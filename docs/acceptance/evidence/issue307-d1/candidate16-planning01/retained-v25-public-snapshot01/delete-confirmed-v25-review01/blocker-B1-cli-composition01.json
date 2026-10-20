@@ -1,0 +1,33 @@
+{
+  "status": "BLOCKED_REQUIRED_HOST_CLI_GROUP_ADAPTER",
+  "at": "2026-10-20T01:28:32.440709+00:00",
+  "head": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+  "host_sha256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+  "observed": [
+    {
+      "action": "archive-root",
+      "group": "late-hold",
+      "stage": "disable-all",
+      "exception_type": "TypeError",
+      "message": "string indices must be integers, not 'str'",
+      "expected_success": "Bound group dict must reach inherited method; current CLI passes string."
+    },
+    {
+      "action": "revoke-case",
+      "group": "late-hold",
+      "stage": "late",
+      "exception_type": "TypeError",
+      "message": "string indices must be integers, not 'str'",
+      "expected_success": "Bound group dict must reach inherited method; current CLI passes string."
+    }
+  ],
+  "external_processes": [],
+  "Docker_Source_provider_permission_sign_delete_actions": 0,
+  "frozen_source_modified": false,
+  "finding": "main passes argparse group string to inherited archive_root/revoke_case, which require frozen group dictionary. H1 revoke-case and fixed root receipt archival cannot execute through sole approved CLI.",
+  "source_locations": [
+    "examples/lifecycle-d1/window_six_support.py:159",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review06/composition/window_support.py:269-281"
+  ],
+  "recommended_minimal_fix": "Resolve host.group(args.group) before inherited methods, validate root action/case stage against actual bound maps before side effects, and exercise actual main composition in normal/-O tests. Any effective tool/source hash change must preserve original frozen authorization and be separately bound/confirmed; do not weaken existing hashes."
+}

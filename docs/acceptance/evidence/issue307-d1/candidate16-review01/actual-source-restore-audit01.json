@@ -1,0 +1,1065 @@
+{
+  "status": "PASS_ACTUAL_C16_NONDELETE_SOURCE_RESTORE_RAW_AUDIT",
+  "at": "2026-10-20T02:23:00.303863+00:00",
+  "source": "5472a583f86838df42a5ffd86bc366c166036efb",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "allocation_sha256": "60855ee4859ba33dc7ebb12bc757aaece6d7abd6799679d0cb65873df8bbd8a4",
+  "terminal_sha256": "f57db89dfbd1c231ed6ea8080dec726d0817de1996a5ab17c051018cea3e38e3",
+  "raw_index_sha256": "037e1343958de0f547b1a892bbaeff7ee3d2044673df8e55d8bdc4acf1031273",
+  "exact_raw_members": 1142,
+  "groups": [
+    {
+      "group": "business-races",
+      "Core_before_after_baseline_restored_rolesACL_equal": true,
+      "source_core_sha256": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8",
+      "backups": {
+        "core.dump": {
+          "sha256": "282a7a1553f28f5a5b91db2f9c7f300a1fa978b6e3e79f790d845a3067b66625",
+          "bytes": 1359118
+        },
+        "globals.sql": {
+          "sha256": "897170391bcfcc1ba0fc8aa5b1019d7e653a6d5ec3dacd12cdc2cd3633260776",
+          "bytes": 669
+        },
+        "native.tar": {
+          "sha256": "110b88bdf5a873592130c9107eac66cb60914c7f8b255ae0f608aadf38abdb2b",
+          "bytes": 292352
+        }
+      },
+      "source_restore_native": [
+        {
+          "role": "maintenance-source",
+          "audit": "d14d56cf-ad9d-42c1-918c-37ec8d816d1a",
+          "copies": 7,
+          "known_IAM": 11,
+          "absent_IAM": 1,
+          "P1_typed_absence": true,
+          "official_policy_Equals": true
+        },
+        {
+          "role": "maintenance-restore",
+          "audit": "d14d56cf-ad9d-42c1-918c-37ec8d816d1a",
+          "copies": 7,
+          "known_IAM": 11,
+          "absent_IAM": 1,
+          "P1_typed_absence": true,
+          "official_policy_Equals": true
+        }
+      ],
+      "technical_journals": [
+        {
+          "role": "maintenance-provision",
+          "pairs": 16,
+          "methods": {
+            "PUT": 6,
+            "GET": 10
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 4
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 6
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/add-canned-policy",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/add-user",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/import-iam-v2",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "role": "maintenance-source",
+          "pairs": 47,
+          "methods": {
+            "GET": 46,
+            "HEAD": 1
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 11
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 12
+            },
+            {
+              "method": "HEAD",
+              "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "role": "maintenance-restore",
+          "pairs": 47,
+          "methods": {
+            "GET": 46,
+            "HEAD": 1
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 11
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 12
+            },
+            {
+              "method": "HEAD",
+              "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "role": "restore-inspect-enable",
+          "pairs": 4,
+          "methods": {
+            "GET": 3,
+            "PUT": 1
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/set-user-status",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "role": "restore-inspect-disable",
+          "pairs": 2,
+          "methods": {
+            "PUT": 1,
+            "GET": 1
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 1
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/set-user-status",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      "business_20_old_multisets_preserved": true,
+      "business_append_deltas": {
+        "lifecycle_fixture_copy": 0,
+        "lifecycle_copy_policy": 0,
+        "lifecycle_provider_attempt": 3,
+        "lifecycle_provider_observation": 0,
+        "lifecycle_provider_send_claim": 0,
+        "lifecycle_reader_pin": 0,
+        "lifecycle_reader_termination": 0,
+        "lifecycle_fixture_reference_release": 0,
+        "lifecycle_disposition_approval": 3,
+        "lifecycle_approval_revocation": 0,
+        "lifecycle_disposition_dispatch": 3,
+        "lifecycle_dispatch_release": 0,
+        "lifecycle_copy_absence_receipt": 0,
+        "dataset_version": 0,
+        "cost_event": 9,
+        "cost_allocation": 9,
+        "audit_event": 31,
+        "evidence": 31,
+        "evidence_relation": 31,
+        "outbox_event": 31
+      },
+      "restored_inspector_fresh_disabled": true,
+      "operation_owner_closures": [
+        {
+          "path": "archive/owner.json",
+          "sha256": "b6c5bd90f2add3b910a15a91544a90bd5aa28c39eeb25dfee4ef8a88cb14d6eb",
+          "cid": "df0ff8cee952273714212390d30ae10387d086a3b51fd7ebf91e002f3583e1e1",
+          "closed": true
+        },
+        {
+          "path": "budget-initialization/owner.json",
+          "sha256": "44b08157ca54f3de2e8af020032f9378de55f1430597bc37cedc87265cf52ae9",
+          "cid": "9a1d76dae9fc9355f93cfdfb04a76f0d56285f3370d358996a949165fc4c9df8",
+          "closed": true
+        },
+        {
+          "path": "native-file-compare/owner.json",
+          "sha256": "9df9a5037e2ec46b4936110fff0fcf73bafe933fb38e3226c16ae5bac1695c85",
+          "cid": "0022347aed203c151362d121857e47bcc9cd9fa830130efa629d1f4973c6b4c4",
+          "closed": true
+        },
+        {
+          "path": "unpack/owner.json",
+          "sha256": "d7ad7ffdf018340c7fe20badf341e5c25e5a1eb0927cde06cae87d817e52a24a",
+          "cid": "9122bd3afe33a6c494fd8f13afd3372e4cd58ee255dea907e0310f9e2e898305",
+          "closed": true
+        },
+        {
+          "path": "restore-inspect-enable/operation/owner.json",
+          "sha256": "6378f5f73726b96ac7678fafcfa198445273eead855f6464f35eb7f369d5acbf",
+          "cid": "91ece7d7dad451dda148a770a06d402a5549d0aa1cb0e568895e8a81206e1f32",
+          "closed": true
+        },
+        {
+          "path": "restore-inspect-disable/operation/owner.json",
+          "sha256": "1518e9df88890f89df3ec848ac543a7abd4050d5733a5e5661e04fbd362362c5",
+          "cid": "d3ed57aa31c490dcab7c1c87cdea53028d21bc82c6786af3223a53bafeb3034f",
+          "closed": true
+        },
+        {
+          "path": "rehearsal/business/operation/owner.json",
+          "sha256": "fa542068e5f123324657937d1b272dfbe391a8c8efe44f43a499f4e7418a8404",
+          "cid": "4a0a1fcb462f2d7b4dbab36851ab3e71adfa5c871bc7d6e86d3f3fd52745e73d",
+          "closed": true
+        },
+        {
+          "path": "maintenance-source/operation/owner.json",
+          "sha256": "1084cebc4dc157a3c11874869f5fbd282dd3fcbb9792d91efbe726c106ed529d",
+          "cid": "e04a6ba17ef5bd43f09cae19c5883ec4264b5bf376bf6bb88a86a2bf0b90e606",
+          "closed": true
+        },
+        {
+          "path": "maintenance-restore/operation/owner.json",
+          "sha256": "d2dcae4c920e40f730157f5223fe38f50cca4156098cc2af87aa89a38215012e",
+          "cid": "7e1e4467b6514fcf058740abb5a8fb075e97e6d328ec5257060fbff62b06b409",
+          "closed": true
+        },
+        {
+          "path": "maintenance-provision/operation/owner.json",
+          "sha256": "756ea7975d3b6e49cbf4929f5075c3f53ccb8cd278ca4eb66434319c6493794f",
+          "cid": "2c9df16559d255166320f573e0deee36d6014babe9624a8c948889d7013d7656",
+          "closed": true
+        }
+      ]
+    },
+    {
+      "group": "late-hold",
+      "Core_before_after_baseline_restored_rolesACL_equal": true,
+      "source_core_sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+      "backups": {
+        "core.dump": {
+          "sha256": "77b699f801670875a618247529d15f7d4c911b317c4c381541d2262b4a16c5cc",
+          "bytes": 1166712
+        },
+        "globals.sql": {
+          "sha256": "e28e6890deee7adc19508cec352c3eac9b8cf2730f5fbe64153f6b5723065f05",
+          "bytes": 669
+        },
+        "native.tar": {
+          "sha256": "80bc77fb094d2bcaea5b4742c7bb136daa4155f8c689dc672f8ddfde7fa8d65a",
+          "bytes": 113152
+        }
+      },
+      "source_restore_native": [
+        {
+          "role": "maintenance-source",
+          "audit": "d14d56cf-ad9d-42c1-918c-37ec8d816d1a",
+          "copies": 6,
+          "known_IAM": 6,
+          "absent_IAM": 4,
+          "P1_typed_absence": false,
+          "official_policy_Equals": true
+        },
+        {
+          "role": "maintenance-restore",
+          "audit": "d14d56cf-ad9d-42c1-918c-37ec8d816d1a",
+          "copies": 6,
+          "known_IAM": 6,
+          "absent_IAM": 4,
+          "P1_typed_absence": false,
+          "official_policy_Equals": true
+        }
+      ],
+      "technical_journals": [
+        {
+          "role": "maintenance-provision",
+          "pairs": 16,
+          "methods": {
+            "PUT": 6,
+            "GET": 10
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 4
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 6
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/add-canned-policy",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/add-user",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/import-iam-v2",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "role": "maintenance-source",
+          "pairs": 36,
+          "methods": {
+            "GET": 36
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 6
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 10
+            }
+          ]
+        },
+        {
+          "role": "maintenance-restore",
+          "pairs": 36,
+          "methods": {
+            "GET": 36
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 6
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 10
+            }
+          ]
+        },
+        {
+          "role": "restore-inspect-enable",
+          "pairs": 4,
+          "methods": {
+            "PUT": 1,
+            "GET": 3
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/set-user-status",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "role": "restore-inspect-disable",
+          "pairs": 2,
+          "methods": {
+            "PUT": 1,
+            "GET": 1
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 1
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/set-user-status",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      "business_20_old_multisets_preserved": true,
+      "business_append_deltas": {
+        "lifecycle_fixture_copy": 0,
+        "lifecycle_copy_policy": 0,
+        "lifecycle_provider_attempt": 2,
+        "lifecycle_provider_observation": 0,
+        "lifecycle_provider_send_claim": 0,
+        "lifecycle_reader_pin": 0,
+        "lifecycle_reader_termination": 0,
+        "lifecycle_fixture_reference_release": 0,
+        "lifecycle_disposition_approval": 3,
+        "lifecycle_approval_revocation": 1,
+        "lifecycle_disposition_dispatch": 2,
+        "lifecycle_dispatch_release": 0,
+        "lifecycle_copy_absence_receipt": 0,
+        "dataset_version": 0,
+        "cost_event": 12,
+        "cost_allocation": 12,
+        "audit_event": 45,
+        "evidence": 45,
+        "evidence_relation": 45,
+        "outbox_event": 45
+      },
+      "restored_inspector_fresh_disabled": true,
+      "operation_owner_closures": [
+        {
+          "path": "archive/owner.json",
+          "sha256": "cde74b1a00c43b240310c7d20030f4f78902511bd4b75619af8940f79f9b0f18",
+          "cid": "747d64f26da96402deb86bed0f22af3b98ba8c2ebefc8fc1fdbd841859789fda",
+          "closed": true
+        },
+        {
+          "path": "budget-initialization/owner.json",
+          "sha256": "5965c52529240112e928bf778da018c3e5a07212ee3f2e9fc90ca4295ee1c98f",
+          "cid": "821d0d0c23d4e6c728f6094017d57b0dec288f731fcbd1dbfe1505f35d853a29",
+          "closed": true
+        },
+        {
+          "path": "native-file-compare/owner.json",
+          "sha256": "c668b57f75112e5928124573bc52c186ea67c0754513470ae9ea62762a8a9886",
+          "cid": "c0591b56902b1ad7dbbc891fabb029abf22e2a0351098b1abb282a755f328db1",
+          "closed": true
+        },
+        {
+          "path": "unpack/owner.json",
+          "sha256": "268f95f8ba0f49cb9dbd5a3f986b77e65a924cb9aec32b288af01918795d1bc6",
+          "cid": "5f60d6661f427a87ef516d4b7c0b37298c70a43f7c4a9a40ba6fdb5b4c25facd",
+          "closed": true
+        },
+        {
+          "path": "restore-inspect-enable/operation/owner.json",
+          "sha256": "073391f4df953a349f2455bfaa36ebfa8b3f3be9501d855d2ce0235fb078ed63",
+          "cid": "0e149a6254bcb12a0b20209f2c87cf8d2e5cd32b2c8eddb56580ea8e12b79a48",
+          "closed": true
+        },
+        {
+          "path": "restore-inspect-disable/operation/owner.json",
+          "sha256": "cf2339799c1215d1a5a5c387e54700195637e1e59eae31293d0c45cd5d8f03fc",
+          "cid": "c02d1ca9cac515c1dfc57d52c450db37c0d00b9c6de7200e56c38fc81ed783e4",
+          "closed": true
+        },
+        {
+          "path": "rehearsal/late/operation/owner.json",
+          "sha256": "417ce628bee5332f78631a77007cfd4ceb673f0a1b63a15bad3bfff308a74e8a",
+          "cid": "195a01683333982c62bdd40b1a18dfc46e9bc289278f856e2c579200c390777e",
+          "closed": true
+        },
+        {
+          "path": "maintenance-source/operation/owner.json",
+          "sha256": "a44aa3efcc941596eac80cc62a0452e8f91a0cedad71510348da06235fc444c7",
+          "cid": "b018453a7d590695ed0477a5d77e54b932c8956d66af4e9f07544e6535e229a9",
+          "closed": true
+        },
+        {
+          "path": "maintenance-restore/operation/owner.json",
+          "sha256": "124565d0f06c3f327d0245684bedfb5cdef5a10ddec6cdb6183ab7bf62c5ea7c",
+          "cid": "3af6ccf8e113c6fcf332274692148ef2aa6ba2c9daa6db05b6d4aa5330416e4f",
+          "closed": true
+        },
+        {
+          "path": "maintenance-provision/operation/owner.json",
+          "sha256": "28b0a6b06efe8d1f6a045e10cc925451b05a14475f465925c628dd6f529d1b77",
+          "cid": "7c4e1eb7bdcc0d58eb502c1579b8076edd5b49d47bb05fe3dcdef9afcec9f5ad",
+          "closed": true
+        }
+      ]
+    },
+    {
+      "group": "mixed",
+      "Core_before_after_baseline_restored_rolesACL_equal": true,
+      "source_core_sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+      "backups": {
+        "core.dump": {
+          "sha256": "60973ef649b9f114c235d0a5683bca44c210e51ede322ba0fab1b3def195512c",
+          "bytes": 1158775
+        },
+        "globals.sql": {
+          "sha256": "e4ef3d47f25eb1bf5fc81d6371f086ea99dcf0c61d9a15332dcf026a358913e0",
+          "bytes": 669
+        },
+        "native.tar": {
+          "sha256": "d7cdfb60751300882655570ed68d5c009f17ed973e5275186be97c0d82ad5be9",
+          "bytes": 110080
+        }
+      },
+      "source_restore_native": [
+        {
+          "role": "maintenance-source",
+          "audit": "d14d56cf-ad9d-42c1-918c-37ec8d816d1a",
+          "copies": 4,
+          "known_IAM": 6,
+          "absent_IAM": 4,
+          "P1_typed_absence": false,
+          "official_policy_Equals": true
+        },
+        {
+          "role": "maintenance-restore",
+          "audit": "d14d56cf-ad9d-42c1-918c-37ec8d816d1a",
+          "copies": 4,
+          "known_IAM": 6,
+          "absent_IAM": 4,
+          "P1_typed_absence": false,
+          "official_policy_Equals": true
+        }
+      ],
+      "technical_journals": [
+        {
+          "role": "maintenance-provision",
+          "pairs": 16,
+          "methods": {
+            "GET": 10,
+            "PUT": 6
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 4
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 6
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/add-canned-policy",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/add-user",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/import-iam-v2",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "role": "maintenance-source",
+          "pairs": 30,
+          "methods": {
+            "GET": 30
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 6
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 10
+            }
+          ]
+        },
+        {
+          "role": "maintenance-restore",
+          "pairs": 30,
+          "methods": {
+            "GET": 30
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+              "count": 3
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 6
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 10
+            }
+          ]
+        },
+        {
+          "role": "restore-inspect-enable",
+          "pairs": 4,
+          "methods": {
+            "GET": 3,
+            "PUT": 1
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/info-canned-policy",
+              "count": 1
+            },
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 2
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/set-user-status",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "role": "restore-inspect-disable",
+          "pairs": 2,
+          "methods": {
+            "GET": 1,
+            "PUT": 1
+          },
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/minio/admin/v3/user-info",
+              "count": 1
+            },
+            {
+              "method": "PUT",
+              "path": "/minio/admin/v3/set-user-status",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      "business_20_old_multisets_preserved": true,
+      "business_append_deltas": {
+        "lifecycle_fixture_copy": 0,
+        "lifecycle_copy_policy": 0,
+        "lifecycle_provider_attempt": 1,
+        "lifecycle_provider_observation": 0,
+        "lifecycle_provider_send_claim": 0,
+        "lifecycle_reader_pin": 0,
+        "lifecycle_reader_termination": 0,
+        "lifecycle_fixture_reference_release": 0,
+        "lifecycle_disposition_approval": 1,
+        "lifecycle_approval_revocation": 0,
+        "lifecycle_disposition_dispatch": 1,
+        "lifecycle_dispatch_release": 0,
+        "lifecycle_copy_absence_receipt": 0,
+        "dataset_version": 0,
+        "cost_event": 6,
+        "cost_allocation": 6,
+        "audit_event": 19,
+        "evidence": 19,
+        "evidence_relation": 19,
+        "outbox_event": 19
+      },
+      "restored_inspector_fresh_disabled": true,
+      "operation_owner_closures": [
+        {
+          "path": "archive/owner.json",
+          "sha256": "7ec40b258429cd6ab5f1f12f5ef8103cfdf7feda0ef60e259f563821619eaba8",
+          "cid": "7b48d4bb1cbcd2bf3f3c2f8fa4edccadcfbff7fa161a8614bc8526347ae853cb",
+          "closed": true
+        },
+        {
+          "path": "budget-initialization/owner.json",
+          "sha256": "324f83220ed0ccadd4de2f771453792b977603e001a84d1bce2bf9f596fa8515",
+          "cid": "bde343c5e69493b92109b7190f3ebf134d0bcdd1023fbfaab04129dc9b83d4db",
+          "closed": true
+        },
+        {
+          "path": "native-file-compare/owner.json",
+          "sha256": "22768a2bc95d4216da938174421421f869a3995be919cca8fedaf8a68dd77316",
+          "cid": "6d52ad5dfce41f22b3a3d804bd1f01f16ec202017fd0d2fe2eef73f78ef35a90",
+          "closed": true
+        },
+        {
+          "path": "unpack/owner.json",
+          "sha256": "edf62197390e2ad8209b2e43054efbd105e7eb33a51c9456a1436784f01faa23",
+          "cid": "c78fffb30c2fcbad1df6824140d74c40285b8fe64166e5b80706484d419a9c3d",
+          "closed": true
+        },
+        {
+          "path": "restore-inspect-enable/operation/owner.json",
+          "sha256": "144526531a09c71eb41909b760b660b93b67acce7d7105e6cc45411830e45a83",
+          "cid": "39abf871af8131c2f4a36f6c25c8f629f133c8efd2e547eeb8d6effb5b065fdf",
+          "closed": true
+        },
+        {
+          "path": "restore-inspect-disable/operation/owner.json",
+          "sha256": "051c477df3ff8040e91f51a97b60c854837b3f5eff8f7bafd23c1ec93ee3b319",
+          "cid": "e3a7579f3c2b6ad292dedd8f467a1f97b3019cc7d4ee994fa0e7849f8d67bce0",
+          "closed": true
+        },
+        {
+          "path": "rehearsal/protected/operation/owner.json",
+          "sha256": "2247321ed5a2139f9a7e4fa4a041de7f506d14ebdb034ce9aca3240b1c04e648",
+          "cid": "85f38e8061f0975eeddd10834196643cceebc75a29ab0d97b132a276972947df",
+          "closed": true
+        },
+        {
+          "path": "rehearsal/mixed/operation/owner.json",
+          "sha256": "5f38da5681bbd4c904fc1907eb32138845b39ddbb46354d9edd8b88017060eba",
+          "cid": "3c87cdbd43debfaa387d5ac49ef1aa1449b2581ac0fd10b7f809c0dd54f0f2fe",
+          "closed": true
+        },
+        {
+          "path": "maintenance-source/operation/owner.json",
+          "sha256": "f82a2b6036c2fb93f57ae9d2980c239fe53938cb98ddc14ce5425df74207fb3c",
+          "cid": "01f013dba6368152a71d403a4f2f5d32c342a015e40eb62769c9e44ac9f536a4",
+          "closed": true
+        },
+        {
+          "path": "maintenance-restore/operation/owner.json",
+          "sha256": "f043a2de818106b71edb010b369435cff80ecfbcd2103cf2d74dbcfb38179734",
+          "cid": "8c40e348e322ade6dc97f36c64e716d76665cea5b6d7164f704c2cdd2316fcc6",
+          "closed": true
+        },
+        {
+          "path": "maintenance-provision/operation/owner.json",
+          "sha256": "614c850714642fb48c4d1523839fb7f36aeeb9b9d837545d1af73cf08af9cb6a",
+          "cid": "50c717a7600a54dca8200aad54e36a52edaff23009be078f88381d77028565c1",
+          "closed": true
+        }
+      ]
+    }
+  ],
+  "actual_technical_helper_start_observation_pairs": 292,
+  "rehearsal_Core_CostEvent_deltas": [
+    9,
+    12,
+    6
+  ],
+  "amount": "NOT_ASSESSED",
+  "whole_provider_HTTP_total": "NOT_INFERRED from helper file journals and hashed rehearsal Core deltas",
+  "independent_file_only_reaggregations": [
+    {
+      "group": "business-races",
+      "role": "maintenance-source",
+      "exit": 0,
+      "stdout_sha256": "4156f37ee536def22e498cd0cb446f650509cf648fd8d1d922324ca1bddee1f1",
+      "copies": 7,
+      "policies": 11,
+      "provider_io_by_file_only_checker": 0
+    },
+    {
+      "group": "business-races",
+      "role": "maintenance-restore",
+      "exit": 0,
+      "stdout_sha256": "e3e0e7c4966ae8e7625298f67fe6f750b85d2a2703a191d8cb93e8fe216854b5",
+      "copies": 7,
+      "policies": 11,
+      "provider_io_by_file_only_checker": 0
+    },
+    {
+      "group": "late-hold",
+      "role": "maintenance-source",
+      "exit": 0,
+      "stdout_sha256": "1c1f566d9cda8cee70fa5ee79b0ff2fc6cfd1546813e5b279c73d98de6f2528b",
+      "copies": 6,
+      "policies": 6,
+      "provider_io_by_file_only_checker": 0
+    },
+    {
+      "group": "late-hold",
+      "role": "maintenance-restore",
+      "exit": 0,
+      "stdout_sha256": "951dfe74ba59acf0d4872dcfbab58eb8d00414bb2028b89614c627aacb9e3f3e",
+      "copies": 6,
+      "policies": 6,
+      "provider_io_by_file_only_checker": 0
+    },
+    {
+      "group": "mixed",
+      "role": "maintenance-source",
+      "exit": 0,
+      "stdout_sha256": "9250c9418bfd34318da05e401a0fc407e5606594ecb0596c9ec2e72094814555",
+      "copies": 4,
+      "policies": 6,
+      "provider_io_by_file_only_checker": 0
+    },
+    {
+      "group": "mixed",
+      "role": "maintenance-restore",
+      "exit": 0,
+      "stdout_sha256": "4e3ad073b5139178a029b4607436f2fed6836960dc4f274896f846bd4c245599",
+      "copies": 4,
+      "policies": 6,
+      "provider_io_by_file_only_checker": 0
+    }
+  ],
+  "source_business_mutations": 0,
+  "object_PUT_DELETE": 0,
+  "reviewer_Source_calls_or_native_replay": 0,
+  "terminal_closures": 92,
+  "profile_revocations": 19,
+  "physical_and_frozen_packet_fullentry_review": "PENDING_AFTER_PARENT_NOTIFY"
+}

@@ -1,0 +1,29 @@
+{
+  "status": "PASS_AUTHORIZED_SCHEDULED_PREWINDOW_CLOSED",
+  "recorded_at": "2026-10-20T01:23:43.501608+00:00",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "automation_id": "307-d1-candidate15-v25",
+  "head": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+  "schedule_evidence_index_sha256": "9f37346ee9e5f083ebdbbea89034a4a56205bbec175a0e746b0324abf9b8d0bc",
+  "execution_matrix_sha256": "6d32c5b71bba1cd5a836314b50d0e6bb8c46e93a975c84599944b92c4b47ce98",
+  "scheduled_resume_sha256": "1c8bbd122ebb9b10e6caf8d8a9fa901d5358d1d98cdb3bd218b42833a2a04676",
+  "authorization_sha256": "55f0be454529612e1d81c47c68f10542929f96d661be675d50aea32fe4029b9e",
+  "separate_schedule_authority_sha256": "65b68dd6c3f7f44dfec9d99e201deeb91e0d953c70bb55ec7ff0a7e13bdc4774",
+  "prewindow_check_sha256": "d16b95d690f32fa58ede78eb0f3675862b6d3889e27a57fdddecc14d6bcc6552",
+  "github_checkpoint_sha256": "5e0c9604b4eaf0e4e23093e4cf98830b011ad9641ca1ff766741f0a00c8addb2",
+  "current_frozen_approved_artifacts_checked": 56,
+  "current_in_window_preflight": "NOT_RUN",
+  "actual_six_target_delete": "NOT_RUN",
+  "remaining_six": {
+    "P2": "NOT_RUN",
+    "T1": "NOT_RUN",
+    "T2": "NOT_RUN",
+    "H2A": "NOT_RUN",
+    "M1A": "NOT_RUN",
+    "M1B": "NOT_RUN"
+  },
+  "current_source_provider_delete_enable_sign_actions": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "PR332": "DRAFT_OPEN",
+  "Issue307": "OPEN"
+}

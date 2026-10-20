@@ -1,0 +1,88 @@
+{
+  "status": "APPENDED_INDEPENDENT_ISOLATED_REPAIR_EVIDENCE_INDEX",
+  "members": {
+    "actual-closed-root-contract01.json": {
+      "sha256": "e5844312600f7a113c1b9340fd54ea1c750a390c7af064b8b3f1bca6ce280794",
+      "bytes": 9288
+    },
+    "authority-schedule-audit01.json": {
+      "sha256": "33ed2055b755ecc7b271ac3f2e67591625f82f07320a5d812c9504d82921db43",
+      "bytes": 19273
+    },
+    "blocker-B1-cli-composition01.json": {
+      "sha256": "276517104afb27d32632835111731f7b98e2440ef3dcdd2f59466c0906f9ad0e",
+      "bytes": 1767
+    },
+    "blocker-B1-direct-resolved-group-positive02.json": {
+      "sha256": "706eaba99ba95c3bcecf34c6be0335fdac5fce1bc56621e547dfb552cf94c260",
+      "bytes": 1524
+    },
+    "human-thread-readback01.json": {
+      "sha256": "5d779247f9cce3b293503ea4d3e2177021c9b733dc9b5f441a7dbf72a6891d96",
+      "bytes": 2264
+    },
+    "independent-authorization-window-review01.json": {
+      "sha256": "b0a4ef12e4b8604c2b18228ef1ce242b53c618df3dff56d4771b305d02c74331",
+      "bytes": 13920
+    },
+    "independent-evidence-index01.json": {
+      "sha256": "7cd7803fbaba8308d32422be155cde267b3e46f92a94a719e1bc3c5ae07c0baf",
+      "bytes": 2020
+    },
+    "isolated-repair-normal01.json": {
+      "sha256": "6251b91e4220196cff6ff1f5d771485a09b29eae424ff17450186a3ba86d8318",
+      "bytes": 535
+    },
+    "isolated-repair-normal01.txt": {
+      "sha256": "be1869712f487402955b2023e22fe4c7058308e63f172c5367b37e1a854962fd",
+      "bytes": 1319
+    },
+    "isolated-repair-optimized01.json": {
+      "sha256": "80df7d6ce00da94372b058beff2ad28267f3755933df103449a0e7787488e85f",
+      "bytes": 538
+    },
+    "isolated-repair-optimized01.txt": {
+      "sha256": "3fd61e577ac8ef91d13999075db806e60ffe575b575077d8ff492112688568a2",
+      "bytes": 1319
+    },
+    "normal-mock-suites01.json": {
+      "sha256": "bfe22b8129256efc6218ecfb5e7cfd231d2a65db54a858d0bc19bb7461332294",
+      "bytes": 2909
+    },
+    "optimized-mock-suites01.json": {
+      "sha256": "3aeb37475a55bcd59e75e88a431080034d97f972dd1b924291f7525af29cf7d3",
+      "bytes": 2912
+    },
+    "retained-normal01.txt": {
+      "sha256": "9160c08fc4eb54a562910fa9d9d24f609936d6894f33f1ad94d1603a711c761c",
+      "bytes": 2031
+    },
+    "retained-optimized01.txt": {
+      "sha256": "f9f894adc4f8ded575c6aa82765541027430d5dee4a35c69aa118fe3a7993648",
+      "bytes": 2031
+    },
+    "run-frozen-mock-suites01.py": {
+      "sha256": "31e5727ad17c5d4b9a89de8012824d430d45b0cf14e7d8475c0f4d5f3b1472c3",
+      "bytes": 1966
+    },
+    "run-isolated-repair-tests01.py": {
+      "sha256": "f111729b769c8286d39435e36a5404b099294c405320640428228517b773c76e",
+      "bytes": 1770
+    },
+    "six-normal01.txt": {
+      "sha256": "653bdb116d8f6526303a933199edbde1939a323ee0855ec9e5e38c74de0d478c",
+      "bytes": 400
+    },
+    "six-optimized01.txt": {
+      "sha256": "0e38dc2c15b8d044a787ff6a963e965097dcdd7d59e362fb4596b9113a2f60c5",
+      "bytes": 400
+    }
+  },
+  "count": 19,
+  "previous_index_sha256": "7cd7803fbaba8308d32422be155cde267b3e46f92a94a719e1bc3c5ae07c0baf",
+  "excludes": [
+    "this appended index",
+    "repair final report"
+  ],
+  "prior_BLOCKED_and_index01_preserved": true
+}

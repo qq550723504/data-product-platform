@@ -1,0 +1,33 @@
+{
+  "status": "DEVELOPMENT_REPAIR_PASS_FROZEN_V25_BLOCKED_PAUSED",
+  "at": "2026-10-20T01:48:26.701438+00:00",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "frozen_HEAD": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+  "development_HEAD": "8a172cade7b5eab2d871fc75ac9d0963f9d27199",
+  "frozen_approved_members_unchanged": 56,
+  "independent_BLOCKED_report_sha256": "b0a4ef12e4b8604c2b18228ef1ce242b53c618df3dff56d4771b305d02c74331",
+  "independent_repair_PASS_report_sha256": "966dd18c814bf6890ced56a3b81b4d7c807436089d15ae026f8c3853dd27acad",
+  "new_HEAD_PR_CI": {
+    "run_id": 39354370553,
+    "checks_success": 13,
+    "event": "pull_request",
+    "not_main_CI": true
+  },
+  "automation": {
+    "id": "307-d1-candidate15-v25",
+    "status": "PAUSED",
+    "next_run_at": null,
+    "runs": 0,
+    "config_sha256": "56e47d5aea1c21cfd787a97733e91a476182a88656240c508b78e6956d42923e"
+  },
+  "operator_terminal_sha256": "938c36cc10beba27c608bc588ab3a24139d047d76b35a2d9390b92c4496e034f",
+  "review_closeout_index_sha256": "6157318f86cc61f48f4cb3939450ad18dccb06ac0537bef40ce332e031a9973c",
+  "matrix_sha256": "115eb1d49a3006f7661a9423048b96889fdec2ca136e0e8912323c15e0036032",
+  "evidence_members": 43,
+  "new_candidate_execution_window_created": false,
+  "old_authorization_reused": false,
+  "actual_delete_source_provider_enable_sign_this_review": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "PR332": "OPEN_DRAFT_UNMERGED",
+  "Issue307": "OPEN"
+}

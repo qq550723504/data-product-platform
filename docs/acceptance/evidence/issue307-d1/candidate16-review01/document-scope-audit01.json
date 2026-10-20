@@ -1,0 +1,1308 @@
+{
+  "status": "PASS_C16_FROZEN_CONFIRMATION_RUNBOOK_MATRIX_SNAPSHOT",
+  "at": "2026-10-20T02:32:41.730500+00:00",
+  "reviewed_documents": {
+    "docs/acceptance/issue307-d1-candidate16-confirmation.md": {
+      "sha256": "50c834ff1872697276ceccb6184d5e2f5be919d571e2390a3a690bb685ac7f8b",
+      "bytes": 38013
+    },
+    "docs/acceptance/issue307-d1-v26-window-runbook.md": {
+      "sha256": "2bc1e09bdd8235d28d81073a9c613d66d515fac6cd3f203db750a674f905fccd",
+      "bytes": 13401
+    },
+    "docs/acceptance/issue307-d1-v26-preparation.md": {
+      "sha256": "077b0270f6b4887a94980a9e80c743feb38f6eff01fc588d1fd9219bd35c8f29",
+      "bytes": 6102
+    }
+  },
+  "template_sha256": "cd06672e3992c3888d9d765082747f073250dcdb33d499d3f0210d1fdb786f7c",
+  "exact_codeblock_UTF8_LF": true,
+  "machine_lines": 108,
+  "target_survivor_binding": "All6 exact target/11 survivor ID/DV/key/version/bytes/SHA/hold/retention/until rows match immutable packet; see source-template-packet-audit01",
+  "relative_links": [
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/candidate.json",
+      "sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/bindings.json",
+      "sha256": "ba4be219a0a567579684afbb9ced23d7fdec556654d746b7b86c254d35e4e580"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/confirmation-template.txt",
+      "sha256": "cd06672e3992c3888d9d765082747f073250dcdb33d499d3f0210d1fdb786f7c"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/source-freeze.json",
+      "sha256": "2a1f4aa1f206b84d74e9045731816dc67f8f992b07d4e39b99e8dc9559127cdc"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/profile-windows.json",
+      "sha256": "24272f1f3b53d332956d1e88297775361bb21944566df7c3739f3f9950f47f21"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/cross-field-windows.json",
+      "sha256": "b5c5fc43a262cfe6a4eec4476fae5885e98bb1ccadfb9186f50d3f04e95198ae"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/offline-validator/stdout.txt",
+      "sha256": "bae077fbd34f4cff09b12d68e3ccf73a069b814a0efbc7d9dfef8181e61ddd1f"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/verify-six-native.py",
+      "sha256": "d232d50990045a6ab876901eead9807f3b1daa58dfcf77502b0c90d561c2f53d"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/window_six_support.py",
+      "sha256": "b0d8cc0d39a535c5e0aa995f435cf2a2e410b2e20103ad544bdf5b6d433d00fd"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/attest-remaining-executable.py",
+      "sha256": "3ed372189c05ab97db2c6591aa98af0e051f2e1ada96ea8be44897374061a3c5"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/remaining_six_window.py",
+      "sha256": "8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/remaining_window.py",
+      "sha256": "c856e3b8224fdfb2b17a9340c8577fbb3ef619e5c12be236152502fd5ab9790a"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-planning01/source-ci-readback01.json",
+      "sha256": "67ade16be2ddb3dd9da7eb3c71ba5fe2886a13d8fa9231909a2b7ac2e1c269bd"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-planning01/host-anchor-readback01.json",
+      "sha256": "bc50bb3eb8a1e93b0afb836fb7ed279986fb1f61f6f843fe88ed5ae4d16ed59b"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16-preparation01/non-delete-terminal.json",
+      "sha256": "f57db89dfbd1c231ed6ea8080dec726d0817de1996a5ab17c051018cea3e38e3"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16-preparation01/non-delete-evidence-index.json",
+      "sha256": "037e1343958de0f547b1a892bbaeff7ee3d2044673df8e55d8bdc4acf1031273"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16-readonly01/complete.json",
+      "sha256": "2988e66ff47c40a8725845fa336910b56bba1cf19e347a9b729ac1fb52f7d4ca"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-review01/source-increment-review01.json",
+      "sha256": "b41554e7449f41572f04b12aedb9595e1a82bea27281b0c3f13b8ad9fd26fcdf"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-review01/actual-source-restore-audit01.json",
+      "sha256": "c6211d07f6b9c3e79381f8e64f9496d4e6c3a40a4b2fd817dfadc19da7a7fee5"
+    },
+    {
+      "path": "issue307-d1-v26-window-runbook.md",
+      "sha256": "2bc1e09bdd8235d28d81073a9c613d66d515fac6cd3f203db750a674f905fccd"
+    },
+    {
+      "path": "issue307-d1-v26-preparation.md",
+      "sha256": "077b0270f6b4887a94980a9e80c743feb38f6eff01fc588d1fd9219bd35c8f29"
+    }
+  ],
+  "raw_SHA_table": [
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/candidate.json",
+      "sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/bindings.json",
+      "sha256": "ba4be219a0a567579684afbb9ced23d7fdec556654d746b7b86c254d35e4e580"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/confirmation-template.txt",
+      "sha256": "cd06672e3992c3888d9d765082747f073250dcdb33d499d3f0210d1fdb786f7c"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/source-freeze.json",
+      "sha256": "2a1f4aa1f206b84d74e9045731816dc67f8f992b07d4e39b99e8dc9559127cdc"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/profile-windows.json",
+      "sha256": "24272f1f3b53d332956d1e88297775361bb21944566df7c3739f3f9950f47f21"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/cross-field-windows.json",
+      "sha256": "b5c5fc43a262cfe6a4eec4476fae5885e98bb1ccadfb9186f50d3f04e95198ae"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16/offline-validator/stdout.txt",
+      "sha256": "bae077fbd34f4cff09b12d68e3ccf73a069b814a0efbc7d9dfef8181e61ddd1f"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/verify-six-native.py",
+      "sha256": "d232d50990045a6ab876901eead9807f3b1daa58dfcf77502b0c90d561c2f53d"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/window_six_support.py",
+      "sha256": "b0d8cc0d39a535c5e0aa995f435cf2a2e410b2e20103ad544bdf5b6d433d00fd"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/attest-remaining-executable.py",
+      "sha256": "3ed372189c05ab97db2c6591aa98af0e051f2e1ada96ea8be44897374061a3c5"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/remaining_six_window.py",
+      "sha256": "8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494"
+    },
+    {
+      "path": "../../examples/lifecycle-d1/remaining_window.py",
+      "sha256": "c856e3b8224fdfb2b17a9340c8577fbb3ef619e5c12be236152502fd5ab9790a"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-planning01/source-ci-readback01.json",
+      "sha256": "67ade16be2ddb3dd9da7eb3c71ba5fe2886a13d8fa9231909a2b7ac2e1c269bd"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-planning01/host-anchor-readback01.json",
+      "sha256": "bc50bb3eb8a1e93b0afb836fb7ed279986fb1f61f6f843fe88ed5ae4d16ed59b"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16-preparation01/non-delete-terminal.json",
+      "sha256": "f57db89dfbd1c231ed6ea8080dec726d0817de1996a5ab17c051018cea3e38e3"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16-preparation01/non-delete-evidence-index.json",
+      "sha256": "037e1343958de0f547b1a892bbaeff7ee3d2044673df8e55d8bdc4acf1031273"
+    },
+    {
+      "path": "evidence/issue307-d1/remaining-candidate16-readonly01/complete.json",
+      "sha256": "2988e66ff47c40a8725845fa336910b56bba1cf19e347a9b729ac1fb52f7d4ca"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-review01/source-increment-review01.json",
+      "sha256": "b41554e7449f41572f04b12aedb9595e1a82bea27281b0c3f13b8ad9fd26fcdf"
+    },
+    {
+      "path": "evidence/issue307-d1/candidate16-review01/actual-source-restore-audit01.json",
+      "sha256": "c6211d07f6b9c3e79381f8e64f9496d4e6c3a40a4b2fd817dfadc19da7a7fee5"
+    }
+  ],
+  "compiled_window": {
+    "start_UTC": "2026-10-20T10:00:00Z",
+    "end_UTC_exclusive": "2026-10-20T10:40:00Z",
+    "SGT": "2026-10-20 18:00-18:40",
+    "readonly_end_UTC": "2026-10-20T12:40:00Z"
+  },
+  "current_unique_host": "examples/lifecycle-d1/window_six_support.py SHA b0d8cc0d39a535c5e0aa995f435cf2a2e410b2e20103ad544bdf5b6d433d00fd",
+  "consistency_review": [
+    "Host.group CLI fix retained; oldv25 CLI only retained failure history",
+    "newAuthPath v26; no old authorization fallback/no schedule",
+    "strict six sequential send-disable-selectedOutbox-Asynq-Core absence-next, threeCore remain readable",
+    "H1 successful trusted owner exit+single-field revoke+enablers closed+freshdisabled45s+sealed gateway before onceproof",
+    "H2 real204 before witness/late hold/revoke/loss; B never dispatch",
+    "M1A absence before M1B unknown/C-protected checkpoint copied/SHA verified before B lookup; C never delete",
+    "new source17 actual versions and historical18 distinct; P1 absent excluded permanently",
+    "23known=22sole+1NONE,9actualNoSuchUser; official policyEquals despite JSONsort/raw SHA differences",
+    "policy5 actual successors checkpoint exact/no Renew or newRights or producer/transfer replay",
+    "SDK no retry; max1 each/max6 global; oncebudget before Coreclaim; freshproof perowner",
+    "30false; root/worker/wirekey separation; immutable oldpins/budgets/backups/failurecost retention",
+    "fullCLI auto closes source/helper before authorized Host.check and subsequent starts",
+    "06:00 oldv25 not reused; new10:40 sends/enable deadline exclusive;12:40 readonly cannot reopenidentity",
+    "seal continues all groups after any error; no source/enable/sender/wire starts; unconfirmedphysical/IAM/archive staysUNCONFIRMED",
+    "no Ready/merge or fullD1 acceptance; frozen proposal not exact human authority"
+  ],
+  "Git_attrs": "docs/acceptance/issue307-d1-candidate16-confirmation.md: text: set\ndocs/acceptance/issue307-d1-candidate16-confirmation.md: eol: lf\ndocs/acceptance/issue307-d1-v26-window-runbook.md: text: set\ndocs/acceptance/issue307-d1-v26-window-runbook.md: eol: lf\ndocs/acceptance/issue307-d1-v26-preparation.md: text: set\ndocs/acceptance/issue307-d1-v26-preparation.md: eol: lf\n",
+  "source_CI_record_sha256": "67ade16be2ddb3dd9da7eb3c71ba5fe2886a13d8fa9231909a2b7ac2e1c269bd",
+  "source_CI_record": {
+    "status": "PASS_EXACT_RUNTIME_SOURCE_PR_CI",
+    "source": "5472a583f86838df42a5ffd86bc366c166036efb",
+    "recorded_at": "2026-10-20 02:18:00 UTC",
+    "run": {
+      "id": 39356719557,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "5472a583f86838df42a5ffd86bc366c166036efb",
+      "run_attempt": 1,
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39356719557"
+    },
+    "jobs": [
+      {
+        "id": 118413366556,
+        "name": "classify-changes",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Checkout history for diff classification",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Classify changed paths",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Post Checkout history for diff classification",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          }
+        ]
+      },
+      {
+        "id": 118413415386,
+        "name": "web-console",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Setup Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Install web dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Lint",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Typecheck",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Smoke production console routes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Post Setup Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          },
+          {
+            "name": "Post Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          }
+        ]
+      },
+      {
+        "id": 118413415390,
+        "name": "gx-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Detect GX adapter changes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Setup Python",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Setup Go",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Install pinned GX runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Run GX runtime unit tests",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Start GX reference runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Run real GX adapter and Native contract",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Skip GX runtime smoke when unrelated",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10
+          },
+          {
+            "name": "Preserve GX logs on failure",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11
+          },
+          {
+            "name": "Stop GX reference runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Post Setup Go",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22
+          },
+          {
+            "name": "Post Setup Python",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23
+          },
+          {
+            "name": "Post Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25
+          }
+        ]
+      },
+      {
+        "id": 118413415402,
+        "name": "label-studio-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Detect Label Studio reference changes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Setup Go",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4
+          },
+          {
+            "name": "Start pinned Label Studio reference runtime",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5
+          },
+          {
+            "name": "Bootstrap ephemeral Label Studio API token",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6
+          },
+          {
+            "name": "Run real Label Studio adapter smoke",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7
+          },
+          {
+            "name": "Skip Label Studio runtime smoke when unrelated",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Preserve Label Studio logs on failure",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9
+          },
+          {
+            "name": "Stop Label Studio reference runtime",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10
+          },
+          {
+            "name": "Post Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 20
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21
+          }
+        ]
+      },
+      {
+        "id": 118413415427,
+        "name": "temporary-container-contracts (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Test completed helper ownership, archival, and safe collection",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Test lifecycle wrapper default retirement and explicit retention without Docker",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Test Windows archive ACL replacement on existing diagnostics",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          }
+        ]
+      },
+      {
+        "id": 118413415435,
+        "name": "go-platform",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Initialize containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Setup Go",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Verify dependency lock is tidy",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Format check",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Vet",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Validate local compose file",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Apply database migrations",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Complete lifecycle readonly preflight replay without Docker or credentials",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Build API / worker / migrate / operator tools",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Post Setup Go",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22
+          },
+          {
+            "name": "Post Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23
+          },
+          {
+            "name": "Stop containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25
+          }
+        ]
+      },
+      {
+        "id": 118413415439,
+        "name": "splink-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Detect Splink adapter changes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Setup Python",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4
+          },
+          {
+            "name": "Install pinned Splink runtime",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5
+          },
+          {
+            "name": "Verify Splink runtime/API imports",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6
+          },
+          {
+            "name": "Run Splink script unit tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7
+          },
+          {
+            "name": "Evaluate labelled company matching reference set",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8
+          },
+          {
+            "name": "Skip Splink runtime smoke when unrelated",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Post Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19
+          }
+        ]
+      },
+      {
+        "id": 118413415453,
+        "name": "temporary-container-contracts (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Test completed helper ownership, archival, and safe collection",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Test lifecycle wrapper default retirement and explicit retention without Docker",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Test Windows archive ACL replacement on existing diagnostics",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          }
+        ]
+      },
+      {
+        "id": 118413415490,
+        "name": "hop-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Detect Hop reference changes",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Test trial image isolation runner contracts",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Run pinned Apache Hop reference pipeline",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Run real PostgreSQL to Hop B1 extraction and fault matrix",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Preserve non-secret PostgreSQL ingestion evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Setup Go for storage provider source build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Run real isolated B2 object storage gate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Preserve non-secret storage evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Run real three-RAW Core batch acceptance and recovery",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Preserve non-secret Core batch receipt evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Skip Hop runtime smoke when unrelated",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13
+          },
+          {
+            "name": "Post Setup Go for storage provider source build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25
+          },
+          {
+            "name": "Post Checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27
+          }
+        ]
+      },
+      {
+        "id": 118413415877,
+        "name": "live-core / live-core-browser",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-go@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Check new Go source formatting",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Install application and isolated browser dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Build and prepare actual standalone console",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Install Chromium",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Real Core and PostgreSQL browser acceptance",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Save actual verification, screenshots, traces and service logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18
+          },
+          {
+            "name": "Post Run actions/setup-go@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 20
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21
+          }
+        ]
+      },
+      {
+        "id": 118413415907,
+        "name": "browser-contracts / web-browser-contracts",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Install application and isolated browser-test dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Fixture server contracts",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Build real Next application and existing regression tests",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Incomplete readiness regression tests",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Install Chromium",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Browser and Server Action contracts against local fixtures",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Preserve browser report and failure traces",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 20
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21
+          }
+        ]
+      },
+      {
+        "id": 118413415966,
+        "name": "demo / demo-lifecycle",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Demo command safety tests",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Confirmed disposal driver safety tests (no provider I/O)",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Check archived candidate04 with its frozen runtime (no provider I/O)",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Install isolated browser runner",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Install Chromium",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Build, migrate and initialize shipped Compose demo",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Review, advance, publish, verify and restart without losing history",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Collect service logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Preserve lifecycle evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Remove only the disposable demo",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27
+          }
+        ]
+      },
+      {
+        "id": 118416492334,
+        "name": "required",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 39356719557,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Test fail-closed gate policy",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Enforce required CI policy for this change class",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Archive the verified source snapshot",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Preserve verified source for review and reproduction",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          }
+        ]
+      }
+    ],
+    "job_count": 13,
+    "all_jobs_success": true,
+    "not_main_CI": true,
+    "verification_method": "GitHub connector workflow run and its first-page 13 job results; completed successful required job and whole run; Code Review backend connection failure retained separately",
+    "code_review_backend_failures": [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Can't connect to GitHub. Try again."
+          }
+        ],
+        "isError": true
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Can't connect to GitHub. Try again."
+          }
+        ],
+        "isError": true
+      }
+    ]
+  },
+  "final_publication_HEAD_CI": "Pending parent final docs publication exactHEAD check, not sourceCI/mainCI",
+  "snapshot_after_review_updates": "Current three raw document SHA are reviewed snapshots. Parent may append actual review/CI facts only with retained snapshot/readback; machine/template/runtime fields cannot change silently."
+}

@@ -1,0 +1,34 @@
+{
+  "status": "PASS_DIRECT_RESOLVED_GROUP_MODEL_NOT_CURRENT_CLI",
+  "purpose": "Isolate current CLI group adapter root cause without claiming frozen CLI fixed. Actual inherited methods pass when host.group resolves the string first.",
+  "direct_methods": {
+    "archive_root": "PASS_REAL_ROTATE_TEMP_RAW_AND_JOURNAL_PRESERVED",
+    "revoke_case": "PASS_REAL_ONEFIELD_REVOKE_TEMP_ORIGINAL_RETAINED"
+  },
+  "trace": [
+    {
+      "method": "root_owner",
+      "group_type": "dict",
+      "group": "late-hold",
+      "action": "disable-all"
+    }
+  ],
+  "exact_locations": {
+    "examples\\lifecycle-d1\\window_six_support.py#out=host.archive_root": {
+      "line": 148,
+      "sha256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542"
+    },
+    "docs\\acceptance\\evidence\\issue307-d1\\remaining-window-review06\\composition\\window_support.py#def archive_root": {
+      "line": 269,
+      "sha256": "ad4a7179efb96a02ef23401f1fbe5d489452f5cd923b09c7aae6fba12944738f"
+    },
+    "docs\\acceptance\\evidence\\issue307-d1\\remaining-window-review06\\composition\\window_support.py#def revoke_case": {
+      "line": 275,
+      "sha256": "ad4a7179efb96a02ef23401f1fbe5d489452f5cd923b09c7aae6fba12944738f"
+    }
+  },
+  "first_failure_receipt_unchanged": true,
+  "first_receipt_line159_hint_correction": "Use exact measured current main call line from exact_locations; first failure raw receipt is preserved.",
+  "all_public_private_frozen_mutations": 0,
+  "actual_Docker_Source_provider_enable_sign_delete": 0
+}

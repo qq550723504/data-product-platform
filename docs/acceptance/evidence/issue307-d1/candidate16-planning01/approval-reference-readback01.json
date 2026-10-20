@@ -1,0 +1,17 @@
+{
+  "status": "PASS_FINAL_PREPARATION_REFERENCE_READBACK",
+  "at": "2026-10-20T02:36:44.378047+00:00",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "reference_index_sha256": "7a699851f9cd3c83574f26b73b1f9d3ae181555da999e48ef7901ad6acb0d863",
+  "reference_count": 67,
+  "nested_exact_member_sets": {
+    "packet-evidence-index.json": 338,
+    "complete-readonly-evidence-index.json": 295,
+    "independent-evidence-index01.json": 53
+  },
+  "confirmation_raw_block_exact": true,
+  "reviewed_matrix_snapshot_preserved": true,
+  "human_authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "native_delete": 0
+}

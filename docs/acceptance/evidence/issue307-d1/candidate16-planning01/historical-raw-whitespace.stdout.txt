@@ -1,0 +1,19 @@
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/retained-v25-public-snapshot01/delete-confirmed-v25-execution01/review-preparation01/cli-regression-before-fix.stderr.txt:3: trailing whitespace.
++test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) ... 
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/retained-v25-public-snapshot01/delete-confirmed-v25-execution01/review-preparation01/isolated-host-cli-repair.patch:6: trailing whitespace.
++ 
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/retained-v25-public-snapshot01/delete-confirmed-v25-execution01/review-preparation01/isolated-host-cli-repair.patch:7: trailing whitespace.
++ 
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/retained-v25-public-snapshot01/delete-confirmed-v25-execution01/review-preparation01/isolated-host-cli-repair.patch:115: trailing whitespace.
++ 
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/retained-v25-public-snapshot01/delete-confirmed-v25-execution01/review-preparation01/isolated-host-cli-repair.patch:116: trailing whitespace.
++ 
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/retained-v25-public-snapshot01/delete-confirmed-v25-execution01/review-preparation01/isolated-host-cli-repair.patch:115: new blank line at EOF.
+docs/acceptance/evidence/issue307-d1/candidate16-review01/buildinfo-operator01.txt:3: trailing whitespace.
++	mod	github.com/qq550723504/data-product-platform/apps/platform	(devel)	
+docs/acceptance/evidence/issue307-d1/candidate16-review01/buildinfo-owner01.txt:3: trailing whitespace.
++	mod	github.com/qq550723504/data-product-platform/apps/platform	(devel)	
+docs/acceptance/evidence/issue307-d1/candidate16-review01/buildinfo-reader01.txt:3: trailing whitespace.
++	mod	github.com/qq550723504/data-product-platform/apps/platform	(devel)	
+docs/acceptance/evidence/issue307-d1/candidate16-review01/buildinfo-readonly-check_exe01.txt:3: trailing whitespace.
++	mod	github.com/qq550723504/data-product-platform/apps/platform	(devel)	

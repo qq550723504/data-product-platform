@@ -1,0 +1,167 @@
+test_archive_root_main_preserves_receipts_and_journal (test_window_six_support.SixSupportTests.test_archive_root_main_preserves_receipts_and_journal) ... ERROR
+test_fresh_four_identity_h1_closure_and_current_counterexamples (test_window_six_support.SixSupportTests.test_fresh_four_identity_h1_closure_and_current_counterexamples) ... ok
+test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) ... 
+  test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='archive-root', fault='live-owner') ... ERROR
+  test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='archive-root', fault='unknown-stage') ... ERROR
+  test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='revoke-case', fault='failed-owner') ... ERROR
+  test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='revoke-case', fault='profile-drift') ... ERROR
+  test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='revoke-case', fault='unknown-stage') ... ERROR
+test_main_missing_maintenance_context_refuses_before_group_lookup (test_window_six_support.SixSupportTests.test_main_missing_maintenance_context_refuses_before_group_lookup) ... ok
+test_main_nonmaintenance_actions_keep_containment_and_dispatch_boundary (test_window_six_support.SixSupportTests.test_main_nonmaintenance_actions_keep_containment_and_dispatch_boundary) ... ok
+test_revoke_case_main_preserves_original_and_only_disables_case (test_window_six_support.SixSupportTests.test_revoke_case_main_preserves_original_and_only_disables_case) ... ERROR
+test_unknown_initial_inspect_still_stops_known_cid (test_window_six_support.SixSupportTests.test_unknown_initial_inspect_still_stops_known_cid) ... ok
+
+======================================================================
+ERROR: test_archive_root_main_preserves_receipts_and_journal (test_window_six_support.SixSupportTests.test_archive_root_main_preserves_receipts_and_journal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 81, in test_archive_root_main_preserves_receipts_and_journal
+    self.cli_maintenance('archive-root')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 64, in cli_maintenance
+    w.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 148, in main
+    out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 271, in archive_root
+    item, output = self.root_owner(group, action)
+                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 41, in root_owner
+    root=self.binding(bound)['root_owners'][stage]
+         ~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 171, in binding
+    return next(b for b in self.bindings if b['group'] == group['Group'])
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 171, in <genexpr>
+    return next(b for b in self.bindings if b['group'] == group['Group'])
+                                                          ~~~~~^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='archive-root', fault='live-owner')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 88, in test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners
+    with self.subTest(action=action,fault=fault):self.cli_maintenance(action,fault)
+                                                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 59, in cli_maintenance
+    with self.assertRaises((ValueError,KeyError)):w.main()
+                                                  ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 148, in main
+    out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 271, in archive_root
+    item, output = self.root_owner(group, action)
+                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 41, in root_owner
+    root=self.binding(bound)['root_owners'][stage]
+         ~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 171, in binding
+    return next(b for b in self.bindings if b['group'] == group['Group'])
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 171, in <genexpr>
+    return next(b for b in self.bindings if b['group'] == group['Group'])
+                                                          ~~~~~^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='archive-root', fault='unknown-stage')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 88, in test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners
+    with self.subTest(action=action,fault=fault):self.cli_maintenance(action,fault)
+                                                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 59, in cli_maintenance
+    with self.assertRaises((ValueError,KeyError)):w.main()
+                                                  ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 148, in main
+    out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 271, in archive_root
+    item, output = self.root_owner(group, action)
+                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 41, in root_owner
+    root=self.binding(bound)['root_owners'][stage]
+         ~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 171, in binding
+    return next(b for b in self.bindings if b['group'] == group['Group'])
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 171, in <genexpr>
+    return next(b for b in self.bindings if b['group'] == group['Group'])
+                                                          ~~~~~^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='revoke-case', fault='failed-owner')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 88, in test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners
+    with self.subTest(action=action,fault=fault):self.cli_maintenance(action,fault)
+                                                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 59, in cli_maintenance
+    with self.assertRaises((ValueError,KeyError)):w.main()
+                                                  ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 148, in main
+    out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+                                                                                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 277, in revoke_case
+    item = self.inspect(group['CaseHelpers'][stage])
+                        ~~~~~^^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='revoke-case', fault='profile-drift')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 88, in test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners
+    with self.subTest(action=action,fault=fault):self.cli_maintenance(action,fault)
+                                                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 59, in cli_maintenance
+    with self.assertRaises((ValueError,KeyError)):w.main()
+                                                  ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 148, in main
+    out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+                                                                                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 277, in revoke_case
+    item = self.inspect(group['CaseHelpers'][stage])
+                        ~~~~~^^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners (test_window_six_support.SixSupportTests.test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners) (action='revoke-case', fault='unknown-stage')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 88, in test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners
+    with self.subTest(action=action,fault=fault):self.cli_maintenance(action,fault)
+                                                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 59, in cli_maintenance
+    with self.assertRaises((ValueError,KeyError)):w.main()
+                                                  ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 148, in main
+    out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+                                                                                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 277, in revoke_case
+    item = self.inspect(group['CaseHelpers'][stage])
+                        ~~~~~^^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_revoke_case_main_preserves_original_and_only_disables_case (test_window_six_support.SixSupportTests.test_revoke_case_main_preserves_original_and_only_disables_case)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 84, in test_revoke_case_main_preserves_original_and_only_disables_case
+    self.cli_maintenance('revoke-case')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\test_window_six_support.py", line 72, in cli_maintenance
+    w.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 148, in main
+    out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+                                                                                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review06\composition\window_support.py", line 277, in revoke_case
+    item = self.inspect(group['CaseHelpers'][stage])
+                        ~~~~~^^^^^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.378s
+
+FAILED (errors=7)

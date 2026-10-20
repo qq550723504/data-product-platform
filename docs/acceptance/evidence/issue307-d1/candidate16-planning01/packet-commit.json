@@ -1,0 +1,42 @@
+{
+  "packet_commit": "729ba2e881bc9f19a6dcdd634bcc8ea74d5907b2",
+  "runtime_source": "5472a583f86838df42a5ffd86bc366c166036efb",
+  "longpaths": "per-command only",
+  "previous_index_add_failed": "Filename too long; no commit; no frozen byte changes",
+  "steps": [
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "add",
+        "--",
+        "docs/acceptance/evidence/issue307-d1/remaining-candidate16",
+        "docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "commit",
+        "-m",
+        "evidence(lifecycle): freeze non-delete candidate16 packet"
+      ],
+      "returncode": 0
+    }
+  ]
+}

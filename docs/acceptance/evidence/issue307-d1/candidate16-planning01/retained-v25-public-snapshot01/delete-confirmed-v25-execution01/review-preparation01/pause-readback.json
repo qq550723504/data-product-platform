@@ -1,0 +1,12 @@
+{
+  "status": "PASS_REVIEW_BLOCKER_HEARTBEAT_PAUSED",
+  "automation_id": "307-d1-candidate15-v25",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "actual_status": "PAUSED",
+  "next_run_at": null,
+  "next_run_nominal_at": null,
+  "snapshot_sha256": "56e47d5aea1c21cfd787a97733e91a476182a88656240c508b78e6956d42923e",
+  "scope_window_prompt_unchanged": true,
+  "native_source_provider_delete_enable": 0,
+  "reason": "Independent B1: archive-root/revoke-case CLI pass a group name string to methods requiring a group object; frozen candidate15 cannot continue as approved."
+}

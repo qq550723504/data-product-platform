@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-20T02:27:19.589446+00:00",
+  "anchor": {
+    "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+    "profile": "candidate16/v26",
+    "candidate_sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643",
+    "bindings_sha256": "ba4be219a0a567579684afbb9ced23d7fdec556654d746b7b86c254d35e4e580",
+    "template_sha256": "cd06672e3992c3888d9d765082747f073250dcdb33d499d3f0210d1fdb786f7c",
+    "packet_commit": "729ba2e881bc9f19a6dcdd634bcc8ea74d5907b2"
+  },
+  "private_host_anchor_sha256": "6327b640443d52179f20664a287bdd31ba2b8bdc09918d38752b85b5f9d10bbd",
+  "purpose": "containment-only fixed known packet CIDs; not authorization, enable or scheduling",
+  "git_snapshot_exact": true,
+  "native_delete": 0,
+  "source_io": 0
+}

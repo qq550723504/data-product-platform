@@ -1,0 +1,14 @@
+{
+  "mode": "optimized",
+  "tests": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "PASS": true,
+  "host_sha256": "2fe83228b0a309badfe2f326eb739e889252c1d7ca9359e1f39e1d9eb23387e2",
+  "test_sha256": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b",
+  "log_sha256": "3fd61e577ac8ef91d13999075db806e60ffe575b575077d8ff492112688568a2",
+  "actual_external_processes": 0,
+  "actual_Docker_Source_provider_enable_sign_DELETE": 0,
+  "scope": "Isolated developer repair source only; frozen v25 unchanged, not activated"
+}

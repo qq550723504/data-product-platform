@@ -1,0 +1,143 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_ISOLATED_HOST_CLI_REPAIR_REVIEW",
+  "at": "2026-10-20T01:35:49.306046+00:00",
+  "scope": "Isolated developer source repair of B1 only; no activation or changed authorization of frozen candidate15/v25.",
+  "remaining_blockers": [],
+  "development_code_B1": "CLOSED_IN_REVIEWED_REPAIR_BYTES_ONLY",
+  "frozen_candidate15_execution_status": "BLOCKED_B1_OLD_FROZEN_CLI_UNCHANGED",
+  "frozen_candidate15_execution_remaining_blockers": [
+    "B1"
+  ],
+  "base_HEAD": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+  "repair_source_HEAD": "8a172cade7b5eab2d871fc75ac9d0963f9d27199",
+  "repair_worktree": "C:\\Users\\Henry\\.codex\\worktrees\\d1-cli-fix\\data-product-platform",
+  "branch": "codex/issue307-v25-host-cli-fix",
+  "runtime_frozen_source": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "frozen_old_host_sha256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+  "reviewed_repair_files": {
+    "examples/lifecycle-d1/window_six_support.py": {
+      "raw_sha256": "2fe83228b0a309badfe2f326eb739e889252c1d7ca9359e1f39e1d9eb23387e2",
+      "Git_raw_sha256": "6af76ec2167308a2cfe8079000be2c42d20f4838260be4d581a2710f3750b2d7",
+      "normalized_LF_equal_Git": true,
+      "bytes": 12925
+    },
+    "examples/lifecycle-d1/test_window_six_support.py": {
+      "raw_sha256": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b",
+      "Git_raw_sha256": "a5fe4ec8370e11201e4b2f22de3280d0bd0a5ea5812b7c94a216be488a6e4518",
+      "normalized_LF_equal_Git": true,
+      "bytes": 14634
+    },
+    "docs/acceptance/issue307-v25-host-cli-repair.md": {
+      "raw_sha256": "c6e2154286e08a8bf8a13b38319d98e0a557c66045a7269ecc159ae9ded0b27b",
+      "Git_raw_sha256": "c6e2154286e08a8bf8a13b38319d98e0a557c66045a7269ecc159ae9ded0b27b",
+      "normalized_LF_equal_Git": true,
+      "bytes": 2497
+    }
+  },
+  "all_host_AST_except_main_unchanged": true,
+  "actual_changed_paths_from_base": [
+    "docs/acceptance/issue307-v25-host-cli-repair.md",
+    "examples/lifecycle-d1/test_window_six_support.py",
+    "examples/lifecycle-d1/window_six_support.py"
+  ],
+  "minimal_change": "Resolve group=host.group(args.group) once before inherited archive_root/revoke_case. Reuse exact original root/case stage maps, clock guards, byte-preserving archive and one-field revocation. No new infrastructure or changed permission/SDK/candidate/key/provider path.",
+  "independent_tests": {
+    "normal": {
+      "mode": "normal",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "host_sha256": "2fe83228b0a309badfe2f326eb739e889252c1d7ca9359e1f39e1d9eb23387e2",
+      "test_sha256": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b",
+      "log_sha256": "be1869712f487402955b2023e22fe4c7058308e63f172c5367b37e1a854962fd",
+      "actual_external_processes": 0,
+      "actual_Docker_Source_provider_enable_sign_DELETE": 0,
+      "scope": "Isolated developer repair source only; frozen v25 unchanged, not activated"
+    },
+    "optimized": {
+      "mode": "optimized",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "host_sha256": "2fe83228b0a309badfe2f326eb739e889252c1d7ca9359e1f39e1d9eb23387e2",
+      "test_sha256": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b",
+      "log_sha256": "3fd61e577ac8ef91d13999075db806e60ffe575b575077d8ff492112688568a2",
+      "actual_external_processes": 0,
+      "actual_Docker_Source_provider_enable_sign_DELETE": 0,
+      "scope": "Isolated developer repair source only; frozen v25 unchanged, not activated"
+    },
+    "success_paths": "Actual main plus real inherited archive_root/revoke_case and real temporary files; byte-preserving receipt archive/journal retention and exactly one field revocation/original-byte retention.",
+    "negative_paths": [
+      "active root owner",
+      "failed case owner",
+      "profile SHA drift",
+      "unknown stage",
+      "missing group/stage context"
+    ],
+    "other_dispatches": "check/h1 dispatch unchanged; seal still containment=True; malformed maintenance context stops before group/side effect.",
+    "external_boundary": "All subprocesses globally rejected by independent runner. No actual Docker, Source, enable, host key/proof or DELETE.",
+    "mock_is_not_native_or_frozen_activation": true
+  },
+  "parent_red_green_originals": {
+    "record_sha256": "ae767502c2529f0ee05e73d7f5746bc145c1186ab7d0a8f46121d27a15658fb9",
+    "patch_sha256": "b5226ec5f90719454ea3f46da35a497b14203f421e7f55d68bda82c7ddd6cf76",
+    "channels": {
+      "cli-regression-after-fix-normal.stderr.txt": {
+        "sha256": "22b6520d8d66d202d1d64ffe677488388c8c2f40b7db35a3b594034761e3e96f",
+        "bytes": 1331
+      },
+      "cli-regression-after-fix-normal.stdout.txt": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "cli-regression-after-fix-optimized.stderr.txt": {
+        "sha256": "d326452ec9a16f4b97724ef42daa461985f9d2f0117de8900b23e47140c83761",
+        "bytes": 1331
+      },
+      "cli-regression-after-fix-optimized.stdout.txt": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "cli-regression-before-fix.stderr.txt": {
+        "sha256": "073eea25f7c5065992f46cc79a07c318939b3ff569a2ac3cdaa8dc600d510add",
+        "bytes": 16923
+      },
+      "cli-regression-before-fix.stdout.txt": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    "original_red_TypeError_retained": true
+  },
+  "prior_independent_BLOCKED_report_sha256": "b0a4ef12e4b8604c2b18228ef1ce242b53c618df3dff56d4771b305d02c74331",
+  "evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/independent-repair-evidence-index02.json",
+    "sha256": "eb949351ea6e1e90d85954159bcab8c882defa1d13443a7060e16449a97c7bb6",
+    "members": 19
+  },
+  "permitted_development_publication_boundary": "No current finite-contract blocker to this minimal three-file developer repair entering the existing Draft PR development branch. Retain old Git objects/frozen d1-six checkout and exact56 approved bytes. Developer commit/push is not applying repair to v25, not merge or deletion authority; exact new PR HEAD CI remains separately required.",
+  "activation_and_retention": {
+    "same_v25_heartbeat": "PAUSED; no resume/duplicate",
+    "old_authorization_reused": false,
+    "old_frozen_candidate_source_binary_keys_configs_56references": "UNCHANGED",
+    "no_new_candidate_execution_window_created": true,
+    "future_executable_proposal": "Bind repaired host/source/evidence explicitly, complete bounded review, obtain renewed exact human confirmation before activation.",
+    "PR332": "DRAFT_UNMERGED",
+    "Issue307": "OPEN",
+    "full_D1": "NOT_ACCEPTED",
+    "window_fresh_native_six_slots": "NOT_RUN"
+  },
+  "reviewer_actions": {
+    "implementation_or_frozen_writes": 0,
+    "Docker_start_stop_exec": 0,
+    "Source_HTTP_provider": 0,
+    "actual_permission_enable_proof_sign_delete": 0,
+    "evidence": "O_EXCL assigned review directory only"
+  },
+  "CI_native_scope": "Normal/-O seven mock compositions each, no new CI/native claim and no Go/SDK/native rerun for this Python CLI-only change.",
+  "publication_timing_note": "Parent committed isolated repair during final metadata readback. Instead of assuming an uncommitted diff, reviewed exact repair_HEAD normalized Git bytes and exact three changed paths. Tested code hashes stayed identical; frozen d1-six HEAD stayed a63."
+}

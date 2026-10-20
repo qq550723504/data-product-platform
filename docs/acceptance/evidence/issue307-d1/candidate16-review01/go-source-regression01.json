@@ -1,0 +1,34 @@
+{
+  "command": [
+    "go",
+    "test",
+    "-count=1",
+    "-json",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-readonly-check"
+  ],
+  "exit": 0,
+  "test_pass_events": 129,
+  "test_fail_events": 0,
+  "package_results": [
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "status": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check",
+      "status": "pass"
+    }
+  ],
+  "logs": {
+    "stdout": {
+      "sha256": "4a9d8a385a523b1aee1d5593653fa2cdeafc605b05b5d57bece1d8fa775b27e7",
+      "bytes": 154038
+    },
+    "stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "actual_Source_Docker_operations": "None in these pure pilot/file-only checker packages"
+}

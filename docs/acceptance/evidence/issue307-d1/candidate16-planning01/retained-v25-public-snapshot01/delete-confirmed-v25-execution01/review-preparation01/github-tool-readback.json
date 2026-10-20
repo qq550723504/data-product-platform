@@ -1,0 +1,273 @@
+{
+  "recorded_at": "2026-10-20 01:27:43 UTC",
+  "checks": {
+    "status": "fulfilled",
+    "value": {
+      "content": [],
+      "structuredContent": {
+        "headRevision": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+        "checks": [
+          {
+            "id": 118299179830,
+            "name": "required",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118299179830",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294460141,
+            "name": "web-console",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294460141",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294459629,
+            "name": "demo / demo-lifecycle",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294459629",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294459559,
+            "name": "live-core / live-core-browser",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294459559",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294459444,
+            "name": "browser-contracts / web-browser-contracts",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294459444",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294459052,
+            "name": "label-studio-smoke",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294459052",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294458994,
+            "name": "go-platform",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294458994",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294458975,
+            "name": "temporary-container-contracts (ubuntu-latest)",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294458975",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294458933,
+            "name": "hop-smoke",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294458933",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294458922,
+            "name": "temporary-container-contracts (windows-latest)",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294458922",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 1
+            }
+          },
+          {
+            "id": 118294458886,
+            "name": "splink-smoke",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294458886",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294458824,
+            "name": "gx-smoke",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294458824",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          },
+          {
+            "id": 118294388899,
+            "name": "classify-changes",
+            "head_sha": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+            "status": "completed",
+            "conclusion": "success",
+            "details_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39320908916/job/118294388899",
+            "output": {
+              "title": null,
+              "summary": null,
+              "text": null,
+              "annotations_count": 2
+            }
+          }
+        ],
+        "statuses": [],
+        "annotations": [],
+        "hasMore": false,
+        "job": null,
+        "jobs": [],
+        "log": null,
+        "logTruncated": false,
+        "providerGuidance": "GitHub guidance for this response only: use checkRunId for output and annotations, runId from a GitHub Actions /runs/<id> link to list jobs, or jobId from a /jobs/<id> link for logs. page paginates checks, jobs or annotations. Keep the supplied account and returned headRevision on follow-up reads. Third-party CI exposes only the output reported to GitHub."
+      }
+    }
+  },
+  "pull_request_attempt": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "tool call error: tool call failed for `codex_apps/github.fetch_pr`\n\nCaused by:\n    Transport closed"
+        }
+      ],
+      "isError": true
+    }
+  },
+  "issue": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "issue": {
+          "url": "https://github.com/qq550723504/data-product-platform/issues/307",
+          "title": "[Governance V2/D1 · P1] 受控合成对象生命周期处置与存储对账切片",
+          "issue_number": 307,
+          "body": "Parent: #296\nDepends on: #300（CLOSED；PR #306，main `9502bd1`，matching push CI SUCCESS）。不依赖 #298 的保留试验环境，不接管 #294 / Draft #295。\n\n## Goal / finite merge contract\n\n在一个独立 workspace、两个固定合成 namespace 上，完成封闭生命周期数据面：停止新使用、reader 排空、explicit archive/restore 或 exact-version delete、unknown 对账及范围化 receipt。历史 identity/hash/认证/发布不改写；只支持本 Issue 注册的少量合成对象。\n\n唯一 writer 为创建此 Issue 的当前聊天；隔离 `codex/` branch/worktree。首先实现 admission/fence/pins/immutable plan 与 facts，再接 provider；不得先给全仓读路径加一个未经验证的 global lifecycle flag。\n\n## Authority\n\n- `docs/architecture/data-lifecycle.md`：唯一 lifecycle 领域/并发/副作用 contract。\n- `docs/adr/0015-data-lifecycle-disposition-boundary.md`；`docs/architecture/data-lifecycle-storage-reuse.md`。\n- `docs/product/data-lifecycle-design-acceptance.md` §4–6：D1 必需用例与 D2–D6 边界。\n- AGENTS §1A/3/7/10/16/17：OSS reuse、历史/parent-first、每次真实 attempt 成本、当前授权、严格 pre-production 与 review 收敛。\n\n## Required behavior / deliverables\n\n- [ ] Domain：policy 起算/retain/use/disposal deadline、explicit restrict/hold/release、disposal authority 与 use rights 分离；UNKNOWN fail closed。\n- [ ] Migration/repository：typed fixture/content/copy/reference/reader/pending-copy、plan exact membership/hash/finalize/approval、append-only restrictions/hold/availability、physical attempt start/observations/coverage receipts；共享 workspace fence、固定 parent-first 锁序，冻结 aggregate 并发验证。\n- [ ] Explicit Commands：可信 principal→workspace 与当前 approval/context；跨 tenant、任意 URI/key/prefix/root/bypass 拒绝；idempotency fingerprint 冲突拒绝。\n- [ ] 封闭 fixture reader/processing/delivery 路径：每次 admission fresh current gate + durable pin；结束须明确完成/取消确认，lease 超时不自动释放。既有未纳管读路径禁止取得 fixture；不改变 DatasetVersion historical storage URI/hash。\n- [ ] Archive/restore：pending copy 先登记、same bytes 验证；source delete 独立 gate；restore 隔离，当前独立 ledger/watermark 无 gap 才允许 fenced admission。未知 ledger/旧 backup 禁止开放。\n- [ ] Storage Port + MinIO native Adapter：固定 instance/incarnation、bucket/key+version；真实 native retention/hold 拒绝；exact absence inventory 与权限/水位证明；delete marker/200/bare HEAD404 均不能算 verified destruction。\n- [ ] DB-first dispatch/attempt start；provider unknown 不盲删，existing worker/outbox reconciliation 单 owner；每次真实 delete/copy/restore/lookup/verify 独立 attempt + CostEvent/typed CostAllocation，observations append-only。\n- [ ] Domain Event/Audit/Evidence/Outbox 同事务，最小 payload 无正文/credential；PARTIAL/UNKNOWN/per-copy receipt，明确 provider 内部备份/外部 recipient 等 excluded scope。\n- [ ] Domain/App/adapter/真实 PostgreSQL barrier concurrency、fault/replay/HTTP tests；LC-01–08、11–16、21–24、28，scoped LC-03/20，隔离 LC-18/19。fake/local tests 与真实存储验收分开报告。\n- [ ] 操作者报告 exact candidate/provider build+SDK、allowlist manifest、DB/provider counters、范围及 PASS/FAIL/SKIP/NOT_RUN/UNKNOWN，区分已限制、已归档、已请求、范围内 verified、外部未确认。\n\n## Reuse check\n\n复用现有 minio-go/v7 native APIs + Storage Adapter、deliveryfence、transaction、Asynq queue/worker/outbox/reconciliation、Cost/Audit/Evidence。现有 Put/Get/PutImmutable 缺 exact-version/hold/verify-copy contract，需经专门 Port 扩展。MinIO CE 固定合成基线及维护/license 风险已在 #300 Reuse Check；AWS S3 version API / Ceph RGW 为成熟替换边界，不新增 storage engine、Temporal/第二队列、policy DSL/审批 SaaS/自研加密系统。\n\n## Authorization and execution gate\n\n用户已明确授权创建本 Issue 并开始代码开发，仅限受控合成对象。**任何实际 provider deletion（包括 integration/acceptance test 的 RemoveObject/cleanup）之前，必须先提交独立 project/environment、namespace、key + provider version/generation、影响范围和 cleanup 清单，收到用户明确确认才运行。** 未确认则仅做 non-destructive/domain/fake/PG admission 验证，实际 deletion 标 NOT_RUN。不得使用 timeout 视为批准。\n\n禁止删除 #298/#294/历史 Pilot/demo 数据、保留 volumes、`down -v`、放宽 #298 delete-deny。不得触碰真实客户/政府数据、生产、backup media、敏感 Evidence/Audit 内嵌正文、Annotation sealed payload、外部副本；无通知/付费/部署/长期凭据/自动删除授权。D1 PR 发布/合并单列授权和 exact-head/main CI，不沿用已完成 #306 的许可。\n\n## Non-goals / follow-ups\n\nD2 全量既有 processing/delivery/shared copy 接入；D3 敏感 envelope migration；D4 真备份恢复；D5 Annotation payload（原 owner）；D6 多副本/真实 rollout。D1 不承诺生产冷 tier、物理介质擦除、外部 copies 全域销毁或完整 IAM/法律裁定。既有 reader 能取得 fixture 却没有 pin/gate 是 blocker，不能藏在 follow-up。\n\n## Merge blockers / convergence\n\n安全/authority/tenant bypass 或 bytes 泄漏；历史/账务改写丢失；authoritative contract 冲突；D1 必需路径/CI/test 失败；并发/幂等破坏已声明 invariant 为 blocker。额外 provider/性能/telemetry/UI/未来 capability 转 follow-up。3 substantive rounds / 20 resolved comments 后按 AGENTS §17 checkpoint。\n\n## Initial status — 2026-10-11\n\nImplementation 开始；所有 runtime acceptance NOT_RUN；实际删除批准 PENDING。#300 设计关闭不代表 D1 已实现。",
+          "state": "open",
+          "user": {
+            "login": "qq550723504",
+            "name": "qq550723504",
+            "email": null,
+            "avatar_url": "https://avatars.githubusercontent.com/u/6007227?v=4",
+            "id": 6007227
+          },
+          "assignees": null,
+          "labels": null,
+          "milestone": null,
+          "state_reason": null,
+          "comments": 51,
+          "created_at": "2026-10-11T08:53:24Z",
+          "updated_at": "2026-10-18T11:16:45Z",
+          "closed_at": null,
+          "display_url": "https://github.com/qq550723504/data-product-platform/issues/307",
+          "display_title": "[Governance V2/D1 · P1] 受控合成对象生命周期处置与存储对账切片"
+        },
+        "url": "https://github.com/qq550723504/data-product-platform/issues/307",
+        "title": "[Governance V2/D1 · P1] 受控合成对象生命周期处置与存储对账切片",
+        "display_url": "https://github.com/qq550723504/data-product-platform/issues/307",
+        "display_title": "[Governance V2/D1 · P1] 受控合成对象生命周期处置与存储对账切片"
+      },
+      "isError": false
+    }
+  },
+  "threads": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "review_threads": []
+      },
+      "isError": false
+    }
+  }
+}
