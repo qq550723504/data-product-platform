@@ -58,6 +58,16 @@ class ActivationContracts(unittest.TestCase):
                 Path(r.read(custody)[0]["file"]).write_bytes(b"wrong")
                 with self.assertRaisesRegex(r.Refused, "Custody bytes"): a.versions(s, r.read(facts), r.read(custody))
 
+    def test_readonly_probe_error_does_not_persist_diagnostic_or_leak_output(self):
+        with tempfile.TemporaryDirectory() as d, patch.object(r, "STATE", Path(d) / "state"):
+            s, _, _, _ = self.fixture(Path(d))
+            with patch.object(r.subprocess, "run", return_value=Mock(returncode=1, stdout=b"private-token", stderr=b"private-dsn")):
+                with r.read_only_observation():
+                    with self.assertRaises(r.Refused) as error: r.command(["probe"])
+                self.assertNotIn("private-token", str(error.exception)); self.assertNotIn("private-dsn", str(error.exception))
+            self.assertEqual(list(Path(s["private"]).iterdir()), [])
+            self.assertFalse(r.READ_ONLY_OBSERVATION.get())
+
     def test_unknown_attempt_or_orphan_prevents_any_new_native_action(self):
         with tempfile.TemporaryDirectory() as d, patch.object(r, "STATE", Path(d) / "state"), patch.object(r, "verify") as verify:
             s, facts, custody, _ = self.fixture(Path(d))
@@ -104,6 +114,15 @@ class ActivationContracts(unittest.TestCase):
             with patch.object(a, "verify_binding", return_value={"planSha256": digest, "head": "accepted"}), patch.object(r, "verify") as verify, patch.object(a, "plan") as plan, patch.object(r, "status") as status, patch.object(a, "execute") as execute:
                 self.assertTrue(a.activate(s, p, digest)["replay"])
             verify.assert_called_once_with(s, running=False); plan.assert_not_called(); execute.assert_not_called(); status.assert_not_called()
+
+    def test_completed_replay_manifest_git_failure_does_not_write_diagnostic(self):
+        with tempfile.TemporaryDirectory() as d, patch.object(r, "STATE", Path(d) / "state"):
+            s, _, _, _ = self.fixture(Path(d))
+            p = Path(d) / "plan.json"; c.write_once(p, {})
+            s.update(activationBinding={"path": "accepted"}, activation={"status": "PASS"})
+            with patch.object(a, "verify_binding", side_effect=lambda s: r.command(["git", "archive"])), patch.object(r.subprocess, "run", return_value=Mock(returncode=1, stdout=b"private", stderr=b"secret")):
+                with self.assertRaises(r.Refused): a.activate(s, p, r.digest(a.encoded({})))
+            self.assertEqual(list(Path(s["private"]).iterdir()), [])
 
     def test_failed_build_keeps_before_state_and_blocks_migration_sts_and_hosts(self):
         with tempfile.TemporaryDirectory() as d, patch.object(r, "STATE", Path(d) / "state"), ExitStack() as stack:

@@ -108,6 +108,11 @@ def versions(s, facts, custody):
 
 
 def plan(s, facts_path, custody_path):
+    with r.read_only_observation():
+        return inspect_plan(s, facts_path, custody_path)
+
+
+def inspect_plan(s, facts_path, custody_path):
     r.need(s["phase"] in ("STOPPED", "RUNNING"), "Known retained stopped owners required; UNKNOWN cannot activate")
     pending(s)
     registry = fingerprint(r.STATE / "state.json")
@@ -276,10 +281,11 @@ def activate(s, plan_path, digest):
     expected = r.read(plan_path)
     r.need(r.digest(encoded(expected)) == digest, "Activation plan digest mismatch")
     if s.get("activationBinding") and s.get("activation", {}).get("status") == "PASS":
-        manifest = verify_binding(s)
-        r.need(manifest["planSha256"] == digest, "Different activation already accepted")
         # Read only, including registry/status files; do not call runtime.status.
-        r.verify(s, running=s["phase"] == "RUNNING")
+        with r.read_only_observation():
+            manifest = verify_binding(s)
+            r.need(manifest["planSha256"] == digest, "Different activation already accepted")
+            r.verify(s, running=s["phase"] == "RUNNING")
         return {"status": "PASS", "replay": True, "runId": s["runId"], "workspaceId": s["workspaceId"], "activationHead": manifest["head"]}
     actual = plan(s, expected["facts"]["path"], expected["custody"]["path"])
     r.need(actual == expected, "Activation admission drift; generate and review a fresh plan")

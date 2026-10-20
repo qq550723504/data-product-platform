@@ -2,6 +2,7 @@
 import base64
 import csv
 import ctypes
+from contextvars import ContextVar
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -28,6 +29,7 @@ SOURCE_PATHS = ("apps/platform", "apps/web", "migrations", "industry-packs", "de
                 "examples/enterprise-activity/data", "examples/enterprise-activity/postgres-ingestion",
                 "examples/lifecycle-d1/durable-storage.ps1")
 LABEL = "dpp.trial.run"
+READ_ONLY_OBSERVATION = ContextVar("trial_read_only_observation", default=False)
 PG = "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
 HOP = "apache/hop:2.19.0@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d"
 REDIS = "redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
@@ -72,6 +74,13 @@ def environment():
     return {k: v for k, v in os.environ.items() if k.upper() in keys}
 
 
+@contextmanager
+def read_only_observation():
+    token = READ_ONLY_OBSERVATION.set(True)
+    try: yield
+    finally: READ_ONLY_OBSERVATION.reset(token)
+
+
 def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     try:
         r = subprocess.run([str(a) for a in args], input=data, cwd=cwd, env=env or environment(),
@@ -82,8 +91,8 @@ def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     if r.returncode:
         # Only sanitized diagnostics are persisted, including on startup failure.
         raw = r.stdout + r.stderr
-        diagnostic = "no trial registry; diagnostic not persisted"
-        if (STATE / "state.json").exists():
+        diagnostic = "diagnostic not persisted"
+        if not READ_ONLY_OBSERVATION.get() and (STATE / "state.json").exists():
             s = read(STATE / "state.json")
             for name in s.get("secretReferences", []):
                 f = Path(name)
