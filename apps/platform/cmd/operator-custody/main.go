@@ -12,8 +12,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
@@ -22,6 +25,33 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 )
+
+// The retained config is produced by deploy/trial/runtime.py and consumed by
+// trial-prepare/resume/activate. Endpoint and operator identity live in Profile.
+type nativeTrialConfig struct {
+	RootKey, RootSecret, DSN, Private string
+	Workspace, Actor                  uuid.UUID
+	Profile                           struct {
+		Subject, StorageEndpoint, Bucket string
+		StorageTLS                       bool
+	}
+}
+
+func nativeComposition(data []byte, p lc.CustodyPlan, file, dsn string) (nativeTrialConfig, error) {
+	var c nativeTrialConfig
+	if json.Unmarshal(data, &c) != nil || c.RootKey == "" || c.RootSecret == "" || c.DSN == "" || c.DSN != dsn ||
+		c.Workspace != p.WorkspaceID || c.Actor != p.ActorID || c.Profile.Subject != p.PrincipalRef ||
+		c.Profile.Subject != "trial-operator-"+p.RunID || c.Profile.Bucket != "raw" || c.Profile.StorageTLS ||
+		c.Profile.StorageEndpoint != p.Endpoint || !filepath.IsAbs(c.Private) || filepath.Clean(c.Private) != c.Private ||
+		filepath.Base(c.Private) != "dpp-trial-"+p.RunID || file != filepath.Join(c.Private, "config.json") {
+		return nativeTrialConfig{}, lc.ErrCustodyScope
+	}
+	rel, err := filepath.Rel(c.Private, p.OutputDirectory)
+	if err != nil || rel == "." || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) || filepath.IsAbs(rel) {
+		return nativeTrialConfig{}, lc.ErrCustodyScope
+	}
+	return c, nil
+}
 
 func main() {
 	profile := flag.String("profile", "", "reviewed private operator profile (no inline credentials)")
@@ -61,13 +91,14 @@ func run(profile, digest, key string) error {
 	if hex.EncodeToString(sh[:]) != cfg.CredentialFileSHA256 {
 		return lc.ErrCustodyScope
 	}
-	var native struct{ RootKey, RootSecret, StorageEndpoint string }
-	if json.Unmarshal(secret, &native) != nil || native.RootKey == "" || native.RootSecret == "" || native.StorageEndpoint != cfg.Plan.Endpoint {
+	dsn := os.Getenv("POSTGRES_DSN")
+	native, err := nativeComposition(secret, cfg.Plan, cfg.CredentialFile, dsn)
+	if err != nil {
 		return lc.ErrCustodyScope
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
-	pool, err := database.Open(ctx, os.Getenv("POSTGRES_DSN"))
+	pool, err := database.Open(ctx, dsn)
 	if err != nil {
 		return lc.ErrCustodyScope
 	}
