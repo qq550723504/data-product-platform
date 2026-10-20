@@ -1,0 +1,22 @@
+{
+  "role": "checkpoint-native",
+  "group": "late-hold",
+  "name": "dpp-lifecycle307-754ea8f0-candidate16-native",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate16-native",
+    "--network",
+    "699a1223a8dcd859413eeec898e5b3c36b77396309905d31bc34be7905451236",
+    "--network-alias",
+    "minio",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-754ea8f0-candidate16-objects,target=/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\late-hold\\restore-credentials,target=/run/credentials,readonly",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+    "/run/credentials/start.sh"
+  ]
+}

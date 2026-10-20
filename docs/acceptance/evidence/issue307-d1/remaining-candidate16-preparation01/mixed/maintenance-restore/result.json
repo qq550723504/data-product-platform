@@ -1,0 +1,49 @@
+{
+  "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+  "group": "mixed",
+  "copies": 4,
+  "policies": [
+    {
+      "policy": "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd",
+      "baseline_file_sha256": "247ebba00c26d1237177ce4208ab8017b2a7779314f4ccf512e24111a1c0e0b2",
+      "fresh_file_sha256": "33dda3509af348c9bb80dcc24cb9dbda5e874833fa15932fd36f36f338bc58ba",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd",
+      "baseline_file_sha256": "da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf",
+      "fresh_file_sha256": "da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-d9f9c67d7dfda43b4",
+      "baseline_file_sha256": "97276e678c32c9b22387eb7f811199de7dafac7b990aa7cb330eb2a6d3dacc3f",
+      "fresh_file_sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-daa2605a5dfda43b4",
+      "baseline_file_sha256": "97276e678c32c9b22387eb7f811199de7dafac7b990aa7cb330eb2a6d3dacc3f",
+      "fresh_file_sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-i9f9c67d7dfda43b4",
+      "baseline_file_sha256": "e264840e1f32ad218499047ba32752a3db130f7e64bf58ef304631c90e75ffe3",
+      "fresh_file_sha256": "9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-iaa2605a5dfda43b4",
+      "baseline_file_sha256": "e264840e1f32ad218499047ba32752a3db130f7e64bf58ef304631c90e75ffe3",
+      "fresh_file_sha256": "9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753",
+      "official_equals": true
+    }
+  ],
+  "provider_io": 0,
+  "delete": 0,
+  "technical_requests": 30,
+  "amount": "NOT_ASSESSED",
+  "role": "RESTORE",
+  "native_delete": 0
+}

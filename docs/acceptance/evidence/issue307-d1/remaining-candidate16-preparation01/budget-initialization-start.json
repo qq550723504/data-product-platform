@@ -1,0 +1,10 @@
+{
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "source": "5472a583f86838df42a5ffd86bc366c166036efb",
+  "allocation_sha256": "60855ee4859ba33dc7ebb12bc757aaece6d7abd6799679d0cb65873df8bbd8a4",
+  "initializers": [
+    "9a1d76dae9fc9355f93cfdfb04a76f0d56285f3370d358996a949165fc4c9df8",
+    "821d0d0c23d4e6c728f6094017d57b0dec288f731fcbd1dbfe1505f35d853a29",
+    "bde343c5e69493b92109b7190f3ebf134d0bcdd1023fbfaab04129dc9b83d4db"
+  ]
+}

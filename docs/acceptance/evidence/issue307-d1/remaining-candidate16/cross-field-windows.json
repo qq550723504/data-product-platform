@@ -1,0 +1,10 @@
+{
+  "status": "PASS_CURRENT_CROSS_FIELD_WINDOWS",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "candidate_use_until": "2026-10-20T10:40:00Z",
+  "recovery_until": "2026-10-20T12:40:00Z",
+  "cases": 6,
+  "recoveries": 6,
+  "provider_io": 0,
+  "current_policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8"
+}

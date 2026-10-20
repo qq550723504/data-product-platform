@@ -1,0 +1,22 @@
+{
+  "role": "restore-gateway",
+  "group": "mixed",
+  "cid": "9058897f0707def906749374603bc16cffcce58618849408a9246b1d3423a3d8",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate16-restore-gateway",
+    "--network",
+    "6de50163e7bb5707225fe4612bc3be0b46e271cc16ae63003acd9abbb2fd14bc",
+    "--tmpfs",
+    "/config",
+    "--tmpfs",
+    "/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\mixed\\restore-gateway.Caddyfile,target=/etc/caddy/Caddyfile,readonly",
+    "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "caddy",
+    "run",
+    "--config",
+    "/etc/caddy/Caddyfile"
+  ]
+}
