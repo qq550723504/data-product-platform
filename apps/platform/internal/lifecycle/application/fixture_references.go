@@ -74,6 +74,15 @@ func InspectFixtureReferences(ctx context.Context, tx pgx.Tx, c domain.Copy) (do
 			return domain.Unknown, nil, err
 		}
 		r.Unreleased = r.Count
+		// A custody acquisition is an active owner pin until synchronous owner
+		// termination. Keep its historical FK, without treating old observations
+		// as perpetual content demand. Crash/UNKNOWN never expires the pin.
+		if r.Schema == "public" && r.Table == "operator_custody_acquisition" && (r.Column == "first_version_id" || r.Column == "second_version_id") {
+			query = "SELECT count(*) FROM operator_custody_acquisition s WHERE s." + pgx.Identifier{r.Column}.Sanitize() + "=$1 AND NOT EXISTS(SELECT 1 FROM operator_custody_termination t WHERE t.acquisition_id=s.id AND t.workspace_id=s.workspace_id AND t.owner_verified_quiescent)"
+			if err = tx.QueryRow(ctx, query, c.DatasetVersionID).Scan(&r.Unreleased); err != nil {
+				return domain.Unknown, nil, err
+			}
+		}
 		if spec, managed := contentreference.ForRelation(r.Schema, r.Table, r.Column); managed {
 			identity := "q." + pgx.Identifier{spec.FactColumn}.Sanitize() + "=s.id"
 			if spec.Kind == "EXECUTION_INPUT" {
