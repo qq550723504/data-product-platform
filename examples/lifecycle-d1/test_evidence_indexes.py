@@ -18,7 +18,8 @@ class EvidenceIndexTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
+        self.original_temp = Path(self.tmp.name)
+        self.root = self.original_temp.resolve()
         self.review = self.root / 'review'
         self.review.mkdir()
         self.member = self.review / 'original.txt'
@@ -61,6 +62,25 @@ class EvidenceIndexTests(unittest.TestCase):
                 self.assertEqual(result['members_verified'], 1)
                 self.assertFalse(result['execution_authority'])
                 self.assertEqual(self.member.read_bytes(), before)
+
+    def test_original_temp_spelling_and_canonical_root_both_pass(self):
+        # Windows hosted TEMP can start with RUNNER~1 while resolve() returns
+        # runneradmin. Exercise both spellings through the real plan reader.
+        spec = self.specification(audit.FILES_MAP)
+        pinned = self.make_plan([spec])
+        for root, plan in [(self.root, self.original_temp / 'plan.json'),
+                           (self.original_temp, self.plan)]:
+            with self.subTest(root=root, plan=plan):
+                self.assertEqual(audit.audit_plan(root, plan, pinned,
+                                                 self.candidate)['members_verified'], 1)
+
+    def test_plan_parent_link_is_rejected_before_normalization(self):
+        spec = self.specification(audit.FILES_MAP)
+        pinned = self.make_plan([spec])
+        real = Path.is_junction
+        with patch.object(Path, 'is_junction', lambda path: path == self.root or real(path)):
+            with self.assertRaisesRegex(ValueError, 'linked evidence path'):
+                audit.audit_plan(self.root, self.plan, pinned, self.candidate)
 
     def test_order_changes_are_valid_only_when_new_index_bytes_are_pinned(self):
         other = self.review / 'second.txt'

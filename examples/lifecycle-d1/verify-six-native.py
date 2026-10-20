@@ -30,7 +30,8 @@ def private_files(folder,allowed,required):
 
 def require_unfinished_execution():
     terminal=r.CONTROL/'authorized-execution01/terminal.json'
-    need(not terminal.is_symlink() and not terminal.is_junction(),'terminal record is aliased')
+    for component in (r.CONTROL,terminal.parent,terminal):
+        need(not component.is_symlink() and not component.is_junction(),'terminal record or authorization directory is aliased')
     try:
         terminal.stat()
     except FileNotFoundError:

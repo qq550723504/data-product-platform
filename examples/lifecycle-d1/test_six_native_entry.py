@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -80,6 +81,18 @@ class SixNativeEntryTests(unittest.TestCase):
             elif fault == 'terminal':
                 (control / 'authorized-execution01').mkdir()
                 r.save(control / 'authorized-execution01/terminal.json', {'status': 'FAILED'})
+            elif fault == 'terminal-parent-alias':
+                history = control / 'authorized-history'
+                history.mkdir()
+                r.save(history / 'terminal.json', {'status': 'ORIGINAL_FAILED_RETAINED'})
+                empty = control / 'empty-target'
+                empty.mkdir()
+                link = control / 'authorized-execution01'
+                if os.name == 'nt':
+                    import _winapi
+                    _winapi.CreateJunction(str(empty), str(link))
+                else:
+                    link.symlink_to(empty, target_is_directory=True)
             argv = ['verify-six-native.py', '--candidate-sha256', r.sha(packet / 'candidate.json'),
                     '--bindings-sha256', r.sha(packet / 'bindings.json'),
                     '--checker-sha256', r.sha(control / 'readonly-check.exe'),
@@ -200,6 +213,9 @@ class SixNativeEntryTests(unittest.TestCase):
                 self.assertFalse((output / 'complete.json').exists())
                 if fault == 'existing-output':
                     self.assertEqual((output / 'original.txt').read_bytes(), b'preserved')
+                if fault == 'terminal-parent-alias':
+                    self.assertEqual(r.load(control / 'authorized-history/terminal.json'),
+                                     {'status': 'ORIGINAL_FAILED_RETAINED'})
             elif fault == 'second-group-checker':
                 self.assertFalse((output / 'complete.json').exists())
                 self.assertFalse((output / 'mixed').exists())
@@ -246,7 +262,7 @@ class SixNativeEntryTests(unittest.TestCase):
 
     def test_main_index_binding_format_bytes_cli_terminal_and_host_rejections(self):
         for fault in ('index-format', 'index-bytes', 'plan-binding', 'missing-plan',
-                      'terminal', 'sealed-gate', 'existing-output'):
+                      'terminal', 'terminal-parent-alias', 'sealed-gate', 'existing-output'):
             with self.subTest(fault=fault):
                 self.composition(fault=fault)
 

@@ -54,9 +54,24 @@ def relative_parts(value):
     return parts
 
 
+def unlinked_absolute(path):
+    """Normalize Windows short/long spellings only after checking links.
+
+    resolve(root) and absolute(plan) are not comparable when TEMP uses an 8.3
+    name. Checking every original component first prevents normalization from
+    hiding a junction or symlink into an otherwise in-bound directory.
+    """
+    original = Path(path).absolute()
+    need('..' not in original.parts, 'traversing absolute evidence path')
+    for component in reversed((original, *original.parents)):
+        need(not component.is_symlink() and not component.is_junction(),
+             'linked evidence path')
+    return original.resolve(strict=True)
+
+
 def bound_path(root, relative, *, directory=False):
     """Reject lexical escapes and links before reading the addressed file."""
-    root = Path(root).resolve(strict=True)
+    root = unlinked_absolute(root)
     path = root
     for part in relative_parts(relative):
         path = path / part
@@ -98,7 +113,7 @@ def audit_index(root, spec):
     index_path = bound_path(root, spec['index'])
     # A repository-root member list uses '.', explicitly only for this root
     # declaration. Individual member names never accept '.' or dot segments.
-    member_root = (Path(root).resolve(strict=True) if spec['member_root'] == '.'
+    member_root = (unlinked_absolute(root) if spec['member_root'] == '.'
                    else bound_path(root, spec['member_root'], directory=True))
     document = decode(checked_bytes(index_path, spec['sha256']))
     need(document.get('status') == spec['expected_status'], 'index status differs')
@@ -132,9 +147,8 @@ def audit_index(root, spec):
 
 
 def audit_plan(root, plan_path, plan_sha256, candidate_path):
-    root = Path(root).resolve(strict=True)
-    plan_path = Path(plan_path).absolute()
-    # Do not resolve the supplied path first: that would hide a symlink.
+    root = unlinked_absolute(root)
+    plan_path = unlinked_absolute(plan_path)
     try:
         relative = plan_path.relative_to(root).as_posix()
     except ValueError as error:
