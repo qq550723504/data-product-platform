@@ -216,3 +216,8 @@ docs/acceptance/evidence/issue307-d1/remaining-candidate17-readonly01/** -text w
 docs/acceptance/evidence/issue307-d1/candidate17-source-review01/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/candidate17-review01/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/candidate17-planning01/** -text whitespace=cr-at-eol
+
+# Exact candidate17 confirmation and bounded window contract bytes.
+docs/acceptance/issue307-d1-candidate17-confirmation.md -text
+docs/acceptance/issue307-d1-v27-window-runbook.md -text
+docs/acceptance/issue307-d1-v27-preparation.md -text
