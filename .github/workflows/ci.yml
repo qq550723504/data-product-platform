@@ -90,6 +90,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Test explicit evidence indexes and complete readonly entry without Docker
+        shell: bash
         run: |
           python -B examples/lifecycle-d1/test_evidence_indexes.py
           python -O -B examples/lifecycle-d1/test_evidence_indexes.py
