@@ -199,3 +199,7 @@ docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/** -text w
 docs/acceptance/issue307-d1-candidate16-confirmation.md text eol=lf
 docs/acceptance/issue307-d1-v26-window-runbook.md text eol=lf
 docs/acceptance/issue307-d1-v26-preparation.md text eol=lf
+
+# Retain exact failed v26 and index-audit repair receipts.
+docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/index-audit-repair01/** -text whitespace=cr-at-eol

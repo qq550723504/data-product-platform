@@ -86,6 +86,15 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Test explicit evidence indexes and complete readonly entry without Docker
+        run: |
+          python -B examples/lifecycle-d1/test_evidence_indexes.py
+          python -O -B examples/lifecycle-d1/test_evidence_indexes.py
+          python -B examples/lifecycle-d1/test_six_native_entry.py
+          python -O -B examples/lifecycle-d1/test_six_native_entry.py
       - name: Test completed helper ownership, archival, and safe collection
         run: python examples/temporary_containers_test.py
       - name: Test lifecycle wrapper default retirement and explicit retention without Docker

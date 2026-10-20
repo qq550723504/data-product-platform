@@ -71,6 +71,10 @@ jobs:
           python3 -O -B examples/lifecycle-d1/test_window_six_support.py
           python3 -B examples/lifecycle-d1/test_verify_six_native.py
           python3 -O -B examples/lifecycle-d1/test_verify_six_native.py
+          python3 -B examples/lifecycle-d1/test_evidence_indexes.py
+          python3 -O -B examples/lifecycle-d1/test_evidence_indexes.py
+          python3 -B examples/lifecycle-d1/test_six_native_entry.py
+          python3 -O -B examples/lifecycle-d1/test_six_native_entry.py
       - name: Check archived candidate04 with its frozen runtime (no provider I/O)
         run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner

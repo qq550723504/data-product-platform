@@ -17,6 +17,7 @@ import uuid
 spec=importlib.util.spec_from_file_location('six_complete_runtime',Path(__file__).with_name('six_candidate_runtime.py'))
 r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 p=r.p
+import evidence_indexes
 need,load,sha,save=r.need,r.load,r.sha,r.save
 PACKET=r.ROOT/'docs/acceptance/evidence/issue307-d1'/('remaining-'+p.GENERATION)
 
@@ -25,6 +26,17 @@ def private_files(folder,allowed,required):
     entries=list(folder.iterdir());names={x.name for x in entries}
     need(not folder.is_symlink() and not folder.is_junction() and names<=set(allowed) and set(required)<=names
          and all(x.is_file() and not x.is_symlink() and not x.is_junction() for x in entries),'private mount membership expanded or aliased')
+
+
+def require_unfinished_execution():
+    terminal=r.CONTROL/'authorized-execution01/terminal.json'
+    need(not terminal.is_symlink() and not terminal.is_junction(),'terminal record is aliased')
+    try:
+        terminal.stat()
+    except FileNotFoundError:
+        return
+    # Permission/I/O failures propagate; an unreadable terminal is not absence.
+    raise ValueError('execution already terminal; saved-evidence audit only')
 
 
 def sealed_gate(packet=PACKET):
@@ -150,15 +162,25 @@ def collect(g,b,packet,private,output,deadline):
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--candidate-sha256',required=True);parser.add_argument('--bindings-sha256',required=True);parser.add_argument('--checker-sha256',required=True);parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--candidate-sha256',required=True);parser.add_argument('--bindings-sha256',required=True);parser.add_argument('--checker-sha256',required=True);parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--evidence-audit-plan',type=Path,required=True)
+    parser.add_argument('--evidence-audit-plan-sha256',required=True)
+    parser.add_argument('--audit-only',action='store_true',help='Audit saved evidence only; never inspect Docker or start native preflight')
+    args=parser.parse_args()
     need(sha(PACKET/'candidate.json')==args.candidate_sha256 and sha(PACKET/'bindings.json')==args.bindings_sha256 and sha(r.CONTROL/'readonly-check.exe')==args.checker_sha256,'exact frozen invocation bindings differ')
     output=args.output.resolve();need(not output.exists() and output.is_relative_to((r.ROOT/'docs/acceptance/evidence/issue307-d1').resolve()),'new complete output must be an evidence subdirectory')
-    gate=sealed_gate();output.mkdir()
+    audit=evidence_indexes.audit_plan(r.ROOT,args.evidence_audit_plan,args.evidence_audit_plan_sha256,PACKET/'candidate.json')
+    if args.audit_only:
+        output.mkdir();save(output/'evidence-audit.json',audit)
+        print(json.dumps({'status':'PASS_SAVED_EVIDENCE_AUDIT_ONLY','execution':audit['execution'],'output':str(output),'native_preflight':'NOT_RUN','execution_authority':False,'native_delete':0}))
+        return
+    require_unfinished_execution()
+    gate=sealed_gate();output.mkdir();save(output/'evidence-audit.json',audit)
     private=r.CONTROL/('complete-'+uuid.uuid4().hex);private.mkdir()
     candidate=load(PACKET/'candidate.json');bindings=load(PACKET/'bindings.json');results=[];deadline=r.now().replace(microsecond=0)+dt.timedelta(minutes=50)
     for g,b in zip(candidate['Groups'],bindings):results.append(collect(g,b,PACKET,private/g['Group'],output/g['Group'],deadline))
     need([x['copies'] for x in results]==[7,6,4],'complete current present membership differs')
-    save(output/'complete.json',{'status':'PASS_COMPLETE_SIX_NATIVE_ENTRY','execution':p.EXECUTION,'host_gate':gate,'groups':results,'present_versions':17,'historical_copies':18,'targets':6,'survivors':11,
+    save(output/'complete.json',{'status':'PASS_COMPLETE_SIX_NATIVE_ENTRY','execution':p.EXECUTION,'evidence_audit':audit,'host_gate':gate,'groups':results,'present_versions':17,'historical_copies':18,'targets':6,'survivors':11,
                                   'technical_requests':sum(x['technical_requests'] for x in results),'native_delete':0,'business_mutations':0,'amount':'NOT_ASSESSED'})
     print(json.dumps({'status':'PASS_COMPLETE_SIX_NATIVE_ENTRY','output':str(output),'native_delete':0}))
 
