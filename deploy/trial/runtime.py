@@ -522,6 +522,8 @@ def web_environment(s):
 def start():
     if (STATE / "state.json").exists():
         s = read(STATE / "state.json")
+        from bootstrap import resume_guard
+        resume_guard(s)
         need(s["phase"] == "RUNNING", f"Existing run {s['runId']} is {s['phase']}; no reseed/replacement. Use explicit resume after stop")
         return status(s)
     host = preflight(); run_id = uuid.uuid4().hex

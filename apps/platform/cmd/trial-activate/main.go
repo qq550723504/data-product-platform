@@ -18,6 +18,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
@@ -34,12 +35,18 @@ type expectedVersion struct {
 	ID     uuid.UUID `json:"id"`
 	SHA256 string    `json:"sha256"`
 	Bytes  int64     `json:"bytes"`
+	URI    string    `json:"uri"`
 }
 type input struct {
-	ConfigFile string            `json:"configFile"`
-	Baseline   string            `json:"baseline"`
-	Profile    string            `json:"profile"`
-	Versions   []expectedVersion `json:"versions"`
+	ConfigFile     string            `json:"configFile"`
+	Baseline       string            `json:"baseline"`
+	Profile        string            `json:"profile"`
+	Versions       []expectedVersion `json:"versions"`
+	Schema         int               `json:"schema"`
+	SchemaVersions []int             `json:"schemaVersions"`
+	CustodyID      uuid.UUID         `json:"custodyId"`
+	CustodyPlan    *lc.CustodyPlan   `json:"custodyPlan"`
+	ManifestSHA256 string            `json:"manifestSha256"`
 }
 type config struct {
 	DSN, Private     string
@@ -183,8 +190,8 @@ func verify(ctx context.Context, pool *pgxpool.Pool, c config, in input) (any, e
 }
 
 func run() error {
-	if len(os.Args) != 2 || (os.Args[1] != "snapshot" && os.Args[1] != "verify") {
-		return fmt.Errorf("snapshot|verify required")
+	if len(os.Args) != 2 || (os.Args[1] != "snapshot" && os.Args[1] != "verify" && os.Args[1] != "admit" && os.Args[1] != "private") {
+		return fmt.Errorf("snapshot|verify|admit|private required")
 	}
 	var in input
 	var c config
@@ -193,9 +200,23 @@ func run() error {
 	}
 	inputPath, err := filepath.Abs(os.Getenv("DPP_TRIAL_ACTIVATION_INPUT"))
 	configPath, configErr := filepath.Abs(in.ConfigFile)
-	rel, relErr := filepath.Rel(filepath.Join(c.Private, "activations"), inputPath)
+	rel, relErr := filepath.Rel(c.Private, inputPath)
+	parts := strings.Split(rel, string(filepath.Separator))
 	if err != nil || configErr != nil || relErr != nil || rel == "." || strings.HasPrefix(rel, "..") || configPath != filepath.Join(c.Private, "config.json") {
 		return fmt.Errorf("same private activation paths required")
+	}
+	if len(parts) < 3 || (parts[0] != "activations" && parts[0] != "bootstrap-attempts" && parts[0] != "custody-attempts") ||
+		(os.Args[1] == "verify" && parts[0] != "activations") {
+		return fmt.Errorf("explicit retained stage path required")
+	}
+	// Reuse the operator custody private-path/ACL primitive before any SQL or
+	// backup. Native metadata and old content hashes do not attest current ACLs.
+	if pilot.CheckCustodyPrivatePath(c.Private, true) != nil || pilot.CheckCustodyPrivatePath(filepath.Dir(inputPath), true) != nil ||
+		pilot.CheckCustodyPrivatePath(inputPath, false) != nil || pilot.CheckCustodyPrivatePath(configPath, false) != nil {
+		return fmt.Errorf("same operator-private stage paths required")
+	}
+	if os.Args[1] == "private" {
+		return json.NewEncoder(os.Stdout).Encode(map[string]any{"status": "PASS", "privateACL": true})
 	}
 	u, err := url.Parse(c.DSN)
 	if err != nil || u.Scheme != "postgres" || u.Hostname() != "127.0.0.1" || u.Path != "/dpp_trial_core" || c.Workspace == uuid.Nil || c.Actor == uuid.Nil ||
@@ -216,6 +237,8 @@ func run() error {
 			return fmt.Errorf("baseline unavailable")
 		}
 		result, err = snapshot(ctx, pool, before)
+	} else if os.Args[1] == "admit" {
+		result, err = admit(ctx, pool, c, in)
 	} else {
 		result, err = verify(ctx, pool, c, in)
 	}

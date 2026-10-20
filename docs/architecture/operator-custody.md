@@ -58,28 +58,28 @@ inventing a protected copy or provider version to reuse that journal is invalid.
   evidence, stdout or errors. No source object, DatasetVersion, mapping, workflow,
   existing copy, provider policy or runtime identity is rewritten.
 
-## Original environment is still blocked
+## Retained controller admission
 
-This source slice is tested on isolated schema 71. The retained #325 database was
-last observed at 68; its activation currently admits custody before migrating
-68 -> 69 -> 70. Recording a custody start on 71 therefore requires a separately
-reviewed bootstrap/order change and controller admission. This slice does not
-change that order or claim the original environment is executable. No migration,
-deployment, service/process operation, credential renewal, original-object read,
-protected copy or activation is authorized by this implementation.
+The custody ledger is tested on isolated schema 71. The retained #325 database
+was last observed at 68. Separate bootstrap, bounded custody and activation-plan
+commands now break the previous custody-before-migration cycle. Their order,
+journals and source admission belong to
+[the retained controller contract](../acceptance/issue325-explicit-activation.md).
+This source implementation does not execute or authorize original-environment
+deployment, process/service operations, migration, credential renewal, object
+reads, protected copies or activation.
 
 Independent review, current-head CI and a subsequent explicit execution decision
 remain required. Future protected creation continues exclusively through the
 existing `workspace-object-copy`; custody acceptance grants no delivery rights.
 
-### Required bootstrap handoff (follow-up under #325)
+### Required bootstrap sequence under #325
 
-The existing activation source also pins the #331 baseline and admits only
-controller changes. Its `execute` requires schema 68 and `migrate` stages only
-through 70. Raising the migration ceiling alone cannot admit this Core change.
-The following is the recommended ordering for a separately implemented and
-reviewed controller contract; none of these original-environment actions are
-performed by this PR:
+Source admission pins merged #335 and admits only committed controller changes
+above it, with the selected merge SHA's completed push/main CI. Bootstrap alone
+owns 68→71 migration; activation requires 71 and never migrates. The following
+order is implemented as separate commands and tested only in isolation; no
+original-environment action is performed during this development task:
 
 | Stage | Admission and completion | Permitted effects after separate authority |
 | --- | --- | --- |
@@ -112,13 +112,14 @@ explicit recovery. Do not run down, restore a backup, reseed, silently retry or
 automatically restart hosts. Expiry alone never clears a custody owner pin.
 The new activation contract must verify accepted Core custody facts, not merely
 the existence/hash of local files, and must pin its new source baseline rather
-than removing the existing controller-only source guard. These implementation
-and isolation/crash-window tests remain follow-up work, not a claim of readiness.
+than removing the existing controller-only source guard. Isolated source tests
+do not prove that original-run deployment or execution has occurred.
 
 Merge blockers are boundary bypass, incorrect/rewritable/lost facts or cost,
 concurrency/idempotency violations, contract conflict, and failed required checks.
 General IAM, generic transfer/recovery tooling, arbitrary member counts, provider
-deletion, original-runtime bootstrap, and product acceptance are follow-ups.
+deletion, UNKNOWN recovery, original-runtime execution and product acceptance
+remain outside this source change.
 
 ## Operator entry (after separate execution authority)
 

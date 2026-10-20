@@ -165,6 +165,8 @@ def launch_hosts(s):
 
 
 def resume(s):
+    from bootstrap import resume_guard
+    resume_guard(s)
     r.need(not s.get("activation") or s["activation"]["status"] == "PASS", "Unfinished activation requires explicit recovery; ordinary resume cannot retry it")
     if s["phase"] == "RUNNING": return r.status(s)
     binding, baseline = precheck(s)
@@ -210,6 +212,8 @@ def resume(s):
 
 
 def restart(s):
+    from bootstrap import resume_guard
+    resume_guard(s)
     r.need(s["phase"] == "RUNNING", "Restart requires known RUNNING; use resume for STOPPED")
     r.verify(s)
     r.stop(s)
