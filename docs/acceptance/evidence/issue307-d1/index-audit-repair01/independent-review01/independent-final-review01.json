@@ -1,0 +1,226 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_EVIDENCE_INDEX_REPAIR_REVIEW",
+  "reviewed_at": "2026-10-20T10:42:01.910747+00:00",
+  "reviewer": "existing_sole_independent_reviewer",
+  "source_head": "c1dd1b61495fd3150052744d6ba91e096a428b99",
+  "base_head": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+  "initial_source_head": "d049d004fe8269190b64e2cd02634bf637f90fdd",
+  "initial_publication_head": "1944bfbea88f3306d879e0a706ad02b9f9c1a12f",
+  "remaining_blockers": [],
+  "closed_blockers": [
+    {
+      "id": "B1",
+      "classification": "BLOCKER_CLOSED",
+      "root_cause": "Terminal parent directory was followed before absence classification. An actual Windows junction could redirect the lookup to an empty directory.",
+      "current_guard": "Check fixed CONTROL, authorized-execution01 directory and terminal for symlink/junction before stat; unreadable terminal still raises.",
+      "independent_proof": "terminal-parent-junction-recheck02.json",
+      "complete_main_proof": "Final test_six_native_entry uses actual Windows junction and asserts no host gate/create/start and original FAILED terminal unchanged.",
+      "original_failure_preserved": "initial-blocked-review01.json and terminal-parent-junction-counterexample01.json"
+    },
+    {
+      "id": "B2",
+      "classification": "BLOCKER_CLOSED",
+      "root_cause": "Resolved root and only-absolute plan used unequal Windows 8.3 and long spellings in containment comparison.",
+      "current_guard": "Original components are checked for links and traversal before resolving both root and plan. No format or path fallback.",
+      "independent_proof": "actual-short-long-audit-plan02.json: three actual distinct Windows short/long combinations each verified 53+19+12=84 members.",
+      "original_failure_preserved": "Author ci-windows-first-failure.json and independent initial-blocked-review01.json"
+    }
+  ],
+  "source_files": {
+    ".gitattributes": {
+      "sha256": "abeb292db89928a35a5132c1a22810d381c726fb1f2c974cb9bb3c23640f12b9",
+      "git_sha256": "efa83e5c1d2b4aee3ef0977a598c6a0ee1557524d05bd707ef26c69cd2c97bc2",
+      "bytes": 16570,
+      "git_bytes": 16369,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "def897919536f8d1e1890a5f2f24f79e08db23a4e8e5ce4bb7c18c4a8dd838dc",
+      "git_sha256": "806890ebf94de07e0fb5f63e40480353dd1a642a5949a6beefd717533a33d5a4",
+      "bytes": 31765,
+      "git_bytes": 30944,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "656458904a0f3aaa9acfa87ca3ebe4f7916c3c7a4038bfd75f88e549bba5d172",
+      "git_sha256": "bdb7d658be446197d4d33c7ff94a0c408f0d41c26ebe104f8b4b09ad01cdadc9",
+      "bytes": 6485,
+      "git_bytes": 6380,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "docs/acceptance/issue307-d1-index-audit-repair.md": {
+      "sha256": "79ee33894c3664d7222c1e4041bec0ab8fdb62a128f4e875d888e140aa405bff",
+      "git_sha256": "79ee33894c3664d7222c1e4041bec0ab8fdb62a128f4e875d888e140aa405bff",
+      "bytes": 6015,
+      "git_bytes": 6015,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "git_sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "bytes": 7869,
+      "git_bytes": 7869,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "84b205ea4f33a008fd4c5ab03a284d6e562f8e5c4e69cf9d1e7ff38b07382a7c",
+      "git_sha256": "6654e9f819b78e78603c10d72fc7538eee4eaa40668605401f806d5086a597ce",
+      "bytes": 16124,
+      "git_bytes": 15935,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_evidence_indexes.py": {
+      "sha256": "e969e70aaf716e48021fb3802cae2f9bcd3d500a3b805d624a84280a2a417204",
+      "git_sha256": "e969e70aaf716e48021fb3802cae2f9bcd3d500a3b805d624a84280a2a417204",
+      "bytes": 11624,
+      "git_bytes": 11624,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "9cc9a41399949a05e7dda89b1495ea20a452fe1e135cac57503f2506098f4e1f",
+      "git_sha256": "9cc9a41399949a05e7dda89b1495ea20a452fe1e135cac57503f2506098f4e1f",
+      "bytes": 15470,
+      "git_bytes": 15470,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    }
+  },
+  "in_scope_findings": [
+    {
+      "classification": "PASS",
+      "topic": "Explicit index formats",
+      "detail": "files-map-v1 and members-list-v1 have separate fixed containers; mixed/swapped/unknown/legacy formats, duplicate keys and entries, empty or wrong count/status/type/SHA/bytes, escapes and linked paths reject. No recursive format guessing."
+    },
+    {
+      "classification": "PASS",
+      "topic": "Plan and immutable evidence binding",
+      "detail": "Plan raw SHA and exact fields bind candidate raw SHA and execution. Every spec/index/member is checked; rehashed malformed structures still reject. Original saved history audit recomputed as 84 members and exactly equals saved receipt."
+    },
+    {
+      "classification": "PASS",
+      "topic": "Complete entry ordering and failure behavior",
+      "detail": "Required audit arguments and real typed audit run before terminal/host gate; audit-only never enters host/native. Existing output, invalid indexes, old terminal/parent alias and host rejection do not start resources. Three true collect calls and second-group failure/finally are exercised with all external effects doubled; no third group or complete PASS after failure."
+    },
+    {
+      "classification": "PASS",
+      "topic": "CI and existing collector reuse",
+      "detail": "Windows/Linux CI invokes both new suites in normal and -O under explicit bash; lifecycle CI retains existing suites and adds both new suites. Original collect AST is unchanged from base. No Go/migration/provider capability changed."
+    }
+  ],
+  "independent_tests": {
+    "initial": {
+      "normal": {
+        "methods": 50,
+        "pass": 49,
+        "skip": 1
+      },
+      "optimized": {
+        "methods": 50,
+        "pass": 49,
+        "skip": 1
+      }
+    },
+    "final": {
+      "normal": {
+        "methods": 52,
+        "pass": 51,
+        "skip": 1,
+        "summary": {
+          "sha256": "f8baeb5b11473be56834b40ca6c4037d813058d04b111843e05d0a5f0b72c710",
+          "bytes": 3023
+        }
+      },
+      "optimized": {
+        "methods": 52,
+        "pass": 51,
+        "skip": 1,
+        "summary": {
+          "sha256": "478957689b8959415fe53ecafd697b990ed4a8b16a4f3432b615ae62e1a79b3c",
+          "bytes": 3050
+        }
+      }
+    },
+    "skip": "Actual symlink creation is unavailable to this Windows account; junction rejection is not skipped and was exercised with a real Windows junction. Linux symlink coverage requires matching CI, not claimed locally.",
+    "global_external_process_guard": "subprocess.Popen rejected globally in every offline suite; zero unmocked attempts.",
+    "actual_saved_file_audit": {
+      "sha256": "56ff081867bf2080958cf3b787474c087142efc505d9df9cefe8d95d6aec78b2",
+      "bytes": 1451
+    },
+    "actual_windows_short_long_audit": {
+      "sha256": "0d02840827ad7eb2ce275171aa3f25ba2f45631a39878e42e8606d97d98a7c57",
+      "bytes": 1228
+    },
+    "B1_actual_junction_recheck": {
+      "sha256": "1f80b5957920984fc73d0ba209784333911c5bfbe110845d80ea1cef76c5de96",
+      "bytes": 265
+    }
+  },
+  "original_external_evidence": {
+    "historical-evidence-audit-plan.json": {
+      "sha256": "8ad738b77b28f02c8c034fe88b6780608e30bf68ac78335f97e9a28b3936cd19",
+      "bytes": 1436
+    },
+    "saved-cli-receipt.json": {
+      "sha256": "f460ba26791a816a2cbbed9363ac292b2db8fd43cc4bce64ccdc43fbc154f517",
+      "bytes": 1203
+    },
+    "saved-cli.stdout.txt": {
+      "sha256": "ff58106e893b29efee28893a565a8bf527bd3376ed4e1b6dec9ff223a92d38d6",
+      "bytes": 362
+    },
+    "saved-cli.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "terminal-cli-receipt.json": {
+      "sha256": "6aec67fe19fb01c6723ee2a575c97b6f63fc197b20b3e235c279c048a907c18c",
+      "bytes": 1153
+    },
+    "terminal-cli.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "terminal-cli.stderr.txt": {
+      "sha256": "dbccd4de32c4eaf2d8116f05dccaabedf23aa5e8d765d686a99a2dff556cf090",
+      "bytes": 776
+    },
+    "ci-windows-first-failure.json": {
+      "sha256": "5eb8a7f6301c442dedc160f40e6e8069608878a44fa82d9b49e437aefbfa5142",
+      "bytes": 26045
+    }
+  },
+  "evidence_index": {
+    "path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-index-audit\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\index-audit-repair01\\independent-review01\\independent-evidence-index01.json",
+    "sha256": "ded4076f2fe153f0930bac88122944d08796d4ff4bd89ad30482811771e2b9d6",
+    "bytes": 8063
+  },
+  "scope_limits": {
+    "full_native_preflight": "NOT_RUN",
+    "Docker_Source_Core_provider_enable_send_delete": 0,
+    "production_proof_signing": 0,
+    "non_audit_only_cli_run": false,
+    "original_candidate_or_authorization_modified": false,
+    "old_execution_reused": false,
+    "old_v26": "TERMINATED; six NOT_RUN/DELETE0; overall fresh IAM seal remains UNCONFIRMED per original facts; heartbeat PAUSED",
+    "new_candidate_window_authorization_schedule": "NOT_CREATED_BY_THIS_REPAIR",
+    "exact_head_PR_CI": "PENDING_SEPARATE_FRESH_READBACK_NOT_CERTIFIED_BY_THIS_REPORT",
+    "main_CI_merge_deploy": "NOT_REVIEWED_NOT_AUTHORIZED",
+    "full_D1": "NOT_ACCEPTED",
+    "Git_GitHub_writes": 0,
+    "report_writes": "O_EXCL under assigned independent-review01 only; temporary test fixtures are synthetic.",
+    "local_actual_junction_fixture": "Preserved locally and explicitly excluded from raw publication index; publish the regular JSON/script/terminal bytes only."
+  },
+  "followups": [
+    {
+      "classification": "OUT_OF_SCOPE_PENDING_REQUIRED_NEXT_STEP",
+      "detail": "Fresh exact final HEAD CI, future candidate/audit-plan freeze and new human authorization remain separate. This report only closes the finite non-delete repair slice."
+    }
+  ]
+}
