@@ -14,6 +14,97 @@ w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
 
 
 class SixSupportTests(unittest.TestCase):
+    def cli_maintenance(self,action,fault=None):
+        with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+            private=Path(tmp);control=private/'authorized';control.mkdir()
+            folder=private/'late-hold';folder.mkdir();case=folder/'case-late';case.mkdir()
+            profile=case/'remaining.json'
+            original=b'{"Base":{"Enabled":true,"Batch":"fixture-only"},"Group":"late-hold"}\r\n'
+            profile.write_bytes(original)
+            output=folder/'outputs/root-disable-all';output.mkdir(parents=True)
+            receipts={'result.json':b'{"retained":1}\r\n','status-changes.json':b'{"disabled":true}\n'}
+            for name,raw in receipts.items():(output/name).write_bytes(raw)
+            (output/'attempt-start.json').write_bytes(b'original journal\n')
+            cid='a'*64
+            group={'Group':'late-hold','CaseHelpers':{'late':cid},'CaseConfigSHA256':{'late':w.base.digest(original)}}
+            if fault=='profile-drift':group['CaseConfigSHA256']['late']='0'*64
+            states={'State':{'Running':False,'Pid':0,'ExitCode':0},'HostConfig':{'RestartPolicy':{'Name':'no'}}}
+            if fault=='live-owner':states['State'].update(Running=True,Pid=4)
+            if fault=='failed-owner':states['State']['ExitCode']=1
+            class RecordedHost(w.Host):
+                def __init__(self,containment=False):
+                    self.candidate={'Groups':[group]}
+                    self.bindings=[{'group':'late-hold','root_owners':{'disable-all':{'container':cid}}}]
+                def root_owner(self,bound,stage):
+                    # The real inherited archive_root must receive the bound
+                    # object before its external root-owner I/O boundary.
+                    root=self.binding(bound)['root_owners'][stage]
+                    if root['container']!=cid:raise AssertionError('wrong fixed owner')
+                    return copy.deepcopy(states),output
+                def inspect(self,ident):
+                    if ident!=cid:raise AssertionError('unbound case owner')
+                    return copy.deepcopy(states)
+            for obj,name,value in [(w,'PRIVATE',private),(w,'CONTROL',control),(w.base,'PRIVATE',private),(w.base,'CONTROL',control)]:stack.enter_context(patch.object(obj,name,value))
+            at=w.p.window.instant(w.p.W['NotBefore'])+dt.timedelta(minutes=1)
+            stack.enter_context(patch.object(w.base,'now',lambda:at))
+            stack.enter_context(patch.object(w.base,'START',w.p.window.instant(w.p.W['NotBefore'])))
+            stack.enter_context(patch.object(w.base,'END',w.p.window.instant(w.p.W['NotAfter'])))
+            stage='disable-all' if action=='archive-root' else 'late'
+            if fault=='unknown-stage':stage='../../unbound'
+            stack.enter_context(patch.object(w.base.sys,'argv',['window_six_support.py',action,'--group','late-hold','--stage',stage]))
+            stack.enter_context(patch.object(w,'Host',RecordedHost))
+            stack.enter_context(patch('subprocess.Popen',side_effect=AssertionError('offline CLI test forbids external processes')))
+            stack.enter_context(patch('builtins.print'))
+            if fault:
+                with self.assertRaises((ValueError,KeyError)):w.main()
+                self.assertEqual(profile.read_bytes(),original)
+                self.assertFalse((control/'revocations').exists())
+                for name,raw in receipts.items():self.assertEqual((output/name).read_bytes(),raw)
+            elif action=='archive-root':
+                w.main()
+                history=list((output/'.history').iterdir());self.assertEqual(len(history),1)
+                for name,raw in receipts.items():
+                    self.assertFalse((output/name).exists())
+                    self.assertEqual((history[0]/name).read_bytes(),raw)
+                self.assertEqual((output/'attempt-start.json').read_bytes(),b'original journal\n')
+                self.assertEqual(profile.read_bytes(),original)
+            else:
+                w.main()
+                revocation=control/'revocations/late-hold/late'
+                self.assertEqual((revocation/'original.private').read_bytes(),original)
+                expected=json.loads(original);expected['Base']['Enabled']=False
+                self.assertEqual(json.loads(profile.read_bytes()),expected)
+                self.assertEqual(w.load(revocation/'revocation.json')['before_sha256'],w.base.digest(original))
+                for name,raw in receipts.items():self.assertEqual((output/name).read_bytes(),raw)
+
+    def test_archive_root_main_preserves_receipts_and_journal(self):
+        self.cli_maintenance('archive-root')
+
+    def test_revoke_case_main_preserves_original_and_only_disables_case(self):
+        self.cli_maintenance('revoke-case')
+
+    def test_main_maintenance_rejects_live_failed_drifted_or_unbound_owners(self):
+        for action,fault in [('archive-root','live-owner'),('archive-root','unknown-stage'),('revoke-case','failed-owner'),('revoke-case','profile-drift'),('revoke-case','unknown-stage')]:
+            with self.subTest(action=action,fault=fault):self.cli_maintenance(action,fault)
+
+    def test_main_nonmaintenance_actions_keep_containment_and_dispatch_boundary(self):
+        for action,method in [('check','check'),('seal','seal'),('h1-proof','h1_proof')]:
+            with self.subTest(action=action),patch.object(w.base.sys,'argv',['window_six_support.py',action]),patch.object(w,'Host') as host,patch('builtins.print'):
+                getattr(host.return_value,method).return_value={}
+                w.main()
+                host.assert_called_once_with(containment=action=='seal')
+                getattr(host.return_value,method).assert_called_once_with()
+                host.return_value.group.assert_not_called()
+
+    def test_main_missing_maintenance_context_refuses_before_group_lookup(self):
+        for action in ('archive-root','revoke-case'):
+            for tail in ([],['--group','late-hold'],['--stage','late']):
+                with self.subTest(action=action,tail=tail),patch.object(w.base.sys,'argv',['window_six_support.py',action,*tail]),patch.object(w,'Host') as host,patch('builtins.print'):
+                    with self.assertRaises(ValueError):w.main()
+                    host.return_value.group.assert_not_called()
+                    host.return_value.archive_root.assert_not_called()
+                    host.return_value.revoke_case.assert_not_called()
+
     def test_unknown_initial_inspect_still_stops_known_cid(self):
         cid='a'*64
         for fault in (None,'final-inspect','stop-fails'):

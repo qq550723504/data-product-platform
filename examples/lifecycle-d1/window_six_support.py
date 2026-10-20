@@ -145,7 +145,8 @@ def main():
     elif args.action=='h1-proof':out=host.h1_proof()
     else:
         need(args.group is not None and args.stage is not None,'fixed group/stage required')
-        out=host.archive_root(args.group,args.stage) if args.action=='archive-root' else host.revoke_case(args.group,args.stage)
+        group=host.group(args.group)
+        out=host.archive_root(group,args.stage) if args.action=='archive-root' else host.revoke_case(group,args.stage)
     print(json.dumps(out,ensure_ascii=False))
 
 
