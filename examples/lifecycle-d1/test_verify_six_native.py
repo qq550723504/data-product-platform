@@ -22,7 +22,7 @@ r,p=v.r,v.p
 
 
 class SixCompleteTests(unittest.TestCase):
-    def composition(self,group='business-races',fault=None):
+    def composition(self,group='business-races',fault=None,post_closure=False):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             root=Path(tmp);control=root/'control';packet=root/'packet';control.mkdir();packet.mkdir()
             stack.enter_context(patch.object(r,'CONTROL',control))
@@ -30,6 +30,9 @@ class SixCompleteTests(unittest.TestCase):
             folder=control/group;folder.mkdir();(folder/'frozen-inventory.json').write_bytes(b'[]');(folder/'present-inventory.json').write_bytes(b'[]');(control/'six-map.json').write_bytes(b'NON_AUTHORITATIVE_TEST_MAP')
             r.save(control/'allocation.json',{'groups':[{'group':group,'private':str(folder)}]});(packet/group).mkdir();r.save(packet/group/'core-readonly.json',{'recorded_source':group})
             private,output=root/'read-private',root/'public-read';states={};calls=[];name_to_cid={};fp=[]
+            baseline=None
+            if post_closure:
+                baseline=root/'post-closure.json';r.save(baseline,{'recorded_source':group,'closed_dispatches':3})
             def state(cid):return {'Id':cid,'Image':p.p1.PG,'Config':{'User':'10001:10001','Entrypoint':['/run/reader'],'Cmd':['-mode','six-verify-native'],'Env':[],'Labels':{'lifecycle307.six-readonly':p.EXECUTION}},
                 'State':{'Running':False,'Pid':0},'HostConfig':{'NetworkMode':'container:'+g['Native'],'ReadonlyRootfs':True,'Privileged':False,'AutoRemove':False,'RestartPolicy':{'Name':'no'},'CapDrop':['ALL'],'CapAdd':None,'SecurityOpt':['no-new-privileges'],'Tmpfs':{'/tmp':'','/var/lib/postgresql/data':'size=1m'},'PortBindings':{}},'Mounts':[],'NetworkSettings':{'Ports':{}}}
             for cid in (g['Core'],g['Native']):states[cid]=state(cid)
@@ -47,7 +50,7 @@ class SixCompleteTests(unittest.TestCase):
             stack.enter_context(patch.object(p.p1,'close_known',close))
             def fingerprint(cid):
                 fp.append(cid)
-                return {'drift':True} if fault=='Core-drift' and len(fp)>1 else {'recorded_source':group}
+                return {'drift':True} if fault=='Core-drift' and len(fp)>1 else ({'recorded_source':group,'closed_dispatches':3} if post_closure else {'recorded_source':group})
             stack.enter_context(patch.object(p.native,'fingerprints',fingerprint))
             def docker(*args,**kw):
                 calls.append(args)
@@ -89,9 +92,9 @@ class SixCompleteTests(unittest.TestCase):
                 real_replace(path,value)
             stack.enter_context(patch.object(r,'replace',replace))
             if fault:
-                with self.assertRaises((ValueError,OSError,subprocess.TimeoutExpired)):v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20))
+                with self.assertRaises((ValueError,OSError,subprocess.TimeoutExpired)):v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline)
             else:
-                result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20));self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
+                result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline);self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
             self.assertFalse(any(x['State']['Running'] for x in states.values()))
             self.assertTrue(all(len(row[1])==64 for row in calls if row[0]=='close'))
             closure=r.load(output/'closure.json');self.assertEqual(closure['all_closed'],fault!='create-unknown')
@@ -103,6 +106,10 @@ class SixCompleteTests(unittest.TestCase):
     def test_three_source_groups_use_current_six_checker_and_close(self):
         for group in p.GROUPS:
             with self.subTest(group=group):self.composition(group)
+
+    def test_new_read_audit_uses_post_closure_checkpoint_and_still_rejects_drift(self):
+        self.composition(post_closure=True)
+        self.composition(post_closure=True,fault='Core-drift')
 
     def test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close(self):
         for fault in ('source-start','namespace','create-result','create-unknown','wait-timeout','logs-timeout','checker','Core-drift','profile-revoke'):

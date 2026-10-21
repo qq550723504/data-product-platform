@@ -91,7 +91,7 @@ def sealed_gate(packet=PACKET):
             'backup_hashes':9,'old_backups_retained':27,'budgets_empty':3,'native_delete':0,'source_provider_io':0}
 
 
-def collect(g,b,packet,private,output,deadline):
+def collect(g,b,packet,private,output,deadline,*,core_baseline=None):
     private.mkdir(parents=True,exist_ok=False);output.mkdir(parents=True,exist_ok=False)
     (output/'files').mkdir()
     a=load(r.CONTROL/'allocation.json');allocation=next(x for x in a['groups'] if x['group']==g['Group'])
@@ -108,7 +108,10 @@ def collect(g,b,packet,private,output,deadline):
         for ident in (g['Core'],g['Native']):known.append(ident);r.docker('start',ident)
         p.native.wait_pg(g['Core'],'fixture');time.sleep(3)
         before=p.native.fingerprints(g['Core']);save(output/'Core-before.json',before)
-        need(before==load(packet/g['Group']/'core-readonly.json'),'Core differs from frozen source checkpoint')
+        # A new zero-delete audit may bind a later append-only Core checkpoint.
+        # The original execution entry always uses its frozen packet baseline.
+        baseline=packet/g['Group']/'core-readonly.json' if core_baseline is None else core_baseline
+        need(before==load(baseline),'Core differs from bound source checkpoint')
         n=json.loads(r.docker('network','inspect',g['Network']))[0]
         need(n['Internal'] and set(n['Containers'])=={g['Core'],g['Native']},'active source network expanded')
         creation_attempted=True
