@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-21T10:03:23.695615+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "scope": "Crosscheck actual assistant text, frozen artifacts, exact published PR HEAD and closed host only",
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "modify_frozen_files": false
+}

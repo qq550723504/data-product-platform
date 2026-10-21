@@ -1,0 +1,8 @@
+{
+  "status": "FAILED_REVIEWER_EXPECTATION",
+  "error": "native observation/cost quantity differs",
+  "cause": "Reviewer required every health readiness connection attempt to have an HTTP response. One recorded startup readiness GET failed transport, then native readiness and all permission checks succeeded. Preserve it as a failed transport attempt; do not rewrite native facts or rerun to hide it.",
+  "script_sha256": "f80dc3d74f8ae18ec4467a6f06e058fc4fd15c7d69f4212e74b8eb7a111e4ec3",
+  "runtime_changed": false,
+  "native_calls_by_reviewer": 0
+}

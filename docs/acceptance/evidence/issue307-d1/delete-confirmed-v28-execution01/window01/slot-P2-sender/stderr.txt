@@ -1,0 +1,2 @@
+Delete "http://127.0.0.1:9002/dpp-lifecycle307-online/fixture/p2.csv?versionId=d8040608-c5cd-4a6f-8a2d-b3f856cf5302": lifecycle storage denied
+lifecycle storage contract violation

@@ -259,3 +259,15 @@ examples/lifecycle-d1/test_retained_v26.py -text whitespace=cr-at-eol
 examples/lifecycle-d1/test_six_candidate_runtime.py -text whitespace=cr-at-eol
 examples/lifecycle-d1/test_freeze_six_candidate.py -text whitespace=cr-at-eol
 examples/lifecycle-d1/test_remaining_six_window.py -text whitespace=cr-at-eol
+
+# Preserve original c18 authorization/failure receipts and this repair evidence.
+docs/acceptance/evidence/issue307-d1/candidate18-crosscheck01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/p2-http403-repair01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-v28-crosscheck01.md -text
+docs/acceptance/issue307-d1-v28-execution01.md -text
+docs/acceptance/issue307-d1-v28-schedule01.md -text
+docs/acceptance/issue307-d1-v28-window01.md -text
+docs/acceptance/issue307-d1-p2-http403-repair01.md -text
+examples/lifecycle-d1/check-p2-permission-native.py -text
+docs/acceptance/evidence/issue307-d1/candidate18-planning01/publication-ci-watch01.stdout.txt -text whitespace=cr-at-eol,-blank-at-eof

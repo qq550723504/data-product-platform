@@ -1,0 +1,10 @@
+{
+  "server": "a4d5d07f622cde0f2d60448da9b140796f4dd25acb58448b12c7530616a2d259",
+  "runner": "ac53ef7a06f37f4a01876d3d76db1d2c235e219d53bf05d12d08ccb79b30336c",
+  "volume": "dpp307-p2-probe-0564c5c393164446a4f6c6dfc2753953-data",
+  "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+  "test_binary_sha256": "3296559b15c4643b5b79aa4d25fd5f06efff5c575f29a128b59ca5b4f28bd53f",
+  "retained_mounts_used": 0,
+  "published_ports": 0,
+  "network": "none; runner shares only new native namespace"
+}

@@ -1,0 +1,12 @@
+{
+  "id": 39577806574,
+  "event": "pull_request",
+  "head_sha": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "head_branch": "codex/issue307-post-v22-dispatch-closure",
+  "status": "completed",
+  "conclusion": "success",
+  "run_attempt": 1,
+  "created_at": "2026-10-21T09:32:53Z",
+  "updated_at": "2026-10-21T09:41:57Z",
+  "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39577806574"
+}

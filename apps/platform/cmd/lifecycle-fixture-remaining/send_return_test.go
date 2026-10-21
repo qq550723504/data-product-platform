@@ -223,3 +223,28 @@ func TestPreSendRejectionPreservesOExclusiveReceiptAndOriginalCause(t *testing.T
 		t.Fatal("original rejection overwritten")
 	}
 }
+
+func TestDeniedSendReturnKeepsSafeNativeReasonAndNoResend(t *testing.T) {
+	cp, a := returnAttempt(t, "business-races", "P2")
+	exact := &returnTestJournal{}
+	j := &journal{exact: exact, authorize: func() error { return nil }, budget: t.TempDir()}
+	calls := 0
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls++
+		w.WriteHeader(403)
+		w.Write([]byte(`<Error><Code>AccessDenied</Code><Message>secret-signature</Message></Error>`))
+	}))
+	defer s.Close()
+	d := testDeleter(t, s.URL, cp, j)
+	sendErr := d.DeleteExactCopy(context.Background(), a, cp)
+	path := filepath.Join(t.TempDir(), "returned.json")
+	err := finishSendReturn(path, "P2", a, cp, j, sendErr, func() (string, string, error) { return exact.proof.Certainty, exact.proof.Outcome, nil })
+	r := readReturn(t, path)
+	raw, _ := os.ReadFile(path)
+	if !errors.Is(err, lc.ErrStorageDenied) || r.HTTPResponse == nil || r.HTTPResponse.ErrorCode != "AccessDenied" || r.HTTPResponse.HTTPStatus != 403 || r.Outcome != domain.ProviderDenied || r.ProviderInvocation != domain.InvocationConfirmed || !r.BudgetConsumed || !r.ClaimConfirmed || strings.Contains(string(raw), "secret-signature") {
+		t.Fatal(err, r)
+	}
+	if testDeleter(t, s.URL, cp, &journal{exact: exact, authorize: func() error { return nil }, budget: j.budget}).DeleteExactCopy(context.Background(), a, cp) == nil || calls != 1 {
+		t.Fatal("denied request resent")
+	}
+}

@@ -1,0 +1,45 @@
+{
+  "status": "PASS_CURRENT_EXACT_HEAD_DRAFT_OPEN_PR_CI_AND_THREADS",
+  "observed_at": "2026-10-21T10:03:27.228350+00:00",
+  "read_times": {
+    "pr": {
+      "start": "2026-10-21T10:03:25.039863+00:00",
+      "finished": "2026-10-21T10:03:26.780603+00:00"
+    },
+    "issue": {
+      "start": "2026-10-21T10:03:25.040160+00:00",
+      "finished": "2026-10-21T10:03:26.289637+00:00"
+    },
+    "ci-run": {
+      "start": "2026-10-21T10:03:25.040469+00:00",
+      "finished": "2026-10-21T10:03:26.404090+00:00"
+    },
+    "ci-jobs": {
+      "start": "2026-10-21T10:03:25.040990+00:00",
+      "finished": "2026-10-21T10:03:26.595604+00:00"
+    },
+    "check-runs": {
+      "start": "2026-10-21T10:03:25.041266+00:00",
+      "finished": "2026-10-21T10:03:27.227617+00:00"
+    },
+    "threads": {
+      "start": "2026-10-21T10:03:25.041579+00:00",
+      "finished": "2026-10-21T10:03:26.426103+00:00"
+    }
+  },
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "pr": 332,
+  "draft": true,
+  "merged": false,
+  "issue": 307,
+  "issue_state": "OPEN",
+  "run_id": 39577806574,
+  "event": "pull_request",
+  "attempt": 1,
+  "jobs_success": 13,
+  "checks_success": 13,
+  "unresolved_threads": 0,
+  "main_ci": "NOT_CLAIMED",
+  "execution_authority": false,
+  "native_delete": 0
+}

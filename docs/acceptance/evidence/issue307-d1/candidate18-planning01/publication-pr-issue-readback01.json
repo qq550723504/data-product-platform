@@ -1,0 +1,17 @@
+{
+  "observed_at": "2026-10-21T09:46:15.478385+00:00",
+  "PR": {
+    "state": "OPEN",
+    "draft": true,
+    "merged": false,
+    "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+    "unresolved_threads": 0
+  },
+  "Issue307": "OPEN",
+  "review_threads": {
+    "nodes": [],
+    "pageInfo": {
+      "hasNextPage": false
+    }
+  }
+}

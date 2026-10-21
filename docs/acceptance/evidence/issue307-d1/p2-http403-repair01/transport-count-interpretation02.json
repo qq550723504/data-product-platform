@@ -1,0 +1,12 @@
+{
+  "status": "APPENDED_TRANSPORT_ATTEMPT_VS_HTTP_RESPONSE_CLARIFICATION",
+  "total_attempt_pairs": 205,
+  "wire_frontend_http_responses": 12,
+  "native_backend_attempts": 193,
+  "native_backend_http_responses": 192,
+  "native_ready_connection_error_attempts": 1,
+  "connection_error_attempt_id": "e17d2fe4-0962-4f1c-914d-7a68d0fcdc67",
+  "native_permission_checks_with_http_response": 118,
+  "physical_provider_invocation_inferred_for_connection_error": false,
+  "original_quantity_and_raw_receipts_preserved": true
+}

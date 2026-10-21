@@ -124,6 +124,7 @@ func (t *deleteTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	invocation := invoked
 	mu.Unlock()
 	status := 0
+	var diagnostic *ExactDeleteResponse
 	outcome := domain.ProviderUnknown
 	if response != nil {
 		status = response.StatusCode
@@ -133,7 +134,9 @@ func (t *deleteTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		}
 		body, bodyErr := io.ReadAll(io.LimitReader(response.Body, (64<<10)+1))
 		response.Body.Close()
-		// RemoveObject expects no success payload. Do not preserve provider error text.
+		// Persist only closed, non-secret diagnostics; never provider error text.
+		detail := InspectExactDeleteResponse(status, body, bodyErr == nil && len(body) <= 64<<10)
+		diagnostic = &detail
 		if bodyErr != nil || len(body) > 64<<10 {
 			err = lifecycle.ErrStorageContract
 		}
@@ -159,14 +162,18 @@ func (t *deleteTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		Status   int
 		Outcome  string
 		Observed time.Time
-	}{c.attempt.ID.String(), status, proof.Outcome, at})
+		Response *ExactDeleteResponse
+	}{c.attempt.ID.String(), status, proof.Outcome, at, diagnostic})
 	proofCtx, cancel := context.WithTimeout(context.WithoutCancel(r.Context()), 5*time.Second)
 	journalErr := t.journal.ObserveExactSend(proofCtx, proof)
 	cancel()
 	if journalErr != nil {
-		return nil, lifecycle.ErrStorageUnknown
+		err = lifecycle.ErrStorageUnknown
 	}
 	if err != nil {
+		if diagnostic != nil {
+			return nil, &ExactDeleteFailure{Response: *diagnostic, cause: err}
+		}
 		return nil, err
 	}
 	if response == nil {

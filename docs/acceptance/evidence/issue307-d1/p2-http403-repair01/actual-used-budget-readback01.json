@@ -1,0 +1,11 @@
+{
+  "status": "PASS_CURRENT_STOPPED_VOLUME_BYTES_MATCH_ORIGINAL",
+  "container": "1e65f249b10abb3b2317d9ade3ca65d5719d5d8b92cc8f8eb879f378443121f8",
+  "read_only_docker_cp": true,
+  "container_started": false,
+  "original_archive_sha256": "3d880f2d40fae24e70e1fa5b4de933d77c8597d62b7391bef4011a7938dabb20",
+  "members": {
+    "6fabf3b5-76b8-4245-8f5d-01e64f610146.json": "616fcd71abed1bce35f47fab924f2c93de5698078ef90b0d32d0e4cf05845b87",
+    "wire-6fabf3b5-76b8-4245-8f5d-01e64f610146.json": "8f192a4aacc8ed1489882d69b177d78e01281c05ac41828724548f7161b7303a"
+  }
+}

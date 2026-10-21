@@ -1,0 +1,11 @@
+{
+  "status": "FAILED_RETAINED",
+  "failure": "native module is not the pinned release",
+  "closure": [],
+  "old_source_starts": 0,
+  "old_authorization_reused": false,
+  "old_budget_writes": 0,
+  "pins_released": 0,
+  "actual_object_deletions": 0,
+  "resources_retained": true
+}

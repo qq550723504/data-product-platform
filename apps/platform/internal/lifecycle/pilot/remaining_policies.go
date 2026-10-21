@@ -10,6 +10,10 @@ import (
 // Policy construction is fixture composition; provider enforcement and semantic
 // comparison remain the existing MinIO policy SDK. No policy engine lives here.
 func RemainingPolicies(group string, present []domain.Copy) (map[string]string, map[string][]byte, error) {
+	return remainingPolicies(group, present, []string{"s3:DeleteObject", "s3:DeleteObjectVersion"})
+}
+
+func remainingPolicies(group string, present []domain.Copy, deleteActions []string) (map[string]string, map[string][]byte, error) {
 	scope, err := RemainingScopeFor(group)
 	counts := map[string]int{"business-races": 7, "late-hold": 6, "mixed": 4}
 	if err != nil || len(present) != counts[group] {
@@ -36,7 +40,10 @@ func RemainingPolicies(group string, present []domain.Copy) (map[string]string, 
 			send = send || cp.Key == key
 		}
 		if send {
-			deleteStatements = append(deleteStatements, statement([]string{"s3:DeleteObjectVersion"}))
+			// The pinned native DeleteObjectHandler authorizes DeleteObject even
+			// for versionId requests. Both actions retain the SAME exact-version
+			// condition; an unversioned remove is still denied by native IAM.
+			deleteStatements = append(deleteStatements, statement(deleteActions))
 		}
 	}
 	if len(deleteStatements) != map[string]int{"business-races": 3, "late-hold": 1, "mixed": 2}[group] {
@@ -106,13 +113,19 @@ func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]str
 	if err != nil {
 		return nil, nil, err
 	}
+	// These are actual frozen retained policies, not current executable ones.
+	// Fixing the new policy must never widen or rewrite disabled historical IAM.
+	_, retained, err := remainingPolicies(group, present, []string{"s3:DeleteObjectVersion"})
+	if err != nil {
+		return nil, nil, err
+	}
 	for user, name := range RemainingRetainedIdentities(group) {
 		users[user] = name
 		kind := "delete"
 		if user[0] == 'i' {
 			kind = "inspect"
 		}
-		policies[name] = append([]byte(nil), policies[RemainingPolicyName(group, kind)]...)
+		policies[name] = append([]byte(nil), retained[RemainingPolicyName(group, kind)]...)
 	}
 	if user, name := RemainingDormantIdentity(group); user != "" {
 		users[user] = ""

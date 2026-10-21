@@ -1,0 +1,20 @@
+{
+  "status": "C18_V28_SEPARATE_HUMAN_SCHEDULE_AUTHORITY_INDEX",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "count": 3,
+  "files": {
+    "schedule-human-authority.json": {
+      "sha256": "abe1decfd26c60bc99cafe9c7c3825df99f240143a6f3870e6ae10d39bc3b7cf",
+      "bytes": 1988
+    },
+    "schedule-human-reply-verbatim.txt": {
+      "sha256": "82224029f93f050a9a281e2bad7bace46452416d37407879c11c7c1e751c2274",
+      "bytes": 634
+    },
+    "schedule-human-answer-verbatim.txt": {
+      "sha256": "ee75cb3402a66504630cd0fa183e3014346c501be4d73b2781317b90f03a91e1",
+      "bytes": 36
+    }
+  },
+  "native_delete": 0
+}

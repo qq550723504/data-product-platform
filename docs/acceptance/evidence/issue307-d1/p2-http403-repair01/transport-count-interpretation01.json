@@ -1,0 +1,11 @@
+{
+  "status": "APPENDED_COUNT_SCOPE_CLARIFICATION",
+  "native03_original_request_pairs": 205,
+  "wire_frontend_roundtrips": 12,
+  "native_backend_roundtrips": 193,
+  "native_permission_checks": 118,
+  "other_native_requests": 75,
+  "raw_unit_label_preserved": "synthetic_native_http_request",
+  "amount": "NOT_ASSESSED",
+  "raw_receipts_modified": false
+}

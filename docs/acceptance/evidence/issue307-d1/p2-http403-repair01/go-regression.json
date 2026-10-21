@@ -1,0 +1,15 @@
+{
+  "command": [
+    "go",
+    "test",
+    "./internal/lifecycle/...",
+    "./internal/platform/storage",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-remaining-iam"
+  ],
+  "exit_code": 0,
+  "unconfigured_live_postgres": "NOT_RUN",
+  "native03_after_build_change": "Only gofmt -w on send_return.go and wire_native_test.go; no semantic edit after native03. Original compiled native receipts retained, final formatted source rerun by Go tests.",
+  "source_changes_during_native03": false
+}

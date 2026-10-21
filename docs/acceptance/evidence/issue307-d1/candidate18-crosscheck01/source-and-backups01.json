@@ -1,0 +1,14 @@
+{
+  "status": "PASS_FROZEN_RAW_LF_SOURCE_AND_48_BACKUPS",
+  "observed_at": "2026-10-21T10:03:25.035631+00:00",
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "source": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "source_members": 2129,
+  "tracked_changes": 0,
+  "backups": 48,
+  "new": 9,
+  "old_complete": 36,
+  "old_partial": 3,
+  "execution_authority": false,
+  "native_delete": 0
+}
