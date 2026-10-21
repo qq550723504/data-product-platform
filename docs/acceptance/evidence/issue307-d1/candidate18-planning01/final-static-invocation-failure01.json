@@ -1,0 +1,14 @@
+{
+  "status": "DENIED_BEFORE_AUDIT_OR_DOCKER_SOURCE_IO",
+  "observed_at": "2026-10-21T09:30:43.892989+00:00",
+  "entry": "examples/lifecycle-d1/verify-six-native.py --audit-only",
+  "error": "ValueError: exact frozen invocation bindings differ",
+  "submitted_checker_sha256": "64d761d82c99388334cc043bb0f33a71fddfd789194ea8411c8cdfd8bb636498",
+  "actual_frozen_checker_sha256": "b05d9f331cb2126176021db402b189678a7b0a0c1aaa8776612e5751de5b7081",
+  "source": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "output_created": false,
+  "candidate_or_config_changed": false,
+  "native_delete": 0,
+  "source_Docker_provider_io": 0,
+  "channel_note": "Original exec console traceback is retained in this chat/tool event; this is a factual readback, not a fabricated separate raw stderr capture."
+}

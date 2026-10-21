@@ -39,7 +39,9 @@ def main():
     report_path = REVIEW / 'independent-final-review01.json'
     report = load(report_path)
     require(report['status'] == 'PASS_BOUNDED_C18_FROZEN_NONDELETE_PREPARATION_REVIEW'
-            and report['remaining_blockers'] == [], 'independent packet review incomplete')
+            and report['remaining_blockers'] == []
+            and report['execution'] == candidate['Execution']
+            and report['source_head'] == candidate['Source'], 'independent packet review incomplete')
     host_index = HERE / 'candidate18-host-bindings01.json'
     inputs = {ROOT / name for name in load(host_index)['files']}
     inputs.add(host_index)
@@ -52,6 +54,7 @@ def main():
         inputs.add(ROOT / 'docs/acceptance' / name)
     inputs.add(BASE / 'candidate18-source-review01/merge-contract.md')
     inputs.add(HERE / 'final-cold-inventory01.json')
+    inputs.add(HERE / 'retained-backups48-readback01.json')
     inputs.add(HERE / 'authority-schedule-absence01.json')
     index_path = HERE / 'final-static-reference-index01.json'
     index = {'status': 'C18_FINAL_STATIC_PREPARATION_REFERENCE_INDEX',
@@ -65,6 +68,7 @@ def main():
     for identity, path, member_root in (
             ('frozen-host-bindings', host_index, '.'),
             ('packet-independent-review', REVIEW / 'evidence-index.json', REVIEW.relative_to(ROOT).as_posix()),
+            ('independent-reviewed-external-artifacts', REVIEW / 'reviewed-artifacts01.json', '.'),
             ('final-static-references', index_path, '.')):
         document = load(path)
         plan['indexes'].append({'id': identity, 'index': path.relative_to(ROOT).as_posix(),

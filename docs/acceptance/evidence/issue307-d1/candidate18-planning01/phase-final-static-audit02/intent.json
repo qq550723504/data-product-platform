@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/verify-six-native.py",
+    "--candidate-sha256",
+    "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+    "--bindings-sha256",
+    "8d021af81d905cc6de255bf84e460fc0b416d5af5bacc8388cfbb2b423a60624",
+    "--checker-sha256",
+    "b05d9f331cb2126176021db402b189678a7b0a0c1aaa8776612e5751de5b7081",
+    "--evidence-audit-plan",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate18-planning01\\final-static-evidence-audit-plan01.json",
+    "--evidence-audit-plan-sha256",
+    "59f7d102aa425ba7684aaace9136701fb8f3bbea6c3952325287e169d3e36ac7",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate18-planning01\\final-static-audit02",
+    "--audit-only"
+  ],
+  "at": "2026-10-21T09:31:14.846343+00:00",
+  "source_or_gate_changes": false,
+  "execution_authority": false
+}

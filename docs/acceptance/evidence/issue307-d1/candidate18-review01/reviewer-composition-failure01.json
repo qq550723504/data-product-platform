@@ -1,0 +1,9 @@
+{
+  "status": "FAILED_REVIEWER_FILE_ONLY_PROFILE_SELECTION",
+  "error": "actual reader private profile missing or ambiguous",
+  "cause": "Reviewer incorrectly matched the active profile SHA against the deliberately revoked final private profile. The fixed full entry revokes Enabled in finally, so use unique AuditID plus Enabled=false for file-only inventory/mapping selection.",
+  "script_sha256": "52d7210b88927fd2966bfc48f4d4674c41b225ef20e139b69d2f9d0955ef24cc",
+  "runtime_source_changed": false,
+  "native_calls": 0,
+  "real_DELETE": 0
+}
