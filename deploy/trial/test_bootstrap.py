@@ -118,13 +118,15 @@ class LedgerStages(unittest.TestCase):
             config = Path(s["private"]) / "config.json"
             output = Path(s["private"]) / "output"; output.mkdir()
             scope = {"workspaceId": s["workspaceId"], "actorId": s["actorId"], "runId": s["runId"], "principalRef": "trial-operator-retained", "endpoint": "127.0.0.1:9000",
-                     "providerWitness": r.digest(a.encoded({})), "planSha256": "a" * 64, "expiresAt": (datetime.now(timezone.utc) + timedelta(minutes=20)).isoformat(), "outputDirectory": str(output)}
+                     "providerWitness": r.digest(a.encoded({})), "planSha256": r.digest(b.encoded(baseline)), "expiresAt": (datetime.now(timezone.utc) + timedelta(minutes=20)).isoformat(), "outputDirectory": str(output)}
             for name, v in zip(("standardized", "curated"), r.read(facts)["facts"]["versions"][3:]):
                 scope[name] = {"versionId": v["id"], "uri": v["storage_uri"], "sha256": v["checksum_value"], "bytes": v["byte_size"]}
             profile = Path(s["private"]) / "profile.json"
             value = {"plan": scope, "credentialFile": str(config), "credentialFileSha256": b.file(config)["sha256"]}; b.put(profile, value)
             expected = b.plan(s, "custody", admission=admission, profile=profile)
             self.assertEqual(expected["bootstrap"], s["bootstrapBinding"])
+            stale = copy.deepcopy(value); stale["plan"]["planSha256"] = s["bootstrap"]["planSha256"]; r.write(profile, stale)
+            with self.assertRaises(r.Refused): b.plan(s, "custody", admission=admission, profile=profile)
             for field in ("workspaceId", "runId", "providerWitness", "planSha256"):
                 broken = copy.deepcopy(value); broken["plan"][field] = "foreign"; r.write(profile, broken)
                 with self.assertRaises(r.Refused): b.plan(s, "custody", admission=admission, profile=profile)

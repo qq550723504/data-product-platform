@@ -128,3 +128,26 @@ bootstrap 后，普通 resume 必须等到显式 activation binding 才能启动
 失败、UNKNOWN、孤立 journal 均拒绝重试；69/70 中断不能冒充新的68检查点。
 完成阶段的 replay 仅读核验。精确 owner stop 可用于止损，不清除未完成 journal。
 plan 输出、源码合并与 CI 都不授予原环境执行权。
+
+## 副作用前 UNKNOWN 的显式恢复
+
+仅接纳已部署 #336 的同一 bootstrap attempt：原 build/private-admission
+已完成、失败为 Refused UNKNOWN，且公共/私有成员完全匹配规定检查点。
+宿主/Core/SQL/备份/迁移动作标记、额外文件、身份或输入漂移、孤立 recovery
+均拒绝。普通 resume/restart 和重新 bootstrap 不会自动恢复它。
+
+```powershell
+python -B deploy/trial/trial.py bootstrap-recovery-plan --admission <新控制器的实际合并SHA及main-CI admission> --output <新恢复计划>
+# 单独审查恢复计划并授权执行后，才允许以下命令：
+python -B deploy/trial/trial.py bootstrap-recover --plan <恢复计划> --plan-sha256 <恢复计划digest>
+```
+
+恢复在同一 attempt 的 recoveries 子目录中构建新工具并追加日志，重新核验
+private ACL、source/main-CI、原五版本和原生身份后，复用账务 bootstrap
+执行顺序。旧 failed.json、before-state、plan 和原工具均保留；成功追加
+resolution 与新的 accepted binding。custody profile 的 planSha256 使用命令
+返回的 acceptedBootstrapPlanSha256（accepted manifest 的 plan digest），
+不使用旧 attempt projection 中的原始 planSha256。
+
+完成 replay 仅核验已接纳 binding；恢复中断或 allocation orphan 继续 UNKNOWN，
+不允许第二次恢复。该源代码实现不代表原环境已经部署或执行恢复。
