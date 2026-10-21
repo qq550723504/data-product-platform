@@ -1,5 +1,36 @@
 # 固定 PostgreSQL 合成试用 — #325 RAW 与原环境续用
 
+## 显式业务前提准备（源代码候选，不自动执行）
+
+装配/复用与有限评审契约见 [business prerequisites](../../docs/acceptance/issue325-business-prerequisites.md)。
+此入口要求已完成原环境 activation，schema71、原五份版本与原 batch/execution 仍在。
+部署、准备执行和随后宿主启动分别需要授权；普通 start/resume 不会创建业务前提。
+
+部署时单独把 `./cmd/trial-business` 构建到原 private 目录的
+`business-tools/<reviewed-head>/trial-business.exe`；不要覆盖旧工具或业务制品。
+私有 `business-spec.json` 按该命令的 `spec` contract 填写：`contract` 为
+`issue325/business-prerequisites-v1`，原 run/workspace/Actor/activation attempt、原
+CURATED target 和五份版本（id/kind/sha256/uri/bytes/rows）；明确单 consumer、purpose
+`ENTERPRISE_CREDIT_RISK_SUPPORT`、最长 24 小时的 UTC validFrom/validTo 和合成来源的
+verificationReason。版本身份取自此前只读验收，不能用新版本替换。消费者是本次
+合成试用的明确主体，不默认继承历史 fixture 的 LICENSED_BANK 或现实授权。
+
+```powershell
+python deploy/trial/trial.py business-plan --profile <private-spec.json> --admission <merged-head-main-ci.json> --tool <private-reviewed-trial-business.exe> --output <new-plan.json>
+# 独立审查输出的 source/tool、原事实、三来源 READ scope、有限有效期、合同/Profile 和配置。
+# 取得业务准备执行授权后，才运行：
+python deploy/trial/trial.py prepare-business --plan <new-plan.json> --plan-sha256 <printed-plan-sha256>
+```
+
+plan 只有只读 SQL/local/native metadata 检查；不会启动服务、构建或分配 secret。
+prepare 调用已有 Core Commands，失败保留 UNKNOWN 和每次调用回执；用同一计划
+继续，Core 通过稳定审计 trace 恢复已提交步骤。改变同 run 的输入会冲突，不自动
+续期/重置。完成重放只读既有回执。原 five versions、review、execution 不重跑。
+
+准备成功只绑定下一次授权宿主启动的 Quality/Compliance Actor 配置及既有 remediation
+plan；不自动重启。Delivery 保持关闭，不生成 delivery token。质量/合规评测、认证、
+实际下载、撤权和 C1 新修复 Execution 均是后续显式动作，本入口不声称它们已通过。
+
 仅支持 Windows 宿主 + 本机 Docker Linux / Compose v2、Go（仓库 go.mod）、Node 22+、Python 3.11+、PowerShell 7、Git。首次构建需要访问已固定的容器镜像、npm、Go modules、MinIO 官方源码及 Maven JDBC。不是生产模板；单操作人、合成数据、loopback，无付费 Provider。现有 CSV demo 仍按原文档使用。
 
 在本候选的完整独立 worktree 根目录打开 PowerShell：

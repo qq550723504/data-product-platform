@@ -25,7 +25,7 @@ def committed_sources(head):
 
 
 def controller_only(path):
-    return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/", "apps/platform/cmd/trial-activate/"))
+    return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/", "apps/platform/cmd/trial-activate/", "apps/platform/cmd/trial-business/"))
 
 
 def check_sources(s, current):
