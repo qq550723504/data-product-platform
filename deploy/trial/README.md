@@ -160,6 +160,14 @@ bootstrap 后，普通 resume 必须等到显式 activation binding 才能启动
 完成阶段的 replay 仅读核验。精确 owner stop 可用于止损，不清除未完成 journal。
 plan 输出、源码合并与 CI 都不授予原环境执行权。
 
+已完成激活的同一环境续用见 [protected continuation](../../docs/acceptance/issue325-protected-resume.md)。
+部署并单独授权后，stop/status 通过 SQL 和原生元数据核对原五份版本；resume 必须
+持有成功的五版本 before-stop 基线，拒绝旧三 RAW 回执或 UNKNOWN 检查点。
+resume 只续发一次原策略 Core STS，并复用受保护读取核对五份内容后才启动原宿主。
+现有 SDK 每份执行 HEAD→GET，十次物理调用分别产生新成本和证据；原业务事实保持
+精确一致，新调用账务按封闭关联核对，不再把合法新增账务误判为历史数据变化。
+失败保留现场和已发生成本，不自动重试、复制或重跑业务。实现和 CI 不代表已执行原环境续用。
+
 ## 副作用前 UNKNOWN 的显式恢复
 
 仅接纳已部署 #336 的同一 bootstrap attempt：原 build/private-admission

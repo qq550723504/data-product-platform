@@ -93,11 +93,20 @@ def precheck(s):
         for sock in sockets: sock.close()
     baseline = r.read(r.STATE / "before-stop-facts.json")
     r.need(baseline["workspaceId"] == s["workspaceId"], "Same-workspace stopped facts required")
+    from protected_resume import active, validate, expected
+    if active(s):
+        r.need(s.get("stopInspection", {}).get("status") == "PASS", "Protected resume requires successful before-stop SQL observation")
+        validate(s, baseline)
+        r.need(baseline["expected"] == expected(s), "Protected before-stop activation drift")
     return {"head": head, "sources": current, "deltaPaths": changes}, baseline
 
 
 def compare_facts(s, baseline):
     actual = r.inspect_facts(s)
+    from protected_resume import active, compare
+    if active(s):
+        compare(s, baseline, actual)
+        return actual
     r.need(actual == baseline, "Retained SQL/native object facts differ or are incomplete; resume outcome UNKNOWN")
     return actual
 
@@ -129,9 +138,11 @@ def refresh_identity(s, directory, receipts):
     s["activeProfile"] = str(profile_path)
     refresh_workspace_profile(s, directory, output, result["expiresAt"])
     s["resume"]["credentialExpiresAt"] = result["expiresAt"]; r.save(s)
-    probe = json.loads(r.command([binary, "verify-core"], env=dict(r.environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"),
-                                 DPP_TRIAL_RENEW_OUTPUT=str(output), DPP_TRIAL_VERIFY_RECEIPT=str(receipts / "before-facts.json"))))
-    write_once(receipts / "scoped-object-probe.json", probe)
+    from protected_resume import active
+    if not active(s):
+        probe = json.loads(r.command([binary, "verify-core"], env=dict(r.environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"),
+                                     DPP_TRIAL_RENEW_OUTPUT=str(output), DPP_TRIAL_VERIFY_RECEIPT=str(receipts / "before-facts.json"))))
+        write_once(receipts / "scoped-object-probe.json", probe)
     return result
 
 
@@ -191,8 +202,12 @@ def resume(s):
     try:
         r.docker("start", *[c["id"] for c in s["containers"].values()], timeout=180)
         wait_containers(s)
-        write_once(receipts / "containers-facts.json", compare_facts(s, baseline))
+        observed = compare_facts(s, baseline)
+        write_once(receipts / "containers-facts.json", observed)
         refreshed = refresh_identity(s, directory, receipts)
+        from protected_resume import active, probe
+        if active(s):
+            baseline = probe(s, observed, directory, receipts)
         launch_hosts(s)
         write_once(receipts / "running-facts.json", compare_facts(s, baseline))
         s["phase"] = "RUNNING"; s["resume"]["status"] = "PASS"; r.save(s)

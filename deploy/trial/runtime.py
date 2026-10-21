@@ -412,6 +412,9 @@ def spawn(s, role, args, env, *, log_directory=None):
 
 
 def inspect_facts(s):
+    from protected_resume import active, observe
+    if active(s):
+        return observe(s)  # SQL/native only; object reads belong to one explicit resume probe.
     return json.loads(command([Path(s["private"]) / "bin/trial-prepare.exe", "inspect"],
                               env=dict(environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"))))
 

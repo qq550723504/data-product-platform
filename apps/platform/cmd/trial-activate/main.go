@@ -190,8 +190,8 @@ func verify(ctx context.Context, pool *pgxpool.Pool, c config, in input) (any, e
 }
 
 func run() error {
-	if len(os.Args) != 2 || (os.Args[1] != "snapshot" && os.Args[1] != "verify" && os.Args[1] != "admit" && os.Args[1] != "private") {
-		return fmt.Errorf("snapshot|verify|admit|private required")
+	if len(os.Args) != 2 || (os.Args[1] != "snapshot" && os.Args[1] != "verify" && os.Args[1] != "resume-verify" && os.Args[1] != "admit" && os.Args[1] != "private") {
+		return fmt.Errorf("snapshot|verify|resume-verify|admit|private required")
 	}
 	var in input
 	var c config
@@ -205,8 +205,11 @@ func run() error {
 	if err != nil || configErr != nil || relErr != nil || rel == "." || strings.HasPrefix(rel, "..") || configPath != filepath.Join(c.Private, "config.json") {
 		return fmt.Errorf("same private activation paths required")
 	}
-	if len(parts) < 3 || (parts[0] != "activations" && parts[0] != "bootstrap-attempts" && parts[0] != "custody-attempts") ||
-		(os.Args[1] == "verify" && parts[0] != "activations") {
+	resumeStage := len(parts) >= 3 && (parts[0] == "resume-observations" || parts[0] == "resume")
+	if len(parts) < 3 || (parts[0] != "activations" && parts[0] != "bootstrap-attempts" && parts[0] != "custody-attempts" && !resumeStage) ||
+		(os.Args[1] == "verify" && parts[0] != "activations") ||
+		(os.Args[1] == "resume-verify" && !resumeStage) ||
+		(resumeStage && os.Args[1] != "snapshot" && os.Args[1] != "resume-verify") {
 		return fmt.Errorf("explicit retained stage path required")
 	}
 	// Reuse the operator custody private-path/ACL primitive before any SQL or
@@ -239,6 +242,13 @@ func run() error {
 		result, err = snapshot(ctx, pool, before)
 	} else if os.Args[1] == "admit" {
 		result, err = admit(ctx, pool, c, in)
+	} else if os.Args[1] == "resume-verify" {
+		if in.Schema != 71 || in.CustodyID == uuid.Nil || in.CustodyPlan == nil {
+			return fmt.Errorf("accepted schema71 custody required before protected continuation")
+		}
+		if _, err = admit(ctx, pool, c, in); err == nil {
+			result, err = verify(ctx, pool, c, in)
+		}
 	} else {
 		result, err = verify(ctx, pool, c, in)
 	}
