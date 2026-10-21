@@ -13,6 +13,17 @@ spec=importlib.util.spec_from_file_location('v27_closure',Path(__file__).with_na
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
 class SealTests(unittest.TestCase):
+    def test_bounded_windows_argv_still_requires_every_owner(self):
+        ids=[format(i,'064x') for i in range(540)];calls=[]
+        def docker(*args):
+            self.assertLessEqual(len(args)-1,64);calls.append(args)
+            return json.dumps([dict(Id=cid) for cid in args[1:]]).encode()
+        with patch.object(m,'docker',docker):self.assertEqual(len(m.inspect_many(ids)),540)
+        self.assertEqual(len(calls),9)
+        with patch.object(m,'docker',return_value=b'[]'),self.assertRaises(ValueError):m.inspect_many(ids)
+        for bad in (ids+[ids[0]],['short-id']):
+            with patch.object(m,'docker',side_effect=AssertionError('no I/O')),self.assertRaises(ValueError):m.inspect_many(bad)
+
     def test_every_close_continues_and_partial_facts_are_observed(self):
         for fault in (None,'missing-profile','observer-stop','Core-read','disable-all','one-stop'):
             with self.subTest(fault=fault),tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:

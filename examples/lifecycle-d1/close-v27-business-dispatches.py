@@ -20,8 +20,8 @@ from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[2]
 PRIVATE=Path('C:/Users/Henry/.codex/fixture-private')
-CONTROL=PRIVATE/'post-v27-business-closure01'
-PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v27-business-closure01'
+CONTROL=PRIVATE/'post-v27-business-closure02'
+PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v27-business-closure02'
 HISTORY=Path('C:/Users/Henry/.codex/worktrees/d1-c17/data-product-platform/docs/acceptance/evidence/issue307-d1/delete-confirmed-v27-execution01/window01')
 OLD=PRIVATE/'remaining-candidate17'
 PACKET=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate17'
@@ -43,11 +43,20 @@ def targets():
     rows=load(ROOT/'docs/acceptance/evidence/issue307-d1/host-path-repair01/core-audit01/actual-v27-targets.json')
     return [dict(Case=name,**{k:row[k] for k in ('Plan','Copy','Dispatch','Attempt','Approval','PlanHash')}) for name,row in zip(('P2','T1','T2'),rows)]
 
+def inspect_many(ids):
+    # Fixed full CIDs are 65 argv bytes each; bounded batches stay below the
+    # Windows CreateProcess limit. Validate the complete union after every read.
+    need(len(ids)==len(set(ids)) and all(len(cid)==64 and all(c in '0123456789abcdef' for c in cid) for cid in ids),'invalid owner set')
+    result=[]
+    for start in range(0,len(ids),64):result.extend(json.loads(docker('inspect',*ids[start:start+64])))
+    need(len(result)==len(ids) and {x['Id'] for x in result}==set(ids),'physical owner lookup substituted')
+    return result
+
 def retained(active_core=None):
     history=load(HISTORY/'postfailure-closed-readback.json')
     ids=[x['cid'] for x in history['physical_owners']]
     need(len(ids)==len(set(ids))==540,'retained owner membership differs')
-    actual=json.loads(docker('inspect',*ids));need({x['Id'] for x in actual}==set(ids),'physical owner lookup substituted')
+    actual=inspect_many(ids)
     descriptors={}
     budgets={}
     for x in actual:
@@ -218,7 +227,7 @@ def run(review,review_sha):
         # The expensive budget/backup check is performed before IAM; physical
         # signing is refreshed after it. No selected/retired sender was started.
         ids=[x['cid'] for x in load(HISTORY/'postfailure-closed-readback.json')['physical_owners']]
-        state=json.loads(docker('inspect',*ids));need(all(closed(x) or x['Id']==g['Core'] for x in state),'retained sender/source active')
+        state=inspect_many(ids);need(all(closed(x) or x['Id']==g['Core'] for x in state),'retained sender/source active')
         need(now()-dt.datetime.fromisoformat(iam['finished_at'])<=dt.timedelta(seconds=45),'fresh IAM evidence expired')
         at=now();bundle=dict(manifest_sha256=sha(CONTROL/'manifest.json'),at=at.isoformat(),IAM=iam,physically_checked_owners=540,execution_owners=manifest['execution_owners'],Core_before_sha256=sha(PUBLIC/'Core-before.json'))
         write(PUBLIC/'trusted-evidence.json',bundle)
