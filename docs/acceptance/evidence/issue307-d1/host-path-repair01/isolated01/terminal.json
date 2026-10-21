@@ -1,0 +1,13 @@
+{
+  "status": "FAILED_OR_UNCONFIRMED_RETAINED",
+  "failure": "RuntimeError: isolated command failed; original diagnostics retained",
+  "execution": "54ad81c4-5a56-423b-819b-af0a5e85fc20",
+  "test_context_only": true,
+  "source_resources_started": 0,
+  "real_delete": 0,
+  "full_source_native_preflight": "NOT_RUN",
+  "facts": [],
+  "closure": [],
+  "retained_volumes": [],
+  "retained_networks": []
+}

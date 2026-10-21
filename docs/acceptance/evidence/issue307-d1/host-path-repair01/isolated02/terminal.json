@@ -1,0 +1,94 @@
+{
+  "status": "FAILED_OR_UNCONFIRMED_RETAINED",
+  "failure": "RuntimeError: isolated command failed; original diagnostics retained",
+  "execution": "a2c3a7e2-7c35-4dd8-8447-e583123ee864",
+  "test_context_only": true,
+  "source_resources_started": 0,
+  "real_delete": 0,
+  "full_source_native_preflight": "NOT_RUN",
+  "facts": [],
+  "closure": [
+    {
+      "cid": "82c21091af78f135e797920d3f5848af5501e1d292ad57c47b9199679e5c0d92",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "9adcc6f9a160f6e27aa29ef5c9d526794652b8c6663d6da48ae0cc22c2618cb4",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "85ad09bd73670f370437172a180ff7d09fd2e7849e7ed8db2fb31120bb73f0e1",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "9303defbd1f2662b460622c7ef97328f36a86328c96654158f9d1a492fc57b4b",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "f1396dc981a13a035dcef5addc05ddd6a70745e6bb5ff545a06632b6437ad63d",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "5a1899c9a031d4016c39d38112bf77e67ec6d4d45bb51ed2d068d96cfdeebdb1",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "5949c5002a19f257ccd14c1cea63a3bff6326e9abe107fed6d70cd6bb14892d3",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "78973657c50c1dd81d331f6b35082991c784c8d42ad75ffe95b486ff5bdba17c",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "d8aef57029cb1008d444d9b2a46e73e8f410a6db9e6c4955b7a37e3fe9895760",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "10e25e592ac754ffeae4ed1444ea95f182805306dbe3e3b2fb4d8a15e833beb1",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "dbd59bd77672a176129c556a150fe5d0486f812a21f9bbcc23d3a233e2d35fb0",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "a879b4feec74e53dc369836b394f9ab2dfb965798bbb639fb4acf05d10903b79",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    }
+  ],
+  "retained_volumes": [
+    "dpp307-path-business-races-pg",
+    "dpp307-path-business-races-native",
+    "dpp-lifecycle307-808a6960-host-path-rehearsal01-budget",
+    "dpp307-path-late-hold-pg"
+  ],
+  "retained_networks": [
+    "8d470c74058eaaf0f66d6f2459e176ca62c1305136a91bba6c00c08566341317",
+    "c027c6591ecec078f7fb668fcf4e9c0797c056a264f57e4c2bb823385cb52073"
+  ]
+}

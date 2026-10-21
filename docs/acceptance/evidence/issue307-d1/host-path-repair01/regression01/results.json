@@ -1,0 +1,21 @@
+[
+  {
+    "name": "python-normal",
+    "argv": [
+      "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "unittest",
+      "test_attest_remaining_executable",
+      "test_verify_six_native",
+      "test_p1_post_v22_readonly",
+      "test_old_business_dispatch_closure",
+      "test_v27_dispatch_closure",
+      "-q"
+    ],
+    "exit": 1,
+    "stdout_sha256": "3687351517cd40f606567f16cda408b8668ef48cf15dd8ec82b75152f29ca580",
+    "stderr_sha256": "1c8d3150478b8fef82d440fd3d3242fc134267b5e70d18c910a88d4d97b97548"
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "audit_id": "37d481bb-4cc1-40da-97ee-e42412509760",
+  "budgets_refunded": 0,
+  "cases": [
+    {
+      "NOT_SENT": {
+        "ID": "13c0a0f4-4559-4be1-bf93-fadd1d40dddc",
+        "Replayed": true,
+        "PreservationUnconfirmed": false
+      },
+      "attempt": "ba5bec6b-84ec-4418-a63f-4b08601ccb76",
+      "case": "P2",
+      "old_approval_already_revoked": true
+    },
+    {
+      "NOT_SENT": {
+        "ID": "26ad3dd7-9dcc-48c0-9a81-e72597a9cd92",
+        "Replayed": true,
+        "PreservationUnconfirmed": false
+      },
+      "attempt": "c1f32764-d3d3-4752-ba48-fc88373c0210",
+      "case": "T1",
+      "old_approval_already_revoked": true
+    },
+    {
+      "NOT_SENT": {
+        "ID": "d0a4267d-35bb-4262-bb48-7e23dcf0b55c",
+        "Replayed": true,
+        "PreservationUnconfirmed": false
+      },
+      "attempt": "3c731704-cc91-4717-95fc-828ced05b46c",
+      "case": "T2",
+      "old_approval_already_revoked": true
+    }
+  ],
+  "completed": true,
+  "native_delete": 0,
+  "pins_released": 0
+}

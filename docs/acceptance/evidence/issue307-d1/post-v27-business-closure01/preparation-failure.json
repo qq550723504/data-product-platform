@@ -1,0 +1,13 @@
+{
+  "status": "BLOCKED_PREPARATION_NO_RESOURCE_ALLOCATION",
+  "error_type": "FileNotFoundError",
+  "windows_error": 206,
+  "observed_error": "文件名或扩展名太长。",
+  "phase": "retained 540 CID inspect before any create/start",
+  "source_started": 0,
+  "maintenance_owners_allocated": 0,
+  "native_delete": 0,
+  "original_tool_receipt": "e421ab",
+  "fix": "inspect_many batches of 64 with exact complete union and duplicate rejection",
+  "preserved_private_directory": "C:/Users/Henry/.codex/fixture-private/post-v27-business-closure01"
+}

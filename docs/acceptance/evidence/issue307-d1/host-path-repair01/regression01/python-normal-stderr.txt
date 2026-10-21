@@ -1,0 +1,18 @@
+======================================================================
+ERROR: test_active_proof_requires_sealed_gateway_budget_and_closed_owners (test_old_business_dispatch_closure.ClosureTests.test_active_proof_requires_sealed_gateway_budget_and_closed_owners)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-path\data-product-platform\examples\lifecycle-d1\test_old_business_dispatch_closure.py", line 234, in test_active_proof_requires_sealed_gateway_budget_and_closed_owners
+    self.assertEqual(m.active_old_state(manifest)['old_owners_stopped'],1)
+                     ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-path\data-product-platform\examples\lifecycle-d1\close-old-business-dispatches.py", line 276, in active_old_state
+    and sha(hostpath(mounted['Source'])) == source['SealedGatewaySHA256'], 'old gateway is not physically sealed')
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-path\data-product-platform\examples\lifecycle-d1\docker_host_paths.py", line 21, in hostpath
+    raise ValueError('Docker mount source must be absolute on this host')
+ValueError: Docker mount source must be absolute on this host
+
+----------------------------------------------------------------------
+Ran 37 tests in 4.033s
+
+FAILED (errors=1)

@@ -1,0 +1,140 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_V27_CLOSURE_MANIFEST_REVIEW",
+  "reviewer_task": "/root/d1_remaining_independent_review",
+  "reviewed_at": "2026-10-21T07:14:43.558022+00:00",
+  "manifest_sha256": "de5fb2434bdcaefec25541ab18f3680a3f5ae5d7a55d90cab88b52bd32b89de5",
+  "source_head": "b37d06760352d1402369fc2ad71c08402b5c4ec4",
+  "remaining_blockers": [],
+  "actual_prepared_owner_inspect_sha256": "b688864d248e5648134e0ba0c2f1bf7760ce645e549068aa15924977cf6b326e",
+  "observer_binary_sha256": "547fc639550ed881f5015dc9b2ca4b5ffe824e11f040f682d545d4c2e4577be4",
+  "resolved_blockers": [
+    {
+      "id": "B1_IAM_COMPLETE_REQUEST_AND_ABSENCE_CONTRACT",
+      "resolution": "Complete 27-request contract and expected SDK XMinioAdminNoSuchUser are retained; actual maintenance02 reached the fresh IAM gate. Maintenance03 still requires a new fresh readback."
+    },
+    {
+      "id": "B2_ACTUAL_SCHEMA_SQL_42703",
+      "root_cause": "Modeled TEMP tables invented observation.dispatch_id/copy_id, hiding SQL incompatible with the actual schema. Prior modeled PASS did not prove production SQL compatibility.",
+      "resolution": "Verifier now follows observation.attempt_id/workspace_id -> provider_attempt.dispatch_id/copy_id and workspace-scoped release, consistent with migration000060. No schema column or compatibility shim was added. Real public-schema restored test and the complete observer/Commands/replay use the same accepted observer binary."
+    },
+    {
+      "id": "B3_PARTIAL_BASELINE_FACT_COUNTS",
+      "resolution": "Maintenance02 committed one P2 approval revocation before SQL failure. Maintenance03 pins that exact partial fingerprint/rows and expects only 2 additional revocations, 3 observations/releases, 5 idempotency facts and 8 events/audit/evidence/outbox facts."
+    }
+  ],
+  "actual_schema_evidence": {
+    "terminal_sha256": "7ae09be1c17ac7f1946c34926678679dc2324e56618eece90ca8b7f502ebf83e",
+    "status": "PASS_ACTUAL_RESTORED_SCHEMA_COMMAND_AND_REPLAY",
+    "canonical_schema_and_modeled_log_sha256": "62c17481a788962c90ab381642d4db4bb97a05010bc105f83c26478b08a74096",
+    "first_command_sha256": "9c2ddde61b9bd4581e82ad1312cda777915ff64ec0923228e17fe13fc8fe32a4",
+    "first_command_delta_sha256": "59015e65a3db3cb4418ad8f76b9f2c6ed3899f2755a72adc30ad00b9787c3c1c",
+    "same_key_replay_sha256": "d69b9001620845b198c0a51f9248a420031451932c8a11ffb43e0f88263bbd0e",
+    "same_key_replay_delta_sha256": "59015e65a3db3cb4418ad8f76b9f2c6ed3899f2755a72adc30ad00b9787c3c1c",
+    "actual_source_dump_hash_and_observer_binary_checked": true,
+    "TestPostV27RestoredCorePublicSchema_has_no_TEMP_or_invented_column": true,
+    "restored_complete_Command_and_same_key_replay": true,
+    "target_old_rows_independently_compared_as_multisets": true,
+    "each_new_NOT_SENT_has_exact_attempt_and_linked_release": true,
+    "all_three_replay_IDs_stable_and_Replayed_true": true,
+    "replay_did_not_increase_fact_counts": true,
+    "four_isolated_owner_closure_receipts_stopped_PID0": true,
+    "test_oracle_is_not_host_authority": true
+  },
+  "partial_baseline": {
+    "previous_terminal_sha256": "79ac5ce594abc3757df840de524ccf092e3ac5f799b8f94204f9131a6dfb47bb",
+    "previous_terminal_status": "FAILED_OR_UNCONFIRMED_KEEP_ALL_FACTS_NO_REPLAY",
+    "fingerprint_sha256": "9a320170f3e583725239b86645e4dc976ffe635cd630200fbb5a7765148bba1f",
+    "rows_sha256": "3603f0224a34d81efc67b7faeb052efb59b46767914903d120d79a30b8399214",
+    "revoked": {
+      "P2": true,
+      "T1": false,
+      "T2": false
+    },
+    "runtime_requires_exact_partial_fingerprint_before_any_new_Command": true,
+    "expected_new_row_counts": {
+      "lifecycle_approval_revocation": 2,
+      "lifecycle_provider_observation": 3,
+      "lifecycle_dispatch_release": 3,
+      "command_idempotency": 5,
+      "audit_event": 8,
+      "evidence": 8,
+      "evidence_relation": 8,
+      "outbox_event": 8
+    }
+  },
+  "manifest_and_owner_checks": {
+    "public_private_manifest_original_bytes_equal": true,
+    "source_file_hashes_verified": 734,
+    "immutable_input_hashes_verified": 22,
+    "retained_private_file_hashes_verified": 531,
+    "previous_maintenance_private_file_hashes_verified": 91,
+    "retained_full_CID_descriptor_membership": 540,
+    "retained_budget_hash_anchors": 18,
+    "exact_failed_execution_owner_bindings": 36,
+    "new_prepared_maintenance_actual_owner_inspect_contracts_verified": 3,
+    "all_new_owners_stopped_PID0_noports_norestart": true,
+    "exact_image_argv_network_namespace_bind_mounts_user_caps_tmpfs_verified": true,
+    "observer_config_enabled": false,
+    "observer_proof_present": false,
+    "output_directories_empty": true,
+    "observer_binary_equals_actual_schema_accepted_binary": true,
+    "prior_maintenance02_owners_and_disabled_config_required_by_runtime": true
+  },
+  "fixed_scope": {
+    "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+    "candidate_sha256": "20d08f0a2d334e779b64f0c082515131c285d9fd005c6fbaa94294b147f38d42",
+    "bindings_sha256": "77ce0be4d5dccd95a276a5b4c3f060689bea870f4f3caef1a827ef81154efa24",
+    "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+    "audit_id": "ed74f10f-85e2-4332-913c-2c8973ad6d25",
+    "targets": [
+      {
+        "Case": "P2",
+        "Plan": "bce1b1b1-d6e2-44fd-8b87-171142350ab9",
+        "Copy": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+        "Dispatch": "5e06d692-648a-4f8c-a13e-8bf1b1452c7b",
+        "Attempt": "ba5bec6b-84ec-4418-a63f-4b08601ccb76",
+        "Approval": "da615e44-5c9a-4c46-8614-a0a0012c444b",
+        "PlanHash": "d4758d9b64003d92aca60290fee1d2f22e7a857d2fe2be513d4a1ea2755ce6a3"
+      },
+      {
+        "Case": "T1",
+        "Plan": "247a2ca9-d2f3-4384-bcee-b10add497175",
+        "Copy": "f48755f1-976b-4f47-98da-70ead936a4c3",
+        "Dispatch": "e6067cd3-0fdf-4952-b18d-12f9913534df",
+        "Attempt": "c1f32764-d3d3-4752-ba48-fc88373c0210",
+        "Approval": "ffef8470-5b80-48fb-ae7b-821e17f36266",
+        "PlanHash": "7c4daf909a375bc21fcf8dd09b14d99960ae1f919ce138eb517ac0593faf1c1c"
+      },
+      {
+        "Case": "T2",
+        "Plan": "531c7b96-173f-4028-be97-2de9ed6c72f2",
+        "Copy": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+        "Dispatch": "b7f4e168-f8e8-42d4-bea7-1da6a8ec0de5",
+        "Attempt": "3c731704-cc91-4717-95fc-828ced05b46c",
+        "Approval": "1cabd635-f9ef-4b64-93c0-24cae172fccc",
+        "PlanHash": "84fbafb913dba44e5ceb43d670203e55f0244fad62a2dc2fd9ebb10b87e0cab5"
+      }
+    ],
+    "maintenance_owner_CIDs": {
+      "observer": "eb46634e70f66907e2378c92983de2fcbcc330235655f743aba20201995f0f33",
+      "check-disabled": "41a6c9ca6076ec6cddf83b657fbf1c9a8c4a0ed847aa0aa83b3528b1b48cb6dc",
+      "disable-all": "262dd338fc2f6990b4590e9f13dd604f37bd607968cea897d102cfea8fcea56b"
+    },
+    "allowed_operation": "Only existing RevokeDispositionApproval and RecordProviderObservation Commands append trusted NOT_SENT/release for failed-v27 P2/T1/T2. No candidate, sender, deletion request, pin release, budget refund or merge.",
+    "native_delete": 0,
+    "pins_released": 0,
+    "budgets_refunded": 0
+  },
+  "history_and_limits": {
+    "old_preparations_and_failed_terminals_preserved": true,
+    "prior_manifest_reviews_do_not_mean_actual_execution_success": true,
+    "prior_modeled69_PASS_is_not_actual_schema_acceptance": true,
+    "reviewer_did_not_run_Docker_DB_provider_or_tests": true,
+    "retained_budget_and_CID_values_are_snapshot_anchors_not_reviewer_live_rechecks": true,
+    "runtime_fresh_source_input_owner_IAM_and_proof_gates_still_required": true,
+    "actual_maintenance03_Core_closure_at_review": "NOT_RUN",
+    "source_full_native_preflight": "NOT_RUN",
+    "no_new_candidate_or_delete_window_or_delete_authority": true,
+    "only_file_written_for_this_manifest03_review": "independent-manifest-review.json"
+  }
+}
