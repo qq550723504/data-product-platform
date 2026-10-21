@@ -1,0 +1,122 @@
+[
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_complete_remaining_preflight.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_complete_remaining_preflight.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_p1_post_v22_readonly.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_p1_post_v22_readonly.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_old_business_dispatch_closure.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_old_business_dispatch_closure.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_post_v22_seventeen.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_post_v22_seventeen.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_remaining_sequence.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_remaining_sequence.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_remaining_six_window.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_remaining_six_window.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_six_candidate_runtime.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_six_candidate_runtime.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_freeze_six_candidate.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_freeze_six_candidate.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_window_six_support.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_window_six_support.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_verify_six_native.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_verify_six_native.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_evidence_indexes.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_evidence_indexes.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_six_native_entry.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_six_native_entry.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_retained_v26.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_retained_v26.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_attest_remaining_executable.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_attest_remaining_executable.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -B examples/lifecycle-d1/test_v27_dispatch_closure.py",
+    "exit": 0
+  },
+  {
+    "command": "python3 -O -B examples/lifecycle-d1/test_v27_dispatch_closure.py",
+    "exit": 0
+  }
+]
