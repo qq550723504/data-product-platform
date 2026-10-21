@@ -56,11 +56,15 @@ type PostV22NoSendVerifier struct {
 }
 
 func (v PostV22NoSendVerifier) Validate(at time.Time, ref string) (ClosedOldBusinessDispatches, error) {
+	return validateClosedBusinessProof(v, at, ref, PostV22Execution, PostV22Candidate, PostV22Bindings, PostV22Core, "post-v22-closed:", PostV22BusinessDispatches())
+}
+
+func validateClosedBusinessProof(v PostV22NoSendVerifier, at time.Time, ref, execution, candidate, bindings, core, prefix string, targets []OldBusinessDispatch) (ClosedOldBusinessDispatches, error) {
 	var p ClosedOldBusinessDispatches
 	if len(v.PublicKey) != ed25519.PublicKeySize || len(v.Proof.Body) > 16384 || !ed25519.Verify(v.PublicKey, v.Proof.Body, v.Proof.Signature) || json.Unmarshal(v.Proof.Body, &p) != nil ||
-		v.AuditID == uuid.Nil || v.AuditID.String() == PostV22Execution || p.AuditID != v.AuditID || p.Nonce == uuid.Nil || ref != "post-v22-closed:"+p.Nonce.String() ||
-		p.Execution != PostV22Execution || p.CandidateSHA256 != PostV22Candidate || p.BindingsSHA256 != PostV22Bindings || p.Core != PostV22Core ||
-		!reflect.DeepEqual(p.Targets, PostV22BusinessDispatches()) || len(v.Owners) == 0 || !reflect.DeepEqual(p.Owners, v.Owners) || p.EvidenceSHA256 != v.EvidenceSHA256 ||
+		v.AuditID == uuid.Nil || v.AuditID.String() == execution || p.AuditID != v.AuditID || p.Nonce == uuid.Nil || ref != prefix+p.Nonce.String() ||
+		p.Execution != execution || p.CandidateSHA256 != candidate || p.BindingsSHA256 != bindings || p.Core != core ||
+		!reflect.DeepEqual(p.Targets, targets) || len(v.Owners) == 0 || !reflect.DeepEqual(p.Owners, v.Owners) || p.EvidenceSHA256 != v.EvidenceSHA256 ||
 		!p.StoppedPIDZero || !p.NoRestart || !p.ConfigDisabled || !p.DeleteIdentityDisabled || !p.GatewaySealed || p.At.IsZero() || at.Before(p.At) || at.Sub(p.At) > time.Minute {
 		return p, lc.ErrStorageContract
 	}

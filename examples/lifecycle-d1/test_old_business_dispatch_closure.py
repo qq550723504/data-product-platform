@@ -224,7 +224,7 @@ class ClosureTests(unittest.TestCase):
         manifest = {'source': {'Core': 'Core', 'Network': 'net'}, 'old_retained': old, 'old_execution_owners': {},'prior_failed_preparation':{}}
         def inspect(cid):
             if cid == 'Core': return {'State': {'Running': True}, 'Image': m.p1.PG, 'HostConfig': {'RestartPolicy': {'Name': 'no'}, 'PortBindings': {}}}
-            return {'State': {'Running': False}, 'Mounts': [{'Destination': '/etc/caddy/Caddyfile', 'Source': 'sealed', 'Type': 'bind', 'RW': False}]}
+            return {'State': {'Running': False}, 'Mounts': [{'Destination': '/etc/caddy/Caddyfile', 'Source': str(Path('sealed').resolve()), 'Type': 'bind', 'RW': False}]}
         with ExitStack() as stack:
             for target,name,value in [(m,'packet',lambda:(candidate,[])),(m,'inspect',inspect),(m,'closed',lambda x:not x['State']['Running']),
                     (m,'prior_preparation_closed',lambda:{}),

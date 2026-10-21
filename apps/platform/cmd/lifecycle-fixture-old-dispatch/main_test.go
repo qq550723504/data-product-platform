@@ -65,3 +65,31 @@ func TestOldDispatchObserverScopeAndPrincipalContainment(t *testing.T) {
 		t.Fatal("current identity binding drift admitted")
 	}
 }
+
+func TestOldDispatchV27CompositionIsFiniteAndObserveOnly(t *testing.T) {
+	at := time.Now().UTC()
+	c := observerConfig(at)
+	c.Purpose = v27Purpose
+	if err := validate(c, at); err != nil {
+		t.Fatal(err)
+	}
+	verifier, targets, prefix := composition(c, nil, pilot.SignedClosedReferenceExecutor{})
+	if _, ok := verifier.(pilot.PostV27NoSendVerifier); !ok || len(targets) != 3 || prefix != "post-v27-closed:" {
+		t.Fatal("wrong finite composition")
+	}
+	if targets[0].Attempt.String() != "ba5bec6b-84ec-4418-a63f-4b08601ccb76" {
+		t.Fatal("old execution selected")
+	}
+	for _, capability := range []string{lc.CapabilityDispatch, lc.CapabilityApproveDisposition, lc.CapabilityReleaseHold} {
+		if _, err := (authority{c}).resolve(c, c.WorkspaceID, capability, at); err == nil {
+			t.Fatal("expanded authority")
+		}
+	}
+	for _, change := range []func(*config){func(c *config) { c.Purpose = "ARBITRARY_CLOSURE" }, func(c *config) { c.AuditID = uuid.MustParse(pilot.PostV27Execution) }, func(c *config) { c.MaxProviderDeletes = 1 }} {
+		bad := c
+		change(&bad)
+		if validate(bad, at) == nil {
+			t.Fatal("expanded contract")
+		}
+	}
+}
