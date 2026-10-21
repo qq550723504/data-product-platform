@@ -77,6 +77,8 @@ jobs:
           python3 -O -B examples/lifecycle-d1/test_six_native_entry.py
           python3 -B examples/lifecycle-d1/test_retained_v26.py
           python3 -O -B examples/lifecycle-d1/test_retained_v26.py
+          python3 -B examples/lifecycle-d1/test_retained_v27.py
+          python3 -O -B examples/lifecycle-d1/test_retained_v27.py
           python3 -B examples/lifecycle-d1/test_attest_remaining_executable.py
           python3 -O -B examples/lifecycle-d1/test_attest_remaining_executable.py
           python3 -B examples/lifecycle-d1/test_v27_dispatch_closure.py

@@ -20,11 +20,13 @@ func TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable(t *testing.T) {
 		{"PUT", "/minio/admin/v3/set-user-status?accessKey=delete808a6960&status=enabled"},
 		{"PUT", "/minio/admin/v3/set-user-status?accessKey=iafc0e66c808a6960&status=enabled"},
 		{"PUT", "/minio/admin/v3/set-user-status?accessKey=dafc0e66c808a6960&status=enabled"},
+		{"PUT", "/minio/admin/v3/set-user-status?accessKey=i6f40bca9808a6960&status=enabled"},
+		{"PUT", "/minio/admin/v3/set-user-status?accessKey=d6f40bca9808a6960&status=enabled"},
 		{"PUT", "/minio/admin/v3/add-user"}, {"GET", "/dpp-lifecycle307-online/fixture/p1.csv?versionId=exact"},
 	} {
 		t.Run(tc.path, func(t *testing.T) {
 			req, _ := http.NewRequest(tc.method, "http://127.0.0.1:9000"+tc.path, nil)
-			if _, e := (transport{base: shouldNotCall{t}, users: map[string]string{"delete808a6960": "fixed", "iafc0e66c808a6960": "retained-inspect", "dafc0e66c808a6960": "retained-delete"}, enable: true, group: "business-races"}).RoundTrip(req); e == nil {
+			if _, e := (transport{base: shouldNotCall{t}, users: map[string]string{"delete808a6960": "fixed", "iafc0e66c808a6960": "retained-inspect", "dafc0e66c808a6960": "retained-delete", "i6f40bca9808a6960": "retired-inspect", "d6f40bca9808a6960": "retired-delete"}, enable: true, group: "business-races"}).RoundTrip(req); e == nil {
 				t.Fatal("forbidden request admitted")
 			}
 		})
@@ -40,6 +42,11 @@ func TestBootstrapSelectsOnlyCurrentExactIdentityAndDormantIsNeverEnabled(t *tes
 				want := user != "" && (user == inspector || (!inspectOnly && user == deletion))
 				if tr.selected(user) != want {
 					t.Fatal(group, inspectOnly, user)
+				}
+			}
+			for user := range pilot.RemainingRetainedIdentities(group) {
+				if tr.selected(user) {
+					t.Fatal("retired execution identity selected", group, inspectOnly, user)
 				}
 			}
 		}

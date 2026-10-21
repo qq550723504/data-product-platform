@@ -66,7 +66,7 @@ class FreezeSixTests(unittest.TestCase):
             self.assertEqual(c['Execution'],f.p.EXECUTION)
             self.assertEqual(text.count('删除目标 '),6);self.assertEqual(text.count('保留版本 '),11)
             self.assertNotIn('删除目标 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/p1.csv',text)
-            self.assertIn('全局至多六次',text);self.assertIn('2026-10-21 14:00–14:40',text)
+            self.assertIn('全局至多六次',text);self.assertIn('2026-10-21 22:00–22:40',text)
             self.assertEqual(calls,[allocation['offline_validator']])
             self.assertEqual(f.load(packet/'status.json')['human_confirmation'],'NOT_RECEIVED')
             self.assertEqual(f.p.window.validate_packet(packet,control)['cases'],6)

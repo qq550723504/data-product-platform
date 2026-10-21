@@ -238,3 +238,24 @@ examples/lifecycle-d1/verify-six-native.py -text whitespace=cr-at-eol
 examples/lifecycle-d1/refresh-post-v27-seventeen.py -text
 examples/lifecycle-d1/test_post_v27_seventeen_refresh.py -text
 examples/lifecycle-d1/test_verify_six_native.py -text whitespace=cr-at-eol
+
+# Exact current candidate18 host contracts and immutable evidence bytes.
+docs/acceptance/evidence/issue307-d1/candidate18-planning01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate18-source-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate18-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate18/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate18-readonly01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-candidate18-confirmation.md -text
+docs/acceptance/issue307-d1-v28-window-runbook.md -text
+docs/acceptance/issue307-d1-v28-preparation.md -text
+examples/lifecycle-d1/prepare-six-candidate.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/six_candidate_runtime.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/freeze-six-candidate.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/window_six_support.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/retained_v27.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_retained_v27.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_retained_v26.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_six_candidate_runtime.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_freeze_six_candidate.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_remaining_six_window.py -text whitespace=cr-at-eol

@@ -1,5 +1,6 @@
 """Six-case/six-recovery real file contract, no runtime/provider calls."""
 import copy
+import datetime as dt
 import hashlib
 import json
 from pathlib import Path
@@ -47,7 +48,10 @@ class SixWindow(unittest.TestCase):
             self.assertEqual(w.CASE_MODES['business-races'],{'business':'remaining-resume-business'})
 
     def test_cross_fields_rehash_does_not_allow_stale_or_extended_window(self):
-        for field,value in (('Batch','old-execution'),('CandidateUseUntil','2026-10-21T06:41:00Z'),('Base','2026-10-21T06:39:00Z')):
+        end=w.instant(w.compiled()['NotAfter'])
+        extended=(end+dt.timedelta(minutes=1)).isoformat().replace('+00:00','Z')
+        shortened=(end-dt.timedelta(minutes=1)).isoformat().replace('+00:00','Z')
+        for field,value in (('Batch','old-execution'),('CandidateUseUntil',extended),('Base',shortened)):
             with self.subTest(field=field),tempfile.TemporaryDirectory() as folder:
                 packet,owner,c,rows=self.fixture(Path(folder));row=rows['cases'][0]
                 file=owner/row['group']/('case-'+row['stage'])/'remaining.json';cfg=json.loads(file.read_bytes())

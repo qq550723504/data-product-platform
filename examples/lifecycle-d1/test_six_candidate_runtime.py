@@ -259,7 +259,9 @@ class SixHostTests(unittest.TestCase):
             stack.enter_context(patch.object(r,'CONTROL',control));stack.enter_context(patch.object(r,'PUBLIC',public))
             state={'groups':[],'owners':[]};states={};calls=[];roles=[];baseline={'relations':[]}
             r.save(public/'recorded-Core.json',baseline)
-            stack.enter_context(patch.object(r.p.window,'policy_checkpoint',lambda:{'CoreSHA256':'f'*64 if stale_checkpoint else r.sha(public/'recorded-Core.json')}))
+            # Its old Core SHA is historical; live admission binds the separate
+            # accepted full post-closure Core checkpoint, not that old fact.
+            stack.enter_context(patch.object(r.p.window,'policy_checkpoint',lambda:{'CoreSHA256':'f'*64}))
             stack.enter_context(patch.object(r,'budget_completion',lambda a:None))
             for name in r.p.GROUPS:
                 folder=control/name;folder.mkdir();(folder/'checkpoint').mkdir()
@@ -272,7 +274,7 @@ class SixHostTests(unittest.TestCase):
                 state['owners'].extend(new)
                 for cid in new+list(g['source'].values()):states[cid]=False
             stack.enter_context(patch.object(r,'state',lambda:state));stack.enter_context(patch.object(r,'preparation_gate',lambda a:{'status':'RECORDED_COLD_GATE_ONLY'}))
-            stack.enter_context(patch.object(r,'baseline_core',lambda group:baseline))
+            stack.enter_context(patch.object(r,'baseline_core',lambda group:{'relations':['post-closure-drift']} if stale_checkpoint else baseline))
             stack.enter_context(patch.object(r.p.native,'fingerprints',lambda cid:baseline))
             stack.enter_context(patch.object(r.p.native,'wait_pg',lambda cid,user:None))
             stack.enter_context(patch.object(r.time,'sleep',lambda duration:None))

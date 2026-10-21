@@ -165,8 +165,13 @@ func TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory(t *test
 		if e != nil {
 			t.Fatal(e)
 		}
-		if len(expected.Users) != map[string]int{"business-races": 13, "late-hold": 8, "mixed": 8}[group] {
+		if len(expected.Users) != map[string]int{"business-races": 15, "late-hold": 10, "mixed": 10}[group] {
 			t.Fatal("new IAM expectation incomplete")
+		}
+		for user, policy := range pilot.RemainingRetainedIdentities(group) {
+			if expected.Users[user] != policy {
+				t.Fatal("retired identity absent from current read expectation", group, user)
+			}
 		}
 		after, _ := os.ReadFile(filepath.Join(baseline, "native-verification.json"))
 		if string(after) != string(original) {

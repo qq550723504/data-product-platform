@@ -1,4 +1,4 @@
-"""Fixed non-delete preparation primitives for candidate17.
+"""Fixed non-delete preparation primitives for candidate18.
 
 No send permission writer, authorization loader or S3 DELETE exists here.
 Allocation, budget initialization, native preparation and freeze are separate
@@ -413,7 +413,11 @@ def maintenance(g,role):
 
 
 def baseline_core(group):
-    return load(ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/Core-after.json' if group=='business-races' else p.p1.PACKET/group/'core-readonly.json')
+    import retained_v27
+    path,digest=retained_v27.CORE_BASELINES[group]
+    baseline=ROOT/'docs/acceptance/evidence/issue307-d1'/path
+    need(sha(baseline)==digest,'current post-closure Core checkpoint bytes drift')
+    return load(baseline)
 
 
 def start_pg(cid):
@@ -498,7 +502,9 @@ def run_non_delete():
             p.native.wait_pg(g['source']['Core'],'fixture');time.sleep(3)
             before=p.native.fingerprints(g['source']['Core']);save(target/'source-Core-before.json',before)
             need(before==baseline_core(group),'source Core drifted from independently accepted checkpoint')
-            if group=='business-races':need(sha(target/'source-Core-before.json')==p.window.policy_checkpoint()['CoreSHA256'],'source differs from actual current policy checkpoint')
+            # The policy checkpoint is the immutable v22 head/expiry fact.
+            # Later trusted NOT_SENT commands append Core audit facts without
+            # changing those heads. Their current full Core baseline is above.
             maintenance(g,'PROVISION')
             source_result=maintenance(g,'SOURCE')
             backup=folder/'checkpoint'
