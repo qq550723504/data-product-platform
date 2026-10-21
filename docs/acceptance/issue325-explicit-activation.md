@@ -99,7 +99,56 @@ blocks retry. Failure/interruption is UNKNOWN: preserve partial files, calls,
 costs, DB and resources. No down, restore, cleanup, seed, new provider attempt or
 automatic host restart. Runner commits per migration; loss after69/70 is not a
 fresh schema68 attempt. Exact-owner stop remains available, but never clears
-journals. UNKNOWN/owner-pin recovery is a separate follow-up.
+journals. Recovery outside the bounded checkpoint below remains a separate follow-up.
+
+## Bounded pre-native bootstrap recovery
+
+Goal: explicitly continue the same bootstrap attempt after the deployed #336
+controller failed after build/private admission and before any native action.
+The first UNKNOWN observation, failed.json, old plan, before-state and tools are
+retained. No generic reset, new bootstrap attempt or ordinary resume is admitted.
+
+`bootstrap-recovery-plan --admission <exact merged head/main-CI admission>` is
+read-only, including real verify/storage_check/PowerShell. It binds the UNKNOWN
+registry, original attempt/plan digest, exact journal/private members and hashes,
+original business/origin/config/five-version facts and current native identities.
+Only the known deployed #336 source is a recoverable predecessor. Its exact
+checkpoint contains before-state/plan, build and private-admission start/result,
+and a Refused UNKNOWN fact. Private files are the two old tools and the single
+private-mode input. Any host/Core/SQL/backup/migration marker, additional file,
+orphan recovery, changed source/input/native identity or later checkpoint refuses.
+Old source identity and original plan membership are revalidated; operator notes
+and absence of log text alone are not admission facts.
+
+`bootstrap-recover --plan <reviewed recovery plan> --plan-sha256 <digest>` is a
+separately authorized command under the existing operator lock. It re-derives
+the plan before allocating exclusive `recoveries/<id>` children in the same
+attempt's public/private journals. It builds fresh tools there, proves current
+private ACLs, and rechecks source/native/input hashes. It then uses the same
+bootstrap executor: stop exact old hosts, start only original Core, admit schema68
+and five versions, persist pg_dump/inventory before canonical69/70/71, verify
+logical preservation/five versions, stop Core. An append-only resolution links
+the first failure, old plan, recovery plan and accepted bootstrap plan. The
+registry status is a projection; old UNKNOWN facts are never overwritten.
+
+The original attemptId/planSha256/receipts stay identifiable. Custody binds the
+accepted manifest's bootstrap-plan digest, including its newly admitted source;
+it never guesses from the old attempt projection. Completed recovery replay
+only verifies bindings/files/native metadata. Recovery interruption or allocation
+orphan stays UNKNOWN and blocks another recovery; no automatic adoption/retry.
+
+Reuse: existing lock, durable exclusive journals/fingerprints, private ACL helper,
+native verifier, source/main-CI gate, canonical migration/backup/inventory and
+bootstrap executor. Ansible is a general orchestration alternative but cannot
+attest this frozen attempt's business bindings; another control plane is unnecessary.
+No schema/Core/IAM/provider SDK, queue or recovery runtime is added.
+
+Merge contract: only this pre-native checkpoint and same-attempt continuation;
+all later-stage, custody, ownership-pin and post-migration recovery is out of
+scope. Tests must cover real read-only storage verification, stale/mismatched
+inputs, every action marker/extra member, private/source/native rechecks before
+effects, same-attempt append-only resolution, interrupted recovery and replay.
+This source change does not deploy or recover the retained original environment.
 
 Completed stage replay only verifies accepted bindings/artifacts, without SQL,
 provider, migration, credential or host effects. The executable CLI may acquire

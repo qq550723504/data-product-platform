@@ -225,7 +225,7 @@ def plan(s, stage, *, facts=None, admission=None, profile=None):
             r.need(scope["workspaceId"] == s["workspaceId"] and scope["actorId"] == s["actorId"] and scope["runId"] == s["runId"]
                    and scope["principalRef"] == cfg["Profile"]["Subject"] == "trial-operator-" + s["runId"]
                    and scope["endpoint"] == cfg["Profile"]["StorageEndpoint"] and scope["providerWitness"] == witness
-                   and scope["planSha256"] == s["bootstrap"]["planSha256"]
+                   and scope["planSha256"] == r.digest(encoded(before["plan"]))
                    and p["credentialFile"] == str(Path(s["private"]) / "config.json")
                    and file(p["credentialFile"])["sha256"] == p["credentialFileSha256"], "Custody profile/native binding drift")
             _, derived = version_facts(s, r.read(before["plan"]["facts"]["path"]))
@@ -278,8 +278,35 @@ def inspect(s, directory, expected, *, schema=71, custody=None):
                            schemaVersions=[n for n in expected["migrationVersions"] if n <= schema], **(custody or {})))
 
 
-def execute(s, expected):
+def bootstrap_work(s, expected, directory, receipts, files):
+    """One shared native/SQL path for initial and explicitly recovered bootstrap."""
     from activation import preserve, tool
+    for role, owner in reversed(list(s["processes"].items())):
+        action(receipts, "stop-host-" + role, lambda owner=owner: r.process_identity(owner["pid"], terminate=True, expected=owner, allow_missing=True))
+    for owner in s["processes"].values():
+        r.wait_for(lambda owner=owner: r.process_identity(owner["pid"], expected=owner, allow_missing=True) is None, "exact host exit")
+    action(receipts, "start-core", lambda: owned(s, "core", "start"))
+    r.wait_for(lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_isready", "-U", "postgres"), "Core")
+    put(receipts / "before-admission.json", inspect(s, directory, expected, schema=68))
+    backup = action(receipts, "backup", lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_dump", "-U", "postgres", "-d", "dpp_trial_core", timeout=180))
+    backup_path = directory / "before.sql"
+    with backup_path.open("xb") as f: f.write(backup); f.flush(); os.fsync(f.fileno())
+    files.append(file(backup_path))
+    inventory = json.loads(tool(s, directory, "trial-activate", "snapshot"))
+    baseline = directory / "before-inventory.json"; put(baseline, inventory); files.append(file(baseline))
+    action(receipts, "migration", lambda: migrate(s, directory, expected["migrations"]))
+    preserve(inventory, json.loads(tool(s, directory, "trial-activate", "snapshot", baseline=str(baseline))))
+    return inspect(s, directory, expected)
+
+
+def stop_core(s, receipts, proof, files):
+    put(receipts / "core-admission.json", proof); files.append(file(receipts / "core-admission.json"))
+    action(receipts, "stop-core", lambda: owned(s, "core", "stop"))
+    native(s)
+
+
+def execute(s, expected):
+    from activation import tool
     stage = expected["stage"]; attempt = uuid.uuid4().hex
     directory = Path(s["private"]) / (stage + "-attempts") / attempt
     receipts = r.STATE / (stage + "-attempts") / attempt
@@ -300,25 +327,11 @@ def execute(s, expected):
             r.need(file(source["path"]) == source, "Reviewed ledger input changed during build")
         files = list(tools.values()) + inputs + [file(receipts / "before-state.json"), file(receipts / "plan.json")]
         if stage == "bootstrap":
-            for role, owner in reversed(list(s["processes"].items())):
-                action(receipts, "stop-host-" + role, lambda owner=owner: r.process_identity(owner["pid"], terminate=True, expected=owner, allow_missing=True))
-            for owner in s["processes"].values():
-                r.wait_for(lambda owner=owner: r.process_identity(owner["pid"], expected=owner, allow_missing=True) is None, "exact host exit")
-        action(receipts, "start-core", lambda: owned(s, "core", "start"))
-        r.wait_for(lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_isready", "-U", "postgres"), "Core")
-        proof = inspect(s, directory, expected, schema=68 if stage == "bootstrap" else 71)
-        put(receipts / "before-admission.json", proof)
-        if stage == "bootstrap":
-            backup = action(receipts, "backup", lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_dump", "-U", "postgres", "-d", "dpp_trial_core", timeout=180))
-            backup_path = directory / "before.sql"
-            with backup_path.open("xb") as f: f.write(backup); f.flush(); os.fsync(f.fileno())
-            files.append(file(backup_path))
-            inventory = json.loads(tool(s, directory, "trial-activate", "snapshot"))
-            baseline = directory / "before-inventory.json"; put(baseline, inventory); files.append(file(baseline))
-            action(receipts, "migration", lambda: migrate(s, directory, expected["migrations"]))
-            preserve(inventory, json.loads(tool(s, directory, "trial-activate", "snapshot", baseline=str(baseline))))
-            proof = inspect(s, directory, expected)
+            proof = bootstrap_work(s, expected, directory, receipts, files)
         else:
+            action(receipts, "start-core", lambda: owned(s, "core", "start"))
+            r.wait_for(lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_isready", "-U", "postgres"), "Core")
+            put(receipts / "before-admission.json", inspect(s, directory, expected, schema=71))
             for role in ("objects", "gateway"): action(receipts, "start-" + role, lambda role=role: owned(s, role, "start"))
             # Deliberately no generic wait_containers, health GET, HEAD or STS.
             cfg = r.read(Path(s["private"]) / "config.json")
@@ -332,9 +345,7 @@ def execute(s, expected):
             proof = inspect(s, directory, expected, custody={"custodyId": result["acquisitionId"], "custodyPlan": p["plan"], "manifestSha256": manifest["sha256"]})
             files += [expected["profile"], manifest] + [file(x["file"]) for x in r.read(manifest["path"])]
             for role in ("gateway", "objects"): action(receipts, "stop-" + role, lambda role=role: owned(s, role, "stop"))
-        put(receipts / "core-admission.json", proof); files.append(file(receipts / "core-admission.json"))
-        action(receipts, "stop-core", lambda: owned(s, "core", "stop"))
-        native(s)
+        stop_core(s, receipts, proof, files)
         manifest = {"contract": CONTRACT, "stage": stage, "status": "PASS", **{k: s[k] for k in ("runId", "workspaceId", "actorId", "root")},
                     "previousBusinessBinding": copy.deepcopy(s["businessBinding"]), "origin": copy.deepcopy(s["originSnapshot"]),
                     "target": expected["target"], "plan": expected, "files": files, "coreAdmission": proof}

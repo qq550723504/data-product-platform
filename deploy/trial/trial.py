@@ -11,11 +11,12 @@ from activation import plan, activate, encoded
 from resume import write_once
 from runtime import digest
 import bootstrap as b
+import recovery as recovery
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart", "upgrade", "bootstrap-plan", "bootstrap", "custody-plan", "custody", "activation-plan", "activate"))
+    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart", "upgrade", "bootstrap-plan", "bootstrap", "bootstrap-recovery-plan", "bootstrap-recover", "custody-plan", "custody", "activation-plan", "activate"))
     parser.add_argument("--facts")
     parser.add_argument("--custody")
     parser.add_argument("--output")
@@ -24,10 +25,13 @@ def main():
     parser.add_argument("--admission")
     parser.add_argument("--profile")
     args = parser.parse_args()  # Reject reset/cleanup/fault actions before any IO.
-    if args.command in ("bootstrap-plan", "custody-plan"):
+    if args.command == "bootstrap-recovery-plan":
+        if not args.admission or any((args.facts, args.custody, args.plan, args.plan_sha256, args.profile)):
+            parser.error("bootstrap-recovery-plan requires only --admission and optional --output")
+    elif args.command in ("bootstrap-plan", "custody-plan"):
         if not args.admission or args.custody or args.plan or args.plan_sha256 or (args.command == "bootstrap-plan" and (not args.facts or args.profile)) or (args.command == "custody-plan" and (not args.profile or args.facts)):
             parser.error("bootstrap-plan requires --facts/--admission; custody-plan requires --profile/--admission; optional --output")
-    elif args.command in ("bootstrap", "custody"):
+    elif args.command in ("bootstrap", "custody", "bootstrap-recover"):
         if not args.plan or not args.plan_sha256 or any((args.facts, args.custody, args.output, args.admission, args.profile)):
             parser.error("stage execution requires only --plan and --plan-sha256")
     elif args.admission or args.profile:
@@ -49,7 +53,12 @@ def main():
             else:
                 if not (STATE / "state.json").exists(): raise Refused("No trial registry in this worktree; run preflight/start")
                 s = read(STATE / "state.json")
-                if args.command in ("bootstrap-plan", "custody-plan"):
+                if args.command == "bootstrap-recovery-plan":
+                    result = recovery.plan(s, args.admission)
+                    if args.output: write_once(args.output, result)
+                    result = {"plan": result, "planSha256": digest(encoded(result))}
+                elif args.command == "bootstrap-recover": result = recovery.run(s, args.plan, args.plan_sha256)
+                elif args.command in ("bootstrap-plan", "custody-plan"):
                     result = b.plan(s, args.command.removesuffix("-plan"), facts=args.facts, admission=args.admission, profile=args.profile)
                     if args.output: write_once(args.output, result)
                     result = {"plan": result, "planSha256": digest(encoded(result))}
