@@ -221,3 +221,13 @@ docs/acceptance/evidence/issue307-d1/candidate17-planning01/** -text whitespace=
 docs/acceptance/issue307-d1-candidate17-confirmation.md -text
 docs/acceptance/issue307-d1-v27-window-runbook.md -text
 docs/acceptance/issue307-d1-v27-preparation.md -text
+
+# Preserve captured bytes for the bounded host-path/non-delete closure slice.
+docs/acceptance/evidence/issue307-d1/host-path-repair01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v27-business-closure01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v27-business-closure02/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v27-business-closure03/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-host-path-convergence01.md -text
+examples/lifecycle-d1/attest-remaining-executable.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/reconcile-p1-post-v22.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_old_business_dispatch_closure.py -text whitespace=cr-at-eol
