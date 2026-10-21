@@ -88,15 +88,18 @@ type spec struct {
 }
 
 type plan struct {
-	Contract     string                          `json:"contract"`
-	Spec         spec                            `json:"spec"`
-	Principal    string                          `json:"principalRef"`
-	Resources    []uuid.UUID                     `json:"sourceResourceIds"`
-	Original     map[string]json.RawMessage      `json:"originalFacts"`
-	Files        map[string]string               `json:"sourceFiles"`
-	Profile      certdomain.CertificationProfile `json:"profile"`
-	ContractYAML string                          `json:"contractYAML"`
-	Commands     []string                        `json:"commands"`
+	Contract             string                               `json:"contract"`
+	Spec                 spec                                 `json:"spec"`
+	Principal            string                               `json:"principalRef"`
+	Resources            []uuid.UUID                          `json:"sourceResourceIds"`
+	Authorization        rightsapp.CreateAuthorizationCommand `json:"authorizationCommand"`
+	Declarations         []rightsdomain.RightsDeclarationSpec `json:"declarationSpecs"`
+	BindingAuthorityMode string                               `json:"bindingAuthorityMode"`
+	Original             map[string]json.RawMessage           `json:"originalFacts"`
+	Files                map[string]string                    `json:"sourceFiles"`
+	Profile              certdomain.CertificationProfile      `json:"profile"`
+	ContractYAML         string                               `json:"contractYAML"`
+	Commands             []string                             `json:"commands"`
 }
 
 type receipt struct {
@@ -282,8 +285,23 @@ func makePlan(ctx context.Context, pool *pgxpool.Pool, c config, r registry, s s
 		return certdomain.Applicability{Mode: certdomain.ApplicabilityExplicit, Values: []string{v}}
 	}
 	scopes := []certdomain.ScopeRef{}
+	p.Authorization = rightsapp.CreateAuthorizationCommand{
+		WorkspaceID: s.Workspace, Code: "TRIAL-EA-" + s.RunID, GrantorRef: "SYNTHETIC-TRIAL-" + s.RunID,
+		GranteeRef: s.Consumer, Purpose: s.Purpose, ValidFrom: &s.ValidFrom, ValidTo: &s.ValidTo, ActorID: &s.Actor,
+	}
+	p.BindingAuthorityMode = rightsdomain.AuthorityDirect
 	for _, id := range p.Resources {
 		scopes = append(scopes, certdomain.ScopeRef{Type: "ALL_RESOURCE", Ref: id.String()})
+		p.Authorization.Resources = append(p.Authorization.Resources, rightsdomain.ResourceGrantSpec{
+			DataResourceID: id, Actions: []string{"READ"}, ScopeType: "ALL_RESOURCE", ScopeRef: id.String(),
+		})
+		p.Declarations = append(p.Declarations, rightsdomain.RightsDeclarationSpec{
+			WorkspaceID: s.Workspace, DataResourceID: id, ClaimantRef: p.Authorization.GrantorRef,
+			BasisType: "SYNTHETIC_TRIAL", BasisRef: businessContract + ":" + s.RunID,
+			ConsumerScopeType: "EXPLICIT", ConsumerRef: s.Consumer, EffectiveFrom: &s.ValidFrom, EffectiveTo: &s.ValidTo,
+			Parties:     []rightsdomain.RightsParty{{PartyRef: p.Authorization.GrantorRef, Role: "RIGHTS_HOLDER"}},
+			Permissions: []rightsdomain.RightsPermission{{Kind: rightsdomain.PermissionGrant, Action: "READ", Purpose: s.Purpose, Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: id.String()}}}, ActorID: &s.Actor,
+		})
 	}
 	p.Profile = certdomain.CertificationProfile{ProfileRef: "park/trial-" + s.RunID + "/certified-v1", Code: "TRIAL-EA-" + s.RunID, Name: "Synthetic retained trial certification", Version: "1.0.0", Purpose: explicit(s.Purpose), Actions: explicit("READ"), Consumers: explicit(s.Consumer), Delivery: explicit("DIRECT_DATA"), RequiredCriticalRules: []string{"QA-COMPANY-ID-COMPLETE", "QA-ENERGY-NONNEGATIVE"}, QualityGateRequired: true, Rights: certdomain.RightsRequirement{Required: true, Purpose: explicit(s.Purpose), Actions: explicit("READ"), Consumers: explicit(s.Consumer), Scopes: certdomain.ScopeApplicability{Mode: certdomain.ApplicabilityExplicit, Values: scopes}}, ComplianceRequired: true, ContractRequired: true, ContractCode: "TRIAL-EA-" + s.RunID, TraceabilityRequired: true, EvidenceRequired: true}
 	if _, err = p.Profile.Snapshot(); err != nil {
@@ -379,12 +397,10 @@ func prepare(ctx context.Context, pool *pgxpool.Pool, p plan, afterStep func(str
 		}
 		rights := rightsapp.NewService(m, rightsinfra.NewPostgresRepository(pool))
 		actor := s.Actor
-		grants := []rightsdomain.ResourceGrantSpec{}
-		for _, id := range p.Resources {
-			grants = append(grants, rightsdomain.ResourceGrantSpec{DataResourceID: id, Actions: []string{"READ"}, ScopeType: "ALL_RESOURCE", ScopeRef: id.String()})
-		}
 		auth, err := e.step(ctx, "authorization", "AUTHORIZATION_CREATED", func(trace string) (uuid.UUID, error) {
-			v, err := rights.Create(ctx, rightsapp.CreateAuthorizationCommand{WorkspaceID: s.Workspace, Code: "TRIAL-EA-" + s.RunID, GrantorRef: "SYNTHETIC-TRIAL-" + s.RunID, GranteeRef: s.Consumer, Purpose: s.Purpose, ValidFrom: &s.ValidFrom, ValidTo: &s.ValidTo, Resources: grants, ActorID: &actor, TraceID: trace})
+			command := p.Authorization
+			command.TraceID = trace
+			v, err := rights.Create(ctx, command)
 			return v.ID, err
 		})
 		if err != nil {
@@ -404,11 +420,12 @@ func prepare(ctx context.Context, pool *pgxpool.Pool, p plan, afterStep func(str
 				return err
 			}
 		}
-		for _, resource := range p.Resources {
+		for _, declaration := range p.Declarations {
+			resource := declaration.DataResourceID
 			key := resource.String()
 			activity := uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("declaration-"+key)))
 			dec, err := e.step(ctx, "declaration-"+key, "RIGHTS_DECLARATION_CREATED", func(trace string) (uuid.UUID, error) {
-				v, err := rights.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{Spec: rightsdomain.RightsDeclarationSpec{WorkspaceID: s.Workspace, DataResourceID: resource, ClaimantRef: "SYNTHETIC-TRIAL-" + s.RunID, BasisType: "SYNTHETIC_TRIAL", BasisRef: businessContract + ":" + s.RunID, ConsumerScopeType: "EXPLICIT", ConsumerRef: s.Consumer, EffectiveFrom: &s.ValidFrom, EffectiveTo: &s.ValidTo, Parties: []rightsdomain.RightsParty{{PartyRef: "SYNTHETIC-TRIAL-" + s.RunID, Role: "RIGHTS_HOLDER"}}, Permissions: []rightsdomain.RightsPermission{{Kind: rightsdomain.PermissionGrant, Action: "READ", Purpose: s.Purpose, Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: key}}}, ActorID: &actor}, ActivityID: &activity, TraceID: trace})
+				v, err := rights.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{Spec: declaration, ActivityID: &activity, TraceID: trace})
 				return v.ID, err
 			})
 			if err != nil {
@@ -426,7 +443,7 @@ func prepare(ctx context.Context, pool *pgxpool.Pool, p plan, afterStep func(str
 			result.Objects["verification-"+key] = verification
 			activity = uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("binding-"+key)))
 			binding, err := e.step(ctx, "binding-"+key, "AUTHORIZATION_PROVENANCE_BOUND", func(trace string) (uuid.UUID, error) {
-				v, err := rights.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{WorkspaceID: s.Workspace, AuthorizationID: auth, DataResourceID: resource, DeclarationID: dec, GrantorRef: "SYNTHETIC-TRIAL-" + s.RunID, AuthorityMode: rightsdomain.AuthorityDirect, ActivityID: &activity, ActorID: &actor, TraceID: trace})
+				v, err := rights.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{WorkspaceID: s.Workspace, AuthorizationID: auth, DataResourceID: resource, DeclarationID: dec, GrantorRef: p.Authorization.GrantorRef, AuthorityMode: p.BindingAuthorityMode, ActivityID: &activity, ActorID: &actor, TraceID: trace})
 				return v.ID, err
 			})
 			if err != nil {

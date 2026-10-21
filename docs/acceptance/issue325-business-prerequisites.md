@@ -40,8 +40,11 @@ BindAuthorizationProvenance、Contract Create/Publish、Profile Create Commands 
 
 ## 幂等与中断
 
-每个 run 只有一份 preparation fingerprint。改变 spec、原事实、规则/合同内容或
-controller/tool 后，既有 key 冲突，拒绝自动重置或更新。prepare 在原 operator lock
+每个 run 只有一份 Core preparation fingerprint，覆盖 spec、原事实、规则/合同内容。
+外层 reviewed plan 另外绑定 controller/tool；UNKNOWN/PASS projection 保存后，改变
+这些输入同样拒绝，不自动重置或更新。首次 journal 已写、registry 尚未保存的窗口
+还没有调用 helper 或写入 Core；这类 orphan 仅保留观察，不冒充已提交的业务步骤。
+prepare 在原 operator lock
 内重新生成计划，再获取 Core session advisory lock。首个 Core 写入是既有
 command_idempotency 的 fingerprint claim；它不是第二套业务事实。
 

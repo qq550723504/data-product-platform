@@ -206,6 +206,14 @@ func TestBusinessPlanRealReadonlyAndAdmission(t *testing.T) {
 	if p.Profile.Rights.Scopes.Mode != "EXPLICIT" || !reflect.DeepEqual(p.Profile.Actions.Values, []string{"READ"}) {
 		t.Fatal("profile coverage widened")
 	}
+	if len(p.Declarations) != 3 || len(p.Authorization.Resources) != 3 || p.BindingAuthorityMode != rightsdomain.AuthorityDirect || p.Authorization.GrantorRef != "SYNTHETIC-TRIAL-"+s.RunID {
+		t.Fatal("plan omits reviewed command authority")
+	}
+	for _, declaration := range p.Declarations {
+		if declaration.ConsumerScopeType != "EXPLICIT" || len(declaration.Permissions) != 1 || declaration.Permissions[0].Kind != rightsdomain.PermissionGrant || declaration.Permissions[0].Action != "READ" || declaration.BasisType != "SYNTHETIC_TRIAL" {
+			t.Fatal("reviewed declaration permission widened")
+		}
+	}
 	// Round-trip exactly as Python sorted JSON output does: nested JSON keys
 	// must not make the reviewed Go fingerprint depend on serializer whitespace.
 	var generic any

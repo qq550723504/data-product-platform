@@ -1,18 +1,22 @@
 """Business composition contracts; no retained services or SQL are accessed."""
 from contextlib import ExitStack
 import copy
+import io
 import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch, Mock
 import uuid
+import sys
+from contextlib import redirect_stdout, redirect_stderr
 
 import business as business
 import runtime as r
 import bootstrap as b
 import resume as c
 import activation as a
+import trial
 
 
 class BusinessContracts(unittest.TestCase):
@@ -108,6 +112,50 @@ class BusinessContracts(unittest.TestCase):
         self.assertNotIn("POC_ENABLE_DATASET_ACTIONS", value["web"])
         self.assertTrue(c.controller_only("apps/platform/cmd/trial-business/main.go"))
         self.assertFalse(c.controller_only("apps/platform/internal/rights/application/service.go"))
+
+    def test_real_cli_plan_does_not_acquire_operator_lock_or_write_registry(self):
+        with tempfile.TemporaryDirectory() as d, ExitStack() as stack:
+            s, spec, admission, tool, helper = self.fixture(Path(d), stack)
+            state = Path(d) / "state"; state.mkdir(); c.write_once(state / "state.json", s)
+            before = (state / "state.json").read_bytes()
+            stack.enter_context(patch.object(trial, "STATE", state))
+            lock = stack.enter_context(patch.object(trial, "exclusive", side_effect=AssertionError("plan acquired lock")))
+            stack.enter_context(patch.object(sys, "argv", ["trial.py", "business-plan", "--profile", str(spec), "--admission", str(admission), "--tool", str(tool)]))
+            output = io.StringIO()
+            with redirect_stdout(output): self.assertEqual(trial.main(), 0)
+            self.assertEqual(json.loads(output.getvalue())["plan"]["contract"], business.CONTRACT)
+            self.assertEqual((state / "state.json").read_bytes(), before)
+            lock.assert_not_called()
+
+    def test_real_cli_rejects_tool_or_execution_options_before_io(self):
+        for arguments in (["business-plan", "--profile", "x"], ["status", "--tool", "x"],
+                          ["prepare-business", "--plan", "x", "--plan-sha256", "y", "--profile", "z"]):
+            with patch.object(sys, "argv", ["trial.py", *arguments]), patch.object(trial, "exclusive") as lock, redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as exit: trial.main()
+                self.assertEqual(exit.exception.code, 2); lock.assert_not_called()
+
+    def test_actual_host_environment_reads_only_successful_bound_configuration(self):
+        with tempfile.TemporaryDirectory() as d, ExitStack() as stack:
+            s, spec, admission, tool, helper = self.fixture(Path(d), stack)
+            stack.enter_context(patch.object(r, "save"))
+            reviewed = business.plan(s, spec, admission, tool); plan_file = Path(d) / "plan.json"; c.write_once(plan_file, reviewed)
+            private = Path(s["private"])
+            c.write_once(private / "config.json", {"DSN": "isolated-not-connected", "Profile": {"StorageEndpoint": "127.0.0.1:1"}})
+            (private / "token").write_text("isolated-test-token")
+            (private / "human-token").write_text("isolated-human-token")
+            s.update(ports={"api": 1, "redis": 2}, api="http://127.0.0.1:1", workspaceObjectProfile="original-protected-profile", businessBinding={})
+            stack.enter_context(patch.object(r, "active_business", return_value={"humanTokenFile": str(private / "human-token"), "business": {"workflowVersionId": "original-workflow"}}))
+            self.assertNotIn("POC_ENABLE_QUALITY_ACTIONS", r.web_environment(s))
+            self.assertNotIn("QUALITY_REMEDIATION_PLAN_REF", r.core_environment(s))
+            business.prepare(s, plan_file, r.digest(b.encoded(reviewed)))
+            api, web = r.core_environment(s), r.web_environment(s)
+            self.assertEqual(api["QUALITY_REMEDIATION_PLAN_REF"], business.REMEDIATION)
+            self.assertEqual(api["DELIVERY_API_ENABLED"], "false")
+            self.assertEqual(api["OBJECT_STORAGE_WORKSPACE_PROFILE"], "original-protected-profile")
+            self.assertNotIn("OBJECT_STORAGE_ACCESS_KEY", api)
+            self.assertEqual(web["POC_QUALITY_ACTOR_ID"], s["actorId"])
+            self.assertEqual(web["POC_COMPLIANCE_ACTOR_ID"], s["actorId"])
+            self.assertNotIn("POC_ENABLE_DELIVERY_ACTIONS", web)
 
 
 if __name__ == "__main__": unittest.main()
