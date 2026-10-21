@@ -13,11 +13,12 @@ from runtime import digest
 import bootstrap as b
 import recovery as recovery
 import business as business
+import business_renewal
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart", "upgrade", "bootstrap-plan", "bootstrap", "bootstrap-recovery-plan", "bootstrap-recover", "custody-plan", "custody", "activation-plan", "activate", "business-plan", "prepare-business"))
+    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart", "upgrade", "bootstrap-plan", "bootstrap", "bootstrap-recovery-plan", "bootstrap-recover", "custody-plan", "custody", "activation-plan", "activate", "business-plan", "prepare-business", "business-rights-renewal-plan", "renew-business-rights"))
     parser.add_argument("--facts")
     parser.add_argument("--custody")
     parser.add_argument("--output")
@@ -27,14 +28,14 @@ def main():
     parser.add_argument("--profile")
     parser.add_argument("--tool")
     args = parser.parse_args()  # Reject reset/cleanup/fault actions before any IO.
-    if args.command == "business-plan":
+    if args.command in ("business-plan", "business-rights-renewal-plan"):
         if not all((args.profile, args.admission, args.tool)) or any((args.facts, args.custody, args.plan, args.plan_sha256)):
-            parser.error("business-plan requires --profile/--admission/--tool; optional --output")
-    elif args.command == "prepare-business":
+            parser.error(args.command + " requires --profile/--admission/--tool; optional --output")
+    elif args.command in ("prepare-business", "renew-business-rights"):
         if not all((args.plan, args.plan_sha256)) or any((args.facts, args.custody, args.output, args.admission, args.profile, args.tool)):
-            parser.error("prepare-business requires only --plan/--plan-sha256")
+            parser.error(args.command + " requires only --plan/--plan-sha256")
     elif args.tool:
-        parser.error("--tool requires business-plan")
+        parser.error("--tool requires a business plan command")
     elif args.command == "bootstrap-recovery-plan":
         if not args.admission or any((args.facts, args.custody, args.plan, args.plan_sha256, args.profile)):
             parser.error("bootstrap-recovery-plan requires only --admission and optional --output")
@@ -63,11 +64,13 @@ def main():
             else:
                 if not (STATE / "state.json").exists(): raise Refused("No trial registry in this worktree; run preflight/start")
                 s = read(STATE / "state.json")
-                if args.command == "business-plan":
-                    result = business.plan(s, args.profile, args.admission, args.tool)
+                if args.command in ("business-plan", "business-rights-renewal-plan"):
+                    module = business if args.command == "business-plan" else business_renewal
+                    result = module.plan(s, args.profile, args.admission, args.tool)
                     if args.output: write_once(args.output, result)
                     result = {"plan": result, "planSha256": digest(encoded(result))}
                 elif args.command == "prepare-business": result = business.prepare(s, args.plan, args.plan_sha256)
+                elif args.command == "renew-business-rights": result = business_renewal.renew(s, args.plan, args.plan_sha256)
                 elif args.command == "bootstrap-recovery-plan":
                     result = recovery.plan(s, args.admission)
                     if args.output: write_once(args.output, result)

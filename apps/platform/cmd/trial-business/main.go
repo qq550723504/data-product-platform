@@ -50,14 +50,17 @@ type config struct {
 }
 
 type registry struct {
-	RunID      string         `json:"runId"`
-	Root       string         `json:"root"`
-	Private    string         `json:"private"`
-	Workspace  uuid.UUID      `json:"workspaceId"`
-	Actor      uuid.UUID      `json:"actorId"`
-	Phase      string         `json:"phase"`
-	Ports      map[string]int `json:"ports"`
-	Activation struct {
+	PreparationBinding fileBinding    `json:"businessPrerequisiteBinding"`
+	RenewalBinding     fileBinding    `json:"businessRightsRenewalBinding"`
+	ActivationBinding  fileBinding    `json:"activationBinding"`
+	RunID              string         `json:"runId"`
+	Root               string         `json:"root"`
+	Private            string         `json:"private"`
+	Workspace          uuid.UUID      `json:"workspaceId"`
+	Actor              uuid.UUID      `json:"actorId"`
+	Phase              string         `json:"phase"`
+	Ports              map[string]int `json:"ports"`
+	Activation         struct {
 		AttemptID string `json:"attemptId"`
 		Status    string `json:"status"`
 	} `json:"activation"`
@@ -319,6 +322,7 @@ type executor struct {
 	p              plan
 	digest         string
 	afterStep      func(string) error
+	beforeStep     func(string) error
 	readOnlyReplay bool
 }
 
@@ -354,6 +358,11 @@ func (e *executor) step(ctx context.Context, name, action string, call func(stri
 	if e.readOnlyReplay {
 		return uuid.Nil, fmt.Errorf("completed preparation lacks committed command receipt")
 	}
+	if e.beforeStep != nil {
+		if err = e.beforeStep(name); err != nil {
+			return uuid.Nil, err
+		}
+	}
 	id, err := call(e.trace(name))
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("Core prerequisite command failed: %s", name)
@@ -364,6 +373,68 @@ func (e *executor) step(ctx context.Context, name, action string, call func(stri
 		}
 	}
 	return id, nil
+}
+
+func (e *executor) rights(ctx context.Context, objects map[string]uuid.UUID) error {
+	p, m := e.p, e.manager
+	s := p.Spec
+	rights := rightsapp.NewService(m, rightsinfra.NewPostgresRepository(e.pool))
+	actor := s.Actor
+	auth, err := e.step(ctx, "authorization", "AUTHORIZATION_CREATED", func(trace string) (uuid.UUID, error) {
+		command := p.Authorization
+		command.TraceID = trace
+		v, err := rights.Create(ctx, command)
+		return v.ID, err
+	})
+	if err != nil {
+		return err
+	}
+	objects["authorization"] = auth
+	transitions := []struct {
+		name, action string
+		call         func(context.Context, rightsapp.TransitionCommand) (rightsdomain.Authorization, error)
+	}{{"submit", "AUTHORIZATION_SUBMITTED", rights.Submit}, {"approve", "AUTHORIZATION_APPROVED", rights.Approve}, {"activate", "AUTHORIZATION_ACTIVATED", rights.Activate}}
+	for _, t := range transitions {
+		_, err = e.step(ctx, t.name, t.action, func(trace string) (uuid.UUID, error) {
+			v, err := t.call(ctx, rightsapp.TransitionCommand{AuthorizationID: auth, ActorID: &actor, At: time.Now().UTC(), TraceID: trace})
+			return v.ID, err
+		})
+		if err != nil {
+			return err
+		}
+	}
+	for _, declaration := range p.Declarations {
+		resource := declaration.DataResourceID
+		key := resource.String()
+		activity := uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("declaration-"+key)))
+		dec, err := e.step(ctx, "declaration-"+key, "RIGHTS_DECLARATION_CREATED", func(trace string) (uuid.UUID, error) {
+			v, err := rights.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{Spec: declaration, ActivityID: &activity, TraceID: trace})
+			return v.ID, err
+		})
+		if err != nil {
+			return err
+		}
+		objects["declaration-"+key] = dec
+		activity = uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("verification-"+key)))
+		verification, err := e.step(ctx, "verification-"+key, "RIGHTS_DECLARATION_VERIFIED", func(trace string) (uuid.UUID, error) {
+			v, err := rights.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{DeclarationID: dec, Outcome: rightsdomain.DeclarationVerified, Reason: s.Reason, ActivityID: &activity, ActorID: &actor, TraceID: trace})
+			return v.ID, err
+		})
+		if err != nil {
+			return err
+		}
+		objects["verification-"+key] = verification
+		activity = uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("binding-"+key)))
+		binding, err := e.step(ctx, "binding-"+key, "AUTHORIZATION_PROVENANCE_BOUND", func(trace string) (uuid.UUID, error) {
+			v, err := rights.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{WorkspaceID: s.Workspace, AuthorizationID: auth, DataResourceID: resource, DeclarationID: dec, GrantorRef: p.Authorization.GrantorRef, AuthorityMode: p.BindingAuthorityMode, ActivityID: &activity, ActorID: &actor, TraceID: trace})
+			return v.ID, err
+		})
+		if err != nil {
+			return err
+		}
+		objects["binding-"+key] = binding
+	}
+	return nil
 }
 
 func prepare(ctx context.Context, pool *pgxpool.Pool, p plan, afterStep func(string) error) (receipt, error) {
@@ -395,62 +466,10 @@ func prepare(ctx context.Context, pool *pgxpool.Pool, p plan, afterStep func(str
 				return err
 			}
 		}
-		rights := rightsapp.NewService(m, rightsinfra.NewPostgresRepository(pool))
-		actor := s.Actor
-		auth, err := e.step(ctx, "authorization", "AUTHORIZATION_CREATED", func(trace string) (uuid.UUID, error) {
-			command := p.Authorization
-			command.TraceID = trace
-			v, err := rights.Create(ctx, command)
-			return v.ID, err
-		})
-		if err != nil {
+		if err := e.rights(ctx, result.Objects); err != nil {
 			return err
 		}
-		result.Objects["authorization"] = auth
-		transitions := []struct {
-			name, action string
-			call         func(context.Context, rightsapp.TransitionCommand) (rightsdomain.Authorization, error)
-		}{{"submit", "AUTHORIZATION_SUBMITTED", rights.Submit}, {"approve", "AUTHORIZATION_APPROVED", rights.Approve}, {"activate", "AUTHORIZATION_ACTIVATED", rights.Activate}}
-		for _, t := range transitions {
-			_, err = e.step(ctx, t.name, t.action, func(trace string) (uuid.UUID, error) {
-				v, err := t.call(ctx, rightsapp.TransitionCommand{AuthorizationID: auth, ActorID: &actor, At: time.Now().UTC(), TraceID: trace})
-				return v.ID, err
-			})
-			if err != nil {
-				return err
-			}
-		}
-		for _, declaration := range p.Declarations {
-			resource := declaration.DataResourceID
-			key := resource.String()
-			activity := uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("declaration-"+key)))
-			dec, err := e.step(ctx, "declaration-"+key, "RIGHTS_DECLARATION_CREATED", func(trace string) (uuid.UUID, error) {
-				v, err := rights.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{Spec: declaration, ActivityID: &activity, TraceID: trace})
-				return v.ID, err
-			})
-			if err != nil {
-				return err
-			}
-			result.Objects["declaration-"+key] = dec
-			activity = uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("verification-"+key)))
-			verification, err := e.step(ctx, "verification-"+key, "RIGHTS_DECLARATION_VERIFIED", func(trace string) (uuid.UUID, error) {
-				v, err := rights.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{DeclarationID: dec, Outcome: rightsdomain.DeclarationVerified, Reason: s.Reason, ActivityID: &activity, ActorID: &actor, TraceID: trace})
-				return v.ID, err
-			})
-			if err != nil {
-				return err
-			}
-			result.Objects["verification-"+key] = verification
-			activity = uuid.NewSHA1(uuid.NameSpaceURL, []byte(e.trace("binding-"+key)))
-			binding, err := e.step(ctx, "binding-"+key, "AUTHORIZATION_PROVENANCE_BOUND", func(trace string) (uuid.UUID, error) {
-				v, err := rights.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{WorkspaceID: s.Workspace, AuthorizationID: auth, DataResourceID: resource, DeclarationID: dec, GrantorRef: p.Authorization.GrantorRef, AuthorityMode: p.BindingAuthorityMode, ActivityID: &activity, ActorID: &actor, TraceID: trace})
-				return v.ID, err
-			})
-			if err != nil {
-				return err
-			}
-			result.Objects["binding-"+key] = binding
-		}
+		actor := s.Actor
 		contracts := contractapp.NewService(m, contractinfra.NewPostgresRepository(pool))
 		cv, err := e.step(ctx, "contract", "CONTRACT_VERSION_CREATED", func(trace string) (uuid.UUID, error) {
 			v, err := contracts.CreateVersionFromYAML(ctx, contractapp.CreateVersionFromYAMLCommand{WorkspaceID: s.Workspace, SourceRef: businessContract + ":" + contractRef, DocumentYAML: []byte(p.ContractYAML), ActorID: &actor, TraceID: trace})
@@ -490,6 +509,9 @@ func prepare(ctx context.Context, pool *pgxpool.Pool, p plan, afterStep func(str
 }
 
 func run(args []string) error {
+	if len(args) > 0 && (args[0] == "renewal-plan" || args[0] == "renew-rights") {
+		return runRenewal(args)
+	}
 	if len(args) == 0 || (args[0] != "plan" && args[0] != "prepare") {
 		return fmt.Errorf("explicit plan|prepare required")
 	}

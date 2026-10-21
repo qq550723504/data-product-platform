@@ -461,6 +461,9 @@ def verify(s, *, source=True, running=True):
     if "activationBinding" in s:
         from activation import verify_binding
         verify_binding(s)
+    if "businessRightsRenewalBinding" in s:
+        from business_renewal import verify_binding
+        verify_binding(s)
     for role, expected in s["containers"].items():
         item = json.loads(docker("inspect", expected["name"]))[0]
         verify_container(s, role, item)
