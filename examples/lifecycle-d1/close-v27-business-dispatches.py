@@ -28,6 +28,7 @@ PACKET=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate17'
 EXECUTION='6f40bca9-cfe2-4362-ad2b-4e38bbbd8453'
 CANDIDATE='20d08f0a2d334e779b64f0c082515131c285d9fd005c6fbaa94294b147f38d42'
 BINDINGS='77ce0be4d5dccd95a276a5b4c3f060689bea870f4f3caef1a827ef81154efa24'
+MANIFEST='manifest-source02.json'
 spec=importlib.util.spec_from_file_location('v22_closure_reuse',Path(__file__).with_name('close-old-business-dispatches.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)
 c.CONTROL=CONTROL;c.PUBLIC=PUBLIC;c.p1.CONTROL=CONTROL
@@ -151,15 +152,43 @@ def prepare():
 def fresh_iam(owner):
     folder=Path(owner['output']);result=load(folder/'result.json');users=set(load(CONTROL/'root-private/iam.json')['disabled_identities'])
     need(len(users)==13 and result['action']=='check-disabled' and result['exact_policy_set_verified'] is True and not result['changed'] and set(result['before'])==users and set(result['before'].values())=={'disabled'},'fresh complete IAM proof missing')
-    x=inspect(owner['cid']);end=dt.datetime.fromisoformat(x['State']['FinishedAt'])
+    x=inspect(owner['cid']);begin,end=(dt.datetime.fromisoformat(x['State'][k]) for k in ('StartedAt','FinishedAt'))
     need(closed(x) and x['State']['ExitCode']==0 and dt.timedelta()<=now()-end<=dt.timedelta(seconds=45),'IAM readback stale')
-    records=[]
+    records=[];user_reads=[];policy_reads=0;absent='d4e524c04808a6960'
     for start in sorted(folder.glob('start-*.json')):
         request=load(start);observation=load(folder/start.name.replace('start-','observation-'))
-        need(request['method']=='GET' and request['path'] in ('/minio/admin/v3/user-info','/minio/admin/v3/info-canned-policy') and observation['http_status']==200 and not observation['transport_error'],'non-read-only or failed IAM request')
+        need(request['method']=='GET' and request['path'] in ('/minio/admin/v3/user-info','/minio/admin/v3/info-canned-policy') and not observation['transport_error'],'non-read-only or failed IAM request')
+        if request['path']=='/minio/admin/v3/user-info':
+            user=request['access'];need(user in users|{absent},'foreign IAM identity read')
+            need(observation['http_status']==(404 if user==absent else 200),'IAM success/absence status differs')
+            user_reads.append(user)
+        else:
+            need(observation['http_status']==200,'IAM policy read failed');policy_reads+=1
+        need(begin<=dt.datetime.fromisoformat(request['at'])<=dt.datetime.fromisoformat(observation['at'])<=end,'IAM request/observation time differs')
         records.append(dict(start_sha256=sha(start),observation_sha256=sha(folder/start.name.replace('start-','observation-'))))
-    need(len(records)==26,'IAM request inventory differs')
-    return dict(result=result,finished_at=end.isoformat(),technical_requests=records,quantity=len(records),amount='NOT_ASSESSED')
+    # Frozen root owner verifies the absent user's official SDK error code
+    # XMinioAdminNoSuchUser before exit0/result; 404 alone is not that proof.
+    need(len(records)==27 and len(user_reads)==len(set(user_reads))==14 and set(user_reads)==users|{absent} and policy_reads==13,'IAM request inventory differs')
+    return dict(result=result,finished_at=end.isoformat(),technical_requests=records,quantity=len(records),amount='NOT_ASSESSED',absent_identity=absent,absence_code_verified_by_frozen_owner='XMinioAdminNoSuchUser')
+
+def bind_source():
+    """Append one reviewed host-source correction, reusing stopped owners.
+
+    Original preparation remains immutable. No target, binary, private input,
+    owner, scope or permission may change; only the host source binding moves.
+    """
+    parent=CONTROL/'manifest.json'
+    need(sha(parent)=='e03e7e01f8f76a4d2767eef0ad71a96dc7ffe7b25191919640a8372c3ec74626','fixed preparation parent drift')
+    manifest=load(parent);need(not (CONTROL/'terminal.json').exists() and not (CONTROL/MANIFEST).exists(),'one-shot source binding already terminal/bound')
+    for name,digest in manifest['inputs'].items():need(sha(CONTROL/name)==digest,'prepared input drift')
+    for owner in manifest['owners'].values():need(closed(c.own_contract(owner,manifest)),'prepared owner active/drifted')
+    need(retained()==manifest['retained'],'retained state drift')
+    need(not p.call(['git','-c','core.longpaths=true','diff','HEAD','--name-only']).strip(),'commit host correction first')
+    manifest['observer_build_source_head']=manifest['source_head']
+    manifest['source_binding_parent_sha256']=sha(parent)
+    manifest['source_head']=p.call(['git','rev-parse','HEAD']).decode().strip();manifest['source_files']=source_files()
+    write(CONTROL/MANIFEST,manifest);write(PUBLIC/'preparation-source02.json',manifest)
+    print(json.dumps(dict(status='APPENDED_HOST_SOURCE_BINDING_NO_RESOURCE_START',manifest_sha256=sha(CONTROL/MANIFEST))))
 
 def frozen(manifest):
     packet();need(p.call(['git','rev-parse','HEAD']).decode().strip()==manifest['source_head'] and source_files()==manifest['source_files'],'implementation source drift')
@@ -211,8 +240,8 @@ def seal(manifest,started,native,before,anchors,result):
     except Exception:result['retained_unchanged']=False
 
 def run(review,review_sha):
-    manifest=load(CONTROL/'manifest.json');report=load(review)
-    need(sha(review)==review_sha and report['status']=='PASS_BOUNDED_INDEPENDENT_V27_CLOSURE_MANIFEST_REVIEW' and report['remaining_blockers']==[] and report['manifest_sha256']==sha(CONTROL/'manifest.json'),'independent exact-manifest review missing')
+    manifest=load(CONTROL/MANIFEST);report=load(review)
+    need(sha(review)==review_sha and report['status']=='PASS_BOUNDED_INDEPENDENT_V27_CLOSURE_MANIFEST_REVIEW' and report['remaining_blockers']==[] and report['manifest_sha256']==sha(CONTROL/MANIFEST),'independent exact-manifest review missing')
     need(not (CONTROL/'terminal.json').exists() and not (PUBLIC/'terminal.json').exists(),'one-shot already terminal; never replay')
     frozen(manifest);need(retained()==manifest['retained'],'retained state drift');c.profile(manifest,False)
     candidate,bindings=packet();need(physical(candidate,bindings)==manifest['execution_owners'],'owner map drift')
@@ -229,7 +258,7 @@ def run(review,review_sha):
         ids=[x['cid'] for x in load(HISTORY/'postfailure-closed-readback.json')['physical_owners']]
         state=inspect_many(ids);need(all(closed(x) or x['Id']==g['Core'] for x in state),'retained sender/source active')
         need(now()-dt.datetime.fromisoformat(iam['finished_at'])<=dt.timedelta(seconds=45),'fresh IAM evidence expired')
-        at=now();bundle=dict(manifest_sha256=sha(CONTROL/'manifest.json'),at=at.isoformat(),IAM=iam,physically_checked_owners=540,execution_owners=manifest['execution_owners'],Core_before_sha256=sha(PUBLIC/'Core-before.json'))
+        at=now();bundle=dict(manifest_sha256=sha(CONTROL/MANIFEST),at=at.isoformat(),IAM=iam,physically_checked_owners=540,execution_owners=manifest['execution_owners'],Core_before_sha256=sha(PUBLIC/'Core-before.json'))
         write(PUBLIC/'trusted-evidence.json',bundle)
         cfg=load(CONTROL/'closure-disabled-original.json');cfg.update(Enabled=True,NotBefore=at.isoformat(),ExpiresAt=(at+dt.timedelta(minutes=40)).isoformat(),EvidenceSHA256=sha(PUBLIC/'trusted-evidence.json'))
         (CONTROL/'worker-private/closure.json').write_text(json.dumps(cfg,indent=2)+'\n',encoding='utf-8',newline='\n')
@@ -250,8 +279,9 @@ def run(review,review_sha):
     return failure is None and result['status']=='PASS_V27_THREE_NOT_SENT_APPEND_ONLY_SEALED'
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('prepare','run'));parser.add_argument('--review',type=Path);parser.add_argument('--review-sha256');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('prepare','bind-source','run'));parser.add_argument('--review',type=Path);parser.add_argument('--review-sha256');args=parser.parse_args()
     if args.action=='prepare':prepare()
+    elif args.action=='bind-source':bind_source()
     else:
         need(args.review is not None and args.review_sha256 is not None,'exact independent manifest review required')
         raise SystemExit(0 if run(args.review,args.review_sha256) else 1)

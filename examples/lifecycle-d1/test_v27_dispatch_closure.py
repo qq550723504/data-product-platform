@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 import tempfile
+import datetime as dt
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -13,6 +14,31 @@ spec=importlib.util.spec_from_file_location('v27_closure',Path(__file__).with_na
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
 class SealTests(unittest.TestCase):
+    def test_complete_IAM_retains_real_absence_as_a_separate_request(self):
+        for fault in (None,'missing-absence','absence-200','foreign-user','missing-policy','stale','future-observation','extra-read'):
+            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+                root=Path(tmp);(root/'root-private').mkdir();out=root/'output';out.mkdir();at=m.now()
+                users={('user'+str(i)):'disabled' for i in range(13)}
+                (root/'root-private/iam.json').write_text(json.dumps(dict(disabled_identities=users)))
+                (out/'result.json').write_text(json.dumps(dict(action='check-disabled',exact_policy_set_verified=True,changed={},before=users)))
+                requests=[('/minio/admin/v3/user-info',user,200) for user in users]+[('/minio/admin/v3/info-canned-policy','',200) for _ in range(13)]+[('/minio/admin/v3/user-info','d4e524c04808a6960',404)]
+                if fault=='missing-absence':requests.pop()
+                if fault=='absence-200':requests[-1]=(requests[-1][0],requests[-1][1],200)
+                if fault=='foreign-user':requests[0]=(requests[0][0],'other',200)
+                if fault=='missing-policy':requests.pop(13)
+                if fault=='extra-read':requests.append(requests[0])
+                for i,(path,user,status) in enumerate(requests):
+                    (out/f'start-{i}.json').write_text(json.dumps(dict(method='GET',path=path,access=user,at=(at-dt.timedelta(seconds=2)).isoformat())))
+                    (out/f'observation-{i}.json').write_text(json.dumps(dict(http_status=status,transport_error=False,at=(at+dt.timedelta(seconds=10) if fault=='future-observation' else at-dt.timedelta(seconds=1)).isoformat())))
+                state=dict(State=dict(StartedAt=(at-dt.timedelta(seconds=3)).isoformat(),FinishedAt=(at-dt.timedelta(seconds=46) if fault=='stale' else at).isoformat(),ExitCode=0))
+                stack.enter_context(patch.object(m,'CONTROL',root));stack.enter_context(patch.object(m,'inspect',lambda *a:state));stack.enter_context(patch.object(m,'closed',lambda *a:True))
+                if fault:
+                    with self.assertRaises(ValueError):m.fresh_iam(dict(cid='test-only',output=str(out)))
+                else:
+                    result=m.fresh_iam(dict(cid='test-only',output=str(out)))
+                    self.assertEqual(result['quantity'],27)
+                    self.assertEqual(result['absent_identity'],'d4e524c04808a6960')
+
     def test_bounded_windows_argv_still_requires_every_owner(self):
         ids=[format(i,'064x') for i in range(540)];calls=[]
         def docker(*args):
