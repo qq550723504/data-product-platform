@@ -41,6 +41,40 @@ func TestPostV27ProofDoesNotReuseV22Authority(t *testing.T) {
 	}
 }
 
+// Mandatory native rehearsal gate, against the full restored source schema,
+// constraints and facts. Unlike the modeled counterexamples below, it uses no
+// TEMP relation or invented column. The source never has this fixture marker.
+func TestPostV27RestoredCorePublicSchema(t *testing.T) {
+	if os.Getenv("TEST_POST_V27_RESTORED_SOURCE") != "1" {
+		t.Skip("isolated restored actual Core fixture required")
+	}
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, os.Getenv("TEST_POSTGRES_DSN"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	var marker string
+	if err = conn.QueryRow(ctx, `SHOW lifecycle.rehearsal_marker`).Scan(&marker); err != nil || marker != "V27_PARTIAL_BASELINE_ISOLATED_NO_AUTHORITY" {
+		t.Fatal("not the isolated actual-schema fixture", err)
+	}
+	p, v, at := v27Proof(t)
+	for i, target := range PostV27BusinessDispatches() {
+		tx, e := conn.Begin(ctx)
+		if e != nil {
+			t.Fatal(e)
+		}
+		_, e = v.VerifyProviderObservation(ctx, tx, oldBusinessAttempt(target, at), "post-v27-closed:"+p.Nonce.String(), at)
+		tx.Rollback(ctx)
+		if i == 0 && e != nil {
+			t.Fatal("real public schema/partial revoked P2 rejected", e)
+		}
+		if i > 0 && !errors.Is(e, lc.ErrStorageDenied) {
+			t.Fatal("unrevoked actual T1/T2 admitted or SQL failed", e)
+		}
+	}
+}
+
 // This is an adapter contract on a new PostgreSQL instance, never a retained
 // source. The successful predecessor is exact NOT_SENT/released, not UNKNOWN.
 func TestPostV27NoSendPostgresEligibility(t *testing.T) {
@@ -67,8 +101,8 @@ func TestPostV27NoSendPostgresEligibility(t *testing.T) {
 CREATE TEMP TABLE lifecycle_disposition_approval(id uuid,plan_hash text,basis_ref text,principal_ref text) ON COMMIT DROP;
 CREATE TEMP TABLE lifecycle_approval_revocation(approval_id uuid) ON COMMIT DROP;
 CREATE TEMP TABLE lifecycle_provider_send_claim(attempt_id uuid) ON COMMIT DROP;
-CREATE TEMP TABLE lifecycle_provider_observation(id uuid,attempt_id uuid,dispatch_id uuid,copy_id uuid,workspace_id uuid,certainty text,outcome text,invoked_at timestamptz) ON COMMIT DROP;
-CREATE TEMP TABLE lifecycle_dispatch_release(dispatch_id uuid,observation_id uuid) ON COMMIT DROP;
+CREATE TEMP TABLE lifecycle_provider_observation(id uuid,attempt_id uuid,workspace_id uuid,certainty text,outcome text,invoked_at timestamptz) ON COMMIT DROP;
+CREATE TEMP TABLE lifecycle_dispatch_release(dispatch_id uuid,workspace_id uuid,observation_id uuid) ON COMMIT DROP;
 CREATE TEMP TABLE lifecycle_copy_absence_receipt(copy_id uuid) ON COMMIT DROP;
 CREATE TEMP TABLE lifecycle_provider_attempt(id uuid,copy_id uuid,dispatch_id uuid,workspace_id uuid,plan_id uuid) ON COMMIT DROP;`)
 				if err != nil {
@@ -97,10 +131,10 @@ CREATE TEMP TABLE lifecycle_provider_attempt(id uuid,copy_id uuid,dispatch_id uu
 					}
 				}
 				obs := uuid.New()
-				if _, err = tx.Exec(ctx, `INSERT INTO lifecycle_provider_observation VALUES($1,$2,$3,$4,$5,'NOT_SENT','NOT_SENT',NULL)`, obs, old.Attempt, old.Dispatch, old.Copy, a.WorkspaceID); err != nil {
+				if _, err = tx.Exec(ctx, `INSERT INTO lifecycle_provider_observation VALUES($1,$2,$3,'NOT_SENT','NOT_SENT',NULL)`, obs, old.Attempt, a.WorkspaceID); err != nil {
 					t.Fatal(err)
 				}
-				if _, err = tx.Exec(ctx, `INSERT INTO lifecycle_dispatch_release VALUES($1,$2)`, old.Dispatch, obs); err != nil {
+				if _, err = tx.Exec(ctx, `INSERT INTO lifecycle_dispatch_release VALUES($1,$2,$3)`, old.Dispatch, a.WorkspaceID, obs); err != nil {
 					t.Fatal(err)
 				}
 				mutations := map[string]struct {

@@ -20,15 +20,16 @@ from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[2]
 PRIVATE=Path('C:/Users/Henry/.codex/fixture-private')
-CONTROL=PRIVATE/'post-v27-business-closure02'
-PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v27-business-closure02'
+CONTROL=PRIVATE/'post-v27-business-closure03'
+PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v27-business-closure03'
 HISTORY=Path('C:/Users/Henry/.codex/worktrees/d1-c17/data-product-platform/docs/acceptance/evidence/issue307-d1/delete-confirmed-v27-execution01/window01')
 OLD=PRIVATE/'remaining-candidate17'
 PACKET=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate17'
 EXECUTION='6f40bca9-cfe2-4362-ad2b-4e38bbbd8453'
 CANDIDATE='20d08f0a2d334e779b64f0c082515131c285d9fd005c6fbaa94294b147f38d42'
 BINDINGS='77ce0be4d5dccd95a276a5b4c3f060689bea870f4f3caef1a827ef81154efa24'
-MANIFEST='manifest-source02.json'
+MANIFEST='manifest.json'
+PREVIOUS=ROOT/'docs/acceptance/evidence/issue307-d1/post-v27-business-closure02'
 spec=importlib.util.spec_from_file_location('v22_closure_reuse',Path(__file__).with_name('close-old-business-dispatches.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)
 c.CONTROL=CONTROL;c.PUBLIC=PUBLIC;c.p1.CONTROL=CONTROL
@@ -73,7 +74,12 @@ def retained(active_core=None):
         for path in paths:
             if path.is_file():files[path.relative_to(PRIVATE).as_posix()]=sha(path)
     need(len(budget_hashes)>=3 and len(files)>=30,'retained budgets/profiles/backups incomplete')
-    return dict(descriptors=descriptors,budgets=budget_hashes,files=files,history_readback_sha256=sha(HISTORY/'postfailure-closed-readback.json'))
+    prior_control=PRIVATE/'post-v27-business-closure02'
+    need(sha(prior_control/'terminal.json')=='79ac5ce594abc3757df840de524ccf092e3ac5f799b8f94204f9131a6dfb47bb','partial maintenance terminal drift')
+    for owner in load(prior_control/'manifest-source02.json')['owners'].values():need(closed(inspect(owner['cid'])),'prior maintenance owner active')
+    need(load(prior_control/'worker-private/closure.json')['Enabled'] is False,'failed maintenance profile reactivated')
+    prior_files={x.relative_to(prior_control).as_posix():sha(x) for x in prior_control.rglob('*') if x.is_file() and x.name!='host-key.private'}
+    return dict(descriptors=descriptors,budgets=budget_hashes,files=files,history_readback_sha256=sha(HISTORY/'postfailure-closed-readback.json'),prior_maintenance_files=prior_files)
 
 def physical(candidate,bindings,active_core=None):
     owners={}
@@ -127,11 +133,17 @@ def core_binding(base,g):
 def prepare():
     need(not p.call(['git','-c','core.longpaths=true','diff','HEAD','--name-only']).strip(),'commit reviewed implementation first')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot closure already allocated')
+    rehearsal=ROOT/'docs/acceptance/evidence/issue307-d1/host-path-repair01/restored-core02/terminal.json'
+    proof=load(rehearsal)
+    need(proof['status']=='PASS_ACTUAL_RESTORED_SCHEMA_COMMAND_AND_REPLAY' and proof['source_retained_unchanged'] is True,'actual-schema complete Command/replay gate missing')
+    need(sha(PREVIOUS/'final-Core-fingerprint.json')=='9a320170f3e583725239b86645e4dc976ffe635cd630200fbb5a7765148bba1f'
+         and sha(PREVIOUS/'final-Core-rows.json')=='3603f0224a34d81efc67b7faeb052efb59b46767914903d120d79a30b8399214','recorded partial baseline drift')
     CONTROL.mkdir();PUBLIC.mkdir(parents=True)
     candidate,bindings=packet();before=retained();owners=physical(candidate,bindings);g=candidate['Groups'][0]
     env=os.environ.copy();env.update(GOOS='linux',GOARCH='amd64',CGO_ENABLED='0')
     result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(CONTROL/'observer'),'./cmd/lifecycle-fixture-old-dispatch'],cwd=ROOT/'apps/platform',env=env,capture_output=True)
     (CONTROL/'build.private').write_bytes(result.stdout+result.stderr);need(result.returncode==0,'observer build failed')
+    need(sha(CONTROL/'observer')==proof['observer_binary_sha256'],'observer differs from actual-schema accepted binary')
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
     from cryptography.hazmat.primitives.serialization import Encoding,PublicFormat,PrivateFormat,NoEncryption
     key=Ed25519PrivateKey.generate();(CONTROL/'host-key.private').write_bytes(key.private_bytes(Encoding.Raw,PrivateFormat.Raw,NoEncryption()))
@@ -144,7 +156,8 @@ def prepare():
     allocated={'observer':allocate('observer',CONTROL/'observer',worker,CONTROL/'output-observer',g['Core'],audit_id)}
     for action in ('check-disabled','disable-all'):allocated[action]=allocate(action,OLD/'owner',root,CONTROL/('output-'+action),g['Native'],audit_id)
     manifest=dict(status='PREPARED_DISABLED_V27_NONDELETE_CLOSURE_ONLY',audit_id=audit_id,source_head=p.call(['git','rev-parse','HEAD']).decode().strip(),source_files=source_files(),source=g,retained=before,targets=targets(),execution_owners=owners,owners=allocated,public_key=public,
-        activation_fields=['Enabled','NotBefore','ExpiresAt','EvidenceSHA256'],inputs={x.relative_to(CONTROL).as_posix():sha(x) for x in CONTROL.rglob('*') if x.is_file() and x.name!='host-key.private' and x.suffix!='.private'},max_provider_deletes=0,pins_released=0,budgets_refunded=0)
+        activation_fields=['Enabled','NotBefore','ExpiresAt','EvidenceSHA256'],inputs={x.relative_to(CONTROL).as_posix():sha(x) for x in CONTROL.rglob('*') if x.is_file() and x.name!='host-key.private' and x.suffix!='.private'},max_provider_deletes=0,pins_released=0,budgets_refunded=0,
+        actual_schema_rehearsal_sha256=sha(rehearsal),partial_baseline_fingerprint_sha256=sha(PREVIOUS/'final-Core-fingerprint.json'),revoked_baseline={'P2':True,'T1':False,'T2':False})
     write(CONTROL/'manifest.json',manifest);write(PUBLIC/'preparation.json',manifest)
     for owner in allocated.values():need(closed(c.own_contract(owner,manifest)),'allocated owner not stopped')
     print(json.dumps(dict(status=manifest['status'],manifest_sha256=sha(CONTROL/'manifest.json'),source_started=False)))
@@ -171,24 +184,6 @@ def fresh_iam(owner):
     need(len(records)==27 and len(user_reads)==len(set(user_reads))==14 and set(user_reads)==users|{absent} and policy_reads==13,'IAM request inventory differs')
     return dict(result=result,finished_at=end.isoformat(),technical_requests=records,quantity=len(records),amount='NOT_ASSESSED',absent_identity=absent,absence_code_verified_by_frozen_owner='XMinioAdminNoSuchUser')
 
-def bind_source():
-    """Append one reviewed host-source correction, reusing stopped owners.
-
-    Original preparation remains immutable. No target, binary, private input,
-    owner, scope or permission may change; only the host source binding moves.
-    """
-    parent=CONTROL/'manifest.json'
-    need(sha(parent)=='e03e7e01f8f76a4d2767eef0ad71a96dc7ffe7b25191919640a8372c3ec74626','fixed preparation parent drift')
-    manifest=load(parent);need(not (CONTROL/'terminal.json').exists() and not (CONTROL/MANIFEST).exists(),'one-shot source binding already terminal/bound')
-    for name,digest in manifest['inputs'].items():need(sha(CONTROL/name)==digest,'prepared input drift')
-    for owner in manifest['owners'].values():need(closed(c.own_contract(owner,manifest)),'prepared owner active/drifted')
-    need(retained()==manifest['retained'],'retained state drift')
-    need(not p.call(['git','-c','core.longpaths=true','diff','HEAD','--name-only']).strip(),'commit host correction first')
-    manifest['observer_build_source_head']=manifest['source_head']
-    manifest['source_binding_parent_sha256']=sha(parent)
-    manifest['source_head']=p.call(['git','rev-parse','HEAD']).decode().strip();manifest['source_files']=source_files()
-    write(CONTROL/MANIFEST,manifest);write(PUBLIC/'preparation-source02.json',manifest)
-    print(json.dumps(dict(status='APPENDED_HOST_SOURCE_BINDING_NO_RESOURCE_START',manifest_sha256=sha(CONTROL/MANIFEST))))
 
 def frozen(manifest):
     packet();need(p.call(['git','rev-parse','HEAD']).decode().strip()==manifest['source_head'] and source_files()==manifest['source_files'],'implementation source drift')
@@ -248,7 +243,8 @@ def run(review,review_sha):
     g=manifest['source'];started=[];failure=None;before=anchors=None;native=p.native_module();result=dict(native_delete=0,pins_released=0,budgets_refunded=0)
     try:
         for cid in (g['Native'],g['Core']):started.append(cid);docker('start',cid)
-        native.wait_pg(g['Core'],'fixture');before=native.fingerprints(g['Core']);p.ALLOWED_RELATIONS=c.ALLOWED;anchors=p.append_anchors(native,g['Core'])
+        native.wait_pg(g['Core'],'fixture');before=native.fingerprints(g['Core']);need(before==load(PREVIOUS/'final-Core-fingerprint.json') and sha(PREVIOUS/'final-Core-fingerprint.json')==manifest['partial_baseline_fingerprint_sha256'],'explicit partial baseline drift')
+        p.ALLOWED_RELATIONS=c.ALLOWED;anchors=p.append_anchors(native,g['Core'])
         write(PUBLIC/'Core-before.json',before);write(PUBLIC/'Core-before-rows.json',current_rows(native,g['Core']))
         for target,row in zip(manifest['targets'],load(ROOT/'docs/acceptance/evidence/issue307-d1/host-path-repair01/core-audit01/actual-v27-targets.json')):need(target['Attempt']==row['Attempt'],'audited target drift')
         c.run_owner(manifest,'check-disabled');iam=fresh_iam(manifest['owners']['check-disabled']);docker('stop','-t','15',g['Native']);need(closed(inspect(g['Native'])),'Native not stopped')
@@ -269,7 +265,8 @@ def run(review,review_sha):
         frozen(manifest);c.profile(manifest,True);c.run_owner(manifest,'observer')
         observed=load(CONTROL/'output-observer/result.json');need(observed['completed'] and len(observed['cases'])==3,'observer incomplete');result['observer']=observed
         after=native.fingerprints(g['Core']);write(PUBLIC/'Core-after.json',after);write(PUBLIC/'Core-after-rows.json',current_rows(native,g['Core']))
-        result['delta']=c.delta(before,after,anchors,p.append_anchors(native,g['Core']))
+        result['delta']=c.delta(before,after,anchors,p.append_anchors(native,g['Core']),complete=False)
+        need(result['delta']['new_row_counts']==dict(lifecycle_approval_revocation=2,lifecycle_provider_observation=3,lifecycle_dispatch_release=3,command_idempotency=5,audit_event=8,evidence=8,evidence_relation=8,outbox_event=8),'exact partial-baseline completion counts differ')
     except Exception as e:failure=type(e).__name__+': '+str(e)
     finally:
         seal(manifest,started,native,before,anchors,result);result['failure']=failure
@@ -279,9 +276,8 @@ def run(review,review_sha):
     return failure is None and result['status']=='PASS_V27_THREE_NOT_SENT_APPEND_ONLY_SEALED'
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('prepare','bind-source','run'));parser.add_argument('--review',type=Path);parser.add_argument('--review-sha256');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('prepare','run'));parser.add_argument('--review',type=Path);parser.add_argument('--review-sha256');args=parser.parse_args()
     if args.action=='prepare':prepare()
-    elif args.action=='bind-source':bind_source()
     else:
         need(args.review is not None and args.review_sha256 is not None,'exact independent manifest review required')
         raise SystemExit(0 if run(args.review,args.review_sha256) else 1)

@@ -79,8 +79,10 @@ func (v PostV27NoSendVerifier) VerifyProviderObservation(ctx context.Context, tx
 	 WHERE od.id=$11 AND od.copy_id=$4 AND od.workspace_id=$2 AND od.plan_id=$3 AND op.id=$12 AND op.plan_hash=$6
 	 AND op.basis_ref=$13 AND op.principal_ref=$14)
 	 AND NOT EXISTS(SELECT 1 FROM lifecycle_provider_send_claim WHERE attempt_id=$10)
-	 AND EXISTS(SELECT 1 FROM lifecycle_provider_observation o JOIN lifecycle_dispatch_release rel ON rel.observation_id=o.id
-	 WHERE o.attempt_id=$10 AND o.dispatch_id=$11 AND o.copy_id=$4 AND o.workspace_id=$2
+	 AND EXISTS(SELECT 1 FROM lifecycle_provider_observation o
+	 JOIN lifecycle_provider_attempt oa ON oa.id=o.attempt_id AND oa.workspace_id=o.workspace_id
+	 JOIN lifecycle_dispatch_release rel ON rel.observation_id=o.id AND rel.workspace_id=o.workspace_id
+	 WHERE o.attempt_id=$10 AND oa.dispatch_id=$11 AND oa.copy_id=$4 AND o.workspace_id=$2
 	 AND o.certainty='NOT_SENT' AND o.outcome='NOT_SENT' AND o.invoked_at IS NULL AND rel.dispatch_id=$11)
 	 AND NOT EXISTS(SELECT 1 FROM lifecycle_provider_observation WHERE attempt_id=$10 AND (certainty<>'NOT_SENT' OR outcome<>'NOT_SENT' OR invoked_at IS NOT NULL))))
 	 OR EXISTS(SELECT 1 FROM lifecycle_disposition_dispatch WHERE copy_id=$4 AND id NOT IN($1,$11))`,
