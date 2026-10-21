@@ -1,7 +1,7 @@
 name: trial-contracts
 on:
   pull_request:
-    paths: ['deploy/trial/**', 'apps/platform/cmd/trial-prepare/**', 'apps/platform/cmd/trial-resume/**', 'apps/platform/cmd/trial-activate/**', '.github/workflows/trial-contracts.yml']
+    paths: ['deploy/trial/**', 'apps/platform/cmd/trial-prepare/**', 'apps/platform/cmd/trial-resume/**', 'apps/platform/cmd/trial-activate/**', 'apps/platform/cmd/trial-business/**', '.github/workflows/trial-contracts.yml']
   workflow_dispatch:
 permissions:
   contents: read

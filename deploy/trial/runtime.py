@@ -503,6 +503,9 @@ def core_environment(s):
                    HUMAN_DECISION_API_SUBJECT="trial-operator-" + s["runId"], HUMAN_DECISION_API_ACTOR_ID=s["actorId"],
                    HUMAN_DECISION_API_WORKSPACE_IDS=s["workspaceId"], RIGHTS_API_TOKEN=(p / "token").read_text().strip(),
                    RIGHTS_API_ACTOR_ID=s["actorId"], RIGHTS_API_WORKSPACE_IDS=s["workspaceId"])
+    if s.get("businessPrerequisiteBinding"):
+        from business import verify_binding
+        env.update(verify_binding(s)["configuration"]["api"])
     return env
 
 
@@ -516,6 +519,9 @@ def web_environment(s):
         env.update(POC_TRIAL_RAW_ONLY="false", POC_ENABLE_REVIEW_ACTIONS="true", POC_RIGHTS_TOKEN_FILE=str(p / "token"),
                    HUMAN_DECISION_API_TOKEN=Path(manifest["humanTokenFile"]).read_text().strip(),
                    POC_INGESTION_WORKFLOW_ID=manifest["business"]["workflowVersionId"])
+    if s.get("businessPrerequisiteBinding"):
+        from business import verify_binding
+        env.update(verify_binding(s)["configuration"]["web"])
     return env
 
 
