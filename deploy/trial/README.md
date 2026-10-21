@@ -31,6 +31,30 @@ prepare 调用已有 Core Commands，失败保留 UNKNOWN 和每次调用回执�
 plan；不自动重启。Delivery 保持关闭，不生成 delivery token。质量/合规评测、认证、
 实际下载、撤权和 C1 新修复 Execution 均是后续显式动作，本入口不声称它们已通过。
 
+## 显式同范围业务权利续期（源代码候选，不自动执行）
+
+原准备有效期结束后，不能修改 #339 spec 或重跑 `prepare-business` 来延长旧事实。
+按 [续期契约](../../docs/acceptance/issue325-business-rights-renewal.md) 生成新的私有
+spec：`contract=issue325/business-rights-renewal-v1`，新的 UUID `renewalId`、原
+`runId/workspaceId/actorId`、原 preparation manifest 的 `preparationSha256`，以及
+精确 UTC 微秒的 `validFrom/validTo` 和 `verificationReason`。时长不得超过原窗口
+或 24 小时；必须在 predecessor 到期后执行。资源、consumer、purpose、READ scope
+全部从原已接纳准备继承，不接受覆盖。只复用原 ContractVersion/Profile。
+
+```powershell
+python deploy/trial/trial.py business-rights-renewal-plan --profile <new-private-renewal-spec.json> --admission <merged-head-main-ci.json> --tool <private-reviewed-trial-business.exe> --output <new-renewal-plan.json>
+# 独立审查原准备/predecessor、五版本、scope、有限窗口、工具及 main CI 后，取得执行授权才运行：
+python deploy/trial/trial.py renew-business-rights --plan <new-renewal-plan.json> --plan-sha256 <printed-plan-sha256>
+```
+
+续期仅追加 Authorization、三份声明/核验/绑定及各自的成本、证据和审计，不更新旧
+有效期、原 spec 或准备 claim。每个 predecessor 仅允许一个 successor。UNKNOWN
+保留旧失败记录，必须沿用同一 UUID/窗口/计划恢复；窗口过期后保持 fail closed，
+不自动分配新窗口。完成重放只返回历史回执，不激活已撤销或过期权利。
+新旧私有 manifest 都保留，仅推进显式 latest renewal binding。
+计划不构建工具、不写锁/registry/journal、不访问对象；`--output` 只写指定的新计划。
+执行不会启停服务、续发 STS、改变策略、seed、重跑审核/加工或执行评测/认证/交付。
+
 仅支持 Windows 宿主 + 本机 Docker Linux / Compose v2、Go（仓库 go.mod）、Node 22+、Python 3.11+、PowerShell 7、Git。首次构建需要访问已固定的容器镜像、npm、Go modules、MinIO 官方源码及 Maven JDBC。不是生产模板；单操作人、合成数据、loopback，无付费 Provider。现有 CSV demo 仍按原文档使用。
 
 在本候选的完整独立 worktree 根目录打开 PowerShell：
