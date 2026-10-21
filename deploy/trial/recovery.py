@@ -61,7 +61,7 @@ def checkpoint(s):
            "Original exact merge/main-CI admission required")
     r.need(all(old[k] == s[k] for k in ("root", "runId", "workspaceId", "actorId"))
            and old["origin"] == s["originSnapshot"] and old["previousBusinessBinding"] == s["businessBinding"], "Original identity/binding changed")
-    r.need(old["registry"]["path"] == str(r.STATE / "state.json") and old["expectedSchema"] == {"from": 68, "to": 71}, "Original registry/schema contract drift")
+    r.need(old["registry"]["path"] == str((r.STATE / "state.json").resolve()) and old["expectedSchema"] == {"from": 68, "to": 71}, "Original registry/schema contract drift")
     config = Path(s["private"]) / "config.json"
     r.need(r.read(private / next(iter(inputs))) == {"configFile": str(config)} and old["config"] == b.file(config), "Original private-mode input/config changed")
     for name in ("facts", "admissionFile"):

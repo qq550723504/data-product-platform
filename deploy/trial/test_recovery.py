@@ -20,9 +20,12 @@ import test_bootstrap as fixtures
 
 class RecoveryContracts(unittest.TestCase):
     @contextmanager
-    def fixture(self):
+    def fixture(self, *, noncanonical_root=False):
         with tempfile.TemporaryDirectory() as name, ExitStack() as stack:
             root = Path(name)
+            if noncanonical_root:
+                (root / "alias").mkdir()
+                root = root / "alias" / ".."
             stack.enter_context(patch.object(r, "STATE", root / "state"))
             stack.enter_context(patch.object(t, "STATE", root / "state"))
             helper = fixtures.LedgerStages()
@@ -56,6 +59,16 @@ class RecoveryContracts(unittest.TestCase):
     def snapshot(self, root):
         return {p.relative_to(root).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns) for p in root.rglob("*") if p.is_file()}
 
+    def test_registry_uses_the_existing_canonical_fingerprint_path(self):
+        # Windows CI may spell the temp directory RUNNER~1 while fingerprint()
+        # resolves its long name. Reproduce differing path spellings on any OS.
+        with self.fixture(noncanonical_root=True) as (root, s, _, _, admission, old, _):
+            self.assertNotEqual(old["registry"]["path"], str(r.STATE / "state.json"))
+            self.assertEqual(old["registry"]["path"], str((r.STATE / "state.json").resolve()))
+            before = self.snapshot(root)
+            self.assertEqual(recovery.plan(s, admission)["attempt"], s["bootstrap"])
+            self.assertEqual(before, self.snapshot(root))
+
     def test_real_cli_recovery_plan_is_repeatable_and_readonly(self):
         with self.fixture() as (root, s, journal, private, admission, old, stack):
             before = self.snapshot(root)
@@ -84,11 +97,15 @@ class RecoveryContracts(unittest.TestCase):
                 with self.assertRaises(r.Refused): recovery.plan(s, admission)
 
     def test_checkpoint_identity_inputs_and_pinned_source_fail_closed(self):
-        for invalid in ("source", "source-map", "digest", "before-state", "config", "facts", "private-input", "failed", "partial-build", "private-pass", "native", "binding"):
+        for invalid in ("source", "source-map", "registry-path", "digest", "before-state", "config", "facts", "private-input", "failed", "partial-build", "private-pass", "native", "binding"):
             with self.subTest(invalid=invalid), self.fixture() as (root, s, journal, private, admission, old, stack):
                 if invalid in ("source", "source-map"):
                     changed = copy.deepcopy(old)
                     changed["target"]["head" if invalid == "source" else "sources"] = "foreign"
+                    r.write(journal / "plan.json", changed); s["bootstrap"]["planSha256"] = r.digest(b.encoded(changed))
+                elif invalid == "registry-path":
+                    r.write(root / "foreign.json", s)
+                    changed = copy.deepcopy(old); changed["registry"]["path"] = str(root / "foreign.json")
                     r.write(journal / "plan.json", changed); s["bootstrap"]["planSha256"] = r.digest(b.encoded(changed))
                 elif invalid == "digest": s["bootstrap"]["planSha256"] = "0" * 64
                 elif invalid == "before-state": value = r.read(journal / "before-state.json"); value["actorId"] = str(uuid.uuid4()); r.write(journal / "before-state.json", value)
