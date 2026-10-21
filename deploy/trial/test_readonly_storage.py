@@ -4,7 +4,7 @@ Keep plan, verify, storage_check, command and the PowerShell storage validator
 real. Only external Docker/tool replies and unrelated source/origin admission
 are replaced. In particular, do not mock verify or storage_check.
 """
-from contextlib import contextmanager, redirect_stdout
+from contextlib import ExitStack, contextmanager, redirect_stdout
 import io
 import json
 import os
@@ -22,6 +22,7 @@ import runtime as r
 import trial as t
 import upgrade as u
 import bootstrap as b
+import recovery as recovery
 
 REAL_RUN = subprocess.run
 PWSH = shutil.which("pwsh")
@@ -158,6 +159,46 @@ class NativeReadonlyStorage(unittest.TestCase):
                     self.assertIn("-InputFromStdin", args); self.assertNotIn("-InputPath", args)
                     self.assertEqual(json.loads(payload)["run_id"], s["runId"])
                 self.assertFalse(r.READ_ONLY_OBSERVATION.get())
+
+    def test_recovery_cli_uses_real_readonly_verify_storage_and_powershell(self):
+        with tempfile.TemporaryDirectory() as d, ExitStack() as stack:
+            root = Path(d); s, containers, facts, _, old = self.fixture(root)
+            s["ports"] = r.free_ports()
+            config = root / "private/config.json"
+            b.put(config, {"DSN": f"postgres://postgres:synthetic@127.0.0.1:{s['ports']['core']}/dpp_trial_core", "Private": s["private"], "Repo": s["root"], "Workspace": s["workspaceId"], "Actor": s["actorId"], "Profile": {"Subject": "trial-operator-" + s["runId"], "Bucket": "raw", "StorageEndpoint": "127.0.0.1:" + str(s["ports"]["storage"])}})
+            r.write(root / "state/state.json", s)
+            old_source = {"deploy/trial/bootstrap.py": "pinned"}
+            admission = root / "old-admission.json"; b.put(admission, {"head": recovery.PREDECESSOR, "ciRunId": 1})
+            for obj, name, value in ((r, "STATE", root / "state"), (t, "STATE", root / "state")):
+                stack.enter_context(patch.object(obj, name, value))
+            stack.enter_context(self.admission(old))
+            calls = stack.enter_context(self.external_replies(s, containers))
+            target = stack.enter_context(patch.object(b, "target", return_value={"head": recovery.PREDECESSOR, "sources": old_source, "admission": r.read(admission)}))
+            stack.enter_context(patch.object(c, "committed_sources", return_value=old_source))
+            original = b.plan(s, "bootstrap", facts=facts, admission=admission)
+            identity = uuid.uuid4().hex
+            journal = r.STATE / "bootstrap-attempts" / identity; journal.mkdir(parents=True)
+            private = root / "private/bootstrap-attempts" / identity; private.mkdir(parents=True)
+            b.put(journal / "before-state.json", s); b.put(journal / "plan.json", original)
+            for action in ("build", "private-admission"):
+                b.put(journal / (action + "-started.json"), {"action": action})
+                b.put(journal / (action + "-result.json"), {"status": "PASS"})
+            b.put(journal / "failed.json", {"status": "UNKNOWN", "failureType": "Refused", "retained": True})
+            for name in ("trial-activate", "migrate"): (private / (name + ".exe")).write_bytes(b"original-tool")
+            b.put(private / (uuid.uuid4().hex + "-input.json"), {"configFile": str(config)})
+            s.update(phase="UNKNOWN", bootstrap={"attemptId": identity, "status": "UNKNOWN", "receipts": str(journal), "planSha256": r.digest(b.encoded(original))}); r.save(s)
+            new_admission = root / "new-admission.json"; b.put(new_admission, {"head": "a" * 40, "ciRunId": 2})
+            target.return_value = {"head": "a" * 40, "admission": r.read(new_admission)}
+            before, first_call = self.snapshot(root), len(calls)
+            for _ in range(2):
+                with patch.object(t.sys, "argv", ["trial.py", "bootstrap-recovery-plan", "--admission", str(new_admission)]), redirect_stdout(io.StringIO()):
+                    self.assertEqual(t.main(), 0)
+            self.assertEqual(before, self.snapshot(root))
+            checks = [(argv, data) for argv, data in calls[first_call:] if argv[0] == "pwsh"]
+            self.assertEqual(len(checks), 2)
+            for argv, data in checks:
+                self.assertIn("-InputFromStdin", argv); self.assertNotIn("-InputPath", argv)
+                self.assertEqual(json.loads(data)["run_id"], s["runId"])
 
     def test_native_rejection_through_real_verify_preserves_cache_state_and_logs(self):
         for invalid in ("foreign-volume", "bind-data", "tmpfs-wal", "wrong-state"):
