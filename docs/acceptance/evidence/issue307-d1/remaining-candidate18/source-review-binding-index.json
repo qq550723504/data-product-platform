@@ -1,0 +1,14 @@
+{
+  "status": "SIX_SOURCE_REVIEW_BINDING_INDEX",
+  "count": 2,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/candidate18-source-review01/independent-final-review01.json": {
+      "sha256": "5c02db6961ca10e8c90e4c6788cf7c968912a7d8039975f47e2f21444433f751",
+      "bytes": 5530
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate18-source-review01/evidence-index.json": {
+      "sha256": "8994847872b0c232ade5809da5afc0c70076b4b15d53545225a6133bd37e9f55",
+      "bytes": 27728
+    }
+  }
+}

@@ -1,0 +1,24 @@
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//dpp-lifecycle307-online/fixture/p1.csv?versionId=exact
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=foreign&status=disabled
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=delete808a6960&status=enabled
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=iafc0e66c808a6960&status=enabled
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=dafc0e66c808a6960&status=enabled
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=i6f40bca9808a6960&status=enabled
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=d6f40bca9808a6960&status=enabled
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/add-user
+=== RUN   TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//dpp-lifecycle307-online/fixture/p1.csv?versionId=exact#01
+--- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//dpp-lifecycle307-online/fixture/p1.csv?versionId=exact (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=foreign&status=disabled (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=delete808a6960&status=enabled (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=iafc0e66c808a6960&status=enabled (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=dafc0e66c808a6960&status=enabled (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=i6f40bca9808a6960&status=enabled (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/set-user-status?accessKey=d6f40bca9808a6960&status=enabled (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//minio/admin/v3/add-user (0.00s)
+    --- PASS: TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable//dpp-lifecycle307-online/fixture/p1.csv?versionId=exact#01 (0.00s)
+=== RUN   TestBootstrapSelectsOnlyCurrentExactIdentityAndDormantIsNeverEnabled
+--- PASS: TestBootstrapSelectsOnlyCurrentExactIdentityAndDormantIsNeverEnabled (0.02s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	1.144s

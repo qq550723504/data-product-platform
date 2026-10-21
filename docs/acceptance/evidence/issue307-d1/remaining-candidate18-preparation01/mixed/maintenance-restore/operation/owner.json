@@ -1,0 +1,11 @@
+{
+  "cid": "991fd64a93db64ed4f27b9eb82c0b31b0cf433fc5c4355bb5abb275350b6bc5d",
+  "closure": {
+    "cid": "991fd64a93db64ed4f27b9eb82c0b31b0cf433fc5c4355bb5abb275350b6bc5d",
+    "closed": true,
+    "initial_inspect_failed": false,
+    "stop_failed": false
+  },
+  "failure": null,
+  "native_delete": 0
+}

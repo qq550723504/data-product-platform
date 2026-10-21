@@ -1,0 +1,748 @@
+{
+  "status": "FAIL",
+  "at": "2026-10-21T08:57:29.993829+00:00",
+  "commands": 61,
+  "failed": [
+    {
+      "index": 56,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit_code": 1
+    },
+    {
+      "index": 57,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit_code": 1
+    }
+  ],
+  "results": [
+    {
+      "index": 1,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_confirmed_race.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 2,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_confirmed_race.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 3,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_delete_preflight.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 4,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_delete_preflight.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 5,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_disposal_preparation.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 6,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_disposal_preparation.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 7,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_native_d1_completion.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 8,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_native_d1_completion.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 9,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_lc13_readonly.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 10,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_lc13_readonly.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 11,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_history.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 12,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_history.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 13,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 14,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 15,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_check.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 16,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_check.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 17,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_history.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 18,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_history.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 19,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/check-reference-candidate05-history.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 20,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/check-remaining-v16-history.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 21,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        ".github/scripts/check-lifecycle307-history.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 22,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_remaining_window.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 23,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_remaining_window.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 24,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_freeze_remaining_executable.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 25,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_freeze_remaining_executable.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 26,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_verify_remaining_native.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 27,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_verify_remaining_native.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 28,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 29,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 30,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 31,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 32,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_old_business_dispatch_closure.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 33,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_old_business_dispatch_closure.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 34,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_post_v22_seventeen.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 35,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_post_v22_seventeen.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 36,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_sequence.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 37,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_sequence.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 38,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 39,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 40,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 41,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 42,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 43,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 44,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 45,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 46,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 47,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 48,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 49,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 50,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 51,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 52,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 53,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 54,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 55,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 56,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit_code": 1
+    },
+    {
+      "index": 57,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit_code": 1
+    },
+    {
+      "index": 58,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_v27_dispatch_closure.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 59,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_v27_dispatch_closure.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 60,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "index": 61,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "native": false
+}
