@@ -25,6 +25,8 @@ func NewHandler(service *metadataapp.Service, repo *metadatainfra.PostgresReposi
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/source-schema-observations/attention", h.schemaAttention)
+	mux.HandleFunc("GET /api/v1/data-resources/{resourceId}/schema-observations/{observationId}", h.schemaObservationDetail)
 	mux.HandleFunc("GET /api/v1/data-resources/{resourceId}/schema-observations", h.schemaHistory)
 	mux.HandleFunc("POST /api/v1/data-resources/{resourceId}/schema-observations", h.requestSchema)
 	mux.HandleFunc("POST /api/v1/data-resources/{resourceId}/schema-observations/{observationId}/handle", h.handleSchema)

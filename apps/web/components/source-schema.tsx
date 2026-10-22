@@ -1,6 +1,7 @@
 import {core,workspace} from "@/lib/batches";
 import {Badge,formatDate} from "./ui";
 import {SchemaScanForm,SchemaHandlingForm} from "./schema-controls";
+import {SchemaColumnComparison} from "./source-schema-comparison";
 
 type Column={name:string;type:string;constraint:string};
 type Observation={id:string;status:string;reason:string;columns:Column[];schema_hash:string;started_at?:string;completed_at?:string;recorded_at:string};
@@ -21,7 +22,7 @@ export async function SourceSchema({resourceId,providerAvailable}:{resourceId:st
     <p>来源 {r.externalFqn} · 规则 {r.ruleRef} / {r.ruleVersion} · 规则 hash {r.ruleHash} · 观察契约 hash {r.planHash}</p>
     <p>请求 {formatDate(r.requestedAt)} · 原生扫描完成 {formatDate(o?.completed_at)} · 记录 {formatDate(o?.recorded_at)}</p>
     <p>原因 {o?.reason??"等待现有 worker 执行"} · schema hash {o?.schema_hash||"UNKNOWN"}</p>
-    <table><thead><tr><th>列</th><th>固定基线</th><th>本次扫描</th></tr></thead><tbody>{Array.from(new Set([...r.baseline.map(c=>c.name),...(o?.columns??[]).map(c=>c.name)])).map(name=>{const b=r.baseline.find(c=>c.name===name),c=o?.columns.find(c=>c.name===name);return <tr key={name}><td>{name}</td><td>{b?`${b.type} / ${b.constraint}`:"基线无此列"}</td><td>{c?`${c.type} / ${c.constraint}`:o?.status==="MATCH"||o?.status==="DRIFT"?"本次无此列":"UNKNOWN"}</td></tr>;})}</tbody></table>
+    <SchemaColumnComparison baseline={r.baseline} columns={o?.columns??[]} conclusive={o?.status==="MATCH"||o?.status==="DRIFT"}/>
     {o?.status==="DRIFT"&&!handled&&history.enabled&&<SchemaHandlingForm resourceId={resourceId} observationId={o.id}/>}
     {r.handling.map(h=><p key={h.observation_id+h.created_at}>处理记录：{h.reason} · {formatDate(h.created_at)}</p>)}
     {r.observations.length>1&&<p>本请求保留全部观察：{r.observations.map(x=>`${x.status} (${formatDate(x.recorded_at)})`).join(" → ")}</p>}

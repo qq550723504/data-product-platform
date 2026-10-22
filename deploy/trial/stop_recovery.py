@@ -7,6 +7,7 @@ from pathlib import Path
 import runtime as r
 import resume as c
 import bootstrap as b
+import activation as a
 import protected_resume as p
 import stop_receipts as stops
 
@@ -17,8 +18,28 @@ def controller(s):
     head = r.command(["git", "rev-parse", "HEAD"]).decode().strip()
     sources = r.sources()
     r.need(c.committed_sources(head) == sources, "Committed recovery controller required")
-    c.check_sources(s, sources)
+    # Full activation validation rejects the known historical stop collision.
+    # Verify its frozen business/source baseline here; plan() independently
+    # validates every ledger file and admits only the exact legacy collision.
+    c.check_controller_delta(a.binding_document(s)["sources"], sources)
     return {"head": head, "sources": sources}
+
+
+def check_ledger(s, current, historical):
+    """Validate every ledger artifact, allowing only the reviewed target states."""
+    frozen = []
+    for stage in b.STAGES:
+        for artifact in b.binding_document(s, stage)["files"]:
+            actual = b.file(artifact["path"])
+            if actual["path"] == current["path"]:
+                r.need(stage == "bootstrap" and current["sha256"] != historical["sha256"] == artifact["sha256"]
+                       and actual["sha256"] in (current["sha256"], artifact["sha256"]),
+                       "Unrelated ledger artifact drift; cannot recover")
+                frozen.append(artifact)
+            else:
+                r.need(actual["sha256"] == artifact["sha256"], "Unrelated ledger artifact drift; cannot recover")
+    r.need(len(frozen) == 1, "Exactly one frozen bootstrap artifact collision required")
+    return frozen[0]
 
 
 def plan(s, historical):
@@ -39,17 +60,7 @@ def plan(s, historical):
                "Only the observed legacy stop receipt collision can recover")
         original = b.file(historical, below=r.STATE)
         r.need(original["path"] != target["path"], "Distinct retained historical copy required")
-        manifests = {stage: b.binding_document(s, stage) for stage in b.STAGES}
-        conflicts = []
-        for stage, value in manifests.items():
-            for artifact in value["files"]:
-                actual = b.file(artifact["path"])
-                if actual["sha256"] != artifact["sha256"]:
-                    r.need(stage == "bootstrap" and actual == target and
-                           original["sha256"] == artifact["sha256"],
-                           "Unrelated ledger artifact drift; cannot recover")
-                    conflicts.append(artifact)
-        r.need(len(conflicts) == 1, "Exactly one frozen bootstrap artifact collision required")
+        frozen = check_ledger(s, target, original)
         activation = b.file(s["activationBinding"]["path"], below=Path(s["private"]) / "activations")
         r.need(activation == s["activationBinding"], "Activation manifest drift")
         accepted = r.read(activation["path"])
@@ -60,7 +71,7 @@ def plan(s, historical):
         r.need(facts["expected"] == accepted["ledger"]["proof"], "Current stop facts do not match accepted activation")
         return {"contract": CONTRACT, **stops.identity(s), "registry": registry,
                 "controller": source, "native": native,
-                "historical": original, "current": target, "frozen": conflicts[0],
+                "historical": original, "current": target, "frozen": frozen,
                 "bootstrapBinding": copy.deepcopy(s["bootstrapBinding"]),
                 "custodyBinding": copy.deepcopy(s["custodyBinding"]),
                 "activationBinding": copy.deepcopy(s["activationBinding"])}
@@ -107,6 +118,10 @@ def run(s, plan_path, expected_sha):
     r.need(s["phase"] == "STOPPED", "Stop recovery cannot operate a running/unknown environment")
     with r.read_only_observation():
         r.need(controller(s) == reviewed["controller"], "Recovery controller drift")
+        # A saved journal skips plan(), but never the ledger precondition.
+        # A prior attempt may already have restored the one reviewed target.
+        r.need(check_ledger(s, reviewed["current"], reviewed["historical"]) == reviewed["frozen"],
+               "Reviewed frozen ledger artifact drift")
     if not folder.exists():
         r.need(plan(s, reviewed["historical"]["path"]) == reviewed, "Stop recovery plan drift")
         folder.mkdir(parents=True, exist_ok=False)

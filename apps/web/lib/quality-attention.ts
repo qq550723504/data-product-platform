@@ -38,6 +38,9 @@ export function qualityAttentionHref(query: Record<string, string | undefined>, 
     if (value) next.set(key, String(value));
   }
   next.set("qualityView", view);
+  if (query.schemaView) next.set("schemaView", query.schemaView === "ALL" ? "ALL" : "UNHANDLED");
+  const schemaOffset = attentionOffset(query.schemaOffset);
+  if (schemaOffset) next.set("schemaOffset", String(schemaOffset));
   if (offset > 0) next.set("qualityOffset", String(offset));
   return `/attention?${next.toString()}#quality-attention`;
 }
