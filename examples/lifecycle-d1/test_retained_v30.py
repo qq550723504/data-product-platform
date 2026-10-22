@@ -30,6 +30,14 @@ def budget(*,uid=10001,nonempty=False):
 
 
 class RetainedV30Tests(unittest.TestCase):
+    def test_native_temp_and_canonical_file_tree_spellings_agree(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder=Path(tmp)/'retained-original';folder.mkdir()
+            raw=b'original\r\n';(folder/'proof.txt').write_bytes(raw)
+            expected={'proof.txt':{'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)}}
+            self.assertEqual(r.file_set(folder),expected)
+            self.assertEqual(r.file_set(folder.resolve()),expected)
+
     def composition(self,fault=None):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             root=Path(tmp)/'current';private=Path(tmp)/'private';old=private/'remaining-candidate20';evidence=root/r.REL

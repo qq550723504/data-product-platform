@@ -37,6 +37,9 @@ def load(path):return audit.decode(audit.unlinked_absolute(path).read_bytes())
 
 
 def file_set(folder):
+    # The same existing boundary must normalize both sides of relative_to:
+    # hosted Windows TEMP can spell this root with an 8.3 user directory.
+    folder=audit.unlinked_absolute(folder)
     values={}
     for path in sorted(folder.rglob('*')):
         need(not path.is_symlink() and not path.is_junction(),'linked retained private file/directory')
