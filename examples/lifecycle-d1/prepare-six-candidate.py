@@ -14,6 +14,7 @@ import subprocess
 import sys
 import uuid
 import fixture_artifacts
+import execution_freeze
 
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('six_prior_readonly',Path(__file__).with_name('verify-post-v22-seventeen.py'))
@@ -310,20 +311,40 @@ def artifact_contract():
     return dict(execution=EXECUTION,profile=PROFILE,start=W['NotBefore'],end=W['NotAfter'])
 
 
+def preallocation_ci():
+    """A completed exact-source CI precedes allocation, not only authorization."""
+    head=subprocess.check_output(['git','-c','core.longpaths=true','rev-parse','HEAD'],cwd=ROOT).decode().strip()
+    journal=ROOT/'docs/acceptance/evidence/issue307-d1'/('preallocation-ci-'+uuid.uuid4().hex)
+    journal.mkdir()
+    snapshot=execution_freeze.GitHub(journal).snapshot()
+    save(journal/'snapshot.json',snapshot)
+    execution_freeze.ready(snapshot,head)
+    receipt=journal/'passed.json'
+    save(receipt,{'status':'PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION','head':head,
+        'execution':EXECUTION,'run':snapshot['ci']['id'],'snapshot_sha256':sha(journal/'snapshot.json'),'provider_io':0,'allocated_resources':0})
+    return {'head':head,'run':snapshot['ci']['id'],'receipt':receipt.relative_to(ROOT).as_posix(),'sha256':sha(receipt)}
+
+
 def allocate():
     window.policy_checkpoint()
     need(PROFILE=='candidate20/v30' and EXECUTION=='5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
+    source_ci=preallocation_ci()
     # Verify retained history before allocating any owner or volume.
     retained=historical_gate()
     CONTROL.mkdir();PUBLIC.mkdir();save(PUBLIC/'retained-before.json',retained)
     a=Allocation();failure=None
     try:
         artifact=build();source=artifact['source']
+        need(artifact['host']['source']==source_ci['head'],'built host P lacks the exact successful source CI')
+        # Historical readback and compilation can take minutes. Revalidate the
+        # captured actual host bytes before creating any network/volume/owner.
+        fixture_artifacts.verify_host(ROOT,artifact['host'])
         old=load(p1.PACKET/'candidate.json');scopes=load(ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
         state={'status':'STOPPED_ALLOCATION_NOT_NATIVE_ACCEPTANCE','source':source,'profile':PROFILE,'execution':EXECUTION,'allocation_nonce':a.nonce,
                'window':W,'policy_checkpoint_sha256':window.POLICY_CHECKPOINT_SHA256,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'build_files':{name:sha(CONTROL/name) for name in ('reader','operator','owner','readonly-check.exe',*[binary+'-build.'+channel for binary in ('reader','operator','owner','checker') for channel in ('stdout','stderr')])},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
         state.update(artifact)
+        state['source_ci']=source_ci
         mapping={'Execution':EXECUTION,'Profile':PROFILE,'Groups':[]}
         for n,scope in enumerate(scopes):
             group=scope['Group'];g=next(x for x in old['Groups'] if x['Group']==group)

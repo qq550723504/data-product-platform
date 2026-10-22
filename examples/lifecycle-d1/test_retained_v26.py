@@ -51,14 +51,15 @@ class RetainedV26Tests(unittest.TestCase):
         self.assertNotEqual(f.p.EXECUTION,retained.EXECUTION)
 
     def fixture(self,root):
-        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate20-source-review01'
+        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01'
         for directory in (public,packet,review):directory.mkdir(parents=True)
         candidate={'Execution':f.p.EXECUTION,'Source':'f'*40}
+        f.save(packet/'source-freeze.json',{'host':{'source':'d'*40}})
         f.save(packet/'candidate.json',candidate)
         for directory,name,status in [(public,'non-delete-evidence-index.json','SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX'),(review,'evidence-index.json','C20_SOURCE_REVIEW_EVIDENCE_INDEX')]:
             (directory/'source.txt').write_bytes(b'recorded-only')
             f.save(directory/name,{'status':status,'count':1,'files':{'source.txt':{'sha256':f.sha(directory/'source.txt'),'bytes':13}}})
-        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C20_SOURCE_PREPARATION_REVIEW','source_head':'f'*40,'remaining_blockers':[]})
+        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C20_DUAL_ARTIFACT_PREPARATION_REVIEW','source_head':'d'*40,'runtime_source':'f'*40,'remaining_blockers':[]})
         return public,packet,review,candidate
 
     def test_current_source_report_and_preparation_form_exact_typed_plan(self):
@@ -74,13 +75,14 @@ class RetainedV26Tests(unittest.TestCase):
             self.assertFalse((packet/'human-authorization.json').exists())
 
     def test_source_review_or_raw_index_drift_stops_freeze_audit(self):
-        for fault in ('blocked','wrong-source','status','members-in-map','length','count','digest-map','traversal'):
+        for fault in ('blocked','wrong-source','wrong-runtime','status','members-in-map','length','count','digest-map','traversal'):
             with self.subTest(fault=fault),tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
                 root=Path(tmp);public,packet,review,candidate=self.fixture(root)
                 for obj,name,value in [(f.r,'ROOT',root),(f.r,'PUBLIC',public),(f,'PACKET',packet)]:stack.enter_context(patch.object(obj,name,value))
                 report=f.load(review/'independent-final-review01.json');index=f.load(public/'non-delete-evidence-index.json')
                 if fault=='blocked':report['remaining_blockers']=['B1']
                 if fault=='wrong-source':report['source_head']='e'*40
+                if fault=='wrong-runtime':report['runtime_source']='e'*40
                 if fault=='status':report['status']='PENDING'
                 if fault=='members-in-map':index['members']=[]
                 if fault=='length':index['files']['source.txt']['bytes']=14

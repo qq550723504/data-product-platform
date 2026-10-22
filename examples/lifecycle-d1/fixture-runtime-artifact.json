@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "purpose": "RETAINED_D1_FIXTURE_ONLY",
   "source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
   "base_source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
@@ -31,8 +31,8 @@
     "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
     "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go"
   ],
-  "archive_sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea",
-  "archive_bytes": 1821417,
+  "archive_sha256": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+  "archive_bytes": 6425445,
   "files": {
     "apps/platform/cmd/api/main.go": "4d7402469b6e208c52186ad134e5b95c250398d8ed2fbc562fafba676bc337db",
     "apps/platform/cmd/ingestion-browser-fixture/main.go": "2dd94df5869849f102313ce1b6644b15e690c946cf9f9f49ddf153142077f447",
@@ -803,5 +803,6 @@
     "migrations/000068_lifecycle_checkpoint_read.up.sql": "23e90a25cd53da573419063a308c6366be5312688b7286b64268325394429d16",
     "migrations/000069_lifecycle_copy_policy_renewal.down.sql": "33ff5287621a3c2c2b3b40c627a4dff7429729bd97e8c8837b62832ca75d66c5",
     "migrations/000069_lifecycle_copy_policy_renewal.up.sql": "2197bf0d3c226ab087c1be71f9e029f3c213b449d9b7097e369497f2e1c7d635"
-  }
+  },
+  "archive_recipe": "GIT_ZIP_STORE_UTC_LF_V1"
 }

@@ -66,6 +66,7 @@ def source_freeze(a):
     archive=r.CONTROL/'approved-runtime-source.zip'
     save(PACKET/'source-freeze.json',{'version':2,'source':a['source'],'runtime':spec,'host':a['host'],
                                     'runtime_artifact_spec_sha256':a['runtime_artifact_spec_sha256'],
+                                    'source_ci':a['source_ci'],
                                     'archive_sha256':sha(archive),'archive_bytes':archive.stat().st_size,
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
@@ -151,7 +152,7 @@ def main():
                          'recovery_redis':allocation['recovery_redis'],'budget_volume':allocation['volumes']['budget'],'budget_initializer':allocation['budget_initializer'],'budget_initializer_script_sha256':allocation['budget_initializer_script_sha256'],
                          'root_owners':owners,'allocation_sha256':sha(r.PUBLIC/'allocation.json'),'owner_descriptors_sha256':a['owner_descriptors_sha256'],
                          'map_sha256':a['map_sha256'],'preparation_terminal_sha256':sha(r.PUBLIC/'non-delete-terminal.json'),'previous_policy_heads':heads})
-        bindings[-1].update(initial_build_source=a['source'],host_source=a['host']['source'],runtime_artifact_spec_sha256=a['runtime_artifact_spec_sha256'],initial_build_files=a['build_files'],retained_history=a['retained'])
+        bindings[-1].update(initial_build_source=a['source'],host_source=a['host']['source'],source_ci=a['source_ci'],runtime_artifact_spec_sha256=a['runtime_artifact_spec_sha256'],initial_build_files=a['build_files'],retained_history=a['retained'])
     save(PACKET/'profile-windows.json',windows);candidate['ProfileWindowsSHA256']=sha(PACKET/'profile-windows.json')
     save(PACKET/'candidate.json',candidate);save(PACKET/'bindings.json',bindings)
     preparation_audit_plan(candidate)
@@ -181,6 +182,7 @@ def confirmation(c,bindings,targets):
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
            f'fixture runtime R={c["Source"]}；PR/host P={bindings[0]["host_source"]}；R archive {sha(r.CONTROL/"approved-runtime-source.zip")}；runtime artifact spec {bindings[0]["runtime_artifact_spec_sha256"]}；schema仅69/66且无protected identity；最终review HEAD另由execution-binding精确绑定。',
+           f'分配前P精确PR CI {bindings[0]["source_ci"]["head"]}；run {bindings[0]["source_ci"]["run"]}；原收据 {bindings[0]["source_ci"]["receipt"]} SHA256 {bindings[0]["source_ci"]["sha256"]}；最终review HEAD仍须独立精确CI。',
            f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15/16/17冷态/预算/IAM/失败证据、可信NOT_SENT闭合及新17版本只读证据独立原样保留，不复用旧execution或授权。',
            f'准备阶段完整入口audit plan {sha(PACKET/"preparation-evidence-audit-plan.json")}；显式files-map-v1；未来实际授权/调度后须另按批准manifest绑定对应phase audit plan，不能覆盖准备快照。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',

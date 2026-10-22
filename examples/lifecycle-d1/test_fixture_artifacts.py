@@ -3,6 +3,7 @@ import copy
 import io
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -26,8 +27,8 @@ class ArtifactTests(unittest.TestCase):
         write('apps/platform/scope.json',b'{"window":"new"}\n')
         write('migrations/69.sql',b'fixed historical DDL\n')
         base=commit();write('apps/platform/fixture.go',b'new execution, exact schema guard\n');source=commit()
-        raw=f.git(root,'archive','--format=zip',source,'apps/platform','migrations')
-        spec=dict(version=1,purpose='RETAINED_D1_FIXTURE_ONLY',execution='new',profile='test/v1',not_before='start',not_after='end',
+        raw=f.runtime_archive(root,source)
+        spec=dict(version=2,archive_recipe='GIT_ZIP_STORE_UTC_LF_V1',purpose='RETAINED_D1_FIXTURE_ONLY',execution='new',profile='test/v1',not_before='start',not_after='end',
                   schema=dict(max_version=69,migration_members=66,protected_identity=False),source=source,base_source=base,
                   runtime_delta_files=['apps/platform/fixture.go'],shared_contract_files=['apps/platform/scope.json'],
                   archive_sha256=f.digest(raw),archive_bytes=len(raw),files={n:f.digest(v) for n,v in f.archive_members(raw).items()})
@@ -52,7 +53,8 @@ class ArtifactTests(unittest.TestCase):
             f.verify(root,control,a,contract)
             packet=Path(tmp)/'packet';packet.mkdir()
             a['build_files']={'recorded':'b'*64}
-            frozen=dict(version=2,source=a['source'],host=a['host'],runtime=spec,
+            a['source_ci']={'recorded_ci':'not_live'}
+            frozen=dict(version=2,source=a['source'],host=a['host'],runtime=spec,source_ci=a['source_ci'],
                         runtime_artifact_spec_sha256=a['runtime_artifact_spec_sha256'],actual_build_source=a['source'],
                         initial_allocation_build_source=a['source'],initial_build_files=a['build_files'],
                         archive_sha256=spec['archive_sha256'],archive_bytes=spec['archive_bytes'])
@@ -63,6 +65,7 @@ class ArtifactTests(unittest.TestCase):
             record(frozen);f.verify_frozen(packet,candidate,a,spec)
             for key,value in [('source',a['host']['source']),('host',dict(a['host'],source=a['source'])),
                               ('runtime',dict(spec,source=a['host']['source'])),('initial_build_files',{}),
+                              ('source_ci',{}),
                               ('runtime_artifact_spec_sha256','e'*64),('archive_sha256','f'*64),
                               ('archive_bytes',0),('version',1)]:
                 bad=copy.deepcopy(frozen);bad[key]=value;record(bad)
@@ -95,7 +98,7 @@ class ArtifactTests(unittest.TestCase):
     def test_cross_artifact_contract_and_schema_refuse_before_build(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);spec,contract=self.fixture(root);path=root/f.SPEC
-            changes=[('execution','old'),('profile','old/v0'),('not_before','old'),('not_after','later'),
+            changes=[('execution','old'),('profile','old/v0'),('not_before','old'),('not_after','later'),('archive_recipe','LOCAL_TIME_COMPRESSED'),
                      ('schema',dict(max_version=71,migration_members=68,protected_identity=True)),
                      ('base_source','f'*40),('runtime_delta_files',[]),('source','f'*40)]
             for key,value in changes:
@@ -103,6 +106,16 @@ class ArtifactTests(unittest.TestCase):
                 with self.subTest(field=key),self.assertRaises((ValueError,subprocess.CalledProcessError)):f.specification(root,**contract)
             path.write_text(json.dumps(spec));scope=root/'apps/platform/scope.json';scope.write_bytes(b'foreign scope')
             with self.assertRaises(ValueError):f.specification(root,**contract)
+
+    def test_archive_bytes_stable_across_inherited_timezones_and_all_members_stored(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);spec,contract=self.fixture(root);archives=[]
+            for zone in ['UTC','Asia/Singapore','America/New_York','GMT-8']:
+                with patch.dict(os.environ,{'TZ':zone}):archives.append(f.runtime_archive(root,spec['source']))
+            self.assertTrue(all(value==archives[0] for value in archives))
+            with zipfile.ZipFile(io.BytesIO(archives[0])) as archive:
+                self.assertTrue(all(entry.compress_type==zipfile.ZIP_STORED for entry in archive.infolist()))
+            self.assertEqual(f.digest(archives[0]),spec['archive_sha256'])
 
     def test_archive_rejects_path_escape_links_duplicates_and_extra_members(self):
         for names in [['../escape'],['/absolute'],['foreign/file'],['apps/platform/a','apps/platform/a']]:

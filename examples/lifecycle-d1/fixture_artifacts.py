@@ -21,7 +21,13 @@ def need(value,message):
 def digest(raw): return hashlib.sha256(raw).hexdigest()
 def load(path): return json.loads(Path(path).read_bytes())
 def git(root,*args):
-    return subprocess.check_output(['git','-c','core.longpaths=true','-c','core.autocrlf=false',*args],cwd=root)
+    env=os.environ.copy();env['TZ']='UTC'
+    return subprocess.check_output(['git','-c','core.longpaths=true','-c','core.autocrlf=false',*args],cwd=root,env=env)
+
+def runtime_archive(root,source):
+    # ZIP DOS timestamps are local time; compression output may depend on
+    # zlib. Native Git UTC + store-only fixes both without a custom archiver.
+    return git(root,'archive','--format=zip','-0',source,'apps/platform','migrations')
 
 def regular(path):
     need(path.is_file() and not path.is_symlink() and not path.is_junction()
@@ -44,7 +50,8 @@ def archive_members(raw):
 
 def specification(root, *, execution, profile, start, end):
     path=Path(root)/SPEC;regular(path);spec=load(path)
-    need(spec['version']==1 and spec['purpose']=='RETAINED_D1_FIXTURE_ONLY'
+    need(spec['version']==2 and spec['archive_recipe']=='GIT_ZIP_STORE_UTC_LF_V1'
+         and spec['purpose']=='RETAINED_D1_FIXTURE_ONLY'
          and spec['execution']==execution and spec['profile']==profile
          and spec['not_before']==start and spec['not_after']==end,
          'runtime/host execution or window contract differs')
@@ -96,7 +103,7 @@ def verify_host(root, host):
 def build(root, destination, contract):
     root,destination=Path(root),Path(destination)
     spec=specification(root,**contract);host=host_snapshot(root)
-    archive=git(root,'archive','--format=zip',spec['source'],'apps/platform','migrations')
+    archive=runtime_archive(root,spec['source'])
     with (destination/'approved-runtime-source.zip').open('xb') as stream:stream.write(archive)
     files=verify_archive(root,destination,spec)
     build_root=destination/'build-runtime';build_root.mkdir()
@@ -131,6 +138,7 @@ def verify_frozen(packet,candidate,a,spec):
     need(digest((Path(packet)/'source-freeze.json').read_bytes())==candidate['SourceFreezeSHA256']
          and frozen['version']==2 and candidate['Source']==frozen['source']==a['source']
          and frozen['host']==a['host']
+         and frozen['source_ci']==a['source_ci']
          and frozen['runtime_artifact_spec_sha256']==a['runtime_artifact_spec_sha256']
          and frozen['actual_build_source']==frozen['initial_allocation_build_source']==a['source']
          and frozen['initial_build_files']==a['build_files'], 'frozen R/P source/build binding differs')

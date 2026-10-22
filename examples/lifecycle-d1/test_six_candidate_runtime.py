@@ -15,6 +15,7 @@ import tarfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
+from test_execution_freeze import snapshot
 
 spec=importlib.util.spec_from_file_location('six_host_under_test',Path(__file__).with_name('six_candidate_runtime.py'))
 r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
@@ -22,11 +23,22 @@ RECORDED=r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate13-prep
 
 
 class SixHostTests(unittest.TestCase):
+    def test_terminal_preparation_refuses_before_allocation_history_or_docker(self):
+        with tempfile.TemporaryDirectory() as tmp,patch.object(r,'CONTROL',Path(tmp)),\
+             patch.object(r,'load',side_effect=AssertionError('allocation read before terminal')):
+            (Path(tmp)/'preparation-terminal.json').write_bytes(b'terminal')
+            with self.assertRaisesRegex(ValueError,'already terminal'):r.allocation_state()
+
     def test_current_exact_build_has_all_twelve_regular_unlinked_members(self):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             control=Path(tmp);stack.enter_context(patch.object(r,'CONTROL',control))
+            stack.enter_context(patch.object(r,'ROOT',control))
             for name in r.BUILD_MEMBERS:(control/name).write_bytes(name.encode())
             a={'source':'a'*40,'build_files':{n:r.sha(control/n) for n in r.BUILD_MEMBERS},'binaries':{n:r.sha(control/n) for n in ('reader','operator','owner','readonly-check.exe')}}
+            a['host']={'source':'a'*40}
+            r.save(control/'snapshot.json',snapshot())
+            r.save(control/'passed.json',dict(status='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION',head='a'*40,run=100,execution=r.p.EXECUTION,snapshot_sha256=r.sha(control/'snapshot.json')))
+            a['source_ci']={'receipt':'passed.json','sha256':r.sha(control/'passed.json'),'head':'a'*40,'run':100}
             verified=[]
             stack.enter_context(patch.object(r.p.fixture_artifacts,'verify',lambda root,control,a,contract:verified.append(a) or {}))
             self.assertEqual(r.build_contract(a)['source'],'a'*40)

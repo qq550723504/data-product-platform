@@ -28,6 +28,10 @@ Non-goals：修改历史 candidate19/v29、恢复其授权、执行对象删除�
 
 P 保留当前产品模型及 identity_kind 保护。宿主构造、完整入口、拓扑签名、分支锁工具和共享 scope/policy 在另一个清单中冻结。P 的宿主源码 commit、原字节/LF SHA 与 R 的源码、归档、四份 binary、12 个原构建成员分别留证。source-freeze v2 把两者整体绑定进候选；完整入口先验证 R/P 共享契约、归档、宿主源码及冻结交叉字段，再读取 Docker/source。最终 review HEAD 仍需精确 CI 与原生分支锁，不以 R 或早期 P 的 CI 代替。
 
+归档统一使用原生 Git `TZ=UTC`、`core.autocrlf=false`、ZIP store-only `-0`，并逐字节固定 ZIP SHA 与完整成员 SHA。ZIP 本地时间及压缩器实现不能成为操作系统间的隐含输入；不以“源码成员相同”豁免执行归档的原字节核验。原 v30 本地时区/压缩归档与失败回执保留，不更新成新格式冒充原始构建。
+
+任何下一代分配之前，必须先有构建所用 P 精确 HEAD 的全部必要 pull_request CI 成功，复用相同的仓库/PR/workflow/app/suite/job 成员来源核验；API 未知、pending、失败或外来 HEAD 在 history/build/任何资源分配前停止。历史核验与 Go 构建之后、第一项 network/volume/owner 创建之前，实际 build 的 P source 必须仍等于该 CI HEAD，且完整宿主 raw/LF 字节仍匹配。新 allocation 与 source-freeze 保存原 CI 回执 SHA/快照；最终文档 HEAD 的 CI 与原生锁仍另行验证。未冻结准备也可以终止：追加 preparation-terminal，保留原 allocation/build/预算和撤销前 profile，固定入口不得恢复或重新使用该 execution。
+
 main 更新带来的新产品 schema 不能隐式改变 R 的执行语义，也不能据此迁移保留源 Core。三源升级若另有业务必要，应使用单独的人类维护授权；本次已保留其隔离克隆证明和未授权备选提案，没有执行源升级。R/P 任一必需契约变化必须在冻结前完成回归、独评与新制品；冻结后不得更新分支来补交回执。
 
 | 阶段 | 允许的分支操作 |

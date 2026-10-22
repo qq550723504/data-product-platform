@@ -74,6 +74,11 @@ def mounts_exact(item,expected):
 
 
 def allocation_state():
+    terminal=CONTROL/'preparation-terminal.json'
+    need(not terminal.is_symlink() and not terminal.is_junction(),'preparation terminal aliased')
+    try:terminal.stat()
+    except FileNotFoundError:pass
+    else:raise ValueError('preparation already terminal; retain only, never resume')
     a=load(CONTROL/'allocation.json')
     need(a['execution']==p.EXECUTION and a['profile']==p.PROFILE and a==load(PUBLIC/'allocation.json'),'allocation differs')
     need(a['policy_checkpoint_sha256']==p.window.POLICY_CHECKPOINT_SHA256,'allocation current policy checkpoint differs')
@@ -88,12 +93,20 @@ BUILD_MEMBERS={'reader','operator','owner','readonly-check.exe'}|{name+'-build.'
 
 def build_contract(a):
     p.fixture_artifacts.verify(ROOT,CONTROL,a,p.artifact_contract())
+    ci=a['source_ci'];receipt=(ROOT/ci['receipt']).resolve()
+    need(receipt.is_relative_to(ROOT.resolve()) and sha(receipt)==ci['sha256'],'source CI receipt missing or changed')
+    p.fixture_artifacts.regular(receipt)
+    record=load(receipt);snapshot=receipt.with_name('snapshot.json')
+    need(record['status']=='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION' and record['head']==ci['head']==a['host']['source']
+         and record['run']==ci['run'] and record['execution']==p.EXECUTION
+         and sha(snapshot)==record['snapshot_sha256'],'source CI/build or saved snapshot binding differs')
+    p.execution_freeze.ready(load(snapshot),a['host']['source'])
     need(set(a['build_files'])==BUILD_MEMBERS,'initial build membership differs')
     for name,digest in a['build_files'].items():
         path=CONTROL/name
         need(path.is_file() and not path.is_symlink() and not path.is_junction() and path.stat().st_nlink==1 and sha(path)==digest,'initial build member bytes/type/link differs')
     need(all(a['build_files'][name]==digest for name,digest in a['binaries'].items()),'active binary differs from initial build')
-    return {'source':a['source'],'files':a['build_files']}
+    return {'source':a['source'],'files':a['build_files'],'source_ci':ci}
 
 
 def state():
