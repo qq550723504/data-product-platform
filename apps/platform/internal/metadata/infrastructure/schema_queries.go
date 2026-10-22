@@ -71,13 +71,15 @@ type SchemaObservationDetail struct {
 
 func ValidSchemaAttentionView(view string) bool { return view == "UNHANDLED" || view == "ALL" }
 
-const schemaObservationFields = `r.workspace_id AS "workspaceId", r.resource_id AS "resourceId",
+const schemaObservationBaseFields = `r.workspace_id AS "workspaceId", r.resource_id AS "resourceId",
  resource.code AS "resourceCode", resource.name AS "resourceName",
  r.id AS "requestId", o.id AS "observationId", o.attempt_id AS "attemptId",
  r.actor_id AS "responsibleActorId", r.external_fqn AS "externalFqn",
  r.rule_ref AS "ruleRef", r.rule_version AS "ruleVersion", r.rule_hash AS "ruleHash",
  r.plan_hash AS "planHash", o.status, o.reason, o.schema_hash AS "schemaHash",
- r.requested_at AS "requestedAt", o.completed_at AS "completedAt", o.recorded_at AS "recordedAt",
+ r.requested_at AS "requestedAt", o.completed_at AS "completedAt", o.recorded_at AS "recordedAt"`
+
+const schemaObservationFields = schemaObservationBaseFields + `,
  (SELECT count(*) FROM source_schema_handling h WHERE h.observation_id=o.id) AS "handlingCount"`
 
 const schemaObservationFrom = ` FROM source_schema_observation o

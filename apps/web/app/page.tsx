@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { QualityAttention } from "@/components/quality-attention";
 import { SchemaAttention } from "@/components/schema-attention";
+import { SchemaExceptions } from "@/components/schema-exceptions";
 import { Badge, EmptyState, LoadError, MetricCard, PageHeader, SetupRequired, formatDate } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
@@ -67,6 +68,7 @@ export default async function WorkbenchPage() {
 
         <QualityAttention compact />
         <SchemaAttention compact />
+        <SchemaExceptions compact />
         <section className="panel" style={{ marginTop: 18 }} data-testid="needs-attention">
           <div className="panel-header">
             <h2>审核、执行与发布待办</h2>

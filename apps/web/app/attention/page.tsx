@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { QualityAttention } from "@/components/quality-attention";
 import { SchemaAttention } from "@/components/schema-attention";
+import { SchemaExceptions } from "@/components/schema-exceptions";
+import { schemaExceptionFilter } from "@/lib/schema-exception-filter";
 import { schemaView } from "@/lib/schema-observation";
 import { attentionOffset, attentionView } from "@/lib/quality-attention";
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
@@ -10,6 +12,8 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 const PAGE_SIZE = 25;
 
 type AttentionSearchParams = {
+  schemaExceptionStatus?: string;
+  schemaExceptionOffset?: string;
   schemaView?: string;
   schemaOffset?: string;
   qualityView?: string;
@@ -101,6 +105,8 @@ export default async function AttentionPage({
   const validatingReleaseOffset = parseOffset(query.validatingReleaseOffset);
   const readyReleaseOffset = parseOffset(query.readyReleaseOffset);
   const offsets = {
+    schemaExceptionStatus: schemaExceptionFilter(query.schemaExceptionStatus),
+    schemaExceptionOffset: attentionOffset(query.schemaExceptionOffset),
     schemaView: schemaView(query.schemaView),
     schemaOffset: attentionOffset(query.schemaOffset),
     qualityView: attentionView(query.qualityView),
@@ -150,12 +156,13 @@ export default async function AttentionPage({
         <PageHeader
           eyebrow="Attention"
           title="待办中心"
-          description="这里只展示当前仍需处理的事项；已被成功 retry 解决的历史失败不会继续占用待办。"
+          description="集中查看当前待办及单列的扫描异常历史；历史异常不计为当前未恢复待办。"
           action={<span>审核、执行与发布：{total} 条</span>}
         />
 
         <QualityAttention query={query} />
         <SchemaAttention query={query} />
+        <SchemaExceptions query={query} />
 
         {total === 0 ? (
           <EmptyState

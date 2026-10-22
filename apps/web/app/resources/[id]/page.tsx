@@ -3,7 +3,7 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 import { ResourceSource } from "@/components/resource-source";
 import { SchemaObservationEvidence } from "@/components/schema-observation-evidence";
 
-export default async function ResourceDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ view?: string; requestId?: string; observationId?: string }> }) {
+export default async function ResourceDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ view?: string; requestId?: string; observationId?: string; schemaExceptionStatus?: string; schemaExceptionOffset?: string }> }) {
   if (!configuredWorkspaceId()) {
     return <><PageHeader title="数据资源详情" /><SetupRequired /></>;
   }
@@ -11,7 +11,7 @@ export default async function ResourceDetailPage({ params, searchParams }: { par
   const query = await searchParams;
   // Resolve exact history before loading any current resource/provider surface.
   if (query.view === "source-schema" || query.requestId !== undefined || query.observationId !== undefined) {
-    return <SchemaObservationEvidence resourceId={id} requestId={query.requestId} observationId={query.observationId} />;
+    return <SchemaObservationEvidence resourceId={id} requestId={query.requestId} observationId={query.observationId} exceptionStatus={query.schemaExceptionStatus} exceptionOffset={query.schemaExceptionOffset} />;
   }
   try {
     const resource = await platform.resource(id);
