@@ -202,10 +202,13 @@ func TestLedgerBootstrap68To71PreservesFiveVersionsAndRealCLICustodyAdmission(t 
 	for i, kind := range []string{"RAW", "RAW", "RAW", "STANDARDIZED", "CURATED"} {
 		dataset, version := uuid.New(), uuid.New()
 		uri := "s3://raw/datasets/" + strconv.Itoa(i) + ".csv"
+		if i < 3 {
+			uri = "s3://raw/core/" + ws.String() + "/source-" + strconv.Itoa(i) + ".csv"
+		}
 		if _, err := pool.Exec(ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type) VALUES($1,$2,$3,'Isolated retained five',$4)`, dataset, ws, uuid.NewString(), kind); err != nil {
 			t.Fatal(err)
 		}
-		if _, err := pool.Exec(ctx, `INSERT INTO dataset_version(id,dataset_id,version_no,status,storage_type,storage_uri,checksum_algorithm,checksum_value,byte_size) VALUES($1,$2,1,'READY','OBJECT_STORAGE',$3,'SHA256',$4,$5)`, version, dataset, uri, checksum, len(body)); err != nil {
+		if _, err := pool.Exec(ctx, `INSERT INTO dataset_version(id,dataset_id,version_no,status,storage_type,storage_uri,checksum_algorithm,checksum_value,byte_size,content_type) VALUES($1,$2,1,'READY','OBJECT_STORAGE',$3,'SHA256',$4,$5,'text/csv')`, version, dataset, uri, checksum, len(body)); err != nil {
 			t.Fatal(err)
 		}
 		versions = append(versions, expectedVersion{ID: version, SHA256: checksum, Bytes: int64(len(body)), URI: uri})
@@ -215,8 +218,35 @@ func TestLedgerBootstrap68To71PreservesFiveVersionsAndRealCLICustodyAdmission(t 
 		t.Fatal(err)
 	}
 	var providerCalls atomic.Int64
+	var resumeMode atomic.Int32
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		providerCalls.Add(1)
+		if mode := resumeMode.Load(); mode != 0 {
+			if !strings.HasPrefix(r.URL.Path, "/raw/core/"+ws.String()+"/") || r.URL.RawQuery != "" || (r.Method != "GET" && r.Method != "HEAD" && r.Method != "PUT") {
+				t.Errorf("protected continuation escaped workspace: %s %s", r.Method, r.URL.Path)
+			}
+			if r.Method == "PUT" {
+				_, _ = io.Copy(io.Discard, r.Body)
+				return
+			}
+			if mode == 3 {
+				w.WriteHeader(http.StatusForbidden)
+				_, _ = w.Write([]byte(`<Error><Code>AccessDenied</Code></Error>`))
+				return
+			}
+			output := body
+			if mode == 2 {
+				output = []byte(strings.ReplaceAll(string(body), "retained", "changed!"))
+			}
+			w.Header().Set("Content-Length", fmt.Sprint(len(output)))
+			w.Header().Set("ETag", `"controlled"`)
+			w.Header().Set("Last-Modified", time.Now().UTC().Format(http.TimeFormat))
+			w.Header().Set("X-Amz-Request-Id", "isolated-protected-resume")
+			if r.Method != "HEAD" {
+				_, _ = w.Write(output)
+			}
+			return
+		}
 		if r.Method != "GET" || r.URL.RawQuery != "" || (r.URL.Path != "/raw/datasets/3.csv" && r.URL.Path != "/raw/datasets/4.csv") {
 			t.Errorf("unexpected bounded custody request %s %s", r.Method, r.URL.Path)
 		}
@@ -378,4 +408,7 @@ func TestLedgerBootstrap68To71PreservesFiveVersionsAndRealCLICustodyAdmission(t 
 			t.Fatal("private admission output leaked")
 		}
 	}
+	// Continue this fresh test-only five-version fixture through the actual SDK
+	// and Python ledger checker. No retained trial or real credential is used.
+	exerciseProtectedResume(t, pool, cfg, in, private, body, &resumeMode, &providerCalls)
 }
