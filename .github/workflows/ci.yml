@@ -100,6 +100,8 @@ jobs:
           python -O -B examples/lifecycle-d1/test_six_native_entry.py
           python -B examples/lifecycle-d1/test_retained_v26.py
           python -O -B examples/lifecycle-d1/test_retained_v26.py
+          python -B examples/lifecycle-d1/test_retained_v29.py
+          python -O -B examples/lifecycle-d1/test_retained_v29.py
           python -B examples/lifecycle-d1/test_execution_freeze.py
           python -O -B examples/lifecycle-d1/test_execution_freeze.py
           python -B examples/lifecycle-d1/test_freeze_six_candidate.py

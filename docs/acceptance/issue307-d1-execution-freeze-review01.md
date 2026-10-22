@@ -22,11 +22,11 @@ v29 execution a5d1e569-f80e-4b38-8f32-d8139a30a077 已终态，授权 HEAD caab4
 | 原生 GitHub 写锁 | PASS | 独立 rehearsal 分支实际锁定；同 tree 的合法快进 commit 更新被 422 Cannot change this locked branch 拒绝；分支和锁保留 |
 | 修复后原生 CI 来源读回 | PASS | 对保留的 rehearsal 分支仅重新读回；run39715490720、13 个 job/check 成员成功；无再次更新尝试 |
 | 独立复评 | PASS | B1/B2 均闭合、剩余有效阻断 0；独立正常/-O 各 33 项通过，13 个审查输入前后 SHA 相同；原生响应离线重放及 6 个 CI 来源反例通过；初评失败和反例保留 |
-| 本修复最终 HEAD 的 PR CI | PENDING | 等待提交推送后的精确 HEAD pull_request 结果；既有 17c HEAD CI 不能替代 |
-| 新候选与实际 #332 执行锁 | NOT_RUN | 本轮未分配 execution/预算/窗口，未生成或冻结候选；实际 #332 仍处准备阶段 |
+| 本修复最终 HEAD 的 PR CI | PASS | 22337ded634a87e7e761082a08b0a3635a3c2e4a；run39736086917，pull_request，13/13 成功、未解决线程 0；不是 main CI |
+| 新候选与实际 #332 执行锁 | PREPARING / NOT_FROZEN | 人类已选择 10月22日新加坡18:00–18:40；新 execution 5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6；预算尚未分配，实际 #332 仍处准备阶段，尚无新执行锁 |
 | 新的人类授权 / 调度 / 删除 | NOT_RUN | 旧授权绝不复用；六目标全部保留待执行 |
 
-本轮证据位于 evidence/issue307-d1/execution-freeze-review01：regression02/result.json、native-rehearsal01/native-result.json、native-ci-provenance-readback02/readback.json、retained-v29-receipt-index.json。原生演练只证明 GitHub 分支写保护，不代表对象存储删除、IAM 关闭或完整 D1 验收。
+本轮证据位于 evidence/issue307-d1/execution-freeze-review01：regression02/result.json、native-rehearsal01/native-result.json、native-ci-provenance-readback02/readback.json、retained-v29-receipt-index.json、independent-final-review02.json、publication01/checkpoint.json。原生演练只证明 GitHub 分支写保护，不代表对象存储删除、IAM 关闭或完整 D1 验收。依据 AGENTS.md 第17节已在 PR 留收口评论：issuecomment-6334820923。独立评审的矩阵快照保留当时 CI PENDING，本段为后来精确 HEAD 成功读回的追加事实，不改写旧快照。
 
 ## 后续新方案的有限顺序
 

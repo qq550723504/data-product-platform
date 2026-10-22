@@ -1,4 +1,4 @@
-"""Finite candidate19 preparation. Allocate stopped owners; never send/enable DELETE.
+"""Finite candidate20 preparation. Allocate stopped owners; never send/enable DELETE.
 
 Allocation, source/restore non-delete verification and final freeze are distinct
 checkpoints. A stopped allocation is not a native PASS or deletion permission.
@@ -136,7 +136,10 @@ def historical_gate():
     import retained_v28
     c18=retained_v28.verify(ROOT,inspect,closed,docker,ids,p1.PRIVATE,p1.hostpath)
     need(len(ids)==731,'retained post-v28 closed owner count differs')
-    return {'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_731_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
+    import retained_v29
+    c19=retained_v29.verify(ROOT,inspect,closed,project_owner,docker,ids,p1.PRIVATE,p1.hostpath)
+    need(len(ids)==820,'retained post-v29 closed owner count differs')
+    return {'c19':c19,'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_820_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
 
 
 def retained_c14(ids):
@@ -314,7 +317,7 @@ def build(destination=CONTROL):
 
 def allocate():
     window.policy_checkpoint()
-    need(PROFILE=='candidate19/v29' and EXECUTION=='a5d1e569-f80e-4b38-8f32-d8139a30a077','only the new proposed execution is supported')
+    need(PROFILE=='candidate20/v30' and EXECUTION=='5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
     # Verify retained history before allocating any owner or volume.
     retained=historical_gate()
@@ -333,7 +336,7 @@ def allocate():
             config=load(p1.PRIVATE/project/'config.json')
             need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
             pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
-            subnet='10.246.'+str(215+n)+'.0/28'
+            subnet='10.246.'+str(218+n)+'.0/28'
             # Reuse the existing subnet overlap check; never attach to another run.
             runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
             network=a.network(prefix+'-restore',subnet)

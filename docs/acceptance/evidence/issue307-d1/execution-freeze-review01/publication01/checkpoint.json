@@ -1,0 +1,276 @@
+{
+  "status": "PASS_REPAIR_EXACT_HEAD_PR_CI_AND_THREAD_CLOSURE",
+  "at": "2026-10-22T06:59:55.207667+00:00",
+  "head": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+  "CI": {
+    "id": 39736086917,
+    "attempt": 1,
+    "path": ".github/workflows/ci.yml",
+    "event": "pull_request",
+    "repository": "qq550723504/data-product-platform",
+    "head_repository": "qq550723504/data-product-platform",
+    "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+    "pull_requests": [
+      332
+    ],
+    "status": "completed",
+    "conclusion": "success",
+    "suite_id": 107688975696,
+    "jobs": [
+      {
+        "check_run_id": 119681972169,
+        "name": "classify-changes",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682048992,
+        "name": "temporary-container-contracts (windows-latest)",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049005,
+        "name": "temporary-container-contracts (ubuntu-latest)",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049015,
+        "name": "splink-smoke",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049056,
+        "name": "web-console",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049083,
+        "name": "label-studio-smoke",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049148,
+        "name": "go-platform",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049214,
+        "name": "gx-smoke",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049279,
+        "name": "browser-contracts / web-browser-contracts",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049301,
+        "name": "hop-smoke",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049323,
+        "name": "demo / demo-lifecycle",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119682049503,
+        "name": "live-core / live-core-browser",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "check_run_id": 119685685950,
+        "name": "required",
+        "run_id": 39736086917,
+        "run_attempt": 1,
+        "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "necessary_checks": [
+    {
+      "id": 119685685950,
+      "name": "required",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049503,
+      "name": "live-core / live-core-browser",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049323,
+      "name": "demo / demo-lifecycle",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049301,
+      "name": "hop-smoke",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049279,
+      "name": "browser-contracts / web-browser-contracts",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049214,
+      "name": "gx-smoke",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049148,
+      "name": "go-platform",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049083,
+      "name": "label-studio-smoke",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049056,
+      "name": "web-console",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049015,
+      "name": "splink-smoke",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682049005,
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119682048992,
+      "name": "temporary-container-contracts (windows-latest)",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119681972169,
+      "name": "classify-changes",
+      "app_id": 15368,
+      "app_slug": "github-actions",
+      "suite_id": 107688975696,
+      "head_sha": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "unresolved_threads": 0,
+  "PR332": "OPEN_DRAFT_UNMERGED",
+  "Issue307": "open",
+  "native_delete": 0,
+  "new_candidate_frozen": false
+}
