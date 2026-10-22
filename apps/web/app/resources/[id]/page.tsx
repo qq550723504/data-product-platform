@@ -1,12 +1,18 @@
 import { BackLink, Badge, DefinitionList, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 import { ResourceSource } from "@/components/resource-source";
+import { SchemaObservationEvidence } from "@/components/schema-observation-evidence";
 
-export default async function ResourceDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ResourceDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ view?: string; requestId?: string; observationId?: string }> }) {
   if (!configuredWorkspaceId()) {
     return <><PageHeader title="数据资源详情" /><SetupRequired /></>;
   }
   const { id } = await params;
+  const query = await searchParams;
+  // Resolve exact history before loading any current resource/provider surface.
+  if (query.view === "source-schema" || query.requestId !== undefined || query.observationId !== undefined) {
+    return <SchemaObservationEvidence resourceId={id} requestId={query.requestId} observationId={query.observationId} />;
+  }
   try {
     const resource = await platform.resource(id);
     return (

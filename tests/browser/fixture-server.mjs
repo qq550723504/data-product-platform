@@ -38,7 +38,18 @@ export const ids = {
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-attention-foreign"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
+export const schemaObservationId = n => `${String(n).padStart(8,"0")}-3460-4346-8346-${String(n).padStart(12,"0")}`;
+export const schemaRequestId = n => `${String(n).padStart(8,"0")}-3461-4346-8346-${String(n).padStart(12,"0")}`;
+function schemaItems() {
+  return Array.from({length:105},(_,index)=>{
+    const n=index+1;
+    return {workspaceId:ids.workspace,resourceId:ids.sourceResource,resourceCode:"SCHEMA_FIXTURE",resourceName:"schema 漂移导航验收",
+      requestId:schemaRequestId(n),observationId:schemaObservationId(n),attemptId:ids.job,responsibleActorId:ids.actor,
+      externalFqn:"historical.energy",ruleRef:"fixture/schema",ruleVersion:"1",ruleHash:"a".repeat(64),planHash:"b".repeat(64),
+      status:"DRIFT",reason:`SOURCE_SCHEMA_CHANGED ${n}`,schemaHash:"c".repeat(64),requestedAt:stamp,completedAt:stamp,recordedAt:stamp,handlingCount:n===105?3:0};
+  });
+}
 export const attentionCaseId = n => `${String(n).padStart(8, "0")}-3430-4343-8343-${String(n).padStart(12, "0")}`;
 function attentionItems() {
   return Array.from({ length: 105 }, (_, index) => {
@@ -342,6 +353,23 @@ export function createFixtureServer() {
         return { items: items.slice(offset, offset + limit), page: { total: items.length, limit, offset } };
       }
       if (req.method === "GET") {
+        if (url.pathname === `${workspace}/source-schema-observations/attention`) {
+          if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(403, {});
+          if (state.scenario === "schema-attention-unavailable") return send(503,{code:"SCHEMA_ATTENTION_UNAVAILABLE"});
+          const all=state.scenario.startsWith("schema-attention")?schemaItems():[];
+          if(state.scenario==="schema-attention-foreign")all[0].workspaceId=ids.goldDataset;
+          const items=all.filter(o=>url.searchParams.get("view")==="ALL"||o.handlingCount===0);
+          return send(200,{...page(items),summary:{unhandledCount:all.filter(o=>!o.handlingCount).length,handledCount:all.filter(o=>o.handlingCount>0).length},readAt:stamp});
+        }
+        if (url.pathname.startsWith(`/api/v1/data-resources/${ids.sourceResource}/schema-observations/`)) {
+          if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
+          const item=schemaItems().find(o=>url.pathname.endsWith(`/${o.observationId}`));
+          if(!item)return send(404,{});
+          return send(200,{...item,requestId:state.scenario==="schema-attention-mismatch"?schemaRequestId(1):item.requestId,
+            bindingId:ids.goldBinding,externalId:"historical-provider-id",connectorHash:"d".repeat(64),startedAt:stamp,
+            baseline:[{name:"energy_kwh",type:"TEXT",constraint:"NOT_NULL"}],columns:[{name:"energy_kwh",type:"BIGINT",constraint:"NULL"},{name:"new_optional",type:"TEXT",constraint:"NULL"}],
+            handling:Array.from({length:item.handlingCount},(_,i)=>({id:schemaObservationId(201+i),observationId:item.observationId,actorId:ids.actor,reason:`历史处理 ${i+1}`,createdAt:stamp}))});
+        }
         if (url.pathname === `${workspace}/quality-remediations/attention`) {
           if (req.headers.authorization !== "Bearer review-secret") return send(403, {});
           if (state.scenario === "quality-attention-unavailable") return send(503, { code: "QUALITY_ATTENTION_UNAVAILABLE" });
