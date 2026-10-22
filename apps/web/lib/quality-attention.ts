@@ -1,3 +1,5 @@
+import { preserveSchemaExceptionQuery } from "./schema-exception-filter";
+
 export type AttentionView = "FOLLOW_UP" | "CLOSED" | "ALL";
 export type QualityAttentionItem = {
   id: string; workspaceId: string; datasetId: string; datasetCode: string; datasetName: string;
@@ -33,6 +35,7 @@ export function attentionOffset(value?: string): number {
 
 export function qualityAttentionHref(query: Record<string, string | undefined>, view: AttentionView, offset: number): string {
   const next = new URLSearchParams();
+  preserveSchemaExceptionQuery(query, next);
   for (const key of ["reviewOffset", "failureOffset", "failedReleaseOffset", "validatingReleaseOffset", "readyReleaseOffset"]) {
     const value = attentionOffset(query[key]);
     if (value) next.set(key, String(value));

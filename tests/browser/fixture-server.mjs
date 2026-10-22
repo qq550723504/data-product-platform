@@ -50,6 +50,18 @@ function schemaItems() {
       status:"DRIFT",reason:`SOURCE_SCHEMA_CHANGED ${n}`,schemaHash:"c".repeat(64),requestedAt:stamp,completedAt:stamp,recordedAt:stamp,handlingCount:n===105?3:0};
   });
 }
+for (const scenario of ["schema-exceptions", "schema-exceptions-unavailable", "schema-exceptions-foreign", "schema-exceptions-mismatch", "schema-exceptions-empty"]) scenarios.add(scenario);
+export const exceptionObservationId = n => `${String(n).padStart(8,"0")}-3490-4349-8349-${String(n).padStart(12,"0")}`;
+export const exceptionRequestId = n => `${String(n <= 3 ? 1 : n).padStart(8,"0")}-3491-4349-8349-${String(n <= 3 ? 1 : n).padStart(12,"0")}`;
+function exceptionItems() {
+  return Array.from({length:105},(_,index)=>{
+    const n=index+1, status=["UNAVAILABLE","DENIED","INTERRUPTED"][index%3];
+    return {workspaceId:ids.workspace,resourceId:ids.sourceResource,resourceCode:"EXCEPTION_FIXTURE",resourceName:"扫描异常历史导航验收",
+      requestId:exceptionRequestId(n),observationId:exceptionObservationId(n),attemptId:status==="DENIED"&&n%2===0?null:`${String(n).padStart(8,"0")}-3492-4349-8349-${String(n).padStart(12,"0")}`,responsibleActorId:ids.actor,
+      externalFqn:"historical.energy",ruleRef:"fixture/schema",ruleVersion:"1",ruleHash:"a".repeat(64),planHash:"b".repeat(64),
+      status,reason:`HISTORICAL_${status} ${n}`,schemaHash:"",requestedAt:stamp,startedAt:null,completedAt:null,recordedAt:stamp};
+  });
+}
 export const attentionCaseId = n => `${String(n).padStart(8, "0")}-3430-4343-8343-${String(n).padStart(12, "0")}`;
 function attentionItems() {
   return Array.from({ length: 105 }, (_, index) => {
@@ -353,6 +365,16 @@ export function createFixtureServer() {
         return { items: items.slice(offset, offset + limit), page: { total: items.length, limit, offset } };
       }
       if (req.method === "GET") {
+        if (url.pathname === `${workspace}/source-schema-observations/exceptions`) {
+          if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(403, {});
+          if (state.scenario === "schema-exceptions-unavailable") return send(503,{code:"SCHEMA_EXCEPTIONS_UNAVAILABLE"});
+          const all=state.scenario.startsWith("schema-exceptions")&&state.scenario!=="schema-exceptions-empty"?exceptionItems():[];
+          if(state.scenario==="schema-exceptions-foreign")all[0].workspaceId=ids.goldDataset;
+          const status=url.searchParams.get("status")??"ALL";
+          if(!["ALL","UNAVAILABLE","DENIED","INTERRUPTED"].includes(status))return send(400,{code:"INVALID_SCHEMA_EXCEPTION_STATUS"});
+          const items=all.filter(o=>status==="ALL"||o.status===status);
+          return send(200,{...page(items),summary:{unavailableCount:all.filter(o=>o.status==="UNAVAILABLE").length,deniedCount:all.filter(o=>o.status==="DENIED").length,interruptedCount:all.filter(o=>o.status==="INTERRUPTED").length},readAt:stamp});
+        }
         if (url.pathname === `${workspace}/source-schema-observations/attention`) {
           if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(403, {});
           if (state.scenario === "schema-attention-unavailable") return send(503,{code:"SCHEMA_ATTENTION_UNAVAILABLE"});
@@ -363,12 +385,13 @@ export function createFixtureServer() {
         }
         if (url.pathname.startsWith(`/api/v1/data-resources/${ids.sourceResource}/schema-observations/`)) {
           if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
-          const item=schemaItems().find(o=>url.pathname.endsWith(`/${o.observationId}`));
+          const item=[...schemaItems(),...exceptionItems()].find(o=>url.pathname.endsWith(`/${o.observationId}`));
           if(!item)return send(404,{});
-          return send(200,{...item,requestId:state.scenario==="schema-attention-mismatch"?schemaRequestId(1):item.requestId,
-            bindingId:ids.goldBinding,externalId:"historical-provider-id",connectorHash:"d".repeat(64),startedAt:stamp,
-            baseline:[{name:"energy_kwh",type:"TEXT",constraint:"NOT_NULL"}],columns:[{name:"energy_kwh",type:"BIGINT",constraint:"NULL"},{name:"new_optional",type:"TEXT",constraint:"NULL"}],
-            handling:Array.from({length:item.handlingCount},(_,i)=>({id:schemaObservationId(201+i),observationId:item.observationId,actorId:ids.actor,reason:`历史处理 ${i+1}`,createdAt:stamp}))});
+          const exception=item.status!=="DRIFT";
+          return send(200,{...item,requestId:state.scenario==="schema-attention-mismatch"?schemaRequestId(1):state.scenario==="schema-exceptions-mismatch"?exceptionRequestId(1):item.requestId,
+            bindingId:ids.goldBinding,externalId:"historical-provider-id",connectorHash:"d".repeat(64),startedAt:exception?null:stamp,
+            baseline:[{name:"energy_kwh",type:"TEXT",constraint:"NOT_NULL"}],columns:exception?[]:[{name:"energy_kwh",type:"BIGINT",constraint:"NULL"},{name:"new_optional",type:"TEXT",constraint:"NULL"}],handlingCount:item.handlingCount??0,
+            handling:Array.from({length:item.handlingCount??0},(_,i)=>({id:schemaObservationId(201+i),observationId:item.observationId,actorId:ids.actor,reason:`历史处理 ${i+1}`,createdAt:stamp}))});
         }
         if (url.pathname === `${workspace}/quality-remediations/attention`) {
           if (req.headers.authorization !== "Bearer review-secret") return send(403, {});

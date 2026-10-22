@@ -1,6 +1,6 @@
 import test, { before, after, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { createFixtureServer, ids, fixtureToken } from "./fixture-server.mjs";
+import { createFixtureServer, ids, fixtureToken, exceptionObservationId, exceptionRequestId } from "./fixture-server.mjs";
 let server, base;
 const controlHeaders = { "x-fixture-token": fixtureToken, "Content-Type": "application/json" };
 before(async () => {
@@ -11,6 +11,27 @@ before(async () => {
 after(async () => { await new Promise((resolve) => server.close(resolve)); });
 beforeEach(async () => { await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: "{}" }); });
 async function state() { return (await fetch(`${base}/__control/state`, { headers: controlHeaders })).json(); }
+
+test("exception history fixture preserves classification counts and exact nullable evidence", async () => {
+  await fetch(`${base}/__control/reset`, {method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-exceptions"})});
+  const list=`${base}/api/v1/workspaces/${ids.workspace}/source-schema-observations/exceptions`;
+  assert.equal((await fetch(list)).status,403);
+  const headers={Authorization:"Bearer rights-fixture-secret"};
+  const all=await (await fetch(`${list}?status=ALL&limit=25&offset=100`,{headers})).json();
+  assert.equal(all.page.total,105);
+  assert.equal(all.items.length,5);
+  assert.deepEqual(all.summary,{unavailableCount:35,deniedCount:35,interruptedCount:35});
+  const denied=await (await fetch(`${list}?status=DENIED&limit=25&offset=25`,{headers})).json();
+  assert.equal(denied.page.total,35);
+  assert.equal(denied.items.length,10);
+  assert.ok(denied.items.every(o=>o.status==="DENIED"));
+  const exact=await (await fetch(`${base}/api/v1/data-resources/${ids.sourceResource}/schema-observations/${exceptionObservationId(104)}`,{headers})).json();
+  assert.equal(exact.requestId,exceptionRequestId(104));
+  assert.equal(exact.attemptId,null);
+  assert.equal(exact.completedAt,null);
+  assert.deepEqual(exact.columns,[]);
+  assert.deepEqual(exact.handling,[]);
+});
 test("control routes require a token", async () => assert.equal((await fetch(`${base}/__control/state`)).status, 403));
 test("unknown scenario is rejected rather than silently returning ready", async () => {
   assert.equal((await fetch(`${base}/__control/scenario`, { method: "POST", headers: controlHeaders, body: '{"scenario":"typo"}' })).status, 400);
