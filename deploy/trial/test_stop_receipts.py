@@ -27,6 +27,9 @@ class StopReceiptContracts(unittest.TestCase):
             state.mkdir(); private.mkdir()
             for module, field, value in ((r, "ROOT", root), (r, "STATE", state), (trial, "STATE", state)):
                 stack.enter_context(patch.object(module, field, value))
+            # exclusive() captured its default STATE at import. Bind the real
+            # lock explicitly so parallel suites never lock a real checkout.
+            stack.enter_context(patch.object(trial, "exclusive", side_effect=lambda: r.exclusive(state)))
             s, before, after = fixtures.ProtectedResumeContracts().fixture()
             s.update(root=str(root), private=str(private), head="a" * 40, sources={},
                      host={"daemonId": "daemon"}, businessBinding={"path": "original-business", "sha256": "f" * 64},
@@ -128,6 +131,14 @@ class StopReceiptContracts(unittest.TestCase):
             self.assertEqual(sum(v[0] == "start" for v in calls), 1)
             self.assertEqual(sum(v[0] == "protected-probe" for v in calls), 1)
 
+    def test_cli_uses_the_real_lock_in_its_temporary_state_directory(self):
+        with self.fixture() as (_, _, _, _, _, calls, renew, hosts, _):
+            with r.exclusive(r.STATE):
+                code, error = self.cli("stop")
+                self.assertEqual(code, 1); self.assertIn("Another trial command", error["reason"])
+            self.assertEqual(calls, []); renew.assert_not_called(); hosts.assert_not_called()
+            self.assertEqual(self.cli("stop")[0], 0)
+
     def test_repeat_stop_is_readonly_and_missing_or_tampered_receipt_never_starts(self):
         for mutation in ("facts", "receipt-path", "observation", "identity", "unknown"):
             with self.subTest(mutation=mutation), self.fixture() as (root, s, _, _, _, calls, renew, hosts, _):
@@ -186,6 +197,22 @@ class StopReceiptContracts(unittest.TestCase):
                 self.assertEqual(self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)[0], 1)
             self.assertEqual(self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)[0], 0)
             self.assertEqual(len(r.read(r.STATE / "state.json")["stopRecoveryHistory"]), 1); renew.assert_not_called()
+
+    def test_completed_recovery_replay_does_not_rebind_a_later_stop(self):
+        with self.fixture(collision=True) as (root, s, _, historical, original, calls, renew, hosts, _):
+            path, sha = self.reviewed(s, historical, root)
+            completed = self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)
+            self.assertEqual(completed[0], 0)
+            self.assertEqual(self.cli("resume")[0], 0)
+            self.assertEqual(self.cli("stop")[0], 0)
+            current = r.read(r.STATE / "state.json")["stopInspection"]
+            self.assertNotEqual(current, completed[1]["stopInspection"])
+            before = self.snapshot(root)
+            self.assertEqual(completed, self.cli("stop-recover", "--plan", path, "--plan-sha256", sha))
+            self.assertEqual(before, self.snapshot(root))
+            self.assertEqual(r.read(r.STATE / "state.json")["stopInspection"], current)
+            self.assertEqual((r.STATE / "before-stop-facts.json").read_bytes(), original)
+            renew.assert_called_once(); hosts.assert_called_once()
 
     def test_recovery_refuses_unsupported_drift_and_changed_plan_before_mutations(self):
         for mutation in ("history-bytes", "foreign-copy", "identity", "current-facts", "other-artifact", "hash", "running", "orphan"):
