@@ -38,6 +38,9 @@ func TestBrowserFixture(t *testing.T) {
 		t.Fatal("private output directory required")
 	}
 	f := newFixture(t)
+	originalBlob, originalManifest := f.blobs["manifest.json"], f.manifest
+	budget := &fixture{blobs: map[string][]byte{"manifest.json": originalBlob}, c: f.c, r: f.r}
+	declareBundleTotal(t, budget, MaxBytes+1)
 	tokenPath := filepath.Join(root, "api-token")
 	profilePath := filepath.Join(root, "web-profile.json")
 	gatewayPath := filepath.Join(root, "web-gateway-token")
@@ -69,9 +72,15 @@ func TestBrowserFixture(t *testing.T) {
 			return
 		}
 		switch cmd.Action {
-		case "enable":
+		case "enable", "budget":
 			f.allowed.Store(true)
 			f.sourceAllowed.Store(true)
+			f.sourceMu.Lock()
+			f.blobs["manifest.json"], f.manifest = originalBlob, originalManifest
+			if cmd.Action == "budget" {
+				f.blobs["manifest.json"], f.manifest = budget.blobs["manifest.json"], budget.manifest
+			}
+			f.sourceMu.Unlock()
 			_, e = f.pool.Exec(r.Context(), `UPDATE source_admission_connection SET enabled=true WHERE id=$1`, f.c.ID)
 		case "deny":
 			_, e = f.pool.Exec(r.Context(), `UPDATE source_admission_connection SET enabled=false WHERE id=$1`, f.c.ID)
@@ -99,6 +108,22 @@ func TestBrowserFixture(t *testing.T) {
 		}
 		_ = json.NewEncoder(w).Encode(map[string]any{"versions": f.count(t, `SELECT count(*) FROM dataset_version WHERE dataset_id=$1`, f.c.DatasetID), "accepted": f.count(t, `SELECT count(*) FROM source_admission_capture WHERE dataset_id=$1 AND state='ACCEPTED_SOURCE'`, f.c.DatasetID), "sourceCalls": f.sourceCalls.Load()})
 	})
+	mux.HandleFunc("GET /__fixture/budget-state", func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-Fixture-Control") != "synthetic-hfa-control" {
+			w.WriteHeader(403)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"calls":     f.sourceCalls.Load(),
+			"artifacts": f.count(t, `SELECT count(*) FROM source_admission_call WHERE workspace_id=$1 AND asset_name<>'manifest.json'`, f.c.WorkspaceID),
+			"costs":     f.count(t, `SELECT count(*) FROM cost_event WHERE workspace_id=$1 AND cost_type='SOURCE_ADMISSION_FETCH'`, f.c.WorkspaceID),
+			"received":  f.count(t, `SELECT count(*) FROM source_admission_call c JOIN source_admission_observation o ON o.call_id=c.id WHERE c.workspace_id=$1 AND c.asset_name='manifest.json' AND o.outcome='RECEIVED' AND o.status_code=200`, f.c.WorkspaceID),
+			"rejected":  f.count(t, `SELECT count(*) FROM source_admission_operation WHERE workspace_id=$1 AND state='FAILED_FINAL' AND error_code='SOURCE_PROFILE_UNSUPPORTED'`, f.c.WorkspaceID),
+			"versions":  f.count(t, `SELECT count(*) FROM dataset_version WHERE dataset_id=$1`, f.c.DatasetID),
+			"captures":  f.count(t, `SELECT count(*) FROM source_admission_capture WHERE dataset_id=$1`, f.c.DatasetID),
+			"copies":    f.count(t, `SELECT count(*) FROM lifecycle_protected_object_intent WHERE workspace_id=$1`, f.c.WorkspaceID),
+		})
+	})
 	listener, e := net.Listen("tcp", "127.0.0.1:25481")
 	if e != nil {
 		t.Fatal(e)
@@ -107,6 +132,7 @@ func TestBrowserFixture(t *testing.T) {
 	defer server.Close()
 	go func() { _ = server.Serve(listener) }()
 	meta := map[string]any{"workspaceId": f.c.WorkspaceID, "datasetId": f.c.DatasetID, "connectionId": f.c.ID, "releaseId": f.r.ReleaseID, "snapshotId": f.r.SnapshotID, "manifestSha256": f.r.ManifestSHA, "profile": profilePath, "gatewayTokenFile": gatewayPath, "api": "http://127.0.0.1:25481"}
+	meta["budgetManifestSha256"] = budget.r.ManifestSHA
 	b, _ = json.Marshal(meta)
 	if e = os.WriteFile(filepath.Join(root, "browser-fixture.json"), b, 0600); e != nil {
 		t.Fatal(e)
