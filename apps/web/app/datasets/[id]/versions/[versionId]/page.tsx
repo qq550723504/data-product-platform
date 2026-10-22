@@ -20,7 +20,7 @@ import { batchEnabled,certificationReferences,core,trialRawOnly,workspace } from
 import { DirectDataDeliveryForm } from "@/components/direct-data-delivery-form";
 import { configuredWorkspaceId, platform, PlatformError, type CertificationBlocker, type DatasetCertification, type CertificationProfile } from "@/lib/platform";
 import { isQualityAttemptId } from "@/lib/quality-command";
-import { QualityReadError } from "@/lib/quality-transport";
+import { readSection, validPage } from "@/lib/workbench-read";
 import { isComplianceAttemptId } from "@/lib/compliance-command";
 
 type DatasetVersionView = "overview" | "quality" | "compliance" | "certification" | "eligibility" | "provenance";
@@ -137,15 +137,18 @@ export default async function DatasetVersionDetailPage({
   };
 
   try {
-    let qualityUnknown = false;
-    const readQuality = async <T,>(request: Promise<T>): Promise<T | null> => {
-      try { return await request; } catch { qualityUnknown = true; return null; }
-    };
+    const readQualityList = (limit: number, offset: number) => readSection(
+      () => platform.qualityAssessments(versionId, limit, offset),
+      page => page.datasetVersionId.toLowerCase() === versionId.toLowerCase()
+        && validPage(page, limit, offset, assessment => isIdentity(assessment.id)
+          && assessment.workspaceId.toLowerCase() === configuredWorkspaceId()!.toLowerCase()
+          && assessment.datasetVersionId.toLowerCase() === versionId.toLowerCase()),
+    );
     const [dataset, version, quality, latestQuality, history] = await Promise.all([
       platform.dataset(id),
       platform.datasetVersion(versionId),
-      readQuality(platform.qualityAssessments(versionId, assessmentLimit, assessmentOffset)),
-      assessmentOffset === 0 ? Promise.resolve(null) : readQuality(platform.qualityAssessments(versionId, 1, 0)),
+      readQualityList(assessmentLimit, assessmentOffset),
+      readQualityList(1, 0),
       platform.certificationHistory(
         versionId,
         certificationLimit,
@@ -199,18 +202,14 @@ export default async function DatasetVersionDetailPage({
     // A delivery ambiguity must not prevent viewing/correcting immutable
     // certification history or reading quality/compliance results.
     const eligibility = canCheck && view === "eligibility" ? await platform.deliveryEligibility(versionId, requested) : null;
-    let qualityAttempt = null;
     const qualityAttemptId = isQualityAttemptId(query.qualityAttemptId) ? query.qualityAttemptId : undefined;
-    if (qualityAttemptId) {
-      try {
-        qualityAttempt = await platform.qualityAttempt(qualityAttemptId);
-        if (qualityAttempt.datasetVersionId.toLowerCase() !== version.id.toLowerCase()) {
-          throw new Error("Quality attempt 不属于当前 DatasetVersion。");
-        }
-      } catch (error) {
-        if (!(error instanceof QualityReadError && error.status === 404)) qualityUnknown = true;
-      }
-    }
+    const qualityAttempt = qualityAttemptId ? await readSection(
+      () => platform.qualityAttempt(qualityAttemptId),
+      attempt => attempt.id.toLowerCase() === qualityAttemptId.toLowerCase()
+        && attempt.workspaceId.toLowerCase() === configuredWorkspaceId()!.toLowerCase()
+        && attempt.datasetVersionId.toLowerCase() === version.id.toLowerCase(),
+    ) : null;
+    const attemptUnknown = Boolean(qualityAttemptId) && qualityAttempt === null;
     let complianceResult = null;
     const complianceAttemptId = isComplianceAttemptId(query.complianceAttemptId) ? query.complianceAttemptId : undefined;
     const compliancePolicyRef = typeof query.compliancePolicyRef === "string" && query.compliancePolicyRef.trim().length <= 1024
@@ -226,15 +225,22 @@ export default async function DatasetVersionDetailPage({
         if (!(error instanceof PlatformError && error.status === 404)) throw error;
       }
     }
-    const latestAssessment = assessmentOffset === 0 ? quality?.items[0] : latestQuality?.items[0];
-    const latestReport = latestAssessment ? await readQuality(platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset)) : null;
+    const latestSummary = latestQuality;
+    const summaryUnknown = latestSummary === null;
+    const latestAssessment = latestSummary?.items[0];
     const selectedAssessmentId = view === "quality" ? query.assessmentId : undefined;
     if (selectedAssessmentId && !isIdentity(selectedAssessmentId)) throw new Error("评测引用无效");
     // Report selection is reading only: latestAssessment remains the source for
     // current summaries and certification defaults below.
-    const displayReport = selectedAssessmentId
-      ? await readQuality(platform.qualityReport(selectedAssessmentId, findingsLimit, findingsOffset).then(report => assertReportScope(report, selectedAssessmentId, version.id, configuredWorkspaceId()!)))
-      : latestReport;
+    const reportId = view === "quality" ? selectedAssessmentId ?? latestAssessment?.id
+      : view === "provenance" ? latestAssessment?.id : undefined;
+    // An explicit historical report has no dependency on the current list or
+    // latest report. Failed explicit selection never falls back to latest.
+    const displayReport = reportId ? await readSection(
+      () => platform.qualityReport(reportId, findingsLimit, findingsOffset),
+      report => Boolean(assertReportScope(report, reportId, version.id, configuredWorkspaceId()!)),
+    ) : null;
+    const reportUnknown = Boolean(reportId) && displayReport === null;
     const evidenceCertification = eligibility?.certification.current
       ?? history.items.find((item) => item.profile.id === selectedProfile?.id);
     const goldExplanation = evidenceCertification?.profile.profileRef === "gold/dataset-v1"
@@ -262,7 +268,7 @@ export default async function DatasetVersionDetailPage({
           eyebrow={`${dataset.code} / v${version.versionNo}`}
           title="DatasetVersion 质量与认证"
           description="历史认证只说明 issued-at 事实；当前可交付性必须重新检查 DatasetVersion、Certification 与 Rights。"
-          action={<div className="badge-row"><Badge value={version.status} /><Badge value={qualityUnknown ? "UNKNOWN" : latestAssessment?.gateDecision ?? "NOT_ASSESSED"} /></div>}
+          action={<div className="badge-row"><Badge value={version.status} /><Badge value={summaryUnknown ? "UNKNOWN" : latestAssessment?.gateDecision ?? "NOT_ASSESSED"} /></div>}
         />
 
         <nav className="detail-tabs" aria-label="DatasetVersion 详情视图">
@@ -317,8 +323,8 @@ export default async function DatasetVersionDetailPage({
               </article>
               <article className="status-overview-card">
                 <span>Quality</span>
-                <strong><Badge value={qualityUnknown ? "UNKNOWN" : latestAssessment?.gateDecision ?? "NOT_ASSESSED"} /></strong>
-                <small>{qualityUnknown ? "质量证据不可确认" : `${quality?.page.total} assessments`}</small>
+                <strong><Badge value={summaryUnknown ? "UNKNOWN" : latestAssessment?.gateDecision ?? "NOT_ASSESSED"} /></strong>
+                <small>{quality === null ? "评测历史 UNKNOWN" : `${quality.page.total} assessments`}</small>
               </article>
               <article className="status-overview-card">
                 <span>Certification</span>
@@ -356,12 +362,11 @@ export default async function DatasetVersionDetailPage({
           </>
         ) : null}
 
-        {qualityUnknown ? <section className="callout" data-testid="quality-evidence-unavailable"><h2>Quality 证据 UNKNOWN</h2><p>暂时无法确认已授权的质量证据，请稍后重试。当前链接中的评测和 attempt 引用已保留，不使用其他评测替代。</p>{query.assessmentId ? <p className="mono">{query.assessmentId}</p> : null}{qualityAttemptId ? <p className="mono">{qualityAttemptId}</p> : null}</section> : null}
-        {view === "quality" && quality && !qualityUnknown ? (
+        {view === "quality" ? (
           <>
-        <div className="panel-header"><h2>Quality Assessment</h2><span className="eyebrow">{quality.page.total} Assessments</span></div>
+        <div className="panel-header"><h2>Quality Assessment</h2><span className="eyebrow">{quality === null ? "UNKNOWN" : `${quality.page.total} Assessments`}</span></div>
         {selectedAssessmentId ? <div className="callout" data-testid="selected-quality-assessment"><strong>指定评测：{selectedAssessmentId}</strong><p>下方报告绑定此评测；最新质量摘要、认证输入和当前交付判断保持独立。</p></div> : null}
-        <QualityCheckForm
+        {attemptUnknown ? <section className="callout" data-testid="quality-attempt-unavailable"><h3>Quality attempt UNKNOWN</h3><p className="mono">{qualityAttemptId}</p><p>暂时无法确认此 attempt，不发起重复评测。</p></section> : <QualityCheckForm
           key={qualityAttemptId ?? "new"}
           datasetId={dataset.id}
           versionId={version.id}
@@ -369,11 +374,10 @@ export default async function DatasetVersionDetailPage({
           enabled={qualityActionsEnabled}
           initialAttemptId={qualityAttemptId}
           attempt={qualityAttempt}
-        />
-        {!latestAssessment ? (
+        />}
+        {summaryUnknown ? <section className="callout" data-testid="quality-summary-unavailable"><h3>最新评测摘要 UNKNOWN</h3></section> : !latestAssessment ? (
           <EmptyState title="尚未评测" description="该 DatasetVersion 还没有 QualityAssessment。" />
         ) : (
-          <>
             <section className="detail-card" style={{ marginBottom: 18 }}>
               <div className="panel-header"><h3>最新评测</h3><Badge value={latestAssessment.gateDecision} /></div>
               <DefinitionList items={[
@@ -399,6 +403,8 @@ export default async function DatasetVersionDetailPage({
                 </table>
               </div>
             </section>
+        )}
+            {reportUnknown ? <section className="callout" data-testid="quality-evidence-unavailable"><h3>Quality 报告 UNKNOWN</h3><p className="mono">{reportId}</p><p>暂时无法确认此评测的证据，请稍后重试。未使用其他评测替代。</p></section> : null}
             {displayReport ? (
               <section className="detail-card" style={{ marginBottom: 18 }} data-testid="quality-report">
                 <div className="panel-header">
@@ -477,6 +483,7 @@ export default async function DatasetVersionDetailPage({
                 </div>
               </section>
             ) : null}
+            {quality === null ? <section className="callout" data-testid="quality-history-unavailable"><h3>Quality 评测历史 UNKNOWN</h3></section> : <>
             <div className="table-card" style={{ marginBottom: 24 }}>
               <table className="data-table">
                 <thead><tr><th>时间</th><th>Gate</th><th>RuleSet</th><th>Assessment</th></tr></thead>
@@ -509,7 +516,7 @@ export default async function DatasetVersionDetailPage({
               </div>
             ) : null}
           </>
-        )}
+        }
 
           </>
         ) : null}
@@ -571,7 +578,7 @@ export default async function DatasetVersionDetailPage({
 
         {view === "certification" ? (
           <>
-        {batchEnabled() && !trialRawOnly() && !qualityUnknown ? <CertificationForm key={selectedProfile?.id??"none"} datasetId={id} versionId={versionId} qualityId={latestAssessment?.id??""} profileId={selectedProfile?.id??""} profiles={profiles} canPrepare={Boolean(version.generatedByExecutionId)} references={await certificationReferences(versionId,selectedProfile?.id??"",latestAssessment?.id??"")} /> : null}
+        {batchEnabled() && !trialRawOnly() && !summaryUnknown ? <CertificationForm key={selectedProfile?.id??"none"} datasetId={id} versionId={versionId} qualityId={latestAssessment?.id??""} profileId={selectedProfile?.id??""} profiles={profiles} canPrepare={Boolean(version.generatedByExecutionId)} references={await certificationReferences(versionId,selectedProfile?.id??"",latestAssessment?.id??"")} /> : null}
         {batchEnabled() && !trialRawOnly() ? <CertificationSupersedeForm datasetId={id} versionId={versionId} certifications={history.items.filter(c=>c.profile.id===selectedProfile?.id).map(c=>({id:c.id,decision:c.decision,issuedAt:c.issuedAt,current:c.decision==="CERTIFIED"&&c.dispositions.length===0}))}/> : null}
         <div className="panel-header"><h2>Certification 历史</h2><span className="eyebrow">{history.page.total} Facts</span></div>
         {history.items.length === 0 ? (
@@ -805,11 +812,12 @@ export default async function DatasetVersionDetailPage({
 
         <section className="detail-card" style={{ marginBottom: 24 }} data-testid="generic-provenance-summary">
           <div className="panel-header"><h2>Evidence / Traceability</h2><span className="eyebrow">Frozen references</span></div>
-          {!latestReport?.evidence.length && !evidenceCertification?.evidenceSnapshotId && !evidenceCertification?.traceabilityEvidenceId ? (
+          {reportUnknown || summaryUnknown ? <p data-testid="quality-provenance-unavailable">Quality Evidence UNKNOWN；其他已知认证引用保持展示。</p> : null}
+          {!reportUnknown && !summaryUnknown && !displayReport?.evidence.length && !evidenceCertification?.evidenceSnapshotId && !evidenceCertification?.traceabilityEvidenceId ? (
             <EmptyState title="暂无 Provenance 引用" description="当前 DatasetVersion 暂无可展示的质量 Evidence、EvidenceSnapshot 或 Traceability Evidence。" />
           ) : (
             <DefinitionList items={[
-              { label: "Quality evidence", value: latestReport?.evidence.length ? latestReport.evidence.map((item) => <div key={item.id}><span className="mono">{shortId(item.id)}</span> · {item.evidenceType}</div>) : "—" },
+              { label: "Quality evidence", value: reportUnknown || summaryUnknown ? "UNKNOWN" : displayReport?.evidence.length ? displayReport.evidence.map((item) => <div key={item.id}><span className="mono">{shortId(item.id)}</span> · {item.evidenceType}</div>) : "—" },
               { label: "Certification EvidenceSnapshot", value: evidenceCertification?.evidenceSnapshotId ? <span className="mono">{evidenceCertification.evidenceSnapshotId}</span> : "—" },
               { label: "Traceability Evidence", value: evidenceCertification?.traceabilityEvidenceId ? <span className="mono">{evidenceCertification.traceabilityEvidenceId}</span> : "—" },
               { label: "Certification", value: evidenceCertification ? <span className="mono">{evidenceCertification.id}</span> : "—" },

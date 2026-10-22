@@ -4,8 +4,8 @@ import { ids, fixtureToken, attentionCaseId } from "./fixture-server.mjs";
 const control = "http://127.0.0.1:4400/__control";
 const headers = { "x-fixture-token": fixtureToken };
 const versionPath = `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`;
-async function reset(request, scenario = "quality-attention") {
-  expect((await request.post(`${control}/reset`, { headers, data: { scenario } })).ok()).toBeTruthy();
+async function reset(request, scenario = "quality-attention", readFaults = {}) {
+  expect((await request.post(`${control}/reset`, { headers, data: { scenario, readFaults } })).ok()).toBeTruthy();
 }
 async function calls(request) {
   const response = await request.get(`${control}/state`, { headers });
@@ -13,6 +13,59 @@ async function calls(request) {
   return (await response.json()).requests;
 }
 test.beforeEach(async ({ request }) => reset(request));
+
+for (const [fault, offset] of [["quality-history", 0], ["quality-latest-summary", 25], ["quality-attempt", 0], ["quality-latest-report", 0]]) {
+  test(`${fault} failure preserves successful exact historical evidence`, async ({ page, request }) => {
+    await reset(request, "quality-attention", { [fault]: "fail" });
+    const attempt = "abababab-abab-4bab-8bab-abababababab";
+    const suffix = fault === "quality-attempt" ? `&qualityAttemptId=${attempt}` : "";
+    await page.goto(`${versionPath}?view=quality&assessmentId=${ids.goldAssessment}&assessmentOffset=${offset}${suffix}`);
+    await expect(page.getByTestId("quality-report")).toContainText(ids.goldAssessment);
+    await expect(page.getByTestId("selected-quality-assessment")).toContainText(ids.goldAssessment);
+    await expect(page.getByTestId("quality-evidence-unavailable")).toHaveCount(0);
+    if (fault === "quality-history") {
+      await expect(page.getByTestId("quality-history-unavailable")).toContainText("UNKNOWN");
+      await expect(page.getByRole("heading", { name: "最新评测", exact: true })).toBeVisible();
+    }
+    if (fault === "quality-latest-summary") await expect(page.getByTestId("quality-summary-unavailable")).toContainText("UNKNOWN");
+    if (fault === "quality-attempt") {
+      await expect(page.getByTestId("quality-attempt-unavailable")).toContainText(attempt);
+      await expect(page.getByRole("form", { name: "运行 Quality Check" })).toHaveCount(0);
+    }
+    const reads = await calls(request);
+    expect(reads.filter(c => c.path.endsWith(`/quality-assessments/${ids.qualityAssessment}/report`))).toHaveLength(0);
+    expect(reads.filter(c => c.path.endsWith(`/quality-assessments/${ids.goldAssessment}/report`))).toHaveLength(1);
+    expect(reads.every(c => c.method === "GET")).toBe(true);
+    expect(await page.content()).not.toContain("private-upstream-sentinel");
+  });
+}
+
+for (const mode of ["fail", "denied", "notfound", "invalid"]) {
+  test(`selected historical report ${mode} stays UNKNOWN without a latest substitute`, async ({ page, request }) => {
+    await reset(request, "quality-attention", { "quality-original-report": mode });
+    await page.goto(`${versionPath}?view=quality&assessmentId=${ids.goldAssessment}`);
+    await expect(page.getByTestId("quality-evidence-unavailable")).toContainText(ids.goldAssessment);
+    await expect(page.getByTestId("quality-report")).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "最新评测", exact: true })).toBeVisible();
+    await expect(page.getByTestId("quality-history-unavailable")).toHaveCount(0);
+    expect((await calls(request)).some(c => c.path.endsWith(`/quality-assessments/${ids.qualityAssessment}/report`))).toBe(false);
+    expect((await calls(request)).every(c => c.method === "GET")).toBe(true);
+    await reset(request);
+    await page.reload();
+    await expect(page.getByTestId("quality-report")).toContainText(ids.goldAssessment);
+    await expect(page).toHaveURL(new RegExp(`assessmentId=${ids.goldAssessment}`));
+  });
+}
+
+test("default latest report failure preserves the known latest summary and history", async ({ page, request }) => {
+  await reset(request, "quality-attention", { "quality-latest-report": "denied" });
+  await page.goto(`${versionPath}?view=quality`);
+  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText(ids.qualityAssessment);
+  await expect(page.getByRole("heading", { name: "最新评测", exact: true })).toBeVisible();
+  await expect(page.getByTestId("quality-summary-unavailable")).toHaveCount(0);
+  await expect(page.getByTestId("quality-history-unavailable")).toHaveCount(0);
+  await expect(page.getByTestId("quality-report")).toHaveCount(0);
+});
 
 test("Quality credentials stay server-side and denied evidence remains local UNKNOWN with the exact historical link", async ({ page, request }) => {
   await page.goto(`${versionPath}?view=quality&assessmentId=${ids.goldAssessment}`);
