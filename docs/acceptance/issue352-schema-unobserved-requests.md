@@ -8,6 +8,12 @@ worktree `C:/Users/Henry/.codex/worktrees/u352`. User authority is implementatio
 necessary isolated tests and a Draft PR; no Ready, merge, deployment or changes to
 existing runtime environments. #325 remains with its existing owner.
 
+During implementation main advanced to `549f469967dcfd37d56cb211cbfda5c40b1c028b`
+(#351 and #348). Their complete changed-file list has no overlap with this slice.
+The isolated branch was rebased onto that main; their existing implementations
+are inherited unchanged. The affected build, read and navigation checks were
+repeated on the combined candidate, without operating either retained environment.
+
 Before editing, current main, active chats/worktrees and open PRs #295/#332/#348/
 #351 were checked. #332's GitHub file list exceeds the API cap, so its exact local
 base/head diff was checked for the intended metadata/Web/browser paths. No direct
