@@ -1,0 +1,70 @@
+# Fork-approved source admission v1
+
+User-authorized on 2026-10-22. Baseline Host main b902f1c635c791f80dcbc2db50f31edbdff342d4; source contract LS main e7567055c5d8fef8e5f0f5f13f0428d7a525bb3e.
+
+## Ownership checkpoint
+
+- #294 / draft #295: owner chat `实现 Core 提交来源接纳`, idle, remote HEAD 9328b7cd8df80c88e92c1042150c91db10697084. Its ordinary Submission / Annotation Result / Core Review / Snapshot / Gold implementation is excluded. Historical body HEAD 433d5733 is not current-head evidence.
+- #307: owner chat `实现 #307 引用需求与业务处置竞争`, idle with its independently authorized candidate19/v29 follow-up. Its worktrees, lifecycle code, native providers, credentials, schedules and retained environments are excluded. Existing protected-object interfaces are consumed without modifications.
+- #325 active writer is in deploy/trial recovery; #337 active writer is in schema attention (s346). Neither write set is part of this feature. No messages, duplicate assignments or environment actions were sent to these owners.
+- Writer: this chat, branch codex/host-fork-approved-admission, dedicated worktree `C:/Users/Henry/.codex/worktrees/hfa`. New internal/sourceadmission, additive migration, new web page/routes/tests; minimal API registration and retention-only outbox event declarations. No worker, annotation or lifecycle implementation changes. Rechecked remote main 5edef9f7f3a9436b3ec75585685f6b914cdac2a0: no overlapping migration or feature files; #325 deploy recovery and #337 schema-attention changes remain separate.
+- Necessary shared compatibility changes: `cmd/trial-business` strictly pins this newly built candidate to schema 72 instead of 71. It is not a permissive `>=71` gate. The historical custody migration test now loads only migrations through 71 for its exact 70 -> 71 replay/down check; its assertions are preserved. Existing schema-71 artifacts, receipts, profiles, runtime and owner worktrees remain unchanged. All eight business/renewal CLI tests passed on schema 72.
+
+## Finite merge contract
+
+Authenticated, server-bound connection + no-media/v1 inline Text + JSON/JSONL -> existing workspace-owned RAW Dataset with explicit DataResource and current READ/PROCESS entitlement. Store the original Manifest/JSON/JSONL unchanged. Validate RFC8785, Draft 2020-12, native membership and raw snapshot hashes, exact XML, source identity and historical Fork approval. Never create Core review/Gold/certification/delivery facts. No mutable annotation/export fallback and no caller URLs/actor/consumer fields.
+
+Use an immutable source identity keyed by source namespace + submission ID across connections/workspaces, a snapshot/version binding and a durable operation identity. A new connection cannot rewrite a previously accepted native source record. Same operation conflicts on changed inputs; new keys for the same snapshot reuse its original version only after fresh authorization and complete source/local-copy verification. Response loss is recovered through the original operation; UNKNOWN never proves absence. Partial storage writes retain the same reserved version and keys. Missing accepted copies fail closed, without repair or overwrite. External Fork revocation and Host commit are not a distributed transaction.
+
+## Reuse / OSS
+
+Reuse DatasetRepository allocation/publication, short transaction/parent-row fences, deliveryfence, CurrentEntitlementGate, ProtectedObjects/MinIO protected adapter, Audit/Evidence/Cost/Outbox and existing trusted principal resolver. No pooled connection is held across Fork HTTP. Generic upload is not source acceptance (non-CSV count is zero). No new IAM, queue, object store or durable workflow runtime.
+
+JCS uses cyberphone/json-canonicalization (upstream Go implementation, pinned module); JSON Schema uses santhosh-tekuri/jsonschema/v6 (Apache-2.0). These are process-local libraries behind the source adapter, adding no services. Legacy Python snapshots are hashed from their original native JSONL byte slices, without passing numbers through float64 or reimplementing Python JSON/JCS. Source schema and golden native fixtures are copied unchanged from the merged LS contract with provenance.
+
+## Verification boundary
+
+Real PostgreSQL permission/concurrency/freeze/recovery tests and bilingual browser tests use only isolated synthetic targets and a synthetic Fork HTTP server. No real LS/Host cross-repository integration, #76 runtime access, deployment, merge or provider deletion is authorized. Store migration/down safety and actual tests/results here before completion.
+
+## API and operator configuration
+
+- `POST /api/v1/workspaces/{workspaceId}/source-admissions`, authenticated Bearer principal with `INGEST_RAW`; `Idempotency-Key` required. Body contains only `datasetId`, `connectionId`, `releaseId`, `snapshotId`, `manifestSha256`. Workspace and human actor are server-derived.
+- `GET` on the collection with `?key=original-key`, or `GET /{operationId}`, resolves only that authenticated actor/subject's operation after current authorization. Lookup returns historical metadata, not proof of current source availability. `PREPARED`/unknown lookup never authorizes a replacement request.
+- State is `PREPARED`, `ACCEPTED_SOURCE`, or `FAILED_FINAL`. Terminal integrity/profile/source-identity failures are frozen; retrying the original key retains the error class. Transport uncertainty remains recoverable through the original key/version. Accepted local-copy corruption fails closed without repair. Invalidated DatasetVersion replay is denied.
+- `ACCEPTED_SOURCE` means an original source capture, READY RAW DatasetVersion and exact verified row count. `goldCertified=false`, `published=false`; no Annotation Result, Core review, Gold, certification, release or delivery acceptance is generated.
+- The source adapter fetches only pinned #80 Manifest and native artifact endpoints on one operator-owned HTTPS base (loopback HTTP is allowed for synthetic tests). Redirects, caller URLs, proxy environment and implicit retries are disabled. Each actual fetch has a typed invocation CostEvent/CostAllocation and durable observation; UNKNOWN is retained.
+- Migration 72 adds typed immutable source tables and extends the existing cost-allocation guard. The new `version_id` reference uses the existing exact `aa_lifecycle_ref_version_id` / `lifecycle_reference_admission_guard('version_id')` trigger. It participates in the first-copy fence and leaves accepted source history as a content pin. Releasing source evidence for content disposal needs a later owner contract; this slice cannot claim it. Empty migration up/down/up passes; rollback with retained source facts is refused.
+
+The API is absent unless `FORK_APPROVED_SOURCE_PROFILE` is set. Its private JSON follows the exported `sourceadmission.Profile`/`Connection` types. Populate `enabled`, `connection` (IDs for workspace/connection/source namespace/RAW dataset/DataResource, project, organization, mode `fork_approved`, baseUrl, tokenFile, consumer, purpose, normalized scope, optional explicit downstream authorizationId), `actorId`, `subject`, `apiTokenFile`, and `storageScope` (WorkspaceID, ActorID, NamespaceID, ProviderInstanceID, IncarnationID, PrincipalRef, Bucket, ExpiresAt). Set `storageEndpoint`, `storageTLS`, `storageCredentialFile`; the last file contains AccessKey/SecretKey/optional SessionToken. Reuse an independently authorized protected namespace and current rights. No profile, token or native provider is provisioned by this feature.
+
+Connection/runtime identity is frozen at startup; binding changes require a new identity. Enabled flags and API/Fork token contents are re-read at authorization boundaries. Storage credential drift denies until an explicitly configured restart. Startup never re-enables a disabled database connection.
+
+The guarded page is `/source-admissions?lang=zh-CN` or `?lang=en-US`. Web composition additionally requires `FORK_APPROVED_WEB_GATEWAY_TOKEN_FILE`, exact trusted `FORK_APPROVED_WEB_ORIGIN`, and `PLATFORM_API_BASE_URL`. Reuse the existing controlled gateway headers `X-Delivery-Web-Gateway` and `X-Authenticated-Principal`; ingress must strip untrusted copies and inject the authenticated identity. These are operator/gateway inputs, not browser credentials or an IAM replacement. The proxy binds dataset/connection/workspace/subject from private configuration, checks exact Origin on mutations and never exposes upstream tokens. The feature section is bilingual; the existing console shell remains unchanged.
+
+## Reproducible local acceptance
+
+Use a dedicated synthetic PostgreSQL database and run migrations before tests. Set `POSTGRES_DSN` and `TEST_POSTGRES_DSN` to that database. From `apps/platform`:
+
+```text
+go run ./cmd/migrate -direction up -dir ../../migrations
+go test ./internal/sourceadmission ./internal/platform/routing ./cmd/trial-business -count=1 -timeout=300s
+go vet ./internal/sourceadmission ./cmd/api
+go test -p 2 ./... -count=1 -timeout=10m
+```
+
+Build `apps/web` with `npm run typecheck`, `npm run lint`, `npm run build`. Install `tests/source-admission` dependencies and Chromium using Playwright's standard installer. Then set `SOURCE_ADMISSION_ACCEPTANCE=1`, a loopback `TEST_POSTGRES_DSN` with database name starting `hfa`, and a fresh `SOURCE_ADMISSION_E2E_DIR`; run `node tests/source-admission/run.mjs` from the repository root. The runner starts only the `_test` Host/Fork/storage Ports and production frontend at 127.0.0.1:25481/25482, and stops its exact child processes afterward. It never runs cmd/api, worker, a real Core or Label Studio. Private profiles/tokens and database evidence are retained locally and excluded from CI uploads.
+
+2026-10-22 local results (final files, PostgreSQL 16):
+
+- Source package: **16 top-level tests PASS**, including PostgreSQL permissions, six concurrent writers, rights/connection revocation, cross-connection/workspace source identity conflict, raw-byte integrity, freeze/late membership, atomic publication failure, partial-copy recovery, uncertain read recovery and lifecycle reference qualification. `TestBrowserFixture` is intentionally skipped in ordinary Go tests and executed by the browser runner.
+- JSON Schema Draft 2020-12 and RFC 8785 validation, unchanged merged-Fork native JSON/JSONL fixture checks: **PASS**. Profiles with media, Core-only origin or ambiguous XML are denied.
+- Bilingual E2E: **6/6 PASS**, final run `browser-run04`; each locale covers accept/replay/refresh, revoked stale page, lost committed response resolved by original key, missing gateway, actor injection and hostile Origin.
+- Typecheck, lint, production frontend build, Go vet and API binary build: **PASS**. Empty schema-72 up/down/up and retained-history rollback refusal: **PASS**.
+- An initial full regression exposed the missing reference-admission trigger and strict CLI schema-71 pin; both causes were fixed, without weakening lifecycle/IAM gates. The exact lifecycle sequential-disposition regression now passes. A separate mistakenly unmigrated scratch database run is incomplete and is not acceptance evidence.
+- Broad regression: **97 packages PASS** in the migrated run. The lifecycle package exceeded the selected ten-minute package budget on the CPU-limited test database; the nine tests without a passing result were completed separately. Together with the corrected frozen-71 fixture, **all 83 lifecycle top-level tests PASS**, with no missing/skipped lifecycle tests (`verification-summary.json`, plus the final custody log). This is split-run coverage, not one green full-suite run. Final namespace hardening is additionally covered by the final 16-test source run, migration up/down/up and bilingual browser run.
+- Full suite is not claimed green: `openmetadata.TestNativeSchemaCostsStartupBeforeMarker/exit` sometimes exhausts its existing 500ms subprocess deadline on Windows before invocation history can be read (`costs=0 gates=0`, `source schema invocation history unavailable`). The unmodified b902f1c6 baseline independently reproduces the identical failure in a three-run check (`schema-baseline71-timing.log`). This feature changes no OpenMetadata code; its process/IAM gates and the schema owner's write domain are preserved.
+- New GitHub workflow prepares the same PostgreSQL/browser gates. Remote PR CI/main CI, native MinIO/Fork acceptance, deployment and Core integration: **NOT_RUN**.
+
+Private evidence root: `C:/Users/Henry/.codex/reports/host-fork-approved-20261022`. Keep `browser-run04/browser-results.json`, locale screenshots, `go-source-final16.jsonl`, `go-targeted-namespace-final3.jsonl`, `go-full-migrated-final.jsonl`, `go-lifecycle-remaining-final.jsonl`, `go-custody71-final.jsonl`, frontend build logs and the protected-environment comparison distinct. Earlier red runs remain historical diagnostic evidence.
+
+Isolation comparison: all six named #76 container IDs/images/start times/mounts and both protected worktree HEAD/status values match the before snapshot exactly. Existing deletions in those worktrees are preserved. The synthetic frontend and HTTP harness have stopped; only this run's labeled PostgreSQL container is stopped afterward, preserving its data. No #76 session/API was exercised.

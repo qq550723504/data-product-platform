@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -246,10 +247,21 @@ func TestOperatorCustodySuccessfulPairCannotLoseTypedCostOrChangeKey(t *testing.
 }
 
 func TestOperatorCustodyMigration71ReplayAndCostScopeGuards(t *testing.T) {
-	pool, _ := planDatabaseAtVersion(t, 70)
+	pool, frozen := planDatabaseAtVersion(t, 70)
 	ctx := context.Background()
 	_, file, _, _ := runtime.Caller(0)
-	runner := migration.NewRunner(pool, filepath.Join(filepath.Dir(file), "../../../../../migrations"))
+	// Freeze this historical 70 -> 71 replay/down contract at migration 71.
+	// Later additive migrations are verified by current-schema tests instead.
+	for _, name := range []string{"000071_operator_custody.up.sql", "000071_operator_custody.down.sql"} {
+		b, err := os.ReadFile(filepath.Join(filepath.Dir(file), "../../../../../migrations", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = os.WriteFile(filepath.Join(frozen, name), b, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	runner := migration.NewRunner(pool, frozen)
 	for i := 0; i < 2; i++ {
 		if err := runner.Up(ctx); err != nil {
 			t.Fatal("70 -> 71 -> 71 replay", err)
