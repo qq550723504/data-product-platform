@@ -68,3 +68,20 @@ Build `apps/web` with `npm run typecheck`, `npm run lint`, `npm run build`. Inst
 Private evidence root: `C:/Users/Henry/.codex/reports/host-fork-approved-20261022`. Keep `browser-run04/browser-results.json`, locale screenshots, `go-source-final16.jsonl`, `go-targeted-namespace-final3.jsonl`, `go-full-migrated-final.jsonl`, `go-lifecycle-remaining-final.jsonl`, `go-custody71-final.jsonl`, frontend build logs and the protected-environment comparison distinct. Earlier red runs remain historical diagnostic evidence.
 
 Isolation comparison: all six named #76 container IDs/images/start times/mounts and both protected worktree HEAD/status values match the before snapshot exactly. Existing deletions in those worktrees are preserved. The synthetic frontend and HTTP harness have stopped; only this run's labeled PostgreSQL container is stopped afterward, preserving its data. No #76 session/API was exercised.
+
+## PR #348 review checkpoint (2026-10-22)
+
+Reviewed input HEAD `6863c9b0d29bd7e4d43517ebfe281636271b4fb0`. The finite contract above remains unchanged. Four defect classes were reproduced before correction:
+
+| Priority | Reproduced cause | Correction and regression |
+| --- | --- | --- |
+| P1 | Interrupted Manifest/native HTTP bodies and HTTP 429 became FAILED_FINAL instead of recoverable uncertainty. | Interrupted reads, HTTP 408/429 and copy-stream read/close failures retain UNKNOWN/PREPARED. Confirmed complete-byte mismatches remain integrity failures. Original-key/version recovery is tested. |
+| P1 | Go's default transport silently retried an actual GET after a reused connection closed, escaping per-invocation accounting. | Use standard-library HTTP/1 transport with fresh connections and no implicit retry. A real server receives then closes a GET; the failed attempt is retained and every resumed physical request has its typed invocation fact. |
+| P2 | SQL three-valued comparisons allowed sealing a version with NULL row count/content type; checksum algorithm/storage type were not checked. Terminal failures could omit their reason. | NULL-safe exact publication checks and a complete operation-outcome constraint; real PostgreSQL rejects each missing fact and a reasonless terminal rejection. |
+| P2 | A Text tag with valueType=url entered the inline-text-only profile. | Reject non-text valueType; retain the exact original XML and native evidence. This adds no media acquisition path. |
+
+Additional trusted-HTTP regressions verify object and key lookup after token rotation, profile disabling and actor-binding drift. No browser/header actor field can replace the private authenticated identity. Collection/object/workspace, current rights and stale-request boundaries remain server-enforced.
+
+Boundary audit: #294 / Draft #295 (remote HEAD `9328b7cd8df80c88e92c1042150c91db10697084`) owns ordinary Submission -> Core Result/Review/Snapshot/Gold with Core as reviewer. This producer uses only approved-release/snapshot endpoints and its own typed source facts; it neither aliases that pipeline nor uses Fork approval as a Core review decision. Core-only origin is rejected, with no mutable/native export fallback. #307 retains ownership of protected-object/lifecycle implementation, disposal authority, provider credentials and runtime; this review changes no lifecycle production code or owner environment. The new reference pin still uses its existing admission guard. No release of that pin or provider deletion is implemented here.
+
+Review-local validation: **22 source top-level tests PASS**, including six new review tests; bilingual E2E **6/6 PASS**, no retries. Go vet/API build, empty migration up/down/up and retained migration rollback refusal PASS. The original red tests and corrected results are retained under `C:/Users/Henry/.codex/reports/host-fork-approved-review-20261022`. The modified unmerged migration was tested only on a new synthetic database, preserving earlier fixtures. Final pushed HEAD and GitHub CI results belong to the PR check record, separately from these local results.

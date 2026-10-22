@@ -32,7 +32,13 @@ CREATE TABLE source_admission_operation (
  capture_id uuid REFERENCES source_admission_capture(id),
  state text NOT NULL CHECK(state IN('PREPARED','ACCEPTED_SOURCE','FAILED_FINAL')), error_code text,
  created_at timestamptz NOT NULL DEFAULT now(),
- UNIQUE(workspace_id,actor_id,idempotency_key)
+ UNIQUE(workspace_id,actor_id,idempotency_key),
+ CONSTRAINT ck_source_admission_operation_outcome CHECK (
+  (state='PREPARED' AND capture_id IS NULL AND error_code IS NULL) OR
+  (state='ACCEPTED_SOURCE' AND capture_id IS NOT NULL AND error_code IS NULL) OR
+  (state='FAILED_FINAL' AND capture_id IS NULL AND error_code IS NOT NULL AND
+   error_code IN('SOURCE_INTEGRITY_FAILED','SOURCE_PROFILE_UNSUPPORTED','SOURCE_IDEMPOTENCY_CONFLICT'))
+ )
 );
 CREATE TABLE source_admission_asset (
  capture_id uuid NOT NULL REFERENCES source_admission_capture(id), name text NOT NULL CHECK(name IN('manifest.json','records.json','records.jsonl')),
@@ -76,7 +82,9 @@ BEGIN
   IF TG_OP='INSERT' AND (NEW.state<>'PREPARED' OR v.status<>'CREATED') THEN RAISE EXCEPTION 'direct accepted capture forbidden'; END IF;
   IF TG_OP='UPDATE' THEN
    IF OLD.state<>'PREPARED' OR NEW.state<>'ACCEPTED_SOURCE' OR (to_jsonb(NEW)-'state') IS DISTINCT FROM (to_jsonb(OLD)-'state') THEN RAISE EXCEPTION 'frozen capture'; END IF;
-   IF v.status<>'READY' OR v.row_count<>NEW.member_count OR v.content_type<>'application/x-ndjson' OR
+   IF v.status IS DISTINCT FROM 'READY' OR v.row_count IS DISTINCT FROM NEW.member_count OR
+    v.content_type IS DISTINCT FROM 'application/x-ndjson' OR v.checksum_algorithm IS DISTINCT FROM 'SHA256' OR
+    v.storage_type IS DISTINCT FROM 'OBJECT_STORAGE' OR
     (SELECT count(*) FROM source_admission_member WHERE capture_id=NEW.id)<>NEW.member_count OR
     (SELECT count(*) FROM source_admission_asset WHERE capture_id=NEW.id AND storage_uri IS NOT NULL)<>3 OR
     NOT EXISTS(SELECT 1 FROM source_admission_asset WHERE capture_id=NEW.id AND name='records.jsonl' AND storage_uri=v.storage_uri AND sha256=v.checksum_value AND byte_size=v.byte_size) OR
@@ -91,7 +99,7 @@ BEGIN
   IF TG_OP='UPDATE' THEN
    IF OLD.state<>'PREPARED' OR NEW.state NOT IN('ACCEPTED_SOURCE','FAILED_FINAL') OR (to_jsonb(NEW)-ARRAY['state','capture_id','error_code']) IS DISTINCT FROM (to_jsonb(OLD)-ARRAY['state','capture_id','error_code']) THEN RAISE EXCEPTION 'frozen operation'; END IF;
    IF NEW.state='FAILED_FINAL' THEN
-    IF NEW.capture_id IS NOT NULL OR NEW.error_code NOT IN('SOURCE_INTEGRITY_FAILED','SOURCE_PROFILE_UNSUPPORTED','SOURCE_IDEMPOTENCY_CONFLICT') THEN RAISE EXCEPTION 'invalid terminal rejection'; END IF;
+    IF NEW.capture_id IS NOT NULL OR NEW.error_code IS NULL OR NEW.error_code NOT IN('SOURCE_INTEGRITY_FAILED','SOURCE_PROFILE_UNSUPPORTED','SOURCE_IDEMPOTENCY_CONFLICT') THEN RAISE EXCEPTION 'invalid terminal rejection'; END IF;
     RETURN NEW;
    END IF;
    IF NEW.error_code IS NOT NULL THEN RAISE EXCEPTION 'accepted error code forbidden'; END IF;

@@ -290,6 +290,9 @@ func textFields(config string) ([]string, error) {
 			if n.Name.Local == "Text" {
 				v := ""
 				for _, a := range n.Attr {
+					if strings.EqualFold(a.Name.Local, "valueType") && a.Value != "text" {
+						return nil, ErrUnsupported
+					}
 					if a.Name.Local == "value" {
 						v = a.Value
 					}

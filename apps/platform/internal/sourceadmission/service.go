@@ -368,7 +368,10 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 			}
 			data, e := io.ReadAll(io.LimitReader(actual, MaxBytes+1))
 			closeErr := actual.Close()
-			if e != nil || closeErr != nil || int64(len(data)) != size || Hash(data) != hash {
+			if e != nil || closeErr != nil {
+				return ErrUnknown
+			}
+			if int64(len(data)) != size || Hash(data) != hash {
 				return ErrIntegrity
 			}
 			if name == "records.jsonl" {

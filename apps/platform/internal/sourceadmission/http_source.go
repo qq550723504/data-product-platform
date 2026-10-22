@@ -21,7 +21,11 @@ import (
 type HTTPSource struct{ Client *http.Client }
 
 func NewHTTPSource() *HTTPSource {
-	return &HTTPSource{Client: &http.Client{Timeout: 20 * time.Second, Transport: &http.Transport{Proxy: nil, ResponseHeaderTimeout: 15 * time.Second}, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}
+	// One client.Do must be one durable invocation. HTTP/1 on a fresh connection
+	// avoids the transport's implicit GET retry after a reused connection fails.
+	protocols := new(http.Protocols)
+	protocols.SetHTTP1(true)
+	return &HTTPSource{Client: &http.Client{Timeout: 20 * time.Second, Transport: &http.Transport{Proxy: nil, Protocols: protocols, DisableKeepAlives: true, ResponseHeaderTimeout: 15 * time.Second}, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}
 }
 func sourceBase(c Connection) (*url.URL, error) {
 	u, e := url.Parse(c.BaseURL)
@@ -88,16 +92,23 @@ func (s *HTTPSource) Fetch(ctx context.Context, service *Service, operation uuid
 		status = response.StatusCode
 		if status == http.StatusOK {
 			data, e = io.ReadAll(io.LimitReader(response.Body, MaxBytes+1))
-			if e == nil && len(data) <= MaxBytes {
-				outcome = "RECEIVED"
-				resultErr = nil
-			} else {
+			if len(data) > MaxBytes {
 				outcome = "INVALID"
 				resultErr = ErrIntegrity
+			} else if e != nil {
+				// A short/failed transport read is not a verified byte mismatch.
+				outcome = "UNKNOWN"
+				resultErr = ErrUnknown
+			} else {
+				outcome = "RECEIVED"
+				resultErr = nil
 			}
 		} else if status == 401 || status == 403 {
 			outcome = "DENIED"
 			resultErr = ErrDenied
+		} else if status == http.StatusRequestTimeout || status == http.StatusTooManyRequests {
+			outcome = "UNKNOWN"
+			resultErr = ErrUnknown
 		} else if status < 500 {
 			outcome = "INVALID"
 			resultErr = ErrIntegrity

@@ -103,6 +103,7 @@ type fixture struct {
 	manifest               Manifest
 	declaration            uuid.UUID
 	beforeAsset            func()
+	sourceResponse         func(http.ResponseWriter, *http.Request, string) bool
 	sourceMu               sync.Mutex
 }
 
@@ -184,6 +185,9 @@ func newFixture(t *testing.T) *fixture {
 		}
 		if name == "" {
 			w.WriteHeader(404)
+			return
+		}
+		if f.sourceResponse != nil && f.sourceResponse(w, r, name) {
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
