@@ -17,6 +17,76 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+func TestPostgresReplacementConnectionBindings(t *testing.T) {
+	f := newFixture(t)
+	ctx := context.Background()
+	for name, change := range map[string]func(*Connection){
+		"dataset":       func(c *Connection) { c.DatasetID = uuid.New() },
+		"authorization": func(c *Connection) { c.AuthorizationID = uuid.New() },
+		"consumer":      func(c *Connection) { c.Consumer = "replacement-consumer" },
+		"endpoint":      func(c *Connection) { c.BaseURL = "https://replacement.invalid" },
+		"token-file":    func(c *Connection) { c.TokenFile = filepath.Join(t.TempDir(), "replacement-token") },
+	} {
+		t.Run(name, func(t *testing.T) {
+			c := f.c
+			change(&c)
+			if e := f.s.RegisterConnection(ctx, c); !errors.Is(e, ErrConflict) {
+				t.Fatalf("existing connection rebound: %v", e)
+			}
+			c.ID = uuid.New()
+			if e := f.s.RegisterConnection(ctx, c); e != nil {
+				t.Fatalf("explicit replacement rejected: %v", e)
+			}
+			if e := f.s.RegisterConnection(ctx, c); e != nil {
+				t.Fatalf("replacement registration not idempotent: %v", e)
+			}
+		})
+	}
+	if n := f.count(t, `SELECT count(*) FROM source_admission_connection WHERE workspace_id=$1 AND namespace_id=$2 AND project_id=$3`, f.c.WorkspaceID, f.c.Namespace, f.c.Project); n != 6 {
+		t.Fatalf("replacement connections=%d want=6", n)
+	}
+}
+
+func TestPostgresReplacementPreservesFrozenSourceAndRevocation(t *testing.T) {
+	f := newFixture(t)
+	ctx := context.Background()
+	original := f.admit(t)
+	old, oldRequest := f.c, f.r
+	if _, e := f.pool.Exec(ctx, `UPDATE source_admission_connection SET enabled=false WHERE id=$1`, old.ID); e != nil {
+		t.Fatal(e)
+	}
+	if e := f.s.RegisterConnection(ctx, old); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := f.s.Admit(ctx, oldRequest, f.caller); !errors.Is(e, ErrDenied) {
+		t.Fatalf("registration re-enabled old connection: %v", e)
+	}
+	f.c.ID = uuid.New()
+	f.c.TokenFile = filepath.Join(t.TempDir(), "replacement-fork-token")
+	if e := os.WriteFile(f.c.TokenFile, []byte("synthetic-fork-token"), 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e := f.s.RegisterConnection(ctx, f.c); e != nil {
+		t.Fatal(e)
+	}
+	f.r.ConnectionID = f.c.ID
+	if _, e := f.s.Admit(ctx, f.r, f.caller); !errors.Is(e, ErrConflict) {
+		t.Fatalf("replacement rewrote original operation: %v", e)
+	}
+	f.r.Key = "replacement-original-source"
+	f.admit(t)
+	changeSource(f)
+	if _, e := f.s.Admit(ctx, f.r, f.caller); !errors.Is(e, ErrConflict) {
+		t.Fatalf("replacement rewrote source identity: %v", e)
+	}
+	if n := f.count(t, `SELECT count(*) FROM source_admission_capture WHERE id=$1 AND connection_id=$2 AND version_id=$3 AND state='ACCEPTED_SOURCE'`, original.CaptureID, old.ID, original.VersionID); n != 1 {
+		t.Fatal("replacement rewrote original frozen capture")
+	}
+	if n := f.count(t, `SELECT count(*) FROM source_admission_identity WHERE namespace_id=$1`, old.Namespace); n != 3 {
+		t.Fatalf("replacement duplicated source identities: %d", n)
+	}
+}
+
 func TestPostgresSourceTransportFailureRecoversOriginalKey(t *testing.T) {
 	for _, stage := range []string{"manifest", "asset", "rate-limit"} {
 		t.Run(stage, func(t *testing.T) {

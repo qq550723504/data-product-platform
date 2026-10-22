@@ -4,8 +4,9 @@ CREATE TABLE source_admission_connection (
  project_id text NOT NULL CHECK(project_id ~ '^[1-9][0-9]*$'),
  organization_id text NOT NULL CHECK(organization_id ~ '^[1-9][0-9]*$'),
  binding_sha256 text NOT NULL CHECK(binding_sha256 ~ '^[0-9a-f]{64}$'),
- mode text NOT NULL CHECK(mode='fork_approved'), enabled boolean NOT NULL DEFAULT true,
- UNIQUE(workspace_id,namespace_id,project_id)
+ -- A source project may have multiple immutable operator-configured bindings.
+ -- Source record uniqueness is enforced separately by namespace + source_id.
+ mode text NOT NULL CHECK(mode='fork_approved'), enabled boolean NOT NULL DEFAULT true
 );
 CREATE TABLE source_admission_capture (
  id uuid PRIMARY KEY, workspace_id uuid NOT NULL, connection_id uuid NOT NULL REFERENCES source_admission_connection(id),
