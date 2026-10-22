@@ -233,6 +233,24 @@ func ValidateManifest(blob []byte, c Connection, r Request) (Manifest, error) {
 	}
 	return m, nil
 }
+
+// Call only after ValidateManifest: count the original envelope and both native
+// bodies before fetching either artifact. Keep actual byte/hash/total checks in
+// ValidateBundle; a declaration within budget does not establish integrity.
+func validateDeclaredBundleBudget(blob []byte, m Manifest) error {
+	remaining := int64(MaxBytes) - int64(len(blob))
+	if remaining < 0 {
+		return ErrUnsupported
+	}
+	for _, a := range m.Artifacts {
+		if a.Size > remaining {
+			return ErrUnsupported
+		}
+		remaining -= a.Size
+	}
+	return nil
+}
+
 func rawString(m map[string]json.RawMessage, k string) string {
 	var s string
 	_ = json.Unmarshal(m[k], &s)

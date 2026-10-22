@@ -287,6 +287,9 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 		if e != nil {
 			return e
 		}
+		if e = validateDeclaredBundleBudget(blob, manifest); e != nil {
+			return e
+		}
 		blobs := map[string][]byte{"manifest.json": blob}
 		for _, a := range manifest.Artifacts {
 			fresh, _, e := s.boundary(ctx, r, caller)
