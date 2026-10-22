@@ -5,14 +5,16 @@ import { SchemaColumnComparison } from "./source-schema-comparison";
 import { attentionOffset } from "@/lib/quality-attention";
 import { schemaExceptionsHref } from "@/lib/schema-exceptions";
 import { isSchemaExceptionStatus, schemaExceptionFilter } from "@/lib/schema-exception-filter";
+import { schemaRequestHref } from "@/lib/schema-requests";
+import { schemaRequestView } from "@/lib/schema-request-filter";
 
-export async function SchemaObservationEvidence({ resourceId, requestId, observationId, exceptionStatus, exceptionOffset }: { resourceId: string; requestId?: string; observationId?: string; exceptionStatus?: string; exceptionOffset?: string }) {
+export async function SchemaObservationEvidence({ resourceId, requestId, observationId, exceptionStatus, exceptionOffset, requestReturn }: { resourceId: string; requestId?: string; observationId?: string; exceptionStatus?: string; exceptionOffset?: string; requestReturn?: Record<string, string | undefined> }) {
   try {
     const o = await schemaObservation(resourceId, requestId ?? "", observationId ?? "");
     const exception = isSchemaExceptionStatus(o.status);
-    const back = exception ? schemaExceptionsHref({}, schemaExceptionFilter(exceptionStatus), attentionOffset(exceptionOffset)) : "/attention?schemaView=ALL#source-schema-attention";
+    const back = requestReturn ? schemaRequestHref(resourceId, o.requestId, schemaRequestView(requestReturn.schemaRequestView), attentionOffset(requestReturn.schemaRequestOffset), o.attemptId ?? undefined, attentionOffset(requestReturn.attemptOffset), attentionOffset(requestReturn.observationOffset)) : exception ? schemaExceptionsHref({}, schemaExceptionFilter(exceptionStatus), attentionOffset(exceptionOffset)) : "/attention?schemaView=ALL#source-schema-attention";
     return <>
-      <Link prefetch={false} className="text-link" href={back}>{exception ? "返回扫描异常历史" : "返回漂移观察"}</Link>
+      <Link prefetch={false} className="text-link" href={back}>{requestReturn ? "返回精确请求证据" : exception ? "返回扫描异常历史" : "返回漂移观察"}</Link>
       <PageHeader title="来源 schema 历史观察" eyebrow={o.resourceCode} description={`${o.resourceName} · 精确历史证据，只读`} action={<Badge value={o.status} />} />
       <section className="detail-card" data-testid="schema-observation-evidence">
         <h2>观察 {o.observationId}</h2>

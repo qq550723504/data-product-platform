@@ -1,4 +1,5 @@
 import { attentionOffset, attentionView, isIdentity } from "./quality-attention";
+import { preserveSchemaRequestQuery } from "./schema-request-filter";
 import { schemaObservationHref, schemaView, type SchemaObservation } from "./schema-observation";
 import { isSchemaExceptionStatus, schemaExceptionFilter, type SchemaExceptionFilter, type SchemaExceptionStatus } from "./schema-exception-filter";
 
@@ -15,6 +16,7 @@ export type SchemaExceptionPage = {
 
 export function schemaExceptionsHref(query: Record<string, string | undefined>, status: SchemaExceptionFilter, offset: number): string {
   const next = new URLSearchParams();
+  preserveSchemaRequestQuery(query, next);
   for (const key of ["reviewOffset", "failureOffset", "failedReleaseOffset", "validatingReleaseOffset", "readyReleaseOffset", "qualityOffset", "schemaOffset"]) {
     const value = attentionOffset(query[key]);
     if (value) next.set(key, String(value));

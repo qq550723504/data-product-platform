@@ -1,6 +1,6 @@
 import test, { before, after, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { createFixtureServer, ids, fixtureToken, exceptionObservationId, exceptionRequestId } from "./fixture-server.mjs";
+import { createFixtureServer, ids, fixtureToken, exceptionObservationId, exceptionRequestId, unobservedRequestId, requestAttemptId, requestObservationId } from "./fixture-server.mjs";
 let server, base;
 const controlHeaders = { "x-fixture-token": fixtureToken, "Content-Type": "application/json" };
 before(async () => {
@@ -11,6 +11,20 @@ before(async () => {
 after(async () => { await new Promise((resolve) => server.close(resolve)); });
 beforeEach(async () => { await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: "{}" }); });
 async function state() { return (await fetch(`${base}/__control/state`, { headers: controlHeaders })).json(); }
+
+test("unobserved request fixture separates registered facts and retains exact identity after arrival",async()=>{
+  const headers={Authorization:"Bearer rights-fixture-secret"};
+  await fetch(`${base}/__control/reset`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-requests"})});
+  const list=`${base}/api/v1/workspaces/${ids.workspace}/source-schema-requests/unobserved?limit=25&offset=100`;
+  assert.equal((await fetch(list)).status,403);
+  const page=await(await fetch(list,{headers})).json();assert.equal(page.page.total,105);assert.equal(page.items.length,5);assert.deepEqual(page.summary,{noAttemptCount:52,attemptRecordedCount:53});
+  const exact=`${base}/api/v1/data-resources/${ids.sourceResource}/schema-requests/${unobservedRequestId(105)}?workspaceId=${ids.workspace}&attemptId=${requestAttemptId(105)}`;
+  assert.equal((await fetch(exact.replace(requestAttemptId(105),requestAttemptId(104)),{headers})).status,404);
+  const prior=await(await fetch(exact,{headers})).json();assert.equal(prior.selectedAttempt.observationId,null);assert.equal(prior.observations.page.total,0);
+  await fetch(`${base}/__control/scenario`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-requests-arrived"})});
+  const after=await(await fetch(exact,{headers})).json();assert.equal(after.selectedAttempt.id,prior.selectedAttempt.id);assert.equal(after.selectedAttempt.observationId,requestObservationId(105));assert.equal(after.observations.items[0].requestId,prior.requestId);
+  assert.equal((await(await fetch(list,{headers})).json()).page.total,104);
+});
 
 test("exception history fixture preserves classification counts and exact nullable evidence", async () => {
   await fetch(`${base}/__control/reset`, {method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-exceptions"})});

@@ -15,7 +15,7 @@ function consoleServer(port, enabled, ingestion = false) {
   };
 }
 export default defineConfig({
-  testDir: ".", testMatch: ["actions.spec.mjs", "ingest-readonly.spec.mjs", "quality-attention.spec.mjs", "schema-attention.spec.mjs", "schema-exceptions.spec.mjs"], fullyParallel: false, workers: 1,
+  testDir: ".", testMatch: ["actions.spec.mjs", "ingest-readonly.spec.mjs", "quality-attention.spec.mjs", "schema-attention.spec.mjs", "schema-exceptions.spec.mjs", "schema-requests.spec.mjs"], fullyParallel: false, workers: 1,
   forbidOnly: Boolean(process.env.CI), retries: 0, timeout: 30000,
   expect: { timeout: 10000 },
   reporter: [["list"], ["html", { open: "never" }]],
