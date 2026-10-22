@@ -1,7 +1,7 @@
 name: trial-contracts
 on:
   pull_request:
-    paths: ['deploy/trial/**', 'apps/platform/cmd/trial-prepare/**', 'apps/platform/cmd/trial-resume/**', '.github/workflows/trial-contracts.yml']
+    paths: ['deploy/trial/**', 'apps/platform/cmd/trial-prepare/**', 'apps/platform/cmd/trial-resume/**', 'apps/platform/cmd/trial-activate/**', 'apps/platform/cmd/trial-business/**', '.github/workflows/trial-contracts.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,5 +14,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Test retained trial lifecycle and ownership (no Docker)
-        run: python -m unittest discover -s deploy/trial -p 'test_*.py'
+      - name: Test retained trial lifecycle and native readonly verification (no Docker)
+        run: python -B -m unittest discover -s deploy/trial -p 'test_*.py'
+      - name: Test retained trial lifecycle with assertions disabled (no Docker)
+        run: python -O -B -m unittest discover -s deploy/trial -p 'test_*.py'

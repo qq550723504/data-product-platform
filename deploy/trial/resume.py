@@ -25,14 +25,13 @@ def committed_sources(head):
 
 
 def controller_only(path):
-    return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/"))
+    return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/", "apps/platform/cmd/trial-activate/", "apps/platform/cmd/trial-business/"))
 
 
 def check_sources(s, current):
     baseline = s["sources"]
     if "businessBinding" in s:
-        from upgrade import verify_business
-        baseline = verify_business(s)["sources"]
+        baseline = r.active_business(s)["sources"]
     changed = sorted(p for p in set(current) | set(baseline) if current.get(p) != baseline.get(p))
     r.need(all(controller_only(p) for p in changed), "Business source drift; this resume only reuses original business artifacts")
     return changed
@@ -49,6 +48,14 @@ def verify_origin(s):
     for key in ("binaries", "privateHashes"):
         r.need(all(s[key].get(name) == value for name, value in original[key].items()), "Original private artifact binding drift")
     r.need(set(original["secretReferences"]).issubset(s["secretReferences"]), "Original secret references must be retained")
+    if original.get("workspaceObjectProfile"):
+        r.need(bool(s.get("workspaceObjectProfile")), "Protected object profile binding removed")
+        old, current = r.read(original["workspaceObjectProfile"]), r.read(s["workspaceObjectProfile"])
+        for key in ("Endpoint", "Secure"):
+            r.need(old.get(key) == current.get(key), "Protected storage endpoint drift")
+        old_scope, current_scope = copy.deepcopy(old["Scope"]), copy.deepcopy(current["Scope"])
+        old_scope.pop("ExpiresAt", None); current_scope.pop("ExpiresAt", None)
+        r.need(old_scope == current_scope, "Protected object scope/identity drift")
 
 
 def verify_binding(s):
@@ -86,11 +93,20 @@ def precheck(s):
         for sock in sockets: sock.close()
     baseline = r.read(r.STATE / "before-stop-facts.json")
     r.need(baseline["workspaceId"] == s["workspaceId"], "Same-workspace stopped facts required")
+    from protected_resume import active, validate, expected
+    if active(s):
+        r.need(s.get("stopInspection", {}).get("status") == "PASS", "Protected resume requires successful before-stop SQL observation")
+        validate(s, baseline)
+        r.need(baseline["expected"] == expected(s), "Protected before-stop activation drift")
     return {"head": head, "sources": current, "deltaPaths": changes}, baseline
 
 
 def compare_facts(s, baseline):
     actual = r.inspect_facts(s)
+    from protected_resume import active, compare
+    if active(s):
+        compare(s, baseline, actual)
+        return actual
     r.need(actual == baseline, "Retained SQL/native object facts differ or are incomplete; resume outcome UNKNOWN")
     return actual
 
@@ -120,19 +136,36 @@ def refresh_identity(s, directory, receipts):
     write_once(profile_path, profile)
     for path in (output, profile_path): s["privateHashes"][str(path)] = r.digest(path.read_bytes())
     s["activeProfile"] = str(profile_path)
+    refresh_workspace_profile(s, directory, output, result["expiresAt"])
     s["resume"]["credentialExpiresAt"] = result["expiresAt"]; r.save(s)
-    probe = json.loads(r.command([binary, "verify-core"], env=dict(r.environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"),
-                                 DPP_TRIAL_RENEW_OUTPUT=str(output), DPP_TRIAL_VERIFY_RECEIPT=str(receipts / "before-facts.json"))))
-    write_once(receipts / "scoped-object-probe.json", probe)
+    from protected_resume import active
+    if not active(s):
+        probe = json.loads(r.command([binary, "verify-core"], env=dict(r.environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"),
+                                     DPP_TRIAL_RENEW_OUTPUT=str(output), DPP_TRIAL_VERIFY_RECEIPT=str(receipts / "before-facts.json"))))
+        write_once(receipts / "scoped-object-probe.json", probe)
     return result
+
+
+def refresh_workspace_profile(s, directory, credential, expires_at):
+    # Only already-bound protected runtimes renew this profile. Real retained
+    # pre-330 business artifacts keep their old explicit binding until upgrade.
+    if not s.get("workspaceObjectProfile"): return
+    old = r.read(s["workspaceObjectProfile"])
+    r.need(old["Scope"]["WorkspaceID"] == s["workspaceId"] and old["Scope"]["ActorID"] == s["actorId"], "Workspace object identity drift")
+    updated = copy.deepcopy(old)
+    updated["CredentialFile"] = str(credential)
+    updated["Scope"]["ExpiresAt"] = expires_at
+    path = directory / "workspace-object-profile.json"
+    write_once(path, updated)
+    s["privateHashes"][str(path)] = r.digest(path.read_bytes())
+    s["workspaceObjectProfile"] = str(path)
 
 
 def launch_hosts(s):
     logs = Path(s["private"]) / "resume" / s["resume"]["attemptId"]
     artifacts = None
     if "businessBinding" in s:
-        from upgrade import verify_business
-        artifacts = verify_business(s)["artifacts"]
+        artifacts = r.active_business(s)["artifacts"]
     for role in ("api", "worker"):
         binary = (artifacts["binaries"] if artifacts else s["binaries"])[role]["path"]
         r.spawn(s, role, [binary], r.core_environment(s), log_directory=logs)
@@ -143,6 +176,9 @@ def launch_hosts(s):
 
 
 def resume(s):
+    from bootstrap import resume_guard
+    resume_guard(s)
+    r.need(not s.get("activation") or s["activation"]["status"] == "PASS", "Unfinished activation requires explicit recovery; ordinary resume cannot retry it")
     if s["phase"] == "RUNNING": return r.status(s)
     binding, baseline = precheck(s)
     attempt = uuid.uuid4().hex
@@ -166,8 +202,12 @@ def resume(s):
     try:
         r.docker("start", *[c["id"] for c in s["containers"].values()], timeout=180)
         wait_containers(s)
-        write_once(receipts / "containers-facts.json", compare_facts(s, baseline))
+        observed = compare_facts(s, baseline)
+        write_once(receipts / "containers-facts.json", observed)
         refreshed = refresh_identity(s, directory, receipts)
+        from protected_resume import active, probe
+        if active(s):
+            baseline = probe(s, observed, directory, receipts)
         launch_hosts(s)
         write_once(receipts / "running-facts.json", compare_facts(s, baseline))
         s["phase"] = "RUNNING"; s["resume"]["status"] = "PASS"; r.save(s)
@@ -187,6 +227,8 @@ def resume(s):
 
 
 def restart(s):
+    from bootstrap import resume_guard
+    resume_guard(s)
     r.need(s["phase"] == "RUNNING", "Restart requires known RUNNING; use resume for STOPPED")
     r.verify(s)
     r.stop(s)

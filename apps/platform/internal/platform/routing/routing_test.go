@@ -24,6 +24,10 @@ func TestVersionFitsPersistedOutboxContract(t *testing.T) {
 // fails dispatch at runtime with a diagnosable error instead of being completed
 // implicitly.
 var eventVocabulary = []string{
+	"OperatorCustodyPrepared",
+	"OperatorCustodyCallStarted",
+	"OperatorCustodyCallObserved",
+	"OperatorCustodyTerminated",
 	"AuthorizationActivated",
 	"AuthorizationApproved",
 	"AuthorizationCreated",
@@ -120,6 +124,8 @@ var eventVocabulary = []string{
 	"LifecycleProviderAttemptObserved",
 	"LifecycleStorageCallStarted",
 	"LifecycleStorageCallObserved",
+	"ProtectedObjectIntentCreated",
+	"ProtectedObjectVerified",
 	"LifecycleFixtureDisposalBasisRegistered",
 	"LifecycleFixtureReferenceRequired",
 	"LifecycleFixtureReferenceReleased",

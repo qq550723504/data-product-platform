@@ -85,19 +85,19 @@ func main() {
 	}
 	defer nativeLockDB.Close()
 
-	objectStore, err := storage.New(
-		cfg.Storage.Endpoint,
-		cfg.Storage.AccessKey,
-		cfg.Storage.SecretKey,
-		cfg.Storage.Bucket,
-		cfg.Storage.UseSSL,
-	)
-	if err != nil {
-		logger.Error("create object storage client", "error", err)
-		os.Exit(1)
+	var objectStore storage.RuntimeStore
+	if cfg.Storage.WorkspaceProfile != "" {
+		objectStore, err = lifecyclepilot.BuildWorkspaceObjects(db, cfg.Storage.WorkspaceProfile)
+	} else {
+		var bootstrap *storage.Store
+		bootstrap, err = storage.New(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey, cfg.Storage.Bucket, cfg.Storage.UseSSL)
+		if err == nil {
+			err = bootstrap.EnsureBucket(ctx)
+		}
+		objectStore = bootstrap
 	}
-	if err := objectStore.EnsureBucket(ctx); err != nil {
-		logger.Error("ensure object storage bucket", "error", err)
+	if err != nil {
+		logger.Error("configure object storage runtime", "error", "storage binding unavailable")
 		os.Exit(1)
 	}
 
@@ -136,6 +136,9 @@ func main() {
 	entityRepo := entityinfra.NewPostgresRepository(db)
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
+	if lease, ok := objectStore.(datasetapp.VersionPublicationLease); ok {
+		datasetWriter.WithPublicationLease(lease)
+	}
 	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	goldService := goldapp.NewService(
 		txManager,

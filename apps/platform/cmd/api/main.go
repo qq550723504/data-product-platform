@@ -39,6 +39,7 @@ import (
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	goldhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/transport/http"
 	ingestionpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot"
+	lifecyclepilot "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
@@ -109,19 +110,19 @@ func main() {
 	}
 	defer db.Close()
 
-	objectStore, err := storage.New(
-		cfg.Storage.Endpoint,
-		cfg.Storage.AccessKey,
-		cfg.Storage.SecretKey,
-		cfg.Storage.Bucket,
-		cfg.Storage.UseSSL,
-	)
-	if err != nil {
-		logger.Error("create object storage client", "error", err)
-		os.Exit(1)
+	var objectStore storage.RuntimeStore
+	if cfg.Storage.WorkspaceProfile != "" {
+		objectStore, err = lifecyclepilot.BuildWorkspaceObjects(db, cfg.Storage.WorkspaceProfile)
+	} else {
+		var bootstrap *storage.Store
+		bootstrap, err = storage.New(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey, cfg.Storage.Bucket, cfg.Storage.UseSSL)
+		if err == nil {
+			err = bootstrap.EnsureBucket(ctx)
+		}
+		objectStore = bootstrap
 	}
-	if err := objectStore.EnsureBucket(ctx); err != nil {
-		logger.Error("ensure object storage bucket", "error", err)
+	if err != nil {
+		logger.Error("configure object storage runtime", "error", "storage binding unavailable")
 		os.Exit(1)
 	}
 
@@ -150,6 +151,9 @@ func main() {
 
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
+	if lease, ok := objectStore.(datasetapp.VersionPublicationLease); ok {
+		datasetWriter.WithPublicationLease(lease)
+	}
 	datasetHandler := datasethttp.NewHandler(
 		datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceRepo),
 		datasetWriter,

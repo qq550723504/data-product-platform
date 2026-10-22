@@ -24,6 +24,8 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot"
+	lifecycleapp "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
+	lifecyclepilot "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
@@ -92,6 +94,15 @@ func prepare(ctx context.Context, pool *pgxpool.Pool, c config) error {
 		return fmt.Errorf("native Core identity issuance failed")
 	}
 	if err := write(p.CoreCredentialFile, pilot.Identity{AccessKey: cv.AccessKeyID, SecretKey: cv.SecretAccessKey, SessionToken: cv.SessionToken}); err != nil {
+		return err
+	}
+	// Same native issuance and policy; only add a non-secret runtime binding.
+	profile := lifecyclepilot.WorkspaceObjectProfile{Endpoint: p.StorageEndpoint, CredentialFile: p.CoreCredentialFile,
+		Scope: lifecycleapp.ProtectedScope{WorkspaceID: c.Workspace, ActorID: c.Actor, PrincipalRef: p.Subject, Bucket: p.Bucket, ExpiresAt: cv.Expiration,
+			NamespaceID:        uuid.NewSHA1(c.Workspace, []byte("core-object-namespace")),
+			ProviderInstanceID: uuid.NewSHA1(uuid.NameSpaceURL, []byte(c.Private+"/objects")),
+			IncarnationID:      uuid.NewSHA1(uuid.NameSpaceURL, []byte(c.Private+"/objects/data"))}}
+	if err := write(filepath.Join(c.Private, "workspace-object-profile.json"), profile); err != nil {
 		return err
 	}
 	admin, err := madmin.New(p.StorageEndpoint, c.RootKey, c.RootSecret, false)

@@ -2,6 +2,7 @@
 import base64
 import csv
 import ctypes
+from contextvars import ContextVar
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -28,6 +29,7 @@ SOURCE_PATHS = ("apps/platform", "apps/web", "migrations", "industry-packs", "de
                 "examples/enterprise-activity/data", "examples/enterprise-activity/postgres-ingestion",
                 "examples/lifecycle-d1/durable-storage.ps1")
 LABEL = "dpp.trial.run"
+READ_ONLY_OBSERVATION = ContextVar("trial_read_only_observation", default=False)
 PG = "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
 HOP = "apache/hop:2.19.0@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d"
 REDIS = "redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
@@ -59,6 +61,7 @@ def read(path):
 
 
 def write(path, value):
+    need(not READ_ONLY_OBSERVATION.get(), "Read-only observation cannot persist state or diagnostics")
     path = Path(path)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -72,6 +75,13 @@ def environment():
     return {k: v for k, v in os.environ.items() if k.upper() in keys}
 
 
+@contextmanager
+def read_only_observation():
+    token = READ_ONLY_OBSERVATION.set(True)
+    try: yield
+    finally: READ_ONLY_OBSERVATION.reset(token)
+
+
 def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     try:
         r = subprocess.run([str(a) for a in args], input=data, cwd=cwd, env=env or environment(),
@@ -82,8 +92,8 @@ def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     if r.returncode:
         # Only sanitized diagnostics are persisted, including on startup failure.
         raw = r.stdout + r.stderr
-        diagnostic = "no trial registry; diagnostic not persisted"
-        if (STATE / "state.json").exists():
+        diagnostic = "diagnostic not persisted"
+        if not READ_ONLY_OBSERVATION.get() and (STATE / "state.json").exists():
             s = read(STATE / "state.json")
             for name in s.get("secretReferences", []):
                 f = Path(name)
@@ -309,10 +319,17 @@ def storage_check(s, allowed):
         name = s["containers"][role]["name"]
         item = json.loads(docker("inspect", name))[0]
         items.append({"role": role, "name": name, "path": target, "volume": s["volumes"][role], "container": item})
-    path = Path(s["private"]) / "storage-inspect.json"
-    write(path, {"run_id": s["runId"], "volumes": [s["volumes"][role] for role in ROLES], "services": items})
-    return json.loads(command(["pwsh", "-NoProfile", "-File", ROOT / "deploy/trial/storage-check.ps1",
-                              "-InputPath", path, "-AllowedStates", ",".join(allowed)]).decode("utf-8-sig"))
+    payload = {"run_id": s["runId"], "volumes": [s["volumes"][role] for role in ROLES], "services": items}
+    args = ["pwsh", "-NoProfile", "-File", ROOT / "deploy/trial/storage-check.ps1", "-AllowedStates", ",".join(allowed)]
+    if READ_ONLY_OBSERVATION.get():
+        # Docker metadata can contain secrets. Keep it off argv and disk,
+        # including temporary files; reuse the same retained-storage validator.
+        result = command([*args, "-InputFromStdin"], data=json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+    else:
+        path = Path(s["private"]) / "storage-inspect.json"
+        write(path, payload)
+        result = command([*args, "-InputPath", path])
+    return json.loads(result.decode("utf-8-sig"))
 
 
 def wait_for(probe, label, seconds=90):
@@ -395,6 +412,9 @@ def spawn(s, role, args, env, *, log_directory=None):
 
 
 def inspect_facts(s):
+    from protected_resume import active, observe
+    if active(s):
+        return observe(s)  # SQL/native only; object reads belong to one explicit resume probe.
     return json.loads(command([Path(s["private"]) / "bin/trial-prepare.exe", "inspect"],
                               env=dict(environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"))))
 
@@ -438,6 +458,12 @@ def verify(s, *, source=True, running=True):
     if "businessBinding" in s:
         from upgrade import verify_business
         verify_business(s)
+    if "activationBinding" in s:
+        from activation import verify_binding
+        verify_binding(s)
+    if "businessRightsRenewalBinding" in s:
+        from business_renewal import verify_binding
+        verify_binding(s)
     for role, expected in s["containers"].items():
         item = json.loads(docker("inspect", expected["name"]))[0]
         verify_container(s, role, item)
@@ -455,21 +481,37 @@ def verify(s, *, source=True, running=True):
     storage_check(s, ["running"] if running else ["exited", "running", "created"])
 
 
+def active_business(s):
+    if "activationBinding" in s:
+        from activation import verify_binding
+        return verify_binding(s)
+    from upgrade import verify_business
+    return verify_business(s)
+
+
 def core_environment(s):
     p, cfg = Path(s["private"]), read(Path(s["private"]) / "config.json")
     env = dict(environment(), APP_ENV="synthetic-trial", APP_HTTP_ADDR=f"127.0.0.1:{s['ports']['api']}", POSTGRES_DSN=cfg["DSN"],
                 REDIS_ADDR=f"127.0.0.1:{s['ports']['redis']}", REDIS_DB="0", OBJECT_STORAGE_ENDPOINT=cfg["Profile"]["StorageEndpoint"],
-                OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"], OBJECT_STORAGE_BUCKET="raw", OBJECT_STORAGE_USE_SSL="false",
+                OBJECT_STORAGE_BUCKET="raw", OBJECT_STORAGE_USE_SSL="false",
                 INDUSTRY_PACK_ROOT=str(ROOT / "industry-packs"), INGESTION_PROFILE=s.get("activeProfile", str(p / "profile.json")),
                 OPENMETADATA_ENABLED="false", HOP_ENABLED="false", SPLINK_ENABLED="false", GX_ENABLED="false", LABEL_STUDIO_ENABLED="false",
                 DELIVERY_API_ENABLED="false", HUMAN_DECISION_API_ENABLED="false")
+    if s.get("workspaceObjectProfile"):
+        env["OBJECT_STORAGE_WORKSPACE_PROFILE"] = s["workspaceObjectProfile"]
+    else:
+        # The real retained pre-330 business artifact still owns this binding.
+        # New binaries require an explicit protected profile and cannot fall back.
+        env.update(OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"])
     if "businessBinding" in s:
-        from upgrade import verify_business
-        manifest = verify_business(s)
+        manifest = active_business(s)
         env.update(HUMAN_DECISION_API_ENABLED="true", HUMAN_DECISION_API_TOKEN=Path(manifest["humanTokenFile"]).read_text().strip(),
                    HUMAN_DECISION_API_SUBJECT="trial-operator-" + s["runId"], HUMAN_DECISION_API_ACTOR_ID=s["actorId"],
                    HUMAN_DECISION_API_WORKSPACE_IDS=s["workspaceId"], RIGHTS_API_TOKEN=(p / "token").read_text().strip(),
                    RIGHTS_API_ACTOR_ID=s["actorId"], RIGHTS_API_WORKSPACE_IDS=s["workspaceId"])
+    if s.get("businessPrerequisiteBinding"):
+        from business import verify_binding
+        env.update(verify_binding(s)["configuration"]["api"])
     return env
 
 
@@ -479,17 +521,21 @@ def web_environment(s):
                 POC_ENABLE_INGESTION_ACTIONS="true", POC_INGESTION_TOKEN_FILE=str(p / "token"), POC_INGEST_ACTOR_ID=s["actorId"],
                 POC_TRIAL_RAW_ONLY="true")
     if "businessBinding" in s:
-        from upgrade import verify_business
-        manifest = verify_business(s)
+        manifest = active_business(s)
         env.update(POC_TRIAL_RAW_ONLY="false", POC_ENABLE_REVIEW_ACTIONS="true", POC_RIGHTS_TOKEN_FILE=str(p / "token"),
                    HUMAN_DECISION_API_TOKEN=Path(manifest["humanTokenFile"]).read_text().strip(),
                    POC_INGESTION_WORKFLOW_ID=manifest["business"]["workflowVersionId"])
+    if s.get("businessPrerequisiteBinding"):
+        from business import verify_binding
+        env.update(verify_binding(s)["configuration"]["web"])
     return env
 
 
 def start():
     if (STATE / "state.json").exists():
         s = read(STATE / "state.json")
+        from bootstrap import resume_guard
+        resume_guard(s)
         need(s["phase"] == "RUNNING", f"Existing run {s['runId']} is {s['phase']}; no reseed/replacement. Use explicit resume after stop")
         return status(s)
     host = preflight(); run_id = uuid.uuid4().hex
@@ -531,7 +577,8 @@ def start():
             command(["go", "build", "-trimpath", "-o", binary, "./cmd/" + role], cwd=ROOT / "apps/platform", timeout=600)
             s["binaries"][role] = {"path": str(binary), "sha256": digest(binary.read_bytes())}; save(s)
         command([p / "bin/trial-prepare.exe", "prepare"], env=dict(environment(), DPP_TRIAL_CONFIG=str(p / "config.json")))
-        s["privateHashes"] = {str(f): digest(f.read_bytes()) for f in [p / "config.json", p / "profile.json", p / "metadata.json", *[Path(n) for n in s["secretReferences"]]]}
+        s["workspaceObjectProfile"] = str(p / "workspace-object-profile.json")
+        s["privateHashes"] = {str(f): digest(f.read_bytes()) for f in [p / "config.json", p / "profile.json", p / "metadata.json", Path(s["workspaceObjectProfile"]), *[Path(n) for n in s["secretReferences"]]]}
         save(s)
         baseline = inspect_facts(s)
         need(baseline["counts"]["dataset_version"] == baseline["counts"]["ingestion_operation"] == 0, "First start must not create business versions/batches")
@@ -570,13 +617,16 @@ def status(s):
               "web": s.get("web"), "registry": str(STATE / "state.json"), "OpenMetadata": "NOT_ENABLED",
               "PR2": {"restartResume": s.get("resume", {}).get("status", "NOT_RUN"), "businessDelivery": "NOT_RUN"}, "humanExplanation": "deferred / NOT_RUN"}
     if "businessBinding" in s:
-        from upgrade import verify_business
-        m = verify_business(s)
+        m = active_business(s)
         result["businessHead"] = m["head"]
         result["PR2"]["businessUpgrade"] = s.get("upgrade", {}).get("status", "UNKNOWN")
         result["workflowVersionId"] = m["business"]["workflowVersionId"]
+    if "activation" in s:
+        result["PR2"]["protectedActivation"] = s["activation"]["status"]
     if s["phase"] == "RUNNING":
         expiry = s.get("resume", {}).get("credentialExpiresAt")
+        if not expiry and s.get("workspaceObjectProfile"):
+            expiry = read(s["workspaceObjectProfile"])["Scope"]["ExpiresAt"]
         if expiry:
             need(datetime.fromisoformat(expiry) > datetime.now(timezone.utc), "Core session expired; use explicit restart for same-scope renewal")
         need(http(s["api"] + "/health/ready") and http(s["web"] + "/batches"), "Runtime health UNKNOWN")
