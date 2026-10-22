@@ -1,0 +1,5 @@
+{
+  "status": "REVIEWER_SCHEMA_ASSUMPTION_CORRECTED",
+  "error": "The summary terminal closed_cids is an integer count; the actual set is in retained.json and terminal.retained_c20.closed_cids. Initial ad hoc audit attempted len on the count. No candidate input was changed.",
+  "native_provider_actions": 0
+}

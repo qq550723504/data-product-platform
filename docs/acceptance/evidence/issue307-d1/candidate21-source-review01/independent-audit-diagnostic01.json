@@ -1,0 +1,6 @@
+{
+  "status": "REVIEWER_FIELD_INTERPRETATION_CORRECTED",
+  "error": "git cat-file of prior_Git_blob returned128 because the recorded value is a calculated checkout-byte blob SHA1, not an assertion that the object was stored",
+  "original_raw_receipts_unchanged": true,
+  "native_provider_actions": 0
+}

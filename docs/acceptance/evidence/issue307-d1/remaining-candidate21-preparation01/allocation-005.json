@@ -1,0 +1,22 @@
+{
+  "role": "source-gateway",
+  "group": "business-races",
+  "cid": "3174531dec6af912b0391741d77f22eac2838b374157a4f955e649671f6c1e69",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate21-gateway",
+    "--network",
+    "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+    "--tmpfs",
+    "/config",
+    "--tmpfs",
+    "/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate21\\business-races\\gateway.Caddyfile,target=/etc/caddy/Caddyfile,readonly",
+    "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "caddy",
+    "run",
+    "--config",
+    "/etc/caddy/Caddyfile"
+  ]
+}

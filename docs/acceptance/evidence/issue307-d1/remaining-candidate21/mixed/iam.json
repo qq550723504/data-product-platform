@@ -1,0 +1,50 @@
+{
+  "disabled_identities": {
+    "d4fd5a7e7dfda43b4": "lifecycle307-six-d4fd5a7e7dfda43b4",
+    "d6f40bca9dfda43b4": "lifecycle307-six-d6f40bca9dfda43b4",
+    "d9ba214bddfda43b4": "lifecycle307-six-d9ba214bddfda43b4",
+    "d9f9c67d7dfda43b4": "lifecycle307-six-d9f9c67d7dfda43b4",
+    "da5d1e569dfda43b4": "lifecycle307-six-da5d1e569dfda43b4",
+    "daa2605a5dfda43b4": "lifecycle307-six-daa2605a5dfda43b4",
+    "deletedfda43b4": "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd",
+    "i4fd5a7e7dfda43b4": "lifecycle307-six-i4fd5a7e7dfda43b4",
+    "i6f40bca9dfda43b4": "lifecycle307-six-i6f40bca9dfda43b4",
+    "i9ba214bddfda43b4": "lifecycle307-six-i9ba214bddfda43b4",
+    "i9f9c67d7dfda43b4": "lifecycle307-six-i9f9c67d7dfda43b4",
+    "ia5d1e569dfda43b4": "lifecycle307-six-ia5d1e569dfda43b4",
+    "iaa2605a5dfda43b4": "lifecycle307-six-iaa2605a5dfda43b4",
+    "inspectdfda43b44419": "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd"
+  },
+  "policy_sha256": {
+    "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd": "f3c01784ebba96d5153ce62c2438d3d6f556a8972759f2a3b9347774ffd52624",
+    "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd": "987669c05cc0069e076226b8438081bb12d0a9a35a164f95807dba4c8bbe6384",
+    "lifecycle307-six-d4fd5a7e7dfda43b4": "149aa67e39bea6b30a884964854bf8a3005dc144bcd7d3930e21a785f31dc773",
+    "lifecycle307-six-d6f40bca9dfda43b4": "149aa67e39bea6b30a884964854bf8a3005dc144bcd7d3930e21a785f31dc773",
+    "lifecycle307-six-d9ba214bddfda43b4": "987669c05cc0069e076226b8438081bb12d0a9a35a164f95807dba4c8bbe6384",
+    "lifecycle307-six-d9f9c67d7dfda43b4": "149aa67e39bea6b30a884964854bf8a3005dc144bcd7d3930e21a785f31dc773",
+    "lifecycle307-six-da5d1e569dfda43b4": "987669c05cc0069e076226b8438081bb12d0a9a35a164f95807dba4c8bbe6384",
+    "lifecycle307-six-daa2605a5dfda43b4": "149aa67e39bea6b30a884964854bf8a3005dc144bcd7d3930e21a785f31dc773",
+    "lifecycle307-six-i4fd5a7e7dfda43b4": "131701f85b13a56052d273001741fbd507bbd2eff49cc4665ad0eabf6c1d4cd5",
+    "lifecycle307-six-i6f40bca9dfda43b4": "131701f85b13a56052d273001741fbd507bbd2eff49cc4665ad0eabf6c1d4cd5",
+    "lifecycle307-six-i9ba214bddfda43b4": "4f54778439af3b3d2a2f3bc2d477ea865294baa7a5e09e199388b124a6daa81d",
+    "lifecycle307-six-i9f9c67d7dfda43b4": "c992b67a37a98222ee5a538b33984f8d0490a0c9fb46c5b17a049e950367c289",
+    "lifecycle307-six-ia5d1e569dfda43b4": "4f54778439af3b3d2a2f3bc2d477ea865294baa7a5e09e199388b124a6daa81d",
+    "lifecycle307-six-iaa2605a5dfda43b4": "4f54778439af3b3d2a2f3bc2d477ea865294baa7a5e09e199388b124a6daa81d"
+  },
+  "policy_file_sha256": {
+    "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd": "6550fa2a313667f3d366eff153720b13344a0bfc3ba18c007cbe4142d035c89b",
+    "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd": "3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b",
+    "lifecycle307-six-d4fd5a7e7dfda43b4": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+    "lifecycle307-six-d6f40bca9dfda43b4": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+    "lifecycle307-six-d9ba214bddfda43b4": "3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b",
+    "lifecycle307-six-d9f9c67d7dfda43b4": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+    "lifecycle307-six-da5d1e569dfda43b4": "3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b",
+    "lifecycle307-six-daa2605a5dfda43b4": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+    "lifecycle307-six-i4fd5a7e7dfda43b4": "eecfda2142236c1f532cc8acae9a1746bc9711433ff7849c88bdb1bf2126e3f4",
+    "lifecycle307-six-i6f40bca9dfda43b4": "eecfda2142236c1f532cc8acae9a1746bc9711433ff7849c88bdb1bf2126e3f4",
+    "lifecycle307-six-i9ba214bddfda43b4": "9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753",
+    "lifecycle307-six-i9f9c67d7dfda43b4": "b6c442fd89038d13bf61c9e3f8967741554ab79c0da8c74838f63bfd728c4f4d",
+    "lifecycle307-six-ia5d1e569dfda43b4": "9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753",
+    "lifecycle307-six-iaa2605a5dfda43b4": "9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753"
+  }
+}

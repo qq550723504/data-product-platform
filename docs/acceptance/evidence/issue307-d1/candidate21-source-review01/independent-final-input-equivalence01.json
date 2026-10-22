@@ -1,0 +1,29 @@
+{
+  "status": "PASS_FINAL_CEF_INPUTS_AND_AFFECTED_RETEST_BOUNDARY",
+  "source_head": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "changed_since_previous_review": [
+    "examples/lifecycle-d1/retained_v30.py",
+    "examples/lifecycle-d1/test_retained_v30.py"
+  ],
+  "unchanged_inputs": {
+    "examples/lifecycle-d1/fixture_artifacts.py": "7d336faf856d99b1e0719cf04b07c69e0e92c65b1828a64d8e0638cf925b5419",
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": "16cb9b91516f655989d7739943c77f25dfbf6cc2bb99499c05bfa1e521888cbb",
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py": "3dc2a4421730525511d48cea06cd01460f5b5a7cacd452b96d5f27055062b378",
+    "examples/lifecycle-d1/test_fixture_artifacts.py": "49861c133bd0ecbfbd19dd6c97b436ae667730d5c1ad977e1cf1ecab65da435e",
+    "examples/lifecycle-d1/test_preallocation_ci.py": "2a03270382f46fd1e971df056604a8ab2d70529a702a7befdf0a0b19e4304bfe",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "01fd25e3a60fcb1a749854c584c3a085cd9568f6f48242846cf6321552f19d50",
+    "examples/lifecycle-d1/test_retained_v26.py": "583666175200c85040622ee4bfbea4d0712d25a44d8e6ea6413c1823e5f7ce0a",
+    "examples/lifecycle-d1/test_retained_v27.py": "128661ff71dca09e5529cdb36d0586f63e687c9378239d4489506ba4305ff826",
+    "examples/lifecycle-d1/test_retained_v29.py": "3be16d2eb6bd6fd03ae6b9247b1b75141e5a510b10d043d8736da45198bfcf70",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "e1fff551a33977c3a235cdc06eeefa80ef3a62f0426d176bf24e7ee082b1cb3e",
+    "examples/lifecycle-d1/test_verify_six_native.py": "f621c1e1b5372eee198d6a412f48fe2de87dc2e21c4fdfa165d220f5ea37920d",
+    "examples/lifecycle-d1/test_window_six_support.py": "c27149387cd1319e66dce5ec70007e51d04eeec542bd799041e8cfca71570a96",
+    "examples/lifecycle-d1/test_execution_freeze.py": "103468ec5c1f0157d4230b5e6b0e6892c055e8c734ddc2e61387272c913e6394",
+    "examples/lifecycle-d1/test_receipt_bytes.py": "adab0e8c3b9a13886f0f6c3a6b9892e02b850625d72f5b84b7a34e371fdeda50"
+  },
+  "affected_tests_reexecuted": "independent-shortpath-fix02/result.json",
+  "receipt_tests": "independent-receipt-bytes02/result.json",
+  "R_archive_and_cmd_tests": "independent-R-archive-ci01/result.json",
+  "no_native_provider_actions": true
+}

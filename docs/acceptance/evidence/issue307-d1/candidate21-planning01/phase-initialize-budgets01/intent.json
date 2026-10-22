@@ -1,0 +1,14 @@
+{
+  "source": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "phase": "initialize-budgets",
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/six_candidate_runtime.py",
+    "initialize-budgets"
+  ],
+  "at": "2026-10-22T11:16:53.757807+00:00",
+  "delete_authority": false
+}
