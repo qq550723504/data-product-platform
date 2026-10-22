@@ -43,7 +43,9 @@ func (s *evidenceStore) Get(ctx context.Context, uri string) (io.ReadCloser, err
 		// Native exact-copy length/contract verification can fail before our
 		// hash comparison. Preserve proven corruption as an integrity failure;
 		// actual transport uncertainty must remain recoverable as UNKNOWN.
-		if errors.Is(e, lc.ErrStorageContract) {
+		// Journal validation can wrap the same sentinel without proving bad
+		// payload bytes. Keep that uncertainty recoverable under the original key.
+		if errors.Is(e, lc.ErrStorageContract) && !errors.Is(e, lc.ErrProtectedJournal) {
 			return nil, ErrIntegrity
 		}
 		return nil, e

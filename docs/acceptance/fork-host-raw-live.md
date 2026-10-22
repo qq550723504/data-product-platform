@@ -144,6 +144,11 @@ actual transport uncertainty. PostgreSQL red/green regression confirms no
 accepted history rewrite, repair version or silent success. No lifecycle/#307
 implementation is changed.
 
+Journal failures retain precedence over the native contract sentinel: a rejected
+observation/start record can wrap that sentinel without proving corrupt bytes.
+Such failures remain recoverable UNKNOWN under the original operation/version;
+the resumed source invocations retain their own costs and typed allocations.
+
 ## Local receipt (2026-10-22)
 
 Pinned bases: Fork `8abaa18f54b296bf7b960a3a1e40c579227806c5`, Host
