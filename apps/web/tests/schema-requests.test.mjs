@@ -25,10 +25,10 @@ test("explicit attempt survives pagination and post-observation detail; never pi
   assert.throws(()=>assertSchemaRequestDetail(d,ws,resource,request,undefined,25,0));
   assert.throws(()=>assertSchemaRequestDetail({...d,selectedAttempt:{...a,requestId:resource}},ws,resource,request,attempt,25,0));
   assert.throws(()=>assertSchemaRequestDetail({...d,observations:{...d.observations,items:[{...d.observations.items[0],requestId:resource}]}},ws,resource,request,attempt,25,0));
-  const url=schemaRequestHref(resource,request,"ATTEMPT_RECORDED",100,attempt,25,50);
+  const url=schemaRequestHref(resource,request,{kind:"REQUESTS",view:"ATTEMPT_RECORDED",offset:100},attempt,25,50);
   assert.match(url,/view=source-schema-request/);assert.match(url,/attemptId=44444444/);assert.match(url,/attemptOffset=25&observationOffset=50$/);
-  assert.throws(()=>schemaRequestHref(resource,request,"ALL",0,""));
-  const observationHref=schemaRequestObservationHref(resource,request,attempt,"NO_ATTEMPT",100,25,50);
+  assert.throws(()=>schemaRequestHref(resource,request,{kind:"REQUESTS",view:"ALL",offset:0},""));
+  const observationHref=schemaRequestObservationHref(resource,request,attempt,{kind:"REQUESTS",view:"NO_ATTEMPT",offset:100},undefined,25,50);
   assert.match(observationHref,/view=source-schema&requestId=/);assert.match(observationHref,/requestEvidence=1&schemaRequestView=NO_ATTEMPT&schemaRequestOffset=100&attemptOffset=25&observationOffset=50$/);
-  assert.throws(()=>schemaRequestObservationHref(resource,request,"/evil","ALL",0,0,0));
+  assert.throws(()=>schemaRequestObservationHref(resource,request,"/evil",{kind:"REQUESTS",view:"ALL",offset:0},undefined,0,0));
 });

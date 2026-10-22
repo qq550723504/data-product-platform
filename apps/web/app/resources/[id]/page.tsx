@@ -4,7 +4,7 @@ import { ResourceSource } from "@/components/resource-source";
 import { SchemaObservationEvidence } from "@/components/schema-observation-evidence";
 import { SchemaRequestEvidence } from "@/components/schema-request-evidence";
 
-export default async function ResourceDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ view?: string; requestId?: string; observationId?: string; schemaExceptionStatus?: string; schemaExceptionOffset?: string; schemaRequestView?: string; schemaRequestOffset?: string; attemptId?: string; attemptOffset?: string; observationOffset?: string; requestEvidence?: string }> }) {
+export default async function ResourceDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ view?: string; requestId?: string; observationId?: string; schemaExceptionStatus?: string; schemaExceptionOffset?: string; schemaRequestView?: string; schemaRequestOffset?: string; attemptId?: string; attemptOffset?: string; observationOffset?: string; requestEvidence?: string; schemaEvidenceOrigin?: string; schemaAttemptOffset?: string; requestAttemptId?: string }> }) {
   if (!configuredWorkspaceId()) {
     return <><PageHeader title="数据资源详情" /><SetupRequired /></>;
   }

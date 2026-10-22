@@ -2,6 +2,31 @@ import { attentionOffset, attentionView, isIdentity } from "./quality-attention"
 import { schemaView, schemaObservationHref, type SchemaColumn } from "./schema-observation";
 import { preserveSchemaExceptionQuery } from "./schema-exception-filter";
 import { schemaRequestView, type SchemaRequestView } from "./schema-request-filter";
+import { preserveSchemaAttemptQuery } from "./schema-attempt-filter";
+import { schemaAttemptsHref } from "./schema-attempts";
+
+export type SchemaRequestOrigin = ({ kind: "REQUESTS"; view: SchemaRequestView; offset: number } | { kind: "OBSERVED_ATTEMPTS"; offset: number }) & { context?: Record<string, string | undefined> };
+export function schemaRequestOrigin(query: Record<string, string | undefined>): SchemaRequestOrigin {
+  if (query.schemaEvidenceOrigin === "OBSERVED_ATTEMPTS") return { kind: "OBSERVED_ATTEMPTS", offset: attentionOffset(query.schemaAttemptOffset), context: query };
+  if (query.schemaEvidenceOrigin !== undefined && query.schemaEvidenceOrigin !== "REQUESTS") throw new Error("证据返回来源无效");
+  return { kind: "REQUESTS", view: schemaRequestView(query.schemaRequestView), offset: attentionOffset(query.schemaRequestOffset), context: query };
+}
+function originQuery(origin: SchemaRequestOrigin): URLSearchParams {
+  // Only the existing bounded attention helpers may carry context through evidence.
+  const list = schemaRequestListHref(origin);
+  const query = new URLSearchParams(list.split("?")[1].split("#")[0]);
+  if (origin.kind === "OBSERVED_ATTEMPTS") {
+    query.set("schemaEvidenceOrigin", "OBSERVED_ATTEMPTS");
+    query.set("schemaAttemptOffset", String(attentionOffset(String(origin.offset))));
+  } else {
+    query.set("schemaRequestView", schemaRequestView(origin.view));
+    query.set("schemaRequestOffset", String(attentionOffset(String(origin.offset))));
+  }
+  return query;
+}
+export function schemaRequestListHref(origin: SchemaRequestOrigin): string {
+  return origin.kind === "OBSERVED_ATTEMPTS" ? schemaAttemptsHref(origin.context ?? {}, origin.offset) : schemaRequestsHref(origin.context ?? {}, origin.view, origin.offset);
+}
 
 export type SchemaRequestItem = {
   workspaceId: string; resourceId: string; resourceCode: string; resourceName: string; requestId: string;
@@ -34,6 +59,7 @@ function validPage(page: Page, length: number, limit: number, offset: number): b
 }
 export function schemaRequestsHref(query: Record<string, string | undefined>, view: SchemaRequestView, offset: number): string {
   const next = new URLSearchParams();
+  preserveSchemaAttemptQuery(query, next);
   preserveSchemaExceptionQuery(query, next);
   for (const key of ["reviewOffset", "failureOffset", "failedReleaseOffset", "validatingReleaseOffset", "readyReleaseOffset", "qualityOffset", "schemaOffset"]) {
     const value = attentionOffset(query[key]); if (value) next.set(key, String(value));
@@ -44,9 +70,10 @@ export function schemaRequestsHref(query: Record<string, string | undefined>, vi
   if (offset > 0) next.set("schemaRequestOffset", String(attentionOffset(String(offset))));
   return `/attention?${next}#schema-unobserved-requests`;
 }
-export function schemaRequestHref(resource: string, request: string, view: SchemaRequestView, offset: number, attempt?: string, attemptOffset = 0, observationOffset = 0): string {
+export function schemaRequestHref(resource: string, request: string, origin: SchemaRequestOrigin, attempt?: string, attemptOffset = 0, observationOffset = 0): string {
   if (![resource, request].every(isIdentity) || (attempt !== undefined && !isIdentity(attempt))) throw new Error("精确请求/attempt 引用无效");
-  const query = new URLSearchParams({ view: "source-schema-request", requestId: request, schemaRequestView: schemaRequestView(view), schemaRequestOffset: String(attentionOffset(String(offset))) });
+  const query = new URLSearchParams({ view: "source-schema-request", requestId: request });
+  originQuery(origin).forEach((value, key) => query.set(key, value));
   if (attempt !== undefined) query.set("attemptId", attempt);
   if (attemptOffset) query.set("attemptOffset", String(attentionOffset(String(attemptOffset))));
   if (observationOffset) query.set("observationOffset", String(attentionOffset(String(observationOffset))));
@@ -61,8 +88,13 @@ export function assertSchemaRequestPage(p: SchemaRequestPage, workspace: string,
     || p.items.some(r => !validItem(r, workspace) || (view === "NO_ATTEMPT" && r.attemptCount !== 0) || (view === "ATTEMPT_RECORDED" && r.attemptCount === 0))) throw new Error("无观察请求汇总不可确认");
   return p;
 }
-export function schemaRequestObservationHref(resource: string, request: string, observation: string, view: SchemaRequestView, offset: number, attemptOffset: number, observationOffset: number): string {
-  const query = new URLSearchParams({ requestEvidence: "1", schemaRequestView: schemaRequestView(view), schemaRequestOffset: String(attentionOffset(String(offset))), attemptOffset: String(attentionOffset(String(attemptOffset))), observationOffset: String(attentionOffset(String(observationOffset))) });
+export function schemaRequestObservationHref(resource: string, request: string, observation: string, origin: SchemaRequestOrigin, selectedAttempt: string | undefined, attemptOffset: number, observationOffset: number): string {
+  if (selectedAttempt !== undefined && !isIdentity(selectedAttempt)) throw new Error("精确返回 attempt 引用无效");
+  const query = new URLSearchParams({ requestEvidence: "1" });
+  originQuery(origin).forEach((value, key) => query.set(key, value));
+  if (selectedAttempt !== undefined) query.set("requestAttemptId", selectedAttempt);
+  query.set("attemptOffset", String(attentionOffset(String(attemptOffset))));
+  query.set("observationOffset", String(attentionOffset(String(observationOffset))));
   return `${schemaObservationHref(resource, request, observation)}&${query}`;
 }
 export function assertSchemaRequestDetail(d: SchemaRequestDetail, workspace: string, resource: string, request: string, attempt: string | undefined, attemptOffset: number, observationOffset: number): SchemaRequestDetail {

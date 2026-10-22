@@ -24,18 +24,26 @@ func schemaRequestPagination(w http.ResponseWriter, r *http.Request, name string
 	return value, true
 }
 
-func (h *Handler) unobservedSchemaRequests(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) schemaReadWorkspace(w http.ResponseWriter, r *http.Request) (uuid.UUID, bool) {
 	ws, err := uuid.Parse(r.PathValue("workspaceId"))
 	if err != nil || ws == uuid.Nil {
 		httpserver.WriteError(w, r, 400, "INVALID_WORKSPACE_ID", "workspace required", nil)
-		return
+		return uuid.Nil, false
 	}
 	if h.Authorize == nil {
 		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
-		return
+		return uuid.Nil, false
 	}
 	if actor, err := h.Authorize(r, ws); err != nil || actor == nil {
 		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return uuid.Nil, false
+	}
+	return ws, true
+}
+
+func (h *Handler) unobservedSchemaRequests(w http.ResponseWriter, r *http.Request) {
+	ws, ok := h.schemaReadWorkspace(w, r)
+	if !ok {
 		return
 	}
 	view := r.URL.Query().Get("view")
@@ -57,6 +65,27 @@ func (h *Handler) unobservedSchemaRequests(w http.ResponseWriter, r *http.Reques
 	result, err := h.repo.UnobservedSchemaRequests(r.Context(), ws, view, limit, offset)
 	if err != nil {
 		httpserver.WriteError(w, r, 503, "SCHEMA_REQUESTS_UNAVAILABLE", "schema requests unavailable", nil)
+		return
+	}
+	writeJSON(w, 200, result)
+}
+
+func (h *Handler) unobservedSchemaAttempts(w http.ResponseWriter, r *http.Request) {
+	ws, ok := h.schemaReadWorkspace(w, r)
+	if !ok {
+		return
+	}
+	limit, ok := schemaRequestPagination(w, r, "limit", 25)
+	if !ok {
+		return
+	}
+	offset, ok := schemaRequestPagination(w, r, "offset", 0)
+	if !ok {
+		return
+	}
+	result, err := h.repo.UnobservedAttemptsInObservedRequests(r.Context(), ws, limit, offset)
+	if err != nil {
+		httpserver.WriteError(w, r, 503, "SCHEMA_ATTEMPTS_UNAVAILABLE", "schema attempts unavailable", nil)
 		return
 	}
 	writeJSON(w, 200, result)
