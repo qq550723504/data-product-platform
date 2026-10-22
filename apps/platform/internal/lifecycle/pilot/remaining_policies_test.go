@@ -31,3 +31,31 @@ func TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users(t 
 		t.Fatal("an unbound group acquired retained identities")
 	}
 }
+
+func TestRemainingUncreatedC20NeverBecomesDisabledOrCurrentIdentity(t *testing.T) {
+	for group, count := range map[string]int{"business-races": 3, "late-hold": 6, "mixed": 6} {
+		scope, err := RemainingScopeFor(group)
+		if err != nil {
+			t.Fatal(err)
+		}
+		users := RemainingUncreatedIdentities(group)
+		if len(users) != count {
+			t.Fatal("uncreated membership differs", group, users)
+		}
+		seen := map[string]bool{}
+		for _, user := range users {
+			if seen[user] || RemainingRetainedIdentities(group)[user] != "" || user == RemainingIdentity(group, "inspect") || user == RemainingIdentity(group, "delete") {
+				t.Fatal("uncreated user was adopted or duplicated", group, user)
+			}
+			seen[user] = true
+		}
+		for _, prefix := range []string{"i", "d"} {
+			if !seen[prefix+"5a54e01a"+scope.Run.String()[:8]] {
+				t.Fatal("C20 absence omitted", group)
+			}
+		}
+	}
+	if RemainingUncreatedIdentities("unbound") != nil {
+		t.Fatal("unbound group acquired an identity")
+	}
+}

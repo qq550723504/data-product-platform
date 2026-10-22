@@ -217,3 +217,34 @@ func TestSixUncreatedIdentityAndDormantEvidenceFailClosed(t *testing.T) {
 		})
 	}
 }
+
+func TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence(t *testing.T) {
+	for _, group := range []string{"business-races", "late-hold", "mixed"} {
+		for _, fault := range []string{"missing-c20", "denied-is-not-absent", "foreign-attempt"} {
+			t.Run(group+"/"+fault, func(t *testing.T) {
+				base, fresh, want, inventory, mapping := sixMock(t, group, "SOURCE")
+				scope, err := pilot.RemainingScopeFor(group)
+				if err != nil {
+					t.Fatal(err)
+				}
+				user := "i5a54e01a" + scope.Run.String()[:8]
+				mutateJSON(t, filepath.Join(fresh, "six-uncreated-users.json"), func(d map[string]any) {
+					users := d["users"].(map[string]any)
+					row := users[user].(map[string]any)
+					switch fault {
+					case "missing-c20":
+						delete(users, user)
+					case "denied-is-not-absent":
+						row["status"] = 403
+						row["code"] = "AccessDenied"
+					case "foreign-attempt":
+						row["attempt_id"] = uuid.NewString()
+					}
+				})
+				if _, err := checkSix(base, fresh, group, want, inventory, mapping); err == nil {
+					t.Fatal("C20 absence omission/denial/foreign journal accepted")
+				}
+			})
+		}
+	}
+}

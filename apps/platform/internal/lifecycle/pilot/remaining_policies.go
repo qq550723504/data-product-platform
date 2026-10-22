@@ -79,10 +79,13 @@ func RemainingUncreatedIdentities(group string) []string {
 		return nil
 	}
 	suffix := "4e524c04" + s.Run.String()[:8]
+	// C20 stopped before native preparation/provisioning. These six users
+	// must remain genuinely absent; they are never counted as disabled users.
+	uncreatedC20 := []string{"i5a54e01a" + s.Run.String()[:8], "d5a54e01a" + s.Run.String()[:8]}
 	if group == "business-races" {
-		return []string{"d" + suffix}
+		return append([]string{"d" + suffix}, uncreatedC20...)
 	}
-	return []string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}
+	return append([]string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}, uncreatedC20...)
 }
 
 // These actual c14/c15/c16/c17/c18/c19 users remain disabled with a sole policy and no groups.
