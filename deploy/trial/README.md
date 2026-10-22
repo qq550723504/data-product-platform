@@ -81,7 +81,7 @@ python deploy/trial/trial.py stop
 python deploy/trial/trial.py status
 ```
 
-`status` 的 `facts` 来自只读 SQL transaction 与真实存储 GET/hash 校验，不把文件状态当作业务事实。`.data/trial/state.json` 是本 worktree 的 ownership registry；`initial-facts.json`、`latest-facts.json`、`before-stop-facts.json` 保存对应时点回执。registry 记录 source HEAD 与逐文件 hash、确切 binary SHA256、image ID、生产 web build、workspace、端口、容器/卷/network 身份及 secret 引用。源文件、制品、容器、配置或 daemon 漂移时拒绝继续。CLI 独占锁拒绝并发 writer。
+`status` 的 `facts` 来自只读 SQL transaction 与真实存储 GET/hash 校验，不把文件状态当作业务事实。`.data/trial/state.json` 是本 worktree 的 ownership registry；`initial-facts.json`、`latest-facts.json` 保存当前观察。每次 stop 的不可变清单与观察写入 `stops/<attempt>/facts.json`、`observation.json`，`stopInspection` 绑定其路径和 SHA256；历史 root `before-stop-facts.json` 不再覆盖。registry 记录 source HEAD 与逐文件 hash、确切 binary SHA256、image ID、生产 web build、workspace、端口、容器/卷/network 身份及 secret 引用。源文件、制品、容器、配置或 daemon 漂移时拒绝继续。CLI 独占锁拒绝并发 writer。
 
 ## 原环境 restart/resume
 
@@ -107,7 +107,9 @@ Windows 的已退出进程对象可能因观察者仍持有 handle 而暂时存�
 
 密钥为每次运行随机生成，保存在 `%LOCALAPPDATA%/Codex/trials/dpp-trial-<runId>`，ACL 仅当前用户和 SYSTEM；不在参数、构建源、HTML 或公共日志内。不要提交/分享私有目录、环境变量或原始 Docker inspect。控制台为正常生产 Next，禁止改成 development server。每次命令失败独立创建已脱敏的私有 `command-error-<id>.log`，错误提示只引用该文件；已有 `last-command-error.log` 和此前诊断均保留，不覆盖。运行日志也保留在私有目录。所有宿主监听均绑定 127.0.0.1；Core API 仍为本机受控试用边界，不能当作生产 IAM。
 
-中断/失败后 registry 保留 UNKNOWN，后续 start 拒绝重新初始化；先保存运行身份和日志，通过 stop 精确停止已记录服务。stop 只依赖本机 Docker daemon 与确切归属校验，不依赖构建工具、fixture 或业务健康。RUNNING 的停止前事实读取失败时，`before-stop-observation.json` 和 registry 的 `stopInspection` 明确记录 UNKNOWN，保留已有成功回执，仍停止已核验的服务；不能把这当作业务数据已验证。不存在 reset/cleanup/down/故障注入/DELETE 命令。不删除卷、对象、staging、备份、镜像标签或其他环境。STOPPED 后仍保留完整回执与资源，start 明确拒绝重建，使用上述显式续用协议。
+中断/失败后 registry 保留 UNKNOWN，后续 start 拒绝重新初始化；先保存运行身份和日志，通过 stop 精确停止已记录服务。stop 只依赖本机 Docker daemon 与确切归属校验，不依赖构建工具、fixture 或业务健康。RUNNING 的停止前事实读取失败时，本次 `stops/<attempt>/observation.json` 和 registry 的 `stopInspection` 明确记录 UNKNOWN，保留已有成功回执，仍停止已核验的服务；不能把这当作业务数据已验证。不存在 reset/cleanup/down/故障注入/DELETE 命令。不删除卷、对象、staging、备份、镜像标签或其他环境。STOPPED 后仍保留完整回执与资源，start 明确拒绝重建，使用上述显式续用协议。
+
+已接纳 bootstrap 的原环境如果曾被旧 stop 覆盖历史 `before-stop-facts.json`，须先审查只读 `stop-recovery-plan --facts <现存 exact-hash 历史副本>`，再单独授权 `stop-recover --plan <审查计划> --plan-sha256 <SHA256>`。恢复保留本次完整清单，恢复历史原字节并绑定新 stop receipt，不改旧 manifest、不启停服务、不续发凭据或访问对象；普通 resume 不自动修复。详见 [stop receipts/recovery contract](../../docs/acceptance/issue325-stop-receipts.md)。
 
 ## 显式业务制品升级与原 RAW 加工
 

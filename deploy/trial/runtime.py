@@ -649,16 +649,8 @@ def stop(s):
         item = json.loads(docker("inspect", found))[0]; verify_container(s, role, item, configuration=False); owned.append(item["Id"])
     for expected in s["processes"].values(): process_identity(expected["pid"], expected=expected, allow_missing=True)
     if s["phase"] == "RUNNING":
-        try:
-            facts = inspect_facts(s)
-        except (Refused, OSError, ValueError):
-            # Business health is not an ownership condition for containment.
-            # Keep prior successful receipts and never turn unreadable facts into zero.
-            observation = {"runId": s["runId"], "status": "UNKNOWN", "reason": "Business facts unavailable; retained data requires inspection"}
-        else:
-            write(STATE / "before-stop-facts.json", facts)
-            observation = {"runId": s["runId"], "status": "PASS", "receipt": str(STATE / "before-stop-facts.json")}
-        write(STATE / "before-stop-observation.json", observation)
+        from stop_receipts import capture
+        observation = capture(s)
         s["stopInspection"] = observation
     s["phase"] = "STOPPING"; save(s)
     for expected in reversed(list(s["processes"].values())): process_identity(expected["pid"], terminate=True, expected=expected, allow_missing=True)

@@ -67,6 +67,7 @@ def verify_binding(s):
 
 def precheck(s):
     r.need(s["phase"] == "STOPPED", f"Run {s['runId']} is {s['phase']}; resume requires known STOPPED, never reseeds")
+    from stop_receipts import read as stop_facts
     # Verify actual retained artifacts before accepting any controller update.
     r.verify(s, source=False, running=False)
     if "originSnapshot" in s:
@@ -91,7 +92,7 @@ def precheck(s):
             except OSError: raise r.Refused("Original trial port unavailable; no replacement port or environment") from None
     finally:
         for sock in sockets: sock.close()
-    baseline = r.read(r.STATE / "before-stop-facts.json")
+    baseline = stop_facts(s)
     r.need(baseline["workspaceId"] == s["workspaceId"], "Same-workspace stopped facts required")
     from protected_resume import active, validate, expected
     if active(s):
