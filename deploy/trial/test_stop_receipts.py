@@ -4,7 +4,9 @@ import copy
 import io
 from itertools import product
 import json
+import os
 from pathlib import Path
+import socket
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -23,7 +25,7 @@ import test_protected_resume as fixtures
 
 class StopReceiptContracts(unittest.TestCase):
     @contextmanager
-    def fixture(self, *, collision=False):
+    def fixture(self, *, collision=False, processes=None):
         with tempfile.TemporaryDirectory() as name, ExitStack() as stack:
             root = Path(name).resolve(); state = root / "state"; private = root / "private"
             state.mkdir(); private.mkdir()
@@ -66,7 +68,7 @@ class StopReceiptContracts(unittest.TestCase):
             s.pop("activationBinding")
             s.update(contract="issue325/stage1", root=str(root), private=str(private),
                      head=business_head, sources=business_sources, project="fixture-project",
-                     host={"daemonId": "daemon"}, processes={}, ports={}, subnets=[], networks={},
+                     host={"daemonId": "daemon"}, processes=copy.deepcopy(processes or {}), ports={}, subnets=[], networks={},
                      images={"core": {"id": "same-image"}}, minio={}, resourceIds={},
                      api="http://127.0.0.1:1", web="http://127.0.0.1:2", webBuild={},
                      binaries={}, privateHashes={}, secretReferences=[], volumes={"core": "retained-volume"})
@@ -164,6 +166,113 @@ class StopReceiptContracts(unittest.TestCase):
     def reviewed(self, s, historical, root):
         reviewed = recovery.plan(s, historical); path = root / "reviewed.json"; b.put(path, reviewed)
         return path, r.digest(b.encoded(reviewed))
+
+    @unittest.skipUnless(os.name == "nt", "Windows full process identity contract")
+    def test_stopped_owner_reused_live_pid_real_cli_plan_recover_and_replay(self):
+        actual = r.process_identity(os.getpid())
+        for field in ("created", "exe"):
+            owner = copy.deepcopy(actual)
+            if field == "created": owner[field] += 1
+            else: owner[field] += ".different-owner"
+            with self.subTest(field=field), self.fixture(collision=True, processes={"worker": owner}) as (root, s, current, historical, original, calls, renew, hosts, _):
+                # The native Windows adapter is real: this PID is alive, but
+                # its creation/executable tuple is not the recorded worker.
+                with patch.object(r, "process_handle", wraps=r.process_handle) as handles:
+                    for live_hosts in (False, True):
+                        with self.assertRaisesRegex(r.Refused, "identity drift"):
+                            b.native(s, hosts=live_hosts)
+                    before = self.snapshot(root, include_lock=True)
+                    code, output = self.cli("stop-recovery-plan", "--facts", historical)
+                    self.assertEqual(code, 0, output)
+                    self.assertEqual(output["plan"]["native"]["processes"], {"worker": None})
+                    self.assertEqual(before, self.snapshot(root, include_lock=True))
+                    path = root / "reviewed.json"; b.put(path, output["plan"])
+                    args = ("stop-recover", "--plan", path, "--plan-sha256", output["planSha256"])
+                    completed = self.cli(*args); self.assertEqual(completed[0], 0, completed)
+                    self.assertEqual(stops.read(r.read(r.STATE / "state.json")), current)
+                    self.assertEqual((r.STATE / "before-stop-facts.json").read_bytes(), original)
+                    retained = self.snapshot(root); observations = handles.call_count
+                    self.assertEqual(completed, self.cli(*args))
+                    self.assertEqual(retained, self.snapshot(root)); self.assertEqual(handles.call_count, observations)
+                    self.assertTrue(handles.call_args_list)
+                    self.assertTrue(all(not call.args[1] for call in handles.call_args_list))
+                self.assertEqual(r.process_identity(os.getpid()), actual)
+                self.assertEqual(r.read(r.STATE / "state.json")["processes"], {"worker": owner})
+                self.assertFalse(any(call[0] in ("start", "stop", "protected-probe") for call in calls))
+                renew.assert_not_called(); hosts.assert_not_called()
+
+    @unittest.skipUnless(os.name == "nt", "Windows full process identity contract")
+    def test_stopped_owner_matching_live_identity_refuses_readonly_cli_plan(self):
+        owner = r.process_identity(os.getpid())
+        with self.fixture(collision=True, processes={"worker": owner}) as (root, s, _, historical, _, calls, renew, hosts, _):
+            with self.assertRaisesRegex(r.Refused, "Recorded host still live"): b.native(s)
+            self.assertEqual(b.native(s, hosts=True)["processes"], {"worker": owner})
+            before = self.snapshot(root, include_lock=True)
+            output = root / "must-not-exist.json"
+            code, error = self.cli("stop-recovery-plan", "--facts", historical, "--output", output)
+            self.assertEqual(code, 1, error); self.assertIn("Recorded host still live", error["reason"])
+            self.assertEqual(before, self.snapshot(root, include_lock=True))
+            self.assertFalse(output.exists()); self.assertFalse((r.STATE / "stop-recoveries").exists())
+            self.assertFalse(any(call[0] in ("start", "stop", "protected-probe") for call in calls))
+            renew.assert_not_called(); hosts.assert_not_called()
+
+    @unittest.skipUnless(os.name == "nt", "Windows process absence adapter contract")
+    def test_stopped_owner_absent_or_unreadable_native_identity_real_cli_plan(self):
+        owner = r.process_identity(os.getpid())
+        for unavailable in (False, True):
+            with self.subTest(unavailable=unavailable), self.fixture(collision=True, processes={"worker": owner}) as (root, _, _, historical, _, calls, renew, hosts, _):
+                before = self.snapshot(root, include_lock=True)
+                # Only native handle I/O is simulated; real process_identity,
+                # CLI, committed sources and every business validator execute.
+                native = {"side_effect": r.Refused("Process identity unavailable")} if unavailable else {"return_value": (None, None)}
+                with patch.object(r, "process_handle", **native) as handles:
+                    code, output = self.cli("stop-recovery-plan", "--facts", historical)
+                self.assertEqual(code, 1 if unavailable else 0, output)
+                if unavailable: self.assertIn("Process identity unavailable", output["reason"])
+                else: self.assertEqual(output["plan"]["native"]["processes"], {"worker": None})
+                self.assertEqual(before, self.snapshot(root, include_lock=True))
+                self.assertTrue(all(not call.args[1] for call in handles.call_args_list))
+                self.assertFalse(any(call[0] in ("start", "stop", "protected-probe") for call in calls))
+                renew.assert_not_called(); hosts.assert_not_called()
+
+    @unittest.skipUnless(os.name == "nt", "Windows process retry contract")
+    def test_stopped_owner_retry_rechecks_identity_before_claim_or_archive_writes(self):
+        owner = r.process_identity(os.getpid()); owner["created"] += 1
+        for claimed in (False, True):
+            with self.subTest(claimed=claimed), self.fixture(collision=True, processes={"worker": owner}) as (root, s, _, historical, _, calls, renew, hosts, _):
+                path, sha = self.reviewed(s, historical, root); save = r.save
+                def crash(value):
+                    if value.get("stopRecovery", {}).get("status") == "UNKNOWN":
+                        if claimed: save(value)
+                        raise r.Refused("Interrupted at recovery claim")
+                    save(value)
+                args = ("stop-recover", "--plan", path, "--plan-sha256", sha)
+                with patch.object(r, "save", side_effect=crash):
+                    self.assertEqual(self.cli(*args)[0], 1)
+                self.assertTrue((r.STATE / "stop-recoveries" / sha / "started.json").exists())
+                before = self.snapshot(root)
+                with patch.object(r, "process_handle", side_effect=r.Refused("Process identity unavailable")):
+                    code, error = self.cli(*args)
+                self.assertEqual(code, 1, error); self.assertIn("Process identity unavailable", error["reason"])
+                self.assertEqual(before, self.snapshot(root), "Refused retry changed its claim or recovery archives")
+                completed = self.cli(*args); self.assertEqual(completed[0], 0, completed)
+                retained = self.snapshot(root)
+                self.assertEqual(completed, self.cli(*args)); self.assertEqual(retained, self.snapshot(root))
+                self.assertEqual(r.read(r.STATE / "state.json")["phase"], "STOPPED")
+                self.assertFalse(any(call[0] in ("start", "stop", "protected-probe") for call in calls))
+                renew.assert_not_called(); hosts.assert_not_called()
+
+    @unittest.skipUnless(os.name == "nt", "Windows stopped-owner port contract")
+    def test_stopped_owner_reused_pid_still_requires_original_port_available(self):
+        owner = r.process_identity(os.getpid()); owner["created"] += 1
+        with self.fixture(collision=True, processes={"worker": owner}) as (root, s, _, historical, _, calls, renew, hosts, _), socket.socket() as occupied:
+            occupied.bind(("127.0.0.1", 0)); s["ports"] = {"api": occupied.getsockname()[1]}; r.save(s)
+            before = self.snapshot(root, include_lock=True)
+            code, error = self.cli("stop-recovery-plan", "--facts", historical)
+            self.assertEqual(code, 1, error); self.assertIn("Original ledger port occupied", error["reason"])
+            self.assertEqual(before, self.snapshot(root, include_lock=True))
+            self.assertFalse(any(call[0] in ("start", "stop", "protected-probe") for call in calls))
+            renew.assert_not_called(); hosts.assert_not_called()
 
     def test_real_cli_stop_to_resume_keeps_frozen_ledger_and_reads_new_stop_binding(self):
         with self.fixture() as (root, s, before, _, original, calls, renew, hosts, _):
