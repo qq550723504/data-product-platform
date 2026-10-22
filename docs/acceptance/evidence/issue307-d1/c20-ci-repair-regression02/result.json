@@ -1,0 +1,695 @@
+{
+  "at": "2026-10-22T09:27:59.057395+00:00",
+  "status": "PASS",
+  "runs": [
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_confirmed_race.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_confirmed_race.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_delete_preflight.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_delete_preflight.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_disposal_preparation.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_disposal_preparation.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_native_d1_completion.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_native_d1_completion.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_lc13_readonly.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_lc13_readonly.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_history.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_history.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_check.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_check.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_history.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_reference_candidate05_history.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "examples/lifecycle-d1/check-reference-candidate05-history.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "examples/lifecycle-d1/check-remaining-v16-history.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        ".github/scripts/check-lifecycle307-history.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_remaining_window.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_remaining_window.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_freeze_remaining_executable.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_freeze_remaining_executable.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_verify_remaining_native.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_verify_remaining_native.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_old_business_dispatch_closure.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_old_business_dispatch_closure.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_post_v22_seventeen.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_post_v22_seventeen.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_remaining_sequence.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_sequence.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_v27_dispatch_closure.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_v27_dispatch_closure.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_preallocation_ci.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_preallocation_ci.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_verify_remaining_native.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_verify_remaining_native.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-B",
+        "examples/lifecycle-d1/test_freeze_remaining_executable.py"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_remaining_executable.py"
+      ],
+      "exit": 0
+    }
+  ],
+  "source_started": false,
+  "native_delete": 0
+}

@@ -1,0 +1,80 @@
+{
+  "status": "PASS_FILE_ONLY_ACTUAL_RETAINED_C19_PAIR_AND_C18_VERSION_ONLY",
+  "at": "2026-10-22T07:09:21.050874+00:00",
+  "source_head": "955e98a2338b7d22a0686866683fb4413bf8dcdd",
+  "files": [
+    {
+      "group": "business-races",
+      "generation": "a5d1e569",
+      "path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\business-races\\root-disable-all\\policies\\lifecycle307-six-da5d1e569808a6960.json",
+      "sha256": "5b8011b872cdea36be4d25d348f216d74206809799c1c26dfe656d82c17c4514",
+      "actions": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "exact_targets": 3,
+      "raw_matches_retained_IAM_index": true
+    },
+    {
+      "group": "business-races",
+      "generation": "4fd5a7e7",
+      "path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\business-races\\root-disable-all\\policies\\lifecycle307-six-d4fd5a7e7808a6960.json",
+      "sha256": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+      "actions": [
+        "s3:DeleteObjectVersion"
+      ],
+      "exact_targets": 3,
+      "raw_matches_retained_IAM_index": true
+    },
+    {
+      "group": "late-hold",
+      "generation": "a5d1e569",
+      "path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\root-disable-all\\policies\\lifecycle307-six-da5d1e569754ea8f0.json",
+      "sha256": "4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0",
+      "actions": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "exact_targets": 1,
+      "raw_matches_retained_IAM_index": true
+    },
+    {
+      "group": "late-hold",
+      "generation": "4fd5a7e7",
+      "path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\root-disable-all\\policies\\lifecycle307-six-d4fd5a7e7754ea8f0.json",
+      "sha256": "c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d",
+      "actions": [
+        "s3:DeleteObjectVersion"
+      ],
+      "exact_targets": 1,
+      "raw_matches_retained_IAM_index": true
+    },
+    {
+      "group": "mixed",
+      "generation": "a5d1e569",
+      "path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\mixed\\root-disable-all\\policies\\lifecycle307-six-da5d1e569dfda43b4.json",
+      "sha256": "3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b",
+      "actions": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "exact_targets": 2,
+      "raw_matches_retained_IAM_index": true
+    },
+    {
+      "group": "mixed",
+      "generation": "4fd5a7e7",
+      "path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\mixed\\root-disable-all\\policies\\lifecycle307-six-d4fd5a7e7dfda43b4.json",
+      "sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "actions": [
+        "s3:DeleteObjectVersion"
+      ],
+      "exact_targets": 2,
+      "raw_matches_retained_IAM_index": true
+    }
+  ],
+  "provider_IO": 0,
+  "native_IAM_status": "NOT_READ_THIS_REVIEW",
+  "historical_IAM": "UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START_NOT_OVERWRITTEN",
+  "scope": "Read-only comparison of actual frozen local policy file witnesses. Official ParseConfig/IsAllowed semantics tested separately by Go unit tests."
+}

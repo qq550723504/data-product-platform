@@ -1,0 +1,21 @@
+test_checkpoint_dsn_cannot_fall_back_to_source (test_reference_candidate05.Candidate05PreparationBoundary.test_checkpoint_dsn_cannot_fall_back_to_source) ... ok
+test_cli_rejects_execution_and_override_options_before_io (test_reference_candidate05.Candidate05PreparationBoundary.test_cli_rejects_execution_and_override_options_before_io) ... usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: delete
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --confirm
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --source HEAD
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --execution old
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --resume
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --cleanup
+ok
+test_prior_denial_closure_and_no_new_authority_are_required (test_reference_candidate05.Candidate05PreparationBoundary.test_prior_denial_closure_and_no_new_authority_are_required) ... ok
+test_seal_attempts_every_resource_when_first_stop_fails (test_reference_candidate05.Candidate05PreparationBoundary.test_seal_attempts_every_resource_when_first_stop_fails) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.008s
+
+OK

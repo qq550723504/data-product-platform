@@ -1,0 +1,4854 @@
+{
+  "bd511bd613c8bb312795245bd174d81ca9d0f34ad427b5e6f40551a893504037": {
+    "id": "bd511bd613c8bb312795245bd174d81ca9d0f34ad427b5e6f40551a893504037",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "0:0",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-e",
+      "/run/budget-init.sh"
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": [
+        "CAP_CHOWN"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/business-races/budget-init.sh",
+        "Destination": "/run/budget-init.sh",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "7bdf0134da2f4e172aced1a33e710eec7c88de6a01a176b66d74f3ca0beaeb67": {
+    "id": "7bdf0134da2f4e172aced1a33e710eec7c88de6a01a176b66d74f3ca0beaeb67",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "postgres"
+    ],
+    "host": {
+      "NetworkMode": "59cb1cc69f896393026ac1f00329813beac12565e519bb70aae3dc7b13b004c6",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/business-races/checkpoint",
+        "Destination": "/run/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-checkpoint-core",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-checkpoint-core/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "e56691e7d13a25086b780735099eac88789ca43fa246d54762bc57fa3e38c73f": {
+    "id": "e56691e7d13a25086b780735099eac88789ca43fa246d54762bc57fa3e38c73f",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "postgres"
+    ],
+    "host": {
+      "NetworkMode": "59cb1cc69f896393026ac1f00329813beac12565e519bb70aae3dc7b13b004c6",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/business-races/checkpoint",
+        "Destination": "/run/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-rehearsal-core",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-rehearsal-core/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "1cd97937159030b4694a07dce89098ad54af051a379f23390ff9f2196841dbee": {
+    "id": "1cd97937159030b4694a07dce89098ad54af051a379f23390ff9f2196841dbee",
+    "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "/run/credentials/start.sh"
+    ],
+    "host": {
+      "NetworkMode": "59cb1cc69f896393026ac1f00329813beac12565e519bb70aae3dc7b13b004c6",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-objects/_data",
+        "Destination": "/data",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/business-races/restore-credentials",
+        "Destination": "/run/credentials",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5": {
+    "id": "8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+    "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "user": "",
+    "entrypoint": null,
+    "command": [
+      "caddy",
+      "run",
+      "--config",
+      "/etc/caddy/Caddyfile"
+    ],
+    "host": {
+      "NetworkMode": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": {
+        "/config": "",
+        "/data": ""
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\gateway.Caddyfile",
+        "Destination": "/etc/caddy/Caddyfile",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "573eeaa0ab1fd817789ebf0f5e7e95fb8496808ebdf14fea3075ce02493da62d": {
+    "id": "573eeaa0ab1fd817789ebf0f5e7e95fb8496808ebdf14fea3075ce02493da62d",
+    "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "user": "",
+    "entrypoint": null,
+    "command": [
+      "caddy",
+      "run",
+      "--config",
+      "/etc/caddy/Caddyfile"
+    ],
+    "host": {
+      "NetworkMode": "59cb1cc69f896393026ac1f00329813beac12565e519bb70aae3dc7b13b004c6",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": {
+        "/config": "",
+        "/data": ""
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\restore-gateway.Caddyfile",
+        "Destination": "/etc/caddy/Caddyfile",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "656bbe881f75fc7f0fd9dec90a84047ab0cc99ba81f1b1309c528df6db123482": {
+    "id": "656bbe881f75fc7f0fd9dec90a84047ab0cc99ba81f1b1309c528df6db123482",
+    "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "redis-server",
+      "--appendonly",
+      "yes"
+    ],
+    "host": {
+      "NetworkMode": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-recovery-redis",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-recovery-redis/_data",
+        "Destination": "/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "ce31c17f0cfa4ead96ce5b0ca49ddfb70b38d09e63eae86a721be2db0f2e4341": {
+    "id": "ce31c17f0cfa4ead96ce5b0ca49ddfb70b38d09e63eae86a721be2db0f2e4341",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "wire"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\wire",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\wire",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "484191cd6ea5953eabad941b45eed6a64a973d4931f90b698ac8e96c5a66190e": {
+    "id": "484191cd6ea5953eabad941b45eed6a64a973d4931f90b698ac8e96c5a66190e",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "P2"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\P2",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\P2",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "f9b870c5d4624e4e00efebd0f7d1171008a1a3a36a070d5acb45faeef338d496": {
+    "id": "f9b870c5d4624e4e00efebd0f7d1171008a1a3a36a070d5acb45faeef338d496",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "recover-P2"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\recover-P2",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\recover-P2",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "d4b6787bd15a3fbed54af1946daaf5b7bec6483df732b1fec20f18232607edd6": {
+    "id": "d4b6787bd15a3fbed54af1946daaf5b7bec6483df732b1fec20f18232607edd6",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "T1"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\T1",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\T1",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "4bea83c4edc24a721530f54e585aca5e2c746dd5316663627e42f89105eefecb": {
+    "id": "4bea83c4edc24a721530f54e585aca5e2c746dd5316663627e42f89105eefecb",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "recover-T1"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\recover-T1",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\recover-T1",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "aceca6eefe1e4e496a489595aa2b6bc23fe8909f7f915d2dd035630586bc20d8": {
+    "id": "aceca6eefe1e4e496a489595aa2b6bc23fe8909f7f915d2dd035630586bc20d8",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "T2"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\T2",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\T2",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "1005487df2b2c61fc7bb8eed440d9584490e1f9d46c8f26609ff51df3568b7cd": {
+    "id": "1005487df2b2c61fc7bb8eed440d9584490e1f9d46c8f26609ff51df3568b7cd",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "recover-T2"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\recover-T2",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\recover-T2",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "cea253c4c3b183deaad5e2884d2f475a04e2c5c508fe115cefe74e45280d643e": {
+    "id": "cea253c4c3b183deaad5e2884d2f475a04e2c5c508fe115cefe74e45280d643e",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-resume-business"
+    ],
+    "host": {
+      "NetworkMode": "container:8adb358b00c7783b344d31766d2a1117e0c4bd47751287d2aa1093f53be812a5",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\case-business",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\case-business",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "8b07dc47990fa1a6671316bd20d02cbb29ccc65ee3509b328b8643015ff57ac0": {
+    "id": "8b07dc47990fa1a6671316bd20d02cbb29ccc65ee3509b328b8643015ff57ac0",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "check-disabled"
+    ],
+    "host": {
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\root-check-disabled",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\root-check-disabled",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "49cbe70597d8e136134c99676612e99b7b9a9d9b7d8dd49977bd5172c7f929e6": {
+    "id": "49cbe70597d8e136134c99676612e99b7b9a9d9b7d8dd49977bd5172c7f929e6",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "enable-read"
+    ],
+    "host": {
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\root-enable-read",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\root-enable-read",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "9c0253ffbaac11288773556f2c06b8b6f7601c1db7ead9e1a23f4559dd5e2e54": {
+    "id": "9c0253ffbaac11288773556f2c06b8b6f7601c1db7ead9e1a23f4559dd5e2e54",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "enable-send"
+    ],
+    "host": {
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\root-enable-send",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\root-enable-send",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "84c56b5c694511b60860e4fad53c723403f61a6c89d97f49963dae3242cf3193": {
+    "id": "84c56b5c694511b60860e4fad53c723403f61a6c89d97f49963dae3242cf3193",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "disable-send"
+    ],
+    "host": {
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\root-disable-send",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\root-disable-send",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "2512f85c76b1151c470ee8a9f7adbab1a9e90dc59e5aa54c5b49feeaecf20c71": {
+    "id": "2512f85c76b1151c470ee8a9f7adbab1a9e90dc59e5aa54c5b49feeaecf20c71",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "disable-all"
+    ],
+    "host": {
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\root-disable-all",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\root-disable-all",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "a0804e57a803b1301053360ebfe59269d746b7576425070abfcbe6ebf89b7335": {
+    "id": "a0804e57a803b1301053360ebfe59269d746b7576425070abfcbe6ebf89b7335",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-verify-native"
+    ],
+    "host": {
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\maintenance-source",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\maintenance-source",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "c12412f675f23f4a4738c7a9ae505244609463a18b99463f6be56eb4026b63ad": {
+    "id": "c12412f675f23f4a4738c7a9ae505244609463a18b99463f6be56eb4026b63ad",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-verify-native"
+    ],
+    "host": {
+      "NetworkMode": "container:1cd97937159030b4694a07dce89098ad54af051a379f23390ff9f2196841dbee",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\maintenance-restore",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\maintenance-restore",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "53adb515dcbed300ad1dbc132f56e0fa24ed6ebaa771d6caa02ab8383fbe5713": {
+    "id": "53adb515dcbed300ad1dbc132f56e0fa24ed6ebaa771d6caa02ab8383fbe5713",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-provision-disabled"
+    ],
+    "host": {
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\maintenance-provision",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\maintenance-provision",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "c710da7d89c2dd68e6042033f0f0cb26a711673c42bebee3019580e1cc1dd2c4": {
+    "id": "c710da7d89c2dd68e6042033f0f0cb26a711673c42bebee3019580e1cc1dd2c4",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-restore-inspect-enable"
+    ],
+    "host": {
+      "NetworkMode": "container:1cd97937159030b4694a07dce89098ad54af051a379f23390ff9f2196841dbee",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\restore-inspect-enable",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\restore-inspect-enable",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "893d84708562c53724a81ed68ec1a58966d212705f9d57dd7b34d3c6fddea446": {
+    "id": "893d84708562c53724a81ed68ec1a58966d212705f9d57dd7b34d3c6fddea446",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-restore-inspect-disable"
+    ],
+    "host": {
+      "NetworkMode": "container:1cd97937159030b4694a07dce89098ad54af051a379f23390ff9f2196841dbee",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\restore-inspect-disable",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\restore-inspect-disable",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "4e1777be8d5c03892a3b8b54e97f380129c52a2f3c5d055edb2ea0f83aec1ea9": {
+    "id": "4e1777be8d5c03892a3b8b54e97f380129c52a2f3c5d055edb2ea0f83aec1ea9",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-resume-business"
+    ],
+    "host": {
+      "NetworkMode": "container:573eeaa0ab1fd817789ebf0f5e7e95fb8496808ebdf14fea3075ce02493da62d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\rehearsal-business",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\rehearsal-business",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "1b1efc323aa1c1f8a6b44f7653b6e9132c0cd0d2e44238219030e58419a2a4de": {
+    "id": "1b1efc323aa1c1f8a6b44f7653b6e9132c0cd0d2e44238219030e58419a2a4de",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "test ! -e /backup/native.tar; exec tar -C /source -cpf /backup/native.tar ."
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/business-races/checkpoint",
+        "Destination": "/backup",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+        "Destination": "/source",
+        "RW": false,
+        "Propagation": ""
+      }
+    ]
+  },
+  "4257d7b888a5f5344470894d13a16ffda0ef7f6b6dfb76eb4486170865246e0e": {
+    "id": "4257d7b888a5f5344470894d13a16ffda0ef7f6b6dfb76eb4486170865246e0e",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "test -z \"$(find /restore -mindepth 1 -print -quit)\"; exec tar -C /restore -xpf /backup/native.tar ."
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/business-races/checkpoint",
+        "Destination": "/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-objects/_data",
+        "Destination": "/restore",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "6437e5f0a23de676f200c8816f5ffee3722561c85e7a75e55363b536243323b7": {
+    "id": "6437e5f0a23de676f200c8816f5ffee3722561c85e7a75e55363b536243323b7",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "cd /source; find . -type f -exec sha256sum {} \\; | sort > /tmp/source; cd /restore; find . -type f -exec sha256sum {} \\; | sort > /tmp/restore; cmp /tmp/source /tmp/restore; cat /tmp/source"
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-candidate20-objects/_data",
+        "Destination": "/restore",
+        "RW": false,
+        "Propagation": ""
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-808a6960-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+        "Destination": "/source",
+        "RW": false,
+        "Propagation": ""
+      }
+    ]
+  },
+  "b4606eb786754510fc5d2a2864df4cc2e20ef406c7639b36169e884922550070": {
+    "id": "b4606eb786754510fc5d2a2864df4cc2e20ef406c7639b36169e884922550070",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "0:0",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-e",
+      "/run/budget-init.sh"
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": [
+        "CAP_CHOWN"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/late-hold/budget-init.sh",
+        "Destination": "/run/budget-init.sh",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "c4768f47d7ef3d574fa882cb96bc9d969e27dac65719c66b2a42b61f7a86c11c": {
+    "id": "c4768f47d7ef3d574fa882cb96bc9d969e27dac65719c66b2a42b61f7a86c11c",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "postgres"
+    ],
+    "host": {
+      "NetworkMode": "35b43c558634b5602682c6cdbc0bf03eec5522b98fdc6b85ad4d6abe66bbce77",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/late-hold/checkpoint",
+        "Destination": "/run/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-checkpoint-core",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-checkpoint-core/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "45ff1f99040a58a6c1849a620e210085e2fcbb386e7e914b6238eb92f491d8f4": {
+    "id": "45ff1f99040a58a6c1849a620e210085e2fcbb386e7e914b6238eb92f491d8f4",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "postgres"
+    ],
+    "host": {
+      "NetworkMode": "35b43c558634b5602682c6cdbc0bf03eec5522b98fdc6b85ad4d6abe66bbce77",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/late-hold/checkpoint",
+        "Destination": "/run/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-rehearsal-core",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-rehearsal-core/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "b2462819855722036b7c699baf9120f2f94242f9af12f938301a85b9ddd6fbcc": {
+    "id": "b2462819855722036b7c699baf9120f2f94242f9af12f938301a85b9ddd6fbcc",
+    "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "/run/credentials/start.sh"
+    ],
+    "host": {
+      "NetworkMode": "35b43c558634b5602682c6cdbc0bf03eec5522b98fdc6b85ad4d6abe66bbce77",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-objects/_data",
+        "Destination": "/data",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/late-hold/restore-credentials",
+        "Destination": "/run/credentials",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "f40ab972c7e626d75533014ae4ab1050f1a5abd8b6812c535fadba5bb023c08e": {
+    "id": "f40ab972c7e626d75533014ae4ab1050f1a5abd8b6812c535fadba5bb023c08e",
+    "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "user": "",
+    "entrypoint": null,
+    "command": [
+      "caddy",
+      "run",
+      "--config",
+      "/etc/caddy/Caddyfile"
+    ],
+    "host": {
+      "NetworkMode": "e27a29ee55732447bff932d15bcb83339784089c00f03b9139232417fe1a8847",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": {
+        "/config": "",
+        "/data": ""
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\gateway.Caddyfile",
+        "Destination": "/etc/caddy/Caddyfile",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "7e983e4cfe429aeac21b5d6225305529fe95ff088077b3793cdb339dd87dc6df": {
+    "id": "7e983e4cfe429aeac21b5d6225305529fe95ff088077b3793cdb339dd87dc6df",
+    "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "user": "",
+    "entrypoint": null,
+    "command": [
+      "caddy",
+      "run",
+      "--config",
+      "/etc/caddy/Caddyfile"
+    ],
+    "host": {
+      "NetworkMode": "35b43c558634b5602682c6cdbc0bf03eec5522b98fdc6b85ad4d6abe66bbce77",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": {
+        "/config": "",
+        "/data": ""
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\restore-gateway.Caddyfile",
+        "Destination": "/etc/caddy/Caddyfile",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "016da3761b6cb81daeeb7a6732271bb1fcf2e6597ecf43d8a8f8a68e2f60ca63": {
+    "id": "016da3761b6cb81daeeb7a6732271bb1fcf2e6597ecf43d8a8f8a68e2f60ca63",
+    "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "redis-server",
+      "--appendonly",
+      "yes"
+    ],
+    "host": {
+      "NetworkMode": "e27a29ee55732447bff932d15bcb83339784089c00f03b9139232417fe1a8847",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-recovery-redis",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-recovery-redis/_data",
+        "Destination": "/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "72a681f83602765c965659a01c5a84d0b22eea9c18ff4d77d403ab6038566ea3": {
+    "id": "72a681f83602765c965659a01c5a84d0b22eea9c18ff4d77d403ab6038566ea3",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "wire"
+    ],
+    "host": {
+      "NetworkMode": "container:f40ab972c7e626d75533014ae4ab1050f1a5abd8b6812c535fadba5bb023c08e",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\wire",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\wire",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "be45c85c1bf565bc340df99cc92a6b0ea52660f81224f9553f5c32f810b17b34": {
+    "id": "be45c85c1bf565bc340df99cc92a6b0ea52660f81224f9553f5c32f810b17b34",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "H2"
+    ],
+    "host": {
+      "NetworkMode": "container:f40ab972c7e626d75533014ae4ab1050f1a5abd8b6812c535fadba5bb023c08e",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\H2",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\H2",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "bfda5f8588fed76edc6a322d3fc22dc4c10c2ef36d63ce17d216766604444dce": {
+    "id": "bfda5f8588fed76edc6a322d3fc22dc4c10c2ef36d63ce17d216766604444dce",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "recover-H2"
+    ],
+    "host": {
+      "NetworkMode": "container:f40ab972c7e626d75533014ae4ab1050f1a5abd8b6812c535fadba5bb023c08e",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\recover-H2",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\recover-H2",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "a47b0d8f7b40170635c359464a564c1fe2dc610b64e15a6043f7951d1f48cf5e": {
+    "id": "a47b0d8f7b40170635c359464a564c1fe2dc610b64e15a6043f7951d1f48cf5e",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-late"
+    ],
+    "host": {
+      "NetworkMode": "container:f40ab972c7e626d75533014ae4ab1050f1a5abd8b6812c535fadba5bb023c08e",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\case-late",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\case-late",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "090a60835cd5d05d1c736f3064f2e8f14865ca4d61278690f1d8251d4d948a6c": {
+    "id": "090a60835cd5d05d1c736f3064f2e8f14865ca4d61278690f1d8251d4d948a6c",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-close-H1"
+    ],
+    "host": {
+      "NetworkMode": "container:f40ab972c7e626d75533014ae4ab1050f1a5abd8b6812c535fadba5bb023c08e",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\case-close-H1",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\case-close-H1",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "3c0e7a37b48394eebef2d2a113e22c4a518a6d82b352a3b07ea6d79d868c6c79": {
+    "id": "3c0e7a37b48394eebef2d2a113e22c4a518a6d82b352a3b07ea6d79d868c6c79",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "check-disabled"
+    ],
+    "host": {
+      "NetworkMode": "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\root-check-disabled",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\root-check-disabled",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "40af06a0ddfd4bed5bf2004d54cd214873d0f881af76f7a5567b71921af363b7": {
+    "id": "40af06a0ddfd4bed5bf2004d54cd214873d0f881af76f7a5567b71921af363b7",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "enable-read"
+    ],
+    "host": {
+      "NetworkMode": "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\root-enable-read",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\root-enable-read",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "85c47ec4e93455a9d28553829d3bed5d05fdc9f53defe754f9c88e22d3ea2819": {
+    "id": "85c47ec4e93455a9d28553829d3bed5d05fdc9f53defe754f9c88e22d3ea2819",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "enable-send"
+    ],
+    "host": {
+      "NetworkMode": "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\root-enable-send",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\root-enable-send",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "1f0874aa2d77e974dfc6e71e865b6497116d97634eee352e13ecd036eac44884": {
+    "id": "1f0874aa2d77e974dfc6e71e865b6497116d97634eee352e13ecd036eac44884",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "disable-send"
+    ],
+    "host": {
+      "NetworkMode": "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\root-disable-send",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\root-disable-send",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "c82fed3189ec8a0c1d3477256c74f1fc85473c43ebd5dae33e1577c74545e7ec": {
+    "id": "c82fed3189ec8a0c1d3477256c74f1fc85473c43ebd5dae33e1577c74545e7ec",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "disable-all"
+    ],
+    "host": {
+      "NetworkMode": "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\root-disable-all",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\root-disable-all",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "d35e65d9ad3e5d2401df9896db2d98d61ef8dcb61502e80781ae79065072f7d9": {
+    "id": "d35e65d9ad3e5d2401df9896db2d98d61ef8dcb61502e80781ae79065072f7d9",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-verify-native"
+    ],
+    "host": {
+      "NetworkMode": "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\maintenance-source",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\maintenance-source",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "d45604cd02778628b6d4f67e89da6735d16900dc19bf6c13af7f99abbbea12d0": {
+    "id": "d45604cd02778628b6d4f67e89da6735d16900dc19bf6c13af7f99abbbea12d0",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-verify-native"
+    ],
+    "host": {
+      "NetworkMode": "container:b2462819855722036b7c699baf9120f2f94242f9af12f938301a85b9ddd6fbcc",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\maintenance-restore",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\maintenance-restore",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "ea310fc9266570a83445079efa000ed989301c0641fc20e08db8d18b980c4902": {
+    "id": "ea310fc9266570a83445079efa000ed989301c0641fc20e08db8d18b980c4902",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-provision-disabled"
+    ],
+    "host": {
+      "NetworkMode": "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\maintenance-provision",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\maintenance-provision",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "05a95229dfa28da47a993dd1783e902448005bb116214b64bbe9e14b5c73d247": {
+    "id": "05a95229dfa28da47a993dd1783e902448005bb116214b64bbe9e14b5c73d247",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-restore-inspect-enable"
+    ],
+    "host": {
+      "NetworkMode": "container:b2462819855722036b7c699baf9120f2f94242f9af12f938301a85b9ddd6fbcc",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\restore-inspect-enable",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\restore-inspect-enable",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "c58433f2364302f10e247ae53b24f11b3eedf3285706e2de93ce80fc5e987e68": {
+    "id": "c58433f2364302f10e247ae53b24f11b3eedf3285706e2de93ce80fc5e987e68",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-restore-inspect-disable"
+    ],
+    "host": {
+      "NetworkMode": "container:b2462819855722036b7c699baf9120f2f94242f9af12f938301a85b9ddd6fbcc",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\restore-inspect-disable",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\restore-inspect-disable",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "b877fcfb989772b2b8c7309a6671020ed5486bd00f11c6be123b0ec9cd76a07e": {
+    "id": "b877fcfb989772b2b8c7309a6671020ed5486bd00f11c6be123b0ec9cd76a07e",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-late"
+    ],
+    "host": {
+      "NetworkMode": "container:7e983e4cfe429aeac21b5d6225305529fe95ff088077b3793cdb339dd87dc6df",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\rehearsal-late",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\rehearsal-late",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "39a544ebf79ee047e219c25a97152f7ed25e80745bc52bfdb180105721137a19": {
+    "id": "39a544ebf79ee047e219c25a97152f7ed25e80745bc52bfdb180105721137a19",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "test ! -e /backup/native.tar; exec tar -C /source -cpf /backup/native.tar ."
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/late-hold/checkpoint",
+        "Destination": "/backup",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-objects/_data",
+        "Destination": "/source",
+        "RW": false,
+        "Propagation": ""
+      }
+    ]
+  },
+  "c12ddf1dd01e11de853ff822931896dd48e1499df7bd3a40de5cb615923aaf44": {
+    "id": "c12ddf1dd01e11de853ff822931896dd48e1499df7bd3a40de5cb615923aaf44",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "test -z \"$(find /restore -mindepth 1 -print -quit)\"; exec tar -C /restore -xpf /backup/native.tar ."
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/late-hold/checkpoint",
+        "Destination": "/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-objects/_data",
+        "Destination": "/restore",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "0db56f1fbe0413c5c1a14643f41f4ad1c4d4cae786511d0e115e1c531adaa50f": {
+    "id": "0db56f1fbe0413c5c1a14643f41f4ad1c4d4cae786511d0e115e1c531adaa50f",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "cd /source; find . -type f -exec sha256sum {} \\; | sort > /tmp/source; cd /restore; find . -type f -exec sha256sum {} \\; | sort > /tmp/restore; cmp /tmp/source /tmp/restore; cat /tmp/source"
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-candidate20-objects/_data",
+        "Destination": "/restore",
+        "RW": false,
+        "Propagation": ""
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-754ea8f0-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-754ea8f0-objects/_data",
+        "Destination": "/source",
+        "RW": false,
+        "Propagation": ""
+      }
+    ]
+  },
+  "e80531b5b70e5773f1d492f3bf96ffd287e2b0b0ba603219d3977f6115363027": {
+    "id": "e80531b5b70e5773f1d492f3bf96ffd287e2b0b0ba603219d3977f6115363027",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "0:0",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-e",
+      "/run/budget-init.sh"
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": [
+        "CAP_CHOWN"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/mixed/budget-init.sh",
+        "Destination": "/run/budget-init.sh",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "e4a1ba082ad21c1a95db2187eb98046d9dabb992a4550fc54c8d648a3134c47d": {
+    "id": "e4a1ba082ad21c1a95db2187eb98046d9dabb992a4550fc54c8d648a3134c47d",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "postgres"
+    ],
+    "host": {
+      "NetworkMode": "a2dcdc0bd74c877f9e3827c2ccd3e7eba3c7df76de16b4fd0d6b6bf967117c6c",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/mixed/checkpoint",
+        "Destination": "/run/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-checkpoint-core",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-checkpoint-core/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "7e5d14365f8c845215f6f272755d88a7923c20e7fed6bb345ae55170964dd5f0": {
+    "id": "7e5d14365f8c845215f6f272755d88a7923c20e7fed6bb345ae55170964dd5f0",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "postgres"
+    ],
+    "host": {
+      "NetworkMode": "a2dcdc0bd74c877f9e3827c2ccd3e7eba3c7df76de16b4fd0d6b6bf967117c6c",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/mixed/checkpoint",
+        "Destination": "/run/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-rehearsal-core",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-rehearsal-core/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "3d9c92d1d74a0b11b6c62c7d3aa54db3a7c9262cae75549e07365f367364193a": {
+    "id": "3d9c92d1d74a0b11b6c62c7d3aa54db3a7c9262cae75549e07365f367364193a",
+    "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "/run/credentials/start.sh"
+    ],
+    "host": {
+      "NetworkMode": "a2dcdc0bd74c877f9e3827c2ccd3e7eba3c7df76de16b4fd0d6b6bf967117c6c",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-objects/_data",
+        "Destination": "/data",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/mixed/restore-credentials",
+        "Destination": "/run/credentials",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0": {
+    "id": "b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+    "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "user": "",
+    "entrypoint": null,
+    "command": [
+      "caddy",
+      "run",
+      "--config",
+      "/etc/caddy/Caddyfile"
+    ],
+    "host": {
+      "NetworkMode": "77f72e9ef0781527a7e8e5ce4a6cd8d36018e527a9ea853ae72d5f8fff9ea0eb",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": {
+        "/config": "",
+        "/data": ""
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\gateway.Caddyfile",
+        "Destination": "/etc/caddy/Caddyfile",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "22c01990d5900a376d997092600e3fd33bde00a5abda465d6b531610a8947e92": {
+    "id": "22c01990d5900a376d997092600e3fd33bde00a5abda465d6b531610a8947e92",
+    "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "user": "",
+    "entrypoint": null,
+    "command": [
+      "caddy",
+      "run",
+      "--config",
+      "/etc/caddy/Caddyfile"
+    ],
+    "host": {
+      "NetworkMode": "a2dcdc0bd74c877f9e3827c2ccd3e7eba3c7df76de16b4fd0d6b6bf967117c6c",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": {
+        "/config": "",
+        "/data": ""
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\restore-gateway.Caddyfile",
+        "Destination": "/etc/caddy/Caddyfile",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "12af7a15a333facf2d82a3383c507857e235cedc4bb00cab83f62e2fac207b66": {
+    "id": "12af7a15a333facf2d82a3383c507857e235cedc4bb00cab83f62e2fac207b66",
+    "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "user": "",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "redis-server",
+      "--appendonly",
+      "yes"
+    ],
+    "host": {
+      "NetworkMode": "77f72e9ef0781527a7e8e5ce4a6cd8d36018e527a9ea853ae72d5f8fff9ea0eb",
+      "ReadonlyRootfs": false,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": null,
+      "CapAdd": null,
+      "SecurityOpt": null,
+      "Tmpfs": null
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-recovery-redis",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-recovery-redis/_data",
+        "Destination": "/data",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "33583479c9baf14e55717115169c218ff78c822a9a0581af0cc0ff3708819ff6": {
+    "id": "33583479c9baf14e55717115169c218ff78c822a9a0581af0cc0ff3708819ff6",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "wire"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\wire",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\wire",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "4c69a1ed7f5e34c59c94c3077507fd490ae3dc8f30a4fe192db2752a242e9829": {
+    "id": "4c69a1ed7f5e34c59c94c3077507fd490ae3dc8f30a4fe192db2752a242e9829",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "M1A"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\M1A",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\M1A",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "67e7c163889e67dc7bdd77d7bc08c16adf2da9ccf50c70aac23175f21cff2ad8": {
+    "id": "67e7c163889e67dc7bdd77d7bc08c16adf2da9ccf50c70aac23175f21cff2ad8",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "recover-M1A"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\recover-M1A",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\recover-M1A",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "9d0aa83a3de826c1b362047ad3e06ab91ffaaa04e89c2b4056da9130519294f5": {
+    "id": "9d0aa83a3de826c1b362047ad3e06ab91ffaaa04e89c2b4056da9130519294f5",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "M1B"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\M1B",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\M1B",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "604ca97463c814e1208356fdf58ed0c6a27c88abbd6615547bf22fdb9e103afe": {
+    "id": "604ca97463c814e1208356fdf58ed0c6a27c88abbd6615547bf22fdb9e103afe",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "recover-M1B"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-budget",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-budget/_data",
+        "Destination": "/run/budget",
+        "RW": true,
+        "Propagation": ""
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\recover-M1B",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\recover-M1B",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "277f1586bc87080d7dfdfaf00736c9b608a957a2993d2e9d4101992a8267c346": {
+    "id": "277f1586bc87080d7dfdfaf00736c9b608a957a2993d2e9d4101992a8267c346",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-mixed"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\case-mixed",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\case-mixed",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "055fd5f61ac02d2a30ff358ee375d9daa0fcb0244dd900a9155279fcbe30c744": {
+    "id": "055fd5f61ac02d2a30ff358ee375d9daa0fcb0244dd900a9155279fcbe30c744",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-mixed-b"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\case-mixed-b",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\case-mixed-b",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "6cab7f0bf0d09807a9435f05a56cd6226d675bbd0e96565cc8fc729e87e38fd9": {
+    "id": "6cab7f0bf0d09807a9435f05a56cd6226d675bbd0e96565cc8fc729e87e38fd9",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-mixed-c"
+    ],
+    "host": {
+      "NetworkMode": "container:b5c4f277105dc688994cdcc2e7990d3c98a46d29b2a3f3507a48730bcda1f8e0",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\case-mixed-c",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\case-mixed-c",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "70a8e4e9dff5d0c4e7b99e37ccc590e9d40483ffa13caf9783d6fe73368afc4c": {
+    "id": "70a8e4e9dff5d0c4e7b99e37ccc590e9d40483ffa13caf9783d6fe73368afc4c",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "check-disabled"
+    ],
+    "host": {
+      "NetworkMode": "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\root-check-disabled",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\root-check-disabled",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "4a143caf2cc52f1352553d57df115a2eb7f97b2b89b6f1970a1971d7cc0b4758": {
+    "id": "4a143caf2cc52f1352553d57df115a2eb7f97b2b89b6f1970a1971d7cc0b4758",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "enable-read"
+    ],
+    "host": {
+      "NetworkMode": "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\root-enable-read",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\root-enable-read",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "3092af7091a975c26ad64f8ec1f28739f0dbef24f08989498d38ae4f64c68b90": {
+    "id": "3092af7091a975c26ad64f8ec1f28739f0dbef24f08989498d38ae4f64c68b90",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "enable-send"
+    ],
+    "host": {
+      "NetworkMode": "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\root-enable-send",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\root-enable-send",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "fd0940b1b92898c072ecc9d86416d9bbf604fc4eebaac615072ff06e9164fd5f": {
+    "id": "fd0940b1b92898c072ecc9d86416d9bbf604fc4eebaac615072ff06e9164fd5f",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "disable-send"
+    ],
+    "host": {
+      "NetworkMode": "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\root-disable-send",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\root-disable-send",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "ddfae084a702cf83dc8f76086dddadfe7219def432898ccfeb9712ad14725942": {
+    "id": "ddfae084a702cf83dc8f76086dddadfe7219def432898ccfeb9712ad14725942",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/owner"
+    ],
+    "command": [
+      "-action",
+      "disable-all"
+    ],
+    "host": {
+      "NetworkMode": "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\root-disable-all",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner",
+        "Destination": "/run/owner",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\root-disable-all",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "7bc335da0ec2075c3cb8efc73856318628f602143e234006af6a2cd990e4be02": {
+    "id": "7bc335da0ec2075c3cb8efc73856318628f602143e234006af6a2cd990e4be02",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-verify-native"
+    ],
+    "host": {
+      "NetworkMode": "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\maintenance-source",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\maintenance-source",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "a50df1286ac71201c87e3bf9e05dd048144f47b727e96f3fc8655aa71c0f89f9": {
+    "id": "a50df1286ac71201c87e3bf9e05dd048144f47b727e96f3fc8655aa71c0f89f9",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-verify-native"
+    ],
+    "host": {
+      "NetworkMode": "container:3d9c92d1d74a0b11b6c62c7d3aa54db3a7c9262cae75549e07365f367364193a",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\maintenance-restore",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\maintenance-restore",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "65ef08e0d6f2d9df7c65ed57134b0278104c8c90a86fd2be834b17ea34275b88": {
+    "id": "65ef08e0d6f2d9df7c65ed57134b0278104c8c90a86fd2be834b17ea34275b88",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-provision-disabled"
+    ],
+    "host": {
+      "NetworkMode": "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\maintenance-provision",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\maintenance-provision",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "74bcdeb49f6dd266cb8c945eb91654df686d2a8cbacfb6e009d02d9652327c32": {
+    "id": "74bcdeb49f6dd266cb8c945eb91654df686d2a8cbacfb6e009d02d9652327c32",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-restore-inspect-enable"
+    ],
+    "host": {
+      "NetworkMode": "container:3d9c92d1d74a0b11b6c62c7d3aa54db3a7c9262cae75549e07365f367364193a",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\restore-inspect-enable",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\restore-inspect-enable",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "537d453413ae3e424aebe1d9349451611f174c3152f78c120cb613f9dbc37ed8": {
+    "id": "537d453413ae3e424aebe1d9349451611f174c3152f78c120cb613f9dbc37ed8",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "six-restore-inspect-disable"
+    ],
+    "host": {
+      "NetworkMode": "container:3d9c92d1d74a0b11b6c62c7d3aa54db3a7c9262cae75549e07365f367364193a",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\restore-inspect-disable",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\restore-inspect-disable",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "a898408a31979eb8b0ee68bf907ff12769bc0882f5010a810bd38d3f51a34fe3": {
+    "id": "a898408a31979eb8b0ee68bf907ff12769bc0882f5010a810bd38d3f51a34fe3",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-mixed"
+    ],
+    "host": {
+      "NetworkMode": "container:22c01990d5900a376d997092600e3fd33bde00a5abda465d6b531610a8947e92",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\rehearsal-mixed",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\rehearsal-mixed",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "d964731f1fc012efb48ac7c4aa9d029f985fa005606de3a5c499128b4b853b5a": {
+    "id": "d964731f1fc012efb48ac7c4aa9d029f985fa005606de3a5c499128b4b853b5a",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/reader"
+    ],
+    "command": [
+      "-mode",
+      "remaining-mixed-protected"
+    ],
+    "host": {
+      "NetworkMode": "container:22c01990d5900a376d997092600e3fd33bde00a5abda465d6b531610a8947e92",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\outputs\\rehearsal-protected",
+        "Destination": "/run/output",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\mixed\\rehearsal-protected",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader",
+        "Destination": "/run/reader",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  },
+  "b897928f6e1ead08d29294dca5fa7313f5bf3619a600f693f417ef2e606fef55": {
+    "id": "b897928f6e1ead08d29294dca5fa7313f5bf3619a600f693f417ef2e606fef55",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "test ! -e /backup/native.tar; exec tar -C /source -cpf /backup/native.tar ."
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/mixed/checkpoint",
+        "Destination": "/backup",
+        "RW": true,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-objects/_data",
+        "Destination": "/source",
+        "RW": false,
+        "Propagation": ""
+      }
+    ]
+  },
+  "b977bd7de1dee3c80e89cb59982bf6bf828df5f56cab7fdb2e1f9373866af0f8": {
+    "id": "b977bd7de1dee3c80e89cb59982bf6bf828df5f56cab7fdb2e1f9373866af0f8",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "test -z \"$(find /restore -mindepth 1 -print -quit)\"; exec tar -C /restore -xpf /backup/native.tar ."
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/remaining-candidate20/mixed/checkpoint",
+        "Destination": "/backup",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-objects/_data",
+        "Destination": "/restore",
+        "RW": true,
+        "Propagation": ""
+      }
+    ]
+  },
+  "3e6f7f64b6b128fd17db4cc24ae701e4f6cb3943ee5f8128120b78dcec102311": {
+    "id": "3e6f7f64b6b128fd17db4cc24ae701e4f6cb3943ee5f8128120b78dcec102311",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "",
+    "entrypoint": [
+      "/bin/sh"
+    ],
+    "command": [
+      "-ec",
+      "cd /source; find . -type f -exec sha256sum {} \\; | sort > /tmp/source; cd /restore; find . -type f -exec sha256sum {} \\; | sort > /tmp/restore; cmp /tmp/source /tmp/restore; cat /tmp/source"
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-candidate20-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-candidate20-objects/_data",
+        "Destination": "/restore",
+        "RW": false,
+        "Propagation": ""
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-dfda43b4-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-objects/_data",
+        "Destination": "/source",
+        "RW": false,
+        "Propagation": ""
+      }
+    ]
+  },
+  "cb1c302d2d92ffe259ae32047c9fa8f3076af60c3cab007c64809959852b8997": {
+    "id": "cb1c302d2d92ffe259ae32047c9fa8f3076af60c3cab007c64809959852b8997",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "user": "10001:10001",
+    "entrypoint": [
+      "/run/operator"
+    ],
+    "command": [
+      "-stage",
+      "check-candidate"
+    ],
+    "host": {
+      "NetworkMode": "none",
+      "ReadonlyRootfs": true,
+      "Privileged": false,
+      "AutoRemove": false,
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "CapDrop": [
+        "ALL"
+      ],
+      "CapAdd": null,
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      }
+    },
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/operator",
+        "Destination": "/run/operator",
+        "RW": false,
+        "Propagation": "rprivate"
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\offline",
+        "Destination": "/run/private",
+        "RW": false,
+        "Propagation": "rprivate"
+      }
+    ]
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "status": "PASS_INDEPENDENT_FINAL_R_P_ARTIFACT_EQUIVALENCE_AUDIT",
+  "at": "2026-10-22T08:01:48.065878+00:00",
+  "source_head": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "runtime_spec_sha256": "cb27cdc95aa5b4ddac313008daa6aa27e6ccfe7ffa29c5de52b81352f168b28f",
+  "archive": {
+    "members": 769,
+    "bytes": 1821417,
+    "sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea"
+  },
+  "host_tracked_files": 2243,
+  "twelve_build_members_all_equal": true,
+  "schema_sources_all_equal": true,
+  "schema_native_binary_sha256": "0fd893c0f787939caaebd4d350eb066e16860e91771fcc31b3fe38e3c39c5bf1",
+  "native_witness_source_label_retained": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "equivalence_scope": "New R has only one test expectation delta; all four actual production binaries and eight original build output bytes equal the native-tested prior build; exact schema gate and test sources/program unchanged. No source migration or new native execution claimed.",
+  "private_artifacts": {
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\reader": {
+      "sha256": "4a00555dfc950ed3960563bf4a49277ee18142c71dc582f37e8db06dda862d0e",
+      "bytes": 38133215
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\operator": {
+      "sha256": "2389da9895f077312efe64c436242c87e6679d6ad7c84b4135de57103cc11fb8",
+      "bytes": 31795240
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\owner": {
+      "sha256": "815398e9c2ec7682587b73972c9fd19d5fc4ca8b46533c5f8a0e769718dd1f0c",
+      "bytes": 17854135
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\readonly-check.exe": {
+      "sha256": "7416d12a7311090fa0208545bd5f7228c720e4ac3c1a882ef8d28ad622d41da6",
+      "bytes": 9036800
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\reader-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\reader-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\operator-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\operator-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\owner-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\owner-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\checker-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\checker-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal02\\approved-runtime-source.zip": {
+      "sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea",
+      "bytes": 1821417
+    }
+  },
+  "source_migration": false,
+  "provider_delete": 0,
+  "reviewer_source_or_docker_io": 0,
+  "reviewer_path_correction": "First in-memory attempt used nonexistent artifact-build02 private path and failed before any I/O other than regular-file check; actual retained private directory is artifact-rehearsal02.",
+  "independent_go_counts": {
+    "independent-final-R-pilot01.stdout.txt": {
+      "top_level_passes": 3,
+      "nested_subcase_passes": 3,
+      "note": "Original regression passed_methods field counts every PASS line including nested subcases; these are separate counts."
+    },
+    "independent-final-R-readonly-check01.stdout.txt": {
+      "top_level_passes": 12,
+      "nested_subcase_passes": 72,
+      "note": "Original regression passed_methods field counts every PASS line including nested subcases; these are separate counts."
+    }
+  }
+}

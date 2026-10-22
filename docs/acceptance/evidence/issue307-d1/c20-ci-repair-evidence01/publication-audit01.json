@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-22T09:38:54.154516+00:00",
+  "status": "PASS_FIXED_TYPED_REVIEW_INDEX_AUDIT",
+  "source_head": "923c06722f3099e9049894489006615f0f0e7ce2",
+  "indexes": [
+    {
+      "id": "evidence-index.json",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/c20-ci-repair-review01/evidence-index.json",
+      "sha256": "d78e5ab8061ff2399e5e42c765f97a70dc9134c9a968712a3af8e4ff91f3b03f",
+      "members_verified": 45
+    },
+    {
+      "id": "independent-reviewed-artifacts01.json",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/c20-ci-repair-review01/independent-reviewed-artifacts01.json",
+      "sha256": "1c8289b3b2e698aa261552fec703e61592288a961ab22669d0e0b83b7e008a1b",
+      "members_verified": 172
+    }
+  ],
+  "source_provider_io": 0,
+  "native_delete": 0
+}

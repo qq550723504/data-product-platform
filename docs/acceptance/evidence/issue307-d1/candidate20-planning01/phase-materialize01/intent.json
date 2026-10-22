@@ -1,0 +1,14 @@
+{
+  "source": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "phase": "materialize",
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/six_candidate_runtime.py",
+    "materialize"
+  ],
+  "at": "2026-10-22T08:08:16.743868+00:00",
+  "delete_authority": false
+}

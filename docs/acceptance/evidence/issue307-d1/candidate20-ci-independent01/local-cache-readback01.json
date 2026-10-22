@@ -1,0 +1,77 @@
+{
+  "run_log_zip_matches": [],
+  "other_cache_metadata": [
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\f6\\99\\f640e276dd3a942486e483f5bd16d4186893b81ad4cf5621753dfcd64452",
+      "bytes": 1453,
+      "target_id_matches": [],
+      "sha256": "f9d8eb9ecdcf1a9b8be3daa753390ed1ab59e35e964667676c529e2df91534ec"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\ea\\52\\3ca118a5cbe721f12d182b2dbaf38e562caa566433305b8841ac454ce33b",
+      "bytes": 1446,
+      "target_id_matches": [],
+      "sha256": "db1377a441e50ed99b15ed2c82b148714b95800690b4143ef8626cda877e03e9"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\e5\\41\\a3c2a1207adeb852ca2f9a23050f642ea0da4803aeb0fdfe3bb720a078c8",
+      "bytes": 4397,
+      "target_id_matches": [],
+      "sha256": "77734f2bbc0a7682553ef66cb3c1b82eebb93580b0c77018a6a3d1a77989733a"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\b3\\00\\d9e0c722094a5eebebfa4cfa6549c9279dc0760003fe89cfb8dd342dd10a",
+      "bytes": 1610,
+      "target_id_matches": [],
+      "sha256": "6955454c8098d5de86d12ffbf76e50842a30a45fbe76a1fc21c26f6d888198a4"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\95\\be\\5c7233080315c649cea95416c4081f75edca6c62eb57bd09188d2ba0e22d",
+      "bytes": 1601,
+      "target_id_matches": [],
+      "sha256": "29e91f59750225111f5206dd9268b25f02419dfe0c407c9f434c72e3020ffe9d"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\75\\d4\\d58a3b3724fd797d07e272f169f5794fc7c08ce0da349b67d0c63ce1d623",
+      "bytes": 4404,
+      "target_id_matches": [],
+      "sha256": "2bd362ab8d5a8bd9cfac1c76d17e1c5eb7da54ad0661ac9bf134bd86ba166cce"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\74\\13\\82264d2456ce30d127a2566129b3e9fa2f87bd4ed603ace93ca6d240a2f5",
+      "bytes": 1449,
+      "target_id_matches": [],
+      "sha256": "afdce88259bbfbf887242647b10df457d1ab194d94121ce582f96b43a6771a91"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\3f\\79\\1ef72d1c52eb6e8a4140bdc4be6c5b1f71bfa1ea39d984fac8bfaad99762",
+      "bytes": 1424,
+      "target_id_matches": [],
+      "sha256": "8a189915e6f508b82d02e58d45533cf1228afde050232fc49129e9cc6a6ec19f"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\3d\\74\\86fe5079f1d37336f214899bffc5238d51d4677c354e3de33ed757ac3880",
+      "bytes": 4383,
+      "target_id_matches": [],
+      "sha256": "6d488fa4a04f85160cb5916b6b8ec788a3ff7cc1cbd4f67d32d95befa31d110e"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\26\\4a\\e099b48d3d1918d1e93b003a1fdf0ddfaf874bf4624d881dcbe5d208083d",
+      "bytes": 1596,
+      "target_id_matches": [],
+      "sha256": "f0e24a9e0bb5a71b2957135cb211bf12f64e7dcd426ff4a36d7593b27e78cf88"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\16\\2e\\05344c1a2b44aa4e10b62872f520def2d0d593210708fa99fbac971068e4",
+      "bytes": 1622,
+      "target_id_matches": [],
+      "sha256": "4c11cf44dfe1a74f8b95aeea7a19673832f6e79e3a12ed10b56b38fa536aa6f2"
+    },
+    {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\GitHub CLI\\12\\03\\69b470535ffc13e59fb2550338d3069a2b55f428b7022318377d511ba23f",
+      "bytes": 4392,
+      "target_id_matches": [],
+      "sha256": "2fdc3287ee885a227b6ce578ca6ec594db49d0816241ea894a1b24fa23aa5f0b"
+    }
+  ]
+}

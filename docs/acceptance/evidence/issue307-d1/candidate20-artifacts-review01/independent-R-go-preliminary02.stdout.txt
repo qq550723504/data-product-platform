@@ -1,0 +1,26 @@
+=== RUN   TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope
+--- PASS: TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope (0.02s)
+=== RUN   TestRemainingFixtureSchemaSingleContract
+--- PASS: TestRemainingFixtureSchemaSingleContract (0.00s)
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users/business-races
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users/late-hold
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users/mixed
+--- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users (0.00s)
+    --- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users/business-races (0.00s)
+    --- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users/late-hold (0.00s)
+    --- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users/mixed (0.00s)
+=== RUN   TestCurrentPolicyCheckpointMatchesActualReadOnlyReceipt
+--- PASS: TestCurrentPolicyCheckpointMatchesActualReadOnlyReceipt (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.484s
+=== RUN   TestResumeRejectsStaleCurrentPolicyCheckpointBeforeDatabase
+--- PASS: TestResumeRejectsStaleCurrentPolicyCheckpointBeforeDatabase (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	2.454s
+testing: warning: no tests to run
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	1.844s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	0.959s [no tests to run]

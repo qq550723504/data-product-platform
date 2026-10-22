@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\docs\acceptance\evidence\issue307-d1\candidate20-artifacts-review01\independent-artifact-evidence-audit01.py", line 16, in <module>
+    need(a['source']==spec['source']==terminal['runtime_source'],'R source cross-binding')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\docs\acceptance\evidence\issue307-d1\candidate20-artifacts-review01\independent-artifact-evidence-audit01.py", line 13, in need
+    if not value:raise ValueError(why)
+                 ^^^^^^^^^^^^^^^^^^^^^
+ValueError: R source cross-binding

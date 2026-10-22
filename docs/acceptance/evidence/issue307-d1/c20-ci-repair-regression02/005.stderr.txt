@@ -1,0 +1,30 @@
+test_authorization_check_survives_optimized_python (test_reference_disposal_preparation.PreparationSafety.test_authorization_check_survives_optimized_python) ... ok
+test_destructive_and_expanded_arguments_fail_before_any_io (test_reference_disposal_preparation.PreparationSafety.test_destructive_and_expanded_arguments_fail_before_any_io) ... usage: python.exe -m unittest [-h]
+                              {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+python.exe -m unittest: error: argument phase: invalid choice: 'execute' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+usage: python.exe -m unittest [-h]
+                              {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+python.exe -m unittest: error: argument phase: invalid choice: 'provision' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+usage: python.exe -m unittest [-h]
+                              {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+python.exe -m unittest: error: argument phase: invalid choice: 'enable' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+usage: python.exe -m unittest [-h]
+                              {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+python.exe -m unittest: error: argument phase: invalid choice: 'cleanup' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+usage: python.exe -m unittest [-h]
+                              {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+python.exe -m unittest: error: unrecognized arguments: --human-confirmed
+usage: python.exe -m unittest [-h]
+                              {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+python.exe -m unittest: error: unrecognized arguments: --target foreign
+usage: python.exe -m unittest [-h]
+                              {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+python.exe -m unittest: error: unrecognized arguments: --release foreign
+ok
+test_frozen_source_topology_input_cannot_be_redefined_by_working_files (test_reference_disposal_preparation.PreparationSafety.test_frozen_source_topology_input_cannot_be_redefined_by_working_files) ... ok
+test_render_keeps_strict_config_path_and_private_output_mount (test_reference_disposal_preparation.PreparationSafety.test_render_keeps_strict_config_path_and_private_output_mount) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.020s
+
+OK

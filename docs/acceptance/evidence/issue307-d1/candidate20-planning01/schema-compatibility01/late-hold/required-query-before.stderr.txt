@@ -1,0 +1,4 @@
+ERROR:  42703: column c.identity_kind does not exist
+LINE 4:   WHERE c.workspace_id=$1 AND c.id=ANY($2) AND c.identity_ki...
+                                                       ^
+LOCATION:  errorMissingColumn, parse_relation.c:3722

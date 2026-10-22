@@ -1,0 +1,475 @@
+{
+  "status": "PASS",
+  "source_head": "955e98a2338b7d22a0686866683fb4413bf8dcdd",
+  "inputs_before": {
+    ".github/workflows/ci.yml": {
+      "sha256": "ab12e2c0845dc7a7861c35f3d86f8eefd3c7bb85d51805b5edded9f3e2de00af",
+      "bytes": 32738
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go": {
+      "sha256": "d91e546d9a1aab95d161eb104c23e26d39fd2edb6bd5a89d7d0f9e5a252b7fee",
+      "bytes": 2839
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "sha256": "ec87270a6ef5837451d7b3d6e7dcbbd1c1617cb3d19aa17cfa879afebeae43bb",
+      "bytes": 6658
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go": {
+      "sha256": "51e52d783068955096ecf37a5ad5a9a8a55b61ef12db590f1055f692b8debbd4",
+      "bytes": 1576
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "sha256": "2b26ec45f7677a866f3f5979e0b725bcfbb6f58d8e44e707aded7c66312dcf1f",
+      "bytes": 2366
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "14526128f34e16d9d8b678bfa0c41aa4ca642dbe854e7ec602135ed46040c258",
+      "bytes": 23541
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "6c8671a8d486343b1fe07c8b333723b4f6936aafef465c036048867b32238233",
+      "bytes": 39067
+    },
+    "examples/lifecycle-d1/retained_v29.py": {
+      "sha256": "6fc3f151ed5f756795b81a465226e30b9188a435cd46b6d1fcb2a481e55e4765",
+      "bytes": 8317
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "9e748053988fc1c97d1f03dd5b385aa1c21e1d3125fbd2fd6390cfad65ec24cd",
+      "bytes": 43116
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "51695f8b5709916224072c1c785e3ed4b0f0ba9668d33c23b523e0ad59477299",
+      "bytes": 7354
+    },
+    "examples/lifecycle-d1/test_retained_v26.py": {
+      "sha256": "71006967135ffe7caf0fc7d61c3061622f3410ef6700772c1bb7986c447589c7",
+      "bytes": 6447
+    },
+    "examples/lifecycle-d1/test_retained_v27.py": {
+      "sha256": "40ef1944b2df1d644341e665560eabaef0a4b115a53a122c6d3b8b48d3fa525f",
+      "bytes": 4706
+    },
+    "examples/lifecycle-d1/test_retained_v29.py": {
+      "sha256": "3be16d2eb6bd6fd03ae6b9247b1b75141e5a510b10d043d8736da45198bfcf70",
+      "bytes": 8740
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "6e1d9b43730ccac607ac29880e03ea81e10128f7f0d40c8568d6be1675bc8336",
+      "bytes": 12988
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/merge-contract.md": {
+      "sha256": "a278287338ec54d32e686a96649276083020813b0f9b32118a5ed4bce0bef006",
+      "bytes": 3029
+    }
+  },
+  "inputs_after": {
+    ".github/workflows/ci.yml": {
+      "sha256": "ab12e2c0845dc7a7861c35f3d86f8eefd3c7bb85d51805b5edded9f3e2de00af",
+      "bytes": 32738
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go": {
+      "sha256": "d91e546d9a1aab95d161eb104c23e26d39fd2edb6bd5a89d7d0f9e5a252b7fee",
+      "bytes": 2839
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "sha256": "ec87270a6ef5837451d7b3d6e7dcbbd1c1617cb3d19aa17cfa879afebeae43bb",
+      "bytes": 6658
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go": {
+      "sha256": "51e52d783068955096ecf37a5ad5a9a8a55b61ef12db590f1055f692b8debbd4",
+      "bytes": 1576
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "sha256": "2b26ec45f7677a866f3f5979e0b725bcfbb6f58d8e44e707aded7c66312dcf1f",
+      "bytes": 2366
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "14526128f34e16d9d8b678bfa0c41aa4ca642dbe854e7ec602135ed46040c258",
+      "bytes": 23541
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "6c8671a8d486343b1fe07c8b333723b4f6936aafef465c036048867b32238233",
+      "bytes": 39067
+    },
+    "examples/lifecycle-d1/retained_v29.py": {
+      "sha256": "6fc3f151ed5f756795b81a465226e30b9188a435cd46b6d1fcb2a481e55e4765",
+      "bytes": 8317
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "9e748053988fc1c97d1f03dd5b385aa1c21e1d3125fbd2fd6390cfad65ec24cd",
+      "bytes": 43116
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "51695f8b5709916224072c1c785e3ed4b0f0ba9668d33c23b523e0ad59477299",
+      "bytes": 7354
+    },
+    "examples/lifecycle-d1/test_retained_v26.py": {
+      "sha256": "71006967135ffe7caf0fc7d61c3061622f3410ef6700772c1bb7986c447589c7",
+      "bytes": 6447
+    },
+    "examples/lifecycle-d1/test_retained_v27.py": {
+      "sha256": "40ef1944b2df1d644341e665560eabaef0a4b115a53a122c6d3b8b48d3fa525f",
+      "bytes": 4706
+    },
+    "examples/lifecycle-d1/test_retained_v29.py": {
+      "sha256": "3be16d2eb6bd6fd03ae6b9247b1b75141e5a510b10d043d8736da45198bfcf70",
+      "bytes": 8740
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "6e1d9b43730ccac607ac29880e03ea81e10128f7f0d40c8568d6be1675bc8336",
+      "bytes": 12988
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/merge-contract.md": {
+      "sha256": "a278287338ec54d32e686a96649276083020813b0f9b32118a5ed4bce0bef006",
+      "bytes": 3029
+    }
+  },
+  "stable_inputs": true,
+  "commands": [
+    {
+      "test": "test_execution_freeze",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "started_at": "2026-10-22T07:06:46.372713+00:00",
+      "observed_at": "2026-10-22T07:06:47.179471+00:00",
+      "exit": 0,
+      "stdout": "independent-test_execution_freeze-normal.stdout.txt",
+      "stderr": "independent-test_execution_freeze-normal.stderr.txt",
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.435s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_execution_freeze",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "started_at": "2026-10-22T07:06:47.179494+00:00",
+      "observed_at": "2026-10-22T07:06:47.767430+00:00",
+      "exit": 0,
+      "stdout": "independent-test_execution_freeze-optimized.stdout.txt",
+      "stderr": "independent-test_execution_freeze-optimized.stderr.txt",
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.370s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_retained_v29",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "started_at": "2026-10-22T07:06:47.767448+00:00",
+      "observed_at": "2026-10-22T07:07:16.253780+00:00",
+      "exit": 0,
+      "stdout": "independent-test_retained_v29-normal.stdout.txt",
+      "stderr": "independent-test_retained_v29-normal.stderr.txt",
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 28.269s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_retained_v29",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "started_at": "2026-10-22T07:07:16.253799+00:00",
+      "observed_at": "2026-10-22T07:07:41.364986+00:00",
+      "exit": 0,
+      "stdout": "independent-test_retained_v29-optimized.stdout.txt",
+      "stderr": "independent-test_retained_v29-optimized.stderr.txt",
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 24.927s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_retained_v26",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "started_at": "2026-10-22T07:07:41.365007+00:00",
+      "observed_at": "2026-10-22T07:07:41.800013+00:00",
+      "exit": 0,
+      "stdout": "independent-test_retained_v26-normal.stdout.txt",
+      "stderr": "independent-test_retained_v26-normal.stderr.txt",
+      "stderr_tail": ".....\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.190s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_retained_v26",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "started_at": "2026-10-22T07:07:41.800031+00:00",
+      "observed_at": "2026-10-22T07:07:42.167883+00:00",
+      "exit": 0,
+      "stdout": "independent-test_retained_v26-optimized.stdout.txt",
+      "stderr": "independent-test_retained_v26-optimized.stderr.txt",
+      "stderr_tail": ".....\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.116s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_retained_v27",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "started_at": "2026-10-22T07:07:42.167901+00:00",
+      "observed_at": "2026-10-22T07:07:42.542305+00:00",
+      "exit": 0,
+      "stdout": "independent-test_retained_v27-normal.stdout.txt",
+      "stderr": "independent-test_retained_v27-normal.stderr.txt",
+      "stderr_tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.122s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_retained_v27",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "started_at": "2026-10-22T07:07:42.542320+00:00",
+      "observed_at": "2026-10-22T07:07:42.849983+00:00",
+      "exit": 0,
+      "stdout": "independent-test_retained_v27-optimized.stdout.txt",
+      "stderr": "independent-test_retained_v27-optimized.stderr.txt",
+      "stderr_tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.082s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_candidate_runtime",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "started_at": "2026-10-22T07:07:42.849997+00:00",
+      "observed_at": "2026-10-22T07:07:43.604196+00:00",
+      "exit": 0,
+      "stdout": "independent-test_six_candidate_runtime-normal.stdout.txt",
+      "stderr": "independent-test_six_candidate_runtime-normal.stderr.txt",
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.513s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_candidate_runtime",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "started_at": "2026-10-22T07:07:43.604227+00:00",
+      "observed_at": "2026-10-22T07:07:44.263975+00:00",
+      "exit": 0,
+      "stdout": "independent-test_six_candidate_runtime-optimized.stdout.txt",
+      "stderr": "independent-test_six_candidate_runtime-optimized.stderr.txt",
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.398s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_remaining_six_window",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "started_at": "2026-10-22T07:07:44.263996+00:00",
+      "observed_at": "2026-10-22T07:07:44.814296+00:00",
+      "exit": 0,
+      "stdout": "independent-test_remaining_six_window-normal.stdout.txt",
+      "stderr": "independent-test_remaining_six_window-normal.stderr.txt",
+      "stderr_tail": ".....\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.424s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_remaining_six_window",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "started_at": "2026-10-22T07:07:44.814313+00:00",
+      "observed_at": "2026-10-22T07:07:45.240040+00:00",
+      "exit": 0,
+      "stdout": "independent-test_remaining_six_window-optimized.stdout.txt",
+      "stderr": "independent-test_remaining_six_window-optimized.stderr.txt",
+      "stderr_tail": ".....\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.304s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_freeze_six_candidate",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "started_at": "2026-10-22T07:07:45.240055+00:00",
+      "observed_at": "2026-10-22T07:07:46.060220+00:00",
+      "exit": 0,
+      "stdout": "independent-test_freeze_six_candidate-normal.stdout.txt",
+      "stderr": "independent-test_freeze_six_candidate-normal.stderr.txt",
+      "stderr_tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.572s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_freeze_six_candidate",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "started_at": "2026-10-22T07:07:46.060235+00:00",
+      "observed_at": "2026-10-22T07:07:46.671818+00:00",
+      "exit": 0,
+      "stdout": "independent-test_freeze_six_candidate-optimized.stdout.txt",
+      "stderr": "independent-test_freeze_six_candidate-optimized.stderr.txt",
+      "stderr_tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.373s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_verify_six_native",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "started_at": "2026-10-22T07:07:46.671835+00:00",
+      "observed_at": "2026-10-22T07:07:47.457479+00:00",
+      "exit": 0,
+      "stdout": "independent-test_verify_six_native-normal.stdout.txt",
+      "stderr": "independent-test_verify_six_native-normal.stderr.txt",
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.505s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_verify_six_native",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "started_at": "2026-10-22T07:07:47.457498+00:00",
+      "observed_at": "2026-10-22T07:07:48.069301+00:00",
+      "exit": 0,
+      "stdout": "independent-test_verify_six_native-optimized.stdout.txt",
+      "stderr": "independent-test_verify_six_native-optimized.stderr.txt",
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.358s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_native_entry",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "started_at": "2026-10-22T07:07:48.069332+00:00",
+      "observed_at": "2026-10-22T07:07:49.058436+00:00",
+      "exit": 0,
+      "stdout": "independent-test_six_native_entry-normal.stdout.txt",
+      "stderr": "independent-test_six_native_entry-normal.stderr.txt",
+      "stderr_tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.756s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_native_entry",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "started_at": "2026-10-22T07:07:49.058451+00:00",
+      "observed_at": "2026-10-22T07:07:50.154464+00:00",
+      "exit": 0,
+      "stdout": "independent-test_six_native_entry-optimized.stdout.txt",
+      "stderr": "independent-test_six_native_entry-optimized.stderr.txt",
+      "stderr_tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.829s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_window_six_support",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "started_at": "2026-10-22T07:07:50.154480+00:00",
+      "observed_at": "2026-10-22T07:07:50.796783+00:00",
+      "exit": 0,
+      "stdout": "independent-test_window_six_support-normal.stdout.txt",
+      "stderr": "independent-test_window_six_support-normal.stderr.txt",
+      "stderr_tail": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.370s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_window_six_support",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "started_at": "2026-10-22T07:07:50.796800+00:00",
+      "observed_at": "2026-10-22T07:07:51.351325+00:00",
+      "exit": 0,
+      "stdout": "independent-test_window_six_support-optimized.stdout.txt",
+      "stderr": "independent-test_window_six_support-optimized.stderr.txt",
+      "stderr_tail": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.300s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_attest_remaining_executable",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "started_at": "2026-10-22T07:07:51.351342+00:00",
+      "observed_at": "2026-10-22T07:07:54.878442+00:00",
+      "exit": 0,
+      "stdout": "independent-test_attest_remaining_executable-normal.stdout.txt",
+      "stderr": "independent-test_attest_remaining_executable-normal.stderr.txt",
+      "stderr_tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 3.299s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_attest_remaining_executable",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "started_at": "2026-10-22T07:07:54.878461+00:00",
+      "observed_at": "2026-10-22T07:07:58.569976+00:00",
+      "exit": 0,
+      "stdout": "independent-test_attest_remaining_executable-optimized.stdout.txt",
+      "stderr": "independent-test_attest_remaining_executable-optimized.stderr.txt",
+      "stderr_tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 3.439s\r\n\r\nOK\r\n"
+    }
+  ],
+  "Docker_provider_IO": 0,
+  "source_start": 0,
+  "native_delete": 0
+}

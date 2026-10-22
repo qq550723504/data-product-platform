@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-22T09:19:11.959733+00:00",
+  "status": "PASS_NATIVE_GIT_UTC_STORE_RECIPE",
+  "old_archive_sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea",
+  "new_archive_sha256": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+  "members_unchanged": 769,
+  "timezone_sha256": {
+    "UTC": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+    "Asia/Singapore": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+    "America/New_York": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+    "GMT-8": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c"
+  },
+  "same_bytes": true,
+  "original_C20_archive_retained": true,
+  "user_log_is_excerpt_not_original_CI_bytes": true,
+  "native_delete": 0
+}

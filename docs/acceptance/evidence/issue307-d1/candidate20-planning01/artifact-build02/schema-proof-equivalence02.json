@@ -1,0 +1,14 @@
+{
+  "status": "PASS_SAME_SCHEMA_GATE_PROGRAM_PROOF",
+  "current_runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "prior_native_runtime_source": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "schema_sources_identical": {
+    "apps/platform/internal/lifecycle/pilot/remaining_fixture_schema.go": "4dc0d9941f271818f29710c15d491b956e6cdfe5651a0c52f753e23119ac1500",
+    "apps/platform/internal/lifecycle/pilot/remaining_fixture_schema_test.go": "0751874c290c514a6fe277f38af282695a0e22c17ea0a1c57a0086bcefa37524"
+  },
+  "original_actual_test_binary_sha256": "0fd893c0f787939caaebd4d350eb066e16860e91771fcc31b3fe38e3c39c5bf1",
+  "original_native_terminal_sha256": "e826cf4b8cd232d517634d07dadd51c61b18f42cf830a186811d697f3f00553b",
+  "native_claim": "existing unchanged program: three schema69 ALLOW + three protected71 DENY; original source label retained",
+  "source_started": false,
+  "native_delete": 0
+}

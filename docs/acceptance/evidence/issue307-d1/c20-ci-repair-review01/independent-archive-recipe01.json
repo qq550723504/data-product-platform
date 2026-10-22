@@ -1,0 +1,52 @@
+{
+  "status": "PASS_INDEPENDENT_UTC_STORE_EXACT_ARCHIVE_CONTRACT",
+  "at": "2026-10-22T09:21:21.294890+00:00",
+  "runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "spec_version": 2,
+  "recipe": "GIT_ZIP_STORE_UTC_LF_V1",
+  "fixed_archive": [
+    {
+      "inherited_TZ": "UTC",
+      "sha256": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+      "bytes": 6425445,
+      "file_members": 769,
+      "all_entries_ZIP_STORED": true
+    },
+    {
+      "inherited_TZ": "Asia/Singapore",
+      "sha256": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+      "bytes": 6425445,
+      "file_members": 769,
+      "all_entries_ZIP_STORED": true
+    },
+    {
+      "inherited_TZ": "America/New_York",
+      "sha256": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+      "bytes": 6425445,
+      "file_members": 769,
+      "all_entries_ZIP_STORED": true
+    },
+    {
+      "inherited_TZ": "GMT-8",
+      "sha256": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
+      "bytes": 6425445,
+      "file_members": 769,
+      "all_entries_ZIP_STORED": true
+    }
+  ],
+  "legacy_same_members_different_bytes": [
+    {
+      "explicit_TZ": "UTC",
+      "sha256": "ffa3fe29ddae3beaf17bc85bfa13b39258d07517d7bcd06c180921d85cc8a217",
+      "bytes": 1821417
+    },
+    {
+      "explicit_TZ": "GMT-8",
+      "sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea",
+      "bytes": 1821417
+    }
+  ],
+  "verify_archive_byte_SHA_and_membership": "UNCHANGED_STRICT",
+  "linux_CI": "NOT_YET_OBSERVED",
+  "scope": "Pure Git archive reads only; no source/provider/DB/Docker."
+}

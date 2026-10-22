@@ -294,3 +294,16 @@ examples/lifecycle-d1/close-v28-business-dispatches.py -text
 examples/lifecycle-d1/rehearse-v28-restored-core.py -text
 examples/lifecycle-d1/refresh-post-v28-seventeen.py -text
 examples/lifecycle-d1/retained_v28.py -text
+
+# Preserve the original failed c20 preparation and bounded CI repair receipts.
+docs/acceptance/evidence/issue307-d1/candidate20-planning01/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+docs/acceptance/evidence/issue307-d1/candidate20-source-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate20-ci-independent01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate20-preparation01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/c20-ci-repair-evidence01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/c20-ci-repair-regression02/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/c20-ci-repair-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+# Diff context whitespace is original review evidence, not executable source style.
+docs/acceptance/evidence/issue307-d1/candidate20-source-review01/*.patch -text -whitespace
+docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01/*.patch -text -whitespace

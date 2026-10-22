@@ -1,0 +1,129 @@
+{
+  "status": "BLOCKED_C20_REQUIRED_CI_DIAGNOSED_PARTIAL",
+  "at": "2026-10-22T08:23:42.352608+00:00",
+  "source_head": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "run_id": 39744232114,
+  "independent_findings": [
+    {
+      "id": "CI-HOST-DEMO",
+      "state": "REPRODUCED_REQUIRED_LOCAL_TEST_FAILURE",
+      "command": "python -B examples/lifecycle-d1/test_retained_v26.py",
+      "result": "5 top-level tests,9errors,exit1",
+      "actual_exception": "FileNotFoundError for current candidate20-artifacts-review01/independent-final-review01.json in temporary fixture",
+      "cause": "The test fixture creates candidate20-source-review01 and the old source-review status/candidate-only Source. Production freeze-six-candidate.preparation_audit_plan requires the reviewed R/P artifacts directory/status and source-freeze host source plus runtime source. The fixture has not followed the authoritative R/P contract. This local mandatory path is proven; remote host/demo full logs remain unavailable.",
+      "minimal_fix": "Update the test fixture positive path and cross-field negatives to the current authoritative contract. Do not alter production freeze gates."
+    },
+    {
+      "id": "CI-GO-R-ARCHIVE",
+      "state": "UNKNOWN_REMOTE_ERROR_NOT_OBSERVED",
+      "job_id": 119709178160,
+      "reason": "GitHub connector could not reach backend transport; direct authenticated gh GET, verified-TLS curl HTTP1.1 GET, and gh run-view with HTTP2 disabled all returned connection/TLS timeout. No current run ZIP or jobID-matching HTTP cache found. Local Windows CI rehearsal PASS does not establish Linux PR CI correctness. Do not infer the Go failure from network errors."
+    }
+  ],
+  "preparation_boundary_recommendation": {
+    "current_unfrozen_C20": "Mark FAILED_CI_BLOCKED_CLOSED only after fresh closed/false/empty evidence; retain original allocation/source snapshot,86CID,3budgets,all historical data without rewriting. No source/IAM provisioning claimed.",
+    "no_host_revision_waiver": true,
+    "next_allocation_precondition": "Require all necessary PR CI success for the exact reviewed P source HEAD before any new allocation, retaining final static docs HEAD CI/branch lock/new human authorization gates.",
+    "source_change": "Any P test/CI change invalidates strict original c79 host snapshot. Do not amend in place or ignore drift. New preparation source/execution/budgets must be explicitly bound after the CI barrier.",
+    "window": "Selected18:00\u201318:40 is preparation preference, not execution authority; no promise until evidence and fresh confirmation are ready."
+  },
+  "reviewer_actions": {
+    "source_started": 0,
+    "Docker_actions": 0,
+    "DB_provider_actions": 0,
+    "workflow_rerun": 0,
+    "implementation_edits": 0,
+    "new_execution_or_authority": 0
+  },
+  "immutable_prior_review": "candidate20-artifacts-review01 source/dual-artifact PASS stays as its original bounded facts; this append-only required-CI finding does not rewrite it.",
+  "evidence": {
+    "connector-log-errors01.json": {
+      "sha256": "d520507ae7f468c4c176196380df9bf38e1d4cbc8e940fa2183a369d652af688",
+      "bytes": 2484
+    },
+    "demo-logs01.stderr.raw": {
+      "sha256": "a798c68982954c4217f76721271bbf094bc0fed610daa11087d9d5b5a27cc6b1",
+      "bytes": 133
+    },
+    "demo-logs01.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "demo-logs02.stderr.raw": {
+      "sha256": "fa8f991f14d139526ad68443bd042e1cf64ad6a3ccb43f279fbce4613e091d33",
+      "bytes": 58
+    },
+    "demo-logs02.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-logs01.stderr.raw": {
+      "sha256": "1eb724b63d8c673f079bc046ff7890063e854f8257bebe8fe420bd27c4e005f5",
+      "bytes": 133
+    },
+    "go-logs01.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-logs02.stderr.raw": {
+      "sha256": "d4ed98eacb055c52b47a23b0d7a6ee07ee62c0f11a3417df055b4dafb8ec2e29",
+      "bytes": 58
+    },
+    "go-logs02.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-runview03.stderr.raw": {
+      "sha256": "ad478f402245f678132dfc5d29fe804fe3a175bf417d220326ba72615e3dc98d",
+      "bytes": 147
+    },
+    "go-runview03.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "host-logs01.stderr.raw": {
+      "sha256": "9636bd734b863e8409c22c1b55505e09e741b319ca443e71e158c4952d4124a1",
+      "bytes": 133
+    },
+    "host-logs01.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "host-logs02.stderr.raw": {
+      "sha256": "fa8f991f14d139526ad68443bd042e1cf64ad6a3ccb43f279fbce4613e091d33",
+      "bytes": 58
+    },
+    "host-logs02.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "local-cache-readback01.json": {
+      "sha256": "7d50a560f892ee9668c138172cc4b1747c1f83d0eaf9f6b93f0af3fa8c040c0a",
+      "bytes": 3424
+    },
+    "result01.json": {
+      "sha256": "65836ea145c5b269bc35672808eb4414dd14b3465010531ac2a9bb5be248463e",
+      "bytes": 2047
+    },
+    "result02.json": {
+      "sha256": "ac7387c5d73d46146aac42b7c46a8d9b6c9af16534b3d5ab865f477f67a689e9",
+      "bytes": 1510
+    },
+    "result03.json": {
+      "sha256": "9367dd84128e531274105867077f307feeab244b6341dd03695ab9de3779f6bd",
+      "bytes": 611
+    },
+    "retained-v26-local01.json": {
+      "sha256": "c4d19087523515b1400cb9048eb8d96b8679557067f3b2e87f868ba91c0edd12",
+      "bytes": 344
+    },
+    "retained-v26-local01.stderr.txt": {
+      "sha256": "e510ee63629185e648c7790ecea9f48deb55f8340bbb6f582929f6fbfa9f3579",
+      "bytes": 16452
+    },
+    "retained-v26-local01.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  }
+}
