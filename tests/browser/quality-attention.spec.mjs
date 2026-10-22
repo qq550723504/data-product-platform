@@ -127,19 +127,32 @@ test("original evidence opens the exact historical assessment and preserves late
 });
 
 test("workbench enters follow-up view and recheck evidence opens its output version", async ({ page, request }) => {
+  const speculativeReads = [];
+  page.on("request", request => {
+    const url = new URL(request.url());
+    if (url.pathname === "/attention" && url.searchParams.has("qualityView")
+      && [...url.searchParams.keys()].every(key => key === "qualityView" || key === "_rsc")
+      && request.headers()["next-router-prefetch"]) speculativeReads.push(request.url());
+  });
   await page.goto("/");
   const compact = page.getByTestId("quality-attention");
   await expect(compact).toContainText("需跟进 104 条");
   await compact.getByRole("link", { name: "查看质量异常" }).click();
   await expect(page).toHaveURL(/qualityView=FOLLOW_UP#quality-attention$/);
-  await page.getByRole("navigation", { name: "质量异常视图" }).getByRole("link", { name: "已人工关闭", exact: true }).click();
+  const filters = page.getByRole("navigation", { name: "质量异常视图" });
   const panel = page.getByTestId("quality-attention");
-  await expect(panel.locator("tbody tr")).toHaveCount(2);
+  for (const [view, label, count] of [["CLOSED", "已人工关闭", 2], ["ALL", "全部", 25], ["CLOSED", "已人工关闭", 2]]) {
+    await filters.getByRole("link", { name: label, exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`qualityView=${view}#quality-attention$`));
+    await expect(filters.getByRole("link", { name: label, exact: true })).toHaveAttribute("aria-current", "page");
+    await expect(panel.locator("tbody tr")).toHaveCount(count);
+  }
   const link = panel.getByRole("link", { name: "本次复检与证据", exact: true });
   await expect(link).toHaveAttribute("href", `/datasets/${ids.goldDataset}/versions/${ids.qualityOutputVersion}?view=quality&assessmentId=${ids.recheckAssessment}`);
   await link.click();
   await expect(page.getByTestId("quality-report")).toContainText(ids.recheckAssessment);
   await expect(page.getByTestId("selected-quality-assessment")).toContainText(ids.recheckAssessment);
+  expect(speculativeReads).toHaveLength(0);
   expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
 });
 
