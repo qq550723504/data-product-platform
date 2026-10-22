@@ -18,6 +18,7 @@ candidate20/v30 的 execution `5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6` 已终止�
 | 准备终态门禁 | preparation-terminal 优先于 allocation/history/Docker 读取，阻止重用已失败的 execution、旧预算和已撤销 profiles；不会通过修改 host snapshot 让旧构建继续。 |
 | 本地非删除回归 | 实际 workflow 中 73 条离线回归/静态检查命令成功；最后 CI run 交叉字段修复后独立正常/-O 各27方法通过。固定 CI R 重建命令在本机完成四个 command packages 与 pilot tests，归档 expected=observed；不冒充 Linux PR CI 或原生 provider 验收。 |
 | 修复后的真实 Linux Go CI | 923c06722f3099e9049894489006615f0f0e7ce2 对应 pull_request run39755999260 的 go-platform 成功，单独钉住的 R 归档重建步骤实际成功，API 读回保存于 linux-go-ci-readback01.json；该读回时完整 run 仍有其他 job 在运行，不提前声称13/13，也不是后来发布 HEAD 或 main CI。 |
+| 修复源码最终 PR CI / 线程 | 后续09:43Z实时固定来源核验通过：同一923c0672、run39755999260、pull_request/attempt1，13个实际 job/check 全成功，未解决线程0。完整 snapshot 与原API响应保存在 source-ci-final01；不覆盖前一 PENDING 快照，不替代后来文档发布 HEAD 的 CI，也不是 main CI。 |
 | CI 修复独立复评 | PASS_BOUNDED_C20_CI_REPAIR_SOURCE_REVIEW，绑定923c06722f3099e9049894489006615f0f0e7ce2，0 blocker；报告 SHA6cdad1521d106a10db798f3df08fa9d465f804ce3135c0bd1e7700eb49f37c8c。原 CI-R1 两次 finding 保留；45份评审证据与172份输入已用固定 typed audit 复核。报告不冒充后来发布 HEAD 的 CI。 |
 | candidate20 可信关闭 | 08:58:32Z 终态：86 owner 停止/PID0、30 permission false、19 profile 已撤销且撤销前原字节私有保留；3 新预算与完整挂载集合未变，24 旧预算及57备份保留。实际源业务命令/provider/DELETE=0，IAM 未 provision。 |
 | 原生17版本、restore/rehearsal、最终冻结 | 本代均 NOT_RUN，不能使用 v29 或隔离克隆结果替代。 |
