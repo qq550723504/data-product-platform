@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { QualityAttention } from "@/components/quality-attention";
+import { SchemaAttention } from "@/components/schema-attention";
+import { schemaView } from "@/lib/schema-observation";
 import { attentionOffset, attentionView } from "@/lib/quality-attention";
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { collectAllPages } from "@/lib/pagination";
@@ -8,6 +10,8 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 const PAGE_SIZE = 25;
 
 type AttentionSearchParams = {
+  schemaView?: string;
+  schemaOffset?: string;
   qualityView?: string;
   qualityOffset?: string;
   reviewOffset?: string;
@@ -97,6 +101,8 @@ export default async function AttentionPage({
   const validatingReleaseOffset = parseOffset(query.validatingReleaseOffset);
   const readyReleaseOffset = parseOffset(query.readyReleaseOffset);
   const offsets = {
+    schemaView: schemaView(query.schemaView),
+    schemaOffset: attentionOffset(query.schemaOffset),
     qualityView: attentionView(query.qualityView),
     qualityOffset: attentionOffset(query.qualityOffset),
     reviewOffset,
@@ -149,6 +155,7 @@ export default async function AttentionPage({
         />
 
         <QualityAttention query={query} />
+        <SchemaAttention query={query} />
 
         {total === 0 ? (
           <EmptyState

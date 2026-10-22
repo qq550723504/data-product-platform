@@ -21,6 +21,7 @@ coverage.out
 
 # Node
 node_modules/
+.schema-tests/
 .next/
 out/
 .turbo/
