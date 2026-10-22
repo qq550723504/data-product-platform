@@ -146,6 +146,43 @@ func TestPostgresReplacementConnectionBindings(t *testing.T) {
 	}
 }
 
+func TestPostgresDatasetPublicationFactsKeepAggregateContract(t *testing.T) {
+	f := newFixture(t)
+	first := f.admit(t)
+	var envelope map[string]any
+	_ = json.Unmarshal(f.blobs["manifest.json"], &envelope)
+	f.r.SnapshotID, f.r.ReleaseID, f.r.Key = uuid.New(), uuid.New(), "next-snapshot"
+	envelope["snapshot_id"] = f.r.SnapshotID.String()
+	envelope["receipt"].(map[string]any)["release_id"] = f.r.ReleaseID.String()
+	f.blobs["manifest.json"] = nativeEncode(envelope)
+	f.r.ManifestSHA = Hash(f.blobs["manifest.json"])
+	second := f.admit(t)
+	f.admit(t) // Replay must not duplicate publication facts.
+	for _, rec := range []Receipt{first, second} {
+		if n := f.count(t, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND aggregate_type='DATASET_VERSION' AND event_type='DatasetVersionCreated' AND payload->>'datasetId'=$2 AND payload->>'status'='READY' AND payload->>'previousStatus'='CREATED' AND payload->>'checksum'=$3 AND (payload->>'versionNo')::int>0`, rec.VersionID, f.r.DatasetID.String(), Hash(f.blobs["records.jsonl"])); n != 1 {
+			t.Fatalf("dataset publication event not discoverable: %d", n)
+		}
+		if n := f.count(t, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND object_type='DATASET_VERSION' AND action='DATASET_VERSION_READY' AND after_state->>'datasetId'=$2`, rec.VersionID, f.r.DatasetID.String()); n != 1 {
+			t.Fatalf("dataset publication audit not discoverable: %d", n)
+		}
+		if n := f.count(t, `SELECT count(*) FROM evidence WHERE source_id=$1 AND source_type='DATASET_VERSION' AND evidence_type='DATASET_VERSION' AND title='DatasetVersionCreated'`, rec.VersionID); n != 1 {
+			t.Fatalf("dataset publication evidence not discoverable: %d", n)
+		}
+		if n := f.count(t, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND aggregate_type<>'DATASET_VERSION'`, rec.VersionID); n != 0 {
+			t.Fatal("dataset facts mislabeled as source admission")
+		}
+		if n := f.count(t, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND aggregate_type='SOURCE_ADMISSION' AND event_type='SourceAdmissionAccepted'`, rec.CaptureID); n != 1 {
+			t.Fatal("source acceptance fact lost its own aggregate")
+		}
+	}
+	if n := f.count(t, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND aggregate_type='DATASET_VERSION' AND event_type='DatasetVersionSuperseded' AND payload->>'replacementVersionId'=$2 AND payload->>'previousStatus'='READY' AND payload->>'status'='SUPERSEDED'`, first.VersionID, second.VersionID.String()); n != 1 {
+		t.Fatalf("dataset supersession event not discoverable: %d", n)
+	}
+	if n := f.count(t, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND object_type='DATASET_VERSION' AND action='DATASET_VERSION_SUPERSEDED' AND before_state->>'status'='READY' AND after_state->>'status'='SUPERSEDED'`, first.VersionID); n != 1 {
+		t.Fatalf("dataset supersession audit not discoverable: %d", n)
+	}
+}
+
 func TestPostgresReplacementPreservesFrozenSourceAndRevocation(t *testing.T) {
 	f := newFixture(t)
 	ctx := context.Background()

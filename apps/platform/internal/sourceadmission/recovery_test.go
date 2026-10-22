@@ -145,6 +145,11 @@ func TestPostgresAtomicFinalizationAndLateMembership(t *testing.T) {
 	if f.count(t, `SELECT count(*) FROM dataset_version WHERE dataset_id=$1 AND status='READY'`, f.r.DatasetID) != 0 {
 		t.Fatal("partial version committed")
 	}
+	if f.count(t, `SELECT count(*) FROM outbox_event WHERE aggregate_id IN(SELECT id FROM dataset_version WHERE dataset_id=$1)`, f.r.DatasetID) != 0 ||
+		f.count(t, `SELECT count(*) FROM audit_event WHERE object_id IN(SELECT id FROM dataset_version WHERE dataset_id=$1)`, f.r.DatasetID) != 0 ||
+		f.count(t, `SELECT count(*) FROM evidence WHERE source_id IN(SELECT id FROM dataset_version WHERE dataset_id=$1)`, f.r.DatasetID) != 0 {
+		t.Fatal("publication rollback leaked dataset facts")
+	}
 	fault.fail = false
 	entered, release := make(chan struct{}), make(chan struct{})
 	fault.before = func() { close(entered); <-release }

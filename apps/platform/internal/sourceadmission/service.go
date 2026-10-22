@@ -219,6 +219,41 @@ func (s *Service) fact(ctx context.Context, tx pgx.Tx, r Request, p principal.Re
 	_, err = evidence.Append(ctx, tx, evidence.Record{WorkspaceID: r.WorkspaceID, EvidenceType: "SOURCE_ADMISSION", Title: event, SourceType: "SOURCE_ADMISSION", SourceID: &id, CreatedBy: &p.ActorID, Metadata: map[string]any{"fact": payload}}, evidence.Relation{ObjectType: "DATASET", ObjectID: r.DatasetID, RelationType: "SUPPORTS"})
 	return err
 }
+
+// Dataset publication keeps the established Dataset aggregate and audit
+// contract. Source capture/operation facts remain separate producer facts.
+func (s *Service) datasetFact(ctx context.Context, tx pgx.Tx, r Request, p principal.RequestPrincipal, v dd.DatasetVersion, previous dd.VersionStatus, replacement *uuid.UUID, capture uuid.UUID) error {
+	event, action, reason := "DatasetVersionCreated", "DATASET_VERSION_READY", ""
+	if v.Status == dd.VersionSuperseded {
+		event, action, reason = "DatasetVersionSuperseded", "DATASET_VERSION_SUPERSEDED", "a newer DatasetVersion became current"
+	} else if v.Status != dd.VersionReady {
+		return ErrIntegrity
+	}
+	payload := map[string]any{"datasetVersionId": v.ID, "datasetId": v.DatasetID, "versionNo": v.VersionNo, "previousStatus": previous, "status": v.Status, "checksum": v.ChecksumValue, "generatedByExecutionId": v.GeneratedByExecutionID, "generatedByEntityMatchJobId": v.GeneratedByEntityMatchJobID}
+	if replacement != nil {
+		payload["replacementVersionId"] = *replacement
+	} else {
+		payload["sourceCaptureId"] = capture
+	}
+	e, err := outbox.NewEvent("DATASET_VERSION", v.ID, event, payload)
+	if err != nil {
+		return err
+	}
+	if err = outbox.Append(ctx, tx, e); err != nil {
+		return err
+	}
+	after := make(map[string]any, len(payload)+2)
+	for k, value := range payload {
+		after[k] = value
+	}
+	after["storageUri"], after["rowCount"] = v.StorageURI, v.RowCount
+	if err = audit.Append(ctx, tx, audit.Event{WorkspaceID: &r.WorkspaceID, ActorType: "USER", ActorID: &p.ActorID, Action: action, ObjectType: "DATASET_VERSION", ObjectID: v.ID, BeforeState: map[string]any{"status": previous}, AfterState: after, Reason: reason}); err != nil {
+		return err
+	}
+	_, err = evidence.Append(ctx, tx, evidence.Record{WorkspaceID: r.WorkspaceID, EvidenceType: "DATASET_VERSION", Title: event, SourceType: "DATASET_VERSION", SourceID: &v.ID, CreatedBy: &p.ActorID, Metadata: map[string]any{"fact": payload}}, evidence.Relation{ObjectType: "DATASET", ObjectID: r.DatasetID, RelationType: "SUPPORTS"})
+	return err
+}
+
 func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt, error) {
 	rec, err := s.prepare(ctx, r, caller)
 	if err != nil {
@@ -434,11 +469,11 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 					return e
 				}
 				if previous != nil {
-					if e = s.fact(ctx, tx, r, p, previous.ID, "DatasetVersionSuperseded", map[string]any{"datasetVersionId": previous.ID, "replacementVersionId": v.ID}); e != nil {
+					if e = s.datasetFact(ctx, tx, r, p, *previous, dd.VersionReady, &v.ID, capture); e != nil {
 						return e
 					}
 				}
-				if e = s.fact(ctx, tx, r, p, v.ID, "DatasetVersionCreated", map[string]any{"datasetVersionId": v.ID, "datasetId": r.DatasetID, "status": "READY", "sourceCaptureId": capture}); e != nil {
+				if e = s.datasetFact(ctx, tx, r, p, v, dd.VersionCreated, nil, capture); e != nil {
 					return e
 				}
 			} else {
