@@ -4,6 +4,7 @@ import { QualityAttention } from "@/components/quality-attention";
 import { SchemaAttention } from "@/components/schema-attention";
 import { SchemaExceptions } from "@/components/schema-exceptions";
 import { SchemaRequests } from "@/components/schema-requests";
+import { SchemaAttempts } from "@/components/schema-attempts";
 import { ReadUnavailable } from "@/components/read-unavailable";
 import { Badge, EmptyState, MetricCard, PageHeader, SetupRequired, formatDate } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
@@ -145,6 +146,7 @@ export default function WorkbenchPage() {
     <Suspense fallback={<section id="source-schema-attention" data-testid="schema-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 漂移汇总读取中" /></section>}><SchemaAttention compact /></Suspense>
     <Suspense fallback={<section id="schema-exception-history" data-testid="schema-exceptions-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 扫描异常历史读取中" /></section>}><SchemaExceptions compact /></Suspense>
     <Suspense fallback={<section id="schema-unobserved-requests" data-testid="schema-requests-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察请求读取中" /></section>}><SchemaRequests compact /></Suspense>
+    <Suspense fallback={<section id="schema-unobserved-attempts" data-testid="schema-attempts-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察 attempt 读取中" /></section>}><SchemaAttempts compact /></Suspense>
     <WorkbenchAttention model={model} />
     <section className="section-grid">
       <Suspense fallback={<ReadUnavailable title="最近生产执行读取中" />}><RecentExecutions model={model} /></Suspense>

@@ -4,6 +4,7 @@ import { QualityAttention } from "@/components/quality-attention";
 import { SchemaAttention } from "@/components/schema-attention";
 import { SchemaExceptions } from "@/components/schema-exceptions";
 import { SchemaRequests } from "@/components/schema-requests";
+import { SchemaAttempts } from "@/components/schema-attempts";
 import { ReadUnavailable } from "@/components/read-unavailable";
 import { schemaRequestView } from "@/lib/schema-request-filter";
 import { schemaExceptionFilter } from "@/lib/schema-exception-filter";
@@ -132,7 +133,7 @@ export default async function AttentionPage({ searchParams }: { searchParams: Pr
   const offsets: Offsets = {
     schemaRequestView: schemaRequestView(query.schemaRequestView), schemaRequestOffset: attentionOffset(query.schemaRequestOffset),
     schemaExceptionStatus: schemaExceptionFilter(query.schemaExceptionStatus), schemaExceptionOffset: attentionOffset(query.schemaExceptionOffset),
-    schemaView: schemaView(query.schemaView), schemaOffset: attentionOffset(query.schemaOffset),
+    schemaView: schemaView(query.schemaView), schemaOffset: attentionOffset(query.schemaOffset), schemaAttemptOffset: attentionOffset(query.schemaAttemptOffset),
     qualityView: attentionView(query.qualityView), qualityOffset: attentionOffset(query.qualityOffset),
   };
   for (const name of ["reviewOffset", "failureOffset", "failedReleaseOffset", "validatingReleaseOffset", "readyReleaseOffset"]) offsets[name] = attentionOffset(query[name]);
@@ -143,6 +144,7 @@ export default async function AttentionPage({ searchParams }: { searchParams: Pr
     <Suspense fallback={<section id="source-schema-attention" data-testid="schema-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 漂移汇总读取中" /></section>}><SchemaAttention query={query} /></Suspense>
     <Suspense fallback={<section id="schema-exception-history" data-testid="schema-exceptions-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 扫描异常历史读取中" /></section>}><SchemaExceptions query={query} /></Suspense>
     <Suspense fallback={<section id="schema-unobserved-requests" data-testid="schema-requests-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察请求读取中" /></section>}><SchemaRequests query={query} /></Suspense>
+    <Suspense fallback={<section id="schema-unobserved-attempts" data-testid="schema-attempts-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察 attempt 读取中" /></section>}><SchemaAttempts query={query} /></Suspense>
     <p className="panel-meta">各分区按各自读取结果展示，不是同一个冻结快照；产品名称不可用时使用已读取的对象 ID。</p>
     <div className="attention-grid">
       <Suspense fallback={<ReadUnavailable title="实体审核读取中" />}><ReviewQueue model={model} offsets={offsets} /></Suspense>
