@@ -24,10 +24,11 @@ jobs:
       TEST_POSTGRES_DSN: postgres://postgres:hfa-ci-synthetic-only@127.0.0.1:25480/hfa_ci?sslmode=disable
       POSTGRES_DSN: postgres://postgres:hfa-ci-synthetic-only@127.0.0.1:25480/hfa_ci?sslmode=disable
       SOURCE_ADMISSION_ACCEPTANCE: '1'
-      SOURCE_ADMISSION_E2E_DIR: ${{ runner.temp }}/hfa-acceptance
       NEXT_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v4
+      - name: Set isolated evidence directory
+        run: echo "SOURCE_ADMISSION_E2E_DIR=$RUNNER_TEMP/hfa-acceptance" >> "$GITHUB_ENV"
       - uses: actions/setup-go@v5
         with:
           go-version-file: apps/platform/go.mod
