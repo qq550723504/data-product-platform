@@ -2,6 +2,7 @@
 from contextlib import ExitStack, contextmanager, redirect_stdout, redirect_stderr
 import copy
 import io
+from itertools import product
 import json
 from pathlib import Path
 import tempfile
@@ -320,6 +321,45 @@ class StopReceiptContracts(unittest.TestCase):
             self.assertEqual(stops.read(r.read(r.STATE / "state.json")), current)
             self.assertEqual(historical_meta[0], original)
             self.assertFalse(any(v[0] in ("start", "stop", "protected-probe") for v in calls)); renew.assert_not_called(); hosts.assert_not_called()
+
+    def test_recovery_retry_rechecks_ledger_before_any_write(self):
+        for cut, stage, kind in product(("journal", "archived", "restored", "manifest"), b.STAGES, ("file", "manifest")):
+            with self.subTest(cut=cut, stage=stage, kind=kind), self.fixture(collision=True) as (root, s, _, historical, _, calls, renew, hosts, _):
+                path, sha = self.reviewed(s, historical, root)
+                save, restore = r.save, recovery.restore
+                def crash_save(value):
+                    if value.get("stopRecovery", {}).get("status") == ("UNKNOWN" if cut == "journal" else "PASS"):
+                        raise r.Refused("interrupted registry commit")
+                    save(value)
+                def crash_restore(*args):
+                    if cut == "restored": restore(*args)
+                    raise r.Refused("interrupted restoration")
+                module, name, crash = (r, "save", crash_save) if cut in ("journal", "manifest") else (recovery, "restore", crash_restore)
+                with patch.object(module, name, side_effect=crash):
+                    self.assertEqual(self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)[0], 1)
+                self.assertTrue((r.STATE / "stop-recoveries" / sha / "started.json").exists())
+                manifest = Path(s[stage + "Binding"]["path"])
+                artifact = manifest if kind == "manifest" else Path(r.read(manifest)["files"][-1]["path"])
+                clean = artifact.read_bytes(); artifact.write_bytes(clean + b"\nchanged")
+                target = r.STATE / "before-stop-facts.json"; target_bytes = target.read_bytes()
+                # A mutating CLI acquires the existing operator lock; compare
+                # all recovery/business files, excluding only that lock file.
+                before = self.snapshot(root)
+                code, error = self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)
+                self.assertEqual(code, 1, error)
+                self.assertEqual(target.read_bytes(), target_bytes, "Refused retry restored the target before checking ledger drift")
+                self.assertEqual(before, self.snapshot(root))
+                self.assertIn("Ledger binding drift" if kind == "manifest" else "Unrelated ledger artifact drift", error["reason"])
+                # Removing only the injected drift lets this exact journal finish.
+                artifact.write_bytes(clean)
+                completed = self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)
+                self.assertEqual(completed[0], 0, completed)
+                retained = self.snapshot(root)
+                self.assertEqual(completed, self.cli("stop-recover", "--plan", path, "--plan-sha256", sha))
+                self.assertEqual(retained, self.snapshot(root))
+                self.assertEqual(r.read(r.STATE / "state.json")["phase"], "STOPPED")
+                self.assertFalse(any(v[0] in ("start", "stop", "protected-probe") for v in calls))
+                renew.assert_not_called(); hosts.assert_not_called()
 
     def test_manifest_before_registry_commit_replay_finishes_same_claim(self):
         with self.fixture(collision=True) as (root, s, _, historical, _, _, renew, _, _):

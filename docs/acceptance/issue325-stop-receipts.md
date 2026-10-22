@@ -73,6 +73,13 @@ manifest/history only after the original ledger validates again.
 An interrupted operation remains STOPPED with an UNKNOWN recovery claim;
 ordinary resume remains blocked. The same plan can finish from its exact saved
 archives, including a lost response after restoration or before registry commit.
+Every unfinished attempt rechecks both frozen ledger manifests and all their
+files before writing recovery state, archives, receipts or restoration bytes,
+even when its journal already exists. Only the one reviewed bootstrap pathname
+may contain either its reviewed current hash or its original frozen hash after
+an interrupted restoration; every other file must still match exactly. Drift
+refuses without changing recovery/business files or the UNKNOWN claim (the
+mutating CLI still acquires its existing operator lock).
 A completed same-plan replay returns its existing receipt without restoring
 again, rebinding a later stop, or running services. A changed plan/claim or target
 outside the two reviewed hashes refuses. Unrecognized partial allocation stays
@@ -99,6 +106,11 @@ real activated validation chain; this regression reproduces that failure before
 the source-admission fix. Recovery tests cover read-only planning, exact-byte
 restoration, same-plan replay, interruptions after restore and before registry
 commit, identity/path/hash tampering, unrelated artifact drift, and orphan claims.
+Retry regressions interrupt journal creation, archival, atomic restoration and
+the final registry commit, then inject bootstrap/custody manifest or file drift.
+The real CLI must refuse before recovery writes, preserve bytes/mtimes and
+bindings, and finish/replay the same journal once only that injected drift is
+removed. No business validation chain is mocked.
 These controller regressions do not claim a live restart of the retained run.
 
 Merge blockers: historical bytes/bindings can be lost or changed; any recovery
