@@ -1,7 +1,8 @@
-"""Real controller stop/precheck/resume/repair paths; native/provider I/O mocked."""
+"""Real CLI and business validators with temporary Git; native/provider I/O simulated."""
 from contextlib import ExitStack, contextmanager, redirect_stdout, redirect_stderr
 import copy
 import io
+from itertools import product
 import json
 from pathlib import Path
 import tempfile
@@ -12,6 +13,7 @@ import uuid
 import runtime as r
 import resume as c
 import bootstrap as b
+import activation as a
 import protected_resume as p
 import stop_receipts as stops
 import stop_recovery as recovery
@@ -30,29 +32,91 @@ class StopReceiptContracts(unittest.TestCase):
             # exclusive() captured its default STATE at import. Bind the real
             # lock explicitly so parallel suites never lock a real checkout.
             stack.enter_context(patch.object(trial, "exclusive", side_effect=lambda: r.exclusive(state)))
+            real_command = r.command
+            def git_io(args, **kw):
+                # command() captures its default cwd at import; only redirect
+                # real Git I/O into this temporary repository, never fake it.
+                self.assertEqual(str(args[0]), "git")
+                kw.setdefault("cwd", root)
+                return real_command(args, **kw)
+            stack.enter_context(patch.object(r, "command", side_effect=git_io))
+            r.command(["git", "init", "--quiet"])
+            for key, value in (("user.name", "Trial fixture"), ("user.email", "fixture@example.invalid"),
+                               ("commit.gpgsign", "false"), ("core.hooksPath", str(root / "no-hooks")),
+                               ("core.autocrlf", "false")):
+                r.command(["git", "config", key, value])
+            for relative in r.SOURCE_PATHS:
+                path = root / relative
+                if relative.endswith(".ps1"):
+                    path.parent.mkdir(parents=True, exist_ok=True); path.write_text("# fixture\n")
+                else:
+                    path.mkdir(parents=True, exist_ok=True); (path / ".fixture").write_text("fixture\n")
+            business_source = root / "apps/platform/fixture.go"
+            business_source.write_text("package fixture\n")
+            controller_source = root / "deploy/trial/fixture.py"
+            controller_source.write_text("# original controller\n")
+            r.command(["git", "add", "--", *r.SOURCE_PATHS])
+            r.command(["git", "commit", "--quiet", "-m", "Original business sources"])
+            business_head = r.command(["git", "rev-parse", "HEAD"]).decode().strip()
+            business_sources = c.committed_sources(business_head)
+            controller_source.write_text("# recovery controller\n")
+            r.command(["git", "add", "deploy/trial/fixture.py"])
+            r.command(["git", "commit", "--quiet", "-m", "Controller only"])
             s, before, after = fixtures.ProtectedResumeContracts().fixture()
-            s.update(root=str(root), private=str(private), head="a" * 40, sources={},
-                     host={"daemonId": "daemon"}, businessBinding={"path": "original-business", "sha256": "f" * 64},
-                     originSnapshot={"sha256": "original-origin"}, processes={}, ports={},
-                     images={"core": {"id": "same-image"}}, binaries={}, privateHashes={}, secretReferences=[],
-                     volumes={"core": "retained-volume"}, workspaceObjectProfile="same-profile")
+            s.pop("activationBinding")
+            s.update(contract="issue325/stage1", root=str(root), private=str(private),
+                     head=business_head, sources=business_sources, project="fixture-project",
+                     host={"daemonId": "daemon"}, processes={}, ports={}, subnets=[], networks={},
+                     images={"core": {"id": "same-image"}}, minio={}, resourceIds={},
+                     api="http://127.0.0.1:1", web="http://127.0.0.1:2", webBuild={},
+                     binaries={}, privateHashes={}, secretReferences=[], volumes={"core": "retained-volume"})
             native = {"Id": "c" * 64, "Name": "/same-core", "Image": "same-image",
                       "Config": {"Labels": {r.LABEL: s["runId"]}}, "HostConfig": {}, "Mounts": [],
                       "NetworkSettings": {"Networks": {"private": {}}}, "State": {"Status": "running"}}
             s["containers"] = {"core": {"id": native["Id"], "name": "same-core", "configHash": r.container_hash(native)}}
+            r.write(private / "compose.json", {})
+            s["composeSha256"] = r.digest((private / "compose.json").read_bytes())
+            b.put(state / "resume-origin.json", s)
+            s["originSnapshot"] = {"sha256": r.digest((state / "resume-origin.json").read_bytes())}
+            human = private / "human-token"; human.write_text("synthetic-only-token")
+            s["privateHashes"][str(human)] = r.digest(human.read_bytes())
+            def artifacts(folder):
+                folder.mkdir(parents=True)
+                binary = folder / "api.exe"; binary.write_bytes(b"synthetic binary")
+                web = folder / "web"; web.mkdir(); (web / "server.js").write_bytes(b"synthetic web")
+                return {"binaries": {"api": b.file(binary)},
+                        "web": {"root": str(web), "files": {"server.js": r.digest((web / "server.js").read_bytes())}}}
+            business_folder = private / "upgrades" / uuid.uuid4().hex
+            business = {"workflowVersionId": str(uuid.uuid4()), "outputs": {"standardized": "same-standardized", "curated": "same-curated"}}
+            business_artifacts = artifacts(business_folder)
+            b.put(business_folder / "manifest.json", {**stops.identity(s), "head": business_head, "sources": business_sources,
+                   "business": business, "humanTokenFile": str(human), "artifacts": business_artifacts})
+            s["businessBinding"] = b.file(business_folder / "manifest.json")
+            profile = private / "object-profile.json"
+            r.write(profile, {"Endpoint": "127.0.0.1:3", "Secure": False, "CredentialFile": str(private / "credential"),
+                              "Scope": {"WorkspaceID": s["workspaceId"], "ActorID": s["actorId"],
+                                        "PrincipalRef": p.identity(s)["principalRef"], "Bucket": "raw",
+                                        "ExpiresAt": "2099-01-01T00:00:00+00:00"}})
+            s["workspaceObjectProfile"] = str(profile)
+            s["privateHashes"][str(profile)] = r.digest(profile.read_bytes())
             legacy = state / "before-stop-facts.json"
             r.write(legacy, {"workspaceId": s["workspaceId"], "historical": "five pre-bootstrap versions"})
             original = legacy.read_bytes(); historical = state / "retained-original.json"; historical.write_bytes(original)
             for stage in b.STAGES:
                 attempt = uuid.uuid4().hex; folder = private / (stage + "-attempts") / attempt
                 folder.mkdir(parents=True)
+                evidence = folder / "evidence.json"; b.put(evidence, {"stage": stage})
                 document = {"contract": b.CONTRACT, "stage": stage, "status": "PASS", **stops.identity(s),
                             "previousBusinessBinding": s["businessBinding"], "origin": s["originSnapshot"],
-                            "files": [b.file(legacy)] if stage == "bootstrap" else []}
+                            "files": [*([b.file(legacy)] if stage == "bootstrap" else []), b.file(evidence)]}
                 b.put(folder / "manifest.json", document)
                 s[stage] = {"attemptId": attempt, "status": "PASS"}; s[stage + "Binding"] = b.file(folder / "manifest.json")
-            folder = private / "activations" / uuid.uuid4().hex; folder.mkdir(parents=True)
-            b.put(folder / "manifest.json", {**stops.identity(s), "ledger": {"bootstrap": s["bootstrapBinding"],
+            folder = private / "activations" / uuid.uuid4().hex
+            activated_artifacts = artifacts(folder)
+            b.put(folder / "manifest.json", {"contract": a.CONTRACT, **stops.identity(s),
+                   "previousBusinessBinding": s["businessBinding"], "business": business, "humanTokenFile": str(human),
+                   "head": business_head, "sources": business_sources, "artifacts": activated_artifacts,
+                   "protectedIdentity": a.profile_identity(r.read(profile)), "ledger": {"bootstrap": s["bootstrapBinding"],
                    "custody": s["custodyBinding"], "proof": before["expected"]}})
             s["activationBinding"] = b.file(folder / "manifest.json")
             calls = []; observed = [before]
@@ -65,30 +129,20 @@ class StopReceiptContracts(unittest.TestCase):
                     native["State"]["Status"] = "running" if args[0] == "start" else "exited"
                     return native["Id"].encode()
                 raise AssertionError("unexpected native call")
-            def verify(*args, **kw):
-                # Keep the real historical ledger validator in both the normal
-                # precheck and the live collision reproducer.
-                b.binding(args[0], "bootstrap"); b.binding(args[0], "custody")
             def invoke(*args, **kw):
                 self.assertEqual(args[1], "resume-verify"); calls.append(("protected-probe",))
                 observed[0] = after
                 return {"status": "PASS", "verifiedVersions": 5, "runtimeRootFallback": False}
             stack.enter_context(patch.object(r, "docker", side_effect=docker))
             stack.enter_context(patch.object(r, "local_docker_identity", return_value={"daemonId": "daemon"}))
-            stack.enter_context(patch.object(r, "verify", side_effect=verify))
-            stack.enter_context(patch.object(c, "verify_origin"))
-            stack.enter_context(patch.object(r, "sources", return_value={}))
-            stack.enter_context(patch.object(c, "committed_sources", return_value={}))
-            stack.enter_context(patch.object(r, "active_business", return_value={"sources": {}}))
-            stack.enter_context(patch.object(r, "command", return_value=("b" * 40).encode()))
-            stack.enter_context(patch.object(r, "inspect_facts", side_effect=lambda _: copy.deepcopy(observed[0])))
-            stack.enter_context(patch.object(p, "expected", return_value=before["expected"]))
+            stack.enter_context(patch.object(r, "preflight", return_value={"daemonId": "daemon"}))
+            stack.enter_context(patch.object(r, "storage_check"))  # native PowerShell adapter only
             stack.enter_context(patch.object(p, "observe", side_effect=lambda _: copy.deepcopy(observed[0])))
             stack.enter_context(patch.object(p, "invoke", side_effect=invoke))
             stack.enter_context(patch.object(c, "wait_containers"))
-            renew = stack.enter_context(patch.object(c, "refresh_identity", return_value={"nativeSTSInvocations": 1, "expiresAt": "future"}))
+            renew = stack.enter_context(patch.object(c, "refresh_identity", return_value={"nativeSTSInvocations": 1, "expiresAt": "2099-01-01T00:00:00+00:00"}))
             hosts = stack.enter_context(patch.object(c, "launch_hosts"))
-            stack.enter_context(patch.object(r, "status", side_effect=lambda value: {"phase": value["phase"]}))
+            stack.enter_context(patch.object(r, "http", return_value=True))
             for function in ("seed_source", "provision_config", "compose", "spawn"):
                 stack.enter_context(patch.object(r, function, side_effect=AssertionError("forbidden environment effect")))
             if collision:
@@ -103,9 +157,9 @@ class StopReceiptContracts(unittest.TestCase):
             code = trial.main()
         return code, json.loads(out.getvalue()) if code == 0 else json.loads(err.getvalue())
 
-    def snapshot(self, root):
+    def snapshot(self, root, *, include_lock=False):
         return {str(v.relative_to(root)): (v.read_bytes(), v.stat().st_mtime_ns)
-                for v in root.rglob("*") if v.is_file() and v.name != "operator.lock"}
+                for v in root.rglob("*") if v.is_file() and (include_lock or v.name != "operator.lock")}
 
     def reviewed(self, s, historical, root):
         reviewed = recovery.plan(s, historical); path = root / "reviewed.json"; b.put(path, reviewed)
@@ -158,7 +212,7 @@ class StopReceiptContracts(unittest.TestCase):
             code, error = self.cli("resume"); self.assertEqual(code, 1); self.assertIn("Ledger artifact drift", error["reason"])
             before = self.snapshot(root)
             first = self.cli("stop-recovery-plan", "--facts", historical)
-            self.assertEqual(first[0], 0); self.assertEqual(first, self.cli("stop-recovery-plan", "--facts", historical))
+            self.assertEqual(first[0], 0, first); self.assertEqual(first, self.cli("stop-recovery-plan", "--facts", historical))
             self.assertEqual(before, self.snapshot(root)); self.assertFalse(any(v[0] in ("start", "stop") for v in calls))
             path, sha = self.reviewed(s, historical, root)
             code, result = self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)
@@ -171,6 +225,87 @@ class StopReceiptContracts(unittest.TestCase):
             self.assertEqual(retained, self.snapshot(root)); renew.assert_not_called(); hosts.assert_not_called()
             self.assertEqual(self.cli("resume")[0], 0); renew.assert_called_once(); hosts.assert_called_once()
             self.assertEqual((r.STATE / "before-stop-facts.json").read_bytes(), original)
+
+    def test_real_business_chain_stays_strict_while_plan_is_readonly_with_one_explicit_output(self):
+        with self.fixture(collision=True) as (root, s, _, historical, _, calls, renew, hosts, _):
+            for ordinary in (lambda: a.verify_binding(s), lambda: r.active_business(s),
+                             lambda: c.check_sources(s, r.sources()), lambda: r.verify(s, source=False, running=False)):
+                with self.assertRaisesRegex(r.Refused, "Ledger artifact drift"):
+                    ordinary()
+            before = self.snapshot(root, include_lock=True)
+            code, first = self.cli("stop-recovery-plan", "--facts", historical)
+            self.assertEqual(code, 0, first)
+            self.assertEqual(before, self.snapshot(root, include_lock=True))
+            output = root / "reviewed-plan.json"
+            code, second = self.cli("stop-recovery-plan", "--facts", historical, "--output", output)
+            self.assertEqual(code, 0, second); self.assertEqual(first, second)
+            after = self.snapshot(root, include_lock=True)
+            self.assertEqual(set(after) - set(before), {"reviewed-plan.json"})
+            self.assertEqual(before, {k: after[k] for k in before})
+            self.assertEqual(r.read(output), first["plan"])
+            self.assertEqual(r.digest(b.encoded(r.read(output))), first["planSha256"])
+            self.assertEqual(self.cli("stop-recover", "--plan", output, "--plan-sha256", first["planSha256"])[0], 0)
+            recovered = r.read(r.STATE / "state.json")
+            self.assertEqual(r.active_business(recovered), a.verify_binding(recovered))
+            self.assertEqual(c.check_sources(recovered, r.sources()), ["deploy/trial/fixture.py"])
+            self.assertFalse(any(call[0] in ("start", "stop", "protected-probe") for call in calls))
+            renew.assert_not_called(); hosts.assert_not_called()
+
+    def test_recovery_source_admission_checks_real_git_and_all_frozen_business_artifacts(self):
+        cases = {"activation-hash": "Activation manifest drift", "activation-identity": "Activation identity",
+                 "previous-business": "Activation identity", "ledger-reference": "Activation ledger",
+                 "activated-binary": "Activated binary drift", "activated-web": "Activated production Web drift",
+                 "business-binary": "Upgraded binary drift", "business-web": "Upgraded production Web drift",
+                 "business-sources": "Business source manifest drift", "activation-sources": "Activation source manifest drift",
+                 "profile-scope": "Protected runtime scope drift", "profile-binding": "Unbound protected profile",
+                 "dirty-controller": "Committed recovery controller required", "committed-business": "Business source drift",
+                 "bootstrap-extra": "Unrelated ledger artifact drift", "custody-extra": "Unrelated ledger artifact drift"}
+        for mutation, reason in cases.items():
+            with self.subTest(mutation=mutation), self.fixture(collision=True) as (root, s, _, historical, _, calls, renew, hosts, _):
+                activation_path = Path(s["activationBinding"]["path"])
+                activated = r.read(activation_path)
+                business = r.read(s["businessBinding"]["path"])
+                if mutation == "activation-hash": activation_path.write_bytes(b"changed")
+                elif mutation in ("activation-identity", "previous-business", "ledger-reference", "activation-sources"):
+                    if mutation == "activation-identity": activated["actorId"] = str(uuid.uuid4())
+                    elif mutation == "previous-business": activated["previousBusinessBinding"] = {"path": "foreign", "sha256": "0" * 64}
+                    elif mutation == "ledger-reference": activated["ledger"]["custody"] = {"path": "foreign", "sha256": "0" * 64}
+                    else: activated["sources"] = {}
+                    r.write(activation_path, activated); s["activationBinding"] = b.file(activation_path)
+                elif mutation in ("activated-binary", "business-binary"):
+                    value = activated if mutation == "activated-binary" else business
+                    Path(value["artifacts"]["binaries"]["api"]["path"]).write_bytes(b"changed")
+                elif mutation in ("activated-web", "business-web"):
+                    value = activated if mutation == "activated-web" else business
+                    (Path(value["artifacts"]["web"]["root"]) / "server.js").write_bytes(b"changed")
+                elif mutation == "business-sources":
+                    business["sources"] = {}
+                    path = Path(s["businessBinding"]["path"]); r.write(path, business)
+                    s["businessBinding"] = b.file(path)
+                    activated["previousBusinessBinding"] = s["businessBinding"]
+                    r.write(activation_path, activated); s["activationBinding"] = b.file(activation_path)
+                elif mutation in ("profile-scope", "profile-binding"):
+                    profile = r.read(s["workspaceObjectProfile"])
+                    if mutation == "profile-scope": profile["Scope"]["WorkspaceID"] = str(uuid.uuid4())
+                    else: profile["CredentialFile"] += "-unbound"
+                    r.write(s["workspaceObjectProfile"], profile)
+                elif mutation in ("dirty-controller", "committed-business"):
+                    path = root / ("deploy/trial/fixture.py" if mutation == "dirty-controller" else "apps/platform/fixture.go")
+                    path.write_text("changed\n")
+                    if mutation == "committed-business":
+                        r.command(["git", "add", "apps/platform/fixture.go"])
+                        r.command(["git", "commit", "--quiet", "-m", "Business source mutation"])
+                else:
+                    stage = "bootstrap" if mutation == "bootstrap-extra" else "custody"
+                    document = r.read(s[stage + "Binding"]["path"])
+                    Path(document["files"][-1]["path"]).write_bytes(b"changed")
+                r.save(s)
+                before = self.snapshot(root, include_lock=True)
+                code, error = self.cli("stop-recovery-plan", "--facts", historical)
+                self.assertEqual(code, 1, error); self.assertIn(reason, error["reason"])
+                self.assertEqual(before, self.snapshot(root, include_lock=True))
+                self.assertFalse(any(call[0] in ("start", "stop", "protected-probe") for call in calls))
+                renew.assert_not_called(); hosts.assert_not_called()
 
     def test_restore_interruption_keeps_unknown_and_same_plan_resumes_without_second_restore(self):
         with self.fixture(collision=True) as (root, s, current, historical, original, calls, renew, hosts, _):
@@ -186,6 +321,45 @@ class StopReceiptContracts(unittest.TestCase):
             self.assertEqual(stops.read(r.read(r.STATE / "state.json")), current)
             self.assertEqual(historical_meta[0], original)
             self.assertFalse(any(v[0] in ("start", "stop", "protected-probe") for v in calls)); renew.assert_not_called(); hosts.assert_not_called()
+
+    def test_recovery_retry_rechecks_ledger_before_any_write(self):
+        for cut, stage, kind in product(("journal", "archived", "restored", "manifest"), b.STAGES, ("file", "manifest")):
+            with self.subTest(cut=cut, stage=stage, kind=kind), self.fixture(collision=True) as (root, s, _, historical, _, calls, renew, hosts, _):
+                path, sha = self.reviewed(s, historical, root)
+                save, restore = r.save, recovery.restore
+                def crash_save(value):
+                    if value.get("stopRecovery", {}).get("status") == ("UNKNOWN" if cut == "journal" else "PASS"):
+                        raise r.Refused("interrupted registry commit")
+                    save(value)
+                def crash_restore(*args):
+                    if cut == "restored": restore(*args)
+                    raise r.Refused("interrupted restoration")
+                module, name, crash = (r, "save", crash_save) if cut in ("journal", "manifest") else (recovery, "restore", crash_restore)
+                with patch.object(module, name, side_effect=crash):
+                    self.assertEqual(self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)[0], 1)
+                self.assertTrue((r.STATE / "stop-recoveries" / sha / "started.json").exists())
+                manifest = Path(s[stage + "Binding"]["path"])
+                artifact = manifest if kind == "manifest" else Path(r.read(manifest)["files"][-1]["path"])
+                clean = artifact.read_bytes(); artifact.write_bytes(clean + b"\nchanged")
+                target = r.STATE / "before-stop-facts.json"; target_bytes = target.read_bytes()
+                # A mutating CLI acquires the existing operator lock; compare
+                # all recovery/business files, excluding only that lock file.
+                before = self.snapshot(root)
+                code, error = self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)
+                self.assertEqual(code, 1, error)
+                self.assertEqual(target.read_bytes(), target_bytes, "Refused retry restored the target before checking ledger drift")
+                self.assertEqual(before, self.snapshot(root))
+                self.assertIn("Ledger binding drift" if kind == "manifest" else "Unrelated ledger artifact drift", error["reason"])
+                # Removing only the injected drift lets this exact journal finish.
+                artifact.write_bytes(clean)
+                completed = self.cli("stop-recover", "--plan", path, "--plan-sha256", sha)
+                self.assertEqual(completed[0], 0, completed)
+                retained = self.snapshot(root)
+                self.assertEqual(completed, self.cli("stop-recover", "--plan", path, "--plan-sha256", sha))
+                self.assertEqual(retained, self.snapshot(root))
+                self.assertEqual(r.read(r.STATE / "state.json")["phase"], "STOPPED")
+                self.assertFalse(any(v[0] in ("start", "stop", "protected-probe") for v in calls))
+                renew.assert_not_called(); hosts.assert_not_called()
 
     def test_manifest_before_registry_commit_replay_finishes_same_claim(self):
         with self.fixture(collision=True) as (root, s, _, historical, _, _, renew, _, _):

@@ -145,7 +145,12 @@ def preserve(before, after):
                "Original public table rows changed: " + name)
 
 
-def verify_binding(s):
+def binding_document(s):
+    """Verify frozen activation/business artifacts; ledger files are separate.
+
+    Recovery uses this strict source baseline before classifying its one known
+    ledger collision. Ordinary callers must use verify_binding().
+    """
     binding = s["activationBinding"]
     f = fingerprint(binding["path"], below=Path(s["private"]) / "activations")
     r.need(f["sha256"] == binding["sha256"], "Activation manifest drift")
@@ -154,8 +159,6 @@ def verify_binding(s):
            and manifest["previousBusinessBinding"] == s["businessBinding"], "Activation identity/previous binding drift")
     r.need(manifest["ledger"]["bootstrap"] == s["bootstrapBinding"] and manifest["ledger"]["custody"] == s["custodyBinding"],
            "Activation ledger binding drift")
-    import bootstrap as b
-    b.binding(s, "bootstrap"); b.binding(s, "custody")
     old = u.verify_business(s)
     r.need(manifest["business"] == old["business"] and manifest["humanTokenFile"] == old["humanTokenFile"], "Frozen business identity drift")
     r.need(c.committed_sources(manifest["head"]) == manifest["sources"], "Activation source manifest drift")
@@ -168,6 +171,13 @@ def verify_binding(s):
     profile = r.read(s["workspaceObjectProfile"])
     r.need(profile_identity(profile) == manifest["protectedIdentity"], "Protected runtime scope drift")
     r.need(r.digest(Path(s["workspaceObjectProfile"]).read_bytes()) == s["privateHashes"].get(s["workspaceObjectProfile"]), "Unbound protected profile")
+    return manifest
+
+
+def verify_binding(s):
+    manifest = binding_document(s)
+    import bootstrap as b
+    b.binding(s, "bootstrap"); b.binding(s, "custody")
     return manifest
 
 
