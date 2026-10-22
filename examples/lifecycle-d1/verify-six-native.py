@@ -46,7 +46,9 @@ def sealed_gate(packet=PACKET):
     p.window.validate_packet(packet,r.CONTROL)
     candidate=load(packet/'candidate.json');bindings=load(packet/'bindings.json')
     need(candidate['Execution']==p.EXECUTION and candidate['Profile']==p.PROFILE,'current candidate scope differs')
-    a=r.state();r.cold_topology(a)
+    a=r.state()
+    p.fixture_artifacts.verify_frozen(packet,candidate,a,p.fixture_artifacts.specification(r.ROOT,**p.artifact_contract()))
+    r.cold_topology(a)
     need(all(b['allocation_sha256']==sha(r.PUBLIC/'allocation.json') and b['owner_descriptors_sha256']==a['owner_descriptors_sha256'] for b in bindings),'frozen allocation or descriptor binding differs')
     common=dict(Enabled=False,Execution=p.EXECUTION,CandidateSHA256=sha(packet/'candidate.json'),ConfirmationSHA256=sha(packet/'confirmation-template.txt'),
                 NotBefore=candidate['NotBefore'],ExpiresAt=candidate['NotAfter'],ConfirmedAt=r.ZERO,MaxPerTarget=1,MaxTotal=6)

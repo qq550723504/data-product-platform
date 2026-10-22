@@ -36,10 +36,11 @@ def audit_preparation_index():
 def preparation_audit_plan(candidate):
     # Source review and preparation exist now. Later human authorization and
     # schedule indexes do not: they are never invented or rewritten here.
-    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate20-source-review01'
+    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01'
     report=load(review/'independent-final-review01.json')
-    need(report['status']=='PASS_BOUNDED_C20_SOURCE_PREPARATION_REVIEW' and report['remaining_blockers']==[]
-         and report['source_head']==candidate['Source'],'independent current-source review incomplete')
+    need(report['status']=='PASS_BOUNDED_C20_DUAL_ARTIFACT_PREPARATION_REVIEW' and report['remaining_blockers']==[]
+         and report['source_head']==load(PACKET/'source-freeze.json')['host']['source']
+         and report['runtime_source']==candidate['Source'],'independent R/P source review incomplete')
     index=review/'evidence-index.json';document=load(index)
     audit_preparation_index()
     specs=[]
@@ -61,18 +62,11 @@ def preparation_audit_plan(candidate):
 
 
 def source_freeze(a):
-    names=subprocess.check_output(['git','ls-files','apps/platform','examples/lifecycle-d1','migrations'],cwd=r.ROOT).decode('utf-8','strict').splitlines()
-    files={}
-    for name in names:
-        path=r.ROOT/name
-        if path.suffix not in {'.go','.py','.ps1','.sql','.json','.mod','.sum','.yml','.yaml','.Caddyfile'}:continue
-        raw=path.read_bytes();git=subprocess.check_output(['git','show',a['source']+':'+name],cwd=r.ROOT)
-        need(raw.replace(b'\r\n',b'\n')==git.replace(b'\r\n',b'\n'),'build source and current source differ')
-        files[name]={'raw_sha256':digest(raw),'lf_sha256':digest(raw.replace(b'\r\n',b'\n'))}
+    spec=p.fixture_artifacts.verify(r.ROOT,r.CONTROL,a,p.artifact_contract())
     archive=r.CONTROL/'approved-runtime-source.zip'
-    need(not archive.exists(),'runtime source archive exists')
-    p.call(['git','archive','--format=zip',a['source'],'apps/platform','examples/lifecycle-d1','migrations'],output=archive)
-    save(PACKET/'source-freeze.json',{'source':a['source'],'files':files,'archive_sha256':sha(archive),'archive_bytes':archive.stat().st_size,
+    save(PACKET/'source-freeze.json',{'version':2,'source':a['source'],'runtime':spec,'host':a['host'],
+                                    'runtime_artifact_spec_sha256':a['runtime_artifact_spec_sha256'],
+                                    'archive_sha256':sha(archive),'archive_bytes':archive.stat().st_size,
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
                                     'initial_allocation_build_source':a['source'],'initial_build_files':a['build_files'],
@@ -157,7 +151,7 @@ def main():
                          'recovery_redis':allocation['recovery_redis'],'budget_volume':allocation['volumes']['budget'],'budget_initializer':allocation['budget_initializer'],'budget_initializer_script_sha256':allocation['budget_initializer_script_sha256'],
                          'root_owners':owners,'allocation_sha256':sha(r.PUBLIC/'allocation.json'),'owner_descriptors_sha256':a['owner_descriptors_sha256'],
                          'map_sha256':a['map_sha256'],'preparation_terminal_sha256':sha(r.PUBLIC/'non-delete-terminal.json'),'previous_policy_heads':heads})
-        bindings[-1].update(initial_build_source=a['source'],initial_build_files=a['build_files'],retained_history=a['retained'])
+        bindings[-1].update(initial_build_source=a['source'],host_source=a['host']['source'],runtime_artifact_spec_sha256=a['runtime_artifact_spec_sha256'],initial_build_files=a['build_files'],retained_history=a['retained'])
     save(PACKET/'profile-windows.json',windows);candidate['ProfileWindowsSHA256']=sha(PACKET/'profile-windows.json')
     save(PACKET/'candidate.json',candidate);save(PACKET/'bindings.json',bindings)
     preparation_audit_plan(candidate)
@@ -186,6 +180,7 @@ def confirmation(c,bindings,targets):
     lines=[f'CONFIRM_DELETE_EXACT_SIX；execution {p.EXECUTION}；{p.PROFILE}。',
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
+           f'fixture runtime R={c["Source"]}；PR/host P={bindings[0]["host_source"]}；R archive {sha(r.CONTROL/"approved-runtime-source.zip")}；runtime artifact spec {bindings[0]["runtime_artifact_spec_sha256"]}；schema仅69/66且无protected identity；最终review HEAD另由execution-binding精确绑定。',
            f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15/16/17冷态/预算/IAM/失败证据、可信NOT_SENT闭合及新17版本只读证据独立原样保留，不复用旧execution或授权。',
            f'准备阶段完整入口audit plan {sha(PACKET/"preparation-evidence-audit-plan.json")}；显式files-map-v1；未来实际授权/调度后须另按批准manifest绑定对应phase audit plan，不能覆盖准备快照。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',

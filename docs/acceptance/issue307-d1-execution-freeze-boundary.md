@@ -22,6 +22,14 @@ Non-goals：修改历史 candidate19/v29、恢复其授权、执行对象删除�
 
 ## 分支更新边界
 
+### 两个源码制品 R / P
+
+保留环境的 fixture runtime R 与 PR/宿主 P 是两个明确制品。R 从已验证的 fixture commit 派生，只包含新 execution/window、已保留 IAM 事实及固定 schema 门禁；`fixture-runtime-artifact.json` 固定 parent、完整 delta、Git archive 原字节/成员和共享 scope/policy。构建只能在该归档的独立目录中运行现有 Go，GOWORK=off，不使用 P checkout 构建后宣称属于 R。R 仅支持三组既有 provider-version fixture 与 schema max=69 / 66 migration members / 无 identity_kind；不能运行当前 protected Core，不提供 schema fallback。
+
+P 保留当前产品模型及 identity_kind 保护。宿主构造、完整入口、拓扑签名、分支锁工具和共享 scope/policy 在另一个清单中冻结。P 的宿主源码 commit、原字节/LF SHA 与 R 的源码、归档、四份 binary、12 个原构建成员分别留证。source-freeze v2 把两者整体绑定进候选；完整入口先验证 R/P 共享契约、归档、宿主源码及冻结交叉字段，再读取 Docker/source。最终 review HEAD 仍需精确 CI 与原生分支锁，不以 R 或早期 P 的 CI 代替。
+
+main 更新带来的新产品 schema 不能隐式改变 R 的执行语义，也不能据此迁移保留源 Core。三源升级若另有业务必要，应使用单独的人类维护授权；本次已保留其隔离克隆证明和未授权备选提案，没有执行源升级。R/P 任一必需契约变化必须在冻结前完成回归、独评与新制品；冻结后不得更新分支来补交回执。
+
 | 阶段 | 允许的分支操作 |
 | --- | --- |
 | 准备/开发，尚未冻结 | 可以正常提交、同步 main；更新后重跑对应评审/CI |

@@ -13,6 +13,7 @@ import secrets
 import subprocess
 import sys
 import uuid
+import fixture_artifacts
 
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('six_prior_readonly',Path(__file__).with_name('verify-post-v22-seventeen.py'))
@@ -302,17 +303,11 @@ class Allocation:
 
 
 def build(destination=CONTROL):
-    need(subprocess.run(['git','diff','--quiet','HEAD','--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).returncode==0 and not subprocess.check_output(['git','ls-files','--others','--exclude-standard','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).strip(),'commit reviewed runtime before allocation')
-    source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip()
-    env=os.environ.copy();env.update(GOOS='linux',GOARCH='amd64',CGO_ENABLED='0')
-    for name,pkg in [('reader','lifecycle-fixture-reader'),('operator','lifecycle-fixture-remaining'),('owner','lifecycle-fixture-remaining-iam')]:
-        result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(destination/name),'./cmd/'+pkg],cwd=ROOT/'apps/platform',env=env,capture_output=True)
-        (destination/(name+'-build.stdout')).write_bytes(result.stdout);(destination/(name+'-build.stderr')).write_bytes(result.stderr)
-        need(result.returncode==0,'exact runtime build failed')
-    result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(destination/'readonly-check.exe'),'./cmd/lifecycle-fixture-readonly-check'],cwd=ROOT/'apps/platform',capture_output=True)
-    (destination/'checker-build.stdout').write_bytes(result.stdout);(destination/'checker-build.stderr').write_bytes(result.stderr)
-    need(result.returncode==0,'file-only checker build failed')
-    return source
+    return fixture_artifacts.build(ROOT,destination,artifact_contract())
+
+
+def artifact_contract():
+    return dict(execution=EXECUTION,profile=PROFILE,start=W['NotBefore'],end=W['NotAfter'])
 
 
 def allocate():
@@ -324,10 +319,11 @@ def allocate():
     CONTROL.mkdir();PUBLIC.mkdir();save(PUBLIC/'retained-before.json',retained)
     a=Allocation();failure=None
     try:
-        source=build()
+        artifact=build();source=artifact['source']
         old=load(p1.PACKET/'candidate.json');scopes=load(ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
         state={'status':'STOPPED_ALLOCATION_NOT_NATIVE_ACCEPTANCE','source':source,'profile':PROFILE,'execution':EXECUTION,'allocation_nonce':a.nonce,
                'window':W,'policy_checkpoint_sha256':window.POLICY_CHECKPOINT_SHA256,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'build_files':{name:sha(CONTROL/name) for name in ('reader','operator','owner','readonly-check.exe',*[binary+'-build.'+channel for binary in ('reader','operator','owner','checker') for channel in ('stdout','stderr')])},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
+        state.update(artifact)
         mapping={'Execution':EXECUTION,'Profile':PROFILE,'Groups':[]}
         for n,scope in enumerate(scopes):
             group=scope['Group'];g=next(x for x in old['Groups'] if x['Group']==group)

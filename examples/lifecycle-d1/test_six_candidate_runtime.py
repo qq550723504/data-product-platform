@@ -27,14 +27,12 @@ class SixHostTests(unittest.TestCase):
             control=Path(tmp);stack.enter_context(patch.object(r,'CONTROL',control))
             for name in r.BUILD_MEMBERS:(control/name).write_bytes(name.encode())
             a={'source':'a'*40,'build_files':{n:r.sha(control/n) for n in r.BUILD_MEMBERS},'binaries':{n:r.sha(control/n) for n in ('reader','operator','owner','readonly-check.exe')}}
-            state={'type':b'commit','dirty':0,'untracked':b''}
-            stack.enter_context(patch.object(r.subprocess,'check_output',lambda args,**kw:state['type'] if args[1]=='cat-file' else state['untracked']))
-            stack.enter_context(patch.object(r.subprocess,'run',lambda *args,**kw:SimpleNamespace(returncode=state['dirty'])))
+            verified=[]
+            stack.enter_context(patch.object(r.p.fixture_artifacts,'verify',lambda root,control,a,contract:verified.append(a) or {}))
             self.assertEqual(r.build_contract(a)['source'],'a'*40)
-            for key,value in [('type',b'blob'),('dirty',1),('untracked',b'untracked-runtime.go')]:
-                old=state[key];state[key]=value
-                with self.subTest(key=key),self.assertRaises(ValueError):r.build_contract(a)
-                state[key]=old
+            self.assertEqual(verified,[a])
+            with patch.object(r.p.fixture_artifacts,'verify',side_effect=ValueError('R/P drift')):
+                with self.assertRaises(ValueError):r.build_contract(a)
             for members in ({},a['binaries'],dict(a['build_files'],extra='f'*64),{k:v for k,v in a['build_files'].items() if k!='checker-build.stderr'}):
                 with self.subTest(members=list(members)),self.assertRaises(ValueError):r.build_contract(dict(a,build_files=members))
             changed=control/'reader-build.stderr';original=changed.read_bytes();changed.write_bytes(b'changed')

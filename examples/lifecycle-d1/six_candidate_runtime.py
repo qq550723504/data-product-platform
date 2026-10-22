@@ -87,10 +87,7 @@ BUILD_MEMBERS={'reader','operator','owner','readonly-check.exe'}|{name+'-build.'
 
 
 def build_contract(a):
-    need(len(a['source'])==40 and all(c in '0123456789abcdef' for c in a['source']),'build source is not a commit')
-    need(subprocess.check_output(['git','cat-file','-t',a['source']],cwd=ROOT).strip()==b'commit','initial build source is not an existing commit')
-    need(subprocess.run(['git','diff','--quiet',a['source'],'--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).returncode==0,'runtime tracked source drift')
-    need(not subprocess.check_output(['git','ls-files','--others','--exclude-standard','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).strip(),'runtime untracked source drift')
+    p.fixture_artifacts.verify(ROOT,CONTROL,a,p.artifact_contract())
     need(set(a['build_files'])==BUILD_MEMBERS,'initial build membership differs')
     for name,digest in a['build_files'].items():
         path=CONTROL/name
