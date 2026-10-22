@@ -603,5 +603,10 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 			t.Fatal("non-RAW rejection allocated detection or Quality work", e)
 		}
 	})
+	t.Run("read-only workspace quality attention", func(t *testing.T) {
+		verifyAttentionProjection(t, ctx, pool, service, command, input.ID, func(id uuid.UUID) error {
+			return handler.Handle(ctx, asynq.NewTask(workflowqueue.TaskExecute, []byte(fmt.Sprintf(`{"executionId":%q}`, id.String()))))
+		})
+	})
 	t.Logf("real PG: 8 same-key requests -> one execution; failed+retry native calls/costs=2; detection/recheck/format evidence quality physical calls=%d; old RAW unchanged", qe.calls.Load())
 }

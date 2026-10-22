@@ -33,10 +33,30 @@ export const ids = {
   complianceResult: "48484848-4848-4848-8848-484848484848",
   deliveryOperation: "49494949-4949-4949-8949-494949494949",
   deliveryRetryOperation: "50505050-5050-4050-8050-505050505050",
+  qualityOutputVersion: "53535353-5353-4353-8353-535353535353",
+  recheckAssessment: "54545454-5454-4454-8454-545454545454",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-attention-foreign"]);
+export const attentionCaseId = n => `${String(n).padStart(8, "0")}-3430-4343-8343-${String(n).padStart(12, "0")}`;
+function attentionItems() {
+  return Array.from({ length: 105 }, (_, index) => {
+    const n = index + 1;
+    return {
+      id: attentionCaseId(n), workspaceId: ids.workspace, datasetId: ids.goldDataset,
+      datasetCode: "QUALITY_FIXTURE", datasetName: "质量异常导航验收", versionId: ids.goldVersion, versionNo: 1,
+      resourceId: null, assessmentId: ids.goldAssessment, findingId: ids.goldBinding,
+      ruleId: "negative-energy", message: `负数用电异常 ${n}`, actorId: null,
+      executionId: n === 101 ? ids.job : null, executionStatus: n === 101 ? "FAILED" : null, outputDatasetId: null, outputVersionId: null,
+      recheckId: [102, 105].includes(n) ? ids.ingestion : null, recheckOutcome: n === 105 ? "ASSESSED" : n === 102 ? "FAILED" : null,
+      recheckAssessmentId: n === 105 ? ids.recheckAssessment : null, recheckGateDecision: n === 105 ? "PASS" : null,
+      recheckDatasetId: n === 105 ? ids.goldDataset : null, recheckVersionId: n === 105 ? ids.qualityOutputVersion : null,
+      pendingRecheck: n === 105, activeExecution: false, manuallyClosed: n >= 104,
+      needsFollowUp: n !== 104, createdAt: stamp,
+    };
+  });
+}
 const pass = { production: "PASS", dataset: "PASS", rights: "PASS", quality: "PASS", compliance: "PASS", contract: "PASS", evidence: "PASS", delivery: "PASS" };
 function fixtureResources(count) {
   return Array.from({ length: count }, (_, index) => {
@@ -93,7 +113,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: scenario.startsWith("quality-attention"), complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -322,6 +342,31 @@ export function createFixtureServer() {
         return { items: items.slice(offset, offset + limit), page: { total: items.length, limit, offset } };
       }
       if (req.method === "GET") {
+        if (url.pathname === `${workspace}/quality-remediations/attention`) {
+          if (req.headers.authorization !== "Bearer review-secret") return send(403, {});
+          if (state.scenario === "quality-attention-unavailable") return send(503, { code: "QUALITY_ATTENTION_UNAVAILABLE" });
+          const all = state.scenario.startsWith("quality-attention") ? attentionItems() : [];
+          const view = url.searchParams.get("view") ?? "FOLLOW_UP";
+          const items = all.filter(i => view === "ALL" || (view === "CLOSED" ? i.manuallyClosed : i.needsFollowUp));
+          return send(200, { ...page(items), summary: { followUpCount: all.filter(i => i.needsFollowUp).length, closedCount: all.filter(i => i.manuallyClosed).length }, readAt: stamp });
+        }
+        if (url.pathname.startsWith(`${workspace}/quality-remediations/`)) {
+          if (req.headers.authorization !== "Bearer review-secret") return send(403, {});
+          const item = attentionItems().find(i => url.pathname.endsWith(`/${i.id}`));
+          if (!item) return send(404, {});
+          return send(200, {
+            case: { id: item.id, workspace_id: ids.workspace, version_id: state.scenario === "quality-attention-foreign" ? ids.version : ids.goldVersion, assessment_id: ids.goldAssessment, finding_id: ids.goldBinding, detection_rule_id: "negative-energy", plan_ref: "fixture", plan_version: "1", workflow_hash: "a".repeat(64) },
+            finding: { message: item.message, observed: { affectedCount: 1, total: 10 } },
+            assignments: [], attempts: [], rechecks: [], closure: item.manuallyClosed ? { reason: "fixture closure" } : null,
+          });
+        }
+        if (url.pathname === `/api/v1/dataset-versions/${ids.qualityOutputVersion}`) return send(200, { ...goldVersion, id: ids.qualityOutputVersion, versionNo: 2 });
+        if (url.pathname === `/api/v1/dataset-versions/${ids.qualityOutputVersion}/quality-assessments`) return send(200, page([{ ...goldAssessment, id: ids.recheckAssessment, datasetVersionId: ids.qualityOutputVersion }]));
+        if (url.pathname === `${workspace}/dataset-versions/${ids.qualityOutputVersion}/certifications`) return send(200, { workspaceId: ids.workspace, datasetVersionId: ids.qualityOutputVersion, asOf: stamp, ...page([]), profiles: [] });
+        if (url.pathname === `/api/v1/quality-assessments/${ids.recheckAssessment}/report`) return send(200, {
+          ...goldAssessment, id: ids.recheckAssessment, datasetVersionId: ids.qualityOutputVersion,
+          findings: { ...page([]) }, evidence: [], auditEvents: [],
+        });
         if (url.pathname === `/api/v1/ingestions/${ids.ingestion}`) {
           if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(401, {});
           return send(200, {id:ids.ingestion,state:state.batchDispatched?"RUNNING":state.scenario==="batch-registered"?"REGISTERED":"REGISTERING",attemptId:ids.job,remoteId:state.scenario==="batch-registered"?"known-remote-run":"",request:{workspaceId:ids.workspace,batchKey:"Recoverable batch",connectionRef:"fixture-source",instanceRef:"fixture-instance",templateHash:"a".repeat(64),schemaHash:"b".repeat(64),slots:[]}});
@@ -450,6 +495,7 @@ export function createFixtureServer() {
         if (url.pathname === `/api/v1/quality-assessments/${ids.goldAssessment}/report`) {
           return send(200, {
             ...goldAssessment,
+            ...(state.scenario === "quality-attention-foreign" ? { datasetVersionId: ids.version } : {}),
             findings: { items: [], page: { total: 0, limit: 50, offset: 0 } },
             evidence: [{ id: "78787878-7878-4878-8878-787878787878", workspaceId: ids.workspace, evidenceType: "GOLD_QUALITY_ASSESSMENT", relationType: "ASSESSMENT_EVIDENCE", sourceType: "QUALITY_ASSESSMENT", sourceId: ids.goldAssessment, hashAlgorithm: "SHA256", hashValue: "a".repeat(64), createdAt: stamp }],
             auditEvents: [],
