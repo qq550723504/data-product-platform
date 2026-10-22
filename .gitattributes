@@ -311,3 +311,8 @@ docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01/*.patch -tex
 # Opaque D1 original receipts: preserve issued bytes in blob, archive and checkout.
 # Later generations inherit this rule; normalization cannot repair an old SHA.
 docs/acceptance/evidence/issue307-d1/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab
+# These indexed historical receipts live outside the evidence subtree.
+docs/acceptance/issue307-d1-v29-crosscheck01.md -text
+docs/acceptance/issue307-d1-v29-execution01.md -text
+docs/acceptance/issue307-d1-v29-schedule01.md -text
+docs/acceptance/issue307-d1-v29-window01.md -text

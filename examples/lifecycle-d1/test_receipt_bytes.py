@@ -9,6 +9,7 @@ import zipfile
 
 ROOT=Path(__file__).resolve().parents[2]
 RULE='docs/acceptance/evidence/issue307-d1/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab'
+MARKDOWN=[f'docs/acceptance/issue307-d1-v29-{suffix}.md' for suffix in ('crosscheck01','execution01','schedule01','window01')]
 
 
 class ReceiptBytesTests(unittest.TestCase):
@@ -19,7 +20,10 @@ class ReceiptBytesTests(unittest.TestCase):
         repo=folder/'source';repo.mkdir();self.git(repo,'init','-q')
         attributes=(ROOT/'.gitattributes').read_text(encoding='utf-8')
         self.assertIn(RULE,attributes)
-        if not current:attributes=attributes.replace(RULE,'')
+        rules=[RULE,*[name+' -text' for name in MARKDOWN]]
+        for rule in rules:self.assertIn(rule,attributes)
+        if not current:
+            for rule in rules:attributes=attributes.replace(rule,'')
         (repo/'.gitattributes').write_text(attributes,encoding='utf-8',newline='\n')
         files={
             'docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/terminal.json':b'{"status":"FAILED"}\r\n',
@@ -27,6 +31,7 @@ class ReceiptBytesTests(unittest.TestCase):
             'docs/acceptance/evidence/issue307-d1/execution-freeze-review01/index.json':b'{"count":1}\r\n',
             'docs/acceptance/evidence/issue307-d1/delete-confirmed-v31-execution01/user.txt':'授权\n'.encode('utf-8'),
         }
+        files.update({name:(ROOT/name).read_bytes() for name in MARKDOWN})
         for name,raw in files.items():
             path=repo/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
         self.git(repo,'add','.')
@@ -51,6 +56,16 @@ class ReceiptBytesTests(unittest.TestCase):
             name=next(iter(files));raw=files[name];blob=self.git(repo,'show','HEAD:'+name)
             self.assertEqual(blob.replace(b'\r\n',b'\n'),raw.replace(b'\r\n',b'\n'))
             self.assertNotEqual(hashlib.sha256(blob).hexdigest(),hashlib.sha256(raw).hexdigest())
+
+    def test_prior_rule_changes_indexed_markdown_outside_evidence_on_checkout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder=Path(tmp);repo,files=self.fixture(folder,current=False)
+            checkout=folder/'checkout'
+            self.git(repo,'clone','--no-local','-q',str(repo),str(checkout),autocrlf='true')
+            for name in MARKDOWN:
+                raw=files[name];observed=(checkout/name).read_bytes()
+                self.assertEqual(observed.replace(b'\r\n',b'\n'),raw.replace(b'\r\n',b'\n'))
+                self.assertNotEqual(hashlib.sha256(observed).hexdigest(),hashlib.sha256(raw).hexdigest())
 
 
 if __name__=='__main__':unittest.main()
