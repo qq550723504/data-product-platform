@@ -214,11 +214,16 @@ jobs:
           python3 -O -B examples/lifecycle-d1/test_freeze_remaining_executable.py
 
       - name: Build API / worker / migrate / operator tools
+        # Current product P and retained fixture R have separate source/DDL.
         run: |
           go build ./cmd/api
           go build ./cmd/worker
           go build ./cmd/migrate
           go build ./cmd/outbox-replay
+
+      - name: Test the separately pinned retained fixture archive
+        working-directory: .
+        run: python3 -B examples/lifecycle-d1/ci-test-fixture-runtime.py
 
   web-console:
     needs: changes
