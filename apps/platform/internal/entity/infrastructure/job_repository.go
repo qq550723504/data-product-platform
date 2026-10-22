@@ -11,6 +11,37 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 )
 
+func (r *PostgresRepository) ListJobsForInput(ctx context.Context, workspace, input uuid.UUID) ([]domain.MatchJob, error) {
+	rows, err := r.pool.Query(ctx, `SELECT id FROM entity_match_job WHERE workspace_id=$1 AND input_dataset_version_id=$2 ORDER BY created_at,id LIMIT 100`, workspace, input)
+	if err != nil {
+		return nil, err
+	}
+	ids := []uuid.UUID{}
+	for rows.Next() {
+		var id uuid.UUID
+		if err = rows.Scan(&id); err != nil {
+			break
+		}
+		ids = append(ids, id)
+	}
+	if err == nil {
+		err = rows.Err()
+	}
+	rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	jobs := []domain.MatchJob{}
+	for _, id := range ids {
+		j, e := r.GetJob(ctx, id)
+		if e != nil {
+			return nil, e
+		}
+		jobs = append(jobs, j)
+	}
+	return jobs, nil
+}
+
 func (r *PostgresRepository) InsertJob(ctx context.Context, tx pgx.Tx, job domain.MatchJob) error {
 	_, err := tx.Exec(ctx, `
 		INSERT INTO entity_match_job (

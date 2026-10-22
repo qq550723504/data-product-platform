@@ -1,0 +1,25 @@
+{
+  "attempts": [
+    {
+      "AttemptID": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+      "ObservationRef": "closed-executor:8501e97f-8e9f-40a5-85c3-5f59719ca0a8"
+    },
+    {
+      "AttemptID": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+      "ObservationRef": "closed-executor:8501e97f-8e9f-40a5-85c3-5f59719ca0a8"
+    }
+  ],
+  "invocation_cost_created": 0,
+  "proof": {
+    "Body": "eyJOb25jZSI6Ijg1MDFlOTdmLThlOWYtNDBhNS04NWMzLTVmNTk3MTljYTBhOCIsIkNoZWNrZWRBdCI6IjIwMjYtMTAtMTRUMDQ6NDk6MTEuODM0MDA3OFoiLCJFbnZpcm9ubWVudCI6IjVkMjI3NGVlLWE2NzEtNGJkYy1iNDA2LTIyYjhkYWQ4ZmQ2MSIsIlBsYW5IYXNoIjoiZDdkYjczNWJmMmVhN2E4YmM4ZWVmY2E3MGFkNGZjMDQ2YmUxOGU3ZTE1OWU2YTUyMzFiZTMwNzNlNTUwYmJmYyIsIkhlbHBlcklEIjoiZmI5MmJkY2QxNTAxMjdjNTAxNjM0NDhkZTlkOTE4ZjNhMmQ5YTE4ZTIzODQyNzRiMzBmZWJmYWY2NDdiZGI4NyIsIkJpbmFyeVNIQTI1NiI6IjVlMDRlODhiYmQ2NTg4MGE1ZTY1ZGE1Nzk1ZGNkYzExNjAyMTUxMmUwNGQyN2EyMDBlYzBkMDNmODNlOTcyYzgiLCJTY3JpcHRTSEEyNTYiOiIyNGUxZDZkMTkzOTQyMDgwMTZlZTFkOWRkMGRkYWEwNjY2OTg4MGQyY2ViYWUwM2I0Yzc5OTZkYjAzMDNmZDFjIiwiQ2FuZGlkYXRlU0hBMjU2IjoiN2MzYzMyNzQwNWM2MmFlMzc2ZTg1NWNlODJjZTdlOWIxYzNmZjI1YmI2MjJmY2IyNjVmOTk4OTM1NzY3NDIwNyJ9",
+    "Signature": "NL7pQEXgp381A2NsuWxzVfovT8oJupjrHwzwHRzryPoFaboc9hxnG4aZ/wShDjd45lO/x/i2JB7NgA1oqPteDg=="
+  },
+  "provider_delete": 0,
+  "provider_io": 0,
+  "result": {
+    "ID": "df64b6b3-523a-452e-ade6-9df94618596c",
+    "Replayed": true,
+    "PreservationUnconfirmed": false
+  },
+  "status": "PASS_NOT_SENT_ATOMIC_APPEND_ONLY"
+}

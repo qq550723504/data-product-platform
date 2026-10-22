@@ -1,0 +1,3 @@
+Preparation started inside closed run dfda43b4-4419-433d-959b-c617556953fd. Helper: dpp-lifecycle307-dfda43b4-prepare. Provider data remains retained.
+After successful completion, public manifest: C:\Users\Henry\.codex\worktrees\9400\data-product-platform\examples\lifecycle-d1\results\dfda43b4-4419-433d-959b-c617556953fd\manifest.json
+Manifest complete; fixture principal disabled. Helper lifecycle receipt persisted; provider DELETE=0; object/volume cleanup=0.

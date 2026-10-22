@@ -1,0 +1,13 @@
+{
+  "exit_code": 0,
+  "root_mounted": false,
+  "id": "56df4c90daa93b122aa64da2edddf0f1798636257955f56f1609e7f3e7a77f7d",
+  "role_directory": "",
+  "run_id": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+  "delete": 0,
+  "container": "dpp-lifecycle307-f3b0c9cd-reader-resume-membership-b450a1",
+  "cleanup": 0,
+  "expected_exit": 0,
+  "binary_sha256": "0bdd794e15230b4da02ddc2a183fd159e2f01817a70fae3556e112f05b57a84c",
+  "mode": "resume-membership"
+}

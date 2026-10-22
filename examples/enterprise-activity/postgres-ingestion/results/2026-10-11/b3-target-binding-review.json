@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "scope": "Edge + full live Core; trusted-ID batch registration/extraction/acceptance regression only",
+  "workspaceId": "f1d775d4-96ae-410e-b756-fc5c136ed585",
+  "operationId": "b938f87d-be56-4392-9fa1-55ccbc1a0bbe",
+  "receipt": {
+    "id": "82884807-cdeb-4aa2-b537-a03168ae9336",
+    "operationId": "b938f87d-be56-4392-9fa1-55ccbc1a0bbe",
+    "attemptId": "5a73f6cd-65e2-4e3c-8489-d6ecb72772ba",
+    "manifestHash": "2e686c3dc23e9a77d87cdd7ff8b8fa597ec2b9bd886209f9bc34c1ce8b35435e",
+    "bindings": [
+      {
+        "code": "energy_raw",
+        "datasetId": "853a9191-2c66-42bf-adb4-3153e870c4f1",
+        "versionId": "1f6d96bb-60f3-41c8-b628-043f582fbf19",
+        "uri": "s3://raw/core/f1d775d4-96ae-410e-b756-fc5c136ed585/b938f87d-be56-4392-9fa1-55ccbc1a0bbe/5a73f6cd-65e2-4e3c-8489-d6ecb72772ba/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+        "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+      },
+      {
+        "code": "enterprise_raw",
+        "datasetId": "cd24d101-662f-45db-a981-01c0a8b09b6a",
+        "versionId": "209aeb5a-0f03-496c-8acf-e9e99231e4e9",
+        "uri": "s3://raw/core/f1d775d4-96ae-410e-b756-fc5c136ed585/b938f87d-be56-4392-9fa1-55ccbc1a0bbe/5a73f6cd-65e2-4e3c-8489-d6ecb72772ba/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+        "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+      },
+      {
+        "code": "lease_raw",
+        "datasetId": "969be57d-2093-4f9a-9d3a-c74e9634d357",
+        "versionId": "89276126-bd1c-49e8-8af5-a7a385113142",
+        "uri": "s3://raw/core/f1d775d4-96ae-410e-b756-fc5c136ed585/b938f87d-be56-4392-9fa1-55ccbc1a0bbe/5a73f6cd-65e2-4e3c-8489-d6ecb72772ba/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+        "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "code": "energy_raw",
+      "rows": 14,
+      "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+    },
+    {
+      "code": "enterprise_raw",
+      "rows": 6,
+      "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+    },
+    {
+      "code": "lease_raw",
+      "rows": 10,
+      "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+    }
+  ],
+  "coreRawVersions": 3,
+  "resourceCount": 3,
+  "implementation_sha256": {
+    "apps/web/app/batches/actions.ts": "b1aba09824650bd0c320e40ca7b99ec6217de67fc0c6aeb560c8c7fe31bf720a",
+    "apps/web/lib/batches.ts": "c06f99e3f11b3f2f15a1cbc3526ce768ff8bb2584beb53a06f624aa13d409582",
+    "apps/platform/internal/ingestion/pilot/profile.go": "a11d6d4141bddfbc997828324a094fe5e013ff60f2573b5be7a0ae9198c37b27",
+    "apps/platform/cmd/ingestion-browser-fixture/main.go": "7447f194ffecad67535eef551a9832441cc1edc178b8afb0b4a6c8ee9346fc22"
+  },
+  "screenshot_sha256": "16474ea107dc09853306dcdede923b4db0db25edd770ee4c7ac306858c68b372",
+  "certificationProfileSwitch": "separate browser fixture contract; not live certification acceptance",
+  "humanExplanation": "NOT_RUN"
+}

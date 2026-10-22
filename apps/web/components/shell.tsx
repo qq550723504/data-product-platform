@@ -7,6 +7,7 @@ const navigation = [
   { href: "/", label: "工作台", mark: "W" },
   { href: "/attention", label: "待办中心", mark: "!" },
   { href: "/ingest", label: "数据接入", mark: "I" },
+  { href: "/batches", label: "数据库批次", mark: "B" },
   { href: "/resources", label: "数据资源", mark: "R" },
   { href: "/datasets", label: "数据集", mark: "D" },
   { href: "/production", label: "数据生产", mark: "P" },

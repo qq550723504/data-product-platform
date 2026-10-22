@@ -1,0 +1,73 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": [
+            "469a3a54-4b1f-4fa9-bd70-28bb77a3f8a7"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/p1.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": [
+            "9c02c1b8-687a-4463-ba79-90991346cbf4"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/p2.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": [
+            "5d16f8ed-c748-4d6a-97aa-0f5e95d53eb7"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/t1.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": [
+            "37eae98d-faa0-4390-aa44-8aa77d67c0db"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/t2.csv"
+      ]
+    }
+  ],
+  "Version": "2012-10-17"
+}

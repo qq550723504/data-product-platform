@@ -1,0 +1,50 @@
+{
+  "attempts": [
+    {
+      "phase": "5d",
+      "helper": {
+        "id": "0776f9a254c7c8ebb97d87c4c9f6b09ff9b38c05148a804644926e810b3cf06c",
+        "exit": 2,
+        "binary_sha256": "e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30",
+        "root_mounted": false,
+        "source_gateway_started": false,
+        "journal_database": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01",
+        "native_delete": 0
+      },
+      "source_fingerprint_matches_success": true,
+      "native_calls_before_failure": 0,
+      "error": "CRLF shell rejection before executor",
+      "retained_state": {
+        "source_pg": "exited",
+        "source_minio": "exited",
+        "source_gateway": "exited",
+        "audit_core": "exited",
+        "cleanup": 0
+      }
+    },
+    {
+      "phase": "5d-02",
+      "helper": {
+        "id": "d3efbb54ead478631e3633a7208dbb3c5effd7ed017feeca19eb42cc8efb7ee0",
+        "exit": 1,
+        "binary_sha256": "e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30",
+        "root_mounted": false,
+        "source_gateway_started": false,
+        "journal_database": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02",
+        "native_delete": 0
+      },
+      "source_fingerprint_matches_success": true,
+      "native_calls_before_failure": 0,
+      "error": "wrong CLI contract before reference invocation",
+      "retained_state": {
+        "source_pg": "exited",
+        "source_minio": "exited",
+        "source_gateway": "exited",
+        "audit_core": "exited",
+        "cleanup": 0
+      }
+    }
+  ],
+  "overwrite": false,
+  "cleanup": 0
+}

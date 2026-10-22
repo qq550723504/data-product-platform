@@ -76,9 +76,17 @@ func (r *PostgresRepository) InsertVersion(ctx context.Context, tx pgx.Tx, versi
 }
 
 func (r *PostgresRepository) GetVersion(ctx context.Context, versionID uuid.UUID) (domain.WorkflowVersion, error) {
+	return r.getVersion(ctx, r.pool, versionID)
+}
+
+func (r *PostgresRepository) GetVersionTx(ctx context.Context, tx pgx.Tx, versionID uuid.UUID) (domain.WorkflowVersion, error) {
+	return r.getVersion(ctx, tx, versionID)
+}
+
+func (r *PostgresRepository) getVersion(ctx context.Context, q executionQuerier, versionID uuid.UUID) (domain.WorkflowVersion, error) {
 	var version domain.WorkflowVersion
 	var definition []byte
-	err := r.pool.QueryRow(ctx, `
+	err := q.QueryRow(ctx, `
 		SELECT id, workflow_id, version, definition_ref, definition_sha256, definition, created_at, created_by
 		FROM workflow_version WHERE id=$1
 	`, versionID).Scan(

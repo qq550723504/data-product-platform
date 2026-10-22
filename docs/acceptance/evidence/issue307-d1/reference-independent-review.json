@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-14",
+  "reviewed_head": "4650c435f8ba89fdb0b2dc0591152d25ded182d7",
+  "base_main": "074a33bace7edbaf481759aac3a84708363ffd02",
+  "reviewer_task": "/root/pr318_independent_review",
+  "independence": "Fresh reviewer fork with no inherited conversation; read-only source review",
+  "outcome": "NO_VERIFIED_CURRENT_SLICE_BLOCKER",
+  "findings": [],
+  "reporting_precision": {
+    "classification": "REPORTING_PRECISION",
+    "code_change_required": false,
+    "required_wording": "After restriction, no new GET/bytes/output and no accepted output; do not claim all Start transitions are rejected",
+    "finding": "ExecutionService.StartWithReferenceCheck may commit RUNNING before PinnedEngine denies lifecycle data-plane admission"
+  },
+  "checked": [
+    "Current module-owner authority and replay fingerprint",
+    "Typed original source/workspace/exact-copy/loss relationships",
+    "Append-only requirements/releases and atomic Event/Audit/Evidence/Outbox",
+    "DatasetVersion FK catalog discovery and exact exemptions",
+    "Guard qualification and first-copy fence",
+    "Pending-copy/dispatch interleavings and verified termination of all version pins",
+    "Finalize reference/pending-copy closure",
+    "NATIVE input/output admission and DirectData ISSUED/transfer pin/history"
+  ],
+  "limits": [
+    "Reviewer did not run independent DB/native tests",
+    "Author self-audit, existing CI and old native binary were not treated as invariant proof",
+    "Fresh native regression recorded separately",
+    "No full D1/D2, real deletion, archive/restore rerun or excluded native fault acceptance"
+  ],
+  "mutations": {
+    "tracked_files": 0,
+    "provider_delete": 0,
+    "issue": 0,
+    "services": 0,
+    "pull_request": 0
+  },
+  "report": "Independent read-only review complete. No verified blocker or code finding within the finite slice. Reporting must distinguish RUNNING claim from actual lifecycle data-plane admission.",
+  "raw_report": "独立只读审查完成：未发现当前有限切片内可验证的 BLOCKER 或需修复的代码 finding。\n\nReviewed HEAD：4650c435f8ba89fdb0b2dc0591152d25ded182d7\nBase：074a33bace7edbaf481759aac3a84708363ffd02\n\n已追踪实际实现，包括：\n- owner 当前 capability、重放 fingerprint、exact-copy/source/workspace/loss 校验。\n- requirement/release 的 append-only 约束与 Event/Audit/Evidence/Outbox 原子性。\n- DatasetVersion FK catalog discovery、exact metadata 豁免、guard qualification、首次登记 fence。\n- pending-copy/dispatch 串行化、版本全部 pin 的 verified termination、finalize closure。\n- fixture native Processing 输入/输出 admission、DirectData ISSUED 同事务 pin 与独立 transfer observations。\n\n报告措辞应限定为 restriction 后没有新 GET/bytes/output，输出不被接纳：StartWithReferenceCheck 本身仍可能先提交 RUNNING，由后续 PinnedEngine 拒绝实际执行。这属于表述精度，不违反本切片的数据面 invariant。\n\n验证限制：本 reviewer 未运行 DB/native 测试，未将作者自审、既有 CI 或旧 native binary 当作 invariant 证明。fresh native regression 应独立记录。完整 D1/D2、真实删除、archive/restore rerun 和明确排除的 native fault 组合仍不能据此验收。\n\n工作区 tracked diff 仍为空；未修改文件、PR/Issue 或任何服务。",
+  "documentation_followup": {
+    "correction": "RUNNING claim distinguished from PinnedEngine data-plane admission",
+    "runtime_stage_not_counted_as_PASS": true,
+    "result": "NO_NEW_CONTRACT_CONFLICT_OR_BLOCKER",
+    "reviewed_head": "4650c435f8ba89fdb0b2dc0591152d25ded182d7",
+    "reviewer_tests": "NOT_RUN",
+    "paths": [
+      "docs/acceptance/issue307-reference-demand-contract.md",
+      "docs/acceptance/issue307-reference-demand.md"
+    ]
+  },
+  "final_evidence_followup": {
+    "result": "NO_DOCUMENTATION_OR_EVIDENCE_BLOCKER",
+    "mode": "Read-only cross-check of saved evidence; no runtime/provider re-execution",
+    "raw_report": "最终文档与证据增量一致，未发现 documentation/evidence BLOCKER。旧 a711 阶段与首次 closure 的 NOT_RUN 没有被覆盖；full D1/D2、真实删除及排除的 fault 验收边界仍准确。本次仅为保存证据的只读复核，未重新执行 runtime、测试或 provider 操作。",
+    "verified": [
+      "32+20=52 calls/observations and typed storage costs, cost mismatch0",
+      "23 requirements/releases,8 kinds,7 matching owner/generation verified stops,active0",
+      "129328 bytes,ISSUED history,recovery delta0,2 blocked and2 eligible non-delete dispatches",
+      "685 source bindings and deployed SQL67 guard body",
+      "Four original identities/protections,six final exact versions,sealing and retained read-only failure diagnostic"
+    ],
+    "native_run": "5d2274ee-a671-4bdc-b406-22b8dad8fd61"
+  }
+}

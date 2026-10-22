@@ -1,0 +1,15 @@
+{
+  "status": "PASS_EXACT_SIX_NATIVE_RESTORE",
+  "versions": 6,
+  "all_identity_bytes_hash_protection_equal": true,
+  "backup_payload_excluded_from_source_absence": true,
+  "source_restart": 0,
+  "provider_delete": 0,
+  "business_admission": 0,
+  "clone_core_calls_are_isolated_from_source": true,
+  "restore_container": "dpp-lifecycle307-5d2274ee-predelete-objects",
+  "restore_id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+  "restore_image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+  "volume": "dpp-lifecycle307-5d2274ee-predelete-objects",
+  "states": "STOPPED_RETAINED"
+}

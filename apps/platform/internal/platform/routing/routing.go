@@ -20,15 +20,18 @@ import (
 // changing it makes every historical confirmation look unconfirmed and replays
 // the handler, so rename only with a deliberate migration.
 const (
-	HandlerExecutionQueue     = "execution-queue"
-	HandlerMetadataProjection = "metadata-projection"
+	HandlerExecutionQueue           = "execution-queue"
+	HandlerMetadataProjection       = "metadata-projection"
+	HandlerSourceSchemaObservation  = "source-schema-observation"
+	HandlerExternalPublicationQueue = "external-publication-queue"
+	HandlerLifecycleRecoveryQueue   = "lifecycle-recovery-queue"
 )
 
 // Version identifies the base layout of the routing table below. Bump it
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v17"
+const Version = "c1-v28+ext1+exec1+usage1+rem1+life3+schema1+obj1"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -59,6 +62,10 @@ func Routes(governanceProjection bool) []outbox.Route {
 		// governance provider configured. Without one the release event is
 		// explicitly retention-only, not an implicit no-op.
 		{EventType: "ProductReleased", RequiredHandlers: productReleased},
+		{EventType: "SourceSchemaObservationRequested", RequiredHandlers: sourceSchemaHandlers(governanceProjection)},
+		{EventType: "SourceSchemaScanStarted"},
+		{EventType: "SourceSchemaObserved"},
+		{EventType: "SourceSchemaHandlingRecorded"},
 
 		// New execution acceptance is delivered only through this outbox
 		// obligation.
@@ -75,6 +82,80 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "ExecutionEngineSelected"},
 		{EventType: "ExecutionSubmitting"},
 		{EventType: "DataResourceCreated"},
+		{EventType: "ExternalIdentityBound"},
+		{EventType: "ExternalIdentityInvalidated"},
+		{EventType: "ExternalIdentifierRecorded"},
+		{EventType: "ExternalIdentifierInvalidated"},
+		{EventType: "ExternalPublicationCreated"},
+		// #84 records intent only; #86 owns future dispatch obligations.
+		{EventType: "ExternalPublicationRequested"},
+		{EventType: "ExternalPublicationExecutionRequested", RequiredHandlers: []string{HandlerExternalPublicationQueue}},
+		{EventType: "ExternalProviderCallStarted"},
+		{EventType: "ExternalProviderCallDispatched"},
+		{EventType: "ExternalProviderObservationRecorded"},
+		{EventType: "ExternalPublicationAttemptResolved"},
+		{EventType: "ExternalPublicationRegistered"},
+		{EventType: "ExternalPublicationPublished"},
+		// Usage pulls are durable PG work, consumed by the existing worker scan.
+		{EventType: "ExternalUsageSourceCreated"},
+		{EventType: "ExternalUsagePullRequested"},
+		{EventType: "ExternalUsageCallStarted"},
+		{EventType: "ExternalUsageCallDispatched"},
+		{EventType: "ExternalUsageOutcomeRecorded"},
+		{EventType: "ExternalUsageRecorded"},
+		{EventType: "ExternalUsageQuarantined"},
+		{EventType: "ExternalUsageAccepted"},
+		{EventType: "ExternalUsageConflictQuarantined"},
+		{EventType: "ExternalUsageCheckpointCommitted"},
+		{EventType: "ExternalUsagePullResolved"},
+		{EventType: "IngestionPrepared"},
+		{EventType: "IngestionInvocationStarted"},
+		{EventType: "IngestionInvocationDispatched"},
+		{EventType: "IngestionInvocationOutcomeRecorded"},
+		{EventType: "IngestionObserved"},
+		{EventType: "IngestionAccepted"},
+		{EventType: "LifecycleDispositionPlanPrepared"},
+		{EventType: "LifecycleContentUseRestricted"},
+		{EventType: "LifecycleContentHoldPlaced"},
+		{EventType: "LifecycleContentHoldReleased"},
+		{EventType: "LifecycleReaderAdmitted"},
+		{EventType: "LifecycleReaderTerminated"},
+		{EventType: "LifecycleProcessingOwnerStopped"},
+		{EventType: "LifecycleHoldDispatchConflict"},
+		{EventType: "LifecycleDispositionApproved"},
+		{EventType: "LifecycleApprovalRevoked"},
+		{EventType: "LifecycleDispositionDispatched"},
+		{EventType: "LifecycleDispositionRecoveryRequested", RequiredHandlers: []string{HandlerLifecycleRecoveryQueue}},
+		{EventType: "LifecycleDispositionRecoveryStarted"},
+		{EventType: "LifecycleDispositionRecoveryObserved"},
+		{EventType: "LifecycleDispositionBlocked"},
+		{EventType: "LifecycleProviderAttemptObserved"},
+		{EventType: "LifecycleDispositionReservationReleased"},
+		{EventType: "LifecycleStorageCallStarted"},
+		{EventType: "LifecycleStorageCallObserved"},
+		{EventType: "ProtectedObjectIntentCreated"},
+		{EventType: "ProtectedObjectVerified"},
+		{EventType: "OperatorCustodyPrepared"},
+		{EventType: "OperatorCustodyCallStarted"},
+		{EventType: "OperatorCustodyCallObserved"},
+		{EventType: "OperatorCustodyTerminated"},
+		{EventType: "LifecycleFixtureDisposalBasisRegistered"},
+		{EventType: "LifecycleFixtureReferenceRequired"},
+		{EventType: "LifecycleFixtureReferenceReleased"},
+		{EventType: "LifecycleProviderSendClaimed"},
+		{EventType: "LifecycleExactCopyAbsenceVerified"},
+		{EventType: "LifecycleContentDispositionFinalized"},
+		{EventType: "LifecycleCopyPolicyBound"},
+		{EventType: "LifecycleCopyPolicyRenewed"},
+		{EventType: "LifecycleCopyPrepared"},
+		{EventType: "LifecycleCopyRecoveryRequested", RequiredHandlers: []string{HandlerLifecycleRecoveryQueue}},
+		{EventType: "LifecycleCopyRecoveryStarted"},
+		{EventType: "LifecycleCopyRecoveryObserved"},
+		{EventType: "LifecycleCopyTargetRecovered"},
+		{EventType: "LifecycleCopyMaterialized"},
+		{EventType: "LifecycleCopyVerified"},
+		{EventType: "LifecycleRestoreCheckpointExported"},
+		{EventType: "LifecycleCopyAdmissionEvaluated"},
 		{EventType: "DatasetCreated"},
 		{EventType: "DatasetVersionCreated"},
 		{EventType: "DatasetVersionSuperseded"},
@@ -132,11 +213,18 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "EffectiveRightsCalculated"},
 		{EventType: "EffectiveRightsFinalized"},
 		{EventType: "DatasetCertified"},
+		{EventType: "DatasetCertificationInputsPrepared"},
 		{EventType: "DatasetCertificationRejected"},
 		{EventType: "DatasetCertificationRevoked"},
 		{EventType: "DatasetCertificationSuperseded"},
 		{EventType: "CertificationProfileCreated"},
 		{EventType: "QualityAssessmentAttemptFailed"},
+		{EventType: "QualityRemediationDetected"},
+		{EventType: "QualityRemediationAssigned"},
+		{EventType: "QualityRemediationExecutionAccepted"},
+		{EventType: "QualityRemediationRecheckStarted"},
+		{EventType: "QualityRemediationRechecked"},
+		{EventType: "QualityRemediationManuallyClosed"},
 		{EventType: "QualityPassed"},
 		{EventType: "QualityFailed"},
 		{EventType: "QualityReviewRequired"},
@@ -160,4 +248,11 @@ func Routes(governanceProjection bool) []outbox.Route {
 // NewRouter builds the validated routing table for a deployment profile.
 func NewRouter(governanceProjection bool) (*outbox.Router, error) {
 	return outbox.NewRouter(VersionFor(governanceProjection), Routes(governanceProjection))
+}
+
+func sourceSchemaHandlers(enabled bool) []string {
+	if enabled {
+		return []string{HandlerSourceSchemaObservation}
+	}
+	return []string{}
 }

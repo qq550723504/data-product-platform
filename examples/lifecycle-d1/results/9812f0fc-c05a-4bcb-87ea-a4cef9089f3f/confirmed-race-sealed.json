@@ -1,0 +1,10 @@
+{
+  "run_id": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "sealed_at": "2026-10-13T11:17:40.145303+00:00",
+  "gateway": "DENY_ALL_OBJECT_ADMIN_IO",
+  "native_delete_reader_users": "DISABLED",
+  "recovery_authority": "DISABLED",
+  "cleanup": 0,
+  "remaining_native_versions": 2,
+  "backup_payloads": "RETAINED / excluded from source receipt"
+}

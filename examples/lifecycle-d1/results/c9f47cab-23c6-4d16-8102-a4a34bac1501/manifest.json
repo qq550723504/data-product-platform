@@ -1,0 +1,204 @@
+{
+  "acceptance": {
+    "absence_finalize": "NOT_RUN",
+    "archive_restore": "NOT_RUN",
+    "business_reader": "NOT_RUN",
+    "delete": "NOT_RUN",
+    "full_D1": "NOT_RUN",
+    "native_exact_bytes": "PASS",
+    "native_retention_hold": "PASS",
+    "native_version_inventory": "PASS",
+    "platform_per_call_journal_cost": "PASS"
+  },
+  "created_at": "2026-10-11T12:43:43.572001314Z",
+  "destructive_requests": 0,
+  "environment": {
+    "storage_inspector_source_sha256": "8db52f4d6cc76232efc05bb609a8252207e234ebb5c55aaeb729ee9e866669d6",
+    "volumes": [
+      "dpp-lifecycle307-c9f47cab-postgres",
+      "dpp-lifecycle307-c9f47cab-objects"
+    ],
+    "gateway": "127.0.0.1:9000 within gateway network namespace only",
+    "source_head": "8b7b8424d1d43fee4efc2057d9b5a8208bb392aa",
+    "preparation_helper": "dpp-lifecycle307-c9f47cab-prepare",
+    "preparation_container_id": "96b1358f701168132b984f29702a2ddf21ae16596f69a988dab13f04d8c5b654",
+    "license": "AGPL-3.0",
+    "gateway_config_sha256": "564c2c02de4528bdf6ee36580c7ab2b89fb8be8bcd83934f1d432b39dc7640b7",
+    "postgres_endpoint": "dpp-lifecycle307-c9f47cab-postgres:5432 within private network only",
+    "containers": [
+      {
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "id": "08f55f18ce8520d4bd35a3314e208ce19c543737fa342db48214495d4facc786",
+        "requested_port_bindings": {},
+        "name": "dpp-lifecycle307-c9f47cab-postgres"
+      },
+      {
+        "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+        "id": "8877f5980344b5278ba86b2dcac0ce2efb783c2f89c7bd184c6e37eb62335138",
+        "requested_port_bindings": {},
+        "name": "dpp-lifecycle307-c9f47cab-minio"
+      },
+      {
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "id": "78dbb57abd29a36113cc5d13624aacbe6888bcbff3694ccca24ce6fd500b61c5",
+        "requested_port_bindings": {},
+        "name": "dpp-lifecycle307-c9f47cab-gateway"
+      }
+    ],
+    "minio_version_output": "minio version DEVELOPMENT.GOGET (commit-id=9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a)\nRuntime: go1.26.5 linux/amd64\nLicense: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html\nCopyright: 2015-0000 MinIO, Inc.",
+    "admin_sdk": "madmin-go/v3 v3.0.94",
+    "gateway_delete": "DENY_ALL",
+    "base_main": "253ce3b4ef044a233de1179534422eed04ded660",
+    "sdk": "minio-go/v7 v7.0.83",
+    "minio_binary_sha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+    "migrations_through": 62,
+    "source_commit": "9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a",
+    "preparation_binary_sha256": "f4540b687141e7d1b94b454773ed7aee21b4667ce9887c3903bc2e4497b7fcfe",
+    "host_ports": [],
+    "preservation": "Named PostgreSQL/object volumes retained; no cleanup on failure/success",
+    "preparation_source_sha256": "3542069a1748df52882b2bbfc9ed68727e39a24c6e9bc1b86265cd8d1085c804",
+    "network": {
+      "internal": true,
+      "id": "6dea17e188c5b61449870f101f1caa1ff33485bf755e6126bd7f39f189af60ba",
+      "members": [
+        "dpp-lifecycle307-c9f47cab-gateway",
+        "dpp-lifecycle307-c9f47cab-minio",
+        "dpp-lifecycle307-c9f47cab-postgres"
+      ],
+      "name": "dpp-lifecycle307-c9f47cab-private"
+    },
+    "project": "dpp-lifecycle307-c9f47cab"
+  },
+  "facts": {
+    "cost_allocation": 14,
+    "lifecycle_content_use_restriction": 1,
+    "lifecycle_disposition_approval": 0,
+    "lifecycle_disposition_dispatch": 0,
+    "lifecycle_fixture_copy": 4,
+    "lifecycle_provider_attempt": 0,
+    "lifecycle_reader_pin": 0,
+    "lifecycle_storage_call": 14,
+    "lifecycle_storage_observation": 14
+  },
+  "incarnation_id": "b19427cf-0d61-4417-a5e1-76c7dd894046",
+  "inspection_identity_policy": "lifecycle307-inspection-c9f47cab-23c6-4d16-8102-a4a34bac1501",
+  "inventories": [
+    {
+      "WorkspaceID": "5fe971c0-7682-4b6b-b4c6-741883247365",
+      "ProviderInstanceID": "24dba412-9b64-46c0-9cc5-ae56a5d3a124",
+      "IncarnationID": "b19427cf-0d61-4417-a5e1-76c7dd894046",
+      "Namespace": "dpp-lifecycle307-online",
+      "Versions": [
+        {
+          "Key": "fixture/a.csv",
+          "Version": "3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d",
+          "ByteSize": 27,
+          "DeleteMarker": false
+        },
+        {
+          "Key": "fixture/b.csv",
+          "Version": "8228fe6b-e938-4404-8ad2-4e490e875495",
+          "ByteSize": 26,
+          "DeleteMarker": false
+        }
+      ],
+      "ObservedAt": "2026-10-11T12:43:43.549698316Z",
+      "CallID": "9165ebf5-1758-48a3-a097-08627413502e",
+      "ResponseSHA256": "2d14006a4428d5875605fed3bce0495e09b67964c5d3c437d2277711b1e355cf"
+    },
+    {
+      "WorkspaceID": "5fe971c0-7682-4b6b-b4c6-741883247365",
+      "ProviderInstanceID": "24dba412-9b64-46c0-9cc5-ae56a5d3a124",
+      "IncarnationID": "b19427cf-0d61-4417-a5e1-76c7dd894046",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Versions": [
+        {
+          "Key": "fixture/a.csv",
+          "Version": "87bd6a39-f420-4bfa-9619-4812a01e5835",
+          "ByteSize": 27,
+          "DeleteMarker": false
+        },
+        {
+          "Key": "fixture/b.csv",
+          "Version": "6e3b6ae2-2b8e-40ee-9103-419322b78718",
+          "ByteSize": 26,
+          "DeleteMarker": false
+        }
+      ],
+      "ObservedAt": "2026-10-11T12:43:43.561298963Z",
+      "CallID": "977307c0-50a8-4e45-8da8-d6c126695c9e",
+      "ResponseSHA256": "3ed2c20423220608b3f8047413b9a0c791526dfc0c7c48752d5eb7c043a6a227"
+    }
+  ],
+  "object_cleanup_requests": 0,
+  "objects": [
+    {
+      "copy_id": "1a0bfd6d-6092-41e8-9231-71ef2cf98713",
+      "dataset_version_id": "aa67944f-df64-4ad3-a9a5-4f205ebe8f97",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d",
+      "sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "bytes": 27,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-11T12:43:43.211354593Z",
+      "protection_observed_at": "2026-10-11T12:43:43.382351052Z"
+    },
+    {
+      "copy_id": "05e24448-0628-43f6-b94f-86be54f758a3",
+      "dataset_version_id": "6bcef65c-eca9-40e2-b699-031567b74c2c",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "8228fe6b-e938-4404-8ad2-4e490e875495",
+      "sha256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "bytes": 26,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-11T12:43:43.238451672Z",
+      "protection_observed_at": "2026-10-11T12:43:43.468631311Z"
+    },
+    {
+      "copy_id": "0b5a37a3-b062-4e1d-8fe9-7e95330876ea",
+      "dataset_version_id": "aa67944f-df64-4ad3-a9a5-4f205ebe8f97",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "87bd6a39-f420-4bfa-9619-4812a01e5835",
+      "sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "bytes": 27,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-12T12:43:43Z",
+      "bytes_verified_at": "2026-10-11T12:43:43.264145836Z",
+      "protection_observed_at": "2026-10-11T12:43:43.504391264Z"
+    },
+    {
+      "copy_id": "b9ed04d6-94b0-4c02-a842-49206c729c12",
+      "dataset_version_id": "6bcef65c-eca9-40e2-b699-031567b74c2c",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "6e3b6ae2-2b8e-40ee-9103-419322b78718",
+      "sha256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "bytes": 26,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-11T12:43:43.290896628Z",
+      "protection_observed_at": "2026-10-11T12:43:43.536349372Z"
+    }
+  ],
+  "plan": {
+    "approval": "PENDING_USER_CONFIRMATION",
+    "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+    "id": "758f5829-cb9c-473b-ba44-888a7a622598",
+    "scope_hash": "bb9a0bb3a638a1a365dad7c267255007a89ff2605e1e33da6fe358a88c2f43b4",
+    "status": "FINALIZED",
+    "targets": 4
+  },
+  "provider_instance_id": "24dba412-9b64-46c0-9cc5-ae56a5d3a124",
+  "run_id": "c9f47cab-23c6-4d16-8102-a4a34bac1501",
+  "schema": "lifecycle307-predelete-manifest-v1",
+  "workspace_id": "5fe971c0-7682-4b6b-b4c6-741883247365"
+}

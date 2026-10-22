@@ -1,0 +1,45 @@
+{
+  "competing_native_io": 0,
+  "revoked_native_delta": 0,
+  "results": [
+    {
+      "id": "0d4ea5da-e83f-467d-b745-d9310675df88",
+      "run_id": "490b907a-8852-4b1c-a1e1-50c9c8cab779",
+      "outcome": "UNKNOWN_PRESENT",
+      "work_id": "5dabef70-cde3-4130-a68a-fe787bdde72c",
+      "terminal": false,
+      "observed_at": "2026-10-14T08:02:47.229329+00:00",
+      "stat_call_id": "bc53592f-fee3-4175-84ba-4a7738611d00",
+      "workspace_id": "cb4937fb-cb09-4063-8f83-4ca8c8e8924d",
+      "completion_id": null,
+      "copy_decision_id": null,
+      "copy_discovery_id": null,
+      "inventory_call_id": "2ee467e9-6631-40bc-a9c5-1c3acc4a27b5",
+      "absence_receipt_id": null,
+      "dependency_revision": 6
+    },
+    {
+      "id": "78958626-cf5a-4cd4-90c1-1c46dc2c3465",
+      "run_id": "172c42c8-742b-494f-9ff5-f64d33b9e968",
+      "outcome": "BLOCKED_AUTHORITY",
+      "work_id": "5dabef70-cde3-4130-a68a-fe787bdde72c",
+      "terminal": true,
+      "observed_at": "2026-10-14T08:02:52.427993+00:00",
+      "stat_call_id": null,
+      "workspace_id": "cb4937fb-cb09-4063-8f83-4ca8c8e8924d",
+      "completion_id": null,
+      "copy_decision_id": null,
+      "copy_discovery_id": null,
+      "inventory_call_id": "76ca016d-222b-4b67-a66a-59f56a443520",
+      "absence_receipt_id": null,
+      "dependency_revision": 6
+    }
+  ],
+  "counts": {
+    "calls": 18,
+    "runs": 4,
+    "results": 2,
+    "copies": 0
+  },
+  "native_delete": 0
+}

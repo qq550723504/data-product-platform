@@ -1,0 +1,317 @@
+{
+  "as_of": "2026-10-14T02:15:58.640104+00:00",
+  "basis": [
+    {
+      "id": "64b40bd8-40c5-4bc2-9725-dc59bf82c730",
+      "run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "basis_ref": "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE",
+      "starts_at": "2026-10-14T00:59:51.707468+00:00",
+      "retain_until": "2026-10-14T00:59:51.707468+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "approved_hash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+      "dispose_due_at": "2026-10-14T00:59:51.707468+00:00",
+      "inventory_hash": "2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8",
+      "start_event_id": "04dbf16f-f8f3-4954-aa60-e6b4e1e22391",
+      "approved_plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "inventory_plan_id": "dfd47e35-b99a-4581-942f-96ab5d3941f1"
+    }
+  ],
+  "holds": null,
+  "plans": [
+    {
+      "id": "de987d5f-f122-4bbc-b688-7f49756f1858",
+      "action": "DELETE_EXACT",
+      "status": "FINALIZED",
+      "targets": [
+        "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+        "3feb660b-21aa-4494-ada8-110cf3cf0e22",
+        "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+        "dbe34c34-cecb-4183-a121-5eac1035d176"
+      ],
+      "created_at": "2026-10-14T00:58:48.06487+00:00",
+      "prepared_by": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "content_hash": "47c691153fb1f883ea4c0a77c85d7f8c964cf2cabb94e45cf49050ec93fc15c3",
+      "finalized_at": "2026-10-14T00:58:48.06487+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "computed_hash": "47c691153fb1f883ea4c0a77c85d7f8c964cf2cabb94e45cf49050ec93fc15c3",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "dependency_revision": 1
+    },
+    {
+      "id": "dfd47e35-b99a-4581-942f-96ab5d3941f1",
+      "action": "DELETE_EXACT",
+      "status": "FINALIZED",
+      "targets": [
+        "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+        "3feb660b-21aa-4494-ada8-110cf3cf0e22",
+        "686f6ecc-40a2-4a8f-a10b-ceaf026c6ada",
+        "7d85a166-59ae-4a72-a562-138e9a1617c7",
+        "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+        "dbe34c34-cecb-4183-a121-5eac1035d176"
+      ],
+      "created_at": "2026-10-14T00:59:51.676829+00:00",
+      "prepared_by": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "content_hash": "2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8",
+      "finalized_at": "2026-10-14T00:59:51.676829+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "computed_hash": "2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "dependency_revision": 21
+    },
+    {
+      "id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "action": "DELETE_EXACT",
+      "status": "FINALIZED",
+      "targets": [
+        "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+        "8b1ff30c-3695-4847-b4cf-cc92cd6a399c"
+      ],
+      "created_at": "2026-10-14T00:59:51.69383+00:00",
+      "prepared_by": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "content_hash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+      "finalized_at": "2026-10-14T00:59:51.69383+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "computed_hash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "dependency_revision": 22
+    }
+  ],
+  "copies": [
+    {
+      "id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "byte_size": 232,
+      "namespace": "dpp-lifecycle307-online",
+      "object_key": "fixture/a.csv",
+      "namespace_id": "f6147fe0-950f-424e-ab88-0aa0fca15872",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "registered_at": "2026-10-14T00:58:48.038143+00:00",
+      "content_sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+      "provider_version": "312365a9-f984-43de-b9d5-7e26009ccd82",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635"
+    },
+    {
+      "id": "3feb660b-21aa-4494-ada8-110cf3cf0e22",
+      "byte_size": 129328,
+      "namespace": "dpp-lifecycle307-online",
+      "object_key": "fixture/b.csv",
+      "namespace_id": "f6147fe0-950f-424e-ab88-0aa0fca15872",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "registered_at": "2026-10-14T00:58:48.038143+00:00",
+      "content_sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+      "provider_version": "159e90c3-adb6-4ea3-b2e8-2804e578e86f",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635"
+    },
+    {
+      "id": "7d85a166-59ae-4a72-a562-138e9a1617c7",
+      "byte_size": 232,
+      "namespace": "dpp-lifecycle307-online",
+      "object_key": "fixture/processed.csv",
+      "namespace_id": "f6147fe0-950f-424e-ab88-0aa0fca15872",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "registered_at": "2026-10-14T00:59:51.458235+00:00",
+      "content_sha256": "99cefa99326fb2e5daa5f23ae8802b057e5f467d5ed9813c73cdecd71f4368ad",
+      "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+      "provider_version": "7c8ad93b-31ee-445c-9402-816dda0410ec",
+      "dataset_version_id": "47451712-ee38-45d1-a94e-786f59aa1647",
+      "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635"
+    },
+    {
+      "id": "686f6ecc-40a2-4a8f-a10b-ceaf026c6ada",
+      "byte_size": 494,
+      "namespace": "dpp-lifecycle307-online",
+      "object_key": "fixture/standardized.csv",
+      "namespace_id": "f6147fe0-950f-424e-ab88-0aa0fca15872",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "registered_at": "2026-10-14T00:59:47.138142+00:00",
+      "content_sha256": "044a854f6cf61dec3d77c6a907b0b30363ec5e96d5dca12649865772d7ee9163",
+      "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+      "provider_version": "2139f293-87f4-4d49-a9f0-941b22275093",
+      "dataset_version_id": "03437e8c-9bbd-4693-87e0-fff6e651d0a5",
+      "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635"
+    },
+    {
+      "id": "dbe34c34-cecb-4183-a121-5eac1035d176",
+      "byte_size": 232,
+      "namespace": "dpp-lifecycle307-quarantine",
+      "object_key": "fixture/a.csv",
+      "namespace_id": "7c259d5d-23d5-4180-8ce6-2d508e466b32",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "registered_at": "2026-10-14T00:58:48.038143+00:00",
+      "content_sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+      "provider_version": "5a7ce790-9093-4569-a8fd-0726009a5eb4",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635"
+    },
+    {
+      "id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "byte_size": 129328,
+      "namespace": "dpp-lifecycle307-quarantine",
+      "object_key": "fixture/b.csv",
+      "namespace_id": "7c259d5d-23d5-4180-8ce6-2d508e466b32",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "registered_at": "2026-10-14T00:58:48.038143+00:00",
+      "content_sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+      "provider_version": "846d0c7c-289d-4667-bc7c-aa04e44357d4",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635"
+    }
+  ],
+  "counts": {
+    "pins": 7,
+    "copies": 6,
+    "completion": 0,
+    "active_pins": 0,
+    "send_claims": 0,
+    "requirements": 23,
+    "terminations": 7,
+    "storage_calls": 52,
+    "copy_operations": 0,
+    "absence_receipts": 0,
+    "reference_releases": 23,
+    "typed_storage_costs": 52,
+    "storage_observations": 52,
+    "provider_observations": 0,
+    "processing_output_ready": 2,
+    "processing_output_intents": 2
+  },
+  "schema": 67,
+  "attempts": [
+    {
+      "id": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+      "action": "DELETE_EXACT",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T00:59:53.349245+00:00",
+      "dispatch_id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 83,
+      "provider_request_key": "lifecycle-delete:0a86461d-d5c2-4c00-99ae-0d44ac6dde2a"
+    },
+    {
+      "id": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+      "action": "DELETE_EXACT",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T00:59:53.615357+00:00",
+      "dispatch_id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 84,
+      "provider_request_key": "lifecycle-delete:d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9"
+    }
+  ],
+  "approvals": [
+    {
+      "id": "34274662-4973-4621-ab4d-b89c0493f1dc",
+      "action": "DELETE_EXACT",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "basis_ref": "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE",
+      "plan_hash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+      "expires_at": "2026-10-14T01:44:38.439783+00:00",
+      "valid_from": "2026-10-14T00:59:51.965416+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "dependency_revision": 28,
+      "expired_as_of_readback": true
+    }
+  ],
+  "dispatches": [
+    {
+      "id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "approval_id": "34274662-4973-4621-ab4d-b89c0493f1dc",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dispatched_at": "2026-10-14T00:59:53.349245+00:00",
+      "evaluation_id": "c987ecc9-d00e-4706-b88a-352a49e44444",
+      "dependency_revision": 83
+    },
+    {
+      "id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "approval_id": "34274662-4973-4621-ab4d-b89c0493f1dc",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dispatched_at": "2026-10-14T00:59:53.615357+00:00",
+      "evaluation_id": "d6bcfa1e-d1b1-4093-8db7-32d2a434b0b9",
+      "dependency_revision": 84
+    }
+  ],
+  "restrictions": [
+    {
+      "id": "876a0559-2c02-45ba-8f64-6845b2a2b175",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "basis_ref": "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE",
+      "occurred_at": "2026-10-14T00:59:52.11498+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "dependency_revision": 37
+    },
+    {
+      "id": "2d2d3b66-05ee-4a30-a831-5dcb5512671a",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "basis_ref": "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE",
+      "occurred_at": "2026-10-14T00:59:52.313441+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "dependency_revision": 53
+    }
+  ],
+  "copy_operations": null,
+  "processing_output_ready": [
+    {
+      "call_id": "a31d681c-4d30-4533-9e80-77958dc88a64",
+      "copy_id": "686f6ecc-40a2-4a8f-a10b-ceaf026c6ada",
+      "intent_id": "5acfe963-420e-4de9-9deb-463b3c5c2f31",
+      "observed_at": "2026-10-14T00:59:47.168566+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155"
+    },
+    {
+      "call_id": "d108b37c-7c6f-4362-9a41-8069c366dce2",
+      "copy_id": "7d85a166-59ae-4a72-a562-138e9a1617c7",
+      "intent_id": "eb0db0be-f362-426d-85b4-c10f07eeaa11",
+      "observed_at": "2026-10-14T00:59:51.466772+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155"
+    }
+  ],
+  "processing_output_intents": [
+    {
+      "id": "5acfe963-420e-4de9-9deb-463b3c5c2f31",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "byte_size": 494,
+      "created_at": "2026-10-14T00:59:47.045025+00:00",
+      "object_key": "fixture/standardized.csv",
+      "execution_id": null,
+      "namespace_id": "f6147fe0-950f-424e-ab88-0aa0fca15872",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "content_sha256": "044a854f6cf61dec3d77c6a907b0b30363ec5e96d5dca12649865772d7ee9163",
+      "source_copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "dataset_version_id": "03437e8c-9bbd-4693-87e0-fff6e651d0a5",
+      "entity_match_job_id": "fad8a29b-d6ad-4c1b-8de8-7b87c2f562ff"
+    },
+    {
+      "id": "eb0db0be-f362-426d-85b4-c10f07eeaa11",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "byte_size": 232,
+      "created_at": "2026-10-14T00:59:51.435787+00:00",
+      "object_key": "fixture/processed.csv",
+      "execution_id": "f4aed750-92ef-4c96-bffa-b0a5f09cc614",
+      "namespace_id": "f6147fe0-950f-424e-ab88-0aa0fca15872",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-fixture:5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "content_sha256": "99cefa99326fb2e5daa5f23ae8802b057e5f467d5ed9813c73cdecd71f4368ad",
+      "source_copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "dataset_version_id": "47451712-ee38-45d1-a94e-786f59aa1647",
+      "entity_match_job_id": null
+    }
+  ]
+}

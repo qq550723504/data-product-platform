@@ -1,0 +1,12 @@
+=== RUN   TestRecordedPoliciesUseOfficialSetEquality
+--- PASS: TestRecordedPoliciesUseOfficialSetEquality (0.00s)
+=== RUN   TestWiderOrDifferentPoliciesRemainRejected
+=== RUN   TestWiderOrDifferentPoliciesRemainRejected/action
+=== RUN   TestWiderOrDifferentPoliciesRemainRejected/resource
+=== RUN   TestWiderOrDifferentPoliciesRemainRejected/version
+--- PASS: TestWiderOrDifferentPoliciesRemainRejected (0.00s)
+    --- PASS: TestWiderOrDifferentPoliciesRemainRejected/action (0.00s)
+    --- PASS: TestWiderOrDifferentPoliciesRemainRejected/resource (0.00s)
+    --- PASS: TestWiderOrDifferentPoliciesRemainRejected/version (0.00s)
+PASS
+ok  	command-line-arguments	0.691s

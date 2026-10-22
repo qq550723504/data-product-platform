@@ -1,0 +1,69 @@
+{
+  "status": "PASS_TWO_BIND_MOUNTS",
+  "closures": [
+    {
+      "stage": "a",
+      "retained_rejected_id": "4935ebb52cd9d33ea07a13ddf04b35c7013f344a32954633af7adcf79142293f",
+      "retained_rejected_name": "dpp-lifecycle307-5d2274ee-reference-send-a-staging-rejected01",
+      "rejected_started": false,
+      "current_id": "84b76b5f6bbee47e9f961cf6d4f48e4f2b3f035824007efe8d9f68d99c5c2d50",
+      "current_name": "dpp-lifecycle307-5d2274ee-reference-send-a",
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\delete-confirmed-v14-execution01\\send-a",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-5d2274ee\\reference-disposal-execution01\\executor-a",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "scratch_tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": ""
+      },
+      "delete": 0
+    },
+    {
+      "stage": "b",
+      "retained_rejected_id": "0484679b65f1c9d6fd603e61e5b94a6e5fa4752e4771771af721615d1b2a87e5",
+      "retained_rejected_name": "dpp-lifecycle307-5d2274ee-reference-send-b-staging-rejected01",
+      "rejected_started": false,
+      "current_id": "799e868213695c7e164a3c8b6ed1228445bf1db061df5e944274ada0b1fc0956",
+      "current_name": "dpp-lifecycle307-5d2274ee-reference-send-b",
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\delete-confirmed-v14-execution01\\send-b",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-5d2274ee\\reference-disposal-execution01\\executor-b",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "scratch_tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": ""
+      },
+      "delete": 0
+    }
+  ],
+  "old_helpers_and_anonymous_volumes": "RETAINED_NEVER_STARTED",
+  "cleanup": 0
+}

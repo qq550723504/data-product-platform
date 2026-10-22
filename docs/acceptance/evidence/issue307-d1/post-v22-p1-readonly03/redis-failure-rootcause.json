@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-19T10:42:20.298873+00:00",
+  "cid": "fdb7b92e9aa45082628a707f63c44338bd66f991a14a90e010dc1125ba385661",
+  "exit": 127,
+  "stopped": true,
+  "pid": 0,
+  "stderr_sha256": "c7cc0db781f153f2d68094140660ae9a7a6a5a6abbb94bec8f51a8e8a5e5ef5c",
+  "original_stderr": "setpriv: setresuid failed: Operation not permitted\n",
+  "frozen_image_passwd": "redis:x:999:1000::/home/redis:/sbin/nologin",
+  "new_empty_data_volume_owner": "999:1000",
+  "native_precheck": "PASS_7_HEAD_PROTECTION_TWO_FULL_LISTS_P1_ABSENT",
+  "Core_absence": "NOT_RUN",
+  "Core_after": "NOT_CAPTURED_IN_FAILED_AUDIT"
+}

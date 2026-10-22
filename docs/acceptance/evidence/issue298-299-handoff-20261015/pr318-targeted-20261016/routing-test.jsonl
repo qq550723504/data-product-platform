@@ -1,0 +1,23 @@
+{"Time":"2026-10-16T14:20:14.4738018+08:00","Action":"start","Package":"./internal/platform/routing"}
+{"Time":"2026-10-16T14:20:14.9246886+08:00","Action":"run","Package":"./internal/platform/routing","Test":"TestVersionFitsPersistedOutboxContract"}
+{"Time":"2026-10-16T14:20:14.9246886+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestVersionFitsPersistedOutboxContract","Output":"=== RUN   TestVersionFitsPersistedOutboxContract\n"}
+{"Time":"2026-10-16T14:20:14.9246886+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestVersionFitsPersistedOutboxContract","Output":"--- PASS: TestVersionFitsPersistedOutboxContract (0.00s)\n"}
+{"Time":"2026-10-16T14:20:14.9246886+08:00","Action":"pass","Package":"./internal/platform/routing","Test":"TestVersionFitsPersistedOutboxContract","Elapsed":0}
+{"Time":"2026-10-16T14:20:14.9246886+08:00","Action":"run","Package":"./internal/platform/routing","Test":"TestRoutesDeclareEveryEventTypeExactlyOnce"}
+{"Time":"2026-10-16T14:20:14.9246886+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRoutesDeclareEveryEventTypeExactlyOnce","Output":"=== RUN   TestRoutesDeclareEveryEventTypeExactlyOnce\n"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRoutesDeclareEveryEventTypeExactlyOnce","Output":"--- PASS: TestRoutesDeclareEveryEventTypeExactlyOnce (0.00s)\n"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"pass","Package":"./internal/platform/routing","Test":"TestRoutesDeclareEveryEventTypeExactlyOnce","Elapsed":0}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"run","Package":"./internal/platform/routing","Test":"TestRoutesResolveGovernanceProjectionProfile"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRoutesResolveGovernanceProjectionProfile","Output":"=== RUN   TestRoutesResolveGovernanceProjectionProfile\n"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRoutesResolveGovernanceProjectionProfile","Output":"--- PASS: TestRoutesResolveGovernanceProjectionProfile (0.00s)\n"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"pass","Package":"./internal/platform/routing","Test":"TestRoutesResolveGovernanceProjectionProfile","Elapsed":0}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"run","Package":"./internal/platform/routing","Test":"TestRoutesRequireExecutionQueueForNewDispatchEvents"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRoutesRequireExecutionQueueForNewDispatchEvents","Output":"=== RUN   TestRoutesRequireExecutionQueueForNewDispatchEvents\n"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRoutesRequireExecutionQueueForNewDispatchEvents","Output":"--- PASS: TestRoutesRequireExecutionQueueForNewDispatchEvents (0.00s)\n"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"pass","Package":"./internal/platform/routing","Test":"TestRoutesRequireExecutionQueueForNewDispatchEvents","Elapsed":0}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"run","Package":"./internal/platform/routing","Test":"TestRouterImplementsObligationSource"}
+{"Time":"2026-10-16T14:20:14.9252201+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRouterImplementsObligationSource","Output":"=== RUN   TestRouterImplementsObligationSource\n"}
+{"Time":"2026-10-16T14:20:14.9257494+08:00","Action":"output","Package":"./internal/platform/routing","Test":"TestRouterImplementsObligationSource","Output":"--- PASS: TestRouterImplementsObligationSource (0.00s)\n"}
+{"Time":"2026-10-16T14:20:14.9257494+08:00","Action":"pass","Package":"./internal/platform/routing","Test":"TestRouterImplementsObligationSource","Elapsed":0}
+{"Time":"2026-10-16T14:20:14.9257494+08:00","Action":"output","Package":"./internal/platform/routing","Output":"PASS\n"}
+{"Time":"2026-10-16T14:20:15.9601202+08:00","Action":"pass","Package":"./internal/platform/routing","Elapsed":1.486}

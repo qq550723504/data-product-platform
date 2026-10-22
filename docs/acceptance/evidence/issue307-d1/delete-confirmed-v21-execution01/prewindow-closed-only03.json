@@ -1,0 +1,77 @@
+{
+  "status": "PASS_AUTHORIZED_PREWINDOW_CLOSED_ONLY",
+  "at": "2026-10-18T11:42:25.669857+00:00",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "retained_containers_stopped_PID0_noports_norestart": 248,
+  "permissions_false_and_all_frozen_fields": 32,
+  "actual_case_recovery_windows": {
+    "status": "PASS_CURRENT_CROSS_FIELD_WINDOWS",
+    "execution": "602acafe-065a-4385-b739-5776408f5448",
+    "candidate_use_until": "2026-10-18T14:40:00Z",
+    "recovery_until": "2026-10-18T16:40:00Z",
+    "cases": 7,
+    "recoveries": 7,
+    "provider_io": 0
+  },
+  "actual_owners_and_backups": {
+    "status": "PASS_ACTUAL_SEALED_OWNERS_BACKUPS",
+    "operators_and_bootstrap": 32,
+    "case_owners": 7,
+    "backup_hashes": 9,
+    "permission_enabled": false,
+    "native_delete": 0,
+    "provider_io": 0
+  },
+  "budget_volumes": [
+    {
+      "group": "business-races",
+      "volume": "dpp-lifecycle307-808a6960-candidate11-budget",
+      "owner_execution": "602acafe-065a-4385-b739-5776408f5448",
+      "mounted_cids": [
+        "0f2d35bd4b912448268aa13ed43ecc403a489349086508004e4515c80fe5edfc",
+        "10b32fa80d2d271e2c1506031954caefdb0d41f9fd55880c1faae1d33224e02a",
+        "1a1ad0d07f75effa38768bfebcac93b57943b70e00204fee0edb4cb58acd1c0c",
+        "3a0b555b9f72e3a199e434931a774e3f01e3640fba6a0d223fb6d2865ee07aa8",
+        "6861d38acbb3ccb1f35a130709e086075b733dc0b089e7cdfd2a69bf1983cdba",
+        "6fbb3021dbf3cc2b9ce47b3db017e8e18d61d40f159b5618c2e2f8fa0350d2cd",
+        "83c46a608d04df855f8f8ce6923069272ff9f5a85b7c0030f67c8ea9c8d2ad7d",
+        "a2d692838b818a32ea149aec41816221efb0b1a1301c6aeadaf72967c6fa3337",
+        "e59fbdb8501cf49c7c88b5e958de9fb294e2bec806a600337c7e5180c9397047"
+      ],
+      "empty": true
+    },
+    {
+      "group": "late-hold",
+      "volume": "dpp-lifecycle307-754ea8f0-candidate11-budget",
+      "owner_execution": "602acafe-065a-4385-b739-5776408f5448",
+      "mounted_cids": [
+        "3e011853a3a52543c1925d4701050e2e2a030f2a1a71a55079d9d1b5a8e469b4",
+        "b180fc6a50cd2286ce04971239ee346e9d8d0ff1c5e216b31ff5722c40caae72",
+        "f4c2d3ef698912fe1161cb4ab1c392db12a45904002d684f565d1ce0f5498a1b"
+      ],
+      "empty": true
+    },
+    {
+      "group": "mixed",
+      "volume": "dpp-lifecycle307-dfda43b4-candidate11-budget",
+      "owner_execution": "602acafe-065a-4385-b739-5776408f5448",
+      "mounted_cids": [
+        "839953b2b11cd2dbff5aa5ab29d4426016722366af7167a69631b5ccfcb9cdfe",
+        "8a95b51caeab75f3b6b6dcb4c909e32c85ac894d7f89916d79ccd9985b6c0c29",
+        "e7d4a9525f14074208ab04a790b36faf81a6ddf48836762d05eda1f0f62ad3d0",
+        "ec37d4cfa3cc017e4344d5ada881624fd99757ddfdc93746354ddaf724ffe810",
+        "fff08ccb56c6259deec8be30371ba4c952b9ac243a21bc39dc50380ad8a90d91"
+      ],
+      "empty": true
+    }
+  ],
+  "source_native_Core_started": false,
+  "permissions_modified": false,
+  "provider_io": 0,
+  "native_delete": 0,
+  "fresh_in_window_Core_native_IAM": "NOT_RUN_REQUIRED",
+  "earlier_audit_script_failures_preserved": [
+    "prewindow-extra-audit-failure01.json",
+    "prewindow-extra-audit-failure02.json"
+  ]
+}

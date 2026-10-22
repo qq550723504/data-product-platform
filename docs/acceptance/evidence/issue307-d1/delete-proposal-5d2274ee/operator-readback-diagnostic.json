@@ -1,0 +1,11 @@
+{
+  "status": "READ_ONLY_QUERY_FAILURE_RETAINED",
+  "query_stage": "Initial proposal-only readback",
+  "failure": "relation lifecycle_pending_copy does not exist",
+  "effect": "READ ONLY transaction aborted; no persisted mutation or provider I/O",
+  "correction": "Schema inspected; corrected readback uses lifecycle_copy_operation and lifecycle_processing_output_intent/ready",
+  "corrected_query": "core-readback.sql",
+  "corrected_result": "PASS",
+  "database_mutation": 0,
+  "provider_io": 0
+}

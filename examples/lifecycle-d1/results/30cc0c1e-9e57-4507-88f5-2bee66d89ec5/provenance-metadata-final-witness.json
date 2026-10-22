@@ -1,0 +1,14 @@
+{
+  "cleanup_requests": 0,
+  "binary_sha256": "33bc8135a6aa1713a8ae1597be9ad744843044652fb0348483a1236d25e9d249",
+  "scenario": "metadata-final-witness",
+  "workspace_id": "cb4937fb-cb09-4063-8f83-4ca8c8e8924d",
+  "attempt_id": "00000000-0000-0000-0000-000000000000",
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "gateway_sha256": "6ae8a380aaa644adbf7b02c5ebe01cce26b5d62620a9c8b8d834fefba96d9e1d",
+  "native_delete": "DENY_ALL",
+  "name": "dpp-lifecycle307-30cc0c1e-recovery-metadata-final-witness",
+  "mode": "witness",
+  "work_id": "00000000-0000-0000-0000-000000000000",
+  "container_id": "e4abcb3eb4aaa10d4e354fb9b7f9e8adec0390b814f5cf9f92f98bd3aa366b78"
+}

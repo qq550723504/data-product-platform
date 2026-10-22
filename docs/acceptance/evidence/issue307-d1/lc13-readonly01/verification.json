@@ -1,0 +1,20 @@
+{
+  "source_head": "84cfff575f646756ca45fbc51a07bb66174a7edc",
+  "go_source_unchanged_at": "5b469de8017ea6c64998493806f4db4d46495978",
+  "command": "go test -race -count=1 -p 1 -json ./cmd/lifecycle-fixture-reader ./internal/lifecycle/application ./internal/workflow/application ./internal/workflow/native ./internal/workflow/transport/queue",
+  "real_pg_schema": 68,
+  "fresh_database": "ref307_lc13_84cfff57",
+  "container": "dpp-ref307-29a7843d",
+  "host_port": 63947,
+  "retained": true,
+  "package_pass": 4,
+  "test_and_subtest_pass": 134,
+  "failure": 0,
+  "race_reports": 0,
+  "cmd_package": "Compiled; no test files",
+  "python_tests": 29,
+  "python_optimized_tests": 29,
+  "focused_go_vet": "PASS",
+  "raw_race_log_sha256": "cbfe8cbd866a13ce29cbd46574970544b8b9d349a4a0d78061777e3dba52e17d",
+  "full_D1": "NOT_ACCEPTED"
+}

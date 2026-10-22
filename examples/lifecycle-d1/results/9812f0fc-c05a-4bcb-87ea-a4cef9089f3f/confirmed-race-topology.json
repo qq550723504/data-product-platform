@@ -1,0 +1,72 @@
+{
+  "run_id": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "network_id": "fbe5e2e696fdba555318bfde0add6f3105b64cc4e676cdb29813ef408afd2d4f",
+  "internal": true,
+  "host_ports": [],
+  "containers": [
+    {
+      "name": "/dpp-lifecycle307-9812f0fc-gateway",
+      "id": "486d0e9953f299ada3727b92a1f68db95cfe793a24ae248a20f042599988f915",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/etc/caddy/Caddyfile",
+          "RW": false
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-9812f0fc-minio",
+      "id": "6d2a18d0346b22e19e7d6d901630212d5f2dfb5bfd3e6efdeabd0a5bf1631c4d",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-9812f0fc-objects",
+          "Destination": "/data",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/access",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/secret",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/start.sh",
+          "RW": false
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-9812f0fc-postgres",
+      "id": "8c900e5dd9cdd1d714124987b1a95315543e3753f35f1234a672df8a88f40b02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/pgpass",
+          "RW": false
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-9812f0fc-postgres",
+          "Destination": "/var/lib/postgresql/data",
+          "RW": true
+        }
+      ]
+    }
+  ],
+  "cleanup": 0
+}

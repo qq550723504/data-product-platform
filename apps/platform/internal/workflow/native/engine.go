@@ -37,6 +37,12 @@ type ObjectStore interface {
 	Get(ctx context.Context, storageURI string) (io.ReadCloser, error)
 }
 
+// Owned typed input port for bounded compositions. It cannot accept a locator
+// supplied by the caller and keeps lifecycle ownership with the execution.
+type DatasetInputReader interface {
+	ReadVersion(context.Context, uuid.UUID) (io.ReadCloser, error)
+}
+
 type Engine struct {
 	industryPackRoot    string
 	tx                  *transaction.Manager
@@ -47,7 +53,10 @@ type Engine struct {
 	store               ObjectStore
 	indicatorCalculator indicator.Calculator
 	goldBuilder         workflowapp.ProcessingEngine
+	inputReader         DatasetInputReader
 }
+
+func (e *Engine) WithInputReader(r DatasetInputReader) *Engine { e.inputReader = r; return e }
 
 func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, entityRepo *entityinfra.PostgresRepository, workflowRepo *workflowinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore, calculator indicator.Calculator, specialized ...workflowapp.ProcessingEngine) *Engine {
 	var goldBuilder workflowapp.ProcessingEngine
@@ -243,7 +252,12 @@ func (e *Engine) readInput(ctx context.Context, versionID uuid.UUID) (version st
 		return version, nil, "", fmt.Errorf("dataset version %s is not readable for workflow execution: status=%s", datasetVersion.ID, datasetVersion.Status)
 	}
 	version.ID = datasetVersion.ID
-	reader, err := e.store.Get(ctx, datasetVersion.StorageURI)
+	var reader io.ReadCloser
+	if e.inputReader != nil {
+		reader, err = e.inputReader.ReadVersion(ctx, versionID)
+	} else {
+		reader, err = e.store.Get(ctx, datasetVersion.StorageURI)
+	}
 	if err != nil {
 		return version, nil, "", err
 	}

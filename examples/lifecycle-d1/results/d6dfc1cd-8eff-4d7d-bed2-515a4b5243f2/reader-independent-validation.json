@@ -1,0 +1,18 @@
+{
+  "observations": 31,
+  "reader_pins": 3,
+  "original_versions_retained": 4,
+  "native_calls": 31,
+  "credential_scan": "PASS",
+  "public_files_scanned": 40,
+  "result": "PASS",
+  "confirmed_stops": 2,
+  "native_source_hashes": "MATCH",
+  "unconfirmed_crashed_pin": 1,
+  "read_calls": 3,
+  "cleanup": 0,
+  "validator": "offline PowerShell independent from Go acceptance runner",
+  "copy": 0,
+  "native_delete": 0,
+  "cost_allocations": 31
+}

@@ -1,0 +1,17 @@
+{
+  "reader-flush-full-tests": {
+    "fail": 0,
+    "ok": 86,
+    "no_test_files": 45
+  },
+  "reader-flush-race-tests": {
+    "fail": 0,
+    "ok": 3,
+    "no_test_files": 0
+  },
+  "reader-scoped-tests": {
+    "fail": 0,
+    "ok": 4,
+    "no_test_files": 1
+  }
+}

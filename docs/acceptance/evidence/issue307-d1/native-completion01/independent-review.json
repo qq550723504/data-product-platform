@@ -1,0 +1,44 @@
+{
+  "reviewer": "/root/pr318_independent_review",
+  "role": "Independent read-only; no file writes, tests, SQL, native/provider calls",
+  "source_head": "c18ffe64797e41cdded669e80bc16feff49698bd",
+  "baseline": "41d9fda759dd3c0d3bcba1435a41b8158d12e105",
+  "contract": "docs/acceptance/issue307-d1-completion-contract.md",
+  "blockers": [],
+  "closed_roots": [
+    "Strict archive MinIO pin matches new driver",
+    "Single-file writable admin receipt within otherwise read-only private mount",
+    "Role windows in finally and StartOnly retains gateway only after successful helper handoff"
+  ],
+  "index02_verified_unique_files": 249,
+  "index02_sha256": "0661c5604c765adf0eac75b562d7d9d7c1481a85ff85962e5dc0f7e70e0506c4",
+  "source_bindings_verified": 706,
+  "crlf_only_differences": 645,
+  "native_evidence": [
+    "pre-ISSUED uncommitted candidate invisible/0 GET/0 TCP bytes, actual exit94 rollback, positive129328 byte read, restriction orders and non-payload replay",
+    "Original3 COPY UNKNOWN/TRANSPORT observations remain; recovery append-only/no resend; explicit double enqueue, real Asynq orphan recovery and dual-owner/revocation",
+    "Metadata SQL fault input is not native deletion approval; UNKNOWN_PRESENT is nonterminal and reservation remains",
+    "209 journaled physical calls/observations/typed invocation costs,0 unaccounted/active pins/native DELETE/send claims/absence/completion/releases"
+  ],
+  "retained_resources_verified": {
+    "containers": 69,
+    "named_volumes": 10,
+    "internal_networks": 4,
+    "recorded_helper_ids": 51,
+    "exit_receipts": 42
+  },
+  "post_index02_artifacts_reviewed": [
+    "post-readonly-topology.json",
+    "private-log-manifest.json",
+    "final-retained-resources.json"
+  ],
+  "limits": [
+    "Reviewer did not rerun tests/SQL/native; verification receipt89 packages1117 tests14 skips0fail/race is root execution",
+    "Private raw logs checked only through public hash references",
+    "Final manifest/private scan/commit freshness are subsequent root checks",
+    "Old resources preservation limited to no-cleanup implementation and saved same-ID old5d services",
+    "Native processing crash, true DELETE faults/late hold/mixed results/post-delete completion,fullD1/D2/productionDR remain unaccepted"
+  ],
+  "draft": true,
+  "native_delete": 0
+}

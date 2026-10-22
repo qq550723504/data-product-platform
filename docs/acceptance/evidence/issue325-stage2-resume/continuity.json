@@ -1,0 +1,98 @@
+{
+  "status": "PASS",
+  "controllerHead": "23d54259c8bc24619f1667069d18307596d9f5cc",
+  "originalBusinessCode": "1687a6ef4bd5bd998696f95255a9e3885607a416",
+  "runId": "1b7e1949e8224ad8b870d28b96a3c6c2",
+  "workspaceId": "e7469d12-05bc-4427-b79a-356a49cfd13c",
+  "phase": "RUNNING",
+  "sameOriginalRegistryBytesArchived": true,
+  "originalFilesUnchanged": 16,
+  "sameOriginalContainerIds": true,
+  "sameOriginalVolumesAndNetworks": true,
+  "sameImagesAndPorts": true,
+  "sameOriginalBusinessBinariesAndWeb": true,
+  "physicalRawFilesUnchanged": 6,
+  "sameFullSQLAndNativeFacts": true,
+  "sourceValues": {
+    "enterprise": {
+      "rows": 6,
+      "allFixtureValuesMatch": true
+    },
+    "lease": {
+      "rows": 10,
+      "allFixtureValuesMatch": true
+    },
+    "energy": {
+      "rows": 14,
+      "allFixtureValuesMatch": true
+    }
+  },
+  "counts": {
+    "audit_event": 23,
+    "cost_event": 6,
+    "data_resource": 3,
+    "dataset": 3,
+    "dataset_certification": 0,
+    "dataset_version": 3,
+    "delivery_operation": 0,
+    "evidence": 15,
+    "execution": 0,
+    "ingestion_operation": 1,
+    "quality_result": 0,
+    "workflow_version": 0
+  },
+  "resumeHistory": [
+    {
+      "runId": "1b7e1949e8224ad8b870d28b96a3c6c2",
+      "workspaceId": "e7469d12-05bc-4427-b79a-356a49cfd13c",
+      "resumeAttemptId": "b5e99ca9a32d458b8c21d6effbf2af9a",
+      "status": "PASS",
+      "sameSQLAndNativeFacts": true,
+      "nativeSTSInvocations": 1,
+      "credentialExpiresAt": "2026-10-19T04:38:14Z"
+    },
+    {
+      "runId": "1b7e1949e8224ad8b870d28b96a3c6c2",
+      "workspaceId": "e7469d12-05bc-4427-b79a-356a49cfd13c",
+      "resumeAttemptId": "4e4de480e7aa4695a3b3bdcfa463bec5",
+      "status": "PASS",
+      "sameSQLAndNativeFacts": true,
+      "nativeSTSInvocations": 1,
+      "credentialExpiresAt": "2026-10-19T04:45:42Z"
+    }
+  ],
+  "nativeScope": {
+    "status": "PASS",
+    "freshSessionRawObjects": 3,
+    "allHashesMatch": true,
+    "foreignWorkspaceStatus": 403,
+    "foreignWorkspaceCode": "AccessDenied",
+    "mutations": 0
+  },
+  "repeat": {
+    "status": "PASS",
+    "runId": "1b7e1949e8224ad8b870d28b96a3c6c2",
+    "workspaceId": "e7469d12-05bc-4427-b79a-356a49cfd13c",
+    "sameFullFacts": true,
+    "sameProcesses": true,
+    "samePrivateHashes": true,
+    "sameResumeHistory": true,
+    "actualResumeAttempts": 1,
+    "actions": [
+      "resume",
+      "start",
+      "status"
+    ]
+  },
+  "restart": {
+    "status": "PASS",
+    "runId": "1b7e1949e8224ad8b870d28b96a3c6c2",
+    "workspaceId": "e7469d12-05bc-4427-b79a-356a49cfd13c",
+    "sameFullFacts": true,
+    "sameContainerIds": true,
+    "sameVolumes": true,
+    "newHostProcessIdentities": true,
+    "actualResumeAttempts": 2,
+    "nativeSTSInvocations": 2
+  }
+}

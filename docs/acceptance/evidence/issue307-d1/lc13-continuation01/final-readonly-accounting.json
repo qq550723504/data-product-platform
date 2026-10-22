@@ -1,0 +1,68 @@
+{
+  "copies": 6,
+  "pins": 6,
+  "terminations": 6,
+  "active_pins": 0,
+  "calls": 23,
+  "observations": 23,
+  "storage_costs": 23,
+  "unaccounted_storage": 0,
+  "provider_attempts": 9,
+  "provider_observations": 9,
+  "provider_costs": 9,
+  "unaccounted_provider": 0,
+  "native_deliveries": [
+    {
+      "id": "3963dfd4-ed4b-47f6-903e-5969d00b98a6",
+      "key": "lc13-native-expiry",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "74784576-f18d-4799-a542-2c9005e7129a",
+      "key": "lc13-native-expiry-03",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "9ea5236a-d2fb-4def-8041-c4c0cd3c29e6",
+      "key": "lc13-native-expiry-04",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "ae7835ce-f5b9-4b64-b22a-335f09e07201",
+      "key": "lc13-native-expiry-02",
+      "status": "BLOCKED"
+    }
+  ],
+  "unreleased_credential_demands": 0,
+  "replay_decisions": [],
+  "native_delete": 0,
+  "send_claims": 0,
+  "absence": 0,
+  "completion": 0,
+  "executions": [
+    {
+      "id": "6d83facd-588d-4ded-9024-9a142529de5d",
+      "output": null,
+      "status": "FAILED",
+      "retry_of": null
+    },
+    {
+      "id": "38cda76f-605a-4e50-ab78-93508e700f60",
+      "output": "a6047bc3-053d-4348-b26b-d26d4abff82b",
+      "status": "SUCCEEDED",
+      "retry_of": "6d83facd-588d-4ded-9024-9a142529de5d"
+    }
+  ],
+  "run": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+  "workspace": "43818661-5a41-4bbf-ab86-341f0c442c3f",
+  "roles": {
+    "credential-admin\\reader.json": false,
+    "credential-owner\\reader.json": false,
+    "plane-admin\\reader.json": false,
+    "plane-owner\\reader.json": false,
+    "resume-admin\\reader.json": false,
+    "resume-owner\\reader.json": false
+  },
+  "cleanup": 0,
+  "all_resources_retained": true
+}

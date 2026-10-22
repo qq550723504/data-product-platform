@@ -17,12 +17,28 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/csvinput"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
 type ObjectStore interface {
 	Put(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error)
+}
+
+// The runtime composition owns this scope; a request cannot select it.
+type WorkspaceObjectStore interface {
+	CheckWorkspace(context.Context, uuid.UUID) error
+}
+
+// A controlled producer can bind object I/O to the already allocated platform
+// version instead of parsing an engine-selected locator or filename.
+type VersionObjectStore interface {
+	PutVersion(context.Context, domain.DatasetVersion, string, io.Reader, int64, string) (string, error)
+}
+type VersionPublicationLease interface {
+	LockPublication(context.Context, pgx.Tx, uuid.UUID) error
+	FinalizePublication(context.Context, pgx.Tx, domain.DatasetVersion) error
 }
 
 type UploadVersionCommand struct {
@@ -39,9 +55,15 @@ type UploadVersionCommand struct {
 }
 
 type UploadVersionService struct {
-	tx    *transaction.Manager
-	repo  *infrastructure.PostgresRepository
-	store ObjectStore
+	tx               *transaction.Manager
+	repo             *infrastructure.PostgresRepository
+	store            ObjectStore
+	publicationLease VersionPublicationLease
+}
+
+func (s *UploadVersionService) WithPublicationLease(p VersionPublicationLease) *UploadVersionService {
+	s.publicationLease = p
+	return s
 }
 
 type VersionPublishFinalizer func(context.Context, pgx.Tx, domain.DatasetVersion) error
@@ -113,10 +135,24 @@ func (s *UploadVersionService) handle(
 	}
 
 	var version domain.DatasetVersion
+	var workspaceID uuid.UUID
 	// alreadyPublished short-circuits a replay of a version this Execution already
 	// published: there is nothing left to write, and no new fact to record.
 	alreadyPublished := false
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		workspaceID, err = s.repo.WorkspaceForDatasetTx(ctx, tx, cmd.DatasetID)
+		if err != nil {
+			return err
+		}
+		if scoped, ok := s.store.(WorkspaceObjectStore); ok {
+			if err := scoped.CheckWorkspace(ctx, workspaceID); err != nil {
+				return err
+			}
+		}
+		if _, err := deliveryfence.Lock(ctx, tx, workspaceID); err != nil {
+			return err
+		}
 		reused := false
 		if key != "" {
 			workspaceID, err := s.repo.WorkspaceForDatasetTx(ctx, tx, cmd.DatasetID)
@@ -241,8 +277,13 @@ func (s *UploadVersionService) handle(
 	// are ever referenced, and a loser merely leaves an unreferenced staged object.
 	attemptToken := uuid.New()
 	filename := sanitizeFilename(cmd.Filename)
-	objectName := fmt.Sprintf("datasets/%s/v%06d/%s/%s", version.DatasetID.String(), version.VersionNo, attemptToken.String(), filename)
-	storageURI, err := s.store.Put(ctx, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)
+	objectName := fmt.Sprintf("core/%s/datasets/%s/v%06d/%s/%s", workspaceID, version.DatasetID, version.VersionNo, attemptToken, filename)
+	var storageURI string
+	if producer, ok := s.store.(VersionObjectStore); ok {
+		storageURI, err = producer.PutVersion(ctx, version, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)
+	} else {
+		storageURI, err = s.store.Put(ctx, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)
+	}
 	if err != nil {
 		_ = s.markFailed(context.Background(), version.ID, cmd)
 		return domain.DatasetVersion{}, fmt.Errorf("store dataset version: %w", err)
@@ -265,6 +306,11 @@ func (s *UploadVersionService) handle(
 		// same Execution may have published this exact version (or failed it) between
 		// our allocation and this commit, so the decision to publish is taken on the
 		// committed row, never on the state this call allocated.
+		if s.publicationLease != nil {
+			if err := s.publicationLease.LockPublication(ctx, tx, version.ID); err != nil {
+				return err
+			}
+		}
 		current, err := s.repo.LockVersion(ctx, tx, version.ID)
 		if err != nil {
 			return err
@@ -322,6 +368,11 @@ func (s *UploadVersionService) handle(
 		}
 		if finalizer != nil {
 			if err := finalizer(ctx, tx, version); err != nil {
+				return err
+			}
+		}
+		if s.publicationLease != nil {
+			if err := s.publicationLease.FinalizePublication(ctx, tx, version); err != nil {
 				return err
 			}
 		}

@@ -1,0 +1,193 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/5d-04/current-core-readback.json",
+      "bytes": 14239,
+      "sha256": "e07cd6b59c0a1c9e6ccd14dbcf003a1a1efd9b03349fb7d446654a4da66225bb"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/5d-04/operator-diagnostic.json",
+      "bytes": 580,
+      "sha256": "ba183183833c5ce78bc18325d8349143140819492363c8a213f64b79a9bde69f"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/5d-04/owner-closure-readback.json",
+      "bytes": 36851,
+      "sha256": "70e9d5bfe3d86d3915f63b10a8dedf1167834726df26a580cda86ae5b2193d7c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/5d-04/retained-final-state.json",
+      "bytes": 206,
+      "sha256": "134e5aa44c048638e34378de46f0d9ec6353ceb1c88879c22939152695341c26"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/execution-preconditions.json",
+      "bytes": 4335,
+      "sha256": "e6acb94075d59b819acd33ea63d70a894e7a40067be1880f581b63cc888a136d"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json",
+      "bytes": 21462,
+      "sha256": "0b89250f7e2a755ae0a452614ae19d3d41c4a735795b39a3deb3e74eed6da0b2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retained-topology.json",
+      "bytes": 18653,
+      "sha256": "268cc6fff2eccfe53744c41ff4937a742b195c2603b3a5bdc5670c6c88862a01"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/core-readonly-collector.py",
+      "bytes": 6736,
+      "sha256": "042889f5ddea41f6fd000780f97e5ad13c240d91ed195ff2fb4572623e66c031"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/current-core-readback.json",
+      "bytes": 14239,
+      "sha256": "cdf92b79716e5b424503230641b9af3edd049cabd22a4458b19e07b0f43667ec"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/current-preconditions-readonly.sql",
+      "bytes": 49802,
+      "sha256": "dc5907dc9bc8e36e47e861b26efa901143e0412f28788973e284ff8fc7f1a8ea"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/iam-readonly.go",
+      "bytes": 3680,
+      "sha256": "18a27cf7f39d9454e235ee88f4a5319e63218f1516875af4e5697f4a8f0efb20"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/native-iam-helper.json",
+      "bytes": 510,
+      "sha256": "a906c2a69d9331e6725b0177bf5b8171663ff8808e2e2272b7e28ac6f6f965ed"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/native-iam-readonly.json",
+      "bytes": 1049,
+      "sha256": "b29f9d75d02f3a9ab2a4e98dee5bb2a2e80928da69556106a1a06af5701bcd74"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/operator-diagnostic.json",
+      "bytes": 705,
+      "sha256": "6ff42a83e87f50e6f3b79723c834caaaa96e86dee1e8fa09ee1984839fc8e354"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/owner-closure-readback.json",
+      "bytes": 36851,
+      "sha256": "70e9d5bfe3d86d3915f63b10a8dedf1167834726df26a580cda86ae5b2193d7c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/reference-qualification-readback.json",
+      "bytes": 26464,
+      "sha256": "a7a07c345cd60fd3d7a9046a408f778218185f96428acd699ac706de2586dcf2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/retained-final-state.json",
+      "bytes": 206,
+      "sha256": "134e5aa44c048638e34378de46f0d9ec6353ceb1c88879c22939152695341c26"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/audit-costs.json",
+      "bytes": 133,
+      "sha256": "4f914194ef984bc25ce3467a6f1090c99846be8031b09fe9f63c07f4cf914ec5"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/audit-restored.json",
+      "bytes": 31634,
+      "sha256": "144c39ada49b599632151abe48a674815a11de305ba087fc2cef12df25fdd44c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/candidate-binding.json",
+      "bytes": 45186,
+      "sha256": "04a1bd50245f0a027086a20ae2033fc856e20d9749b1f01c9a1a44f523b86228"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/core-readonly-collector.py",
+      "bytes": 6736,
+      "sha256": "042889f5ddea41f6fd000780f97e5ad13c240d91ed195ff2fb4572623e66c031"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/current-core-readback.json",
+      "bytes": 14239,
+      "sha256": "42becb4cb2f481a4f06c43636fb3df0d95ff5a0e077b2a3cf8772a9c23c8ded2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/current-preconditions-readonly.sql",
+      "bytes": 49802,
+      "sha256": "dc5907dc9bc8e36e47e861b26efa901143e0412f28788973e284ff8fc7f1a8ea"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/iam-readonly.go",
+      "bytes": 3748,
+      "sha256": "ea70559ea5916083fdd7cc8c1b7e927c370438baf628ccb2b5f5835ca233aaac"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/native-helper.json",
+      "bytes": 335,
+      "sha256": "74dbaa16ed611f3d5f3eac8a2cff13c61bbb48c0fc051b5f1935e3008229f08f"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/native-iam-helper.json",
+      "bytes": 510,
+      "sha256": "89742707c2468ec1b9d84431d30530a08a32b201d33a7c67e921caa171cf9e2f"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/native-iam-readonly.json",
+      "bytes": 1043,
+      "sha256": "e46fd1b8808477d0c918b83c9db15b99ecc340ea6efc72592da28fcab5d85ffe"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/native-six-version.json",
+      "bytes": 12743,
+      "sha256": "80bbb49b56ee83328cb66aa54e8f6fe4b296d128e34e1793d7d904426174ee89"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/owner-closure-readback.json",
+      "bytes": 36851,
+      "sha256": "70e9d5bfe3d86d3915f63b10a8dedf1167834726df26a580cda86ae5b2193d7c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/readonly-checkpoint.json",
+      "bytes": 913,
+      "sha256": "215471cb528d6fafecd3998d68e811290e1f70a38566e1c2a45ec2900e7bc9f6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/reference-qualification-readback.json",
+      "bytes": 26464,
+      "sha256": "2f29f125951f6918d66acb84196f78ad542d10bcf619c5f9fdc6238cfebbcdfd"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/retained-final-state.json",
+      "bytes": 196,
+      "sha256": "32901781f00c832f9df07b526f1399a74af6a5ed78e517174860c03715e855d3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/source-after.json",
+      "bytes": 31312,
+      "sha256": "3a5f98c09d2f367d8b46d0804a46e49f0575a4c5a5b67ae9bf3e36b505636828"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/source-before.json",
+      "bytes": 31286,
+      "sha256": "e288f051ca58ba8196f1eb19e30a3adc82aae767aafe9f8c4869c72ba1216815"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/run-readonly-refresh.py",
+      "bytes": 2746,
+      "sha256": "663885cf177fdb4712d4cce2d2cdd036b0c85bb92b0a1a264cf981333d7faa0c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/verification.json",
+      "bytes": 668,
+      "sha256": "0fc171f8e33b15a2cb276b0f02879fccc888f45a2c6682e0ccfe76a34bd96fbe"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/secret-audit.json",
+      "bytes": 60,
+      "sha256": "a7eb5280d74ed63b13bd46d64a0ba942783bc7e0446b5a17128f66b3c955f96a"
+    }
+  ],
+  "self_excluded": true,
+  "candidate_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "prior_indexes_unchanged": true,
+  "delete": 0
+}

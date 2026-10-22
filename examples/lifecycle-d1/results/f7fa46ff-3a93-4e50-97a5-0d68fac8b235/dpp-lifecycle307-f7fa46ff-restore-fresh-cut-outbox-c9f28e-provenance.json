@@ -1,0 +1,15 @@
+{
+  "gateway_sha256": "3045f714f56768b5099ff2b4f18c5a3fb5e833cbdadd694313f6ebea725961af",
+  "scenario": "restore-fresh-cut-outbox",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "cleanup": 0,
+  "native_delete": 0,
+  "credentials": "READ_ONLY_NO_ROOT_NO_COPY_NO_DELETE",
+  "binary_sha256": "6bc11d66bb3f64f3ae07a1c3b508350b3c577ab3437d1436e4d6ae6bee576154",
+  "role": "copy-worker",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "recorded_before_start": "2026-10-11T14:56:39.1644461Z",
+  "expected_exit": 0,
+  "helper_id": "7463296ff502b2196c7401d4e9f8eff378cecc549d613742838947c65e5d4607",
+  "action": "outbox"
+}

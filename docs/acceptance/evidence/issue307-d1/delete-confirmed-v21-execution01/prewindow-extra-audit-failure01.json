@@ -1,0 +1,13 @@
+{
+  "status": "FAILED_HOST_AUDIT_SCRIPT_FIELD_NAME",
+  "at": "2026-10-18T11:41:26.973412+00:00",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "exception": "KeyError: 'HumanTextSHA256'",
+  "cause": "Additional host audit used a nonexistent permission JSON field; frozen schema uses ConfirmationSHA256/MaxPerTarget/MaxTotal. No permission or candidate changed. Frozen review05 Host.check already passed, all 248 retained resources had been inspected closed before this script error.",
+  "source_starts": 0,
+  "permission_mutations": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "budget_readback_started": false,
+  "disposition": "Keep this failed audit attempt; correct the audit field names and use a new receipt, without changing any gate or frozen bytes."
+}

@@ -1,0 +1,15 @@
+{
+  "recorded_before_start": "2026-10-11T14:46:50.1313780Z",
+  "expected_exit": 0,
+  "native_delete": 0,
+  "binary_sha256": "36d3efc94a4c8b305f86a34a4b0c4f9c827720f8a39b96c688389631c73edcb9",
+  "helper_id": "2b245b0ef408c2e09b95a4e13ac10bdec33a56ed662ddc7bc78bb0576191667a",
+  "scenario": "provision-copy-iam",
+  "action": "provision",
+  "gateway_sha256": "2582a33a3dd7c6912143e5308c7a4ee24bf5c09343585c354e0204367872d855",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "credentials": "IAM_PROVISIONING_ONLY",
+  "cleanup": 0,
+  "role": "copy-admin"
+}

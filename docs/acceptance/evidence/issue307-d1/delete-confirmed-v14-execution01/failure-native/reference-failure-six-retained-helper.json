@@ -1,0 +1,10 @@
+{
+  "id": "498931d927ecd633a86dd3a0c7970997f0fcb9efd3a79d685b5af352e3a2ad8e",
+  "name": "dpp-lifecycle307-5d2274ee-reference-failure-six-retained",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "exit": 0,
+  "pid": 0,
+  "network": "container:0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+  "read_only": true,
+  "root_payload_mounted": false
+}

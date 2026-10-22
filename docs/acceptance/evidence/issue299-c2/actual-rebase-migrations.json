@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "base": "c1a3463ee110e3cb7dadb0004b0942c001f19ffe",
+  "candidate": "a793f237336c21f397e9daf557ea6d1ab53ab1f1",
+  "fresh66": "PASS",
+  "main64to66": "PASS",
+  "empty66then65DownUp": "PASS",
+  "main64CostGuardDefinitionNormalizedOnlyCRLF": true,
+  "main64SingleSubjectConstraintExact": true,
+  "initialHarnessFailure": "raw compiled function byte comparison differed only by LF versus embedded CRLF, normalized definitions/constraint exactly equal; no product weakening",
+  "destructive64Down": "FAIL_CLOSED",
+  "destructive64StructureBeforeAfterEqual": true,
+  "populated66Down": "FAIL_CLOSED",
+  "factsBefore": [
+    {
+      "name": "attempts",
+      "n": 18,
+      "hash": "260775e510ab8eb83706aa03d07efd4e"
+    },
+    {
+      "name": "cost_allocation",
+      "n": 263,
+      "hash": "93ae9955e2f2d3246b10516f54cfbc82"
+    },
+    {
+      "name": "cost_event",
+      "n": 281,
+      "hash": "19557a19b0811d2d5c0757025f1139f3"
+    },
+    {
+      "name": "migration",
+      "n": 63,
+      "hash": "e105b0975c46431db06456a5d1d33268"
+    },
+    {
+      "name": "observations",
+      "n": 20,
+      "hash": "e3d453a5ecb03bafdb1689187ad56e76"
+    },
+    {
+      "name": "runtime",
+      "n": 18,
+      "hash": "3c902edf9604adfa6222fe076d978e48"
+    }
+  ],
+  "factsAfter": [
+    {
+      "name": "attempts",
+      "n": 18,
+      "hash": "260775e510ab8eb83706aa03d07efd4e"
+    },
+    {
+      "name": "cost_allocation",
+      "n": 263,
+      "hash": "93ae9955e2f2d3246b10516f54cfbc82"
+    },
+    {
+      "name": "cost_event",
+      "n": 281,
+      "hash": "19557a19b0811d2d5c0757025f1139f3"
+    },
+    {
+      "name": "migration",
+      "n": 63,
+      "hash": "e105b0975c46431db06456a5d1d33268"
+    },
+    {
+      "name": "observations",
+      "n": 20,
+      "hash": "e3d453a5ecb03bafdb1689187ad56e76"
+    },
+    {
+      "name": "runtime",
+      "n": 18,
+      "hash": "3c902edf9604adfa6222fe076d978e48"
+    }
+  ],
+  "scope": "independent named-volume validation DBs only; no retained trial/schema mutation"
+}

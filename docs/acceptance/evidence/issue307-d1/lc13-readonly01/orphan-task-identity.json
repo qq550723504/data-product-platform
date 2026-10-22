@@ -1,0 +1,55 @@
+{
+  "crash_tasks": [
+    {
+      "after_native_get": true,
+      "at": "2026-10-14T09:23:15.717597679Z",
+      "execution": "02e248ee-43af-455b-9879-c9fb5b262e22",
+      "exit": 95,
+      "input": "585ceb3f-0bc2-4a2a-bf32-7a45d76e61a8",
+      "owner_stop": false,
+      "task_id": "16f8897a-9b0e-409f-a396-6871cc0eb406"
+    },
+    {
+      "after_native_get": true,
+      "at": "2026-10-14T09:23:17.587213706Z",
+      "execution": "91e814f4-28b4-4767-80c7-304f61495067",
+      "exit": 95,
+      "input": "585ceb3f-0bc2-4a2a-bf32-7a45d76e61a8",
+      "owner_stop": false,
+      "task_id": "dcb3f456-cb2e-4e6f-8ca8-666e9175ba00"
+    }
+  ],
+  "real_returned_tasks": [
+    {
+      "at": "2026-10-14T09:25:39.441094434Z",
+      "execution": "91e814f4-28b4-4767-80c7-304f61495067",
+      "mode": "lc13-orphan",
+      "status_before": "RUNNING",
+      "task_id": "03c47cf9-3cda-409b-adf0-4f35ce26b300"
+    },
+    {
+      "at": "2026-10-14T09:25:14.176860892Z",
+      "execution": "91e814f4-28b4-4767-80c7-304f61495067",
+      "mode": "lc13-orphan",
+      "status_before": "RUNNING",
+      "task_id": "dcb3f456-cb2e-4e6f-8ca8-666e9175ba00"
+    },
+    {
+      "at": "2026-10-14T09:25:39.43106464Z",
+      "execution": "02e248ee-43af-455b-9879-c9fb5b262e22",
+      "mode": "lc13-orphan",
+      "status_before": "RUNNING",
+      "task_id": "34c28def-c7e0-490c-a7cb-20e743e2dead"
+    },
+    {
+      "at": "2026-10-14T09:25:38.717496154Z",
+      "execution": "02e248ee-43af-455b-9879-c9fb5b262e22",
+      "mode": "lc13-orphan",
+      "status_before": "RUNNING",
+      "task_id": "16f8897a-9b0e-409f-a396-6871cc0eb406"
+    }
+  ],
+  "both_original_crashed_task_ids_returned": true,
+  "native_io_delta": 0,
+  "natural_use_expiry_releases": 0
+}

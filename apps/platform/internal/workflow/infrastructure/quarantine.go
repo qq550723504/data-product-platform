@@ -19,6 +19,32 @@ type QuarantineRecord struct {
 	Payload       map[string]any
 }
 
+// ListQuarantine returns a bounded page from the existing execution evidence.
+// The workspace predicate is enforced in SQL as well as by the HTTP boundary.
+func (r *PostgresRepository) ListQuarantine(ctx context.Context, workspaceID, executionID uuid.UUID, limit, offset int) ([]QuarantineRecord, int64, error) {
+	rows, err := r.pool.Query(ctx, `SELECT q.id,q.execution_id,q.input_name,COALESCE(q.source_key,''),q.reason_code,COALESCE(q.reason_message,''),q.payload
+		FROM execution_quarantine_record q JOIN execution e ON e.id=q.execution_id
+		WHERE e.workspace_id=$1 AND e.id=$2 ORDER BY q.input_name,q.id LIMIT $3 OFFSET $4`, workspaceID, executionID, limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+	items := make([]QuarantineRecord, 0)
+	for rows.Next() {
+		var v QuarantineRecord
+		if err := rows.Scan(&v.ID, &v.ExecutionID, &v.InputName, &v.SourceKey, &v.ReasonCode, &v.ReasonMessage, &v.Payload); err != nil {
+			return nil, 0, err
+		}
+		items = append(items, v)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, 0, err
+	}
+	var total int64
+	err = r.pool.QueryRow(ctx, `SELECT count(*) FROM execution_quarantine_record q JOIN execution e ON e.id=q.execution_id WHERE e.workspace_id=$1 AND e.id=$2`, workspaceID, executionID).Scan(&total)
+	return items, total, err
+}
+
 func (r *PostgresRepository) InsertQuarantine(ctx context.Context, tx pgx.Tx, record QuarantineRecord) error {
 	payload, err := json.Marshal(record.Payload)
 	if err != nil {

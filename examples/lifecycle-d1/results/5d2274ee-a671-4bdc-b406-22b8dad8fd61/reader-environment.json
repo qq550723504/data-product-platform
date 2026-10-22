@@ -1,0 +1,90 @@
+{
+  "objects": [
+    {
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "312365a9-f984-43de-b9d5-7e26009ccd82",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T00:58:47.885155385Z",
+      "protection_observed_at": "2026-10-14T00:58:48.151555292Z"
+    },
+    {
+      "copy_id": "3feb660b-21aa-4494-ada8-110cf3cf0e22",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "159e90c3-adb6-4ea3-b2e8-2804e578e86f",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T00:58:47.947697895Z",
+      "protection_observed_at": "2026-10-14T00:58:48.197936339Z"
+    },
+    {
+      "copy_id": "dbe34c34-cecb-4183-a121-5eac1035d176",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "5a7ce790-9093-4569-a8fd-0726009a5eb4",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-15T00:58:47Z",
+      "bytes_verified_at": "2026-10-14T00:58:47.990072276Z",
+      "protection_observed_at": "2026-10-14T00:58:48.245816954Z"
+    },
+    {
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "846d0c7c-289d-4667-bc7c-aa04e44357d4",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T00:58:48.030639728Z",
+      "protection_observed_at": "2026-10-14T00:58:48.286036772Z"
+    }
+  ],
+  "root_in_reader": false,
+  "host_ports": [],
+  "internal": true,
+  "copy": 0,
+  "delete": 0,
+  "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635",
+  "binary_sha256": "5e04e88bbd65880a5e65da5795dcdc116021512e04d27a200ec0d03f83e972c8",
+  "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+  "project": "dpp-lifecycle307-5d2274ee",
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "window_expires": "2026-10-14T01:44:38.4397831Z",
+  "run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "production_delivery": "NOT_RUN",
+  "source_head": "4650c435f8ba89fdb0b2dc0591152d25ded182d7",
+  "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+  "network_id": "33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c",
+  "cleanup": 0,
+  "source_hashes": {
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "fa50777171a652bd9992d35a6d6af6a02670790b141d29cf1f07320781f0846b",
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "52ebfcfd20e350bd4c57aaa49c6686435150b7236bc6266cab86d3c2e90f14da",
+    "apps/platform/internal/lifecycle/application/reader_service.go": "ec6ed10a94facc6096cd262e0098e5f2ff0f2edf0ea867997d0815cad69f7ebe",
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "785a1303835f584408626671ad4a52a452e20506820467929041097f3310dc9b",
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "1b60f8aead182f9fa9ec1e1708bba553ba46dcfb35236c0736d3600b3ccc2eab",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "0ad343089e47349d94787763a46b0b6d88f0f4c06edcdfdd1cd7a2e198a70cd5",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "01266298f94b71f35177e2b238de6452acf5877973e2deabd407ea2d7b25a802"
+  },
+  "retained_volumes": [
+    "dpp-lifecycle307-5d2274ee-postgres",
+    "dpp-lifecycle307-5d2274ee-objects"
+  ]
+}

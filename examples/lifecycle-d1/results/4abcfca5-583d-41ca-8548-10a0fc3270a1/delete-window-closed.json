@@ -1,0 +1,9 @@
+{
+  "as_of": "2026-10-11T14:08:08.5452044Z",
+  "native_delete_user_disabled": true,
+  "fixture_authority": "DISABLED",
+  "gateway_delete": "DENY_ALL",
+  "gateway_sha256": "81b26869b3ee1074035798a4bb6ba8c455ec71d69b57b7a7434d0da4d6011662",
+  "volume_cleanup": 0,
+  "object_cleanup": 0
+}

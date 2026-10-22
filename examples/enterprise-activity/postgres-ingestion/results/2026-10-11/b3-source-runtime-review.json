@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "scope": "Edge + full live Core; matched probe/Hop endpoint, current runtime and three RAW admission regression only",
+  "workspaceId": "fa9d7dff-dbd4-4d40-b1ed-7b3e6786d39e",
+  "operationId": "6cbd8a1e-fdb7-4ed5-af7e-a435854523a6",
+  "receipt": {
+    "id": "ae00e753-0303-47af-b10d-6463ca105c4a",
+    "operationId": "6cbd8a1e-fdb7-4ed5-af7e-a435854523a6",
+    "attemptId": "7b486efc-b80b-4c13-a8a1-040909037510",
+    "manifestHash": "a7dbf9e4c8a49460cf5612e25527f2f9640be8acce498129d2a8a14313d66efb",
+    "bindings": [
+      {
+        "code": "energy_raw",
+        "datasetId": "25d3c14a-6a5b-4955-b640-be785e2d2d74",
+        "versionId": "0a823304-bf81-4c03-a6fd-2ce1db82818f",
+        "uri": "s3://raw/core/fa9d7dff-dbd4-4d40-b1ed-7b3e6786d39e/6cbd8a1e-fdb7-4ed5-af7e-a435854523a6/7b486efc-b80b-4c13-a8a1-040909037510/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+        "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+      },
+      {
+        "code": "enterprise_raw",
+        "datasetId": "edc223bb-ee5c-4e07-abcb-74cfd68c0aa0",
+        "versionId": "8d6b8f9d-efe0-4ab3-bbcc-c3a00769cd9f",
+        "uri": "s3://raw/core/fa9d7dff-dbd4-4d40-b1ed-7b3e6786d39e/6cbd8a1e-fdb7-4ed5-af7e-a435854523a6/7b486efc-b80b-4c13-a8a1-040909037510/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+        "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+      },
+      {
+        "code": "lease_raw",
+        "datasetId": "64aef6cd-0cbc-4792-9497-ce421c88f492",
+        "versionId": "5c7ea4be-cdbd-43fc-91e8-fdd29d90413f",
+        "uri": "s3://raw/core/fa9d7dff-dbd4-4d40-b1ed-7b3e6786d39e/6cbd8a1e-fdb7-4ed5-af7e-a435854523a6/7b486efc-b80b-4c13-a8a1-040909037510/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+        "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "code": "energy_raw",
+      "rows": 14,
+      "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+    },
+    {
+      "code": "enterprise_raw",
+      "rows": 6,
+      "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+    },
+    {
+      "code": "lease_raw",
+      "rows": 10,
+      "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+    }
+  ],
+  "coreRawVersions": 3,
+  "resourceCount": 3,
+  "implementation_sha256": {
+    "apps/web/app/batches/actions.ts": "b1aba09824650bd0c320e40ca7b99ec6217de67fc0c6aeb560c8c7fe31bf720a",
+    "apps/web/lib/batches.ts": "c06f99e3f11b3f2f15a1cbc3526ce768ff8bb2584beb53a06f624aa13d409582",
+    "apps/platform/internal/ingestion/pilot/profile.go": "e9bd923cf26763e8c81bb1ad6070348e1851facca0ddf14c5f91f05b05effd3b",
+    "apps/platform/cmd/ingestion-browser-fixture/main.go": "7447f194ffecad67535eef551a9832441cc1edc178b8afb0b4a6c8ee9346fc22",
+    "apps/platform/internal/ingestion/hop/adapter.go": "d93d649b3c5494199cf1c6a535372615fedb3c79edcd846bd0546e97ea72d62a",
+    "apps/platform/internal/ingestion/application/service.go": "2ffa7ac96f8ec72ff13f8f299c5cf48dbae87543fbcc7e7987149c632f56e5c4",
+    "apps/platform/internal/ingestion/infrastructure/repository.go": "00addd35426d94c9c71ff9fa58dd1e0b9765bd8bd9605be8145b8db545e3c6e8"
+  },
+  "screenshot_sha256": "77879f9b7a138bc4f20a1e1279e2c4fa36c3d51f048abe87e62e76b87aea0a55",
+  "certificationProfileSwitch": "separate browser fixture contract; not live certification acceptance",
+  "humanExplanation": "NOT_RUN",
+  "probeAndHopEndpoint": {
+    "hostname": "host.docker.internal",
+    "port": "56631",
+    "database": "dpp_ingestion_source",
+    "reader": "dpp_reader"
+  },
+  "sourceEndpointMatch": true,
+  "claimedInvocations": 3,
+  "actualInvocations": 3,
+  "unobservedClaims": 0,
+  "api_binary_sha256": "cc76928e3da85db3c1aaaf61187ab30dd93df9e4af07fb2dd00dd9da390ed0cb"
+}

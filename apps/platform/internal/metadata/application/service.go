@@ -20,6 +20,7 @@ import (
 var ErrInvalidBindingRequest = errors.New("invalid metadata binding request")
 
 type Service struct {
+	Schema    *SchemaService
 	provider  metadatadomain.Provider
 	domainFQN string
 	tx        *transaction.Manager
@@ -54,6 +55,9 @@ func (s *Service) BindResource(ctx context.Context, cmd BindResourceCommand) (me
 	if err != nil {
 		return metadatadomain.ResourceBinding{}, err
 	}
+	if strings.TrimSpace(asset.ID) == "" || strings.TrimSpace(asset.EntityType) == "" || strings.TrimSpace(asset.FullyQualifiedName) == "" {
+		return metadatadomain.ResourceBinding{}, metadataengine.NewExternalError(metadataengine.ErrorInvalidResponse, "get asset", 0, errors.New("provider asset identity is incomplete"))
+	}
 	binding := metadatadomain.ResourceBinding{
 		ID:              uuid.New(),
 		ResourceID:      cmd.ResourceID,
@@ -76,6 +80,12 @@ func (s *Service) BindResource(ctx context.Context, cmd BindResourceCommand) (me
 }
 
 func (s *Service) HandleOutboxEvent(ctx context.Context, event outbox.PublishedEvent) error {
+	if event.EventType == "SourceSchemaObservationRequested" {
+		if s.Schema == nil {
+			return errors.New("source schema observer is not configured")
+		}
+		return s.Schema.Process(ctx, event.AggregateID)
+	}
 	if event.EventType != "ProductReleased" {
 		return nil
 	}

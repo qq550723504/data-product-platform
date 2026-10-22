@@ -1,0 +1,1 @@
+{"status": "PASS_CANDIDATE12_OFFLINE", "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e", "source": "5c7e964dac83ebda0cf44743d49a546123735119", "targets": 7, "survivors": 11, "source_files": 831, "raw_evidence": 1305, "native_technical_requests": 76, "checker_provider_io": 0, "native_delete": 0, "human_confirmation": "NOT_RECEIVED"}

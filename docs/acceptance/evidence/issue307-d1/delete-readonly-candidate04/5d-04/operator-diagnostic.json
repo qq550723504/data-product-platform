@@ -1,0 +1,12 @@
+{
+  "classification": "OPERATOR_SQL_FUNCTION_EXTRACTOR_FORMAT_FAILURE",
+  "reason": "Extractor required $$; while the authoritative migration closes with $$ LANGUAGE plpgsql;. No database drift conclusion was established.",
+  "fix": "Recognize closing dollar quote independently of the LANGUAGE suffix; keep body comparison exact except CRLF/LF.",
+  "source_core_mutation": 0,
+  "native_payload_or_iam_io": 0,
+  "audit_core_created": false,
+  "helper_created": false,
+  "source_final_state": "PG/MinIO/gateway exited; failure and inputs retained",
+  "delete": 0,
+  "cleanup": 0
+}

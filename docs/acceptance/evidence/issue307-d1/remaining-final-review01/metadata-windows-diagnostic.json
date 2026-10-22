@@ -1,0 +1,50 @@
+{
+  "status": "DIAGNOSED_UNCHANGED_TEST_BUDGET",
+  "full_module_test": "FAIL_ONE_WINDOWS_500MS_PREMARKER_EXIT_SUBTEST",
+  "unchanged_against": "origin/main",
+  "files": [
+    "apps/platform/internal/metadata/openmetadata/schema.go",
+    "apps/platform/internal/metadata/openmetadata/schema_test.go"
+  ],
+  "mechanism": "500ms parent context covers child process launch and independent invocation subprocess; expiration returns unknown before onInvocation, preserving fail-closed behavior",
+  "direct_invocation_samples": [
+    {
+      "sample": 1,
+      "elapsed_ms": 1404.3,
+      "exit_code": 0,
+      "observation": "{\"Status\":\"exited\",\"StartedAt\":\"2026-10-12T00:00:00Z\"}",
+      "stderr": ""
+    },
+    {
+      "sample": 2,
+      "elapsed_ms": 24.41,
+      "exit_code": 0,
+      "observation": "{\"Status\":\"exited\",\"StartedAt\":\"2026-10-12T00:00:00Z\"}",
+      "stderr": ""
+    },
+    {
+      "sample": 3,
+      "elapsed_ms": 27.33,
+      "exit_code": 0,
+      "observation": "{\"Status\":\"exited\",\"StartedAt\":\"2026-10-12T00:00:00Z\"}",
+      "stderr": ""
+    },
+    {
+      "sample": 4,
+      "elapsed_ms": 24.22,
+      "exit_code": 0,
+      "observation": "{\"Status\":\"exited\",\"StartedAt\":\"2026-10-12T00:00:00Z\"}",
+      "stderr": ""
+    },
+    {
+      "sample": 5,
+      "elapsed_ms": 23.34,
+      "exit_code": 0,
+      "observation": "{\"Status\":\"exited\",\"StartedAt\":\"2026-10-12T00:00:00Z\"}",
+      "stderr": ""
+    }
+  ],
+  "isolated_existing_test_exit_code": 0,
+  "candidate_source_modified": false,
+  "native_delete": 0
+}

@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6-review01/independent-re-review.json",
+      "bytes": 1732,
+      "sha256": "5997111d6e2736216cac3db71949786b16c7501f1704a459a585c0a6d9531a9e"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6-review01/initial-review.json",
+      "bytes": 1911,
+      "sha256": "4e6f5d08525d3561538f11ab837565bde89a1b99c8224479dd5cda7dbdc83319"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6-review01/regression.json",
+      "bytes": 4732,
+      "sha256": "125c005e8b3031e9c401e810280c945fde37fc1d02078597f829b5af38c92185"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6-review01/retained-host-readback.json",
+      "bytes": 9639,
+      "sha256": "eec9521d29900feb8ee19dbb26c62e83e1c29b9f50f39016e157b352c36c6cc4"
+    }
+  ],
+  "scope": "New independent v6 review and offline regression; previous evidence indexes remain byte exact"
+}

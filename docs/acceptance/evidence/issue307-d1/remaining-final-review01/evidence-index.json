@@ -1,0 +1,47 @@
+{
+  "schema": "remaining-final-review-evidence-v1",
+  "source": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "candidate_sha256": "b9660f17cbb745e781a06d50e8ec0e81c87e654318420533b75b4ada29728949",
+  "files": [
+    {
+      "path": "independent-review.json",
+      "sha256": "a7a42c12ab638202f11f87548833cefe81709cd7d6f49cae165a949321ac886f",
+      "bytes": 1879
+    },
+    {
+      "path": "metadata-isolated-tests.txt",
+      "sha256": "194364c3bf9b3905db5932213aa60c8ebce3197156140b7a45eab4f0960f6b77",
+      "bytes": 2506
+    },
+    {
+      "path": "metadata-windows-diagnostic.json",
+      "sha256": "f9959eb42670f885074cc20bf0e23bd2ec9f17049f106764583cef67ece33016",
+      "bytes": 1615
+    },
+    {
+      "path": "offline-1.txt",
+      "sha256": "4fdd0d2db6258b29c0aedfd640178f8709433409e9bbabc97e7689cb74171b72",
+      "bytes": 206
+    },
+    {
+      "path": "offline-2.txt",
+      "sha256": "7588d09bb0b64592084e2a9c4e4626209fd1dc7687dc58385bcbc2877acd9493",
+      "bytes": 548
+    },
+    {
+      "path": "offline-3.txt",
+      "sha256": "e9d59fe0cdba77881a289c9f6237a4398add5157f9ff19d53d2415be75bb6175",
+      "bytes": 548
+    },
+    {
+      "path": "retained-owner-readback.json",
+      "sha256": "dfad9c54b539959bcff7a9dbe22b2947abff2e3b5a8131264d84c4c629d7ac4a",
+      "bytes": 24843
+    },
+    {
+      "path": "windows-full-module-failure-excerpt.txt",
+      "sha256": "248cd5c8092f8129ca708076ec46dd041aa66dd4c6b7e9ce7c1a401c04afd7b6",
+      "bytes": 559
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-15T09:28:15.263886+00:00",
+  "status": "PASS_FINAL_SOURCE_EVIDENCE_AND_CLOSED_HOST",
+  "reviewed_base_head": "2babc930d46c38a3c5241e52b15a13706f081345",
+  "reviewer_source_hashes_match_staged": true,
+  "final_docs_git_lf_sha256": {
+    "docs/acceptance/issue307-d1-confirmed-v14-execution.md": "039b9f42c9ab873a71fff4b5675b883ed1ae05a632dbf7edf9aa4c28f4bb5b17",
+    "docs/acceptance/issue307-d1-delete-proposal.md": "8cd4a7de1f4eec31a06cd31564a0ad1e085d083ccadfe69b65838213a09f91ff",
+    "docs/acceptance/issue307-d1-candidate04-readonly.md": "0310c780b750eed2be2f1e3d8acba20e30c792c7c42d0454ab570ad71ca7a2b8"
+  },
+  "post_review_document_change": "Only explicit independent report links/results; native success remains blocked",
+  "stage_raw_audit": {
+    "at": "2026-10-15T09:25:15.276768+00:00",
+    "status": "PASS_STAGED_RAW_AND_DISCLOSURE_AUDIT",
+    "indexed_payloads": 81,
+    "index_files": 1,
+    "all82_staged_blobs_match_original_checkout_bytes": true,
+    "raw_crlf_files_preserved": 3,
+    "credential_values_found": 0,
+    "replacement_characters_found": 0,
+    "diff_check": "PASS",
+    "provider_io": 0,
+    "db_io": 0,
+    "container_starts": 0,
+    "delete": 0,
+    "cleanup": 0
+  },
+  "old255_unchanged": 255,
+  "execution_index_sha256": "f875efde29f0ff49d5ab38a95e8415e7867fd34d3a094d6fa689ca6dcaa2fb2a",
+  "stopped_source_project_containers": 86,
+  "pr_before_commit": {
+    "headRefOid": "2babc930d46c38a3c5241e52b15a13706f081345",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/qq550723504/data-product-platform/pull/318"
+  },
+  "source_fix_activated": false,
+  "actual_deletion_result": "A once403_CONFIRMED_DENIED;B never-started;successful0;absence0;completion0;six retained",
+  "effects": {
+    "provider_io": 0,
+    "db_io": 0,
+    "container_starts": 0,
+    "iam_changes": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "merge": 0
+  }
+}

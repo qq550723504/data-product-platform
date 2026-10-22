@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-17T02:03:50.605103+00:00",
+  "status": "PASS_STATIC_AUTHORIZATION_BINDINGS",
+  "head": "b4d0556ad424e15896577a069bcbd1b236647a07",
+  "CI": 38896130651,
+  "groups": [
+    {
+      "group": "business-races",
+      "backup_hashes": 3,
+      "budget_empty": true,
+      "owner_contracts": 16,
+      "network_internal": true
+    },
+    {
+      "group": "late-hold",
+      "backup_hashes": 3,
+      "budget_empty": true,
+      "owner_contracts": 10,
+      "network_internal": true
+    },
+    {
+      "group": "mixed",
+      "backup_hashes": 3,
+      "budget_empty": true,
+      "owner_contracts": 13,
+      "network_internal": true
+    }
+  ],
+  "native_delete": 0,
+  "permissions_enabled": false
+}

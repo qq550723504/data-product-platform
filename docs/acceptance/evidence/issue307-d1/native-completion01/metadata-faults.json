@@ -1,0 +1,12 @@
+{
+  "work": "5dabef70-cde3-4130-a68a-fe787bdde72c",
+  "sql_input": "NOT_NATIVE_DELETE_APPROVAL",
+  "real_asynq_exit": 92,
+  "counts": {
+    "calls": 15,
+    "runs": 2,
+    "results": 0,
+    "copies": 0
+  },
+  "native_delete": 0
+}

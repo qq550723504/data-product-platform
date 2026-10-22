@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-19T09:04:17.420009+00:00",
+  "cmd": [
+    "go",
+    "test",
+    "-count=1",
+    "./internal/lifecycle/application",
+    "-run",
+    "Test(SequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim|ExactSendClaimSerializedAndLateRevocationKeepsCost|ExactAbsenceRequiresPostDispatchJournalAndCompleteMembership)$",
+    "-v"
+  ],
+  "exit_code": 0,
+  "cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "log_sha256": "8d5102e1affeb504f75c9aceb96897bf50cd4ad6a0ba97fb3ccca4212c81c0c1",
+  "native_delete": 0,
+  "provider": "SIMULATED_FACTS_ONLY"
+}

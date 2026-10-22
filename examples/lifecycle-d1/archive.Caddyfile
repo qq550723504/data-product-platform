@@ -1,0 +1,53 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @delete method DELETE
+  respond @delete 403
+  @unsigned header X-Amz-Content-Sha256 STREAMING-UNSIGNED-PAYLOAD-TRAILER
+  respond @unsigned 403
+  @health path /minio/health/ready
+  reverse_proxy @health minio:9000
+  @admin {
+   path /minio/admin/v3/*
+   method GET PUT POST
+  }
+  reverse_proxy @admin minio:9000
+  @inventory {
+   path /dpp-lifecycle307-online /dpp-lifecycle307-online/ /dpp-lifecycle307-quarantine /dpp-lifecycle307-quarantine/
+   method GET
+   query versions=*
+  }
+  reverse_proxy @inventory minio:9000
+  __COPY_RULE__
+  @writes method PUT POST PATCH
+  respond @writes 403
+  @unversioned {
+   path /dpp-lifecycle307-online/* /dpp-lifecycle307-quarantine/*
+   method GET HEAD
+   expression {http.request.uri.query.versionId} == ''
+  }
+  respond @unversioned 403
+  @head {
+   path /dpp-lifecycle307-online/fixture/* /dpp-lifecycle307-quarantine/fixture/* /dpp-lifecycle307-quarantine/archive/a.csv /dpp-lifecycle307-quarantine/restore/*
+   method HEAD
+  }
+  reverse_proxy @head minio:9000
+  @retention {
+   path /dpp-lifecycle307-online/* /dpp-lifecycle307-quarantine/*
+   method GET
+   query retention=*
+  }
+  reverse_proxy @retention minio:9000
+  @hold {
+   path /dpp-lifecycle307-online/* /dpp-lifecycle307-quarantine/*
+   method GET
+   query legal-hold=*
+  }
+  reverse_proxy @hold minio:9000
+  __PAYLOAD_RULE__
+  respond 403
+ }
+}

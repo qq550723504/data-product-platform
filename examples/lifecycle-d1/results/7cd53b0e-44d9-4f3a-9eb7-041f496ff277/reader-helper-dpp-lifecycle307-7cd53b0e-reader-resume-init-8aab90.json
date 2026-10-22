@@ -1,0 +1,13 @@
+{
+  "expected_exit": 0,
+  "id": "8853d2b93b60f8525f6ecf215d3ce0d4f10ef890a41b8eb1d58053321631cb98",
+  "role_directory": "",
+  "exit_code": 0,
+  "run_id": "7cd53b0e-44d9-4f3a-9eb7-041f496ff277",
+  "cleanup": 0,
+  "mode": "resume-init",
+  "container": "dpp-lifecycle307-7cd53b0e-reader-resume-init-8aab90",
+  "binary_sha256": "6e2f52890f670c4b3198dcb6379b41ed34a1f8ae1c1ca5144ef0ae90d8739968",
+  "root_mounted": false,
+  "delete": 0
+}

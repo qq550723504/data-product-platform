@@ -1,0 +1,174 @@
+{
+  "status": "PASS_FULL_MODULE_REAL_POSTGRES_RACE",
+  "source_head": "4af0ee88db92dfbe7aad029b22916bb046155e27",
+  "command": "go test -race -count=1 -p 1 -json ./...",
+  "exit": 0,
+  "package_pass": 89,
+  "packages": [
+    "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-delete",
+    "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-prepare",
+    "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-recovery",
+    "github.com/qq550723504/data-product-platform/apps/platform/cmd/poc-demo",
+    "github.com/qq550723504/data-product-platform/apps/platform/cmd/worker",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/cost",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/resolution",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/splink",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/evidence",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/integration",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/pilot",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/ports",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/reference",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/hop",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/contentreference",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/csvinput",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/product/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/gx",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/traceability",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/traceability/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/hop",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/native",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/http",
+    "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
+  ],
+  "test_and_subtest_pass": 1117,
+  "test_and_subtest_skip": 14,
+  "skipped_cases": [
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance",
+      "test": "TestBrowserCSVIngest"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance",
+      "test": "TestBrowserLiveCorePOC"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance",
+      "test": "TestBrowserLiveGoldExistingCore"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio",
+      "test": "TestLabelStudioLiveCoreResultReviewAndSnapshot"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio",
+      "test": "TestLabelStudioLiveReference"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue",
+      "test": "TestRedisDuplicateWakeupUsesOneTask"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application",
+      "test": "TestLiveGoldWorkerBuildAndFormalQuality"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot",
+      "test": "TestLiveCoreBatch"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue",
+      "test": "TestRedisRecoveryDeadlineCoversFullBoundedLookupSequence"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata",
+      "test": "TestSourceSchemaNativeReceiptCostRecovery"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox",
+      "test": "TestExecutionQueueRedisRecoveryAfterOutboxFailure"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox",
+      "test": "TestExecutionQueueRedeliveryAfterLostConfirmationUsesProductionHandler"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage",
+      "test": "TestIngestionStorageIsolation"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/gx",
+      "test": "TestGXLiveReferenceMatchesNativePassFailSemantics"
+    }
+  ],
+  "fail": 0,
+  "race_reports": 0,
+  "started_at": "2026-10-14T12:48:35.2707193+08:00",
+  "finished_at": "2026-10-14T13:02:27.7278606+08:00",
+  "validation_server_id": "7ca2126fb7d56f3a32e66b1fee13b3105e309bed5715e85ce87476b22b03192c",
+  "validation_database": "ref307_disposal_4af0ee88",
+  "validation_schema_version": 68,
+  "fresh_database_migrated_before_run": true,
+  "validation_dsn_password_disclosed": false,
+  "retained_source_fixture_used": false,
+  "raw_log_sha256": "077ff43b0726a6f60053ce1135085066a9ee6c5378dcb0c8068cf4704eab3f47",
+  "go_vet": "PASS ./... at4af0ee88",
+  "python_normal_tests": 19,
+  "python_optimized_tests": 19,
+  "python_status": "PASS both modes; pure local tests",
+  "provider_delete": 0
+}

@@ -1,0 +1,12 @@
+{
+  "active_pins": 0,
+  "run_id": "326fedd2-8c22-4eb8-acca-05be57e15d77",
+  "status": "PASS",
+  "delete": 0,
+  "source_files": 62,
+  "physical_calls": 40,
+  "retained_versions": 6,
+  "verification": "offline independent JSON/source/identity/stop/accounting checks; no native I/O",
+  "production_acceptance": "NOT_RUN",
+  "cleanup": 0
+}

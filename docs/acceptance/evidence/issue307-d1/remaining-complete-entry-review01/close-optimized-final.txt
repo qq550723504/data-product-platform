@@ -1,0 +1,6 @@
+test_stop_or_inspect_failure_continues_every_other_owner (__main__.PreparationClosureTests.test_stop_or_inspect_failure_continues_every_other_owner) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK

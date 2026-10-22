@@ -1,0 +1,24 @@
+{
+  "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "human_turn_id": "01a15200-7cfc-7c80-a7d1-0798553607e9",
+  "human_ui_message_id": "01a15200-7e0b-7f73-ace9-a9c1626059b2",
+  "human_rollout_message_id": "msg_01a15200-7e0b-7f73-ace9-a9b0c107b802",
+  "human_message_timestamp": "2026-10-19T02:32:06.411Z",
+  "session_file": "C:\\Users\\Henry\\.codex\\sessions\\2026\\10\\13\\rollout-2026-10-13T23-50-22-01a13579-573d-7a32-b1e1-3297fe78380a_01a135f5-2d3a-7953-8149-c86a26446d07.jsonl",
+  "session_line": 29472,
+  "user_message_sha256": "fce3771b1b29f5b8c466a7b4e76e01f1ab8436b481c706af4563f5819cc1e017",
+  "user_message_UTF8_bytes": 7,
+  "preceding_confirmation_origin": {
+    "session_file": "C:\\Users\\Henry\\.codex\\sessions\\2026\\10\\13\\rollout-2026-10-13T23-50-22-01a13579-573d-7a32-b1e1-3297fe78380a_01a135f5-2d3a-7953-8149-c86a26446d07.jsonl",
+    "line": 29327,
+    "timestamp": "2026-10-19T02:04:18.067Z",
+    "message_id": "msg_099c3841d45c7835016ad579f2bc848199ac49aa364a7c75b7",
+    "sha256": "974fa85bf3e1437fcdf89cbb462f5632cdeb9992a0b4839dcae99fc6da4bcf0a"
+  },
+  "preceding_verification_summary": {
+    "line": 29465,
+    "timestamp": "2026-10-19T02:25:12.705Z",
+    "id": "msg_099c3841d45c7835016ad57f7ff674819995a6e90bf02ac844"
+  },
+  "resolution": "The direct human reply 授权 follows the candidate12/v22 full precise proposal and item-by-item PASS, with no competing execution or scope. It accepts that bounded reference; it is not a retyped machine template. Scheduling remains a separately requested operation under the frozen runbook."
+}

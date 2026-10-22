@@ -1,0 +1,15 @@
+{
+  "status": "PASS_EXACT_ABSENCE_AND_TERMINAL_REPLAY",
+  "stage": "a",
+  "work": "7a56e035-d1a9-44d1-84f4-13d8d6fbcabe",
+  "attempt": "8c39da56-f252-4a57-bb45-8fc685ec2049",
+  "counts": {
+    "storage_calls": 132,
+    "attempts": 4,
+    "claims": 2,
+    "receipts": 1,
+    "completion": 0
+  },
+  "replay_provider_io_delta": 0,
+  "native_delete_in_recovery": 0
+}

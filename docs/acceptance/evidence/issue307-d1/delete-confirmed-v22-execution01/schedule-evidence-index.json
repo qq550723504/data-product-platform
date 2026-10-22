@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-19T02:52:59.415768+00:00",
+  "scope": "Append-only schedule evidence, excludes this index and later checkpoint. Initial preparation-evidence-index.json is unchanged.",
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/authorization-context.json": "575c83fce940a79d1d2174c1b7389fb7f9271e00bb035ed09a33f1010c894c30",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/github-prewindow-check.json": "8511da2f0ce79f90976478871cb69d046def598210e509e495d2d4f3b925840d",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/human-authorization.json": "4235dc7205b9479d7fe0c36b88484ba9e780c2d166b094a7700bed31a3311dc4",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/preparation-evidence-index.json": "c83922931182b4ce84d01b9cc9a53a406ddbf2ad5d82b32e43908b28f0260b4b",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/prewindow-host-check.json": "6ebbad1b137b8792079fbf880974ea6044acf3b6c1ad7f380c6b7d7a63460777",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/schedule-readback-normalization-failure01.json": "cb315beb41cc73e514ad692f499b89fc80fb09f3453b7e314cb8d81581d4a8cd",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/schedule-tool-receipts.json": "e198d57d1cb16e42b8a4beb5a11868a607e6655ea0c7f17402a1335cd434e209",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/scheduled-automation-snapshot.toml": "6af0e65f4b92a7c284ff9c0994fa22b86471c6d380b098ad6bce291832b970da",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/scheduled-prompt.txt": "7198df6871a1eea3555c82f80f8f72359e2ed7354b5dd582ce4ef19d2aacaa11",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/scheduled-resume.json": "7feb4d958209f670dfbc6e8d35353ad75f21a327be9abe03fbb468724f7861f1",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/scheduling-consent.json": "43ccbae244ca02d0fc6f19620a37bab7eaa77c23defc502697df13a3c9598052"
+  },
+  "current_matrix": {
+    "path": "docs/acceptance/issue307-d1-v22-execution01.md",
+    "sha256": "d7cad9b6df9222ac48d978b4e74c8eb3a5418913300ebc09a0f16a28e3f053fe"
+  },
+  "private_proposed_prompt_sha256": "a2d4949f221cec8d66b925ff0bed71297da8b1b5d4517537440c1eed432f1a09",
+  "private_actual_prompt_sha256": "7198df6871a1eea3555c82f80f8f72359e2ed7354b5dd582ce4ef19d2aacaa11",
+  "private_matrix_before_scheduling_sha256": "40bf08244531d89ef1af30187a131a279e0f62543bd2a8aa051cefbfa0d90c14"
+}

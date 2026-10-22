@@ -1,0 +1,13 @@
+{
+  "cleanup": 0,
+  "run_id": "8120904f-13d9-42f3-ab1f-66eb1a37b2b0",
+  "root_mounted": true,
+  "expected_exit": 0,
+  "delete": 0,
+  "exit_code": 0,
+  "container": "dpp-lifecycle307-8120904f-reader-provision-a36332",
+  "mode": "provision",
+  "binary_sha256": "f36eb7a5b695152cbd34dfe52afbf74d23a72e7d77bde7c0b46ca8a09dd8e8d7",
+  "id": "b94c84967943d154849d2d9a11960548c7b7324aa87dbd82f69f758a43ab85a6",
+  "role_directory": ""
+}

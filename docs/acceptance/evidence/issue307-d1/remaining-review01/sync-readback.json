@@ -1,0 +1,32 @@
+{
+  "recorded_at": "2026-10-16T05:51:13.085387+00:00",
+  "issue": {
+    "html_url": "https://github.com/qq550723504/data-product-platform/issues/307",
+    "number": 307,
+    "state": "open"
+  },
+  "pr": {
+    "baseRefOid": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+    "headRefOid": "bca29f4d63c423962ed5a43b71fd4f71ec2665f9",
+    "isDraft": true,
+    "number": 323,
+    "state": "OPEN",
+    "url": "https://github.com/qq550723504/data-product-platform/pull/323"
+  },
+  "remote_head": "bca29f4d63c423962ed5a43b71fd4f71ec2665f9",
+  "base_main": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "original_eof_receipt_preserved": true,
+  "old_receipt_sha256": "55f9e1f2539440ec604a76f30d4d48eb38a30d2b2aedca1b16d8d95ffe70fa41",
+  "initial_pr_ci": {
+    "run_id": 38857638865,
+    "head_sha": "bca29f4d63c423962ed5a43b71fd4f71ec2665f9",
+    "event": "pull_request",
+    "conclusion": "IN_PROGRESS_AT_CHECKPOINT",
+    "not_final_append_commit_ci": true
+  },
+  "native_fixture_operations": 0,
+  "delete": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "cleanup": 0
+}

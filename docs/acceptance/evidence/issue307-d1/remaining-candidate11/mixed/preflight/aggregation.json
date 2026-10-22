@@ -1,0 +1,31 @@
+{
+  "status": "PASS_COMPLETE_NATIVE_AGGREGATION",
+  "group": "mixed",
+  "copies": 4,
+  "policies": [
+    {
+      "policy": "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd",
+      "baseline_file_sha256": "247ebba00c26d1237177ce4208ab8017b2a7779314f4ccf512e24111a1c0e0b2",
+      "fresh_file_sha256": "247ebba00c26d1237177ce4208ab8017b2a7779314f4ccf512e24111a1c0e0b2",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd",
+      "baseline_file_sha256": "3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b",
+      "fresh_file_sha256": "8984f8693ba1641c977951b64ee5c850c5c0a3b55741c5033b9eaab41b07fa33",
+      "official_equals": true
+    }
+  ],
+  "provider_io": 0,
+  "delete": 0,
+  "provider_raw_sha256": {
+    "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd": "9420709713c8fa8b272f66489cfb5714d9c501e7635c55b612e61249cc287fa3",
+    "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd": "dffb5ef0c2373083a73c80ae6024701a3e60e7313126ba50fafb60b1c8174d9c"
+  },
+  "native_receipt_file_sha256": "bd781195a59aefd58a6ce91b2c55814191f8e42db2ef84a0d5ef7b85a064287a",
+  "technical_requests": 18,
+  "at": "2026-10-18T10:43:26.830134+00:00",
+  "native_delete": 0,
+  "native_mutations": 0,
+  "source_Core_unchanged": true
+}

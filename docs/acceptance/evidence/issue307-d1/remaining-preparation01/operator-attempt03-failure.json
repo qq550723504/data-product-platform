@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "phase": "scratch-topology-gate",
+  "cause": "Internal-only Docker network did not allocate published loopback port",
+  "repair": "Attach only newly owned scratch PG to dedicated 10.234.163.0/24 host-test bridge; verified 127.0.0.1-only port; native environments remain noports",
+  "native_io": 0,
+  "old_environment_mutations": 0,
+  "history_preserved": true
+}

@@ -1,0 +1,72 @@
+package main
+
+import (
+ "bytes"
+ "context"
+ "crypto/sha256"
+ "encoding/hex"
+ "encoding/json"
+ "errors"
+ "fmt"
+ "io"
+ "net"
+ "net/http"
+ "net/http/httputil"
+ "net/url"
+ "os"
+ "sync"
+ "time"
+ storage "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
+)
+type Config struct { Endpoint,AccessKey,SecretKey,RunID string }
+type Request struct { Method,Path string; Status int }
+type statusWriter struct {http.ResponseWriter; status int}
+func(w *statusWriter)WriteHeader(n int){w.status=n;w.ResponseWriter.WriteHeader(n)}
+func hash(b []byte)string{s:=sha256.Sum256(b);return hex.EncodeToString(s[:])}
+func main(){
+ raw,e:=os.ReadFile(os.Args[1]);if e!=nil{panic("private config unavailable")}
+ var c Config;if json.Unmarshal(raw,&c)!=nil{panic("invalid private config")}
+ target,e:=url.Parse("http://"+c.Endpoint);if e!=nil{panic("invalid endpoint")}
+ proxy:=httputil.NewSingleHostReverseProxy(target)
+ var mu sync.Mutex; requests:=[]Request{}
+ listener,e:=net.Listen("tcp","127.0.0.1:0");if e!=nil{panic("local proxy listen")}
+ handler:=http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
+   sw:=&statusWriter{w,200}
+   if r.Method==http.MethodDelete{sw.WriteHeader(403)}else{proxy.ServeHTTP(sw,r)}
+   mu.Lock();requests=append(requests,Request{r.Method,r.URL.Path,sw.status});mu.Unlock()
+ })
+ server:=&http.Server{Handler:handler};go server.Serve(listener)
+ ctx,cancel:=context.WithTimeout(context.Background(),90*time.Second);defer cancel()
+ bucket:="bc318-"+c.RunID[:8]
+ store,e:=storage.New(listener.Addr().String(),c.AccessKey,c.SecretKey,bucket,false)
+ checks:=[]string{};failure:=""
+ check:=func(label string,ok bool){if !ok&&failure==""{failure=label};if ok{checks=append(checks,label)}}
+ if e!=nil{failure="adapter constructor"}else if e=store.EnsureBucket(ctx);e!=nil{failure="native bucket create"}else{
+   key:="owned/"+c.RunID+"/output.csv";payload:=[]byte("id,value\n1,原始值\n2,-999\n")
+   uri,err:=store.PutImmutable(ctx,key,bytes.NewReader(payload),int64(len(payload)),"text/csv")
+   check("native adapter create-only PUT",err==nil)
+   read:=func(uri string)[]byte{r,err:=store.Get(ctx,uri);if err!=nil{return nil};defer r.Close();b,err:=io.ReadAll(r);if err!=nil{return nil};return b}
+   check("native GET exact UTF-8 payload/negative-value hash",bytes.Equal(read(uri),payload))
+   _,err=store.PutImmutable(ctx,key,bytes.NewReader([]byte("overwrite")),9,"text/csv")
+   check("native repeated immutable PUT rejects overwrite",errors.Is(err,storage.ErrObjectExists))
+   check("original bytes preserved after rejected PUT",bytes.Equal(read(uri),payload))
+   racers:=[][]byte{[]byte("writer-a"),[]byte("writer-b")};outcomes:=make(chan error,2)
+   var wg sync.WaitGroup
+   for _,value:=range racers{wg.Add(1);go func(v []byte){defer wg.Done();_,err:=store.PutImmutable(ctx,"owned/"+c.RunID+"/race",bytes.NewReader(v),int64(len(v)),"text/plain");outcomes<-err}(value)}
+   wg.Wait();close(outcomes);ok,conflict:=0,0
+   for err:=range outcomes{if err==nil{ok++}else if errors.Is(err,storage.ErrObjectExists){conflict++}}
+   winner:=read("s3://"+bucket+"/owned/"+c.RunID+"/race")
+   check("concurrent create-only PUT has one winner and stable bytes",ok==1&&conflict==1&&(bytes.Equal(winner,racers[0])||bytes.Equal(winner,racers[1])))
+   mu.Lock();before:=len(requests);mu.Unlock()
+   _,err=store.Get(ctx,"s3://another-owned-bucket/forbidden")
+   mu.Lock();after:=len(requests);mu.Unlock()
+   check("cross-bucket URI rejected before provider HTTP",err!=nil&&before==after)
+ }
+ server.Close()
+ mu.Lock();deleteCount:=0;for _,r:=range requests{if r.Method=="DELETE"{deleteCount++}};mu.Unlock()
+ check("zero DELETE HTTP attempts",deleteCount==0)
+ status:="PASS";if failure!=""{status="FAIL"}
+ report:=map[string]any{"status":status,"failure_check":failure,"run_id":c.RunID,"bucket":bucket,"checks":checks,"requests":requests,"delete_http_attempts":deleteCount,"payload_sha256":hash([]byte("id,value\n1,原始值\n2,-999\n")),"scope":"real MinIO and current storage adapter via method/status-only local proxy; fresh bucket/prefix; no old source, CurrentDeliveryGate or full provider-admission claim"}
+ data,_:=json.MarshalIndent(report,"","  ");fmt.Println(string(data))
+ if failure!=""{os.Exit(1)}
+}

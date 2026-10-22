@@ -1,0 +1,19 @@
+{
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "new_human_authorization": "NOT_RECEIVED",
+  "new_schedule": "NOT_CREATED",
+  "old_authority_reused": false,
+  "old_schedules": [
+    {
+      "id": "307-d1-candidate07-v17",
+      "status": "PAUSED",
+      "toml_sha256": "1a81f008d4018eba425eea649b1e68f8762ae3d9e3192db59f7c2dfa166b1650"
+    },
+    {
+      "id": "307-d1-candidate10-v20",
+      "status": "PAUSED",
+      "toml_sha256": "1999c6b0be6b04ebd55369ab1688867702791541636f0bf54ef9573308dbb297"
+    }
+  ],
+  "native_delete": 0
+}

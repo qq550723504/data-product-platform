@@ -1,0 +1,90 @@
+{
+  "copy": 0,
+  "workspace_id": "00afbb2f-60c6-4336-a67a-a87fd9f05392",
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "source_head": "a7116c355428ee71ff621870ceafeb6ede9e9205",
+  "provider_instance_id": "ccc14054-8af3-4191-ab14-aeaa725c34e9",
+  "internal": true,
+  "delete": 0,
+  "project": "dpp-lifecycle307-e1487ce7",
+  "production_delivery": "NOT_RUN",
+  "retained_volumes": [
+    "dpp-lifecycle307-e1487ce7-postgres",
+    "dpp-lifecycle307-e1487ce7-objects"
+  ],
+  "objects": [
+    {
+      "copy_id": "dec2782b-fa3d-42a1-8874-6aac4758f200",
+      "dataset_version_id": "5530b09c-fecb-4a0a-8c28-c837db7a2d91",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "ac15b44b-9944-4326-9e19-aecf7c62b57f",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T14:16:06.514236607Z",
+      "protection_observed_at": "2026-10-13T14:16:06.806937169Z"
+    },
+    {
+      "copy_id": "eff9bca2-b94c-4267-ba1b-6c173b43f821",
+      "dataset_version_id": "74db97c0-ca97-499d-bd41-2af49d8fae1d",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "e36021a9-e915-4b40-b798-1751253b060c",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T14:16:06.582537492Z",
+      "protection_observed_at": "2026-10-13T14:16:06.858643803Z"
+    },
+    {
+      "copy_id": "7e844895-8de5-4964-ba2a-962bed6dd1dd",
+      "dataset_version_id": "5530b09c-fecb-4a0a-8c28-c837db7a2d91",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "8d96680f-168c-4d68-8aa3-1f266d58f4fd",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-14T14:16:06Z",
+      "bytes_verified_at": "2026-10-13T14:16:06.630443291Z",
+      "protection_observed_at": "2026-10-13T14:16:06.922740678Z"
+    },
+    {
+      "copy_id": "13a8866b-c648-4979-8073-d7687f6d97b0",
+      "dataset_version_id": "74db97c0-ca97-499d-bd41-2af49d8fae1d",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "92af5ef2-e26f-46bf-8189-acbf67e2e5bc",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T14:16:06.688964885Z",
+      "protection_observed_at": "2026-10-13T14:16:06.981752047Z"
+    }
+  ],
+  "network_id": "47d96d485aa4aab0355f5c11ad51f3c53cbb79d5d57c94ffc1811679ee149cc1",
+  "run_id": "e1487ce7-172d-4641-80a3-725aa12cc483",
+  "host_ports": [],
+  "root_in_reader": false,
+  "cleanup": 0,
+  "binary_sha256": "bdd90a3c02fe645e1d722ecbef036b537e77a7f2ff720dd8fa4130c3a4617875",
+  "window_expires": "2026-10-13T15:02:29.9172234Z",
+  "source_hashes": {
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "1b60f8aead182f9fa9ec1e1708bba553ba46dcfb35236c0736d3600b3ccc2eab",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "fa50777171a652bd9992d35a6d6af6a02670790b141d29cf1f07320781f0846b",
+    "apps/platform/internal/lifecycle/application/reader_service.go": "ec6ed10a94facc6096cd262e0098e5f2ff0f2edf0ea867997d0815cad69f7ebe",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "01266298f94b71f35177e2b238de6452acf5877973e2deabd407ea2d7b25a802",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "0ad343089e47349d94787763a46b0b6d88f0f4c06edcdfdd1cd7a2e198a70cd5",
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "52ebfcfd20e350bd4c57aaa49c6686435150b7236bc6266cab86d3c2e90f14da",
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "785a1303835f584408626671ad4a52a452e20506820467929041097f3310dc9b"
+  },
+  "incarnation_id": "a6bd68f2-95bc-4075-8f9a-38f77b816592"
+}

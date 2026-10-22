@@ -15,11 +15,48 @@ jobs:
       CI: 'true'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Demo command safety tests
         run: node --test deploy/demo/demo.test.mjs
+      - name: Confirmed disposal driver safety tests (no provider I/O)
+        run: |
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_delete_preflight.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_delete_preflight.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_disposal_preparation.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_disposal_preparation.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_native_d1_completion.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_native_d1_completion.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_lc13_readonly.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_lc13_readonly.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_check.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_check.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_history.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_history.py -v
+          python3 examples/lifecycle-d1/check-reference-candidate05-history.py
+          python3 examples/lifecycle-d1/check-remaining-v16-history.py
+          python3 .github/scripts/check-lifecycle307-history.py
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_remaining_window.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_remaining_window.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_freeze_remaining_executable.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_freeze_remaining_executable.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_verify_remaining_native.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_verify_remaining_native.py -v
+          python3 -B examples/lifecycle-d1/test_complete_remaining_preflight.py
+          python3 -O -B examples/lifecycle-d1/test_complete_remaining_preflight.py
+          python3 -B examples/lifecycle-d1/test_p1_post_v22_readonly.py
+          python3 -O -B examples/lifecycle-d1/test_p1_post_v22_readonly.py
+      - name: Check archived candidate04 with its frozen runtime (no provider I/O)
+        run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner
         run: npm --prefix tests/live-browser install --no-audit --no-fund
       - name: Install Chromium

@@ -1,0 +1,6 @@
+test_rehashed_actual_semantic_mismatch_fails_before_permission_source_or_output (__main__.RehashedActualProfileTests.test_rehashed_actual_semantic_mismatch_fails_before_permission_source_or_output) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.476s
+
+OK

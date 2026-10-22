@@ -1,0 +1,21 @@
+{
+  "status": "PASS_SCOPED_EXACT_ABSENCE_AND_ORDINARY_READER_RACES",
+  "run_id": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "actual_delete_invocations": 2,
+  "original_unknown_observations_unchanged": 2,
+  "storage_calls": 44,
+  "data_plane_typed_invocation_costs": 46,
+  "pins": 2,
+  "verified_terminations": 2,
+  "active_pins": 0,
+  "exact_absence_receipts": 2,
+  "scope_completions": 1,
+  "protected_versions_retained": 2,
+  "backup_versions_retained": 4,
+  "concurrent_terminal_replay_new_native_io": 0,
+  "admin_provisioning": "separate private infrastructure START/OBSERVATION journal; not included in data-plane counts",
+  "full_D1": "NOT_RUN",
+  "full_business_LC11_12": "NOT_RUN / blocked",
+  "native_archive_restore_rerun": "NOT_RUN",
+  "cleanup": 0
+}

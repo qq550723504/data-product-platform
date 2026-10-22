@@ -1,0 +1,10 @@
+{
+  "status": "FAIL_RETAINED",
+  "native_GET_inventory_protection_disabled_users": "PASS",
+  "native_policy_GET_http": 200,
+  "rejected_step": "byte-serialized OSS policy equality",
+  "fix": "Use existing OSS Policy.Equals for set semantics, rather than noncanonical MarshalJSON bytes; still reject other actions/resources/versions",
+  "fresh_readonly_probe": "new binary/helper/config/output generation02, original calls retained",
+  "delete": 0,
+  "mutations": 0
+}

@@ -1,0 +1,23 @@
+{
+  "status": "PRESERVED_READONLY_AUDIT_ERRORS_CORRECTED",
+  "scope": "Optional post-preparation retained-owner readback; not the fixed full entry and not window execution",
+  "errors": [
+    {
+      "attempt": 1,
+      "exception": "FileNotFoundError: remaining-candidate7/candidate.json",
+      "root_cause": "generation display must use 02d",
+      "source_or_gate_changed": false
+    },
+    {
+      "attempt": 2,
+      "exception": "AssertionError: historical human-confirmation.txt exists",
+      "root_cause": "Old authorized owners may legitimately retain original authorization evidence; only new generation must have no materialized authority. Old evidence was preserved.",
+      "source_or_gate_changed": false
+    }
+  ],
+  "corrected_readback": "physical-preparation-readback.json",
+  "source_starts": 0,
+  "permission_changes": 0,
+  "provider_requests": 0,
+  "native_delete": 0
+}

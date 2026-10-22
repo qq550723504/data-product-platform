@@ -1,0 +1,17 @@
+{
+  "automation_id": "307-d1-candidate10-v20",
+  "status": "ACTIVE",
+  "kind": "heartbeat",
+  "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "scheduled_for_local": "2026-10-18T18:00:00+08:00",
+  "scheduled_for_utc": "2026-10-18T10:00:00Z",
+  "verified_at": "2026-10-18T07:31:47.116070+00:00",
+  "prompt_sha256": "ea553adace261d0fe0cef395fe3aa17145b84f861d6454b7d2ff7fd991bf5ebd",
+  "time_zone": "Singapore Standard Time / Asia/Singapore",
+  "saved_prompt_exact_readback": true,
+  "absolute_date_guard_in_prompt": "2026-10-18 only",
+  "count": 1,
+  "old_v17_heartbeat": "PAUSED",
+  "terminal_action": "pause this same heartbeat after completion/failure/expiry; no repeat or new window",
+  "computer_and_Codex_must_remain_running": true
+}

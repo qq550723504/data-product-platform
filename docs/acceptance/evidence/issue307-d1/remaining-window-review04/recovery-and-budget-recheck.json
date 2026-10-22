@@ -1,0 +1,105 @@
+{
+  "status": "PASS_ACTUAL_SEVEN_READONLY_PROFILES_AND_EMPTY_BUDGETS",
+  "at": "2026-10-18T06:28:21.564212+00:00",
+  "profiles": [
+    {
+      "group": "business-races",
+      "stage": "recover-P1",
+      "profile_sha256": "bb46649c22c6737f3028abaf9f2f7e26064410b26c69238cdc85b9012a22cd28",
+      "ValidUntil": "2026-10-18T12:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-P2",
+      "profile_sha256": "bb46649c22c6737f3028abaf9f2f7e26064410b26c69238cdc85b9012a22cd28",
+      "ValidUntil": "2026-10-18T12:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T1",
+      "profile_sha256": "bb46649c22c6737f3028abaf9f2f7e26064410b26c69238cdc85b9012a22cd28",
+      "ValidUntil": "2026-10-18T12:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T2",
+      "profile_sha256": "bb46649c22c6737f3028abaf9f2f7e26064410b26c69238cdc85b9012a22cd28",
+      "ValidUntil": "2026-10-18T12:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "recover-H2",
+      "profile_sha256": "bd42b99108791ae6528984977df9c9459ccd89b0a097d0db7f82abdba7f9d8d3",
+      "ValidUntil": "2026-10-18T12:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1A",
+      "profile_sha256": "4ee024159fb1faf9a7db9a49d0f374b92158d2f01be9ebce2a46b17aec0e228e",
+      "ValidUntil": "2026-10-18T12:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1B",
+      "profile_sha256": "4ee024159fb1faf9a7db9a49d0f374b92158d2f01be9ebce2a46b17aec0e228e",
+      "ValidUntil": "2026-10-18T12:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    }
+  ],
+  "budgets": [
+    {
+      "group": "business-races",
+      "volume": "dpp-lifecycle307-808a6960-candidate10-budget",
+      "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+      "mounted_CIDs_exact": true,
+      "mounted_CID_count": 9,
+      "persistent_budget_files": 0
+    },
+    {
+      "group": "late-hold",
+      "volume": "dpp-lifecycle307-754ea8f0-candidate10-budget",
+      "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+      "mounted_CIDs_exact": true,
+      "mounted_CID_count": 3,
+      "persistent_budget_files": 0
+    },
+    {
+      "group": "mixed",
+      "volume": "dpp-lifecycle307-dfda43b4-candidate10-budget",
+      "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+      "mounted_CIDs_exact": true,
+      "mounted_CID_count": 5,
+      "persistent_budget_files": 0
+    }
+  ],
+  "actual_recovery_runs": "NOT_RUN",
+  "native_delete": 0,
+  "new_authority": "NOT_RECEIVED"
+}

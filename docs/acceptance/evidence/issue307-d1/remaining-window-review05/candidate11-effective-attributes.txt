@@ -1,0 +1,6 @@
+docs/acceptance/evidence/issue307-d1/remaining-candidate11/candidate.json: text: unset
+docs/acceptance/evidence/issue307-d1/remaining-candidate11/candidate.json: eol: unspecified
+docs/acceptance/issue307-d1-candidate11-confirmation.md: text: set
+docs/acceptance/issue307-d1-candidate11-confirmation.md: eol: lf
+docs/acceptance/issue307-d1-v21-window-runbook.md: text: set
+docs/acceptance/issue307-d1-v21-window-runbook.md: eol: lf

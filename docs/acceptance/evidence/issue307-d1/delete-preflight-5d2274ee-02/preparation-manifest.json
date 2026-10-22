@@ -1,0 +1,140 @@
+{
+  "schema": "lifecycle307-non-delete-preparation-manifest-v1",
+  "source_parent_head": "917465d88a0f6e8dfd0a4745fb4d8d767a2c75a1",
+  "frozen_native_source": "4650c435f8ba89fdb0b2dc0591152d25ded182d7",
+  "status": "PASS_NON_DELETE_PREPARATION_ONLY",
+  "entries": [
+    {
+      "path": ".github/workflows/demo-lifecycle.yml",
+      "git_blob": "d506794fab574d2f027ffcf575f79c395381324c",
+      "sha256": "8b3c2ac19c6010b47004369110819b4bc12cedf90dd15d5ce9352ec0a508abfb",
+      "bytes": 2152
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/current-core-readback.json",
+      "git_blob": "b990ec937e82980a7b47adbada4056b1764ae737",
+      "sha256": "d296d96cad09a1d776a094b53f0f3d9742d84ca9a428af14aa0465a9861a6d75",
+      "bytes": 14239
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/final-known-secret-scan.json",
+      "git_blob": "0677772266e4066d343c3ec632be413b8a618ca8",
+      "sha256": "fcfabcce7f95b62aa9583eff85de155cab25721e6c04137667c0ac38f93c42f0",
+      "bytes": 3928
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/known-secret-scan.json",
+      "git_blob": "ad04394a0d20a07f2c16e2c7adff77929c9e73bc",
+      "sha256": "879f812b7e00058c72793b16d28ace5ddfadfffcac83c1dc3616d1565de007fa",
+      "bytes": 239
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/preflight-independent-review.json",
+      "git_blob": "4982b19b1a93957c7aba7acdb1f09bf950d8fe5b",
+      "sha256": "23f335cfb8d33890aff00ac7f74dc7aca3e179624a2ae8c039c4df852414845c",
+      "bytes": 6497
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/preflight-profile.json",
+      "git_blob": "5ea952ba50284f4969796b83e20c13430cf7e21c",
+      "sha256": "86d2759f573f727aff8c4fd8ae541ea55aad62f3c14a803f66d7b9822a05e1ee",
+      "bytes": 5269
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/trial-no-send-candidate.json",
+      "git_blob": "ffb6b81bf43a2bd27ebef5d173396e7c06712a10",
+      "sha256": "e2cbf3cf39094513f13aa9f175b549dd2632ab5a7460adbf0046749696bcc393",
+      "bytes": 2997
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/verification.json",
+      "git_blob": "73bae1a6257366ce4cc4484c5292b72c649d12c1",
+      "sha256": "c0c75068b15d3c201aa55a17fa47fd8cd2c8746e0b62cb6689a3a1c5488c7855",
+      "bytes": 1960
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint-auth.json",
+      "git_blob": "b6f563a8109cf46a7a463a731782b19971dc435e",
+      "sha256": "45bc50d848ed854339722faf03862c26904f430ad013404eef902cd7e893d63f",
+      "bytes": 1341
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint-final-readback.json",
+      "git_blob": "ce60a36b855a006bdb922c841d79a30698b33749",
+      "sha256": "70c04af76aa41d09407fcdf89519a14c1fb3aedba6c619540a6c9de00eddd1d3",
+      "bytes": 727
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint-preparation-failures.json",
+      "git_blob": "b76bf30da2c2e95040fc41578f710487ad494e06",
+      "sha256": "9f77b396ca748de9eee652c475267054cbce1d2ac6e3479cbda888567e41961a",
+      "bytes": 1354
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint.json",
+      "git_blob": "92136c3bf83ced3595a76cd96d6c76d04bc78057",
+      "sha256": "c94c10e16f5de01ca94dd99e252baf2d4815a2e357595283ac5eda67201c6792",
+      "bytes": 33127
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/current-core-readback.json",
+      "git_blob": "fd57ecfff13048b117427a12c26e9cac06ba57e2",
+      "sha256": "618c34f86873007c103f07b80125db44aaa1c660453bce31d360ad51eefe3973",
+      "bytes": 14239
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/preflight-profile.json",
+      "git_blob": "5ea952ba50284f4969796b83e20c13430cf7e21c",
+      "sha256": "86d2759f573f727aff8c4fd8ae541ea55aad62f3c14a803f66d7b9822a05e1ee",
+      "bytes": 5269
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/trial-no-send-candidate.json",
+      "git_blob": "cb30b217a12cc9571445d96015040b576dcd96c8",
+      "sha256": "bdd7767963d40ddb951d679b22bb851958d1c9bbe4f9727b712c4e2857efecdd",
+      "bytes": 2655
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-delete-preflight.md",
+      "git_blob": "9be3673f631b4fc30c59e06fab67bbd9f06a3df0",
+      "sha256": "c268989420cefc42d5cbd05d5390b7539623cdb714251ea6accf5ce961eeb2c1",
+      "bytes": 7765
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-delete-proposal.md",
+      "git_blob": "a31462d3165d607bc56177d4388d4959194b88fa",
+      "sha256": "d117371f80de688641becc1761a2cc56b64fa13b1a6629b1630ae27a30127072",
+      "bytes": 16564
+    },
+    {
+      "path": "examples/lifecycle-d1/checkpoint-reference-core.ps1",
+      "git_blob": "1e2be3e8503215a0155e86c42b6c4da845a60b1a",
+      "sha256": "2caed0256bebf500bf6f24be3ff6c8fd2e6b752969ba1e65da7618ab78e30bf6",
+      "bytes": 18642
+    },
+    {
+      "path": "examples/lifecycle-d1/prepare-reference-delete.py",
+      "git_blob": "30d3e35daefc714b75381cd73cc67c0e3c054ab9",
+      "sha256": "24e1d6d19394208016ee1d9dd0ddaa06669880d2cebae03b4c7996db0303fd1c",
+      "bytes": 16263
+    },
+    {
+      "path": "examples/lifecycle-d1/test_reference_delete_preflight.py",
+      "git_blob": "b6124928b945cf625f8cfdacf19b1912ec22569f",
+      "sha256": "41f6eab25453c85f4acc7af4608db9329fc5fa51dce2b8ab3c38a8a150808cca",
+      "bytes": 6500
+    }
+  ],
+  "self_excluded": true,
+  "previous_native_108_and_48_receipt_manifests": "UNCHANGED",
+  "actual_provider_io": 0,
+  "provider_delete": 0,
+  "source_core_mutation": 0,
+  "cleanup": 0,
+  "no_send_proof": "VERIFIED_CANDIDATE_NOT_APPLIED",
+  "core_checkpoint": "PASS; independent restore and remote SCRAM; initial dump script hash NOT_CAPTURED",
+  "native_object_backup_restore": "NOT_RUN",
+  "actual_send_profile_and_server_bridge": "NOT_IMPLEMENTED/NOT_VALIDATED",
+  "exact_delete_authorization": "NOT_RECEIVED",
+  "full_D1": "NOT_ACCEPTED"
+}

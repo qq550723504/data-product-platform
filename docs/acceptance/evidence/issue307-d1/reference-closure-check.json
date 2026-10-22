@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-14",
+  "base_main": "074a33bace7edbaf481759aac3a84708363ffd02",
+  "first_registration_source": "f5476e0b4fa4ece062fc89aaf417ef8af5a943b0",
+  "guard_qualification_source": "0b88e47c92d69d4b783a90f678d128a79bedccdf",
+  "pre_fix": {
+    "first_registration_both_orders": "FAIL: expected parent-lock wait absent",
+    "misconfigured_guards": "FAIL: five cases SATISFIED instead of UNKNOWN",
+    "original_failures_preserved": true
+  },
+  "targeted_pg": {
+    "additional_wrong_update_column_seconds": 10.574,
+    "misconfigured_guards_after": 6,
+    "qualification_seconds": 91.57,
+    "provider_configured": false,
+    "status": "PASS",
+    "new_owned_scratch_databases": true,
+    "race": true,
+    "first_registration_orders": 2
+  },
+  "module_race": {
+    "status": "PASS",
+    "summary": {
+      "packages_pass": 89,
+      "packages_skip": 44,
+      "tests_pass": 700,
+      "tests_skip": 339,
+      "failures": 0,
+      "started_at": "2026-10-14T00:15:23.7320917+08:00",
+      "last_at": "2026-10-14T00:16:32.9878444+08:00",
+      "raw_log_sha256": "b5ff44443f37ec5559b42b4a6c89d0f47fe5dba278e77a2dccd13bd4be581d07"
+    },
+    "source": "0b88e47c92d69d4b783a90f678d128a79bedccdf",
+    "command": "go test -race -count=1 -json ./...",
+    "external_service_mode": "not configured; integration skips kept separate"
+  },
+  "vet": {
+    "command": "go vet ./...",
+    "status": "PASS",
+    "source": "0b88e47c92d69d4b783a90f678d128a79bedccdf"
+  },
+  "full_pg": {
+    "database": "ref307_closure_c6935258d7f04eba90967372de1fa87a",
+    "provider_configured": false,
+    "source": "f5476e0b4fa4ece062fc89aaf417ef8af5a943b0",
+    "database_retained": true,
+    "status": "PASS",
+    "command": "go test -race -count=1 -p 1 -json ./...",
+    "summary": {
+      "packages_pass": 89,
+      "packages_skip": 44,
+      "tests_pass": 1098,
+      "tests_skip": 14,
+      "failures": 0,
+      "started_at": "2026-10-14T00:08:32.8786524+08:00",
+      "completed_at": "2026-10-14T00:27:07.7003442+08:00",
+      "raw_log_sha256": "97d8ce90b32beafec4a61d0ded605e0f6f05c43e74aa258db5af430421c25332",
+      "lifecycle_application_seconds": 584.13
+    }
+  },
+  "durable_preflight": {
+    "run_id": "29a7843d-74a6-47c2-bd7f-215ce0c7da40",
+    "label_key": "lifecycle307.reference",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "container": "dpp-ref307-29a7843d",
+        "role": "postgres",
+        "destination": "/var/lib/postgresql/data",
+        "container_id": "7ca2126fb7d56f3a32e66b1fee13b3105e309bed5715e85ce87476b22b03192c",
+        "writable": true,
+        "volume": "dpp-ref307-29a7843d-pgdata",
+        "type": "volume"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  "operator_preflight_retry": {
+    "live_label_verified": "lifecycle307.reference",
+    "initial": "FAIL: supplied wrong label key; stopped before database creation",
+    "corrected": "PASS"
+  },
+  "native_catalog": {
+    "relations": 27,
+    "qualified": 27,
+    "unqualified": 0,
+    "source": "a7116c355428ee71ff621870ceafeb6ede9e9205",
+    "mutation": 0,
+    "provider_io": 0
+  },
+  "native_reexecution": "NOT_RUN",
+  "previous_ci": {
+    "checks": 11,
+    "run_id": 38425913437,
+    "matching_main_push_ci": "NOT_RUN",
+    "head": "269fe15e23f6e63f8913e81cb171dc227996de37",
+    "status": "SUCCESS",
+    "event": "pull_request"
+  },
+  "secret_scan": {
+    "status": "PASS",
+    "known_private_values": 18,
+    "files": 10,
+    "matches": 0,
+    "compressed_logs": "decompressed and checked against raw log SHA256"
+  },
+  "prior_receipt_manifest_git_blob": "930762cb1b7597c852fdc5fc9d597522cb9e4fb5",
+  "prior_receipt_manifest_unchanged": true,
+  "provider_delete": 0,
+  "provider_cleanup": 0,
+  "protection_release": 0,
+  "old_core_upgrade": 0,
+  "sealed_windows_reopened": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "draft": true,
+  "logs": [
+    {
+      "sha256": "6386f9f2b547bb36ea24a05b6a59c7264e308ef7e93b706da81c162ce2a6d49e",
+      "path": "reference-closure/final-module.jsonl.gz",
+      "bytes": 65775
+    },
+    {
+      "sha256": "3797471142ac0d22be6945e884e24b35aaccfa7fa2f979949e0e0a57aac8e1c0",
+      "path": "reference-closure/first-registration-after.log",
+      "bytes": 5835
+    },
+    {
+      "sha256": "983e08f74d12a82b6cf365c116497e4e91579176d53d8be04ac96b7d6a60962c",
+      "path": "reference-closure/first-registration-before.log",
+      "bytes": 835
+    },
+    {
+      "sha256": "b03ac26a3241bc230bd473e1dce1908a8cb875ea8eca1ddd15f9989de6b99742",
+      "path": "reference-closure/full-pg.jsonl.gz",
+      "bytes": 74534
+    },
+    {
+      "sha256": "fab92ca3f790f8a4a152358371450c742e17b033c111a8e365d841e0d9f991a0",
+      "path": "reference-closure/qualification-after.log",
+      "bytes": 103
+    },
+    {
+      "sha256": "b5928b7a4c1c9e5b50964c03322991273e326913dfc420f78c233ba8625ae89e",
+      "path": "reference-closure/trigger-before.log",
+      "bytes": 14157
+    },
+    {
+      "sha256": "c1195a472bb14e0e5f0c478cbe9481aa7205972ce9b2a5f46a2c10f9de793a27",
+      "path": "reference-closure/wrong-update-column-after.log",
+      "bytes": 103
+    }
+  ],
+  "receipt_encoding": "Text receipts normalized to UTF-8 LF; compressed JSONL preserves original raw bytes"
+}

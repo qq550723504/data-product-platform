@@ -1,0 +1,133 @@
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/application	[no test files]
+=== RUN   TestDistinctSourceResources
+--- PASS: TestDistinctSourceResources (0.00s)
+=== RUN   TestExactTextCSV
+=== RUN   TestExactTextCSV/no-terminal-LF
+=== RUN   TestExactTextCSV/wrong-header
+=== RUN   TestExactTextCSV/wrong-width
+=== RUN   TestExactTextCSV/BOM
+=== RUN   TestExactTextCSV/CRLF
+=== RUN   TestExactTextCSV/invalid-UTF8
+=== RUN   TestExactTextCSV/NUL
+--- PASS: TestExactTextCSV (0.00s)
+    --- PASS: TestExactTextCSV/no-terminal-LF (0.00s)
+    --- PASS: TestExactTextCSV/wrong-header (0.00s)
+    --- PASS: TestExactTextCSV/wrong-width (0.00s)
+    --- PASS: TestExactTextCSV/BOM (0.00s)
+    --- PASS: TestExactTextCSV/CRLF (0.00s)
+    --- PASS: TestExactTextCSV/invalid-UTF8 (0.00s)
+    --- PASS: TestExactTextCSV/NUL (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/domain	0.408s
+=== RUN   TestMetadataUsesTheProbedEndpoint
+=== RUN   TestMetadataUsesTheProbedEndpoint/valid
+=== RUN   TestMetadataUsesTheProbedEndpoint/hostname
+=== RUN   TestMetadataUsesTheProbedEndpoint/port
+=== RUN   TestMetadataUsesTheProbedEndpoint/custom-url
+=== RUN   TestMetadataUsesTheProbedEndpoint/alternate-mode
+=== RUN   TestMetadataUsesTheProbedEndpoint/unknown-field
+--- PASS: TestMetadataUsesTheProbedEndpoint (0.00s)
+    --- PASS: TestMetadataUsesTheProbedEndpoint/valid (0.00s)
+    --- PASS: TestMetadataUsesTheProbedEndpoint/hostname (0.00s)
+    --- PASS: TestMetadataUsesTheProbedEndpoint/port (0.00s)
+    --- PASS: TestMetadataUsesTheProbedEndpoint/custom-url (0.00s)
+    --- PASS: TestMetadataUsesTheProbedEndpoint/alternate-mode (0.00s)
+    --- PASS: TestMetadataUsesTheProbedEndpoint/unknown-field (0.00s)
+=== RUN   TestRequestDispatchObservation
+--- PASS: TestRequestDispatchObservation (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/hop	0.905s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/infrastructure	[no test files]
+=== RUN   TestPrivateTargetBindingsFailClosed
+--- PASS: TestPrivateTargetBindingsFailClosed (0.00s)
+=== RUN   TestLiveCoreBatch
+=== RUN   TestLiveCoreBatch/metadata-endpoint-must-match-probe
+=== RUN   TestLiveCoreBatch/runtime-change-requires-restart
+=== RUN   TestLiveCoreBatch/claim-before-dispatch-is-not-actual-cost
+=== RUN   TestLiveCoreBatch/registered-reply-survives-projection-failure
+=== RUN   TestLiveCoreBatch/definite-preflight-failure-can-retry
+=== RUN   TestLiveCoreBatch/dispatch-cost-survives-result-loss
+=== RUN   TestLiveCoreBatch/definite-start-preflight-failure-can-retry
+=== RUN   TestLiveCoreBatch/unsent-status-does-not-fail-live-pipeline
+=== RUN   TestLiveCoreBatch/server-owned-targets
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/schema
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/attempt
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/engine-version
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/traversal
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/missing
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/extra
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/duplicate
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/source
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/path
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/columns
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/workspace
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/template
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/config
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/rows
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/instance
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/batch
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/request
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/engine-id
+=== RUN   TestLiveCoreBatch/manifest-negative-matrix/dataset
+=== RUN   TestLiveCoreBatch/concurrent-prepare-and-admit
+=== RUN   TestLiveCoreBatch/native-attempt-publisher-isolation
+=== RUN   TestLiveCoreBatch/commit-reply-loss-recovers-same-receipt
+=== RUN   TestLiveCoreBatch/revocation-between-object-write-and-core-commit
+=== RUN   TestLiveCoreBatch/third-object-failure-and-recovery
+=== RUN   TestLiveCoreBatch/lost-object-put-response
+=== RUN   TestLiveCoreBatch/database-rollback-and-recovery
+=== RUN   TestLiveCoreBatch/current-authority-and-source-revocation
+=== RUN   TestLiveCoreBatch/unknown-register-never-restarted
+=== RUN   TestLiveCoreBatch/lost-start-status-recovery
+=== RUN   TestLiveCoreBatch/unknown-status-retains-attempt
+=== RUN   TestLiveCoreBatch/status-reply-must-confirm-exact-identity
+=== RUN   TestLiveCoreBatch/failed-hop-explicit-new-attempt
+=== RUN   TestLiveCoreBatch/hop-restart-id-loss-fails-closed
+--- PASS: TestLiveCoreBatch (35.57s)
+    --- PASS: TestLiveCoreBatch/metadata-endpoint-must-match-probe (0.06s)
+    --- PASS: TestLiveCoreBatch/runtime-change-requires-restart (0.05s)
+    --- PASS: TestLiveCoreBatch/claim-before-dispatch-is-not-actual-cost (0.19s)
+    --- PASS: TestLiveCoreBatch/registered-reply-survives-projection-failure (2.00s)
+    --- PASS: TestLiveCoreBatch/definite-preflight-failure-can-retry (0.87s)
+    --- PASS: TestLiveCoreBatch/dispatch-cost-survives-result-loss (0.26s)
+    --- PASS: TestLiveCoreBatch/definite-start-preflight-failure-can-retry (0.88s)
+    --- PASS: TestLiveCoreBatch/unsent-status-does-not-fail-live-pipeline (0.75s)
+    --- PASS: TestLiveCoreBatch/server-owned-targets (0.15s)
+    --- PASS: TestLiveCoreBatch/manifest-negative-matrix (0.83s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/schema (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/attempt (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/engine-version (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/traversal (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/missing (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/extra (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/duplicate (0.01s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/source (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/path (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/columns (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/workspace (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/template (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/config (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/rows (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/instance (0.01s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/batch (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/request (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/engine-id (0.00s)
+        --- PASS: TestLiveCoreBatch/manifest-negative-matrix/dataset (0.00s)
+    --- PASS: TestLiveCoreBatch/concurrent-prepare-and-admit (1.53s)
+    --- PASS: TestLiveCoreBatch/native-attempt-publisher-isolation (1.04s)
+    --- PASS: TestLiveCoreBatch/commit-reply-loss-recovers-same-receipt (0.78s)
+    --- PASS: TestLiveCoreBatch/revocation-between-object-write-and-core-commit (0.83s)
+    --- PASS: TestLiveCoreBatch/third-object-failure-and-recovery (1.31s)
+    --- PASS: TestLiveCoreBatch/lost-object-put-response (1.27s)
+    --- PASS: TestLiveCoreBatch/database-rollback-and-recovery (1.19s)
+    --- PASS: TestLiveCoreBatch/current-authority-and-source-revocation (1.11s)
+    --- PASS: TestLiveCoreBatch/unknown-register-never-restarted (0.25s)
+    --- PASS: TestLiveCoreBatch/lost-start-status-recovery (1.41s)
+    --- PASS: TestLiveCoreBatch/unknown-status-retains-attempt (0.98s)
+    --- PASS: TestLiveCoreBatch/status-reply-must-confirm-exact-identity (1.29s)
+    --- PASS: TestLiveCoreBatch/failed-hop-explicit-new-attempt (2.75s)
+    --- PASS: TestLiveCoreBatch/hop-restart-id-loss-fails-closed (12.12s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot	37.120s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/transport/http	[no test files]

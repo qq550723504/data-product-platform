@@ -1,0 +1,5 @@
+asynq: pid=1 2026/10/19 10:58:08.279828 INFO: Starting processing
+asynq: pid=1 2026/10/19 10:58:08.480423 INFO: Starting graceful shutdown
+asynq: pid=1 2026/10/19 10:58:09.648953 INFO: Waiting for all workers to finish...
+asynq: pid=1 2026/10/19 10:58:09.648992 INFO: All workers have finished
+asynq: pid=1 2026/10/19 10:58:09.651150 INFO: Exiting

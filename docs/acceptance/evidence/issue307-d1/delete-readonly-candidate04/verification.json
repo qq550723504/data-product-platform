@@ -1,0 +1,18 @@
+{
+  "candidate_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "candidate_binary_sha256": "01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3",
+  "runtime_source_hashes": 317,
+  "go_runtime_changed": false,
+  "python_normal": 30,
+  "python_optimized": 30,
+  "native_checkpoint_delta": 20,
+  "native_management_gets_including_failed_probe": 8,
+  "source_mutation": 0,
+  "delete": 0,
+  "merge": 0,
+  "cleanup": 0,
+  "consistency_audit": "PRIMARY_READ_ONLY; no new independent runtime review claimed",
+  "source_source_code_commit": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "read_only_snapshot": "PASS",
+  "send_authorization": "NOT_RECEIVED"
+}

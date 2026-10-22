@@ -1,0 +1,18 @@
+test_b2_binds_owner_before_build_and_checks_after_cleanup (cleanup_receipts_test.CleanupFailureContract.test_b2_binds_owner_before_build_and_checks_after_cleanup) ... FAIL
+
+======================================================================
+FAIL: test_b2_binds_owner_before_build_and_checks_after_cleanup (cleanup_receipts_test.CleanupFailureContract.test_b2_binds_owner_before_build_and_checks_after_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue320-trial-image-lifecycle\data-product-platform\examples\enterprise-activity\postgres-ingestion\cleanup_receipts_test.py", line 84, in test_b2_binds_owner_before_build_and_checks_after_cleanup
+    self.assertEqual(set(files),{"trial_images.py","cleanup_receipts.py","storage_smoke.py"})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the second set but not the first:
+'storage_smoke.py'
+'trial_images.py'
+'cleanup_receipts.py'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.007s
+
+FAILED (failures=1)

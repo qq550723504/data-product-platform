@@ -1,0 +1,596 @@
+{
+  "at": "2026-10-14T15:24:43.082954+00:00",
+  "environments": [
+    {
+      "run": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+      "workspace": "43818661-5a41-4bbf-ab86-341f0c442c3f",
+      "services": [
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-redis",
+          "id": "e842290f4b0be93f44e2aac59be89428cf535efb0cf30efaaa197b7e03a014ad",
+          "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+          "state": "running",
+          "pid": 51084,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-f3b0c9cd-redis-data"
+          ]
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-gateway",
+          "id": "00a1249278d0e3138eb45e9aa34df6702499875927a868d1993dae209952f5b6",
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+          "state": "running",
+          "pid": 55879,
+          "exit_code": 0,
+          "volumes": []
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-minio",
+          "id": "be23faf06a0d5d009f196bc38e53b8ca6da67837b76ac46f568d42617be9b1b7",
+          "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+          "state": "running",
+          "pid": 48486,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-f3b0c9cd-objects"
+          ]
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-postgres",
+          "id": "e01551079c89b8edcb83eee60e8befd6d26a2c0aebd9949fcfb95abf0d46f6f7",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "running",
+          "pid": 48571,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-f3b0c9cd-postgres"
+          ]
+        }
+      ],
+      "helpers": [
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-release-9ade37",
+          "id": "88363beef7f2844de8b5106efafee2b5cbff9a0598a290fa4f996b4c736d92a4",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-release-2da49b",
+          "id": "1369b6cf5db7ab2962e7c2568970f6e608fa02e53dece01d0e2692c884420d4d",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-seal-f856ce",
+          "id": "e0e228e669e45d43edd7f9e3e6a633f25c86522222e8dde1ec7a9ad36a18f8b1",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-seal-6a3224",
+          "id": "77ce84f0eca751e2a683e1d356f4135d8cdff467e44d6c7520fec4d959bb2b9f",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-subjects-63efb9",
+          "id": "28dd1f828f8ef33e95842d8648c4724d5d72b593449bd6d341768965e67c6afc",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-restrict-df55be",
+          "id": "4258ffca54b52f95683eaf33d65bb8cf6bfc437455a3f919c00088cee1b06618",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-forensic-353514",
+          "id": "9fd92eb887271446205fa0249cc3dd294c65f51a7e087cae19135bbd7fdedb9d",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-issue-2dc039",
+          "id": "fdd45c047f0c3882b111eeac0c2d96c3a04269cf4075b7f8504b99b6337c2d2e",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-issue-5e1991",
+          "id": "292f8dc5b66c7992dfa57befee9114a0cad9ef049689cf30547025394d71e8bf",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-issue-eafece",
+          "id": "e24b78cd2c6c871a925d46d78383dee3a3fed72b1350403ce1d27d83ce5ecf1b",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-issue-182cba",
+          "id": "5ef8e14b1f899079562619dc0dfe89435588f1fe35c183a1c6c68141d9ebacdb",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-issue-71525c",
+          "id": "244fcca3b2c6c9fad3ec5ec0b07ebe27f724ec8eccbd6e30fb15a970e85511c6",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-credential-provision-cc8129",
+          "id": "ae3ceb2e5d444c6c5f69c6ac6b4029bc3540c208d4bd4577119b2a4839502fe1",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-resume-retry-ea53df",
+          "id": "7991e69db055f2c67137af0c61a123fb25f1a1aadd18d084cd073ef4e775b8a8",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-resume-stop-8bd81a",
+          "id": "7d2a9c6fca9828c681f357602fa552a1ebe3254a3a612b7bf02deeb466354492",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-resume-stop-bdfb85",
+          "id": "5adcc32cbb5ec36feeb86a74594da039cfdc1c651fee44702f2acbe61a1bfe87",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-seal-36c23f",
+          "id": "2e7cd69d4c10c18abbb5f6f9d9fe61ddbdcfadd6007a4006509a4abd2d5fbc3e",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-resume-provision-63cde5",
+          "id": "7e3e66918adc08a69e7710027e6098fc569f9fb930c8d7e98e9f6bc0d0bd3b80",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-resume-membership-b450a1",
+          "id": "56df4c90daa93b122aa64da2edddf0f1798636257955f56f1609e7f3e7a77f7d",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-resume-crash-e2dcca",
+          "id": "c7026f5b8ba3a053858c3493fee88490272aa578f3297f7ca366e04e011c9186",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-resume-init-1083d4",
+          "id": "091b30de5f58a0052460b8078cc8788f775a2ebdb588288ea56970df47a69f06",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-setup-cc8eb5",
+          "id": "c5f6b56d541237b6eb0b26547e50ff30cc4bea0d3744af8a917e8312f742505e",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-reader-provision-b5e7d3",
+          "id": "b4c816167e4aafc83e1002003d883d6da8124312289ba6d3a41656403ff280b6",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-f3b0c9cd-prepare",
+          "id": "24bc0a06174799c823e7af175094e6d3c29e50ed0005c9a9a346017403654819",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        }
+      ],
+      "roles": {
+        "credential-admin\\reader.json": false,
+        "credential-owner\\reader.json": false,
+        "plane-admin\\reader.json": false,
+        "plane-owner\\reader.json": false,
+        "resume-admin\\reader.json": false,
+        "resume-owner\\reader.json": false
+      },
+      "provider_rpc": 9,
+      "admin_setup_and_seal_rpc": 20,
+      "all_resources_retained": true
+    },
+    {
+      "run": "7cd53b0e-44d9-4f3a-9eb7-041f496ff277",
+      "workspace": "0cbfdbc2-a5a5-45c2-bb3e-7387ad2e55f4",
+      "services": [
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-redis",
+          "id": "1efb6ab8f234b102ebdd2496aeb196cf530b00951e181853c95d2e6a16067f40",
+          "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+          "state": "running",
+          "pid": 10219,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-7cd53b0e-redis-data"
+          ]
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-gateway",
+          "id": "c624fc17e3dbcbeabe73c006b6fa92ae19c26d6cc59fe1b5a485aa6b9fcbb203",
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+          "state": "running",
+          "pid": 15645,
+          "exit_code": 0,
+          "volumes": []
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-minio",
+          "id": "e360fd87e60f326d36e361f8a24c4ea1004d9b117ab481fef7b3fd73b2db9d0b",
+          "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+          "state": "running",
+          "pid": 8413,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-7cd53b0e-objects"
+          ]
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-postgres",
+          "id": "8baa99ffa638b9d230db9836b58c876a9da9a089dbc66f35d4c28c584542c4f3",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "running",
+          "pid": 8481,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-7cd53b0e-postgres"
+          ]
+        }
+      ],
+      "helpers": [
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-release-648405",
+          "id": "c565056cf31a19dc7282c6d04830794c3a310d18faad607ce90eb44d941722e4",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-release-11bfd1",
+          "id": "593c256ea541fa30ecef99286864447460bbb817dc9109ba0d8f5ec34a720b16",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-seal-0ab107",
+          "id": "39559eb39244f252a35a33d790abca8cfb9c2e03a04f74000449bb173fc88d78",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-seal-9b6cc9",
+          "id": "85ed3082f9ca96cd358729f16e7568f76a843873fa881d94168b15dce17a0359",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-subjects-3c2c25",
+          "id": "ffafbbe412048d71bb479569acd8c15baa8442f43a5728b77cde9a7824e9fcb2",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-restrict-2c8f6d",
+          "id": "0f61cd116a06a9cceda1ece282b40a35616a5f7a6cb84b68f109d5901ef70b01",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-confirm-6849f9",
+          "id": "014728d67749bb72120906cba8c36ad91abadaf16b8bd2583609a136f890b3b7",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-contain-c26139",
+          "id": "7ef865655204eed75cc65193034c9f37b950c5e70481d4e71ea7a858d270b143",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-expiry-0d858c",
+          "id": "8cc5ca798d650c7adb2173756e4610ded3958acd321a79dda3473b59684573cf",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-issue-9299fa",
+          "id": "f22cc440ed31c7b83cb5de4b904842d797cd33cb532f4b1174815918e2175f60",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-issue-ec12c2",
+          "id": "a6c841645e22c0e8fb572bc0c4613e821ebeb6287bfc62c21505e7d91b31f8a7",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-credential-provision-56e021",
+          "id": "e67aafe6d0943e57170ad4699f6cbc9ad27269321ef7fde3df3081b8145b57fe",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-resume-init-8aab90",
+          "id": "8853d2b93b60f8525f6ecf215d3ce0d4f10ef890a41b8eb1d58053321631cb98",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-setup-c47a80",
+          "id": "e6cc4c3b3aa1de331adb118a0856003dc2eee4575c493a7f789a044114a6de00",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-reader-provision-4aca5e",
+          "id": "2b7b6207d295b707c25a4c000be330f7ed43e335d2e56d209f63ddab20eb53ab",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-7cd53b0e-prepare",
+          "id": "7b14d4bdf0122c3a4ae771a67108199c202905095b60053acf39369b411cc449",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        }
+      ],
+      "roles": {
+        "credential-admin\\reader.json": false,
+        "credential-owner\\reader.json": false,
+        "plane-admin\\reader.json": false,
+        "plane-owner\\reader.json": false,
+        "resume-owner\\reader.json": false
+      },
+      "provider_rpc": 12,
+      "admin_setup_and_seal_rpc": 12,
+      "all_resources_retained": true
+    },
+    {
+      "run": "8120904f-13d9-42f3-ab1f-66eb1a37b2b0",
+      "workspace": "3e43d757-29dd-46aa-bac6-6e172438a4c8",
+      "services": [
+        {
+          "name": "dpp-lifecycle307-8120904f-redis",
+          "id": "18c85d8ffc14e965de88908b2802d170963ee9ed665ec4d5077c98ec3ed4d34c",
+          "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+          "state": "running",
+          "pid": 64345,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-8120904f-redis-data"
+          ]
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-gateway",
+          "id": "bcf638e97615c1033ab147b37081e4ba915dd5f9dc2aa8f492cd95b7d7c6141f",
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+          "state": "running",
+          "pid": 65650,
+          "exit_code": 0,
+          "volumes": []
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-minio",
+          "id": "a1c20d0e8fa2b3d7fd3b71d0428e9f2a27389a5648eb543bc49f667d025a4738",
+          "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+          "state": "running",
+          "pid": 62690,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-8120904f-objects"
+          ]
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-postgres",
+          "id": "2e8891ae40854734dbbc4812662c08cfce5cbcfcf1943a0dc8036d2395649860",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "running",
+          "pid": 62607,
+          "exit_code": 0,
+          "volumes": [
+            "dpp-lifecycle307-8120904f-postgres"
+          ]
+        }
+      ],
+      "helpers": [
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-seal-022997",
+          "id": "cf39b5b758b4051c56960a8e9e1388627946a5c02a20c04392cf77c17964fdc5",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-resume-retry-1e76ec",
+          "id": "925e9103585bddf4b6e0bb3f8d2d69a56702ed46390b32f6e0b67626f71999da",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-resume-stop-aaf954",
+          "id": "38d4298484ac183ad1ff32fa074536bd9b74def9a99a0b3daa2f5647a3006949",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-seal-79abcf",
+          "id": "14d03c573e41912226a8b76d5e8421f531487c8ef39497cb215dea8bd39a5e52",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-resume-provision-142c67",
+          "id": "062cf60f4ae65bace12d295ea26977965c2baecfdaa060f9b330484f23f2e931",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-resume-membership-d09a36",
+          "id": "480b3d18812721a64a238059fe60fe8fe0ca095bb8d957b5bc62ade74e35da54",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-resume-crash-7e6f1b",
+          "id": "cf547628a7293be9b541d8654d2adbfc7a68dc89297c96ee9e4f3801ab08535d",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 1
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-resume-init-ea0870",
+          "id": "b1e8739ae0c62c2eabe43ee4563bf00c8208b09aa84abae252978a82179ce4be",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-setup-f9266b",
+          "id": "0603ecf6ae92b8a4195f8ce9efd887f9098a83f3a21aae4f88044c860bf6ed49",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-reader-provision-a36332",
+          "id": "b94c84967943d154849d2d9a11960548c7b7324aa87dbd82f69f758a43ab85a6",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        },
+        {
+          "name": "dpp-lifecycle307-8120904f-prepare",
+          "id": "ec5e97fe425906efd715b36e0092592e840460fe6db96af2da5cbec3d0eec49d",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "state": "exited",
+          "pid": 0,
+          "exit_code": 0
+        }
+      ],
+      "roles": {
+        "credential-admin\\reader.json": false,
+        "credential-owner\\reader.json": false,
+        "plane-admin\\reader.json": false,
+        "plane-owner\\reader.json": false,
+        "resume-admin\\reader.json": false,
+        "resume-owner\\reader.json": false
+      },
+      "provider_rpc": 0,
+      "admin_setup_and_seal_rpc": 16,
+      "all_resources_retained": true
+    }
+  ],
+  "cleanup": 0
+}

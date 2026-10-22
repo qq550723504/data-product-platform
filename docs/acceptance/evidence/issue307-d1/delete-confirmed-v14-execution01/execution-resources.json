@@ -1,0 +1,37 @@
+{
+  "status": "PREPARED_DISABLED",
+  "gateway": {
+    "name": "dpp-lifecycle307-5d2274ee-reference-delete-gateway",
+    "id": "0ee5a053afc9e0b0b0a340fa9aa15542ee10135086dc9db55f34dd82c7b65dfa",
+    "active_config_sha256": "7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a"
+  },
+  "redis": {
+    "name": "dpp-lifecycle307-5d2274ee-delete-recovery-redis",
+    "id": "92a54204a079ad7dbe19ae647a3aefaff037a1f2c615b3c91d91c8e782276c8e",
+    "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "volume": "dpp-lifecycle307-5d2274ee-delete-recovery-redis-data"
+  },
+  "senders": [
+    {
+      "stage": "a",
+      "id": "4935ebb52cd9d33ea07a13ddf04b35c7013f344a32954633af7adcf79142293f",
+      "name": "dpp-lifecycle307-5d2274ee-reference-send-a"
+    },
+    {
+      "stage": "b",
+      "id": "0484679b65f1c9d6fd603e61e5b94a6e5fa4752e4771771af721615d1b2a87e5",
+      "name": "dpp-lifecycle307-5d2274ee-reference-send-b"
+    }
+  ],
+  "authority_confirmed_at": "2026-10-15T08:37:14Z",
+  "expires_at": "2026-10-15T09:12:00Z",
+  "window_seconds": 2086.0,
+  "source_gateway_config": "unchanged deny-all403; topology verifier requires running sealed service",
+  "recovery_binary_sha256": "ae6bb8726c986ce364ed29a62e67e1163d5b6e6b82ebd7b7ab81180f6b1e1890",
+  "survivor_binary_sha256": "9ddf888d8411b76c14cb15fbc757bad67ad4cf5f06b321fa014657269ae04ab5",
+  "survivor_source_sha256": "0bb25f3900657a0331b32ea051b1c8fd648b23cd53b1215dec02130e640b2c73",
+  "frozen_runtime_source_unchanged": true,
+  "root_payload_mount": false,
+  "delete": 0,
+  "cleanup": 0
+}

@@ -1,0 +1,43 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_INDEX_ADDENDUM",
+  "blocker": "RB2_REVIEW_INDEX_INCLUDED_GIT_IGNORED_PYTHON_CACHE",
+  "resolution": "CLOSED",
+  "remaining_blockers": [],
+  "reviewer": "/root/v20_independent_review",
+  "at": "2026-10-18T11:03:03.986709+00:00",
+  "reviewed_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/remaining-window-review05/evidence-index.json",
+    "sha256": "f70b34fc1a77649efa0839e5f248bc6608bd7199808c1d5b18394656e63a5e68",
+    "indexed_intended_raw_files": 30,
+    "cache_and_self_excluded": true
+  },
+  "preserved_before_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/remaining-window-review05/history/evidence-index-before-RB2.json",
+    "sha256": "6a1c62c309808d5b4f8ebb26a73b5e865a2ec1477c5b5592d6285af3eb2bae2a",
+    "equals_original_HEAD_blob": true
+  },
+  "repair_receipt": {
+    "path": "docs/acceptance/evidence/issue307-d1/remaining-window-review05/review-fix-RB2.json",
+    "sha256": "29ba27d166cfe931b90f33d6daaa7b678c9829990343bdb498f4699e0ddf190b"
+  },
+  "preserved_ignored_cache_files": {
+    "count": 2,
+    "original_onsite_and_private_retained_bytes_match_before_index_SHA": true,
+    "ignored_and_untracked": true
+  },
+  "Git_index_checks": {
+    "intended_entries_raw_SHA_verified": 30,
+    "new_not_yet_tracked_entries": [],
+    "cache_entries": 0,
+    "note": "Parent staged the two new receipts during independent inspection; all 30 entries now match actual Git index blobs."
+  },
+  "original_report_and_addenda_SHA_unchanged": {
+    "independent-final-review.json": "efbf2ab25a3f15bf09d9506ae990744deafd78465eb95e94cf69bc4e96db9d1d",
+    "candidate11-attributes-addendum.json": "433bea05d725a5d6c277be74b696f5078e9f6e0775654fe410a2968178b6f4f2",
+    "candidate11-approval-bindings-addendum.json": "c1bb51e2048c3d8927722e8bf44a654dc123bd41278531ae7d23114bd2b11d59"
+  },
+  "scope": "Publication receipt membership repair only. Frozen candidate/source/machine payload/support/authority unchanged. This addendum is not authorization.",
+  "parent_final_publication_requirement": "After adding this addendum, rebuild the intentional raw index excluding cache/self and verify all entries against staged and committed Git raw bytes. This 30-entry SHA describes the reviewed snapshot, not the future enlarged index.",
+  "reviewer_Docker_provider_permission_io": 0,
+  "additional_native_or_Go_tests": false
+}

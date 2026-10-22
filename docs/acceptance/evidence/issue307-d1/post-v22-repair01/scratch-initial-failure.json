@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-19T09:00:33.622842+00:00",
+  "phase": "network-allocation",
+  "message": "Error response from daemon: all predefined address pools have been fully subnetted",
+  "sha256": "5eb7d21f7cd1846897f5056aa18de5d58dbc4524e27f6bd2e5ef5416f22cf086",
+  "source_started": false,
+  "native_delete": 0,
+  "retained_resources_removed": 0
+}

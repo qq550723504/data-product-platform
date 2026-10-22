@@ -1,0 +1,18 @@
+{
+  "group": "mixed",
+  "original_checkpoint": "docs\\acceptance\\evidence\\issue307-d1\\remaining-executable03\\mixed",
+  "source_core_sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+  "restored_core_sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+  "core_dump_sha256": "303ef33e8184f09a3de4d91eda8abb3043578c6de30cb0acde57a5922e15e343",
+  "globals_sha256": "cc68a7d8f23cf18c9754719b404a4a86a35d83c91d87b49bb05ff92d28ddd2f4",
+  "native_archive_sha256": "e404b58c3e700716497a8ce2b4b8ab2ce6be180923e814a2e5bfa1ce9b7e4940",
+  "restored_core": "67cbb08fce688d3e3ed446065eceae350568e04a5b59a367a974a4301a77ac8f",
+  "restored_native": "082d4921b7a430f0c7f667b528fd5f8d1b049a51c24f98931315345e6bff0ed3",
+  "restored_gateway": "0d928b5997ee076a24c667fb9c2b3a1796f835688bde3756c908f6bf126c6554",
+  "restore": "PASS_FULL_CORE_AND_NATIVE",
+  "C_protection": "PASS_NATIVE_GOVERNANCE_BLOCK",
+  "mixed_outcomes": "NOT_RUN",
+  "send_claims": 0,
+  "native_delete": 0,
+  "source_mutations": 0
+}

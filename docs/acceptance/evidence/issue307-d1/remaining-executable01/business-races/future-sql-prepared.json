@@ -1,0 +1,5 @@
+{
+  "queries": 12,
+  "transaction": "READ ONLY; PREPARE/DEALLOCATE/ROLLBACK",
+  "execution": 0
+}

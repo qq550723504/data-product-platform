@@ -1,0 +1,9 @@
+{
+  "checkpoint_id": "85567273b268e66511ab58d6c03a430788b3f93ceb7346a52cf44eaa82939ab6",
+  "status": "exited",
+  "pid": 0,
+  "source_pg": "exited",
+  "source_minio": "exited",
+  "source_gateway": "exited",
+  "cleanup": 0
+}

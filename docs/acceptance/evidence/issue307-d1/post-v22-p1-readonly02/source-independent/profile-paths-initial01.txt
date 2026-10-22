@@ -1,0 +1,30 @@
+test_only_enabled_change_works_with_actual_windows_manifest_key (__main__.ProfilePaths.test_only_enabled_change_works_with_actual_windows_manifest_key) ... 
+  test_only_enabled_change_works_with_actual_windows_manifest_key (__main__.ProfilePaths.test_only_enabled_change_works_with_actual_windows_manifest_key) (separator='\\') ... FAIL
+
+======================================================================
+FAIL: test_only_enabled_change_works_with_actual_windows_manifest_key (__main__.ProfilePaths.test_only_enabled_change_works_with_actual_windows_manifest_key) (separator='\\')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-post-v22-p1-review01\test_independent_profile_paths01.py", line 22, in test_only_enabled_change_works_with_actual_windows_manifest_key
+    try:m.active_topology(manifest,'enable-p1-readonly')
+        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\fixture-private\remaining-post-v22-p1-review01\host-source-prepared01.py", line 234, in active_topology
+    else:need(sha(p)==h,'P1 input drift during audit')
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\fixture-private\remaining-post-v22-p1-review01\host-source-prepared01.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: P1 input drift during audit
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-post-v22-p1-review01\test_independent_profile_paths01.py", line 23, in test_only_enabled_change_works_with_actual_windows_manifest_key
+    except ValueError as e:self.fail('Only Enabled changed, but actual manifest path separator rejected the controlled transition: '+str(e))
+                           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Only Enabled changed, but actual manifest path separator rejected the controlled transition: P1 input drift during audit
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+FAILED (failures=1)

@@ -1,0 +1,11 @@
+{
+  "run_id": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "helper": "dpp-lifecycle307-9812f0fc-race-delete-a",
+  "id": "fafa7c4218ef7fa31ba75e7965e9e1646d3befa601045ab9e6564d55b8d69047",
+  "exit": 1,
+  "expected_exit": 93,
+  "binary_sha256": "900555aa247d90ecd48827166c4fc36a1c9c0cc585c605a87fcd8bc81cf54445",
+  "driver_sha256": "96ffc05f6bb379d79590b9b2f8612e3bf1be0583c450a4d2919bcb21c564b919",
+  "root_mounted": false,
+  "cleanup": 0
+}

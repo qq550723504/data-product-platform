@@ -1,0 +1,10 @@
+{
+  "scope": "new baseline backup data restored only into independent test DB with actual candidate schema; no retained runtime/backup changes",
+  "method": "native pg_dump schema-only + pg_restore pre-data / backup data / current schema post-data; no trigger disabling, hand-written DDL or compatibility shim",
+  "tableFacts": "all192relations exactly match backup before/after",
+  "constraintIdentityAndKindsMatchCurrent": true,
+  "allConstraintsValidated": true,
+  "currentEpochAndRecoveryConstraints": true,
+  "initialOriginalSchemaCopy": "retained separately; not used for current-code browser because it carries its earlier phase schema",
+  "runtime": "API/web read/history/denial only; no worker, source regrant or native scan"
+}

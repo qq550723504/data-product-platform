@@ -1,0 +1,12 @@
+{
+  "status": "PASS_PREWINDOW_CLOSED",
+  "at": "2026-10-18T07:27:22.927929+00:00",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "permissions_disabled": 32,
+  "containers_stopped": 58,
+  "containment_anchor": "5eb3aec724f55e97ee05595439f74781d0e4b989",
+  "containment_snapshot_available": true,
+  "native_delete": 0,
+  "provider_io": 0,
+  "container_starts": 0
+}

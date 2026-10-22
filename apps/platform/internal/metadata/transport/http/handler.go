@@ -15,8 +15,9 @@ import (
 )
 
 type Handler struct {
-	service *metadataapp.Service
-	repo    *metadatainfra.PostgresRepository
+	service   *metadataapp.Service
+	repo      *metadatainfra.PostgresRepository
+	Authorize func(*http.Request, uuid.UUID) (*uuid.UUID, error)
 }
 
 func NewHandler(service *metadataapp.Service, repo *metadatainfra.PostgresRepository) *Handler {
@@ -24,9 +25,62 @@ func NewHandler(service *metadataapp.Service, repo *metadatainfra.PostgresReposi
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
+	mux.HandleFunc("GET /api/v1/data-resources/{resourceId}/schema-observations", h.schemaHistory)
+	mux.HandleFunc("POST /api/v1/data-resources/{resourceId}/schema-observations", h.requestSchema)
+	mux.HandleFunc("POST /api/v1/data-resources/{resourceId}/schema-observations/{observationId}/handle", h.handleSchema)
 	mux.HandleFunc("GET /api/v1/data-resources/{resourceId}/metadata-bindings", h.listBindings)
+	mux.HandleFunc("GET /api/v1/data-resources/{resourceId}/metadata-observation", h.observe)
 	mux.HandleFunc("POST /api/v1/data-resources/{resourceId}/metadata-bindings", h.bindResource)
 	mux.HandleFunc("GET /api/v1/governance-projections/{provider}/{objectType}/{objectId}", h.getProjection)
+}
+func (h *Handler) authorizeResource(w http.ResponseWriter, r *http.Request) (uuid.UUID, bool) {
+	ws, err := uuid.Parse(r.URL.Query().Get("workspaceId"))
+	if err != nil || ws == uuid.Nil {
+		httpserver.WriteError(w, r, 400, "INVALID_WORKSPACE_ID", "workspace required", nil)
+		return uuid.Nil, false
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
+		return uuid.Nil, false
+	}
+	if actor, err := h.Authorize(r, ws); err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return uuid.Nil, false
+	}
+	id, err := uuid.Parse(r.PathValue("resourceId"))
+	if err != nil {
+		httpserver.WriteError(w, r, 400, "INVALID_RESOURCE_ID", "resource required", nil)
+		return uuid.Nil, false
+	}
+	exists, err := h.repo.ResourceInWorkspace(r.Context(), id, ws)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "METADATA_RESOURCE_LOOKUP_UNAVAILABLE", "resource lookup is unavailable", nil)
+		return uuid.Nil, false
+	}
+	if !exists {
+		httpserver.WriteError(w, r, 404, "RESOURCE_NOT_FOUND", "resource not found in workspace", nil)
+		return uuid.Nil, false
+	}
+	return id, true
+}
+
+func (h *Handler) observe(w http.ResponseWriter, r *http.Request) {
+	id, allowed := h.authorizeResource(w, r)
+	if !allowed {
+		return
+	}
+	bindings, err := h.repo.ListBindings(r.Context(), id)
+	if err != nil {
+		httpserver.WriteError(w, r, 500, "METADATA_READ_FAILED", "metadata unavailable", nil)
+		return
+	}
+	if len(bindings) == 0 {
+		writeJSON(w, 200, map[string]any{"status": "UNKNOWN", "message": "No provider-confirmed metadata binding"})
+		return
+	}
+	b := bindings[0]
+	observation := h.service.ObserveBinding(r.Context(), b)
+	writeJSON(w, 200, map[string]any{"status": observation.Status, "provider": b.Provider, "externalId": b.ExternalID, "externalFqn": b.ExternalFQN, "version": observation.Version, "lastConfirmedVersion": b.BindingMetadata["version"], "lastConfirmedAt": b.UpdatedAt, "observedAt": observation.ObservedAt, "governance": observation.Governance})
 }
 
 type bindResourceRequest struct {
@@ -36,13 +90,12 @@ type bindResourceRequest struct {
 }
 
 func (h *Handler) bindResource(w http.ResponseWriter, r *http.Request) {
-	if h.service == nil {
-		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "METADATA_ENGINE_DISABLED", "metadata engine is disabled", nil)
+	resourceID, allowed := h.authorizeResource(w, r)
+	if !allowed {
 		return
 	}
-	resourceID, err := uuid.Parse(r.PathValue("resourceId"))
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_RESOURCE_ID", "resourceId must be a UUID", nil)
+	if h.service == nil {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "METADATA_ENGINE_DISABLED", "metadata engine is disabled", nil)
 		return
 	}
 	var req bindResourceRequest
@@ -64,9 +117,8 @@ func (h *Handler) bindResource(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) listBindings(w http.ResponseWriter, r *http.Request) {
-	resourceID, err := uuid.Parse(r.PathValue("resourceId"))
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_RESOURCE_ID", "resourceId must be a UUID", nil)
+	resourceID, allowed := h.authorizeResource(w, r)
+	if !allowed {
 		return
 	}
 	bindings, err := h.repo.ListBindings(r.Context(), resourceID)
@@ -117,6 +169,10 @@ func (h *Handler) getProjection(w http.ResponseWriter, r *http.Request) {
 }
 
 func writeBindingError(w http.ResponseWriter, r *http.Request, err error) {
+	if errors.Is(err, metadatainfra.ErrBindingConflict) {
+		httpserver.WriteError(w, r, http.StatusConflict, "METADATA_BINDING_CONFLICT", "metadata asset identity or name conflicts with an existing binding", nil)
+		return
+	}
 	if errors.Is(err, metadataapp.ErrInvalidBindingRequest) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "METADATA_BINDING_INVALID", "metadata binding request is invalid", nil)
 		return
@@ -159,6 +215,7 @@ func bindingResponse(binding metadatadomain.ResourceBinding) map[string]any {
 		"externalFqn":     binding.ExternalFQN,
 		"bindingMetadata": binding.BindingMetadata,
 		"primary":         binding.IsPrimary,
+		"updatedAt":       binding.UpdatedAt,
 	}
 }
 

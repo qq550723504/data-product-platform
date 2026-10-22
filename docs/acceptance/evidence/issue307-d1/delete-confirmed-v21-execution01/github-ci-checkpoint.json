@@ -1,0 +1,14 @@
+{
+  "status": "PASS_EXACT_HEAD_PR_CI",
+  "recorded_at": "2026-10-18T11:46:15.935634+00:00",
+  "source": "Actual gh api run and jobs output read during this authorization turn, after final GitHub connector state check",
+  "run_id": 39121716342,
+  "head_sha": "8eef47a2edfbd9df2dc2a83467d9361a3fa4ec96",
+  "event": "pull_request",
+  "run_status": "completed",
+  "conclusion": "success",
+  "jobs": 13,
+  "all_jobs_success": true,
+  "main_ci": "NOT_RUN",
+  "merged": false
+}

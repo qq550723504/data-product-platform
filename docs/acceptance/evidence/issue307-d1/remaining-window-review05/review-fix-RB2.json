@@ -1,0 +1,18 @@
+{
+  "blocker": "RB2_REVIEW_INDEX_INCLUDED_GIT_IGNORED_PYTHON_CACHE",
+  "status": "FIXED_PENDING_INDEPENDENT_RECHECK",
+  "before_index_sha256": "6a1c62c309808d5b4f8ebb26a73b5e865a2ec1477c5b5592d6285af3eb2bae2a",
+  "retained_ignored_cache_evidence": {
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/__pycache__/window_support.cpython-314.opt-1.pyc": {
+      "original_sha256": "8d8c04416d3ebf92e6938da5d6c171817487933b490815d3ff2938356174ae4d",
+      "retained_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate11\\review-index-RB2\\window_support.cpython-314.opt-1.pyc"
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/__pycache__/window_support.cpython-314.pyc": {
+      "original_sha256": "8d8c04416d3ebf92e6938da5d6c171817487933b490815d3ff2938356174ae4d",
+      "retained_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate11\\review-index-RB2\\window_support.cpython-314.pyc"
+    }
+  },
+  "resolution": "Exclude __pycache__ from published index; preserve original index and caches. Verify every intended indexed file against actual Git blobs.",
+  "runtime_candidate_source_and_authorization_unchanged": true,
+  "native_delete": 0
+}

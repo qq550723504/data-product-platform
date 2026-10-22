@@ -1,0 +1,14 @@
+{
+  "source_head": "01a9739245760a10e5e63307e787fd4b7a34c704",
+  "as_of": "2026-10-14T04:42:43.313750+00:00",
+  "execution_files": {
+    "examples/lifecycle-d1/prepare-reference-disposal.py": "9786984c77a8986b6faefa203ea0be30ecebb10546b9934ed7021ba5494ac195",
+    "examples/lifecycle-d1/checkpoint-reference-core.ps1": "0524d81b2a7e57ddcd79874c2e108a4850c2a693446c96f20314412a0a80e169",
+    "examples/lifecycle-d1/assert-reference-storage.ps1": "15c02d8317c297170f33b511f0675e341028dada14e118bf639681d59c0828e6"
+  },
+  "binary_build_receipt": "build-source.json",
+  "binary_source_head": "f87af0565c6768ad14c6b4db8815896393f51245",
+  "go_sources_changed_since_binary_build": false,
+  "render_files_private": true,
+  "provider_delete": 0
+}

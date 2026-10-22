@@ -1,0 +1,599 @@
+{
+  "containers": [
+    {
+      "name": "/dpp-lifecycle307-808a6960-unpack",
+      "id": "3e3217b70f81d4ebea3a596ea02c7a934afb79ccc2fe108738b3bcea5a4ce820",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/checkpoint",
+          "Destination": "/backup",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-restored-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-restored-objects/_data",
+          "Destination": "/restore",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "0bb1f6997668df308ede8ebc044de0f3b48bd630a6b8b84ef55ec1b574035e0f",
+          "Source": "/var/lib/docker/volumes/0bb1f6997668df308ede8ebc044de0f3b48bd630a6b8b84ef55ec1b574035e0f/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-archive",
+      "id": "18f59aad8b195df4095a80ab299e126166fb536cf40d4bb9c7c77fcccd7ddee7",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/checkpoint",
+          "Destination": "/backup",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/source",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": false,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "9e6b3f380352b1d069637784a589089eca379709313f143074add5810849859d",
+          "Source": "/var/lib/docker/volumes/9e6b3f380352b1d069637784a589089eca379709313f143074add5810849859d/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-checkpoint",
+      "id": "562fc35651295d65d18f81c0ae85f9404cb9377cbbcc37a82b2a83358e7abfd4",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/checkpoint",
+          "Destination": "/run/backup",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-checkpoint-data",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-checkpoint-data/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-prepare",
+      "id": "aade8a515ef3a8655a64b3fecde63ed5279e6d85e3a7b394f304221b14e35683",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\migrations",
+          "Destination": "/run/migrations",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\examples\\lifecycle-d1\\results",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-808a6960",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-gateway",
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-808a6960\\Caddyfile",
+          "Destination": "/etc/caddy/Caddyfile",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-minio",
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/access",
+          "Destination": "/run/credentials/access",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/secret",
+          "Destination": "/run/credentials/secret",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-postgres",
+      "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/pgpass",
+          "Destination": "/run/credentials/pgpass",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-postgres",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-postgres/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-compare",
+      "id": "fa0712013c5a461797f6bbd1b1ec9cc0e8979325771f7c13053116ca0bf756d0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-restored-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-restored-objects/_data",
+          "Destination": "/restore",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": false,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/source",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": false,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "f1e5f5a0713fde64e85ac10538fae9149370985da1e86c8627ea8ac02c641b0d",
+          "Source": "/var/lib/docker/volumes/f1e5f5a0713fde64e85ac10538fae9149370985da1e86c8627ea8ac02c641b0d/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-restored-minio",
+      "id": "e52e7e01f3f1f220d85469d37f442ec0b07c64f6c3e5755952c5c48dee67e2f1",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-restored-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-restored-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960",
+          "Destination": "/run/credentials",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-restored-minio",
+      "id": "e52e7e01f3f1f220d85469d37f442ec0b07c64f6c3e5755952c5c48dee67e2f1",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-restored-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-restored-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960",
+          "Destination": "/run/credentials",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-compare",
+      "id": "fa0712013c5a461797f6bbd1b1ec9cc0e8979325771f7c13053116ca0bf756d0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-restored-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-restored-objects/_data",
+          "Destination": "/restore",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": false,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/source",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": false,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "f1e5f5a0713fde64e85ac10538fae9149370985da1e86c8627ea8ac02c641b0d",
+          "Source": "/var/lib/docker/volumes/f1e5f5a0713fde64e85ac10538fae9149370985da1e86c8627ea8ac02c641b0d/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-unpack",
+      "id": "3e3217b70f81d4ebea3a596ea02c7a934afb79ccc2fe108738b3bcea5a4ce820",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/checkpoint",
+          "Destination": "/backup",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-restored-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-restored-objects/_data",
+          "Destination": "/restore",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "0bb1f6997668df308ede8ebc044de0f3b48bd630a6b8b84ef55ec1b574035e0f",
+          "Source": "/var/lib/docker/volumes/0bb1f6997668df308ede8ebc044de0f3b48bd630a6b8b84ef55ec1b574035e0f/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-archive",
+      "id": "18f59aad8b195df4095a80ab299e126166fb536cf40d4bb9c7c77fcccd7ddee7",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/checkpoint",
+          "Destination": "/backup",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/source",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": false,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "9e6b3f380352b1d069637784a589089eca379709313f143074add5810849859d",
+          "Source": "/var/lib/docker/volumes/9e6b3f380352b1d069637784a589089eca379709313f143074add5810849859d/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-checkpoint",
+      "id": "562fc35651295d65d18f81c0ae85f9404cb9377cbbcc37a82b2a83358e7abfd4",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/checkpoint",
+          "Destination": "/run/backup",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-checkpoint-data",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-checkpoint-data/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-prepare",
+      "id": "aade8a515ef3a8655a64b3fecde63ed5279e6d85e3a7b394f304221b14e35683",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\migrations",
+          "Destination": "/run/migrations",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\examples\\lifecycle-d1\\results",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-808a6960",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-gateway",
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-808a6960\\Caddyfile",
+          "Destination": "/etc/caddy/Caddyfile",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-minio",
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/access",
+          "Destination": "/run/credentials/access",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/secret",
+          "Destination": "/run/credentials/secret",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-808a6960-postgres",
+      "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/pgpass",
+          "Destination": "/run/credentials/pgpass",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-postgres",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-postgres/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    }
+  ],
+  "delete": 0,
+  "cleanup": 0,
+  "retained": true
+}

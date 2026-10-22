@@ -1,0 +1,90 @@
+{
+  "source_head": "283eba050c96ac4aa70990339e3fa25dea6068e1",
+  "source_hashes": {
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "02ac3cbbcf0c2c7b52da38dcf64da94eb7a4746ce7898e8ecea0f64286082511",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "ae27867ccd54b941249a5258755afbf9c25eb25df4ec143555a165063ce2185f",
+    "apps/platform/internal/lifecycle/application/reader_service.go": "14b43ee9c61e1aa8cc170411f9a364bcaa07f56b3b84050e3f7203089be447e0",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "1944624029e4163b759fab5b9046ecc3f36faee6a8bf36f1a8af3b0021c44f17",
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "264ae9a757db94de2bbc3e3b84933479d1915bd80e5bfaa5c90340ef0578a0f3",
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "7e033b0eb9fe53dbece468f1411ddbb1e69c408a9dfeca38f25c0e09ac4bf58d",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "5e6d85cb9ae552ef3b737a28cf6f8bdb186025026e61d5aaedb075b39841ad31"
+  },
+  "objects": [
+    {
+      "copy_id": "b08f5a41-5586-4e78-a726-18ffe62a2b5e",
+      "dataset_version_id": "f4dc8a92-831f-46ff-8937-1d3dd798b0da",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "39ef4e93-485d-40ee-b305-7d2ba2753cbb",
+      "sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "bytes": 27,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-11T16:15:23.248187383Z",
+      "protection_observed_at": "2026-10-11T16:15:23.423454574Z"
+    },
+    {
+      "copy_id": "0f44430a-2f5e-4453-a7cd-5631cf22f752",
+      "dataset_version_id": "d01852fe-f88a-4391-bc96-bd13fc89973a",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "7d49c000-c013-4b1a-ac50-5a816254feba",
+      "sha256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "bytes": 26,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-11T16:15:23.280481236Z",
+      "protection_observed_at": "2026-10-11T16:15:23.466132907Z"
+    },
+    {
+      "copy_id": "990b73d4-6155-45d5-943f-2b92139c7535",
+      "dataset_version_id": "f4dc8a92-831f-46ff-8937-1d3dd798b0da",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "2c583862-3d9f-4ae3-bb35-df87b8ae9728",
+      "sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "bytes": 27,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-12T16:15:23Z",
+      "bytes_verified_at": "2026-10-11T16:15:23.313250436Z",
+      "protection_observed_at": "2026-10-11T16:15:23.503850784Z"
+    },
+    {
+      "copy_id": "20cb4b2a-3cf1-471c-b042-7859d69abd94",
+      "dataset_version_id": "d01852fe-f88a-4391-bc96-bd13fc89973a",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "bc942d0f-314e-4ced-bd41-fc669b1b740b",
+      "sha256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "bytes": 26,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-11T16:15:23.342764948Z",
+      "protection_observed_at": "2026-10-11T16:15:23.535894998Z"
+    }
+  ],
+  "window_expires": "2026-10-11T17:01:08.3114080Z",
+  "run_id": "34696798-06e3-42de-8b31-6b237c6e9c22",
+  "binary_sha256": "cf48f96a1ecc8c140f73e230ec78a891e8ec1426b19378cfcd5f4ef8dcf5b58c",
+  "internal": true,
+  "network_id": "cf359520f1a5f481a5958285c9c42b4099a97bcfa27c04fe1869dd08a056d7fc",
+  "cleanup": 0,
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "project": "dpp-lifecycle307-34696798",
+  "root_in_reader": false,
+  "copy": 0,
+  "delete": 0,
+  "retained_volumes": [
+    "dpp-lifecycle307-34696798-postgres",
+    "dpp-lifecycle307-34696798-objects"
+  ],
+  "production_delivery": "NOT_RUN",
+  "workspace_id": "8d26375d-fd97-487b-a3fe-68c70821865c",
+  "host_ports": [],
+  "provider_instance_id": "d781aac3-3963-4293-b6ad-e167edda3bf1",
+  "incarnation_id": "51df1295-1187-4bb4-8eec-1f1218e76918"
+}

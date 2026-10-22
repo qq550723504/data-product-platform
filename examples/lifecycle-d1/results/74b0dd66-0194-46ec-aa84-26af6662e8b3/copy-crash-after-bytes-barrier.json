@@ -1,0 +1,21 @@
+{
+  "fault": "PROCESS_EXIT_AFTER_DURABLE_TARGET_GET_BEFORE_VERIFY_FACT",
+  "proof": {
+    "Copy": {
+      "ID": "e269faf2-9c13-47f4-9e92-518009a937a7",
+      "WorkspaceID": "b2506f83-2810-419f-9f59-4c89bde12331",
+      "DatasetVersionID": "4e5e52b0-f22b-4bcb-8891-98c4d124d874",
+      "ProviderInstanceID": "0cf09f47-c8f9-4b2a-a2ea-31191b6b92c6",
+      "IncarnationID": "c5fbab6d-85dd-490e-b49a-901f350d254b",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "archive/a.csv",
+      "ProviderVersion": "9f88eba0-d784-4bb5-82c7-9a14d541bc43",
+      "ContentSHA256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "ByteSize": 27
+    },
+    "CallID": "8e8648ab-2fd5-4d4e-869f-84d970773efe",
+    "SHA256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+    "Bytes": 27,
+    "ObservedAt": "2026-10-14T07:58:16.104649252Z"
+  }
+}

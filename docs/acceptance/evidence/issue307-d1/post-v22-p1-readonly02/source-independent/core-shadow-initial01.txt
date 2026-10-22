@@ -1,0 +1,15 @@
+test_running_foreign_owner_cannot_shadow_bound_core_dns (__main__.CoreBinding.test_running_foreign_owner_cannot_shadow_bound_core_dns) ... FAIL
+
+======================================================================
+FAIL: test_running_foreign_owner_cannot_shadow_bound_core_dns (__main__.CoreBinding.test_running_foreign_owner_cannot_shadow_bound_core_dns)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-post-v22-p1-review01\test_independent_core_shadow01.py", line 13, in test_running_foreign_owner_cannot_shadow_bound_core_dns
+    with patch.object(m,'inspect',side_effect=info),patch.object(m,'docker',return_value=json.dumps(net).encode()),self.assertRaises(ValueError):
+                                                                                                                   ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

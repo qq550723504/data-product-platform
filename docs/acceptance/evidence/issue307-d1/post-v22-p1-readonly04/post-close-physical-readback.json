@@ -1,0 +1,56 @@
+{
+  "at": "2026-10-19T10:59:35.344412+00:00",
+  "unique_owner_count": 77,
+  "all_stopped_PID0_noports_norestart": true,
+  "audits": [
+    {
+      "audit": "01",
+      "terminal_sha256": "db6b254cfa57b5d9d16e9a1024daae9a0032c0cf4f279c330c2b639ded525fd7",
+      "owners": [
+        "74d2fb9aed18285a1a5183d0c3359d5ddf4b7e8a268df79f96c8bda7bfd549fe",
+        "6c52adb21e33b73c911c874104eafefa10948abf8f9ba8fcf7ad12768bda7599",
+        "99eff7a3dd85b4a2648362d684b055d8255803a933dc08a710cdc49351538159",
+        "768f0aaf409eae6ccaf24e12591f2d43c278325158785fe58f9e1a4493444a62"
+      ],
+      "both_profiles_false": true
+    },
+    {
+      "audit": "02",
+      "terminal_sha256": "e6c4ca076c5576b71e871cbed68843d97367818cad0be5e1f2928ae3f839e04f",
+      "owners": [
+        "b47315340dfa42ab1366e3e9d1ed095c7be3e0be69dbb9a600e809513f2c95ab",
+        "5e6b348c86a03f1eb48da27c1ccb8f18b82162f50358fcbd9f1e269d843be9c6",
+        "5579531c052c1885ac4b82de9aed30c5bf20dc52b4d7f0733c1f7272bcb1e402",
+        "98c88a2a87f317cf413fe56d816a4c6d0a4511b13a511c225b20ff54ffe44957"
+      ],
+      "both_profiles_false": true
+    },
+    {
+      "audit": "03",
+      "terminal_sha256": "1cb6bb1d04ffb5fe9916aa2e92db0692541f42333808bf7a3aaa1206a5f958a0",
+      "owners": [
+        "fdb7b92e9aa45082628a707f63c44338bd66f991a14a90e010dc1125ba385661",
+        "b040c0113071e8cee2df2789575609f2589850b43a7bcf80fd888f65906c4248",
+        "65d9ad83e86805e98961bf85256db4bef05fcf762af4829938e0813704ba8ebf",
+        "52d934ca9ffadf94cf80c82e27ed7daa525b1fd4b5e2c331e3e31c52e9362edd"
+      ],
+      "both_profiles_false": true
+    },
+    {
+      "audit": "04",
+      "terminal_sha256": "39421f8199aa222b09027b1ec9d2988ae722e252f7d57e5d14b595e0744864a7",
+      "owners": [
+        "dc18e50151c2a3bce3333ee2f11e776d9a8cac2dbd66b2bb2498c2b9fb703cf9",
+        "9257fb882ba4deeae0727eb03a3c9cead64bfbdcc9436a19b4752de55db8d826",
+        "8e37a8ff1830099130a7c0894d405581ab5e2b5990ed6494ac342fe46d3333d2",
+        "e74be270b9f8bad63adebf5db1b5d10ba59cc471b4589c57cd94ccd954ac98f2"
+      ],
+      "both_profiles_false": true
+    }
+  ],
+  "old_46_control_sha256_unchanged": true,
+  "old_3_budget_contents_unchanged": true,
+  "all_9_backup_sha256_unchanged": true,
+  "new_8_readonly_profiles_false": true,
+  "native_delete": 0
+}

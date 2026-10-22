@@ -1,0 +1,15 @@
+{
+  "status": "PASS_FROZEN_READER_H0_H1_NATIVE_NONDELETE",
+  "candidate_sha256": "b9660f17cbb745e781a06d50e8ec0e81c87e654318420533b75b4ada29728949",
+  "reader_sha256": "8a9800bd3a77c75d3364cfe01712e7de1dcb060111a4b43c4bb90820b7b2a4b1",
+  "source": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "rehearsal_batch": "73309826-82ba-427f-8fa5-07cf615aa1f2",
+  "core": "7ba6a70d54b49021ab50156a9fdf3bd7a57bdd9b93dbbb441b3837614a665639",
+  "native": "82024ecd2d4cd8afa46b33d1d28abfddffa4093d6b9dd9b24d67fc046bb6eabd",
+  "schema": 69,
+  "send_claims": 0,
+  "H2": "READY_UNCLAIMED_NOT_SENT",
+  "native_delete": 0,
+  "source_environment_mutations": 0,
+  "cleanup": 0
+}

@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "restoreContainer": "dpp-ind299-restored-ompg-47203cb12b93",
+  "preserved": true,
+  "logSha256": "ea893058d662c55728a86834bebcb050a7b6a9f395db35d6985579a163fca62d",
+  "reason": "Unix-socket pg_isready observed the transient init server; psql then received database system is shutting down",
+  "correction": "wait for final TCP server in a new independent restore volume",
+  "oldCoreIncident": "FAIL / NOT_RESTORED"
+}

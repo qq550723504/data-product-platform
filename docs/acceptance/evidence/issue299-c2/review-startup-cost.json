@@ -1,0 +1,87 @@
+{
+  "status": "PASS",
+  "finding": "successful cmd.Start could exit/hang/emit malformed marker before its physical startup cost was recorded",
+  "rootFix": "charge process-start invocation immediately after successful Start; separate fresh authority/binding callback after bound marker before RUN; failed Start has zero invocation charge",
+  "adapterRegression": {
+    "red": "all three pre-marker failures costs=0",
+    "green": "each started failure costs=1 and source-I/O gate=0; failed executable Start costs=0; cost commit failure or fresh authority failure cannot RUN",
+    "redLogSHA256": "981cbb7f4b658d6a7f60a883e880806910259f57915302afbc964894c042c7a6",
+    "testScope": "actual OS process/NativeSchemaObserver protocol failure regression; no native provider success claimed"
+  },
+  "realPostgres": "failed startup retains typed cost; same-attempt ChargeScan replay dedupes; real retry is a second cost; successful replay adds no work; binding changes during startup block source I/O but preserve startup cost",
+  "combinedSource": {
+    "status": "PASS",
+    "d1Head": "fcef3dd28cf271634534e32ae34c19c97e7fdb57",
+    "c2": "startup-cost working candidate after 87d5a8f4",
+    "fullGoRealPostgresRace": "PASS",
+    "metadataRealPG": "PASS",
+    "vet": "PASS",
+    "bothFrozenRegistrations": "PASS",
+    "sourceSHA256": {
+      "apps/platform/internal/platform/routing/routing.go": "765560e26bbb92ad1488a9c1560ebc3563e0bb78598d95e514f389f14aa2bf03",
+      "apps/platform/internal/metadata/application/schema.go": "a82a9af4308f10caff5e6969c358628ba7868bcf88b0d66419b1ac3358ec4aeb",
+      "apps/platform/internal/metadata/application/schema_retry_integration_test.go": "5d030e1f9e99612bb4957503572a6f75eeeb387666a830c2be1d94d632be6d5c",
+      "apps/platform/internal/metadata/openmetadata/schema.go": "46b4bf3fe35125cf739f3138968ed3a7effa3bd5eabbe3f834e9988c509f09f5",
+      "apps/platform/internal/metadata/openmetadata/schema_test.go": "7cc99adc3b6e75d8948c4ac6c131f210398ac80de64de2ee53c17f67ae766812",
+      "apps/platform/internal/engine/metadata/schema.go": "1851ec3a39a124819ad9e35da0d4b145b2c89ac78e735b395523b064ad88413c",
+      "apps/platform/cmd/worker/routing_test.go": "5faa8f32aaccc1c179c34d5487c8e1d6efe5cc6196d71a808d21bfccc155a106"
+    },
+    "scope": "complete D1+C2 resolved source; independent named-volume PG, no trial data used",
+    "completeManifestSHA256": "b3f1b412b9cb0b5fe312e34f8a370c15b7ad6903635b059cd18be47a7e49a770",
+    "logs": {
+      "api-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "merged-full-race.log": "995aaf0935e324d159b50f0df7da0fb42497fd621a022f74fdb294bc9a02eb0c",
+      "merged-migrate.log": "d057b7b2c8353d47df91afeaffec937a1eeaa37f25d4972fe44162025aa16f06",
+      "merged-registration.log": "cedc408781a37aabd87a617949685a74dcedfc608217323d08e6377965a2cad6",
+      "merged-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata-real-pg-race.log": "93332b218d681f40c6d6aabbf95313c8c0a35da53403bff540b0d1108674c019",
+      "worker-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "migration": "unchanged66; order main59 -> D1 60-64 -> C2 65-66",
+  "currentCodeBackup": {
+    "status": "PASS",
+    "supplement": "C:\\Users\\Henry\\.codex\\worktrees\\issue299-c2\\data-product-platform\\.data\\c2-new-persistent\\backup-tools\\dpp-retention-backups\\20261012T045440Z\\code-supplements\\20261012T051541Z",
+    "completeDataBackup": "C:\\Users\\Henry\\.codex\\worktrees\\issue299-c2\\data-product-platform\\.data\\c2-new-persistent\\backup-tools\\dpp-retention-backups\\20261012T045440Z",
+    "unchangedSchemaLatest": 66,
+    "allCoreRelations": 192,
+    "fullCoreMatchesIndependentlyRestoredBackup": true,
+    "coreHashBefore": "7722043e5478ad93a59632739ecb6919c0696e8e8454984cc2f02d21e85d04e4",
+    "apiSHA256": "fb37fca9c8071f5a5086d0b236c1db5127e045897128d58b6ba91a9e03878283",
+    "sourceArchiveSHA256": "626f8d821068af6517369cf9eeaf00eb96c33e1fc602167b982616f007ec23e0",
+    "sourceAuthorization": "still REVOKED; no regrant",
+    "metadataAuth": "same existing identity, duration and grants retained; no refresh necessary",
+    "scope": "current code/config binaries supplement of unchanged schema66 data backup; old snapshot preserved; original lost Core not restored"
+  },
+  "actualBrowser": {
+    "status": "PASS",
+    "binaryPrefix": "pgi-b3-c2-startcost",
+    "apiSHA256": "fb37fca9c8071f5a5086d0b236c1db5127e045897128d58b6ba91a9e03878283",
+    "browser": "real Edge / production Next; reloaded after actual new process start",
+    "source": "OBSERVED; both old MATCH requests and five UNAVAILABLE preserved; actual new scan click SCHEMA_AUTHORITY_DENIED",
+    "delivery": "CurrentCertification ALLOWED, CurrentEntitlement BLOCKED, download disabled; no payload attempt",
+    "allTables": {
+      "core": {
+        "relations": 192,
+        "sha256": "7722043e5478ad93a59632739ecb6919c0696e8e8454984cc2f02d21e85d04e4",
+        "matchesIndependentlyRestoredBackup": true
+      },
+      "source": {
+        "relations": 3,
+        "sha256": "893a19132be10d934463bdcb6ca8622142dfd4fb68de1e9cc8758306bd151673",
+        "matchesIndependentlyRestoredBackup": true
+      }
+    },
+    "coreBeforeAfterEqual": true,
+    "exactNativeVersions": 8,
+    "objectIDSizePayloadSHA256Equal": true,
+    "newWorkOrCost": 0,
+    "sourceAuthority": "REVOKED, no regrant",
+    "scope": "post-startup-cost code history/read/denial regression; no new healthy native discovery or download claimed",
+    "humanExplanation": "NOT_RUN / deferred",
+    "originalLostCore": "NOT_RESTORED / untouched"
+  },
+  "originalLostCore": "FAIL / NOT_RESTORED",
+  "humanExplanation": "NOT_RUN / deferred",
+  "draft": "no Ready/merge/Issue closure; exact-HEAD CI/review separate"
+}

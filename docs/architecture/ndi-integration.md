@@ -159,6 +159,8 @@ Connector Usage Evidence
 
 在 ProductRelease 稳定之后，实现提供方中立的模型：
 
+#84 的模型与发布意图 contract 见 [External Integration Core](external-integration-core.md)；#86 的 adapter ports、verified REGISTERED/PUBLISHED、durable attempts/physical-call costs 和执行恢复由 [External publication execution](external-publication-execution.md) 拥有。正式 NDI adapter 仍需正式规范/testbed；#86 的 loopback reference 不是 NDI 实施。使用事件的 source、关联和 cursor/recovery 由 [External usage evidence — #87](external-usage-evidence.md) 拥有，SUSPENDED/WITHDRAWN 仍需未来独立 Command/containment contract。
+
 - `external_identity_binding`
 - `external_identifier`
 - `external_publication`

@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 )
@@ -15,6 +16,7 @@ import (
 var (
 	ErrNotFound               = errors.New("metadata projection record not found")
 	ErrStaleProjectionAttempt = errors.New("stale metadata projection attempt")
+	ErrBindingConflict        = errors.New("metadata asset identity or name conflicts with an existing binding")
 )
 
 type PostgresRepository struct {
@@ -25,6 +27,12 @@ func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
 
+func (r *PostgresRepository) ResourceInWorkspace(ctx context.Context, resourceID, workspaceID uuid.UUID) (bool, error) {
+	var exists bool
+	err := r.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM data_resource WHERE id=$1 AND workspace_id=$2)`, resourceID, workspaceID).Scan(&exists)
+	return exists, err
+}
+
 func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, binding metadatadomain.ResourceBinding) (metadatadomain.ResourceBinding, error) {
 	metadata, err := json.Marshal(binding.BindingMetadata)
 	if err != nil {
@@ -33,6 +41,11 @@ func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, bindi
 	if binding.ID == uuid.Nil {
 		binding.ID = uuid.New()
 	}
+	// Follow observation finalization's parent-first resource -> binding order.
+	var resourceID uuid.UUID
+	if err := tx.QueryRow(ctx, `SELECT id FROM data_resource WHERE id=$1 FOR UPDATE`, binding.ResourceID).Scan(&resourceID); err != nil {
+		return metadatadomain.ResourceBinding{}, fmt.Errorf("lock binding resource: %w", err)
+	}
 	var persisted metadatadomain.ResourceBinding
 	var persistedMetadata []byte
 	err = tx.QueryRow(ctx, `
@@ -40,13 +53,13 @@ func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			id, resource_id, provider, entity_type, external_id, external_fqn,
 			binding_metadata, is_primary, created_at, updated_at
 		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,now(),now())
-		ON CONFLICT (provider, entity_type, external_fqn)
+		ON CONFLICT (provider, entity_type, external_id)
 		DO UPDATE SET
-			resource_id = EXCLUDED.resource_id,
-			external_id = EXCLUDED.external_id,
+			external_fqn = EXCLUDED.external_fqn,
 			binding_metadata = EXCLUDED.binding_metadata,
 			is_primary = EXCLUDED.is_primary,
 			updated_at = now()
+		WHERE resource_binding.resource_id = EXCLUDED.resource_id
 		RETURNING id, resource_id, provider, entity_type, COALESCE(external_id,''), external_fqn,
 		          binding_metadata, is_primary, created_at, updated_at
 	`, binding.ID, binding.ResourceID, binding.Provider, binding.EntityType, nullableString(binding.ExternalID),
@@ -56,6 +69,14 @@ func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, bindi
 		&persisted.CreatedAt, &persisted.UpdatedAt,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return metadatadomain.ResourceBinding{}, ErrBindingConflict
+		}
+		var constraint *pgconn.PgError
+		if errors.As(err, &constraint) && constraint.Code == "23505" &&
+			(constraint.ConstraintName == "uq_resource_binding_provider_entity" || constraint.ConstraintName == "uq_resource_binding_resource_fqn") {
+			return metadatadomain.ResourceBinding{}, ErrBindingConflict
+		}
 		return metadatadomain.ResourceBinding{}, fmt.Errorf("upsert resource binding: %w", err)
 	}
 	if err := json.Unmarshal(persistedMetadata, &persisted.BindingMetadata); err != nil {

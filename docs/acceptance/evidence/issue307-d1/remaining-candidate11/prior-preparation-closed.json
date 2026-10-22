@@ -1,0 +1,9 @@
+{
+  "status": "PASS_ACTUAL_SEALED_OWNERS_BACKUPS",
+  "operators_and_bootstrap": 32,
+  "case_owners": 7,
+  "backup_hashes": 9,
+  "permission_enabled": false,
+  "native_delete": 0,
+  "provider_io": 0
+}

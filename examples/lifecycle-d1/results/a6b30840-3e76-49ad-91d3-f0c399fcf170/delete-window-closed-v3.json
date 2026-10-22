@@ -1,0 +1,8 @@
+{
+  "volume_cleanup": 0,
+  "gateway_delete": "DENY_ALL",
+  "execution_authority": "DISABLED",
+  "as_of": "2026-10-11T11:31:59.0882156+00:00",
+  "object_cleanup": 0,
+  "gateway_config_sha256": "09b9c395a8ddf5d5e7952f14c514862a1aa07cfce159ba2c20e970a2eada93ea"
+}

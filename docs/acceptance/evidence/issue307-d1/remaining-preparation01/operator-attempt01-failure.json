@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "phase": "private-acl-before-credential",
+  "cause": "icacls requires * prefix for numeric SID",
+  "repair": "Correct SID syntax; failed private directory verified empty",
+  "native_io": 0,
+  "docker_mutations": 0,
+  "history_preserved": true
+}

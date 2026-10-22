@@ -1,0 +1,15 @@
+{
+  "status": "FAIL_RETAINED_NOT_REPLAYED",
+  "source_commit": "0684a60eaa5dffb0a3f8ea369c938f8f2c58432d",
+  "run_id": "5aa99bb9-d3ce-4497-a83b-893c2052e2d1",
+  "failed_step": "full Core function owner ACL comparison",
+  "root_cause": "pg_restore as checkpoint_admin creates pgcrypto extension/functions owned by checkpoint_admin, source owner is fixture",
+  "rows_194_tables_roles_table_acl": "MATCH",
+  "schema_function_default_acl": "MISMATCH; diagnostics retained",
+  "fix": "pg_restore --role=fixture; keep full comparison strict",
+  "new_versions_retained": 6,
+  "delete": 0,
+  "cleanup": 0,
+  "candidate": "EXCLUDED",
+  "diagnostic_sql": "READ ONLY; exact owned source/checkpoint restarted, read and stopped; no restore replay"
+}

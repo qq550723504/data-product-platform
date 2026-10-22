@@ -1,0 +1,240 @@
+{
+  "status": "PASS",
+  "workspaceId": "8cfecd74-4dd9-4327-8150-961973d3e166",
+  "history": {
+    "dataset_version": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"33052af0-cf57-45bb-8926-538bdd91d8ef\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"3fc5b298-131e-49f0-9b8c-36a3a7914f8d\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0ba6da68-2f34-47a9-9645-8fa4ef662b10\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"bf8122d1-3fcf-47d6-a893-2e4aa266a27e\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"1e5cbbed-d9e3-4320-a010-1043feab74b2\"}'::jsonb",
+      "count": 5,
+      "sha256": "0535281d825c1ff99bef383bdd15cbb0587db0db78ba182076a0f7da8d0b37ce"
+    },
+    "dataset_version_lineage": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"1e5d4a26-ee58-4971-85b9-14227e4684b0\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"1feff49e-cd5f-4769-9230-0d8cbeb7dce5\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"2f101af4-e787-4d1b-afc8-cb987ffe8f3e\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"444d245e-5c8c-487f-beb3-d85d7fe075c3\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"92404731-f7e9-4b26-9335-86fc0cef2263\"}'::jsonb",
+      "count": 5,
+      "sha256": "4d4f2278c2a4e512c6038b107c271b59e954693f8a6c0e32ee72cdc109d3ff1c"
+    },
+    "quality_result": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"0cb3f95c-e3c1-4fff-b96b-62e70d154ec0\"}'::jsonb",
+      "count": 1,
+      "sha256": "e17b31c2323f46d64c3e6ebf4e9f8ff4c87929c89c9eb3a3f4b51ab6c4770ee1"
+    },
+    "quality_finding": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"36e8bcd0-7128-4351-a5b3-7ef11ef60caa\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"c9406442-2ac3-44cc-8726-a1cedfc61d6b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"e8126378-8a8e-44f7-8657-ac36b49aacd6\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"39028053-04d3-487d-9ad7-8669bdd220ab\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"de4eb02e-840a-471f-98ef-9f10606c4c4a\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"3982157f-392a-4059-a34c-6f06f65ee8ac\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"709a56b0-8105-47ae-8c5f-639341d02dda\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0477843c-9992-4cbc-8bfb-452cc13e30c7\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"2238e071-800f-4834-8bd0-a77a5cdb2d86\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"8573c2b6-16cb-4a71-bcba-230ed7aec32b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"f1bca8b4-7499-4079-9d1a-a442e569f002\"}'::jsonb",
+      "count": 11,
+      "sha256": "3fd9f589dcb303891d255ffdb0c23b960e281d39f94006c1d2e244c932996c7b"
+    },
+    "compliance_result": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"0118a9ac-5cbd-4d6e-95c3-15e87488dab6\"}'::jsonb",
+      "count": 1,
+      "sha256": "84a6f38d44d4728459b1eda87c41c33144550036d5fca12f11e48943a9892b78"
+    },
+    "dataset_certification": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"d6627bc6-b78f-4182-98b8-69391b36c74a\"}'::jsonb",
+      "count": 1,
+      "sha256": "5adc5207e17dcfbc2646822192064a72f0955ec999f08aea1eb7aee32b6fffc2"
+    },
+    "evidence_snapshot": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"5a806b6e-1d16-4f8a-b448-a625fd00488c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"e1bba161-4063-4196-9bdd-4674b07c8fb3\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"a422848a-11b4-49eb-a819-3ef55d4f3e83\"}'::jsonb",
+      "count": 3,
+      "sha256": "13a9722587bf703a79c39923ad8a7d2de3a94e37500d73c4291d221f38ec7622"
+    },
+    "evidence_snapshot_item": {
+      "predicate": "to_jsonb(t) @> '{\"snapshot_id\":\"a422848a-11b4-49eb-a819-3ef55d4f3e83\",\"evidence_id\":\"122a9b8f-86fe-49ee-a716-07ae8a19f65a\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"e1bba161-4063-4196-9bdd-4674b07c8fb3\",\"evidence_id\":\"122a9b8f-86fe-49ee-a716-07ae8a19f65a\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"5a806b6e-1d16-4f8a-b448-a625fd00488c\",\"evidence_id\":\"f9a57219-e853-5cbb-997f-9cfaf27eaf7f\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"e1bba161-4063-4196-9bdd-4674b07c8fb3\",\"evidence_id\":\"e7699557-bd07-44e6-befc-b483cdce915b\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"e1bba161-4063-4196-9bdd-4674b07c8fb3\",\"evidence_id\":\"9f676d81-c5d1-4482-9a29-48ed04b77dcf\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"a422848a-11b4-49eb-a819-3ef55d4f3e83\",\"evidence_id\":\"7422f5e1-f6f5-4896-827a-4814496c8dad\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"e1bba161-4063-4196-9bdd-4674b07c8fb3\",\"evidence_id\":\"7422f5e1-f6f5-4896-827a-4814496c8dad\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"a422848a-11b4-49eb-a819-3ef55d4f3e83\",\"evidence_id\":\"9f676d81-c5d1-4482-9a29-48ed04b77dcf\"}'::jsonb",
+      "count": 8,
+      "sha256": "ebf3b8f8baa5087455a357ca43c1d58b00ade7913194d30e5c42f3323655b5ef"
+    },
+    "rights_snapshot": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\"}'::jsonb",
+      "count": 2,
+      "sha256": "3d21f799c7ba890046000b60f9061b54774eaa1ad80586a730c093a57f7415d7"
+    },
+    "rights_snapshot_authorization": {
+      "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\",\"authorization_id\":\"94b332b4-20fd-4e76-a729-7093cb18f85b\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\",\"authorization_id\":\"94b332b4-20fd-4e76-a729-7093cb18f85b\"}'::jsonb",
+      "count": 2,
+      "sha256": "7dd7eea103ea42486d8a8c1dd0ae988b213c279ecd0d814545d4f06780af9262"
+    },
+    "rights_snapshot_declaration": {
+      "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\",\"declaration_id\":\"071ec161-9d57-4510-a470-0e933984da61\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\",\"declaration_id\":\"071ec161-9d57-4510-a470-0e933984da61\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\",\"declaration_id\":\"f3377f46-190d-4e58-bc55-bb5829fbb899\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\",\"declaration_id\":\"f3377f46-190d-4e58-bc55-bb5829fbb899\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\",\"declaration_id\":\"f763b559-cbe8-4b1a-add2-5ac799c5ac3a\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\",\"declaration_id\":\"f763b559-cbe8-4b1a-add2-5ac799c5ac3a\"}'::jsonb",
+      "count": 6,
+      "sha256": "5b27c47a27fa5871ce14594a3fb5b321a23b3d4def0bc0d2c4db7959864c7621"
+    },
+    "rights_snapshot_provenance_binding": {
+      "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\",\"binding_id\":\"236ab7d1-8db6-467d-b617-723377871dbf\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\",\"binding_id\":\"236ab7d1-8db6-467d-b617-723377871dbf\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\",\"binding_id\":\"befa7de9-84fb-45db-af5a-970587eda09c\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\",\"binding_id\":\"befa7de9-84fb-45db-af5a-970587eda09c\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"27915b3f-c283-4f7c-ba96-0ddfc3df3896\",\"binding_id\":\"f3222060-f9a2-432c-ac10-f07ff4ef74ca\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"8e25a5ab-7f01-40bb-b2ed-ac301cb6eec3\",\"binding_id\":\"f3222060-f9a2-432c-ac10-f07ff4ef74ca\"}'::jsonb",
+      "count": 6,
+      "sha256": "c4a53fb96078144a67895522c995f2ab42fd02e4a7605cad6320692e1245be72"
+    },
+    "effective_rights_snapshot": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"ad5f896e-fe6d-5597-941b-49f337e4c9f9\"}'::jsonb",
+      "count": 1,
+      "sha256": "772302ee0bc065f29350832c29eaa8ab7feceb090af50488a99bbc1368649add"
+    },
+    "product_version": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"0b4fea73-df1d-4d37-a6e2-0d8c36ac6e6e\"}'::jsonb",
+      "count": 1,
+      "sha256": "11a0bf625a5326940ef07fc06bccae085502b78961b434b3d27899d95b0bd301"
+    },
+    "product_asset": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"0bce6418-3db1-4431-99be-4450e6e57afd\"}'::jsonb",
+      "count": 1,
+      "sha256": "5a5524e1fbea2fdc7516390e2c7cef40294e0788610bf0cb0f28fb58bacf0516"
+    },
+    "product_release": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"a0cac075-ebe0-4d23-bdfe-fa4bb05a7e58\"}'::jsonb",
+      "count": 1,
+      "sha256": "b198dfd5660206b5d87388dd3246e9eb82a2c522ba391ee28a788fc3aa59e3a3"
+    },
+    "product_release_dataset": {
+      "predicate": "to_jsonb(t) @> '{\"release_id\":\"a0cac075-ebe0-4d23-bdfe-fa4bb05a7e58\",\"dataset_version_id\":\"1e5cbbed-d9e3-4320-a010-1043feab74b2\"}'::jsonb",
+      "count": 1,
+      "sha256": "cb5d108810fe26d58a4d9a3fe007844b2c27aede446dc0b4f3acc0632bf7fe07"
+    }
+  },
+  "checks": [
+    {
+      "name": "one actual negative finding case",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual negative RAW detection is 1/14",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real failure and explicit retry preserve two attempts",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "output is a new immutable version",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "quarantine preserves negative original",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "energy grain conserved separately from enterprise aggregation",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "one independent recheck",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "full existing ruleset assessed new output PASS",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "all three real native invocations charged incl failure",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "eight HTTP same-key retries recover same execution including after closure",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "closed case blocks new execution admission",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "accepted recheck recovers same identity after close",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "closed case blocks new recheck admission",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "manual close same-key recovery is stable",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "changed same-key handling reason rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "forged actor without credential rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "foreign workspace rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "replays create no facts or cost",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real browser payload matches output hash",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "manual closure did not turn RAW failure into certification",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "new output has independent certification",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "issued history retained and stale ALLOWED request blocked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual source authorization revoked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "blocked same-key recovery outputs zero dataset payload",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "old direct-data issued recovery never resends bytes",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "business and audit facts contain no configured secrets",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "final production browser responses contain no configured secrets",
+      "status": "PASS",
+      "detail": null
+    }
+  ],
+  "caseId": "63f1f2c0-eaca-45ae-87e9-1016eeb4ca47",
+  "outputVersion": "6a4acbb2-3903-46a6-8619-39c605f42206",
+  "apiSha256": "13e65111d1642b97ff894aafd089d1dbbabf0f5794a9520192c20c9d9404886d",
+  "webMode": "production",
+  "versions": [
+    "33052af0-cf57-45bb-8926-538bdd91d8ef",
+    "3fc5b298-131e-49f0-9b8c-36a3a7914f8d",
+    "0ba6da68-2f34-47a9-9645-8fa4ef662b10",
+    "bf8122d1-3fcf-47d6-a893-2e4aa266a27e",
+    "6a4acbb2-3903-46a6-8619-39c605f42206",
+    "1e5cbbed-d9e3-4320-a010-1043feab74b2"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "files": 254,
+  "known_values": 54,
+  "matches": 0,
+  "scope": "All changed public files versus41d including appended reports; new and old5d private config values plus validation password",
+  "scan_report_and_future_manifest": "Generated safe metadata only; not circularly claimed as input",
+  "native_delete": 0
+}

@@ -1,0 +1,18 @@
+{
+  "writer": "C2 shared source owner; D1 worktree not rewritten",
+  "sql_only_combination": "environment failure, not migration FAIL",
+  "c2_head": "00bd4d4e9afadd863a178b7798b6f7dee1f3192d",
+  "automerged_require_registration_checks": [
+    "apps/platform/cmd/worker/handlers.go",
+    "apps/platform/cmd/worker/main.go",
+    "apps/platform/internal/platform/routing/routing_test.go"
+  ],
+  "source_conflicts": [
+    "apps/platform/internal/platform/routing/routing.go",
+    "apps/platform/cmd/worker/routing_test.go"
+  ],
+  "full_source_combination": "PENDING",
+  "d1_head": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+  "base_main": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "merge_tree": "ef9c788578287c1d7b0a882f8f5aa132c84c9f93"
+}

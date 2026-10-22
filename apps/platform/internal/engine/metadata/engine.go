@@ -10,6 +10,25 @@ type Asset struct {
 	DisplayName        string
 	Description        string
 	Metadata           map[string]any
+	Governance         *GovernanceFields
+}
+
+// GovernanceFields are descriptive provider observations, never Core ownership,
+// entitlement, quality or certification facts.
+type GovernanceFields struct {
+	Description     string           `json:"description"`
+	Owners          []PartyReference `json:"owners"`
+	Stewards        []PartyReference `json:"stewards"`
+	Classifications []string         `json:"classifications"`
+	Terms           []string         `json:"terms"`
+}
+
+// PartyReference deliberately excludes provider links, email and credentials.
+type PartyReference struct {
+	ID          string `json:"id"`
+	Type        string `json:"type"`
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
 }
 
 type GovernanceProduct struct {

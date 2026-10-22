@@ -1,0 +1,16 @@
+{
+  "classification": "OPERATOR_IAM_ENUM_FAILURE",
+  "reason": "Probe compared regular UserInfo statuses against service-account on/off strings. Native replies are disabled/enabled and meet the intended condition.",
+  "fix": "Compare typed madmin.AccountDisabled/AccountEnabled; do not weaken the current contract with dual-format aliases.",
+  "native_admin_gets": 4,
+  "reader": "disabled",
+  "producer": "disabled",
+  "inspector": "enabled",
+  "planned_regular_executor": "authoritative XMinioAdminNoSuchUser",
+  "source_core_mutation": 0,
+  "native_storage_io": 0,
+  "audit_core_created": false,
+  "source_final_state": "PG/MinIO/gateway exited; failed probe retained",
+  "delete": 0,
+  "cleanup": 0
+}

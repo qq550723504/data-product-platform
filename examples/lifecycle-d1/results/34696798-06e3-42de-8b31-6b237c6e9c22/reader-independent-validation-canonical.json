@@ -1,0 +1,19 @@
+{
+  "read_calls": 3,
+  "cost_allocations": 31,
+  "credential_scan": "PASS",
+  "original_versions_retained": 4,
+  "accepted_code_commit": "283eba050c96ac4aa70990339e3fa25dea6068e1",
+  "validator": "offline PowerShell independent from Go acceptance runner",
+  "result": "PASS",
+  "cleanup": 0,
+  "native_source_hashes": "MATCH_EXACT_COMMIT",
+  "native_delete": 0,
+  "public_files_scanned": 41,
+  "confirmed_stops": 2,
+  "copy": 0,
+  "observations": 31,
+  "unconfirmed_crashed_pin": 1,
+  "reader_pins": 3,
+  "native_calls": 31
+}

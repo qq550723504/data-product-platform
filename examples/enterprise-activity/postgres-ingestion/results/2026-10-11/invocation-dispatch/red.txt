@@ -1,0 +1,6 @@
+=== RUN   TestBufferedHeadersAreNotConfirmedDispatch
+    adapter_test.go:37: buffered headers invented an ACTUAL dispatch before any network write
+--- FAIL: TestBufferedHeadersAreNotConfirmedDispatch (0.00s)
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/hop	0.824s
+FAIL

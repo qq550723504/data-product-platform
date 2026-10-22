@@ -1,0 +1,22 @@
+{
+  "status": "BLOCKED_PENDING_P1_SOURCE_REPAIR",
+  "at": "2026-10-19T09:42:18.460967+00:00",
+  "finding": {
+    "id": "B1",
+    "classification": "BLOCKER",
+    "path": "examples/lifecycle-d1/reconcile-p1-post-v22.py",
+    "lines": [
+      254,
+      257,
+      268,
+      271
+    ],
+    "problem": "An unavailable inspect skips physical stop for a known bound CID. Failed identity readback can combine with the omitted stop, leaving a live owner without any attempted physical closure. Reporting UNCONFIRMED does not replace the required stop attempt.",
+    "bounded_fix": "If pre-stop inspect fails, still attempt fixed known CID stop. Stop and final inspect failures are independent and cannot suppress the rest of closure. Preserve UNCONFIRMED if final state cannot be read."
+  },
+  "observed_host_source_sha256": "defbc31b9cd5d69d194976c67eca5998d27faf56a9e236100e8c98436d3f45a0",
+  "counterexample_script_sha256": "8f0c080baadf1480b98479036bdf50c5664c60a2aba3a68494d47fa3f53e1ffa",
+  "counterexample_failure_log_sha256": "d767b50d51ce5fa07ff2a09c3eda3b266165c6e2807dff5f3e886f336ef44aec",
+  "reviewer_provider_io": 0,
+  "reviewer_docker_io": 0
+}

@@ -1,0 +1,27 @@
+{
+  "originalCommandsRemainFailed": [
+    {
+      "command": "all-eight recheck HTTP200 assertion",
+      "cause": "existing quality advisory-lock contention returned409; same-key serial recovery and zero new facts/cost independently passed"
+    },
+    {
+      "command": "two distinct successful Worker owner assertion",
+      "cause": "secondary actually contended while primary scanned; primary subsequently completed both requests. Cross-Worker contention, non-overlap and two physical costs independently passed; distinct successful owners not claimed"
+    },
+    {
+      "command": "release-outage after new C1 output",
+      "cause": "existing immutable same-output guard rejected the changed version without publishing; explicit new ProductVersion command fixes required C3 fixture path"
+    },
+    {
+      "command": "repeat backup native validation",
+      "cause": "initial replica name already existed; snapshot-qualified names and resume preserved both replicas and final restore passed"
+    }
+  ],
+  "runtimeBusinessFailuresExpected": [
+    "actual storage outage processing FAILED with charged Native invocation",
+    "seven real metadata UNAVAILABLE scans before same request MATCH",
+    "six failed governance projection attempts before success7",
+    "revoked queued scan DENIED with no physical attempt and stale ALLOWED browser delivery BLOCKED"
+  ],
+  "scope": "no failed command or old incident relabelled as PASS"
+}

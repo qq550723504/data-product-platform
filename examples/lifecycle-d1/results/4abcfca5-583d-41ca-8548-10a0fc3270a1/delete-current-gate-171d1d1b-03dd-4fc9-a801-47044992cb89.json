@@ -1,0 +1,65 @@
+{
+  "approval": {
+    "ID": "7e450a88-95ac-4ed0-a9e4-bb0d955e1fce",
+    "Replayed": false,
+    "PreservationUnconfirmed": false
+  },
+  "basis": {
+    "ID": "0b840665-cd78-4f53-ba4b-62e959070f8b",
+    "Replayed": false,
+    "PreservationUnconfirmed": false
+  },
+  "current_gate": {
+    "evaluation": {
+      "id": "b963e36c-4a00-4b73-b62d-fac5b7ead179",
+      "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+      "plan_id": "872ca588-6856-420f-b450-e5cd4e8008f4",
+      "approval_id": "7e450a88-95ac-4ed0-a9e4-bb0d955e1fce",
+      "copy_id": "171d1d1b-03dd-4fc9-a801-47044992cb89",
+      "actor_id": "14cce5b6-6e81-48e2-9a1a-aef260ea132c",
+      "principal_ref": "lifecycle-fixture:4abcfca5-583d-41ca-8548-10a0fc3270a1",
+      "checked_at": "2026-10-11T14:08:05.349551+00:00",
+      "dependency_revision": 9,
+      "status": "FINALIZED",
+      "retention_count": 1,
+      "content_hash": "d99056a9adf3b4fedeacb526c3c99082748042ed33bdaefc1ccb3cff556956f6",
+      "eligible": true,
+      "blockers": []
+    },
+    "dependencies": {
+      "evaluation_id": "b963e36c-4a00-4b73-b62d-fac5b7ead179",
+      "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+      "disposal_due_at": "2026-10-11T14:08:04.909083+00:00",
+      "inventory_complete": "SATISFIED",
+      "references_released": "SATISFIED",
+      "provider_retention_allows": "SATISFIED",
+      "ledger_current": "SATISFIED",
+      "use_restricted": "SATISFIED",
+      "hold_free": "SATISFIED",
+      "readers_drained": "SATISFIED",
+      "unresolved_dispatches": 0,
+      "window_mode": "DEADLINE",
+      "valid_until": "2026-10-11T14:09:05.286527+00:00"
+    },
+    "retention": [
+      {
+        "evaluation_id": "b963e36c-4a00-4b73-b62d-fac5b7ead179",
+        "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+        "ordinal": 0,
+        "policy_id": "0b840665-cd78-4f53-ba4b-62e959070f8b",
+        "start_event_id": "674b10e5-d296-44d4-995b-5446e9de75ad",
+        "starts_at": "2026-10-11T14:08:04.909083+00:00",
+        "retain_until": "2026-10-11T14:08:04.909083+00:00"
+      }
+    ]
+  },
+  "dispatch": {
+    "EvaluationID": "b963e36c-4a00-4b73-b62d-fac5b7ead179",
+    "DispatchID": "300f35c9-0bc7-4cc7-bf62-cea9fb661d3c",
+    "AttemptID": "13323038-1024-49f8-b5cd-a8ffe4c4ea4e",
+    "Admitted": true,
+    "Replayed": false,
+    "Blockers": []
+  },
+  "human_confirmation": "human-confirmed:2026-10-11:dpp-lifecycle307-4abcfca5:quarantine/fixture/b.csv@ce87f789-a4f4-4ce7-bf1f-a044ac53d1d2"
+}

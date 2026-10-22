@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-19T02:53:32.264706+00:00",
+  "status": "PASS_SCHEDULED_AND_PREWINDOW_CLOSED",
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "host_check": {
+    "status": "PASS_PREWINDOW_CLOSED",
+    "at": "2026-10-19T02:53:32.251312+00:00",
+    "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+    "permissions_disabled": 32,
+    "containers_stopped": 58,
+    "containment_anchor": "30e954027bc1d5a74d683f0dcd8bd141aa7a678b",
+    "containment_snapshot_available": true,
+    "native_delete": 0,
+    "provider_io": 0,
+    "container_starts": 0
+  },
+  "host_check_stdout_sha256": "7eeb93035c4c5ce5824bc66eacb66b096311164033649bccd4e7b65808d6fe25",
+  "host_check_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "schedule": {
+    "id": "307-d1-candidate12-v22",
+    "status": "ACTIVE",
+    "next_run_at": 1792389600000,
+    "last_run_at": null,
+    "kind": "heartbeat",
+    "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a"
+  },
+  "schedule_evidence_index_sha256": "1e4bd9d5d345c2c52b64decd3573d8f77e32341af912f84984acaea32de4cd53",
+  "scheduled_resume_sha256": "7feb4d958209f670dfbc6e8d35353ad75f21a327be9abe03fbb468724f7861f1",
+  "scheduling_consent_sha256": "43ccbae244ca02d0fc6f19620a37bab7eaa77c23defc502697df13a3c9598052",
+  "actual_prompt_sha256": "7198df6871a1eea3555c82f80f8f72359e2ed7354b5dd582ce4ef19d2aacaa11",
+  "human_authorization_sha256": "4235dc7205b9479d7fe0c36b88484ba9e780c2d166b094a7700bed31a3311dc4",
+  "matrix_sha256": "d7cad9b6df9222ac48d978b4e74c8eb3a5418913300ebc09a0f16a28e3f053fe",
+  "head": "7f3566cbfee6b22aded52403d5045681165a69d5",
+  "source_starts_this_turn": 0,
+  "provider_io_this_turn": 0,
+  "native_delete_this_turn": 0,
+  "window_fresh_check": "NOT_RUN",
+  "full_D1": "NOT_ACCEPTED"
+}

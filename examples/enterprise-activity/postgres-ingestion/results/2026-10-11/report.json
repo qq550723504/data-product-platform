@@ -1,0 +1,382 @@
+{
+  "attempts": [
+    {
+      "attempt": "baseline",
+      "definition_sha256": "adfb8899a8ce5137c7de3886477e99cd20e98c7a2e5732b132872aeaa02d4ece",
+      "manifest_sha256": "de6f435ede657997bb1a52937cf763418d31a49ec6e0b360d475c4f8b96900c2",
+      "name": "dpp-pgi-9ea01970e048-baseline",
+      "observations": [
+        {
+          "at": 1791682092.8427517,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682093.1029792,
+          "state": "START_REQUEST"
+        },
+        {
+          "state": "START_ACCEPTED"
+        },
+        {
+          "description": "Finished",
+          "errors": 0,
+          "state": "SUCCEEDED"
+        }
+      ],
+      "remote_id": "37c9eab9-1de4-48ba-a60a-c07ef7d71dfa",
+      "request_key": "dpp-pgi-9ea01970e048/baseline"
+    },
+    {
+      "attempt": "repeat",
+      "definition_sha256": "e7761863351daeffb4467ffdd3fc78e156efe9ffa407f93c610f694441cc98a7",
+      "manifest_sha256": "4ad8a6f3a4080101763ac662e5d8ed84915dccb3ce8d90e69094f62e2315a989",
+      "name": "dpp-pgi-9ea01970e048-repeat",
+      "observations": [
+        {
+          "at": 1791682094.7021813,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682094.717332,
+          "state": "START_REQUEST"
+        },
+        {
+          "state": "START_ACCEPTED"
+        },
+        {
+          "description": "Finished",
+          "errors": 0,
+          "state": "SUCCEEDED"
+        }
+      ],
+      "remote_id": "ed7155c2-6696-4584-bd99-f7b30c403186",
+      "request_key": "dpp-pgi-9ea01970e048/repeat"
+    },
+    {
+      "attempt": "encoding-edge",
+      "definition_sha256": "0c1d5113a6c811f993f9af657d1685a4603ac39d4dfc7d3022cd6a755dcf9414",
+      "manifest_sha256": "9c7d659867858146441ea917afacd2f0f27f094dc51654af6fd459dd1d290f03",
+      "name": "dpp-pgi-9ea01970e048-encoding-edge",
+      "observations": [
+        {
+          "at": 1791682096.341723,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682096.3564794,
+          "state": "START_REQUEST"
+        },
+        {
+          "state": "START_ACCEPTED"
+        },
+        {
+          "description": "Finished",
+          "errors": 0,
+          "state": "SUCCEEDED"
+        }
+      ],
+      "remote_id": "e4796bf1-eb95-4a95-8809-91833fa7da50",
+      "request_key": "dpp-pgi-9ea01970e048/encoding-edge"
+    },
+    {
+      "attempt": "register-loss",
+      "definition_sha256": "7c2f4f5de71d04acdab665ce8934ad717f1a241ee1de700b4be3cb6fb79d1b66",
+      "name": "dpp-pgi-9ea01970e048-register-loss",
+      "observations": [
+        {
+          "at": 1791682099.5195136,
+          "state": "START_FACT"
+        },
+        {
+          "reason": "REGISTER_RESPONSE_LOST_NO_ID",
+          "state": "UNKNOWN"
+        }
+      ],
+      "request_key": "dpp-pgi-9ea01970e048/register-loss"
+    },
+    {
+      "attempt": "start-loss",
+      "definition_sha256": "36609794968640a07ecaca86f1491fcc9e53f686eab6ede70124b677a3b98a3c",
+      "manifest_sha256": "61a5df2d4bdfa50db5f0d92cd022b2498265610073ba91834b30f99c98b47894",
+      "name": "dpp-pgi-9ea01970e048-start-loss",
+      "observations": [
+        {
+          "at": 1791682099.933451,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682099.947242,
+          "state": "START_REQUEST"
+        },
+        {
+          "reason": "START_RESPONSE_LOST",
+          "state": "UNKNOWN"
+        },
+        {
+          "description": "Finished",
+          "errors": 0,
+          "state": "SUCCEEDED"
+        },
+        {
+          "reason": "STATUS_UNAVAILABLE",
+          "state": "UNKNOWN"
+        },
+        {
+          "description": "Finished",
+          "errors": 0,
+          "state": "SUCCEEDED"
+        },
+        {
+          "reason": "HOP_RESTART_LOST_ID",
+          "state": "UNKNOWN"
+        }
+      ],
+      "remote_id": "176fb1df-8ea1-4b77-b731-828d6bb14259",
+      "request_key": "dpp-pgi-9ea01970e048/start-loss"
+    },
+    {
+      "attempt": "source-down",
+      "definition_sha256": "6f960ff93f84a32eceb8b5b464526bec046b876722127e19c411ba132fac4adb",
+      "name": "dpp-pgi-9ea01970e048-source-down",
+      "observations": [
+        {
+          "at": 1791682101.3201025,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682101.5881367,
+          "state": "START_REQUEST"
+        },
+        {
+          "state": "START_REJECTED"
+        },
+        {
+          "description": "Finished (with errors)",
+          "errors": 3,
+          "state": "FAILED"
+        }
+      ],
+      "remote_id": "0451c802-b396-4bcf-b2c4-ea1cd6bdb6df",
+      "request_key": "dpp-pgi-9ea01970e048/source-down"
+    },
+    {
+      "attempt": "source-recovered",
+      "definition_sha256": "5855964f99c9511c7292648d20c9c485b3be8982ae9689c3b94a3f8b08997000",
+      "manifest_sha256": "a77fb21b03b331b0594a7af943aa67f11b95edb6a5440586eaa97fc052f94f49",
+      "name": "dpp-pgi-9ea01970e048-source-recovered",
+      "observations": [
+        {
+          "at": 1791682112.2910526,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682112.303729,
+          "state": "START_REQUEST"
+        },
+        {
+          "state": "START_ACCEPTED"
+        },
+        {
+          "description": "Finished",
+          "errors": 0,
+          "state": "SUCCEEDED"
+        }
+      ],
+      "remote_id": "4f136811-75b8-4954-992c-490e9d48ce88",
+      "request_key": "dpp-pgi-9ea01970e048/source-recovered"
+    },
+    {
+      "attempt": "restart-pending",
+      "definition_sha256": "6da604cffa99ba28e63176e16685d25318f5f3245a3c412b56b8fef628bf2f15",
+      "name": "dpp-pgi-9ea01970e048-restart-pending",
+      "observations": [
+        {
+          "at": 1791682113.6242228,
+          "state": "START_FACT"
+        },
+        {
+          "reason": "HOP_RESTART_LOST_ID",
+          "state": "UNKNOWN"
+        }
+      ],
+      "remote_id": "e1490768-9084-44fd-a2fa-84ddd575c996",
+      "request_key": "dpp-pgi-9ea01970e048/restart-pending"
+    },
+    {
+      "attempt": "restart-running",
+      "definition_sha256": "fcbfaa9844003c41d199252d3acf7e2aa1cbed8a0542d6e089f32db504a64779",
+      "name": "dpp-pgi-9ea01970e048-restart-running",
+      "observations": [
+        {
+          "at": 1791682114.2014751,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682114.22758,
+          "state": "START_REQUEST"
+        },
+        {
+          "state": "START_ACCEPTED"
+        },
+        {
+          "reason": "HOP_RESTART_LOST_ID",
+          "state": "UNKNOWN"
+        },
+        {
+          "reason": "INCOMPLETE_RESTART_OUTPUT",
+          "state": "ARTIFACT_REJECTED"
+        }
+      ],
+      "remote_id": "38698acb-db2b-49cf-baf9-b6da564b77b5",
+      "request_key": "dpp-pgi-9ea01970e048/restart-running"
+    },
+    {
+      "attempt": "after-restart-explicit",
+      "definition_sha256": "b0426284b70226459080e7ab9fb58c26c7c41266ee38b1d459809efe2b501b5c",
+      "manifest_sha256": "d07a9a4dcd2c070a8862a369e064c3ed4420728f162966f2835d488715931bc1",
+      "name": "dpp-pgi-9ea01970e048-after-restart-explicit",
+      "observations": [
+        {
+          "at": 1791682126.977821,
+          "state": "START_FACT"
+        },
+        {
+          "at": 1791682127.3602867,
+          "state": "START_REQUEST"
+        },
+        {
+          "state": "START_ACCEPTED"
+        },
+        {
+          "description": "Finished",
+          "errors": 0,
+          "state": "SUCCEEDED"
+        }
+      ],
+      "remote_id": "e4f5070d-178a-46b8-889d-11c07a2d63cc",
+      "request_key": "dpp-pgi-9ea01970e048/after-restart-explicit"
+    }
+  ],
+  "base_sha": "d15acdc60d60de8a63bd2979d6c25ed856018c27",
+  "browser_acceptance": "NOT_RUN",
+  "checks": {
+    "PGI-01": {
+      "detail": "real JDBC 6/10/14 rows; every original field equal; repeated extraction byte hashes equal",
+      "status": "PASS"
+    },
+    "PGI-02": {
+      "detail": {
+        "preserved": [
+          "UTF-8",
+          "quotes",
+          "comma",
+          "LF within field",
+          "surrounding spaces",
+          "empty string",
+          "original dates",
+          "negative energy"
+        ],
+        "rejected_before_dispatch": [
+          "null",
+          "extra-column",
+          "missing-column",
+          "type-drift",
+          "unknown-schema"
+        ]
+      },
+      "status": "PASS"
+    },
+    "PGI-03": {
+      "detail": {
+        "admin_mount": "absent from Hop",
+        "secret_values_found": 0,
+        "source_account": "ACL negative checks passed",
+        "surfaces_scanned": [
+          "URLs",
+          "submitted XML",
+          "metadata",
+          "manifests",
+          "all output artifacts",
+          "Hop response/decoded log",
+          "container logs",
+          "Docker configured env/command"
+        ]
+      },
+      "status": "PASS"
+    },
+    "PGI-04": {
+      "detail": "real register/start response loss; exact-ID query; status 503; source outage/new attempt; Hop restart loses IDs => UNKNOWN; zero blind second starts",
+      "status": "PASS"
+    },
+    "source-read-only": {
+      "detail": {
+        "denied": [
+          "insert",
+          "update",
+          "delete",
+          "truncate",
+          "alter",
+          "create-schema",
+          "create-table",
+          "temporary-table",
+          "private-table",
+          "owner-role"
+        ],
+        "fixture_owner": "NOLOGIN; source is quiescent except explicit test mutations",
+        "reader_role": "t|f|f|f|f|f"
+      },
+      "status": "PASS"
+    }
+  },
+  "contract": "postgres-ingestion-v1/B1",
+  "core_admission": "NOT_RUN",
+  "fixture_sha256": {
+    "energy": "7fa671a5a14401bc642697064a7e2b2e1b5c1ae5842a60981dff2ddf4c290abf",
+    "enterprise": "0ad1c22c199e98a6eb5df7790569d93c3156fd92fa5cc95ff35c8280d57c68db",
+    "lease": "a2782ccace5d901c0d33eb2a276c8f6a2870c07fc96214983d11fd71fcbbf4d6"
+  },
+  "implementation_sha256": {
+    ".github/workflows/ci.yml": "316d2e915070141c4b0fcd2d866cee0fce10c066c7aef8ee12439b7dd1a8537f",
+    "examples/enterprise-activity/postgres-ingestion/.gitattributes": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9",
+    "examples/enterprise-activity/postgres-ingestion/Dockerfile.hop": "423b8bb50075d5a4d173b825486c384716cc139d72a0d833c5a705c51f7d4300",
+    "examples/enterprise-activity/postgres-ingestion/extract.hpl": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+    "examples/enterprise-activity/postgres-ingestion/metadata/pipeline-run-configuration/local.json": "000a755887d5a4a1eb6824fd051b5c1124361ef080f01cd8ad31e2255d2676ce",
+    "examples/enterprise-activity/postgres-ingestion/metadata/rdbms/dpp-source.json": "a8b9534cd655c12bac413c8b61d5e55b361262b1273c7a412f764d7347a5451a",
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": "52e8dcabbc95fb045f8dd5f5b450f0c7faf789001c813269fff8e201c924540b",
+    "examples/enterprise-activity/postgres-ingestion/source.sql": "bd245b93679fe4d58d6007578572a39ce812edbe23d64220646d5e976dadd630",
+    "examples/enterprise-activity/postgres-ingestion/start-hop.sh": "3dfe370c1721af292fab6ebd80e3cd8aaf97589137ae7de30eaaa8e52c566fd3"
+  },
+  "object_storage": "NOT_RUN",
+  "result": "PASS",
+  "runtime": {
+    "hop": {
+      "digests": [
+        "apache/hop@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d"
+      ],
+      "id": "sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d",
+      "tag": "apache/hop:2.19.0@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d"
+    },
+    "java_jdbc": [
+      "openjdk version \"21.0.12\" 2026-07-21",
+      "OpenJDK Runtime Environment (build 21.0.12+8-alpine-r0)",
+      "OpenJDK 64-Bit Server VM (build 21.0.12+8-alpine-r0, mixed mode, sharing)",
+      "73914527305a40cce504b0d3d90b23caf565136912d607ae8ae7c5895512332c  /opt/hop/lib/jdbc/postgresql-42.7.14.jar"
+    ],
+    "jdbc": {
+      "engine_image_id": "sha256:dcc4ae71e5060d752c917e983b253f4ede08be50938d31803d63174fd1c45af5",
+      "sha256": "73914527305a40cce504b0d3d90b23caf565136912d607ae8ae7c5895512332c",
+      "url": "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/42.7.14/postgresql-42.7.14.jar",
+      "version": "42.7.14"
+    },
+    "postgres": {
+      "digests": [
+        "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      ],
+      "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "tag": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    "postgres_version": "PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit"
+  },
+  "scope": "real engines / synthetic source / local staging only",
+  "template_sha256": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1"
+}

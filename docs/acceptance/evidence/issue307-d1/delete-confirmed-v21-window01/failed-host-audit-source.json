@@ -1,0 +1,10 @@
+{
+  "status": "PRESERVED_ACTUAL_FAILED_HOST_AUDIT_TOOL_ARGUMENT_BYTES",
+  "timestamp": "2026-10-18T14:03:39.777Z",
+  "function_call_id": "call_5f27ff3b64bc42ed903697c452491f49",
+  "sha256": "17573ab63c2e1cbd559a579ada28f37bb48d3029f35bf9bfb7daa0d492b1b687",
+  "bytes": 3685,
+  "private_artifact": "failed-host-audit-toolcall.txt",
+  "not_reconstructed_or_retried": true,
+  "selection": "Original custom_tool_call before failure terminal timestamp; later evidence-extraction tool calls excluded"
+}

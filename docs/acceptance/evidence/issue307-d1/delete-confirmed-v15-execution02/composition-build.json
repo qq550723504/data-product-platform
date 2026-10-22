@@ -1,0 +1,11 @@
+{
+  "source_binding": "6d362e78959e0d1d563caa8fcf889fa4980a335f6ac9a564356fbe025b2deeec",
+  "frozen_binaries_unchanged": true,
+  "sender_rebuilt": false,
+  "admin_source_sha256": "197dd4e9e505a132b39220ced49650040e8e6f28d63bfae6070fcfe916606b49",
+  "admin_binary_sha256": "825e9df01d608a3c4be9c0cb91a65c7709d73f10ecac4a62f318963d9df1a2c0",
+  "survivors_source_sha256": "1db46e44196eddea5feaf164031b4bb9891d4fd924b88343cdfcf34e7951eb96",
+  "survivors_binary_sha256": "25c5d0be42a427caf630d9a1f1b9111cb6adf37b2ed4d56a8d037107f8489eda",
+  "root_payload_mount": false,
+  "delete": 0
+}

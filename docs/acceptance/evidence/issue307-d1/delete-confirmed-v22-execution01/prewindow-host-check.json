@@ -1,0 +1,13 @@
+{
+  "status": "PASS_PREWINDOW_CLOSED",
+  "at": "2026-10-19T02:36:43.905438+00:00",
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "permissions_disabled": 32,
+  "containers_stopped": 58,
+  "containment_anchor": "30e954027bc1d5a74d683f0dcd8bd141aa7a678b",
+  "containment_snapshot_available": true,
+  "native_delete": 0,
+  "provider_io": 0,
+  "container_starts": 0,
+  "source": "Actual frozen review06 window_support.py check output in this turn after new authorization recording"
+}

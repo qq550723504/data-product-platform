@@ -1,0 +1,12 @@
+{
+  "delete": 0,
+  "expected_exit": 0,
+  "binary_sha256": "3cddefc13a732482f1afe5493dd641ab880254a9ec47536b1053516d51dc727a",
+  "exit_code": 0,
+  "root_mounted": false,
+  "container": "dpp-lifecycle307-04a6ff55-reader-lc13-orphan-76eb5a",
+  "mode": "lc13-orphan",
+  "cleanup": 0,
+  "id": "b6577ad8107cfb0c8db4796f61677df88b4294f68aaf0f51afad8b39b551abda",
+  "run_id": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0"
+}

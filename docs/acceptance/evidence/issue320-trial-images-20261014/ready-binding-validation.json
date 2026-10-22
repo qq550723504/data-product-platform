@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "previous_ready_head": "f4e453c6d3d10f83d69187151a05796617478cc1",
+  "root_cause": "B2 source set omitted newly executed lifecycle dependencies",
+  "correction": "same selected set includes storage_smoke/trial_images/cleanup_receipts; snapshot before build, verify after cleanup",
+  "controlled_tests": {
+    "cleanup_and_binding": 4,
+    "lifecycle": 14,
+    "isolation": 5
+  },
+  "old_artifacts_unchanged": 23,
+  "native_executed_sources_unchanged": true,
+  "native_rerun": "NOT_RUN / no native mutation for source-binding correction",
+  "candidate_source_lf_sha256": {
+    ".github/workflows/ci.yml": "19db23aa17b2fd1947a05046d90e446e1856b057cd5ea913a8424340ac2b47d8",
+    "examples/enterprise-activity/postgres-ingestion/trial_images.py": "2ec957ba1d3a9ef220c99fd16418f9ab96407475ded0b4aaae646e28199a47c6",
+    "examples/enterprise-activity/postgres-ingestion/trial_images_native_test.py": "13cc9751d77ca745be19489a905eb5d2d2b9f6268b4caeb26971df42261f14ff",
+    "examples/enterprise-activity/postgres-ingestion/trial_images_test.py": "fd866a68fda3305460fd2c47f3a341c82a7006d564b9777410907f03b7238b54",
+    "examples/enterprise-activity/postgres-ingestion/cleanup_receipts.py": "65548590b5e42c956452e6255204695b259b69cf65fc0b7f987d0e7d9db85310",
+    "examples/enterprise-activity/postgres-ingestion/cleanup_receipts_test.py": "70b16266772b76e6d8677cf251449fd61c0f380d2631ebfbc1d10bab509ad6d5",
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": "94df4ad092e376fdf2f3139f28aa9ad8e72f049a5218e04cfb0f73d4dc3c5c6a",
+    "examples/enterprise-activity/postgres-ingestion/storage_smoke.py": "80bdec2ec987e8d4871a123ad04c280b09c4bd0052bc4010e919233404c60e6d",
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": "53383fb63e2b2e7f9d3f40e0bb4a32bdf75918251e51eb92c8da049cb2af9ceb",
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": "91534ef1abc2037ce3e6b4a5277d4e18140a5a2a5ff8fb0f89e95fd8827e8504",
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_test.py": "3623017ee4945544f315ad883e44175a64af6848bdcff2522e6e027af0bdd07a",
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py": "654f66fb2cf96fc99f5b7f9662d92efa690a57d8e4b17a20319f348ae3098a41"
+  },
+  "independent_review": "bind exact new head separately in PR checkpoint",
+  "ci": "bind exact new head separately in PR checkpoint",
+  "red_method": "controlled assertion over captured original B2 sources initializer; test-only adapter, no native execution",
+  "initial_fixture_error": "preserved separately: old module lacked new implementation_sources function; not behavior proof"
+}

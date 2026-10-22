@@ -1,0 +1,10 @@
+{
+  "stage": "renew",
+  "container": "f8ba4d5fb2009bad9dc19bf3683667927bcf373db86dbd6a2ce3802ec4758a28",
+  "started_at": "2026-10-19T06:06:43.729420273Z",
+  "finished_at": "2026-10-19T06:06:44.08366545Z",
+  "exit_code": 0,
+  "stopped_pid_zero": true,
+  "profile_sha256": "87e7fcb2c8c49e35d1f973566a5c5a7668f630c19c3286ba963fe64051b63c5f",
+  "native_delete": 0
+}

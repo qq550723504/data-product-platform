@@ -1,0 +1,63 @@
+{
+  "status": "PASS_NATIVE_READONLY_REFRESH",
+  "operator_base_head": "af16ee12e74596ee688e366804b7c9182e6d7a57",
+  "operator_worktree_changes": true,
+  "operator_source_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "fc058d87681725a36747e7e2468e991c050a09ed6c55e5373f1b8fbd4f910ccf",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "1ebfe9d07531f25e32489428f2a14f5d22d9c84bfd07589e6d12ce72927acd65",
+    "examples/lifecycle-d1/check-reference-refresh.py": "5c7a76b0d0205b557ada3bb4c1b953dce44c6ec6cb430a921b7ca9bfe4e1b0e6",
+    "examples/lifecycle-d1/test_reference_refresh.py": "45d33c47c2651d01de034328e64f0c059e3e823317351e81945b12ccaa00aa0c"
+  },
+  "runtime_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "runtime_source_files": 317,
+  "storage_native_reads": 20,
+  "management_gets": 8,
+  "management_failed05_gets": 4,
+  "source_core_mutation": 0,
+  "clone_storage_calls_observations_costs": 112,
+  "source_storage_calls": 92,
+  "all_retained_containers": 45,
+  "delete": 0,
+  "merge": 0,
+  "cleanup": 0,
+  "independent_review": "Baseline v6 re-review retained; this refresh is primary native/read-only acceptance, no new independent review claimed",
+  "tests": [
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": false,
+      "tests": 8,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": false,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": false,
+      "tests": 5,
+      "exit_code": 0
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": true,
+      "tests": 8,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": true,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": true,
+      "tests": 5,
+      "exit_code": 0
+    }
+  ],
+  "tests_per_mode": 20
+}

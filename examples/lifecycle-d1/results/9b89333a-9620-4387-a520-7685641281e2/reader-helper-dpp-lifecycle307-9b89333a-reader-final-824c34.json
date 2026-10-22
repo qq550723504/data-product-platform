@@ -1,0 +1,12 @@
+{
+  "expected_exit": 0,
+  "delete": 0,
+  "mode": "final",
+  "binary_sha256": "250e254143582c9430946828177f6b57e33aa82e320b976e3c49b839bac798d8",
+  "exit_code": 0,
+  "id": "df6659501e532fd265537c8dcf84256bdf89a74b42038b9a5d41da116d84dd4a",
+  "root_mounted": false,
+  "container": "dpp-lifecycle307-9b89333a-reader-final-824c34",
+  "run_id": "9b89333a-9620-4387-a520-7685641281e2",
+  "cleanup": 0
+}

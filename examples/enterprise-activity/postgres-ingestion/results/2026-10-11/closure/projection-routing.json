@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "sameSourceEventAcrossRetry": true,
+  "projections": [
+    {
+      "status": "SUCCEEDED",
+      "attempts": 1,
+      "eventType": "ProductReleased",
+      "releaseId": "30c33685-6a62-455c-90e6-2eef6c2faab2",
+      "eventStatus": "PUBLISHED",
+      "sourceEventId": "fdba46a2-2b07-4668-8a49-9bd0b3c0feb4",
+      "routingVersion": "c1-v19+governance",
+      "eventAggregateId": "30c33685-6a62-455c-90e6-2eef6c2faab2",
+      "requiredHandlers": [
+        "metadata-projection"
+      ]
+    },
+    {
+      "status": "SUCCEEDED",
+      "attempts": 4,
+      "eventType": "ProductReleased",
+      "releaseId": "2fbd3e49-0702-45f8-8c61-2febf86f1a6c",
+      "eventStatus": "PUBLISHED",
+      "sourceEventId": "3b24e492-1844-47b6-a898-c522d0982d44",
+      "routingVersion": "c1-v19+governance",
+      "eventAggregateId": "2fbd3e49-0702-45f8-8c61-2febf86f1a6c",
+      "requiredHandlers": [
+        "metadata-projection"
+      ]
+    }
+  ]
+}

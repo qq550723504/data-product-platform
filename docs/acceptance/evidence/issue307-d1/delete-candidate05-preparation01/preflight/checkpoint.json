@@ -1,0 +1,19 @@
+{
+  "status": "PASS_FULL_CURRENT_CORE_RESTORE",
+  "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15",
+  "container": "dpp-lifecycle307-5d2274ee-delete-checkpoint-core-02",
+  "id": "85567273b268e66511ab58d6c03a430788b3f93ceb7346a52cf44eaa82939ab6",
+  "volume": "dpp-lifecycle307-5d2274ee-delete-checkpoint-core-02-data",
+  "tables": 194,
+  "rows": 2361,
+  "roles_acl": {
+    "role_sha256": "d59afc3faf1249c16260a8e07386ec47803edc36523bf2b1d5bcdc3fd9e3d42d",
+    "acl_sha256": "e4244ced8811561a28191258ca9f7ea778c7927a6bc10de572f4cc0405c2335b"
+  },
+  "dump_sha256": "4457301bc212eff3d5010b61a907948c48c330aae70d614c0530f685386f58d7",
+  "globals_sha256": "bb538f66ee5ee60fd2132cc92cdfd61b7051ccec9da1c0533c3269d17e0fd665",
+  "prior_facts_preserved": true,
+  "new_basis": 0,
+  "new_approval": 0,
+  "delete": 0
+}

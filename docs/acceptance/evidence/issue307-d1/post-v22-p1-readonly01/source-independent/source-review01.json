@@ -1,0 +1,84 @@
+{
+  "status": "BLOCKED_BOUNDED_INDEPENDENT_P1_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T09:47:31.957119+00:00",
+  "head": "f59bf8b09aa1bbcf9cae3847d7ebc3389596f577",
+  "reviewed_files": {
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": "f792d763b0477ee5c34c1ecb16ed81ba29fd1dfba57f560ad33ac767fc558359",
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22_test.go": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly_test.go": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+    "apps/platform/internal/platform/outbox/publisher.go": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+    "apps/platform/internal/lifecycle/application/p1_recovery_integration_test.go": "ea80793d8af661795a46203b3bbe87be56ec2857e0cae9e1dea300646d859b84",
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py": "e4c60e0fd9ffc2fc417dbf4525aa5e7366c5ca9dfb73548a568ed19d614ee372",
+    "examples/lifecycle-d1/test_p1_post_v22_readonly.py": "7583e9c063f637858108203c37bc24161dbcf2f4accba05582064cd06b3c9e9a",
+    ".github/workflows/demo-lifecycle.yml": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+    "docs/acceptance/issue307-d1-post-v22-p1-readonly.md": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0"
+  },
+  "remaining_blockers": [
+    "B2_CORE_CONNECTION_TARGET_BINDING",
+    "B3_ORIGINAL_OWNER_STDERR_RETENTION"
+  ],
+  "closed": [
+    {
+      "id": "B1",
+      "result": "CLOSED",
+      "description": "Known bound CID now always receives stop even when first inspect fails; stop error and final readback are separate, unknown final state remains UNCONFIRMED; remaining owners still attempted.",
+      "independent_initial_counterexample": "containment-initial01.txt",
+      "independent_final_counterexample": "containment-final02.txt"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B2_CORE_CONNECTION_TARGET_BINDING",
+      "classification": "BLOCKER_PENDING_EXISTING_COVERAGE",
+      "description": "Worker only checks DSN nonempty and host copies an unverified legacy Base. Fixed Core metadata plus original P1 UUID query do not bind actual connection target. A foreign copied database could provide the receipt while original Core before/after remains unchanged, which is currently allowed.",
+      "limited_remedy": "Prove frozen Base bytes plus exact Core resolution, or strictly constrain parsed host/port/database/user and prohibit fallback/multi-host/hostaddr/service alternatives; bind sanitized actual target evidence."
+    },
+    {
+      "id": "B3_ORIGINAL_OWNER_STDERR_RETENTION",
+      "classification": "BLOCKER",
+      "description": "Generic call returns only stdout. Successful docker logs CLI can place failed non-TTY container original error exclusively in stderr; execute_owner saves an empty log and loses original error.",
+      "limited_remedy": "Dedicated O_EXCL owner stdout/stderr raw log capture with lengths and SHA; keep generic call stdout bytes unchanged.",
+      "independent_counterexample": "owner-stderr-initial01.txt"
+    }
+  ],
+  "tests": {
+    "two_go_command_packages": "PASS uncached; no native/provider I/O",
+    "original_host_normal_optimized": "PASS each3",
+    "B1_fixed_host_normal_optimized": "PASS each4",
+    "B1_original_independent_counterexample": "FAIL then PASS after fix",
+    "B3_independent_container_stderr_counterexample": "FAIL; Docker mocked, no provider/host operations"
+  },
+  "test_artifacts": {
+    "additional-findings02.json": "543276d758bbd126b30a50d357db003b57f46f57321158dd5ee185171c50caed",
+    "containment-final02.txt": "87b5dc9d0bebe8396b022bcae611b85b7684bdec4140b71d79647164c25ffd45",
+    "containment-initial01.txt": "d767b50d51ce5fa07ff2a09c3eda3b266165c6e2807dff5f3e886f336ef44aec",
+    "go-unit01.txt": "5cabea3a52d4d6f455292820a4f414e272126f858a339c5b0e68bf88de6fe2d7",
+    "host-normal01.txt": "e208a32429384491bf88138083dfb59196450ce55c24c266447857e167ba7166",
+    "host-normal02.txt": "5354103a9fe663591a5eaa3e3ea1359c762ea50e9a4d950c007614414b5a42db",
+    "host-optimized01.txt": "2a9f6e79aed4b9b615b21700434f8a56c4ccb0a7a96fdcfdbffdbcafd9daa50c",
+    "host-optimized02.txt": "da4cc2727be3c382c09169096d2c9d50ecf506660a6c393a7c3f1cf09c8b5b42",
+    "host-source-initial01.py": "defbc31b9cd5d69d194976c67eca5998d27faf56a9e236100e8c98436d3f45a0",
+    "initial-findings01.json": "0653f358f4efdd07236e935d64f8b7cd6c890267c9191245a82872ae72284823",
+    "owner-stderr-initial01.txt": "97ab7a3097f5b7ca880b638ddc9c8a803fc421ad8f2474a8a9d23f1e544fa36b",
+    "test_independent_containment01.py": "8f0c080baadf1480b98479036bdf50c5664c60a2aba3a68494d47fa3f53e1ffa",
+    "test_independent_owner_stderr01.py": "d1aa97484bd48688a58f24b1e5e27b7101e05c65a92ad8307c0800a1ccf34287"
+  },
+  "parent_pg_evidence_reviewed_only": {
+    "postgres-closed.json": "b7a5bc8ac3f7644ed6521b030aa08f6de8f8e2c46214a18d4d329706be8a7063",
+    "postgres-regression.json": "017702cf05a118c7270bd098a7b7661c76864bdcf2a2676960a454d3f890b4c1",
+    "postgres-tests.txt": "7b13f09b3dea08d2aa9654a30d71d12bbdf87cb102a38838f4f18e95fec1a07c"
+  },
+  "scope_limits": [
+    "Source review only; no prepared manifest or independent manifest PASS yet",
+    "No Docker/source/provider/credential access by reviewer",
+    "No changes to shared repository; all reviewer writes are in this new private directory",
+    "Old R1/R2 and candidate12 reports preserved",
+    "Real P1 reconciliation remains NOT_RUN; no deletion, old execution resume or old authority reuse"
+  ],
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN"
+}

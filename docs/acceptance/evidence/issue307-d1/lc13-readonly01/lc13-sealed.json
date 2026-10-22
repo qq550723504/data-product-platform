@@ -1,0 +1,13 @@
+{
+  "run": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+  "business_windows": false,
+  "gateway_deny_all": ":9000 {\n respond \"sealed\" 403\n}\n",
+  "gateway_id": "12ff9d7949309d79ddf99191a04ed2f42d8d5c5344baac438c0b7f910c9bc07e",
+  "delete": 0,
+  "cleanup": 0,
+  "volumes_retained": [
+    "dpp-lifecycle307-04a6ff55-postgres",
+    "dpp-lifecycle307-04a6ff55-objects"
+  ],
+  "pins_preserved": 6
+}

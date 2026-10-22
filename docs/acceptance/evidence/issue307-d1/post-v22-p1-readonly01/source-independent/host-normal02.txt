@@ -1,0 +1,10 @@
+test_complete_owner_contract_rejects_root_mount_port_and_command_expansion (__main__.P1ReadOnlyHostTests.test_complete_owner_contract_rejects_root_mount_port_and_command_expansion) ... ok
+test_prestart_failure_is_terminal_and_starts_no_source_or_identity (__main__.P1ReadOnlyHostTests.test_prestart_failure_is_terminal_and_starts_no_source_or_identity) ... ok
+test_seal_attempts_every_bound_stop_even_when_every_inspect_is_unreadable (__main__.P1ReadOnlyHostTests.test_seal_attempts_every_bound_stop_even_when_every_inspect_is_unreadable) ... ok
+test_seal_continues_all_stops_when_profiles_and_disable_readback_fail (__main__.P1ReadOnlyHostTests.test_seal_continues_all_stops_when_profiles_and_disable_readback_fail) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.044s
+
+OK
+{"at": "2026-10-19T09:43:07.972211+00:00", "audit_id": "fixed-test-audit", "status": "BLOCKED_PRESTART_NO_SOURCE_IO", "failure": "ValueError: synthetic drift", "source_started": false, "identity_enabled": false, "native_delete": 0, "old_execution_resumed": false, "full_D1": "NOT_ACCEPTED"}

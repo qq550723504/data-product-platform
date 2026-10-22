@@ -1,0 +1,19 @@
+{
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/composition/test_window_support.py": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/composition/window_support.py": "58494ed65aa033fe739bdd3a4d042ef132f0ffa18a6c827709ae59b4b2b4951d",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/current-offline-check.json": "afaffd2d9a9cbc6c547952c405d06c7d166d303ccbcc3f217195be1c8b793214",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/independent-current-offline.txt": "afaffd2d9a9cbc6c547952c405d06c7d166d303ccbcc3f217195be1c8b793214",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/independent-final-review.json": "a5824f032fe9db31074684b1f6d2408e1ed41eb3c37b18cee01694c1de7a0f87",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/independent-public-bindings-audit.json": "eb3fb7cdfb393ef06ea002708f578aa3f77379457c1edaf8c9b8adfda0d74d2f",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/independent-support-normal.txt": "9431e4f203c204c998ed834a801182eded2da8393185da0d7b00d98c8d3d32f0",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/independent-support-optimized.txt": "17be12cc3f18605153f4c270735a97765a02fdd9ff7e0fd5ecdf03c42d5b489b",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/normal-stderr.txt": "d4522fe9dafc031f7be1030daaa40de4ab4a25bbd64d7ab04c2c80adf209c055",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/normal-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/optimized-stderr.txt": "477a401a14959f1d15e68eb529611709da035385de4ac2f657febb03aa447be5",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/optimized-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/physical-close-recheck.json": "883bf61ddeb4aa2eddf6b5c713c317ce66442407048810b3075d445b48213731",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/recovery-and-budget-recheck.json": "313c2d6781a7bdd9490515f721c769252cbd07371b3324d35d5f7713946f7b7d",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/status.json": "da3c121a9ce3e93dd92771591bac4e3f9be1b8779cedea3c5cd55ed430e72db2"
+  }
+}

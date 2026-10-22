@@ -1,0 +1,18 @@
+{
+  "topology_sha256": "4f2911d4366e1bd48a577558b6ac0c719422f0ffe1f0c64e8019942bd6d34bd8",
+  "helper_id": "db4050a55d78b427feecf0ad408b74de470f58a13dae861ace2763a178c1f2c3",
+  "source_head": "34ea8193f6d93ca98b648091c588a471fba942fe",
+  "mode": "disable",
+  "recorded_before_start": "2026-10-11T14:08:07.1825524Z",
+  "binary_sha256": "ba5c93d6b930040018d9df82dc1ea142d81ca08f00258cbf4708d2a700d01141",
+  "gateway_sha256": "ece000d9036dd7d248d4b0d7b400b494c28720bc6766be6d753af57d141b8c0e",
+  "bootstrap_credentials_mounted": true,
+  "source_hashes": {
+    "apps/platform/internal/lifecycle/application/fixture_basis.go": "111e9da6e28ab716b1ef27dd629d09b3497632c59f819b6acf968d629d870a6c",
+    "apps/platform/internal/platform/storage/lifecycle_delete.go": "f890326ccc9b30e6768fedc6c8571e5034ef953b0382b4ddaf2d95a4e61b63c9",
+    "apps/platform/internal/lifecycle/application/exact_execution.go": "30a7df6dfa2b32352fc1b947ba08117c18c25b6cb535219a1cece76110e335fc",
+    "apps/platform/cmd/lifecycle-fixture-delete/main.go": "2fb9e428301426c087c47601c7f26cac5b010ddbe83cf2753c249cfed28a001f",
+    "apps/platform/cmd/lifecycle-fixture-delete/worker_delete.go": "a3641c7122f408e0fa85682b7c5a0640554e74ec43e27cd986abf84c4c24f4c5"
+  },
+  "run_id": "4abcfca5-583d-41ca-8548-10a0fc3270a1"
+}

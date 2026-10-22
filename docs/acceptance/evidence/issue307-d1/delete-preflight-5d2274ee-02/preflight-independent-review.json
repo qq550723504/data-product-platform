@@ -1,0 +1,110 @@
+{
+  "schema": "lifecycle307-non-delete-preparation-review-v1",
+  "date": "2026-10-14",
+  "reviewer_task": "/root/pr318_independent_review",
+  "mode": "Previously authorized independent reviewer; read-only incremental staged source and saved-evidence review",
+  "reviewed_parent_head": "917465d88a0f6e8dfd0a4745fb4d8d767a2c75a1",
+  "reviewed_entries": [
+    {
+      "path": ".github/workflows/demo-lifecycle.yml",
+      "git_blob": "d506794fab574d2f027ffcf575f79c395381324c",
+      "sha256": "8b3c2ac19c6010b47004369110819b4bc12cedf90dd15d5ce9352ec0a508abfb"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/current-core-readback.json",
+      "git_blob": "b990ec937e82980a7b47adbada4056b1764ae737",
+      "sha256": "d296d96cad09a1d776a094b53f0f3d9742d84ca9a428af14aa0465a9861a6d75"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/known-secret-scan.json",
+      "git_blob": "ad04394a0d20a07f2c16e2c7adff77929c9e73bc",
+      "sha256": "879f812b7e00058c72793b16d28ace5ddfadfffcac83c1dc3616d1565de007fa"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/preflight-profile.json",
+      "git_blob": "5ea952ba50284f4969796b83e20c13430cf7e21c",
+      "sha256": "86d2759f573f727aff8c4fd8ae541ea55aad62f3c14a803f66d7b9822a05e1ee"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/trial-no-send-candidate.json",
+      "git_blob": "ffb6b81bf43a2bd27ebef5d173396e7c06712a10",
+      "sha256": "e2cbf3cf39094513f13aa9f175b549dd2632ab5a7460adbf0046749696bcc393"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-02/verification.json",
+      "git_blob": "73bae1a6257366ce4cc4484c5292b72c649d12c1",
+      "sha256": "c0c75068b15d3c201aa55a17fa47fd8cd2c8746e0b62cb6689a3a1c5488c7855"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint-auth.json",
+      "git_blob": "b6f563a8109cf46a7a463a731782b19971dc435e",
+      "sha256": "45bc50d848ed854339722faf03862c26904f430ad013404eef902cd7e893d63f"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint-final-readback.json",
+      "git_blob": "ce60a36b855a006bdb922c841d79a30698b33749",
+      "sha256": "70c04af76aa41d09407fcdf89519a14c1fb3aedba6c619540a6c9de00eddd1d3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint-preparation-failures.json",
+      "git_blob": "b76bf30da2c2e95040fc41578f710487ad494e06",
+      "sha256": "9f77b396ca748de9eee652c475267054cbce1d2ac6e3479cbda888567e41961a"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/core-checkpoint.json",
+      "git_blob": "92136c3bf83ced3595a76cd96d6c76d04bc78057",
+      "sha256": "c94c10e16f5de01ca94dd99e252baf2d4815a2e357595283ac5eda67201c6792"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/current-core-readback.json",
+      "git_blob": "fd57ecfff13048b117427a12c26e9cac06ba57e2",
+      "sha256": "618c34f86873007c103f07b80125db44aaa1c660453bce31d360ad51eefe3973"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/preflight-profile.json",
+      "git_blob": "5ea952ba50284f4969796b83e20c13430cf7e21c",
+      "sha256": "86d2759f573f727aff8c4fd8ae541ea55aad62f3c14a803f66d7b9822a05e1ee"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee/trial-no-send-candidate.json",
+      "git_blob": "cb30b217a12cc9571445d96015040b576dcd96c8",
+      "sha256": "bdd7767963d40ddb951d679b22bb851958d1c9bbe4f9727b712c4e2857efecdd"
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-delete-preflight.md",
+      "git_blob": "8af2c34b1d2aaf8c0a81d3c348bf467a481b2bab",
+      "sha256": "22a2886e894e63083855766c1ce36c06d72ffab433864f4ccc409d26725ae81b"
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-delete-proposal.md",
+      "git_blob": "a31462d3165d607bc56177d4388d4959194b88fa",
+      "sha256": "d117371f80de688641becc1761a2cc56b64fa13b1a6629b1630ae27a30127072"
+    },
+    {
+      "path": "examples/lifecycle-d1/checkpoint-reference-core.ps1",
+      "git_blob": "1e2be3e8503215a0155e86c42b6c4da845a60b1a",
+      "sha256": "2caed0256bebf500bf6f24be3ff6c8fd2e6b752969ba1e65da7618ab78e30bf6"
+    },
+    {
+      "path": "examples/lifecycle-d1/prepare-reference-delete.py",
+      "git_blob": "30d3e35daefc714b75381cd73cc67c0e3c054ab9",
+      "sha256": "24e1d6d19394208016ee1d9dd0ddaa06669880d2cebae03b4c7996db0303fd1c"
+    },
+    {
+      "path": "examples/lifecycle-d1/test_reference_delete_preflight.py",
+      "git_blob": "b6124928b945cf625f8cfdacf19b1912ec22569f",
+      "sha256": "41f6eab25453c85f4acc7af4608db9329fc5fa51dce2b8ab3c38a8a150808cca"
+    }
+  ],
+  "outcome": "NO_VERIFIED_NON_DELETE_PREPARATION_BLOCKER",
+  "findings": [],
+  "followups_required_before_real_delete": [
+    "Native exact-six-version backup/restore",
+    "Authorized server no-send verifier and transaction bridge",
+    "Actual send profile/composition and fresh exact-list human authorization"
+  ],
+  "reviewer_runtime_or_tests": "NOT_RUN; saved evidence checked, no independent live restore/SCRAM re-proof",
+  "provider_delete": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "raw_report": "当前 staged 18-file 增量（parent `917465d88a0f6e8dfd0a4745fb4d8d767a2c75a1`）：**未发现可验证 BLOCKER。**\n\n已确认固定 six-copy/two-target scope、canonical `fc009d88`/`917465d8` manifest/SQL 信任种子、未应用 NOT_SENT 候选及无删除 CLI。checkpoint 的源操作仅导出/只读查询；恢复和启停限定新 replica，密码、globals dump 与原诊断保留在私有目录。\n\n四份 source hash 与回执一致；194 relation fingerprints/1377 rows、52/52/52 storage counts、7 pins/stops、零 claim/observation/completion 与报告相符。原 dump/restore 未捕获 script hash 的限制被明确保留，没有被最终 source-bound readback 冒充覆盖。\n\n**FOLLOW-UP（已明确记录）：** native exact-object backup/restore、服务端 no-send transaction bridge、实际发送 profile/composition。它们不阻塞本次非删除准备，仍是未来真实删除的必需条件；full D1 未接受。\n\n本 reviewer 仅审查源码及保存证据，未执行脚本、测试、SQL、runtime 或 provider，也未独立重证 live restore/SCRAM。"
+}

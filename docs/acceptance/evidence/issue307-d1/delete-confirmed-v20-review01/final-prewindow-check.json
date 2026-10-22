@@ -1,0 +1,23 @@
+{
+  "status": "PASS_FINAL_PREWINDOW_CLOSED",
+  "at": "2026-10-18T07:50:28.775057+00:00",
+  "this_generation_support_check": {
+    "status": "PASS_PREWINDOW_CLOSED",
+    "at": "2026-10-18T07:50:28.175775+00:00",
+    "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+    "permissions_disabled": 32,
+    "containers_stopped": 58,
+    "containment_anchor": "5eb3aec724f55e97ee05595439f74781d0e4b989",
+    "containment_snapshot_available": true,
+    "native_delete": 0,
+    "provider_io": 0,
+    "container_starts": 0
+  },
+  "all_generations_containers_stopped": 205,
+  "all_generations_permissions_false": 128,
+  "source_container_starts": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "native_IAM_Core_fresh_window_checks": "NOT_RUN_REQUIRED_IN_WINDOW",
+  "real_business_send_containment": "NOT_RUN"
+}

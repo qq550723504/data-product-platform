@@ -1,0 +1,435 @@
+{
+  "source_head": "5b469de8017ea6c64998493806f4db4d46495978",
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d/audit-restored.json",
+      "sha256": "5460a03d29c0dea1cb128f1e45d440cc68972757648ccec24790de986904e0d2",
+      "bytes": 31634
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d/native-helper.json",
+      "sha256": "a73bc73f71e7ea0331c1f97d106dab86b2f001f0f2b4478f1df1c00fec764196",
+      "bytes": 335
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d/retained-final-state.json",
+      "sha256": "6000c874ea2bd11f503c4b87f14fcf4c7f31847c909d2ceda8d04746fba2670f",
+      "bytes": 128
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d/source-before.json",
+      "sha256": "07e0f65000f4f3b9ab7d8e05aeb25597de364e268eea430e15457ef90ce9de02",
+      "bytes": 31286
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-02/audit-restored.json",
+      "sha256": "283cb80d9975c6a27368f65a858b1684550e330995aef7bd015f8cc43ec4a1fa",
+      "bytes": 31634
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-02/native-helper.json",
+      "sha256": "f3553121046d0d82cc870e2ff74cd3034c36832e601b75f45e2de9db6d380a33",
+      "bytes": 335
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-02/retained-final-state.json",
+      "sha256": "6000c874ea2bd11f503c4b87f14fcf4c7f31847c909d2ceda8d04746fba2670f",
+      "bytes": 128
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-02/source-before.json",
+      "sha256": "f235c4363d0257a91ff76356b0a0a7c73ad938d69ef68533729254e04552eb6c",
+      "bytes": 31286
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/audit-costs.json",
+      "sha256": "4f914194ef984bc25ce3467a6f1090c99846be8031b09fe9f63c07f4cf914ec5",
+      "bytes": 133
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/audit-restored.json",
+      "sha256": "3b78c269553c10fef5da86d724182d95e92bb3a2e176f63d2352f33ea948fd37",
+      "bytes": 31634
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/current-core-readback.json",
+      "sha256": "b4ccda9ad7c535d9f8d81fbc306796786c5e32fed14b6039886b146f7264f164",
+      "bytes": 14239
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/native-helper.json",
+      "sha256": "cfd407174b8dd7c4dca782cfb49f906eae0d9a843562088024f131c95c90f81b",
+      "bytes": 335
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/native-six-version.json",
+      "sha256": "853c4513f6af71a8808dfab2b6b8a021c1d86eadb8a6acde71e76165b53effab",
+      "bytes": 12741
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/readonly-checkpoint.json",
+      "sha256": "b2f028b0356cde6235d4b751e03f582b8d8506b53fbe629486a86549d826ddbb",
+      "bytes": 913
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/retained-final-state.json",
+      "sha256": "32901781f00c832f9df07b526f1399a74af6a5ed78e517174860c03715e855d3",
+      "bytes": 196
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/source-after.json",
+      "sha256": "d510cc81be4bc9a521d8512014a927b421d0962372bca28e0b1318cd0aeeb347",
+      "bytes": 31312
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/5d-03/source-before.json",
+      "sha256": "d2d1267aeea333538b825a61cfb2256b70dbf6549d7e906a7d36e04387b22567",
+      "bytes": 31286
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/crash-expired-before-recovery.json",
+      "sha256": "0829f581ffafe581bbb53b8bc8d164a876ce57787c046eb8814973062952a637",
+      "bytes": 7183
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/failed-preparations.json",
+      "sha256": "c0bb144b7c16d853d0c594cba645b2b89be3f44ac267c84668f05ecf5a131c32",
+      "bytes": 1608
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/final-source-state.json",
+      "sha256": "51f8a2dc88689bcfcd7533386725e53b35e2a5b713d060fb7d504dc83fdca115",
+      "bytes": 2855
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/lc13-accounting-readonly.json",
+      "sha256": "a69e903adb6d0c35211270923098df90bf09021f86e2a3ccb8605b8db5d9f33e",
+      "bytes": 397254
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/lc13-accounting-readonly.sql",
+      "sha256": "6ae34fb4f2f0994e6146d810f56964fd60afc05a65831de355a667244b908848",
+      "bytes": 1393
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/lc13-sealed.json",
+      "sha256": "57aea12204ee9ee8f1e7ed97dc29ed956e0ee6bfba0596634e62615185f8856e",
+      "bytes": 393
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/orphan-task-identity.json",
+      "sha256": "32668702c76c4f018f89ddf7361856c62c51b6a65f1047b9e6b456e0ed4414a5",
+      "bytes": 1727
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/plane-environment.json",
+      "sha256": "980b128c456b99ab08c3995767c59fc0b7bcb1a59af68133853dd071e4526d60",
+      "bytes": 1689
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/proposal-v3.json",
+      "sha256": "47f9f139bc116f5023ccdb87fd697b986f6e5e693d1006b426cf1c1961332cda",
+      "bytes": 17744
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/retained-resources.json",
+      "sha256": "cfe7be21911589c5dd2dde5db7c175bbfee2bb1546fe81ee0bce2e2f3cfed49f",
+      "bytes": 21117
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/source-binding.json",
+      "sha256": "ef0ce1400d342d277b2c276979a19f800b45cac3b4e3d9762e4f40974b5033c9",
+      "bytes": 251409
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/lc13-readonly01/verification.json",
+      "sha256": "26d8c3f4d2049dbd35a6aa1ade3677de03fde929ecbac276ee37e9dc87662033",
+      "bytes": 831
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/bootstrap-receipts.jsonl",
+      "sha256": "212e0f00e7b5e6949fb7b58cf4c367a47a92ead1e6655d5a6623028eaf5cf797",
+      "bytes": 6583
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/inspection-policy.json",
+      "sha256": "5f73d3a8efdfeb3264e1ea436dd939579a588750673613f4490df215c256dfc3",
+      "bytes": 861
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-crash-02e248ee-43af-455b-9879-c9fb5b262e22.json",
+      "sha256": "1f591ca12f3647ed8074e167fe2e27ec985a70ee06e9f026d94857784d1e469f",
+      "bytes": 240
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-crash-91e814f4-28b4-4767-80c7-304f61495067.json",
+      "sha256": "424833009b22fae7ffc727a7d20bc0ec21ec8c3407ef84c31172bd0eacbbbb3a",
+      "bytes": 240
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-orphan.json",
+      "sha256": "a6befdf442c97a73366c6bbde6c60a1085dcb294e44d30afc95a6f932cf95df7",
+      "bytes": 425
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-recovery.json",
+      "sha256": "ff87168e3c3e00fa0e71ea2e2188ee5c4265976f44ebcf3403f140a3fe9f22ab",
+      "bytes": 2954
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-state.json",
+      "sha256": "33a819b08559944e1a3c5972b748a51457853594f5f5c5acdb543158850ea0d0",
+      "bytes": 133
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-entry-a3d52220-d1c5-41ad-9af0-246499e9d540.json",
+      "sha256": "78332e8ca0c252206b89e9a7bd9879f1f17cfadffb7988360ebc5f9989a85573",
+      "bytes": 187
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-entry-ab7b9c98-03de-4a1c-92d7-043c2a9be0e9.json",
+      "sha256": "e155c7fba45ffcf2bb74b622f09ebb1c0aaa8d9e9faa8aae741df6a13affddae",
+      "bytes": 189
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-entry-b80f9181-d0e4-46f3-a991-172afc036858.json",
+      "sha256": "f9810760d307252b36deec4e09859bad681eb969eeacb2382874074b9c6a9687",
+      "bytes": 189
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-entry-c5dcc490-1376-4d8c-85b7-c7c9df9d76be.json",
+      "sha256": "89efbf40167252d0549ee63618a089285f443189b7b12b882e68f28792f8ec6c",
+      "bytes": 187
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-entry-d11e9ba9-a604-4685-829c-35419a20373b.json",
+      "sha256": "44445e8bb2f44c19608de8df27fa58c0ca3c35d58dbbc5d678720a05253c4d54",
+      "bytes": 187
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-entry-fb3d4800-bad2-4530-9084-9af39152f01a.json",
+      "sha256": "09773f17ebf6231d055ef183d1b874da66e921ac21f559f86b750e4cb502a6e9",
+      "bytes": 186
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-return-1f9224df-43f0-4a8c-bb82-53f39bb8e809.json",
+      "sha256": "89efbf40167252d0549ee63618a089285f443189b7b12b882e68f28792f8ec6c",
+      "bytes": 187
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-return-377c166b-7757-4d52-bf94-ab47bf52956e.json",
+      "sha256": "78332e8ca0c252206b89e9a7bd9879f1f17cfadffb7988360ebc5f9989a85573",
+      "bytes": 187
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-return-57c42f0c-8477-4d45-b945-fa5d207c210a.json",
+      "sha256": "09773f17ebf6231d055ef183d1b874da66e921ac21f559f86b750e4cb502a6e9",
+      "bytes": 186
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/lc13-task-return-613128ef-f0b5-427e-a0c4-3254ba55b0fc.json",
+      "sha256": "44445e8bb2f44c19608de8df27fa58c0ca3c35d58dbbc5d678720a05253c4d54",
+      "bytes": 187
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/manifest.json",
+      "sha256": "eaeadd880266484975c9cea4308f973e1b7e16063576cc822c4419466732d0d6",
+      "bytes": 8515
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-current-quality-certification.json",
+      "sha256": "2c7bd3d20911155d7f8f6f2efd3bf5a7b6e1b9d290e4352bc566b3cf963b31e2",
+      "bytes": 321
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-calls.json",
+      "sha256": "e9a2d51ae6f77c43265efbbf8de3985e2bbde4cfbf59ccfff16ce6557b7b3f59",
+      "bytes": 15615
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-inventory.json",
+      "sha256": "7d3fd5dfe7f1b9ee7f58c5b8fd4eff5d7118e7c7d98673b4425cf6fc5316baca",
+      "bytes": 1682
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-native-inspection.json",
+      "sha256": "525ce9e5969b7c99baa99bb7333e6afbf444d35eb14659be18aa2797c18f7dcd",
+      "bytes": 7763
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-observations.json",
+      "sha256": "0b7734136244442ea9bb85ee6b8f49f3588c1cdef8827b5f0b233e7f2867c10b",
+      "bytes": 18320
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-output-intents.json",
+      "sha256": "2f9531eef46dfb8b790029ae2486a7648725009d21e978bfb55b0ca6a3f6d36d",
+      "bytes": 663
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-outputs.json",
+      "sha256": "881f155063c9b2b5e532f154607176e313001bc5b46139539159d088fbb80451",
+      "bytes": 256
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-pins.json",
+      "sha256": "b8e1bea5df452ff0d7fe51b504b9c35b2c171d57fbb623f062b095d48b28a6c8",
+      "bytes": 3535
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-terminations.json",
+      "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+      "bytes": 5
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-final-transfers.json",
+      "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+      "bytes": 5
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-producer-policy.json",
+      "sha256": "e7245d9611783120a514b5389eecf1c66dad2a9268f738840b2ad42ada9730b8",
+      "bytes": 222
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/plane-state.json",
+      "sha256": "70fea7cca65e66c5ff6e81c4d39c323252c870f2c99d3c3b704c5812516cabb2",
+      "bytes": 295
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-009d44ff-4cef-48fb-bff4-62e357cd70e3.json",
+      "sha256": "e1a44eb832df9a402eaceffd083fe3234dc0a22252c096f6216b377859112440",
+      "bytes": 157
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-1d41342e-7d4b-486b-8a90-f6e6e7b10942.json",
+      "sha256": "0dad4848b0650caca0fbf72c0540bac41138cb7e4a9d54aab5243c2b9201cd0a",
+      "bytes": 148
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-25cd963f-9d46-4e1b-a679-41f1a15245fa.json",
+      "sha256": "65823cc73c6e5fd172aaa5b6aeeb83c86ef497ebe04159ab6a655f4d6dea644b",
+      "bytes": 155
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-430b49e2-1321-4089-89f7-806320233ce9.json",
+      "sha256": "aebd9163ca0d8a4ea9ffddeb7dd3993bec956c605ec234279fd518c7978df44c",
+      "bytes": 157
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-43900f67-c233-47c4-8cf6-b198d295c21e.json",
+      "sha256": "142e02914a94e06ffc77a8b84639f68940dc2e75203071ee39877a86ca128979",
+      "bytes": 166
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-62d13fad-0766-467f-b7ec-3e255f66d41e.json",
+      "sha256": "f72550de238d30b439ca8d9cdc10f1a322deabc1eab177e18876d7ddc695df1c",
+      "bytes": 166
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-e7871a84-2ee1-4f26-ac09-df3b8803357a.json",
+      "sha256": "18075464ed1442e6209d003a19b4168d0e1a4abfb2fe1613ca18a8335ed9d125",
+      "bytes": 147
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-f27abfa4-809c-44ba-aefc-ebbfe3973af9.json",
+      "sha256": "9ceb5017c487847dcccd4b99dfb30b9753aa3dbd54d87807ecc1e8c15d4e121e",
+      "bytes": 155
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-009d44ff-4cef-48fb-bff4-62e357cd70e3.json",
+      "sha256": "b404a665e04a547bed82325a35209a6e9d5c146f3ea77b51a27f01a9cde923cc",
+      "bytes": 115
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-1d41342e-7d4b-486b-8a90-f6e6e7b10942.json",
+      "sha256": "3b32183e7867fcfa11f20a121c2a6909a204d438d4399013f8b10aabf803446b",
+      "bytes": 115
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-25cd963f-9d46-4e1b-a679-41f1a15245fa.json",
+      "sha256": "bab2a321fc623c4d3dda980128430f098fb46f41a5ec9cf64df1844aa495f153",
+      "bytes": 115
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-430b49e2-1321-4089-89f7-806320233ce9.json",
+      "sha256": "5440e787548f1d5dc200bbbd548ae28cd8bfe53536788064397152e763ddb337",
+      "bytes": 115
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-43900f67-c233-47c4-8cf6-b198d295c21e.json",
+      "sha256": "139b5233d63732423d64d6414131a44887afb854330d7bda82ef4ea8452b8d78",
+      "bytes": 115
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-62d13fad-0766-467f-b7ec-3e255f66d41e.json",
+      "sha256": "b1a90ab71c08996baa77dc1862252dffa619bf8b4e19f28aff6ddd082f32e86e",
+      "bytes": 114
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-e7871a84-2ee1-4f26-ac09-df3b8803357a.json",
+      "sha256": "95e2a98b82b2757e758418929bb561d0684d0c3861d1bc5aa50aa0d29a28e023",
+      "bytes": 115
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-admin-observation-f27abfa4-809c-44ba-aefc-ebbfe3973af9.json",
+      "sha256": "0bd0cdcb02acde1b466ee73b1e7b37d7d839ac1620c8db5062462d6daa70f406",
+      "bytes": 115
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-environment.json",
+      "sha256": "cc678df766b2b7bb4309ecfaf6a35c11ca849476a3aa604d6fc42d6000b97ada",
+      "bytes": 4265
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-lc13-crash-one-e8f4c1.json",
+      "sha256": "4e7cf800a097bdada3c1d2326cc60e042e5ef2bdd81af3a218612107cc71d499",
+      "bytes": 416
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-lc13-crash-two-8a72a4.json",
+      "sha256": "ab5a9c035bfd0b74f0f9a32ac194001d99b3a494fbdaf421b286efe4fb94e745",
+      "bytes": 416
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-lc13-final-0c63f1.json",
+      "sha256": "b81c198b9be0bcb72de25dfd1c767bee21efe797fedbea0440636f7a3c061ee9",
+      "bytes": 406
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-lc13-init-db2b72.json",
+      "sha256": "8b8de887a33d5fadaeb38e9111b625b329ad6a7307709ed06e7351254308e6ec",
+      "bytes": 404
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-lc13-lease-recovery-8918d7.json",
+      "sha256": "0ddc235be754f3fb28caa19f8a6386d928bc75eef6a429bf7acd6ed4b162089a",
+      "bytes": 424
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-lc13-orphan-76eb5a.json",
+      "sha256": "b29eabb2e99fa6968571517fcbc15aa21332257329951fde9da5154f7a814d40",
+      "bytes": 408
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-provision-2760ee.json",
+      "sha256": "80fb7a418090ab162f76f720cc9c63c4a908e7287c7d5866e231b456ef783756",
+      "bytes": 403
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-seal-ea285c.json",
+      "sha256": "84c87392c34c2543a568399d9fe9bf4d23c9d65b16efe262d3bee0daf348c160",
+      "bytes": 393
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-helper-dpp-lifecycle307-04a6ff55-reader-setup-30a8ab.json",
+      "sha256": "4c5cb9aa233f91fe67cb931014d9184e63d974dc4f4e8097f56dfb350c437f6d",
+      "bytes": 396
+    },
+    {
+      "path": "examples/lifecycle-d1/results/04a6ff55-f366-4a6e-8a1b-9cc79bea15e0/reader-iam-policy.json",
+      "sha256": "58e4c9049a8a319cba98544af4f9c8f2341c8a8f96e2defc3eb0ade4815eb4d2",
+      "bytes": 859
+    }
+  ]
+}

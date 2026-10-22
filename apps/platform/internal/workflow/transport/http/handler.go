@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -17,6 +18,7 @@ type Handler struct {
 	versions   *workflowapp.WorkflowVersionService
 	executions *workflowapp.ExecutionService
 	repo       *workflowinfra.PostgresRepository
+	Authorize  func(*http.Request, uuid.UUID) (*uuid.UUID, error)
 }
 
 func NewHandler(versions *workflowapp.WorkflowVersionService, executions *workflowapp.ExecutionService, repo *workflowinfra.PostgresRepository) *Handler {
@@ -28,6 +30,50 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/executions", h.createExecution)
 	mux.HandleFunc("GET /api/v1/executions/{executionId}", h.getExecution)
 	mux.HandleFunc("POST /api/v1/executions/{executionId}/retry", h.retryExecution)
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/executions/{executionId}/quarantine", h.quarantine)
+}
+
+func (h *Handler) quarantine(w http.ResponseWriter, r *http.Request) {
+	ws, e1 := uuid.Parse(r.PathValue("workspaceId"))
+	id, e2 := uuid.Parse(r.PathValue("executionId"))
+	if e1 != nil || e2 != nil || ws == uuid.Nil || id == uuid.Nil {
+		httpserver.WriteError(w, r, 400, "INVALID_REFERENCE", "workspace and execution required", nil)
+		return
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
+		return
+	}
+	if actor, err := h.Authorize(r, ws); err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return
+	}
+	limit, offset := 50, 0
+	for name, dst := range map[string]*int{"limit": &limit, "offset": &offset} {
+		if raw := r.URL.Query().Get(name); raw != "" {
+			v, err := strconv.Atoi(raw)
+			if err != nil || v < 0 || (name == "limit" && (v < 1 || v > 100)) {
+				httpserver.WriteError(w, r, 400, "INVALID_PAGE", "limit 1..100 and nonnegative offset required", nil)
+				return
+			}
+			*dst = v
+		}
+	}
+	e, err := h.repo.GetExecution(r.Context(), id)
+	if err != nil || e.WorkspaceID != ws {
+		httpserver.WriteError(w, r, 404, "EXECUTION_NOT_FOUND", "execution not found in workspace", nil)
+		return
+	}
+	items, total, err := h.repo.ListQuarantine(r.Context(), ws, id, limit, offset)
+	if err != nil {
+		httpserver.WriteError(w, r, 500, "QUARANTINE_READ_FAILED", "quarantine unavailable", nil)
+		return
+	}
+	result := make([]map[string]any, 0, len(items))
+	for _, v := range items {
+		result = append(result, map[string]any{"id": v.ID, "inputName": v.InputName, "sourceKey": v.SourceKey, "reasonCode": v.ReasonCode, "reasonMessage": v.ReasonMessage, "payload": v.Payload})
+	}
+	writeJSON(w, 200, map[string]any{"items": result, "page": map[string]any{"limit": limit, "offset": offset, "total": total}})
 }
 
 type createWorkflowVersionRequest struct {

@@ -1,0 +1,9 @@
+{
+  "applied_at": "2026-10-11T11:27:50.7209647+00:00",
+  "schema_migration_unchanged": true,
+  "extension_file": "000058_lifecycle_scoped_completion.up.sql",
+  "extension_sha256": "71030f44300a690b5575df0592f66f2823675a1eca88f0f7341a80e186caec02",
+  "binary_sha256": "b6bd746a4e6141d2586d641eb9f7afb3fcc9f88108664cce42f85fd86790f829",
+  "base_schema_version": 54,
+  "note": "Preserved fixture snapshot54 plus explicit additive58 tables. Fresh installation uses main55+D157+58."
+}

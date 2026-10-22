@@ -1,0 +1,190 @@
+{
+  "status": "PASS",
+  "workspaceId": "0d0dc3bf-1e91-4e87-86cc-a11c46dcb5fb",
+  "api": "http://127.0.0.1:52555",
+  "web": "http://127.0.0.1:56998",
+  "webMode": "production",
+  "apiSha256": "32fd1a17822376f7c52b55e04a175bd0632f5f4343f7da3a2c98916f5c329f8e",
+  "acceptance": {
+    "PGI-08": "PASS",
+    "metadata-observation": "OBSERVED",
+    "PGI-09-human-explanation": "NOT_RUN"
+  },
+  "checks": [
+    {
+      "name": "isolated browser acceptance uses production web",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "same Core has three RAW, one STANDARDIZED and one CURATED",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "RAW remains READY with original 6/10/14 rows",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "browser batch accepted with exactly one persisted manifest receipt",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "receipt references exact three immutable RAW content hashes",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "one actual native execution succeeded",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "negative energy quarantined with original -999 value",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real browser download equals immutable 5-row 640-byte output",
+      "status": "PASS",
+      "detail": "3be783926e4860bde75a6e01b561455c0a7086dcb54c6bc54e4f768a8417a9ac"
+    },
+    {
+      "name": "actual quality PASS and RAW FAIL are separate immutable facts",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "failed quality never produced CERTIFIED",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "browser prepared FINALIZED snapshot of four actual engine/quality/compliance evidence items",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "explicit supersede preserves both CERTIFIED history facts",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "each actual certification evaluation and disposition has allocated cost",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual browser delivery issued and revoked retry blocked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "revocation retained original issued history",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "fresh gate separates valid certification from revoked entitlement",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "preparation domain event published with explicit no-task obligation",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "preparation audit references exact frozen evidence snapshot",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "rights preparation has a real allocated cost",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "six concurrent preparation replays recover or report lock contention",
+      "status": "PASS",
+      "detail": {
+        "recovered": 2,
+        "contended": 4
+      }
+    },
+    {
+      "name": "retry after contention recovers exact snapshot",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "same preparation key with different quality fails closed",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "supersede replay returns same disposition",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "forged CERTIFIED decision is rejected",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "replays/rejections add no snapshots, costs, decisions, audits or events",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "new read endpoints reject forged actor without trusted credential",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "trusted token cannot cross workspace",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "quarantine rejects negative page offset",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "metadata observation is OBSERVED",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "issued direct-data same-key recovery is non-payload",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "public business/audit/event facts contain no known credential secrets",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "rendered browser pages contain no known credential secrets",
+      "status": "PASS",
+      "detail": null
+    }
+  ],
+  "facts": {
+    "batch": "d1cdaafe-b67a-494c-b737-97767ec0804a",
+    "outputVersion": "d8ea1a3c-ba13-4528-a1fe-e88292b560bf",
+    "outputHash": "3be783926e4860bde75a6e01b561455c0a7086dcb54c6bc54e4f768a8417a9ac",
+    "preparedSnapshot": "cbe158df-5c30-4e27-adfd-77eb64f8758e",
+    "currentCertification": "2817d4a7-8fe7-4913-8a4a-134dd1bedae5"
+  },
+  "notRun": [
+    "metadata outage/reconnect not assessed by this B3 oracle",
+    "human operator explanation - explicitly deferred by user",
+    "production IAM/provider acceptance"
+  ]
+}

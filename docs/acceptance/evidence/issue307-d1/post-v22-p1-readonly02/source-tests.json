@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-19T10:11:55.606512+00:00",
+  "status": "PASS_NORMAL_AND_OPTIMIZED_8_EACH",
+  "scope": "Docker/IAM mocks only",
+  "results": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "-X",
+        "utf8",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit": 0,
+      "log": "host-normal.txt",
+      "sha256": "ba5fd117b17bc9486544d023407dea1fd3e6b50c73b34ea2694dc88aff44473a"
+    },
+    {
+      "command": [
+        "python",
+        "-O",
+        "-B",
+        "-X",
+        "utf8",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit": 0,
+      "log": "host-optimized.txt",
+      "sha256": "df37af197304cb3bee24a1f0ad1948823df1385b3a597fee849e5b20f96a8d92"
+    }
+  ]
+}

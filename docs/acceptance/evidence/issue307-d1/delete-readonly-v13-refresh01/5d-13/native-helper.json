@@ -1,0 +1,9 @@
+{
+  "id": "521c50d2371f8cf6eeb1971e679f4098df02711486527ce8cadd043e0ff89f6b",
+  "exit": 0,
+  "binary_sha256": "01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3",
+  "root_mounted": false,
+  "source_gateway_started": false,
+  "journal_database": "dpp-lifecycle307-5d2274ee-readonly-audit-core-13",
+  "native_delete": 0
+}

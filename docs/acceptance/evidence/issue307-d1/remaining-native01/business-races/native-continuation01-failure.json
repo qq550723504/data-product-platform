@@ -1,0 +1,8 @@
+{
+  "status": "FAIL_RETAINED",
+  "cause": "MinIO API startup marker is on Docker stderr, stdout-only collector missed it",
+  "readiness_observation": "stdout_bytes=0; stderr_bytes=232; API marker on stderr",
+  "fix": "Read both Docker log streams; retain original comparison/volume/clone, no archive/restore/provision replay",
+  "physical_file_sha256_compare": "PASS",
+  "delete": 0
+}

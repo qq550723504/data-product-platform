@@ -1,0 +1,32 @@
+{
+  "reviewer": "/root/pr318_independent_review",
+  "role": "Independent read-only source and saved-evidence review; no tests/SQL/provider actions",
+  "reviewed_source_head": "69529668f13c82cd03184276118a8ed592d65c00",
+  "reviewed_evidence_commit": "b9d925c23bd7af96d431452b40d24de78636ed19",
+  "post_review_changes": "Documentation claim precision and explicit final audit maintenance-window sealing only; source unchanged",
+  "index01_files_verified": 86,
+  "source_bindings_verified": 709,
+  "crlf_only_differences": 645,
+  "blockers": [],
+  "closed_roots": [
+    "Complete existing PROFILE/MODE and LF inspection entry contract",
+    "Confirmed-created helper ID and independent stopped-state restoration attempts"
+  ],
+  "verified": [
+    "Original Asynq task IDs returned RUNNING no-op, natural lease recovery FAILED/0 new I/O/six pins retained",
+    "Six prior pins and two read-call starts unchanged,34 physical calls with exactly1 typed allocation each",
+    "Four separate Core estimated engine costs and2 recovery Evidence/Audit/Outbox groups",
+    "Three fresh audit restores match194 source relations/1879 rows and roles/ACL",
+    "Six exact versions/protection/hash match prior evidence;source journal92,success audit112",
+    "Proposal scope/budget unchanged andnohumanapproval",
+    "Actual audit maintenance configs disabled;onlyPreparationEnabled changed and privatebefore retained"
+  ],
+  "follow_up": [
+    "Positive same-execution resume",
+    "Trusted external-owner termination and automatic pin release",
+    "Credential containment",
+    "Native DELETE fault/race and full D1/D2"
+  ],
+  "full_D1": "NOT_ACCEPTED",
+  "pr318": "DRAFT_NO_MERGE_NO_REAL_DELETE"
+}

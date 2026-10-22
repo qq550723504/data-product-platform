@@ -1,0 +1,13 @@
+{
+  "status": "PASS_DENIED_PRESENT_TERMINAL_REPLAY_ZERO_IO",
+  "counts": {
+    "calls": 125,
+    "claims": 1,
+    "receipts": 0,
+    "completion": 0
+  },
+  "replay_provider_io": 0,
+  "delete_success": 0,
+  "absence_claimed": false,
+  "second_target_started": false
+}

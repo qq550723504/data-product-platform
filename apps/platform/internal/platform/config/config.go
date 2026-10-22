@@ -53,11 +53,12 @@ type RedisConfig struct {
 }
 
 type StorageConfig struct {
-	Endpoint  string
-	AccessKey string
-	SecretKey string
-	Bucket    string
-	UseSSL    bool
+	WorkspaceProfile string
+	Endpoint         string
+	AccessKey        string
+	SecretKey        string
+	Bucket           string
+	UseSSL           bool
 }
 
 type OpenMetadataConfig struct {
@@ -205,11 +206,12 @@ func Load() (Config, error) {
 			DB:       redisDB,
 		},
 		Storage: StorageConfig{
-			Endpoint:  stringEnv("OBJECT_STORAGE_ENDPOINT", "localhost:9000"),
-			AccessKey: stringEnv("OBJECT_STORAGE_ACCESS_KEY", "minio"),
-			SecretKey: stringEnv("OBJECT_STORAGE_SECRET_KEY", "minio123"),
-			Bucket:    stringEnv("OBJECT_STORAGE_BUCKET", "data-product-platform"),
-			UseSSL:    useSSL,
+			WorkspaceProfile: strings.TrimSpace(os.Getenv("OBJECT_STORAGE_WORKSPACE_PROFILE")),
+			Endpoint:         stringEnv("OBJECT_STORAGE_ENDPOINT", "localhost:9000"),
+			AccessKey:        stringEnv("OBJECT_STORAGE_ACCESS_KEY", "minio"),
+			SecretKey:        stringEnv("OBJECT_STORAGE_SECRET_KEY", "minio123"),
+			Bucket:           stringEnv("OBJECT_STORAGE_BUCKET", "data-product-platform"),
+			UseSSL:           useSSL,
 		},
 		OpenMetadata: OpenMetadataConfig{
 			Enabled: openMetadataEnabled,
@@ -268,6 +270,9 @@ func Load() (Config, error) {
 	}
 	if cfg.Storage.Endpoint == "" || cfg.Storage.Bucket == "" {
 		return Config{}, fmt.Errorf("object storage endpoint and bucket must not be empty")
+	}
+	if cfg.Environment == "synthetic-trial" && cfg.Storage.WorkspaceProfile == "" {
+		return Config{}, fmt.Errorf("synthetic trial requires OBJECT_STORAGE_WORKSPACE_PROFILE; root fallback is disabled")
 	}
 	if cfg.IndustryPackRoot == "" {
 		return Config{}, fmt.Errorf("INDUSTRY_PACK_ROOT must not be empty")

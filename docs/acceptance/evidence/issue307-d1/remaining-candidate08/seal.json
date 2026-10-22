@@ -1,0 +1,228 @@
+{
+  "containers": [
+    {
+      "id": "5ce094c5beac39c734225169cef76f1adb41b598b1993d203bd2fa71a21f83c3",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "2e2192530e9ff4d45bfdae8fc797089fd8ce0969d37cba97e00d63986f4e194c",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "25da5d4b43876de2a2aca7f97406cb6a05735ba7178c523159862ce168181d3d",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "38881cd25e94e0ae5fa5c9e9f08d8280f8c748df0299b522b726f1113e7cb20e",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "8a02550d8a5454c5b7b775f6b3d758fda670ecfd44955d86945bb957634fff6c",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "bb0db9c4705bc62a9b0e0d49c7ccff61b3eb2da4daaa627139046daeeac82136",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "b682c69ea17f1040fc6ec7635c5dc56ef0cb359bb2fcb55c98c4da921f5c4142",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "088472f89fc29fff82eaaf28a42af24c6450da681553cafbdcd5a05a7a485523",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "d8028e263d190a950ba01cd626502b72c63e839ee20f6c6087ce35706cb73037",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "0db01c9ee64d93ec8b61f1112b9f1e002ab1efcb8731a84de8020a277f1257ee",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "70486e3ef2f3221cde85c5a61e4d8e8292be3d37864b056da1ac8ba51e916208",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "232f9a8050b5295258b1bae4d0aaa6550cbebea9acd6ef5afdd75100ac7e55d5",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "ad8ca4dcc363bda1b611cd94efbb6dad15ed1a2776de0f5ddec1312fb3539608",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "f35f67ac99068d5fe012b35d64623d98d40b1e41a7ef088c0735524d06609a94",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "0a3814d2f7b7e7223b17497a77c1a89fd8504e876d29856a6ca3300de79d25e1",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "51eb451db0c305a67e7b3859a21b65777168ec361ddbba7985bcde1d76382256",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "7cd770a4ee880df691e756fd81217cf54d5992dfa52fd65e292aac5caafa2314",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "73e8329d35b24824847e55aea107c96126845b17b9e7251d8c4f5ee26be22e73",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "7f79c8dbfc0c975374e62aa084fe2287c8e0559972907fa3dcc6100df3651908",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "1a00e1faf2a0db52b4877963df9a3cb9aec097ec3b4c170e3b1f38cfe4e93248",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "083c270366c9f263cea49a83a131896e9ce576b8658b09172c816a31ae48a086",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "e1d09c3d6be34b8a13df35f8f4317055038d96ef34a8925d74250cb756711229",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "d497f2d1907805452428a781a36baa2935adf034b0029102c3733ac102b9d165",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "3b47f7905e84cc9ca14de3932548aca1f3ff9b194aa0a415f98daed5f75a6956",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "d7275e2da3a448c85a353256b7ac96969eb9045fcd863ae075bde5793e4236f5",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "e9e6ea5b8b454e5ede793afc5096b8ce4504d5d4a88848fae28a6bf614860ef9",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "82d6461105a6264dbe365a661e1210f6abaad4f10b3eeb855ef619a1b1a5266f",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "9b99a8f93f41848b3e5284abd8cc7e77acd63f9c54c67fa6e8f331e76cdf6866",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "39c2d0c92ff5668d0ec3eefcc7d384c7fc50296c6d52631728abb94a781da7e9",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "f8cb405750af5bc05c3f41bcd9ecc97ebd6e5c328f9b0ee8316ae6370ea567dd",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "b2d328beb95e94854a65593ce7d8704017936ccd2733c425bde27124e7a0ee59",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "76f9f4a1550493333478d4c8fa5b07072826abc74f5996e8a13ccda9ce446477",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "3bfbae3745af3cffea258c02e94c23845d988fcdee4282eb4d5e80f7ac8bee5b",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "f838041eb2d5d75640e548edf8bb96ec0e309f40e764f8edeccaf691c2c53979",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "92d5dc966fd30c00e3b9c4631d807c1b1748a6adf3507d6401df9fd6e1cd07a0",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "b8f0fdd0af6309931bb278b7a037a3e2f3a80d9cc2b2b40adee1beba2f2d28f1",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "f8ea9938346c4fd0dd28b093f5fc34d74026e78aa45d2d0dd0a1a3f439ad1d1c",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "03bb97a1315bdd608d056bd61d5a428a168eea23be9f9e7c9648273d193f404e",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "7484ce78c6fc55c82492e82a9d2cc335597717f59e78c383d5a8705ad6af9ae6",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "cd0817cbd5434a57730392379483378df861ca0ea11d0c931b7822ee3ade0abb",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "cd53b2662e9d909be539c70e0b34126600d294b7fb1c38dd7cf49b72b30e4f42",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "9e52cc2788305ceb63e18d6dff3fe123ffc7c14ec86ac2f5da3015a400aa5780",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "28a8804d815d152bebae70f90cb32735c3c8e71317c85a8b7526310018ccc041",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "0e5246cbd8f77efbf6a2a28f836909b7068e5cd6755f6f38f3c5b1f89f99cbc0",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "e2fbca5761cef1451f388894318242ebe194dd63b2da1bd53f4db77ea796ec35",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "57dc573cc9311eb56109a46662af0225e7f4873a5750ab8ec32c684dad6ee0a9",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "83f7e56bd5277557e1a6056709e35e5c3251111fdb6fb442c3ede7014d9301fa",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "615cc58360778d612118c3e4c88c4c9c8c79b494b2064cf57bbd322d26e62998",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "stopped_pid_zero": true
+    }
+  ],
+  "all_closed": true,
+  "retained": true,
+  "native_delete": 0,
+  "cleanup": 0
+}

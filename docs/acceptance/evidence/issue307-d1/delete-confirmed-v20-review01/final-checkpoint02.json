@@ -1,0 +1,60 @@
+{
+  "status": "PASS_AUTHORIZED_REVIEW_GATE_CHECKPOINT",
+  "at": "2026-10-18T07:52:58.931119+00:00",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "HEAD": "2ead583ee8d7f84e06272bb34f3b7865cfb0ddb1",
+  "PR_CI_run": 39104508835,
+  "PR_CI_jobs_success": 13,
+  "unresolved_review_threads": 0,
+  "authorization_sha256": "261378648576c27a106893a2b06af425e490966495e0dfc8fccda83d64bbaab8",
+  "independent_review_status": "PASS_BOUNDED_INDEPENDENT_AUTHORIZATION_WINDOW_REVIEW",
+  "remaining_blockers": [],
+  "independent_report_sha256": "88589338c265179182b561f108b4e7e7859bd8a9fecaa13db1da0afd719e3c6c",
+  "review_evidence_index_sha256": "2775e87d5f9f5a6a6fa735c4179131399107d148948a71d33a1dbe37dd25a924",
+  "review_gated_schedule_sha256": "90924a9524662d7cc26af863b9984a993bbbdd40f1c0443042b2c6e6870d3019",
+  "current_prompt_sha256": "a3ddfe89c761461c90137176eef5f1ec4fe0355c5eaa664d61451bed9d2bf646",
+  "matrix_sha256": "0d28373721b96143cc3e034cace5f1f8c67a17eb37c9b30320d2c6ded448e797",
+  "final_prewindow_check_sha256": "5d71f68f6dfeb0ae7180bb490707705ad969daf29b9b6b7fd4e26b26fae2bdc2",
+  "host": {
+    "status": "PASS_FINAL_PREWINDOW_CLOSED",
+    "at": "2026-10-18T07:50:28.775057+00:00",
+    "this_generation_support_check": {
+      "status": "PASS_PREWINDOW_CLOSED",
+      "at": "2026-10-18T07:50:28.175775+00:00",
+      "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+      "permissions_disabled": 32,
+      "containers_stopped": 58,
+      "containment_anchor": "5eb3aec724f55e97ee05595439f74781d0e4b989",
+      "containment_snapshot_available": true,
+      "native_delete": 0,
+      "provider_io": 0,
+      "container_starts": 0
+    },
+    "all_generations_containers_stopped": 205,
+    "all_generations_permissions_false": 128,
+    "source_container_starts": 0,
+    "provider_io": 0,
+    "native_delete": 0,
+    "native_IAM_Core_fresh_window_checks": "NOT_RUN_REQUIRED_IN_WINDOW",
+    "real_business_send_containment": "NOT_RUN"
+  },
+  "fixed_send_window": [
+    "2026-10-18T10:00:00Z",
+    "2026-10-18T10:40:00Z"
+  ],
+  "readonly_recovery_deadline": "2026-10-18T12:40:00Z",
+  "full_D1_acceptance": "NOT_ACCEPTED",
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "ready_or_merge": false,
+  "source_binary_candidate_template_original_authorization_changes": 0,
+  "new_artifacts": "untracked execution/review receipts and matrix only; no new Git commit",
+  "review_gated_schedule_file": "review-gated-schedule02.json",
+  "prior_final_checkpoint_sha256": "ebc9fc3b43145134e56d3e87cc9bb8d5daf25b2505069f971f56fc27d29724ef",
+  "closed_blocker_ids": [
+    "B1"
+  ],
+  "schedule_encoding_repair_sha256": "bca0c2ad182ed04830326ad5507bc066ee63301cf3919714b25c1966e2c62c76",
+  "original_authorization_prompt_snapshots_failure_inputs_reports_and_index_preserved": true,
+  "current_matrix_explicitly_records_encoding_failure_root_fix_and_independent_regressions": true
+}

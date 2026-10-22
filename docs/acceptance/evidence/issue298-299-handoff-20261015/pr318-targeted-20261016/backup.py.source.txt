@@ -1,0 +1,21 @@
+import json,subprocess
+import run as d
+p,s=d.load_state()
+names=d.call(['docker','exec',s['pg_container'],'psql','-U',s['pg_user'],'-d',s['pg_database'],'-Atc',"select datname from pg_database where not datistemplate order by datname"]).stdout.decode().splitlines()
+target=p/'database-backups';target.mkdir(exist_ok=False)
+records=[]
+for name in names:
+ r=subprocess.run(['docker','exec',s['pg_container'],'pg_dump','-U',s['pg_user'],'-Fc',name],capture_output=True)
+ path=target/(name+'.dump');path.write_bytes(r.stdout)
+ (target/(name+'-stderr.log')).write_bytes(r.stderr)
+ if r.returncode:raise RuntimeError('fresh database dump failed')
+ records.append({'database':name,'bytes':len(r.stdout),'sha256':d.sha(r.stdout)})
+globals=d.call(['docker','exec',s['pg_container'],'pg_dumpall','-U',s['pg_user'],'--globals-only']).stdout
+(target/'globals.sql').write_bytes(globals)
+report={'status':'BACKUP_CREATED','restore':'NOT_RUN / not required for this directed regression','scope':'only this new PostgreSQL instance including retained owned test databases','run_id':s['run_id'],'databases':records,'globals_sha256':d.sha(globals),'original_core_recovery':'DEFERRED / FAIL_NOT_RESTORED','provider_delete_calls':0,'cleanup_calls':0}
+d.save(d.OUT/'backup-summary.json',report)
+d.save(d.OUT/'harness-failures.json',{'failures':[
+ {'stage':'native-start01','status':'FAIL','reason':'orchestrator used /minio instead of repository runner /usr/local/bin/minio','container':s['prefix']+'-minio','volume':s['prefix']+'-objects','preserved':True,'product_defect':False},
+ {'stage':'native-receipt-export01','status':'FAIL','reason':'default GBK decoding of UTF-8 helper source after real native test completed','raw_result_preserved':True,'explicit_utf8_export_recovery':'PASS','provider_rerun':False,'product_defect':False}
+]})
+print(json.dumps({'backup':'CREATED','databases':len(records),'old_environment_io':0,'cleanup_calls':0}))

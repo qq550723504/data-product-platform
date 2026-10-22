@@ -1,0 +1,14 @@
+{
+  "disabled_identities": {
+    "deletedfda43b4": "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd",
+    "inspectdfda43b44419": "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd"
+  },
+  "policy_sha256": {
+    "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd": "9420709713c8fa8b272f66489cfb5714d9c501e7635c55b612e61249cc287fa3",
+    "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd": "987669c05cc0069e076226b8438081bb12d0a9a35a164f95807dba4c8bbe6384"
+  },
+  "policy_file_sha256": {
+    "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd": "247ebba00c26d1237177ce4208ab8017b2a7779314f4ccf512e24111a1c0e0b2",
+    "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd": "3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b"
+  }
+}

@@ -1,0 +1,209 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_R1_SOURCE_REVIEW",
+  "reviewer": "/root/v20_independent_review",
+  "at": "2026-10-18T10:42:16.569133+00:00",
+  "head_at_review": "d4e306d5d32ce09ffb7307b2a7ea1cbe1b696be4",
+  "staged_source_changes_at_review": [
+    "examples/lifecycle-d1/check-remaining-candidate11.py",
+    "examples/lifecycle-d1/freeze-remaining-executable.py"
+  ],
+  "contract": "docs/acceptance/issue307-d1-r1-window-contract.md",
+  "profile": "candidate11/v21",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "proposed_window": [
+    "2026-10-18T14:00:00Z",
+    "2026-10-18T14:40:00Z"
+  ],
+  "readonly_recovery_deadline": "2026-10-18T16:40:00Z",
+  "proposal_not_authorization": true,
+  "remaining_blockers": [],
+  "source_file_hashes": {
+    "examples/lifecycle-d1/remaining_window.py": {
+      "raw_sha256": "a8c6152372b3266fd4fa0bff1f78a03e1240ee1743fd9d154307b483f089987f",
+      "lf_sha256": "a8c6152372b3266fd4fa0bff1f78a03e1240ee1743fd9d154307b483f089987f"
+    },
+    "examples/lifecycle-d1/freeze-remaining-executable.py": {
+      "raw_sha256": "b306c89ae9a8459f6e615d0992b74e297035516f5dc9a436366d5721e57da9fc",
+      "lf_sha256": "b306c89ae9a8459f6e615d0992b74e297035516f5dc9a436366d5721e57da9fc"
+    },
+    "examples/lifecycle-d1/verify-remaining-native.py": {
+      "raw_sha256": "4e2d703c6829e9b5c7188de83de2b103c2d90701dce52779a0f1946ba29781d0",
+      "lf_sha256": "4e2d703c6829e9b5c7188de83de2b103c2d90701dce52779a0f1946ba29781d0"
+    },
+    "examples/lifecycle-d1/check-remaining-candidate11.py": {
+      "raw_sha256": "5346cb1a30879d6cb5fdb5eb11889126457a41fd4f7152c3a2901cc74ca6b90e",
+      "lf_sha256": "5346cb1a30879d6cb5fdb5eb11889126457a41fd4f7152c3a2901cc74ca6b90e"
+    },
+    "examples/lifecycle-d1/test_remaining_window.py": {
+      "raw_sha256": "508407215a7f54e55f94ac89767b72a2f4b87eac8baf38e5fe5ec4e69fb8d416",
+      "lf_sha256": "508407215a7f54e55f94ac89767b72a2f4b87eac8baf38e5fe5ec4e69fb8d416"
+    },
+    "examples/lifecycle-d1/test_verify_remaining_native.py": {
+      "raw_sha256": "a28ee2c69eb8eed5956c3d558bc257bc3799641d6949d91117d02b6b9e9bfdce",
+      "lf_sha256": "a28ee2c69eb8eed5956c3d558bc257bc3799641d6949d91117d02b6b9e9bfdce"
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_window_test.go": {
+      "raw_sha256": "176f32b77f22e38942177e7592412548dc9aa2dce18093557c2eb6df51ecaec8",
+      "lf_sha256": "176f32b77f22e38942177e7592412548dc9aa2dce18093557c2eb6df51ecaec8"
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_setup.go": {
+      "raw_sha256": "6f1b432d95d87710ed96c7d67afa7863f04a86618d0a4c6a1da28900109192ca",
+      "lf_sha256": "6f1b432d95d87710ed96c7d67afa7863f04a86618d0a4c6a1da28900109192ca"
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": {
+      "raw_sha256": "07271ad5b87784119309b740b03f9489cea9780774833fa10fe333be95993c35",
+      "lf_sha256": "07271ad5b87784119309b740b03f9489cea9780774833fa10fe333be95993c35"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "raw_sha256": "eed47331abc741283eb3e4f5870d78ebd050637ff9ed9d149b771aaa83ca5736",
+      "lf_sha256": "eed47331abc741283eb3e4f5870d78ebd050637ff9ed9d149b771aaa83ca5736"
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "raw_sha256": "65f9eb27d149b7c70374c70b7490097b9d26be463873461ff47c2094a68ccf6e",
+      "lf_sha256": "65f9eb27d149b7c70374c70b7490097b9d26be463873461ff47c2094a68ccf6e"
+    },
+    "examples/lifecycle-d1/rehearse-remaining-renewal.py": {
+      "raw_sha256": "dfb0a5fcb7f8eaa040e98c4b83dbfb47be9d449a841ecd4d80903aaf2f12ab13",
+      "lf_sha256": "dfb0a5fcb7f8eaa040e98c4b83dbfb47be9d449a841ecd4d80903aaf2f12ab13"
+    },
+    ".github/scripts/check-lifecycle307-history.py": {
+      "raw_sha256": "6d68b326bd7d2d37ae81bcd03e7dc600d5f83d528c427be7edcc1bc515bf83a4",
+      "lf_sha256": "6d68b326bd7d2d37ae81bcd03e7dc600d5f83d528c427be7edcc1bc515bf83a4"
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "raw_sha256": "7435662ce0f4ce1d7a599f01e1a4d02bca31b904b6e866efa07b5e79be060231",
+      "lf_sha256": "7435662ce0f4ce1d7a599f01e1a4d02bca31b904b6e866efa07b5e79be060231"
+    },
+    "docs/acceptance/issue307-d1-r1-window-contract.md": {
+      "raw_sha256": "3d8a585124709725227e2aa4c27d088b8b7681aeda188459f5e4ed49784728f4",
+      "lf_sha256": "3d8a585124709725227e2aa4c27d088b8b7681aeda188459f5e4ed49784728f4"
+    },
+    "docs/acceptance/.gitattributes": {
+      "raw_sha256": "2cdf5167b6a880b66dda6afe68e4353dc223d55a6c998fab44a01fc6feefa979",
+      "lf_sha256": "2cdf5167b6a880b66dda6afe68e4353dc223d55a6c998fab44a01fc6feefa979"
+    }
+  },
+  "independent_actual_tests": {
+    "R1_normal": {
+      "methods": 4,
+      "offline_rehashed_mutations": 11,
+      "complete_CLI_mutations": 15,
+      "exit_code": 0
+    },
+    "R1_optimized": {
+      "methods": 4,
+      "exit_code": 0
+    },
+    "complete_native_entry_normal_optimized": {
+      "methods_each": 5,
+      "exit_code": 0,
+      "transport": "recorded Docker double plus actual file-only Go policy checker"
+    },
+    "preparation_closure_normal_optimized": {
+      "methods_each": 1,
+      "exit_code": 0
+    },
+    "independent_rehashed_actual_profile_cases": {
+      "methods": 1,
+      "subcases": 6,
+      "exit_code": 0,
+      "description": "wrong actual CandidateUseUntil/Base end/Batch/Group/same-count heads/recovery deadline; public semantic projection remains good and all raw SHA anchors recomputed; actual full CLI rejects before permission reads, Docker inspection/start, collection or outputs"
+    },
+    "Go_five_target_packages": {
+      "exit_code": 0,
+      "cache_used": true
+    },
+    "Go_runtime_Renew_guard_uncached": {
+      "test": "TestRemainingRenewRejectsWrongCandidateDeadlineBeforeDB",
+      "count": 1,
+      "exit_code": 0,
+      "nil_pool": "strict guard rejects zero/old/early/late deadline before marker or DB access"
+    },
+    "historical_adapter": {
+      "exit_code": 0,
+      "v17": {
+        "source": 812,
+        "raw": 940,
+        "old_normal_optimized_unit_tests": 12
+      },
+      "v19": {
+        "source": 823,
+        "raw": 1118
+      },
+      "v20": {
+        "source": 824,
+        "raw": 1119
+      },
+      "meaning": "unchanged historical hash/source audit only; v20 retains its known R1 semantic failure and supplies no current execution authority"
+    }
+  },
+  "implementation_review": {
+    "compiled_Go_window_authoritative": true,
+    "generator_overwrites_old_CandidateUseUntil_and_Base_window_without_mutating_template": true,
+    "seven_case_and_seven_recovery_nonsecret_projection_bound_to_actual_profile_SHA": true,
+    "current_offline_checker_semantics_before_hash_receipts": true,
+    "full_CLI_actual_profile_semantics_before_sealed_gate_permission_or_source_IO": true,
+    "technical_GET_HEAD_and_old_baseline_not_misclassified_as_current_execution_profiles": true,
+    "runtime_deadline_guard_retained": true,
+    "old_failed_v20_has_separate_terminal_physical_closure_not_old_profile_hash_reuse": true,
+    "human_window_label_and_current_offline_values_derived_from_compiled_constants": true
+  },
+  "parent_PG_acceptance_reviewed": {
+    "live_PG_or_Docker_actions_performed_by_reviewer": false,
+    "status": "PASS_SIX_RENEW_ISOLATED_PG",
+    "indexed_files_checked": 8,
+    "old_policy_rows_retained_unchanged": 12,
+    "rows_after": 18,
+    "new_facts": 6,
+    "closed_CIDs_from_parent_receipt": 2,
+    "independent_clone_not_original_Core": true,
+    "native_storage_started": false,
+    "send_authority": "NONE",
+    "hashes": {
+      "acceptance.json": "1e5c46797533324775626f28c40e8f4caca4dfa68bd2e3bc72de50b53e8dc294",
+      "physical-close.json": "460b05acacfab038743b718912fed5425aaad60deebb04d17ec8c4c6f2c47f81",
+      "evidence-index.json": "9072d43fe1471f94e09eed2949ea7f1be8467999dafbbb2c691f89aca1ccc465",
+      "old-policies.json": "95e38a943ef67e3b8b5c27394f5989b628048318f8bf7eb8426cf5445861bbda",
+      "policies-after.json": "50d615bcf81f28bb7199f3428717e92216cc62d9bf206238d03af59a2b0cc70a",
+      "renew/candidate07-copy-policies.json": "d6620426ed623dec43a83f6e4b83992498007c1fcb0d49d938c435c5f4e6e1d7"
+    },
+    "first_network_allocation_failure_preserved_sha256": "6fbd8cb311ea1691256625ba15ab0fe1f040c5cb4f427b5ba231f4e63aa5e4ad"
+  },
+  "old_v20_failure_evidence_sha256": {
+    "window-result.json": "877a091ec298857081e4102e64ce0a9381167373dfabb2d2b3fcb2c132ef6a59",
+    "renew-root-cause.json": "6622bedf6367c3ec47623e77f59abb9ca902c79d28e8e18b6dcf8307bcbbcc25",
+    "failure-seal.json": "ebd11847c67d29488ba2609ee1bab24d99a514d3ec35d95dea32cb53f7c9fae8",
+    "root-admin-window-ledger.json": "3e77430655050efa21b03993369e3d59400ee16aba9df145372a70dba8a8ecbf"
+  },
+  "logs_and_independent_counterexample_script_sha256": {
+    "go-five-packages-initial.txt": "6698f7a761d26929b2ad25faead985bcbea82d6179885e9696e019a1bc6485d6",
+    "go-renew-guard-uncached.txt": "14157cac6289e5eda6ee3421a08bb59ba3590b46d0c9fe644a6879fcfdab43eb",
+    "history-initial.txt": "60419d37b838070d821682a8db17215f5eec64c998cd1b9e5d036d3cf91183ad",
+    "rehashed-actual-profiles-initial.txt": "6d802bc5da289c485105cf823af19e755565e899a0b0b46b6c92ba18605a5ffa",
+    "test_freeze_remaining_executable.py-normal-initial.txt": "e5911e72b4e81ae4b0837fc0a5b9f021743cd6e94733cf7b22c963731b059408",
+    "test_freeze_remaining_executable.py-optimized-initial.txt": "e5911e72b4e81ae4b0837fc0a5b9f021743cd6e94733cf7b22c963731b059408",
+    "test_rehashed_actual_profiles.py": "430c605286e0d93d243d6ef2baba31999f6c8d17c9b5e902dd219dc781e99c2d",
+    "test_remaining_window.py-normal-final.txt": "55589650d377c18c9bc56b3c21308eda5cdaa014af3969dbb620badff7580406",
+    "test_remaining_window.py-normal-initial.txt": "14acce1691528a1127eb61b49237ac384e83445615f4b7667f88ddd84427be20",
+    "test_remaining_window.py-optimized-final.txt": "0cdfca3563432287c1ac85bb72f64e386aeff49ce92a3bd7d8d5ad80fe9f39c6",
+    "test_remaining_window.py-optimized-initial.txt": "b69b5994feb079c2de6c1e5119a2108eb6d1d4f90c445709d212333403b8712d",
+    "test_verify_remaining_native.py-normal-initial.txt": "b05f5796ea2c6a0ed7ad064e0afe97cf8581374afdcb818836a50fdeff75636e",
+    "test_verify_remaining_native.py-optimized-initial.txt": "f715e1b3587488a105d5cae9727be594b9947ee8a1104cb5575608fb49869590"
+  },
+  "reviewer_side_effects": {
+    "repository_edits": 0,
+    "Git_commits": 0,
+    "Docker_calls": 0,
+    "actual_source_or_credential_access": 0,
+    "native_provider_IO": 0,
+    "permission_or_case_mutations": 0,
+    "actual_signing_or_sending": 0,
+    "GitHub_writes": 0
+  },
+  "scope_limits": [
+    "Source slice and public isolated-PG receipt review only; actual candidate11 packet, original/fresh native receipts, host support and full confirmation bindings await a separate final review.",
+    "Current complete candidate11 offline checker was tested on adversarial synthetic inputs; no real candidate11 packet existed at this source review point.",
+    "Future candidate11 execution requires a new exact human authorization and all fixed-window fresh gates; old v20 authorization is not reused.",
+    "No Ready/merge; #323 Draft and #307 OPEN; full D1 remains NOT_ACCEPTED."
+  ]
+}

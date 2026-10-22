@@ -1,0 +1,27 @@
+{
+  "status": "PASS_ALLOWED_MAINTENANCE_FACTS_ONLY",
+  "historical_generation01_rows": 1377,
+  "current_generation02_rows": 1879,
+  "relations": 194,
+  "changed_relations": [
+    "audit_event",
+    "command_idempotency",
+    "cost_allocation",
+    "cost_event",
+    "delivery_authorization_fence",
+    "evidence",
+    "evidence_relation",
+    "lifecycle_dispatch_release",
+    "lifecycle_provider_observation",
+    "lifecycle_storage_call",
+    "lifecycle_storage_observation",
+    "outbox_event",
+    "schema_migration"
+  ],
+  "unchanged_relations": 181,
+  "business_rows_immutable": true,
+  "original_generation01_core_clone": "Used as isolated maintenance journal for 20 native restored calls; its old full fingerprint is historical. No source admission. New generation02 is the current complete Core checkpoint.",
+  "old_c2": "LOST/UNAVAILABLE/NOT_RESTORED",
+  "cleanup": 0,
+  "provider_delete": 0
+}

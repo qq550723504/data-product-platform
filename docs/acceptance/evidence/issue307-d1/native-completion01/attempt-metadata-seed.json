@@ -1,0 +1,6 @@
+{
+  "phase": "metadata-seed",
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "driver_sha256": "c72293631eb86fa1c3c02fecf86982645eb270db9b45ab52f493c6b3870af50d",
+  "intent": "ONE_SHOT_NON_DELETE; append-only, failure never auto-resumes"
+}

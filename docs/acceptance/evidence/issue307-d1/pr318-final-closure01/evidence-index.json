@@ -1,0 +1,39 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/pr318-final-closure01/audit.py",
+      "bytes": 8929,
+      "sha256": "fb131e210a77277386138bc510e1b8403076c3a7e6096b6d563cd9ba721a613c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/pr318-final-closure01/commit-attribution.json",
+      "bytes": 364,
+      "sha256": "50403a0b0738ecd6fdc78cd201de6263bec62c42776ab7f2c2b755fe60e90220"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/pr318-final-closure01/convergence-checkpoint.json",
+      "bytes": 1928,
+      "sha256": "f9cbfc9a2b9260a30118b8b304dfc34444ba7d4a217325ef4379f89776fce5a7"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/pr318-final-closure01/github-preflight.json",
+      "bytes": 4128,
+      "sha256": "6d9d11e70222d9c6d34c0251708e3c20296c5e7131d4f62d3f0273077432a395"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/pr318-final-closure01/host-metadata-readback.json",
+      "bytes": 26184,
+      "sha256": "ad3b1eccb3401ff4b0ddca65517745b4be94e42667f13ebf1db5f21aa4019d84"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/pr318-final-closure01/offline-audit.json",
+      "bytes": 1532,
+      "sha256": "50ec256f04e834c460a01ea628e6924c8d12a712bdaa6435a89c852730a3685b"
+    }
+  ],
+  "scope": "Final PR318 closeout only; no new native observation or deletion authorization",
+  "provider_io": 0,
+  "db_io": 0,
+  "delete": 0,
+  "merge": 0
+}

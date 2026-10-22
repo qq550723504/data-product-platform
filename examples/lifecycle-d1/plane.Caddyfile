@@ -1,0 +1,65 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @unsigned header X-Amz-Content-Sha256 STREAMING-UNSIGNED-PAYLOAD-TRAILER
+  respond @unsigned 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  @delete method DELETE
+  respond @delete 403
+  # Root is only available to the isolated one-shot IAM helper. The reader
+  # mount contains neither root credential. No root payload route is exposed.
+  @admin {
+   path /minio/admin/v3/*
+   method PUT POST
+   expression {http.request.header.Authorization}.contains('Credential=__ROOT_ACCESS__/')
+  }
+  reverse_proxy @admin minio:9000
+  @producer {
+   path /dpp-lifecycle307-online/fixture/standardized.csv /dpp-lifecycle307-online/fixture/processed.csv
+   method PUT
+   header If-None-Match *
+   expression {http.request.header.Authorization}.contains('Credential=__PRODUCER_ACCESS__/') && {http.request.uri.query} == ''
+  }
+  reverse_proxy @producer minio:9000
+  @write method PUT POST PATCH
+  respond @write 403
+  @unversioned {
+   path /dpp-lifecycle307-online/fixture/* /dpp-lifecycle307-quarantine/fixture/*
+   method GET HEAD
+   expression {http.request.uri.query.versionId} == ''
+  }
+  respond @unversioned 403
+  @payload {
+   path /dpp-lifecycle307-online/fixture/a.csv
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=__READER_ACCESS__/') && {http.request.uri.query.versionId} == '__A_VERSION__' && !{http.request.uri.query}.contains('retention') && !{http.request.uri.query}.contains('legal-hold')
+  }
+  reverse_proxy @payload minio:9000
+  @beta {
+   path /dpp-lifecycle307-online/fixture/b.csv
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=__READER_ACCESS__/') && {http.request.uri.query.versionId} == '__B_VERSION__' && !{http.request.uri.query}.contains('retention') && !{http.request.uri.query}.contains('legal-hold')
+  }
+  reverse_proxy @beta minio:9000
+  @inspection {
+   path /dpp-lifecycle307-online/fixture/a.csv /dpp-lifecycle307-online/fixture/b.csv /dpp-lifecycle307-online/fixture/standardized.csv /dpp-lifecycle307-online/fixture/processed.csv /dpp-lifecycle307-quarantine/fixture/a.csv /dpp-lifecycle307-quarantine/fixture/b.csv
+   method HEAD GET
+   expression {http.request.header.Authorization}.contains('Credential=__INSPECT_ACCESS__/') && ({http.request.method} == 'HEAD' || {http.request.uri.query}.contains('retention') || {http.request.uri.query}.contains('legal-hold'))
+  }
+  reverse_proxy @inspection minio:9000
+  @inventory {
+   path /dpp-lifecycle307-online/ /dpp-lifecycle307-quarantine/
+   method GET
+   query versions=*
+   expression {http.request.header.Authorization}.contains('Credential=__INSPECT_ACCESS__/')
+  }
+  reverse_proxy @inventory minio:9000
+  @health path /minio/health/ready
+  reverse_proxy @health minio:9000
+  respond 403
+ }
+}

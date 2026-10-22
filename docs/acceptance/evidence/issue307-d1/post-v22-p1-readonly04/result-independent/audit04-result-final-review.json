@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_P1_RESULT_REVIEW",
+  "reviewed_at": "2026-10-19T11:02:36.001713+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "scope": "Evidence-only closeout of actual audit04 P1 read-only reconciliation and current acceptance/preparation matrices. No new source review/tests/native operations.",
+  "audit_id": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+  "source_head": "491a42564edec862048fdb532a9964bad536b300",
+  "manifest_sha256": "08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c",
+  "terminal_status": "PASS_P1_READONLY_RECONCILIATION_SEALED",
+  "terminal_sha256": "39421f8199aa222b09027b1ec9d2988ae722e252f7d57e5d14b595e0744864a7",
+  "actual_P1_result": {
+    "absence_receipt": "b2d74d75-ed07-4b0a-b530-6c5d308cf1b8",
+    "actual_asynq_worker": true,
+    "audit_id": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+    "copy": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+    "event": "528b553b-4db0-4d26-b818-bf2330032f46",
+    "native_delete": 0,
+    "original_attempt": "009f4317-8855-4f99-80ec-cafc225f654e",
+    "original_outcome": "CONFIRMED ACCEPTED_UNCHANGED",
+    "outbox": "PUBLISHED",
+    "plan_completion": "16562b28-3896-49c0-933e-a6e73059bddc",
+    "work": "ab6904c1-38ff-4778-86ed-6990c37cc57b"
+  },
+  "actual_execution_window": {
+    "NotBefore": "2026-10-19T10:50:40.266016+00:00",
+    "ExpiresAt": "2026-10-19T11:30:40.266016+00:00",
+    "completed_at": "2026-10-19T10:58:17.381250+00:00",
+    "inside_fixed_window": true
+  },
+  "verified_chain": {
+    "frozen_source_and_manifest_unchanged": true,
+    "Redis_fixed_nonroot_PONG": true,
+    "native_precheck": "7 exact HEAD/protection, 2 complete namespace inventories, P1 exact absent, 23 distinct physical CallIDs. No bytes/SHA content reread.",
+    "Outbox": {
+      "event": "528b553b-4db0-4d26-b818-bf2330032f46",
+      "last_error": "",
+      "status": "PUBLISHED",
+      "work": "ab6904c1-38ff-4778-86ed-6990c37cc57b"
+    },
+    "Asynq": "Actual exit0 worker and original start/graceful-shutdown log consistent with result; not a mock/recording",
+    "Core_absence_receipt": "b2d74d75-ed07-4b0a-b530-6c5d308cf1b8",
+    "Core_plan_completion": "16562b28-3896-49c0-933e-a6e73059bddc",
+    "Core_roles_and_ACL_same": true,
+    "Core_total_relations_compared": 194,
+    "Core_changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "cost_allocation",
+      "cost_event",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_copy_absence_receipt",
+      "lifecycle_plan_completion",
+      "lifecycle_reconciliation_result",
+      "lifecycle_reconciliation_run",
+      "lifecycle_reconciliation_work",
+      "lifecycle_storage_call",
+      "lifecycle_storage_observation",
+      "outbox_event",
+      "outbox_event_consumption"
+    ],
+    "Core_new_row_counts": {
+      "audit_event": 53,
+      "command_idempotency": 3,
+      "cost_allocation": 24,
+      "cost_event": 24,
+      "evidence": 53,
+      "evidence_relation": 53,
+      "lifecycle_copy_absence_receipt": 1,
+      "lifecycle_plan_completion": 1,
+      "lifecycle_reconciliation_result": 1,
+      "lifecycle_reconciliation_run": 1,
+      "lifecycle_reconciliation_work": 1,
+      "lifecycle_storage_call": 24,
+      "lifecycle_storage_observation": 24,
+      "outbox_event": 53,
+      "outbox_event_consumption": 1
+    },
+    "Core_old_row_multiset": "Parent pinned-source append-anchor verification receipt PASS; counts independently agree with before/after. Reviewer did not open private raw row anchors.",
+    "protected_Core_relation_fingerprints_unchanged": [
+      "lifecycle_provider_attempt",
+      "lifecycle_provider_observation",
+      "lifecycle_provider_send_claim",
+      "external_provider_dispatch",
+      "external_provider_call",
+      "external_provider_observation",
+      "lifecycle_reader_pin"
+    ]
+  },
+  "activity_and_cost": {
+    "new_storage_calls": 24,
+    "new_storage_observations": 24,
+    "new_CostEvents": 24,
+    "new_CostAllocations": 24,
+    "precheck_calls": 23,
+    "recovery_additional_instrumented_read": 1,
+    "new_audit_evidence_outbox_rows_each": 53,
+    "root_admin_requests": 26,
+    "root_admin_methods": {
+      "GET": 21,
+      "PUT": 5
+    },
+    "root_admin_HTTP200": 26,
+    "admin_scope": "Technical identity/policy GET and inspector enable/containment PUT journal, separate from business CostEvents",
+    "amount": "NOT_ASSESSED",
+    "native_DELETE": 0,
+    "original_v22_DELETE_unchanged": true
+  },
+  "sealed_boundaries": {
+    "current_owners_closed": 6,
+    "current_profiles_false": 2,
+    "fresh_disabled_identities": 4,
+    "unique_old_plus_four_audit_owners_stopped_PID0_noports_norestart": 77,
+    "old_controls_SHA_unchanged": 46,
+    "old_backups_SHA_unchanged": 9,
+    "old_budget_contents_SHA_unchanged": 3,
+    "all_four_audits_new_profiles_false": 8,
+    "old_provider_attempts_observations_and_pins_unchanged": true,
+    "cleanup": 0,
+    "hold_release": 0,
+    "bypass": 0,
+    "old_audits_resumed": false
+  },
+  "public_index": {
+    "file": "evidence-index.json",
+    "sha256": "32a18245e97348c56ef86c93f81eb7d2082fe5edc54514912a3ab3178cad110d",
+    "files": 100,
+    "each_raw_bytes_SHA_matches": true,
+    "closure": "No missing/extra unindexed intended public raw files; index excludes itself and Python cache. This is the exact pre-result-report snapshot, not a self-reference."
+  },
+  "private_originals_summary": {
+    "summary": {
+      "files": 27,
+      "index_sha256": "6e98f8902ca2c7a9e12b7ebebf42daf010711b933b2de8fc248a38dc80263a8e",
+      "secrets": "PRIVATE_NOT_PUBLISHED"
+    },
+    "scope": "27 private originals are declared/hash-indexed by parent; only public summary read by reviewer, no private credential values or raw secret journal read. Not independently claimed to have opened these originals."
+  },
+  "reviewed_evidence_files": {
+    "evidence-index.json": {
+      "sha256": "32a18245e97348c56ef86c93f81eb7d2082fe5edc54514912a3ab3178cad110d",
+      "bytes": 17281
+    },
+    "terminal.json": {
+      "sha256": "39421f8199aa222b09027b1ec9d2988ae722e252f7d57e5d14b595e0744864a7",
+      "bytes": 2486
+    },
+    "preparation.json": {
+      "sha256": "08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c",
+      "bytes": 25269
+    },
+    "output-worker/P1-reconciled.json": {
+      "sha256": "e0617ebc09f8db13b23887089c7c7dee4ecedfa4e6ad44661a4538db8f42ee5a",
+      "bytes": 524
+    },
+    "output-worker/outbox-dispatch.json": {
+      "sha256": "883c3b6c44bc072d33ab58b7a70f483bff683641cb2e8d5a857eb6ac885967ae",
+      "bytes": 149
+    },
+    "output-worker/native-precheck.json": {
+      "sha256": "dbecc3abae6e61142227d1d0dee194ab1dbc390b6412187485269f42c8125ac3",
+      "bytes": 15425
+    },
+    "worker-owner.json": {
+      "sha256": "b5a58fa1b616187b066790c5b233762ce10bdc6d8744b649cde6af5df5fd1025",
+      "bytes": 499
+    },
+    "worker-original-stdout.txt": {
+      "sha256": "8925213eb2b2d1caa8d9399d34463b2d331abe228bdb688666f5b22b4276d52f",
+      "bytes": 57
+    },
+    "worker-original-stderr.txt": {
+      "sha256": "3a9a47ca62981e338a62769ac6530ef0047e21e5c200cdba4e447416aec90aa2",
+      "bytes": 348
+    },
+    "redis-ready.json": {
+      "sha256": "12cd7eef59691f5d288d996adcc030a5cb49f81be2b5c98190b639276bd28cf1",
+      "bytes": 186
+    },
+    "redis-owner.json": {
+      "sha256": "c10731de52557867671a3aaec71c02ec525f6497ae073bdfc014f979e5425ae0",
+      "bytes": 398
+    },
+    "seal.json": {
+      "sha256": "58fdc3b681836cecd411ab8054a142250f62603cb7f1b718aba4cfe043dcf893",
+      "bytes": 1454
+    },
+    "output-disable-all/status-changes.json": {
+      "sha256": "21fd97cd75f5ae8f19347b7ba77b828ab7d30a07ec8165f9d721eebdcd8f9439",
+      "bytes": 246
+    },
+    "Core-before.json": {
+      "sha256": "ad63a6cb213f7ad2286fb3658253de1d167e925442be5573d083b10e05880619",
+      "bytes": 31430
+    },
+    "Core-after.json": {
+      "sha256": "18e870e279c08714aeb72ddde2ee7ad5a3b9c597d6f6e9c0e4508703791a2e31",
+      "bytes": 31433
+    },
+    "Core-delta.json": {
+      "sha256": "da59d44f28cdb3018b757e8fe264ac682e040bfd889eb033ccab623898093766",
+      "bytes": 579
+    },
+    "Core-append-preservation.json": {
+      "sha256": "d2ced813af2b9b198619f6dd9c408b85b9555f1761f9000b42126474c0e73277",
+      "bytes": 1063
+    },
+    "activity-accounting.json": {
+      "sha256": "83e55610a2e8b78531125a116d053fae1314f0d6779a7068eceba0dca44d56a0",
+      "bytes": 7781
+    },
+    "post-close-physical-readback.json": {
+      "sha256": "f92175c272a46e7c287bee29e89ed25769eb40af176539c10f820feea0dba433",
+      "bytes": 2293
+    },
+    "private-originals-index-summary.json": {
+      "sha256": "47546f20a0ac4529d2fcb669e61b733ad587b139ded82e77735a65570d5aff53",
+      "bytes": 142
+    }
+  },
+  "reviewed_document_snapshots": {
+    "docs/acceptance/issue307-d1-post-v22-p1-readonly-acceptance.md": {
+      "sha256": "c2e27c36681a62f15d39b4090891d42f6ae98431e6dc1375c1a9dff2f1f2b255",
+      "bytes": 9176
+    },
+    "docs/acceptance/issue307-d1-post-v22-remaining-six-preparation.md": {
+      "sha256": "9743d726b7151c39879298cda30a8f062db72b2997c741e7eff1d327c6a3e1ef",
+      "bytes": 9853
+    }
+  },
+  "prior_reviews_preserved": {
+    "SOURCE05": "3cbbf2a2a297fbd94ae80a60b8de205aff29f50bfbf97914fd0f889c12850323",
+    "manifest04": "cc9ee86aa4f950156849848a4d400b425c1b50cb7e535fe1ab637b11bf0f41e6"
+  },
+  "independent_audit": {
+    "file": "audit04-result-binding-audit.json",
+    "sha256": "b22c3588a54f7eeb908fb5a34faf89362a4127839472db97b146e350374b78ce",
+    "status": "PASS_EVIDENCE_MATRIX_AUDIT"
+  },
+  "matrix_assessment": {
+    "classification": "PASS_CURRENT_BOUNDED_P1_ACCEPTANCE",
+    "P1_actual_readonly": "PASS_AND_SEALED",
+    "historical_snapshots": "Earlier NOT_PREPARED/FAILED rows remain historical and the latest actual04 section explicitly supersedes their current-status interpretation, without rewriting old failures.",
+    "remaining_six_targets": 6,
+    "survivor_versions_expected": 11,
+    "remaining_six_status": "UNFROZEN_DRAFT_ONLY",
+    "old_P2_T1_T2_dispatch_current_query_and_trusted_closure": "NOT_RUN",
+    "full_17_version_bytes_SHA_protection_Core_IAM_refresh": "NOT_RUN",
+    "new_delete_execution_window_authorization": "NONE",
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "scope_limits": [
+    "Evidence review of parent-produced actual runtime receipts, raw logs/index and Core fingerprints, not personally rerun live inspections or DB queries. No tests rerun.",
+    "P1 actual read-only acceptance closes only this finite gate. It does not prove current full17-version bytes/SHA/hold/retention state, remaining-six success, new deletion permission, merge approval or matching main CI.",
+    "Old v22 original P1 accepted DELETE and P2 pre-send failure/UNKNOWN/consumed budgets/pins remain. No missing cost/observation is retroactively treated as no invocation or zero cost.",
+    "Private raw journal index27 is only publicly summarized; claims here stop at observed public summary, actual admin pairs and Core aggregate fingerprints/parent preservation receipt.",
+    "Keep the reviewed evidence-index100 and matrices as identifiable snapshots if adding this report; publish a separate append index or explicitly retain the previous indexed bytes, avoiding a report/index hash cycle."
+  ],
+  "reviewer_operations": {
+    "tests_rerun": 0,
+    "Docker": 0,
+    "provider": 0,
+    "source_start": 0,
+    "identity_enable": 0,
+    "secret_values_read": 0,
+    "proof_signing": 0,
+    "real_DELETE": 0,
+    "shared_repo_write": 0,
+    "GitHub_write": 0
+  },
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

@@ -1,0 +1,13 @@
+{
+  "composition/test_window_support.py": "b9d8f91b10ea37a551e82db2910f01b040e981f51299ebdedfbd1f4fadf92937",
+  "composition/window_support.py": "0896a1121517adec0cbaa39561a00768de38e4f381b860c8a8508ef56e97b3f1",
+  "current-stage.json": "7ab6b990c0db892ba81617a6c801ffac1eeba51fb35a6a639da36330d8e86cd2",
+  "freeze-check.txt": "ca8ec688ffb672eb984328efb175aad28babb47f7b6148c644b4f6a7df8830de",
+  "human-authorization.json": "2f88cdd99d43019bcec1da861bc08e6625e92d12b9336ebe1a50e43bea09eea8",
+  "prewindow-check.json": "553d49c1979c6638ef346cfd4d1b15fb35de9713a29e0880078ba5d90d4549d2",
+  "scheduler-registration.json": "2698698769448bcda7b30bcd72d012af2f8b79721e25a5265fe8225bea48e103",
+  "stage.json": "209eac9f822b74828498e341e8da6ccfcd68bbb2291aa5d3b5799f9f0bc7c9f2",
+  "window-preparation.json": "8bbf56901c5f57897d2947b951f48bbef312b1da66f817e507db0881e94e3e69",
+  "window-tests.txt": "e90f1b87f52b22bd693043a7a2a606a10d4de26f830c0efa1232e4c71e9b1aae",
+  "window-tests02.txt": "f5021fdd8b36fec2c1a7bbb5e93ff8e5c4b0fe355cf8f9174c3f0e2f22f217e7"
+}

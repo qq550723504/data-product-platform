@@ -5,12 +5,29 @@ import (
 	"testing"
 )
 
+func TestVersionFitsPersistedOutboxContract(t *testing.T) {
+	// outbox_event.required_handlers_version is varchar(64). Both profile
+	// identities must fit before any event is recorded under that profile.
+	for _, governance := range []bool{false, true} {
+		if got := len(VersionFor(governance)); got == 0 || got > 64 {
+			t.Fatalf("governance=%t routing version has %d bytes, want 1..64", governance, got)
+		}
+	}
+	if VersionFor(false) == VersionFor(true) {
+		t.Fatal("governance profiles must have distinct routing identities")
+	}
+}
+
 // eventVocabulary is the second witness to the routing table: every event type
 // the platform can emit must appear exactly once. Adding a domain event without
 // declaring its routing obligation fails this test, and an undeclared event
 // fails dispatch at runtime with a diagnosable error instead of being completed
 // implicitly.
 var eventVocabulary = []string{
+	"OperatorCustodyPrepared",
+	"OperatorCustodyCallStarted",
+	"OperatorCustodyCallObserved",
+	"OperatorCustodyTerminated",
 	"AuthorizationActivated",
 	"AuthorizationApproved",
 	"AuthorizationCreated",
@@ -57,10 +74,79 @@ var eventVocabulary = []string{
 	"CertificationProfileCreated",
 	"DataProductCreated",
 	"DatasetCertified",
+	"DatasetCertificationInputsPrepared",
 	"DatasetCertificationRejected",
 	"DatasetCertificationRevoked",
 	"DatasetCertificationSuperseded",
 	"DataResourceCreated",
+	"ExternalIdentityBound",
+	"ExternalIdentityInvalidated",
+	"ExternalIdentifierRecorded",
+	"ExternalIdentifierInvalidated",
+	"ExternalPublicationCreated",
+	"ExternalPublicationRequested",
+	"ExternalPublicationExecutionRequested",
+	"ExternalProviderCallStarted",
+	"ExternalProviderCallDispatched",
+	"ExternalProviderObservationRecorded",
+	"ExternalPublicationAttemptResolved",
+	"ExternalPublicationRegistered",
+	"ExternalPublicationPublished",
+	"ExternalUsageSourceCreated",
+	"ExternalUsagePullRequested",
+	"ExternalUsageCallStarted",
+	"ExternalUsageCallDispatched",
+	"ExternalUsageOutcomeRecorded",
+	"ExternalUsageRecorded",
+	"ExternalUsageQuarantined",
+	"ExternalUsageAccepted",
+	"ExternalUsageConflictQuarantined",
+	"ExternalUsageCheckpointCommitted",
+	"ExternalUsagePullResolved",
+	"IngestionPrepared",
+	"IngestionInvocationStarted",
+	"IngestionInvocationDispatched",
+	"IngestionInvocationOutcomeRecorded",
+	"IngestionObserved",
+	"IngestionAccepted",
+	"LifecycleDispositionPlanPrepared",
+	"LifecycleContentUseRestricted",
+	"LifecycleContentHoldPlaced",
+	"LifecycleContentHoldReleased",
+	"LifecycleReaderAdmitted",
+	"LifecycleReaderTerminated",
+	"LifecycleProcessingOwnerStopped",
+	"LifecycleHoldDispatchConflict",
+	"LifecycleDispositionApproved",
+	"LifecycleApprovalRevoked",
+	"LifecycleDispositionDispatched",
+	"LifecycleDispositionRecoveryRequested",
+	"LifecycleDispositionRecoveryStarted",
+	"LifecycleDispositionRecoveryObserved",
+	"LifecycleDispositionBlocked",
+	"LifecycleProviderAttemptObserved",
+	"LifecycleStorageCallStarted",
+	"LifecycleStorageCallObserved",
+	"ProtectedObjectIntentCreated",
+	"ProtectedObjectVerified",
+	"LifecycleFixtureDisposalBasisRegistered",
+	"LifecycleFixtureReferenceRequired",
+	"LifecycleFixtureReferenceReleased",
+	"LifecycleProviderSendClaimed",
+	"LifecycleExactCopyAbsenceVerified",
+	"LifecycleContentDispositionFinalized",
+	"LifecycleCopyPolicyBound",
+	"LifecycleCopyPolicyRenewed",
+	"LifecycleCopyPrepared",
+	"LifecycleCopyRecoveryRequested",
+	"LifecycleCopyRecoveryStarted",
+	"LifecycleCopyRecoveryObserved",
+	"LifecycleCopyTargetRecovered",
+	"LifecycleCopyMaterialized",
+	"LifecycleCopyVerified",
+	"LifecycleRestoreCheckpointExported",
+	"LifecycleCopyAdmissionEvaluated",
+	"LifecycleDispositionReservationReleased",
 	"DatasetCreated",
 	"DatasetVersionCreated",
 	"DatasetVersionSuperseded",
@@ -92,7 +178,17 @@ var eventVocabulary = []string{
 	"ProductVersionCreated",
 	"QualityFailed",
 	"QualityAssessmentAttemptFailed",
+	"QualityRemediationDetected",
+	"QualityRemediationAssigned",
+	"QualityRemediationExecutionAccepted",
+	"QualityRemediationRecheckStarted",
+	"QualityRemediationRechecked",
+	"QualityRemediationManuallyClosed",
 	"QualityPassed",
+	"SourceSchemaObservationRequested",
+	"SourceSchemaScanStarted",
+	"SourceSchemaObserved",
+	"SourceSchemaHandlingRecorded",
 	"QualityReviewRequired",
 	"RightsSnapshotCreated",
 	"RightsDeclarationCreated",

@@ -1,0 +1,27 @@
+{
+  "status": "PASS_INDEPENDENT_PUBLIC_BINDINGS_AUDIT",
+  "candidate_index_working_and_git_raw": 1119,
+  "complete_CLI_indexed_files": 181,
+  "embedded_template_exact": true,
+  "old_packet_preservation": {
+    "07": {
+      "records": 940,
+      "original_index_anchor": "9a41e13f1ebe01ae90b36f53c491392c3c4a72ad",
+      "all_working_raw_sha_match": true
+    },
+    "08": {
+      "records": 1117,
+      "original_index_anchor": "207128c477f285312ddca6f1894a569ec9037e35",
+      "all_working_raw_sha_match": true
+    },
+    "09": {
+      "records": 1118,
+      "original_index_anchor": "72e4ce098203f1c076bb3753c6b11931f734e911",
+      "all_working_raw_sha_match": true
+    }
+  },
+  "Core_all_three_unchanged": true,
+  "technical_reads": 168,
+  "provider_io": 0,
+  "docker_calls": 0
+}

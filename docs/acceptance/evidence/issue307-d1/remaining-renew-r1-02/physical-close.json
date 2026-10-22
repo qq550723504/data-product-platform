@@ -1,0 +1,16 @@
+{
+  "containers": [
+    {
+      "id": "31e13285db8aaf2e82aabe2ecbd55aaf0f0bff7d0e571c00ac5a776da0e970f8",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "eb94d693d41152356be6aabb982d121e151e75691306a85494664665aa18af1a",
+      "stopped_pid_zero": true
+    }
+  ],
+  "all_closed": true,
+  "retained": true,
+  "native_delete": 0,
+  "cleanup": 0
+}

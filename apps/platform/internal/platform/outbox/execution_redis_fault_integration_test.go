@@ -178,12 +178,12 @@ func TestExecutionQueueRedeliveryAfterLostConfirmationUsesProductionHandler(t *t
 		t.Fatalf("create routing table: %v", err)
 	}
 	firstDispatcher, err := platformoutbox.NewDispatcher(fixture.pool, executionDispatcherConfig("t2-lost-confirmation-first-"+uuid.NewString()), router,
-		platformoutbox.HandlerRegistration{Name: routing.HandlerExecutionQueue, Handle: firstHandler})
+		platformoutbox.HandlerRegistration{Name: routing.HandlerExecutionQueue, Handle: firstHandler}, unavailableExternalRegistration(), unavailableLifecycleRegistration())
 	if err != nil {
 		t.Fatalf("create first dispatcher: %v", err)
 	}
 	secondDispatcher, err := platformoutbox.NewDispatcher(fixture.pool, executionDispatcherConfig("t2-lost-confirmation-second-"+uuid.NewString()), router,
-		platformoutbox.HandlerRegistration{Name: routing.HandlerExecutionQueue, Handle: secondHandler})
+		platformoutbox.HandlerRegistration{Name: routing.HandlerExecutionQueue, Handle: secondHandler}, unavailableExternalRegistration(), unavailableLifecycleRegistration())
 	if err != nil {
 		t.Fatalf("create second dispatcher: %v", err)
 	}
@@ -368,7 +368,7 @@ func newExecutionDispatcher(t *testing.T, pool *pgxpool.Pool, enqueuer workflowq
 			Handle: func(ctx context.Context, event platformoutbox.PublishedEvent) error {
 				return enqueuer.EnqueueExecution(ctx, event.AggregateID)
 			},
-		})
+		}, unavailableExternalRegistration(), unavailableLifecycleRegistration())
 	if err != nil {
 		t.Fatalf("create execution dispatcher: %v", err)
 	}
@@ -382,6 +382,16 @@ func executionDispatcherConfig(consumer string) platformoutbox.Config {
 		FailureCap:   time.Millisecond,
 		MaxAttempts:  5,
 		ConsumerName: consumer,
+	}
+}
+
+// This fixture tests workflow queue faults, with no publication provider.
+// Register the current required identity but never falsely confirm its events.
+func unavailableExternalRegistration() platformoutbox.HandlerRegistration {
+	return platformoutbox.HandlerRegistration{
+		Name: routing.HandlerExternalPublicationQueue, Handle: func(context.Context, platformoutbox.PublishedEvent) error {
+			return errors.New("external publication provider not configured in workflow fault fixture")
+		},
 	}
 }
 
@@ -483,4 +493,10 @@ func unusedRedisAddress(t *testing.T) string {
 		t.Fatalf("release Redis test address: %v", err)
 	}
 	return addr
+}
+
+func unavailableLifecycleRegistration() platformoutbox.HandlerRegistration {
+	return platformoutbox.HandlerRegistration{Name: routing.HandlerLifecycleRecoveryQueue, Handle: func(context.Context, platformoutbox.PublishedEvent) error {
+		return errors.New("lifecycle provider not configured in workflow fault fixture")
+	}}
 }

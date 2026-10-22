@@ -1,0 +1,12 @@
+{
+  "binary_sha256": "cf48f96a1ecc8c140f73e230ec78a891e8ec1426b19378cfcd5f4ef8dcf5b58c",
+  "delete": 0,
+  "container": "dpp-lifecycle307-34696798-reader-accept-eb30d6",
+  "id": "262d2239fffb9e2e3471970e4aed9f56059323a896fc924d7ab5e0943015d992",
+  "root_mounted": false,
+  "exit_code": 0,
+  "expected_exit": 0,
+  "run_id": "34696798-06e3-42de-8b31-6b237c6e9c22",
+  "mode": "accept",
+  "cleanup": 0
+}

@@ -1,0 +1,26 @@
+{
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/go-five-packages-initial.txt": "6698f7a761d26929b2ad25faead985bcbea82d6179885e9696e019a1bc6485d6",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/go-renew-guard-uncached.txt": "14157cac6289e5eda6ee3421a08bb59ba3590b46d0c9fe644a6879fcfdab43eb",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/go-tests.txt": "a74de0603c7c766ebf569d1557dc9e2d9b8c2cfd27ec02dd4dce31cfd53aa569",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/history-initial.txt": "60419d37b838070d821682a8db17215f5eec64c998cd1b9e5d036d3cf91183ad",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/local-regression.json": "259c31a3ef1ea330b777392359b0fe938d277a5eb1bc89df7eb0bf9a8e99ee54",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/rehashed-actual-profiles-initial.txt": "6d802bc5da289c485105cf823af19e755565e899a0b0b46b6c92ba18605a5ffa",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/source-independent-review.json": "ace683a1d9839c3975d877157bd46b7e8c02b28a5f40e112d743a832150ecc25",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_freeze_remaining_executable-normal.txt": "7ff486a06e202093d4cd09ac17ff9d2dbc7f1af9df7bd32994f6053476a97fa4",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_freeze_remaining_executable-optimized.txt": "7ff486a06e202093d4cd09ac17ff9d2dbc7f1af9df7bd32994f6053476a97fa4",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_freeze_remaining_executable.py-normal-initial.txt": "e5911e72b4e81ae4b0837fc0a5b9f021743cd6e94733cf7b22c963731b059408",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_freeze_remaining_executable.py-optimized-initial.txt": "e5911e72b4e81ae4b0837fc0a5b9f021743cd6e94733cf7b22c963731b059408",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_rehashed_actual_profiles.py": "430c605286e0d93d243d6ef2baba31999f6c8d17c9b5e902dd219dc781e99c2d",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_remaining_window-normal.txt": "9ea9e02c32e1ced60331bac7e1b7efdccaad84b1080c53fe0c00ada737a368e2",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_remaining_window-optimized.txt": "fac9e2641856d5839095c57216a543441e43681be4852bd274e5e465f182a627",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_remaining_window.py-normal-final.txt": "55589650d377c18c9bc56b3c21308eda5cdaa014af3969dbb620badff7580406",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_remaining_window.py-normal-initial.txt": "14acce1691528a1127eb61b49237ac384e83445615f4b7667f88ddd84427be20",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_remaining_window.py-optimized-final.txt": "0cdfca3563432287c1ac85bb72f64e386aeff49ce92a3bd7d8d5ad80fe9f39c6",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_remaining_window.py-optimized-initial.txt": "b69b5994feb079c2de6c1e5119a2108eb6d1d4f90c445709d212333403b8712d",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_verify_remaining_native-normal.txt": "edaaf57824cf4090898b2bb851e1c9b2b65624b7be65f2803a068a8a8acdbb51",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_verify_remaining_native-optimized.txt": "e9f79d26b47382cf1553c94b34f0908a7e9c1bad85896e9fb47d3198196244d8",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_verify_remaining_native.py-normal-initial.txt": "b05f5796ea2c6a0ed7ad064e0afe97cf8581374afdcb818836a50fdeff75636e",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/test_verify_remaining_native.py-optimized-initial.txt": "f715e1b3587488a105d5cae9727be594b9947ee8a1104cb5575608fb49869590"
+  }
+}

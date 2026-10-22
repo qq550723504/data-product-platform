@@ -14,8 +14,10 @@ import {
 import { DatasetVersionInvalidateForm } from "@/components/dataset-version-invalidate-form";
 import { QualityCheckForm } from "@/components/quality-check-form";
 import { ComplianceCheckForm } from "@/components/compliance-check-form";
+import { CertificationForm, CertificationSupersedeForm } from "@/components/certification-form";
+import { batchEnabled,certificationReferences,core,trialRawOnly,workspace } from "@/lib/batches";
 import { DirectDataDeliveryForm } from "@/components/direct-data-delivery-form";
-import { configuredWorkspaceId, platform, PlatformError, type CertificationBlocker, type DatasetCertification } from "@/lib/platform";
+import { configuredWorkspaceId, platform, PlatformError, type CertificationBlocker, type DatasetCertification, type CertificationProfile } from "@/lib/platform";
 import { isQualityAttemptId } from "@/lib/quality-command";
 import { isComplianceAttemptId } from "@/lib/compliance-command";
 
@@ -151,8 +153,9 @@ export default async function DatasetVersionDetailPage({
       throw new Error("DatasetVersion 不属于当前 Dataset");
     }
 
-    const profileMap = new Map(history.profiles.map((profile) => [profile.id, profile]));
-    const profiles = history.profiles;
+    const availableProfiles = batchEnabled() && !trialRawOnly() ? (await core<{items:CertificationProfile[]}>(`/workspaces/${workspace()}/certification-profiles`,"GET",undefined,undefined,true)).items : [];
+    const profileMap = new Map([...availableProfiles,...history.profiles].map((profile) => [profile.id, profile]));
+    const profiles = [...profileMap.values()];
     const selectedProfile = profileMap.get(query.profileId ?? "") ?? profiles[0];
     const profileScope = selectedProfile?.rights.scopes.values?.[0];
     const requested = {
@@ -186,7 +189,9 @@ export default async function DatasetVersionDetailPage({
       && requested.delivery.trim() !== ""
       && requested.scopeType.trim() !== ""
       && (requested.scopeType.trim().toUpperCase() === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
-    const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
+    // A delivery ambiguity must not prevent viewing/correcting immutable
+    // certification history or reading quality/compliance results.
+    const eligibility = canCheck && view === "eligibility" ? await platform.deliveryEligibility(versionId, requested) : null;
     let qualityAttempt = null;
     const qualityAttemptId = isQualityAttemptId(query.qualityAttemptId) ? query.qualityAttemptId : undefined;
     if (qualityAttemptId) {
@@ -327,6 +332,7 @@ export default async function DatasetVersionDetailPage({
               <div className="panel-header"><h2>下一步</h2><span className="eyebrow">Drill down</span></div>
               <div className="quick-links">
                 <Link href={viewHref("quality")}>查看 Quality 评测 →</Link>
+                {dataset.datasetType === "RAW" ? <Link href={`/datasets/${id}/versions/${versionId}/remediation`}>质量异常分派、处理与复检 →</Link> : null}
                 <Link href={viewHref("compliance")}>运行 / 恢复 Compliance Check →</Link>
                 <Link href={viewHref("certification")}>查看 Certification 历史 →</Link>
                 <Link href={viewHref("eligibility")}>检查当前可交付性 →</Link>
@@ -548,6 +554,8 @@ export default async function DatasetVersionDetailPage({
 
         {view === "certification" ? (
           <>
+        {batchEnabled() && !trialRawOnly() ? <CertificationForm key={selectedProfile?.id??"none"} datasetId={id} versionId={versionId} qualityId={latestAssessment?.id??""} profileId={selectedProfile?.id??""} profiles={profiles} canPrepare={Boolean(version.generatedByExecutionId)} references={await certificationReferences(versionId,selectedProfile?.id??"",latestAssessment?.id??"")} /> : null}
+        {batchEnabled() && !trialRawOnly() ? <CertificationSupersedeForm datasetId={id} versionId={versionId} certifications={history.items.filter(c=>c.profile.id===selectedProfile?.id).map(c=>({id:c.id,decision:c.decision,issuedAt:c.issuedAt,current:c.decision==="CERTIFIED"&&c.dispositions.length===0}))}/> : null}
         <div className="panel-header"><h2>Certification 历史</h2><span className="eyebrow">{history.page.total} Facts</span></div>
         {history.items.length === 0 ? (
           <EmptyState title="NOT_CERTIFIED" description="该 DatasetVersion 尚无 DatasetCertification 历史事实。" />

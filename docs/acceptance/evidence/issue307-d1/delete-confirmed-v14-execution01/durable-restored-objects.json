@@ -1,0 +1,21 @@
+{
+  "run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "label_key": "lifecycle307.run",
+  "allowed_states": [
+    "exited"
+  ],
+  "status": "PASS",
+  "services": [
+    {
+      "container_id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+      "type": "volume",
+      "destination": "/data",
+      "writable": true,
+      "container": "dpp-lifecycle307-5d2274ee-predelete-objects",
+      "role": "restored-objects",
+      "volume": "dpp-lifecycle307-5d2274ee-predelete-objects"
+    }
+  ],
+  "storage_io": 0,
+  "mutation": 0
+}

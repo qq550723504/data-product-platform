@@ -1,0 +1,121 @@
+{
+  "at": "2026-10-19T06:02:25Z",
+  "status": "PASS_EXACT_HEAD_PR_CI_AND_REPOSITORY_STATE",
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "head": "7f3566cbfee6b22aded52403d5045681165a69d5",
+  "pr": {
+    "number": 323,
+    "draft": true,
+    "state": "open",
+    "merged": false
+  },
+  "issue": {
+    "number": 307,
+    "state": "open"
+  },
+  "run_id": 39138927794,
+  "association": {
+    "queried_commit": "7f3566cbfee6b22aded52403d5045681165a69d5",
+    "connector_contract": "fetch_commit_workflow_runs filters pull-request-triggered runs",
+    "is_main_ci": false
+  },
+  "jobs": [
+    {
+      "id": 117709111622,
+      "name": "classify-changes",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152758,
+      "name": "splink-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152802,
+      "name": "web-console",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152812,
+      "name": "temporary-container-contracts (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152829,
+      "name": "hop-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152843,
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152844,
+      "name": "gx-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152895,
+      "name": "go-platform",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709152913,
+      "name": "label-studio-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709153123,
+      "name": "browser-contracts / web-browser-contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709153148,
+      "name": "live-core / live-core-browser",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117709153237,
+      "name": "demo / demo-lifecycle",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    },
+    {
+      "id": 117711313510,
+      "name": "required",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 39138927794
+    }
+  ],
+  "unresolved_threads": 0,
+  "latest_human": {
+    "scheduling": "01a1520d-05d3-7af3-9bc7-d55c8794ef29",
+    "deletion": "01a15200-7e0b-7f73-ace9-a9c1626059b2",
+    "newer_withdrawal_seen": false
+  }
+}

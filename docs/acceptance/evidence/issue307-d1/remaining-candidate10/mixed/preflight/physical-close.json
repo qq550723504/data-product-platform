@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-18T06:24:42.907051+00:00",
+  "containers": [
+    {
+      "id": "49d4a7a9f2026ec81d11069dacfebd0c3c469c24e4599e563112378f9187287a",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "stopped_pid_zero": true
+    },
+    {
+      "id": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "stopped_pid_zero": true
+    }
+  ],
+  "all_closed": true,
+  "resources_retained": true,
+  "cleanup": 0,
+  "native_delete": 0,
+  "IAM_fresh_disable_readback": "NOT_PERFORMED_READONLY_ENTRY"
+}

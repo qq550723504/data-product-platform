@@ -1,0 +1,14 @@
+{
+  "attempt_id": "00000000-0000-0000-0000-000000000000",
+  "work_id": "40bc18ba-781f-4571-9582-9240ea167021",
+  "source_head": "62e8f3aa72527b5a0b2736607ba69b68e74ae846",
+  "gateway_sha256": "81b26869b3ee1074035798a4bb6ba8c455ec71d69b57b7a7434d0da4d6011662",
+  "scenario": "hold-owner",
+  "name": "dpp-lifecycle307-4abcfca5-recovery-hold-owner",
+  "binary_sha256": "0c508dc8780b94a04a65f3a0c15db648c3a92ec3494fb3fbc30613821d10d38f",
+  "cleanup_requests": 0,
+  "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+  "mode": "once",
+  "container_id": "bbbb1ef56ee7ae0f5482bd7db7f726ed1a3cfaddf59d0fb0bf67f55c6557d5cf",
+  "native_delete": "DENY_ALL"
+}

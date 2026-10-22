@@ -1,0 +1,11 @@
+{
+  "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-after",
+  "id": "81c3a96acb7a8da97a0bb31e8576624404f0b063291bbda4349b6201876dd4ed",
+  "exit": 0,
+  "expected_exit": 0,
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "binary_sha256": "e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30",
+  "root_mounted": false,
+  "network_mode": "container:0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+  "retained": true
+}

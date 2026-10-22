@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BackLink, Badge, DefinitionList, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { ExecutionRetryForm } from "@/components/execution-retry-form";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
+import { batchEnabled, core } from "@/lib/batches";
 
 function executionGuidance(status: string): string {
   switch (status) {
@@ -34,6 +35,7 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
     if (execution.workspaceId !== workspaceId) {
       throw new Error("Execution 不属于当前 POC Workspace");
     }
+    const quarantine = batchEnabled() ? await core<{items:Array<{id:string;inputName:string;sourceKey:string;reasonCode:string;reasonMessage:string;payload:Record<string,unknown>}>;page:{total:number;offset:number;limit:number}}>(`/workspaces/${workspaceId}/executions/${execution.id}/quarantine`, "GET", undefined, undefined, true) : null;
     return (
       <>
         <BackLink href="/production">返回数据生产</BackLink>
@@ -118,6 +120,8 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
             </div>
           )}
         </section>
+
+        {quarantine ? <section className="detail-card" style={{marginTop:18}}><h2>隔离记录</h2><p>共 {quarantine.page.total} 条 · 当前显示前 {quarantine.page.limit} 条。修复来源数据后创建新批次和加工执行；已有结果与隔离历史保留。</p>{quarantine.items.length ? <table className="data-table"><thead><tr><th>来源端口 / 记录</th><th>原因</th><th>原值</th></tr></thead><tbody>{quarantine.items.map(q=><tr key={q.id}><td>{q.inputName}<br/>{q.sourceKey}</td><td>{q.reasonCode}<br/>{q.reasonMessage}</td><td><details><summary>查看原记录</summary><pre className="json-preview">{JSON.stringify(q.payload,null,2)}</pre></details></td></tr>)}</tbody></table>:<p>没有隔离记录。</p>}</section>:null}
 
         {Object.keys(execution.metrics ?? {}).length > 0 ? (
           <section className="detail-card" style={{ marginTop: 18 }}>

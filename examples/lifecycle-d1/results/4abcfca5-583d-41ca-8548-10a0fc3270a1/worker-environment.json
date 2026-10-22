@@ -1,0 +1,38 @@
+{
+  "redis": {
+    "id": "cd8b28ebac93735075c7997e780b68e45c9a4e10d2401546d550bc106635b938",
+    "host_ports": [],
+    "volume": "dpp-lifecycle307-4abcfca5-redis-data",
+    "name": "dpp-lifecycle307-4abcfca5-redis",
+    "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
+  },
+  "bootstrap_enabled": false,
+  "native_delete": "DENY_ALL",
+  "payload_get": "DENY_ALL",
+  "gateway_sha256": "81b26869b3ee1074035798a4bb6ba8c455ec71d69b57b7a7434d0da4d6011662",
+  "network": {
+    "id": "2e5ddaa5edbbe88fc6f24a011d3d7095013f8e2651b06ae3e0e439f77e44e1c3",
+    "internal": true,
+    "members": [
+      "68b96043e2b3dbc25840f86a9b05a5cb5c207913889f676e0f28280b707c889b",
+      "7d43cffc2aaf97baf8bf8ae5a4aa7c126ae73d46dff6bbd1326667bdd5f64885",
+      "ba20cf07fd7d0cedbb62a9c153f52850ff3207cd23e602b5f8196d62618ed227",
+      "cd8b28ebac93735075c7997e780b68e45c9a4e10d2401546d550bc106635b938"
+    ],
+    "name": "dpp-lifecycle307-4abcfca5-private"
+  },
+  "provider_identity": "INSPECT_ONLY",
+  "cleanup_requests": 0,
+  "retained_volumes": [
+    "dpp-lifecycle307-4abcfca5-postgres",
+    "dpp-lifecycle307-4abcfca5-objects",
+    "dpp-lifecycle307-4abcfca5-redis-data"
+  ],
+  "manifest_sha256": "196696bdf8d23c6aaced42854fdaf4d88c842e962b435f10ad6c7ab411738b32",
+  "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+  "provider_instance_id": "b48e5dcf-d466-483d-ac89-f810ba976974",
+  "run_id": "4abcfca5-583d-41ca-8548-10a0fc3270a1",
+  "source_head": "62e8f3aa72527b5a0b2736607ba69b68e74ae846",
+  "binary_sha256": "0c508dc8780b94a04a65f3a0c15db648c3a92ec3494fb3fbc30613821d10d38f",
+  "incarnation_id": "57c5084d-d929-4eeb-842d-180734158bb0"
+}

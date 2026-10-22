@@ -1,0 +1,15 @@
+{
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "credentials": "READ_ONLY_NO_ROOT_NO_COPY_NO_DELETE",
+  "recorded_before_start": "2026-10-11T14:57:35.5520139Z",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "helper_id": "e5d287fb54ddddcfdf0d4f87a6b6b55c4c379a1156fdc0ce19e2a8d7649b26ab",
+  "role": "copy-worker",
+  "action": "once",
+  "native_delete": 0,
+  "binary_sha256": "6bc11d66bb3f64f3ae07a1c3b508350b3c577ab3437d1436e4d6ae6bee576154",
+  "gateway_sha256": "3045f714f56768b5099ff2b4f18c5a3fb5e833cbdadd694313f6ebea725961af",
+  "scenario": "copy-duplicate-terminal-replay",
+  "cleanup": 0,
+  "expected_exit": 0
+}

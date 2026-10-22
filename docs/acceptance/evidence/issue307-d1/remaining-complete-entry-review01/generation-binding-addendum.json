@@ -1,0 +1,153 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_GENERATION_BINDING_ADDENDUM",
+  "reviewer": "/root/v20_independent_review",
+  "at": "2026-10-18T14:49:23.246210+00:00",
+  "remaining_blockers": [],
+  "amends_source_report": {
+    "file": "source-independent-final-review.json",
+    "sha256": "05b040799490b430f4583bb285509062ca1147c0aba4352398fd2695badcf9e0",
+    "original_unchanged": true
+  },
+  "profile": "candidate12/v22",
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "proposed_window": {
+    "start_inclusive_utc": "2026-10-19T06:00:00Z",
+    "end_exclusive_utc": "2026-10-19T06:40:00Z",
+    "Singapore": "2026-10-19 14:00-14:40",
+    "readonly_recovery_until_utc": "2026-10-19T08:40:00Z",
+    "readonly_recovery_until_Singapore": "2026-10-19 16:40"
+  },
+  "proposal_not_human_preference_or_authorization": true,
+  "resolved_findings": [
+    {
+      "id": "G1_COMPLETE_RECEIPT_FINITE_MEMBERSHIP",
+      "status": "CLOSED",
+      "initial_record": {
+        "file": "generation-binding-initial-findings.json",
+        "sha256": "8dc75b4bbd214432b9346108b8f14dd9ab683bff8812699297bc30f89124570f"
+      },
+      "repair": "New check12.complete_receipt requires exact three groups and summed76 requests,18versions/candidate SHA/execution/DELETE0/NONE authority. Each group must have PASS aggregation, exact copy count, zero mutation/delete, Core unchanged/before-after equal baseline, embedded aggregation exactly equal file and physical close true. Embedded host must equal separately hashed file with execution,32false/7case/7recovery/3network/3budget. Freeze whole-main invocation must exit0 and bind actual entry SHA.",
+      "independent_recheck": "The added15th test first traverses successful actual full Python main with Docker recording and real3-group Go aggregation, then checks valid receipt acceptance and eight malformed outcomes: empty/partial groups, bad group status,17versions,wrong read total,host mismatch,invocation exit1 and wrong entry SHA. Normal and -O each15 methods PASS."
+    }
+  ],
+  "other_binding_checks": [
+    "Go compiled current execution/profile and exact40-minute UTC/SGT window agree with derived RecoveryEnd and Python generator. No permission edit or old confirmation can move these constants.",
+    "Uncached Go authority test independently rejects07/09/10/11 candidates under new12 binary. Current R1 tests import check12 and pass normal/-O each4; old11 checker bytes remain identical to its frozen3d62 source.",
+    "Replacing only the new freeze docstring with the previous first line reproduces the previously reviewed b5e0f741c7e3f75a815af14995865233bf608d023866612cfe2275d79f62fbc4 SHA. Freeze function semantics remain as previously reviewed. verify/attester/runner raw bytes unchanged from05b0 report.",
+    "CI current path now connects strict check12; historical11 remains isolated at3d62/c00d by the existing history driver. New checker cannot pass before a complete newpacket exists; old11 packet is neither rewritten nor used as current runtime acceptance.",
+    "No four-generation history audit rerun in this mechanical binding slice; the original independent source review retains their earlier strict PASS results. Driver current-runtime annotation changes do not change historical acceptance logic."
+  ],
+  "actual_tests": [
+    {
+      "name": "current12 R1 normal",
+      "methods_or_cases": 4,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "generation12-window-normal.txt",
+      "log_sha256": "791068f27d9414e6cedab986ce2590b793c0a8e2dd38dc26766a09418522bc65"
+    },
+    {
+      "name": "current12 R1 optimized",
+      "methods_or_cases": 4,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "generation12-window-optimized.txt",
+      "log_sha256": "0cbd8124b9b750b7959a524dfb2a61565371ec31b1ec496a86984ca5126532c1"
+    },
+    {
+      "name": "uncached old execution authority rejection Go",
+      "methods_or_cases": 4,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "generation12-old-authority-go.txt",
+      "log_sha256": "43cab746c0f8bf68967f9314ffbc35e0e115aa30394a39090c67663e69f1870d"
+    },
+    {
+      "name": "complete main and eight malformed receipt counterexamples normal",
+      "methods_or_cases": 15,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "generation12-complete-normal-final.txt",
+      "log_sha256": "06cce49db8f72c5ab4fe1b0caa4b003aad73f76e11fc084c498f163ded9c818e"
+    },
+    {
+      "name": "complete main and eight malformed receipt counterexamples optimized",
+      "methods_or_cases": 15,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "generation12-complete-optimized-final.txt",
+      "log_sha256": "3ef0813ba7948ff064747815f4b8ed2dd4eee20229081bc14030b2a03a3b34c8"
+    }
+  ],
+  "file_sha256": {
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "raw_sha256": "005c992c05f62f9bdbc5885a95b9b274346f53476cd6d51677330d1da1684f86",
+      "lf_sha256": "005c992c05f62f9bdbc5885a95b9b274346f53476cd6d51677330d1da1684f86"
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/main_test.go": {
+      "raw_sha256": "9a8176ed06efa82fd0ccfb52e26cb395c4e1e42228236f4e31721b5735b4880e",
+      "lf_sha256": "9a8176ed06efa82fd0ccfb52e26cb395c4e1e42228236f4e31721b5735b4880e"
+    },
+    "examples/lifecycle-d1/check-remaining-candidate12.py": {
+      "raw_sha256": "69119b8de21c1b888db46414b4cc63de554c8fee6456d9073bdc7697aad9445e",
+      "lf_sha256": "69119b8de21c1b888db46414b4cc63de554c8fee6456d9073bdc7697aad9445e"
+    },
+    "examples/lifecycle-d1/test_remaining_window.py": {
+      "raw_sha256": "62ee16aacb094f0d85ab8627673309b49c616bd30f1cdb5860b7faff81e7f4d6",
+      "lf_sha256": "62ee16aacb094f0d85ab8627673309b49c616bd30f1cdb5860b7faff81e7f4d6"
+    },
+    "examples/lifecycle-d1/test_complete_remaining_preflight.py": {
+      "raw_sha256": "949ad2d5127057e007b82833d67f997d5621fbcf4f35f43f04ed0473d6852ccd",
+      "lf_sha256": "949ad2d5127057e007b82833d67f997d5621fbcf4f35f43f04ed0473d6852ccd"
+    },
+    "examples/lifecycle-d1/freeze-remaining-executable.py": {
+      "raw_sha256": "0cbacfd5e18162566388c3e847ed56760f772e37ac78c275e509fdb0aa8bc6ca",
+      "lf_sha256": "0cbacfd5e18162566388c3e847ed56760f772e37ac78c275e509fdb0aa8bc6ca"
+    },
+    "examples/lifecycle-d1/verify-remaining-native.py": {
+      "raw_sha256": "fa57c33b01b9ae83c1a0cfe0867d7ec8618da3722667d9caf2224f91bada78b0",
+      "lf_sha256": "fa57c33b01b9ae83c1a0cfe0867d7ec8618da3722667d9caf2224f91bada78b0"
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "raw_sha256": "45e704544a02762bd55eeed80a92a6861e189f38b4e183a055ca0c38a7ebf395",
+      "lf_sha256": "45e704544a02762bd55eeed80a92a6861e189f38b4e183a055ca0c38a7ebf395"
+    },
+    "examples/lifecycle-d1/prepare-remaining-runner.py": {
+      "raw_sha256": "78414341fea8225b66c9e934c82337a3d424b449415ccbc9246f8808defe3a18",
+      "lf_sha256": "78414341fea8225b66c9e934c82337a3d424b449415ccbc9246f8808defe3a18"
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "raw_sha256": "5d5ab12d4f0b1c3b1e19a52cf8baa9ad9aec293efaf22ee12ef5961772444b53",
+      "lf_sha256": "5d5ab12d4f0b1c3b1e19a52cf8baa9ad9aec293efaf22ee12ef5961772444b53"
+    },
+    ".github/workflows/ci.yml": {
+      "raw_sha256": "6be318282150de09ada38222be7b6c3decf943a400614fb35097e2762f05b566",
+      "lf_sha256": "7761376a85f8a1ac25e94be330c1d3a0f3f77907c0d8ac1ba4596c6a92995996"
+    },
+    ".github/scripts/check-lifecycle307-history.py": {
+      "raw_sha256": "fe6adfad69789de4ea16c0f2c9b989fe8fb5775747233f70e680006a66c7fd1c",
+      "lf_sha256": "fe6adfad69789de4ea16c0f2c9b989fe8fb5775747233f70e680006a66c7fd1c"
+    }
+  },
+  "not_yet_accepted": {
+    "newpacket_generated": false,
+    "whole_candidate12_offline_check": "NOT_RUN_NO_PACKET",
+    "real_complete_native_non_deletion": "NOT_RUN",
+    "new_human_authorization": "NOT_RECEIVED",
+    "new_schedule": "NOT_CREATED",
+    "DELETE": "NOT_RUN",
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "next_gates": "Parent may freeze the new unapproved preparation using the reviewed generator, whose final real main must prove every host/native path before final indexing. Actual native success, frozenpacket/source/binary/Core/IAM/gateway/owner/budget binding review and exact HEAD CI remain separate required evidence. This proposal/index/source addendum grants no deletion or scheduling authority and does not restore old executions.",
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "reviewer_side_effects": {
+    "repo_writes": 0,
+    "Docker_io": 0,
+    "provider_io": 0,
+    "credential_reads": 0,
+    "permission_changes": 0,
+    "real_source_starts": 0,
+    "native_delete": 0
+  }
+}

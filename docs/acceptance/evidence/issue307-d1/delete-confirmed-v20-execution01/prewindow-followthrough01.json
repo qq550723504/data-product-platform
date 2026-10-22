@@ -1,0 +1,43 @@
+{
+  "status": "PASS_EXISTING_FIXED_WINDOW_CONTINUATION_READY_NOT_OPENED",
+  "at": "2026-10-18T08:04:06.771648+00:00",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "existing_automation_id": "307-d1-candidate10-v20",
+  "automation_status": "ACTIVE",
+  "schedule_created_or_modified_this_turn": false,
+  "existing_prompt_sha256": "a3ddfe89c761461c90137176eef5f1ec4fe0355c5eaa664d61451bed9d2bf646",
+  "fixed_send_window_UTC": [
+    "2026-10-18T10:00:00Z",
+    "2026-10-18T10:40:00Z"
+  ],
+  "readonly_recovery_deadline": "2026-10-18T12:40:00Z",
+  "authorization_sha256": "261378648576c27a106893a2b06af425e490966495e0dfc8fccda83d64bbaab8",
+  "old_authorization_reused": false,
+  "independent_review_remaining_blockers": [],
+  "all_final_index_and_14_frozen_references_exact": true,
+  "closed_support": {
+    "status": "PASS_PREWINDOW_CLOSED",
+    "at": "2026-10-18T08:04:06.148194+00:00",
+    "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+    "permissions_disabled": 32,
+    "containers_stopped": 58,
+    "containment_anchor": "5eb3aec724f55e97ee05595439f74781d0e4b989",
+    "containment_snapshot_available": true,
+    "native_delete": 0,
+    "provider_io": 0,
+    "container_starts": 0
+  },
+  "actual_all_generations_bound_containers_stopped": 205,
+  "actual_all_generations_permissions_false": 128,
+  "window_fresh_native_Core_IAM_protection_topology_budget_and_required_CI": "NOT_RUN_REQUIRED_IN_WINDOW",
+  "real_business_send_recovery_final_containment": "NOT_RUN",
+  "source_container_starts": 0,
+  "provider_calls": 0,
+  "native_delete": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "next_action": "existing same-thread heartbeat at 2026-10-18T10:00:00Z; latest human instruction and all fresh prerequisites first; failure or expiry seals without a new window"
+}

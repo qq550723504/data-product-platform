@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-19T06:20:11.645051+00:00",
+  "status": "PASS_ALL_NINE_BACKUPS_UNCHANGED",
+  "files": [
+    {
+      "group": "business-races",
+      "file": "core.dump",
+      "bytes": 1216276,
+      "sha256": "75f02109f039c6ee2735e976ee3c1c7bb9d5f2fd643cface5849e206eed11bab"
+    },
+    {
+      "group": "business-races",
+      "file": "globals.sql",
+      "bytes": 669,
+      "sha256": "d738e649fe404e45e778808ab074d93ca0ba2d90cb5c39a1c6592bb25aa5f360"
+    },
+    {
+      "group": "business-races",
+      "file": "native.tar",
+      "bytes": 222208,
+      "sha256": "40fdf5125d8df98b97f91eaaf2aad0eb565322e79c5c95704d580f8414973255"
+    },
+    {
+      "group": "late-hold",
+      "file": "core.dump",
+      "bytes": 1166712,
+      "sha256": "63651c3f5f2b93c393e12c8ddec627338132fc5261d8193083522d6736f3a5da"
+    },
+    {
+      "group": "late-hold",
+      "file": "globals.sql",
+      "bytes": 669,
+      "sha256": "06c767c194d83e91552c72b9daf5e1637480506f5a432b7d2ff342ec18874fce"
+    },
+    {
+      "group": "late-hold",
+      "file": "native.tar",
+      "bytes": 62464,
+      "sha256": "a51518f5ec922fe2a887a346685192f219650409f76f64518facaaf7b29aa25a"
+    },
+    {
+      "group": "mixed",
+      "file": "core.dump",
+      "bytes": 1158775,
+      "sha256": "303ef33e8184f09a3de4d91eda8abb3043578c6de30cb0acde57a5922e15e343"
+    },
+    {
+      "group": "mixed",
+      "file": "globals.sql",
+      "bytes": 669,
+      "sha256": "cc68a7d8f23cf18c9754719b404a4a86a35d83c91d87b49bb05ff92d28ddd2f4"
+    },
+    {
+      "group": "mixed",
+      "file": "native.tar",
+      "bytes": 60416,
+      "sha256": "e404b58c3e700716497a8ce2b4b8ab2ce6be180923e814a2e5bfa1ce9b7e4940"
+    }
+  ],
+  "restore": "NOT_RUN_AFTER_FAILURE",
+  "no_source_restart": true
+}

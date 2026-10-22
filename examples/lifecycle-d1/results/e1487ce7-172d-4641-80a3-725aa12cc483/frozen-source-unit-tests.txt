@@ -1,0 +1,133 @@
+?   	github.com/qq550723504/data-product-platform/apps/platform/cmd/api	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/cmd/ingestion-browser-fixture	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/cmd/ingestion-pilot	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-archive	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-delete	3.704s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-prepare	3.893s
+?   	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-recovery	1.971s
+?   	github.com/qq550723504/data-product-platform/apps/platform/cmd/migrate	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/cmd/outbox-replay	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/poc-demo	1.582s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/worker	1.999s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance	2.925s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application	2.072s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain	1.377s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure	2.241s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio	2.528s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http	2.143s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application	2.104s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain	1.411s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure	2.816s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/certification/transport/http	1.712s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/domain	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/native	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/transport/http	2.001s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/contract/application	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/contract/domain	1.405s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/contract/transport/http	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/cost	2.148s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application	2.238s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain	1.474s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/transport/http	1.791s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application	2.135s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain	1.481s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/infrastructure	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/transport/http	1.810s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/engine/metadata	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application	2.124s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain	1.591s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure	2.134s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching	1.544s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/entity/resolution	1.428s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/entity/splink	1.927s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http	2.317s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/evidence	2.050s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/application	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/domain	1.459s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/infrastructure	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/integration	3.826s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/pilot	1.556s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/ports	1.659s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/ports/contracttest	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/reference	2.945s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/testkit	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/http	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue	2.558s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application	3.351s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/gold/transport/http	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator	1.640s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/application	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/domain	1.536s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/hop	3.071s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/infrastructure	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot	4.525s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/transport/http	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/adapters/workflow	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	2.260s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain	1.538s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/infrastructure	3.115s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.970s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/http	1.842s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue	2.956s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application	1.869s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain	1.336s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure	1.964s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata	29.383s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/transport/http	2.475s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/contentreference	1.431s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/csvinput	1.340s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver	1.529s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/industrypack	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration	2.780s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox	2.875s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal	1.668s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing	1.493s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage	6.486s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction	1.997s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/product/application	1.911s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/product/domain	1.321s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure	1.858s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/product/transport/http	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application	1.866s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine	1.309s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/gx	1.857s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure	2.994s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native	1.632s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/application	2.364s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/domain	1.341s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/infrastructure	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/transport/http	1.649s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http	1.631s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel	2.089s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel/transport/http	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/resource/domain	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure	[no test files]
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application	3.036s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain	1.409s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure	2.503s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/rights/transport/http	1.790s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/traceability	2.521s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/traceability/transport/http	2.349s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application	2.281s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain	1.267s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/hop	1.951s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/indicator	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure	1.344s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/native	2.963s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/http	1.422s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue	2.175s

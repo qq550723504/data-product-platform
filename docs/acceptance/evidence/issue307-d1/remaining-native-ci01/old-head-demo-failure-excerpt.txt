@@ -1,0 +1,12 @@
+2026-10-16T06:43:07.9174031Z Traceback (most recent call last):
+2026-10-16T06:43:07.9174841Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-reference-candidate05.py", line 150, in <module>
+2026-10-16T06:43:07.9175448Z     main()
+2026-10-16T06:43:07.9176337Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-reference-candidate05.py", line 146, in main
+2026-10-16T06:43:07.9176670Z     check()
+2026-10-16T06:43:07.9177010Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-reference-candidate05.py", line 128, in check
+2026-10-16T06:43:07.9177528Z     require(hashlib.sha256(value).hexdigest() == digest and raw(path).replace(b'\r\n', b'\n') == value, 'Frozen runtime/source changed')
+2026-10-16T06:43:07.9178038Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-reference-candidate05.py", line 36, in require
+2026-10-16T06:43:07.9178389Z     raise ValueError(message)
+2026-10-16T06:43:07.9178573Z ValueError: Frozen runtime/source changed
+2026-10-16T06:43:07.9326929Z ##[error]Process completed with exit code 1.
+2026-10-16T06:43:07.9371947Z ##[group]Run mkdir -p .artifacts/demo

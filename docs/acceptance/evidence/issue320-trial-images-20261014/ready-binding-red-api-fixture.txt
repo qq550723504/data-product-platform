@@ -1,0 +1,15 @@
+test_b2_binds_owner_before_build_and_checks_after_cleanup (cleanup_receipts_test.CleanupFailureContract.test_b2_binds_owner_before_build_and_checks_after_cleanup) ... ERROR
+
+======================================================================
+ERROR: test_b2_binds_owner_before_build_and_checks_after_cleanup (cleanup_receipts_test.CleanupFailureContract.test_b2_binds_owner_before_build_and_checks_after_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue320-trial-image-lifecycle\data-product-platform\examples\enterprise-activity\postgres-ingestion\cleanup_receipts_test.py", line 82, in test_b2_binds_owner_before_build_and_checks_after_cleanup
+    root=Path(directory); files={p.name:root/p.name for p in b2_smoke.implementation_sources()
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'old_b2_for_controlled_binding_regression' has no attribute 'implementation_sources'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (errors=1)

@@ -1,0 +1,112 @@
+[
+  {
+    "approval": "NOT_GRANTED",
+    "check_kind": "DOMAIN_PREREQUISITE_READ_ONLY",
+    "copy": {
+      "ID": "05e24448-0628-43f6-b94f-86be54f758a3",
+      "WorkspaceID": "5fe971c0-7682-4b6b-b4c6-741883247365",
+      "DatasetVersionID": "6bcef65c-eca9-40e2-b699-031567b74c2c",
+      "ProviderInstanceID": "24dba412-9b64-46c0-9cc5-ae56a5d3a124",
+      "IncarnationID": "b19427cf-0d61-4417-a5e1-76c7dd894046",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/b.csv",
+      "ProviderVersion": "8228fe6b-e938-4404-8ad2-4e490e875495",
+      "ContentSHA256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "ByteSize": 26
+    },
+    "decision": {
+      "Eligible": false,
+      "Blockers": [
+        "APPROVAL_NOT_CURRENT_FOR_SCOPE",
+        "RETENTION_UNKNOWN",
+        "DISPOSAL_NOT_DUE",
+        "DISPOSAL_AUTHORITY_NOT_CURRENT",
+        "USE_NOT_RESTRICTED",
+        "INVENTORY_INCOMPLETE",
+        "REFERENCES_RETAINED_OR_UNKNOWN",
+        "READERS_ACTIVE_OR_UNKNOWN",
+        "HOLD_ACTIVE_OR_UNKNOWN",
+        "PROVIDER_RETENTION_BLOCKED_OR_UNKNOWN",
+        "LEDGER_NOT_CURRENT"
+      ]
+    },
+    "native_delete_requests": 0,
+    "protection": {
+      "Copy": {
+        "ID": "05e24448-0628-43f6-b94f-86be54f758a3",
+        "WorkspaceID": "5fe971c0-7682-4b6b-b4c6-741883247365",
+        "DatasetVersionID": "6bcef65c-eca9-40e2-b699-031567b74c2c",
+        "ProviderInstanceID": "24dba412-9b64-46c0-9cc5-ae56a5d3a124",
+        "IncarnationID": "b19427cf-0d61-4417-a5e1-76c7dd894046",
+        "Namespace": "dpp-lifecycle307-online",
+        "Key": "fixture/b.csv",
+        "ProviderVersion": "8228fe6b-e938-4404-8ad2-4e490e875495",
+        "ContentSHA256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+        "ByteSize": 26
+      },
+      "RetentionMode": "NONE",
+      "RetainUntil": null,
+      "LegalHold": true,
+      "ObservedAt": "2026-10-11T13:06:37.534907464Z",
+      "CallIDs": [
+        "923d4ed1-5e29-48c1-8136-fb784a115180",
+        "f22357b8-4445-4a1d-9dac-4bc53dc05bcc"
+      ]
+    }
+  },
+  {
+    "approval": "NOT_GRANTED",
+    "check_kind": "DOMAIN_PREREQUISITE_READ_ONLY",
+    "copy": {
+      "ID": "0b5a37a3-b062-4e1d-8fe9-7e95330876ea",
+      "WorkspaceID": "5fe971c0-7682-4b6b-b4c6-741883247365",
+      "DatasetVersionID": "aa67944f-df64-4ad3-a9a5-4f205ebe8f97",
+      "ProviderInstanceID": "24dba412-9b64-46c0-9cc5-ae56a5d3a124",
+      "IncarnationID": "b19427cf-0d61-4417-a5e1-76c7dd894046",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/a.csv",
+      "ProviderVersion": "87bd6a39-f420-4bfa-9619-4812a01e5835",
+      "ContentSHA256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "ByteSize": 27
+    },
+    "decision": {
+      "Eligible": false,
+      "Blockers": [
+        "APPROVAL_NOT_CURRENT_FOR_SCOPE",
+        "RETENTION_UNKNOWN",
+        "DISPOSAL_NOT_DUE",
+        "DISPOSAL_AUTHORITY_NOT_CURRENT",
+        "USE_NOT_RESTRICTED",
+        "INVENTORY_INCOMPLETE",
+        "REFERENCES_RETAINED_OR_UNKNOWN",
+        "READERS_ACTIVE_OR_UNKNOWN",
+        "HOLD_ACTIVE_OR_UNKNOWN",
+        "PROVIDER_RETENTION_BLOCKED_OR_UNKNOWN",
+        "LEDGER_NOT_CURRENT"
+      ]
+    },
+    "native_delete_requests": 0,
+    "protection": {
+      "Copy": {
+        "ID": "0b5a37a3-b062-4e1d-8fe9-7e95330876ea",
+        "WorkspaceID": "5fe971c0-7682-4b6b-b4c6-741883247365",
+        "DatasetVersionID": "aa67944f-df64-4ad3-a9a5-4f205ebe8f97",
+        "ProviderInstanceID": "24dba412-9b64-46c0-9cc5-ae56a5d3a124",
+        "IncarnationID": "b19427cf-0d61-4417-a5e1-76c7dd894046",
+        "Namespace": "dpp-lifecycle307-quarantine",
+        "Key": "fixture/a.csv",
+        "ProviderVersion": "87bd6a39-f420-4bfa-9619-4812a01e5835",
+        "ContentSHA256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+        "ByteSize": 27
+      },
+      "RetentionMode": "GOVERNANCE",
+      "RetainUntil": "2026-10-12T12:43:43Z",
+      "LegalHold": false,
+      "ObservedAt": "2026-10-11T13:06:37.593044285Z",
+      "CallIDs": [
+        "db6eb586-fec2-4244-adb7-42c4003d9df8",
+        "7397ed4e-e3d8-449a-b413-fc0d959173aa"
+      ]
+    }
+  }
+]

@@ -1,0 +1,373 @@
+{
+  "tests": {
+    "race": "NOT_RUN this turn",
+    "full_module": {
+      "no_test_packages": 44,
+      "log_sha256": "79356e47b6fa50d40f34880926220e410c96ff01f870e410c9670ae9a3bbc597",
+      "test_postgres_dsn": "unset for broad pass; real PG tested separately",
+      "command": "go test ./... -timeout 8m",
+      "ok_packages": 85,
+      "status": "PASS"
+    },
+    "final_routing_profiles": {
+      "status": "PASS",
+      "version": "c1-v26+ext1+exec1+usage1+rem1+life2",
+      "varchar_limit": 64,
+      "command": "go test ./internal/platform/routing -count=1",
+      "version_with_governance": "c1-v26+ext1+exec1+usage1+rem1+life2+governance"
+    },
+    "production_reader_delivery": "NOT_RUN",
+    "new_native_delete": "NOT_RUN",
+    "final_guard_real_postgresql": {
+      "status": "PASS",
+      "application_seconds": 32.613,
+      "command": "go test ./internal/lifecycle/application -run 'TestCopyRecovery|TestCopyMaterializationACK|TestArchiveRestore|TestCopyForged|TestCopyClaim' -count=1 -timeout 4m",
+      "log_sha256": "873f98129c2153db7311b284f7704ba6331ad5ffe202c843347aae1380f3f015"
+    },
+    "scoped_real_postgresql": {
+      "status": "PASS",
+      "database": "new isolated d05b650f",
+      "application_seconds": 297.786,
+      "command": "go test ./internal/lifecycle/... ./internal/platform/storage ./internal/platform/routing ./cmd/lifecycle-fixture-recovery ./cmd/lifecycle-fixture-archive -count=1 -timeout 6m",
+      "log_sha256": "23c33ccfe2fcafb0f8d1fcd142f685933abaa4d6ec42104c9cfd0c021152c848"
+    }
+  },
+  "isolated_database": {
+    "loopback_port": 57327,
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "container": "dpp-lifecycle307-migration-d05b650f",
+    "retained_named_volume": "dpp-lifecycle307-migration-d05b650f-data",
+    "native_object_access": "NONE"
+  },
+  "main_push_ci": {
+    "head_sha": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+    "scope": "base main only; not D1 CI",
+    "run_id": 38147297060,
+    "event": "push",
+    "conclusion": "success",
+    "branch": "main"
+  },
+  "source_boundary": "Native fixture retains its accepted SQL/binaries. Final guard was added after sealing and validated in two further fresh retained databases; no accepted database was changed.",
+  "c1_candidate_sha": "f114e506527b7097405acb42a94a59e8b018a900",
+  "current_sql": [
+    {
+      "name": "000059_quality_remediation.down.sql",
+      "sha256": "4ba368183643709b8a83a6be4ffe2c419fb44fa00d7b678ffbce612394168a20"
+    },
+    {
+      "name": "000059_quality_remediation.up.sql",
+      "sha256": "ec056e34032dc6152c1d74a49ea795ef52419db275af5329e4b6650e44971aec"
+    },
+    {
+      "name": "000060_lifecycle_fixture_plan.down.sql",
+      "sha256": "23cf51bbe75c57c330e4bdda54ea38978b49c79b88b4bcedc707f698c2f96fa7"
+    },
+    {
+      "name": "000060_lifecycle_fixture_plan.up.sql",
+      "sha256": "11f5860d01712f83873744d372daaa143950bd17722cc83940a4d3e2ee71e239"
+    },
+    {
+      "name": "000061_lifecycle_scoped_completion.down.sql",
+      "sha256": "dd6805ba5970a39d5cd2d358366b507f62cc49258dae4ff9c3b60c76e63fc8ff"
+    },
+    {
+      "name": "000061_lifecycle_scoped_completion.up.sql",
+      "sha256": "2fc4cd6336663ae33cdcd617e17e7a7ebe70514ef39ae0a8289d91751cde6058"
+    },
+    {
+      "name": "000062_lifecycle_denied_reconciliation.down.sql",
+      "sha256": "2fa11c1a1e885c9aee04cbd8a7a1a14398c42597b6042710a8ad2ca157275958"
+    },
+    {
+      "name": "000062_lifecycle_denied_reconciliation.up.sql",
+      "sha256": "d088d63d40df2bd85843071cbaf8daa55093bb76e344d0bebf397497e49e9e8a"
+    },
+    {
+      "name": "000063_lifecycle_archive_restore.down.sql",
+      "sha256": "89a2370f1646c373d7b79d8953452cd854bd06fd35b461d5fc7a99ff99daae0a"
+    },
+    {
+      "name": "000063_lifecycle_archive_restore.up.sql",
+      "sha256": "6d80cc8e20889473863c53072836a022dc5c77eba74c41c6b1f12033a9864076"
+    },
+    {
+      "name": "000064_lifecycle_reconciliation_work.down.sql",
+      "sha256": "f86ba26f716ceeda6ed81a4f6a255e1bee5f5df501462d3c18a2c4a6ead06c34"
+    },
+    {
+      "name": "000064_lifecycle_reconciliation_work.up.sql",
+      "sha256": "58f4f2a311fc5b9d55e977f34e3dfce07fec6ad4fbfba9ace12ffb89fef6a641"
+    }
+  ],
+  "unpublished_d1_versions": [
+    60,
+    61,
+    62,
+    63,
+    64
+  ],
+  "observed_at_utc": "2026-10-11T15:17:58.94012Z",
+  "main_sha": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "databases": [
+    {
+      "status": "PASS",
+      "retained": true,
+      "database": "upgrade_main58_c159_d164",
+      "readback": {
+        "applied_count": 61,
+        "max_version": 64,
+        "copy_discovery_table": false,
+        "final_discovery_scope_guard": false,
+        "rows_59_64": [
+          {
+            "version": 59,
+            "name": "000059_quality_remediation.up.sql",
+            "applied_at": "2026-10-11T22:28:11.793894+08:00"
+          },
+          {
+            "version": 60,
+            "name": "000060_lifecycle_fixture_plan.up.sql",
+            "applied_at": "2026-10-11T22:28:11.956362+08:00"
+          },
+          {
+            "version": 61,
+            "name": "000061_lifecycle_scoped_completion.up.sql",
+            "applied_at": "2026-10-11T22:28:12.214044+08:00"
+          },
+          {
+            "version": 62,
+            "name": "000062_lifecycle_denied_reconciliation.up.sql",
+            "applied_at": "2026-10-11T22:28:12.272255+08:00"
+          },
+          {
+            "version": 63,
+            "name": "000063_lifecycle_archive_restore.up.sql",
+            "applied_at": "2026-10-11T22:28:12.293841+08:00"
+          },
+          {
+            "version": 64,
+            "name": "000064_lifecycle_reconciliation_work.up.sql",
+            "applied_at": "2026-10-11T22:28:12.402512+08:00"
+          }
+        ]
+      }
+    },
+    {
+      "status": "PASS",
+      "retained": true,
+      "database": "fresh_c159_d164",
+      "readback": {
+        "applied_count": 61,
+        "max_version": 64,
+        "copy_discovery_table": false,
+        "final_discovery_scope_guard": false,
+        "rows_59_64": [
+          {
+            "version": 59,
+            "name": "000059_quality_remediation.up.sql",
+            "applied_at": "2026-10-11T22:28:14.848654+08:00"
+          },
+          {
+            "version": 60,
+            "name": "000060_lifecycle_fixture_plan.up.sql",
+            "applied_at": "2026-10-11T22:28:14.91894+08:00"
+          },
+          {
+            "version": 61,
+            "name": "000061_lifecycle_scoped_completion.up.sql",
+            "applied_at": "2026-10-11T22:28:15.102335+08:00"
+          },
+          {
+            "version": 62,
+            "name": "000062_lifecycle_denied_reconciliation.up.sql",
+            "applied_at": "2026-10-11T22:28:15.138934+08:00"
+          },
+          {
+            "version": 63,
+            "name": "000063_lifecycle_archive_restore.up.sql",
+            "applied_at": "2026-10-11T22:28:15.145073+08:00"
+          },
+          {
+            "version": 64,
+            "name": "000064_lifecycle_reconciliation_work.up.sql",
+            "applied_at": "2026-10-11T22:28:15.216203+08:00"
+          }
+        ]
+      }
+    },
+    {
+      "status": "PASS",
+      "retained": true,
+      "database": "upgrade_main59_final64",
+      "readback": {
+        "applied_count": 61,
+        "max_version": 64,
+        "copy_discovery_table": true,
+        "final_discovery_scope_guard": false,
+        "rows_59_64": [
+          {
+            "version": 59,
+            "name": "000059_quality_remediation.up.sql",
+            "applied_at": "2026-10-11T22:53:51.729389+08:00"
+          },
+          {
+            "version": 60,
+            "name": "000060_lifecycle_fixture_plan.up.sql",
+            "applied_at": "2026-10-11T22:53:51.92972+08:00"
+          },
+          {
+            "version": 61,
+            "name": "000061_lifecycle_scoped_completion.up.sql",
+            "applied_at": "2026-10-11T22:53:52.156873+08:00"
+          },
+          {
+            "version": 62,
+            "name": "000062_lifecycle_denied_reconciliation.up.sql",
+            "applied_at": "2026-10-11T22:53:52.211557+08:00"
+          },
+          {
+            "version": 63,
+            "name": "000063_lifecycle_archive_restore.up.sql",
+            "applied_at": "2026-10-11T22:53:52.237929+08:00"
+          },
+          {
+            "version": 64,
+            "name": "000064_lifecycle_reconciliation_work.up.sql",
+            "applied_at": "2026-10-11T22:53:52.332665+08:00"
+          }
+        ]
+      }
+    },
+    {
+      "status": "PASS",
+      "retained": true,
+      "database": "fresh_final64",
+      "readback": {
+        "applied_count": 61,
+        "max_version": 64,
+        "copy_discovery_table": true,
+        "final_discovery_scope_guard": false,
+        "rows_59_64": [
+          {
+            "version": 59,
+            "name": "000059_quality_remediation.up.sql",
+            "applied_at": "2026-10-11T22:53:54.786443+08:00"
+          },
+          {
+            "version": 60,
+            "name": "000060_lifecycle_fixture_plan.up.sql",
+            "applied_at": "2026-10-11T22:53:54.865225+08:00"
+          },
+          {
+            "version": 61,
+            "name": "000061_lifecycle_scoped_completion.up.sql",
+            "applied_at": "2026-10-11T22:53:55.080071+08:00"
+          },
+          {
+            "version": 62,
+            "name": "000062_lifecycle_denied_reconciliation.up.sql",
+            "applied_at": "2026-10-11T22:53:55.117162+08:00"
+          },
+          {
+            "version": 63,
+            "name": "000063_lifecycle_archive_restore.up.sql",
+            "applied_at": "2026-10-11T22:53:55.123914+08:00"
+          },
+          {
+            "version": 64,
+            "name": "000064_lifecycle_reconciliation_work.up.sql",
+            "applied_at": "2026-10-11T22:53:55.202493+08:00"
+          }
+        ]
+      }
+    },
+    {
+      "status": "PASS",
+      "retained": true,
+      "database": "upgrade_main59_guard64",
+      "readback": {
+        "applied_count": 61,
+        "max_version": 64,
+        "copy_discovery_table": true,
+        "final_discovery_scope_guard": true,
+        "rows_59_64": [
+          {
+            "version": 59,
+            "name": "000059_quality_remediation.up.sql",
+            "applied_at": "2026-10-11T23:16:34.438214+08:00"
+          },
+          {
+            "version": 60,
+            "name": "000060_lifecycle_fixture_plan.up.sql",
+            "applied_at": "2026-10-11T23:16:34.69585+08:00"
+          },
+          {
+            "version": 61,
+            "name": "000061_lifecycle_scoped_completion.up.sql",
+            "applied_at": "2026-10-11T23:16:34.921563+08:00"
+          },
+          {
+            "version": 62,
+            "name": "000062_lifecycle_denied_reconciliation.up.sql",
+            "applied_at": "2026-10-11T23:16:34.970358+08:00"
+          },
+          {
+            "version": 63,
+            "name": "000063_lifecycle_archive_restore.up.sql",
+            "applied_at": "2026-10-11T23:16:34.9918+08:00"
+          },
+          {
+            "version": 64,
+            "name": "000064_lifecycle_reconciliation_work.up.sql",
+            "applied_at": "2026-10-11T23:16:35.09072+08:00"
+          }
+        ]
+      }
+    },
+    {
+      "status": "PASS",
+      "retained": true,
+      "database": "fresh_guard64",
+      "readback": {
+        "applied_count": 61,
+        "max_version": 64,
+        "copy_discovery_table": true,
+        "final_discovery_scope_guard": true,
+        "rows_59_64": [
+          {
+            "version": 59,
+            "name": "000059_quality_remediation.up.sql",
+            "applied_at": "2026-10-11T23:16:38.408356+08:00"
+          },
+          {
+            "version": 60,
+            "name": "000060_lifecycle_fixture_plan.up.sql",
+            "applied_at": "2026-10-11T23:16:38.472384+08:00"
+          },
+          {
+            "version": 61,
+            "name": "000061_lifecycle_scoped_completion.up.sql",
+            "applied_at": "2026-10-11T23:16:38.669499+08:00"
+          },
+          {
+            "version": 62,
+            "name": "000062_lifecycle_denied_reconciliation.up.sql",
+            "applied_at": "2026-10-11T23:16:38.702305+08:00"
+          },
+          {
+            "version": 63,
+            "name": "000063_lifecycle_archive_restore.up.sql",
+            "applied_at": "2026-10-11T23:16:38.708705+08:00"
+          },
+          {
+            "version": 64,
+            "name": "000064_lifecycle_reconciliation_work.up.sql",
+            "applied_at": "2026-10-11T23:16:38.787416+08:00"
+          }
+        ]
+      }
+    }
+  ],
+  "native64_sql_sha256": "259ceb5ab945c38d36ccf00f2b362dbd1dcf7f1dad6f64d6f3bd935b74645e0f",
+  "final_local_code_sha": "4868774a97e55651beba2a92d156c69ca655afce"
+}

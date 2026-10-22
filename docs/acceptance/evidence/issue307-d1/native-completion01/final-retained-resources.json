@@ -1,0 +1,2058 @@
+{
+  "plane": {
+    "run": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+    "containers": [
+      {
+        "name": "dpp-lifecycle307-4176888e-reader-seal-6652f8",
+        "id": "05059d2c4f0ebdee5cb5ebcd81013dcfe769c5a72682b4a38b58f3f192a1f59a",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/repo",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/rules",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-reader-final-8dd125",
+        "id": "d9939a54d56fac572d4726c752dbe50a104746a3a74a9549ed801b23a6c43d1a",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/repo",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/rules",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-reader-pre-issued-ec3582",
+        "id": "c3378cf474f6674cfbe5002827d7e647238ceae197b5e7f043d8e25b435b7534",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/repo",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/rules",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-reader-verify-pre-issued-crash-162450",
+        "id": "c358782cae678f83b5bb365366f83265d538c06b01b20817fc436e41d431d9bd",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/repo",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/rules",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-reader-pre-issued-crash-366a80",
+        "id": "093d33d80da822bf29cd4790ecbbf1f9d9bfad28fe2874c8d134ad9dec1a5174",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 94,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/repo",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/rules",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-reader-setup-54f75e",
+        "id": "0e97fce3d953432561ce51a834af2b1e4ff3227d9c5deb6d560fbed1161a9311",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/repo",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/rules",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-reader-provision-f63420",
+        "id": "97d1dd15359932e87676987229ab420a9fc8081a32d9015f4aa0f9319166ee0a",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/repo",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/rules",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-prepare",
+        "id": "8dcd7f308a2787275d07a85ee2afd06d2dcf5d1ff4ed62fa20619e297f11ff04",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/migrations",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-gateway",
+        "id": "c5ff1f7e62f063e6e3e1d3bdd9a412bed06f7e5f420f4cf23d0002f897b38497",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "exited",
+        "exit": 255,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/etc/caddy/Caddyfile",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-minio",
+        "id": "c62244fe672646c67f081950cc2aa10955d8e069daff447090117c7c7f8fbe08",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "exited",
+        "exit": 255,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-4176888e-objects",
+            "destination": "/data",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/access",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/secret",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/start.sh",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-postgres",
+        "id": "612706e91ae71b2d6800ce270cc8ad60e64b0e09a77f8578488f5ac9a9e64912",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "exit": 0,
+        "run_label": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/pgpass",
+            "rw": false
+          },
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-4176888e-postgres",
+            "destination": "/var/lib/postgresql/data",
+            "rw": true
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "dpp-lifecycle307-4176888e-objects",
+        "labels": {
+          "lifecycle307.run": "4176888e-2c11-476e-80cf-b9800db1f8e9"
+        },
+        "driver": "local"
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-postgres",
+        "labels": {
+          "lifecycle307.run": "4176888e-2c11-476e-80cf-b9800db1f8e9"
+        },
+        "driver": "local"
+      }
+    ],
+    "network": {
+      "name": "dpp-lifecycle307-4176888e-private",
+      "id": "24665b6a54ffde7c8707abb06033922e6fe6ba832930d439fdec127705bfe580",
+      "internal": true,
+      "labels": {
+        "lifecycle307.run": "4176888e-2c11-476e-80cf-b9800db1f8e9"
+      }
+    },
+    "recorded_helper_ids_checked": 7,
+    "missing_recorded_helper_ids": [],
+    "required_named_volumes": [
+      "dpp-lifecycle307-4176888e-objects",
+      "dpp-lifecycle307-4176888e-postgres"
+    ],
+    "independent_witness": {
+      "private_retained": true
+    },
+    "no_cleanup_invocations": true
+  },
+  "archive": {
+    "run": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+    "containers": [
+      {
+        "name": "dpp-lifecycle307-df27ccf8-archive-disable-8677dc",
+        "id": "74e0cfa9c66525f605981005658b8d1fe310a12dd8ebdca086d299d20f7b4124",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private/archive-admin-receipts.jsonl",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-archive-execute-4df35b",
+        "id": "104bb4fb58dd41291cdb7d7f45625a7e86b8e918981fbe9413e303e4f4eba888",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-archive-provision-6b1243",
+        "id": "00f8864ea43529967a70581a55bae3e658576cea8d9d47deb534f4dc792048c3",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private/archive-admin-receipts.jsonl",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-prepare",
+        "id": "670d56071244e0c33ffd2d3ae70c6e3029fe851bd06dd1c2616f9b129c480325",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/migrations",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-gateway",
+        "id": "2371ba9bee99d5564a35ed83195ae391629cc62dc4f5456589f78edd36821643",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "exited",
+        "exit": 255,
+        "run_label": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/etc/caddy/Caddyfile",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-minio",
+        "id": "dab25bf2f9b8b2293e93c2910116b95b8eee8c954162878ee21e5feb873ffeaa",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "exited",
+        "exit": 255,
+        "run_label": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-df27ccf8-objects",
+            "destination": "/data",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/access",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/secret",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/start.sh",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-postgres",
+        "id": "d02a3dc4b63f8ec36d02b8aff55309c30eebb14d8c3de2fadf60b77655729c01",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "exit": 0,
+        "run_label": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/pgpass",
+            "rw": false
+          },
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-df27ccf8-postgres",
+            "destination": "/var/lib/postgresql/data",
+            "rw": true
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "dpp-lifecycle307-df27ccf8-objects",
+        "labels": {
+          "lifecycle307.run": "df27ccf8-00e5-46f0-8ac2-58568fe5b574"
+        },
+        "driver": "local"
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-postgres",
+        "labels": {
+          "lifecycle307.run": "df27ccf8-00e5-46f0-8ac2-58568fe5b574"
+        },
+        "driver": "local"
+      }
+    ],
+    "network": {
+      "name": "dpp-lifecycle307-df27ccf8-private",
+      "id": "4682bdeec2cdbe1cb0e7a5a4d3520a081009409c54d849348c2ea0191e8d3b50",
+      "internal": true,
+      "labels": {
+        "lifecycle307.run": "df27ccf8-00e5-46f0-8ac2-58568fe5b574"
+      }
+    },
+    "recorded_helper_ids_checked": 3,
+    "missing_recorded_helper_ids": [],
+    "required_named_volumes": [
+      "dpp-lifecycle307-df27ccf8-objects",
+      "dpp-lifecycle307-df27ccf8-postgres"
+    ],
+    "independent_witness": {
+      "private_retained": true
+    },
+    "no_cleanup_invocations": true
+  },
+  "copy": {
+    "run": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+    "containers": [
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-final-seal-bef3c1",
+        "id": "739c706e4d70a2f9a2fff3a901ae4b0a6a162d75fde8f84ead43c3a0ac109d4d",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private/archive-admin-receipts.jsonl",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-final-seal-f6b322",
+        "id": "04a87c6b519c8026cc21e49da6f2dfb320ca129549319eeb735670e30e267f8c",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private/archive-admin-receipts.jsonl",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-final-witness-5c4674",
+        "id": "d580d04c56854ea46b6d482da2d77fc1e41ff0868e4ef1bde949cb0e8e481bf6",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-restricted-worker-4ada24",
+        "id": "27df75bc34eacb3bd58edc387525b0c5ae0f3196ca053631e45389d298ffe1aa",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-restricted-outbox-d73269",
+        "id": "036818e4c487b44041488ede12081e3723784cb295583b66b7f3ad6fb2e17dcb",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-restricted-request-c1f7d6",
+        "id": "74884277eb63d8f993ad228d87375be7bd32dae7d311325d63960df0e67d7da1",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-restricted-witness-43ac52",
+        "id": "cf99b27f65985629cc4db66f0d77c867b342bd5c393e5a30c97aa48f7c1418d2",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-old-ledger-worker-270795",
+        "id": "0470535fd5164d4363324dc95ac9b033a52f9bb7a2a648d48b8c32086f90db2e",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-old-ledger-request-d13a96",
+        "id": "67e8c57830dfde3bf6f5cea64813da21c42399bb7c6d0ae30b1426c74dcb12ea",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-later-restriction-ae3ee0",
+        "id": "c8ae049c6d845f89eb94909358a54e85a2c7dfc4e269819d15f190c557a52489",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-authority-replay-315a0f",
+        "id": "2f824167f39f6a0d0f70cdb91a025946fbd74381dafe313081e2c4639b6f4cac",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-revoke-after-lookup-3c96cc",
+        "id": "80a96e7011d5b2cdfc96d46fda27492f4162d1a82b191051607ab4c8f5c25e24",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-producer-revoked-121f7e",
+        "id": "c9227893fde8f395f8a411bd68988da2c87fa4f6ffcb9894d69cd7d5dc7169fd",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 93,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-restored-replay-30e9a3",
+        "id": "24358b2012f976f11f6032186f375c6000a7080b20341b7ead8e414c95ceb48c",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-fresh-restore-worker-2fc6b3",
+        "id": "747a0ae3cb22e7a4e51685868bed11a82ce444c7729880aefa358ce694c3b7a4",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-fresh-restore-outbox-644690",
+        "id": "1eaf1a7daad1e7979a54ff8232275857152941b1014d5956e90c028aed492948",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-fresh-restore-request-427e7c",
+        "id": "c7e8a9b79724fa533b4e8896c9f526e1cdef6dee49a4f7d241cdf9ec06e05c08",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-fresh-witness-4d8240",
+        "id": "5bb449e7c4f21e98a53e4a3599d3b1a437eaa25504024cf3d11b2dfbf73b90cb",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-competing-owner",
+        "id": "e79d8a484e24716eb90d6f5b548f38899a55b34e01790e8864ed6cb6ff61ea5d",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-hold-owner-762f59",
+        "id": "6e5a8ccdcc65bc100bed39408b52c9c2f19e45d215df424f5c9625b5094ef558",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-producer-restore-dc337f",
+        "id": "91c07058f98fcecd972f5b778cd4c7d64b2426a1d0bf6d451df64dc7f683351d",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 93,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-archive-replay-cebfcd",
+        "id": "f68507a54b7903e57250a7569a3a56df5ebe4c76e66c8150a3dc6306791d4071",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-orphan-resumed-b6a2dc",
+        "id": "c79d0abce96b6fe45acfa1a20b1e3ead8baa7cb20f1fe5f9dd2c0bd3089a4d68",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-crash-after-bytes-6d32ba",
+        "id": "f5ca6d5b655a7f6798d2ec70f6df5a3613f091aabc3eca413df32f06f8135737",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 96,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-crash-after-lookup-059a70",
+        "id": "f7f407264f0ac54911e8f31c7eed5ad5d331753ce498f2b229b985da90932e03",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 92,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-crash-before-lookup-508ef0",
+        "id": "097e875626dfd959fb3a089c183897be3d1cc49b8fef04195de8b467f45c0f14",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 91,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-duplicate-enqueue-252ddb",
+        "id": "14713696b9cad526ba251f80208c67647d56fb771a3b704d351f0306a9bd6b80",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-broker-repaired-2a41f6",
+        "id": "32443bfd584842b1b60674bee39cb09bd9fd6f8a9200ed69cb356b4f8fa3ca26",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-outbox-broker-unavailable-f4b7ee",
+        "id": "cdc743ce8f5717a2dd14068a01aa7894a8c0dea55b612db71c245376328212f1",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-copy-producer-archive-72c53b",
+        "id": "487e09991e88a5d797168cd4e5e906734bcd90b093a9fe2e91d934a3f8d5378b",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 93,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-provision-readonly-iam-659123",
+        "id": "f618352b6f42f036a5a47176ef1344e189fb080132735211ac90f33a4de8e952",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private/archive-admin-receipts.jsonl",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-provision-copy-iam-aa7c91",
+        "id": "15f639ee03c1ebaf6de22e5cce7c310b714068285fa5734076b7a728bb289818",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/witness",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private/archive-admin-receipts.jsonl",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-redis",
+        "id": "e1eb9a821974aeccefbfa551455dec31319ddcab7605750798eeb3995400fc46",
+        "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+        "state": "running",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-74b0dd66-redis-data",
+            "destination": "/data",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-prepare",
+        "id": "d2fb804bd0cb8c6682e7e1f5541bdc6cbd820b9b7583772815461a7422db1993",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/migrations",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-gateway",
+        "id": "354ef8421234084fec4d58fd029eb5ec4c0a512f4fbe29fee8d205cf48d7346b",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "running",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/etc/caddy/Caddyfile",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-minio",
+        "id": "9fb52f3936729083cc31e7bc023baae8b07ff154d834cd75fb73015d91ee89d5",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "running",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-74b0dd66-objects",
+            "destination": "/data",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/access",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/secret",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/start.sh",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-postgres",
+        "id": "18790cf170e4ddca5bab55f1bd80e955022041cda1ec18c78975aadfbb7a2390",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "exit": 0,
+        "run_label": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/pgpass",
+            "rw": false
+          },
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-74b0dd66-postgres",
+            "destination": "/var/lib/postgresql/data",
+            "rw": true
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "dpp-lifecycle307-74b0dd66-objects",
+        "labels": {
+          "lifecycle307.run": "74b0dd66-0194-46ec-aa84-26af6662e8b3"
+        },
+        "driver": "local"
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-postgres",
+        "labels": {
+          "lifecycle307.run": "74b0dd66-0194-46ec-aa84-26af6662e8b3"
+        },
+        "driver": "local"
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-redis-data",
+        "labels": {
+          "lifecycle307.run": "74b0dd66-0194-46ec-aa84-26af6662e8b3"
+        },
+        "driver": "local"
+      }
+    ],
+    "network": {
+      "name": "dpp-lifecycle307-74b0dd66-private",
+      "id": "592e6bc46ebeec9b1f6484e5464bae9ad0bdeb08b4e307800555bc5d7ba8a005",
+      "internal": true,
+      "labels": {
+        "lifecycle307.run": "74b0dd66-0194-46ec-aa84-26af6662e8b3"
+      }
+    },
+    "recorded_helper_ids_checked": 32,
+    "missing_recorded_helper_ids": [],
+    "required_named_volumes": [
+      "dpp-lifecycle307-74b0dd66-objects",
+      "dpp-lifecycle307-74b0dd66-postgres",
+      "dpp-lifecycle307-74b0dd66-redis-data"
+    ],
+    "independent_witness": {
+      "private_retained": true
+    },
+    "no_cleanup_invocations": true
+  },
+  "metadata": {
+    "run": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+    "containers": [
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-recovery-metadata-final-witness",
+        "id": "e4abcb3eb4aaa10d4e354fb9b7f9e8adec0390b814f5cf9f92f98bd3aa366b78",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-recovery-metadata-terminal-replay",
+        "id": "ab79942e39f381e507ba629f12eba084ff220a573fbbbc44102c17e4b12d7fe5",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-metadata-competing-owner",
+        "id": "e34a4b21753d7da19c9ee51f03a9e5ba75ef99009039a1ac892392bc416943fc",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-hold-owner",
+        "id": "a5eeac192ae7fc26ff7081d412335f00f999dc6c42d50b1e3d0ff845f740f2bc",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-metadata-resumed-worker",
+        "id": "ec64fe6eeec135fe0241e40430d127a5e3eff8cc5daae52dd6615c9672b8c70b",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-recovery-crash-after-lookup",
+        "id": "38fe705f10d23ab5310fce2e67abe12cf10e98e66ed98866bf4a6d1505ce4122",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 92,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-recovery-crash-before-lookup",
+        "id": "1c518a7c71d82abffd8e49baf2c7cffe3df8bdd0b242b33b157396ead5221f90",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 91,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-recovery-metadata-outbox",
+        "id": "b9d18601a227ed4c2a60fd01c3ec8040e73296f2f445c87abac79c9bcdd2d3a7",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-recovery-completion-sql-input",
+        "id": "e0abe410bed4adce0961afe5115701ceac861a1d4731f3674277510f4d73b570",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-redis",
+        "id": "d59ad9a741a6544c2b0d7028fd049c94d297106cce55a60cb8d50596dcab73ef",
+        "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+        "state": "running",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-30cc0c1e-redis-data",
+            "destination": "/data",
+            "rw": true
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-prepare",
+        "id": "fae56fddbc5cde93b9737ef4f7fb56d5be2957f30c181e40b909d15339dab6f5",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "exited",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/migrations",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/output",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/private",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-gateway",
+        "id": "4484607d0179236ed897f239ba67d642af4f7ab160c83735098f9fc764d753a2",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "running",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/etc/caddy/Caddyfile",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-minio",
+        "id": "b9ab72ba7173cdff1b32a79181f42b25a967330028eddc4c13891f1c821f7da3",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "running",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-30cc0c1e-objects",
+            "destination": "/data",
+            "rw": true
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/access",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/secret",
+            "rw": false
+          },
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/start.sh",
+            "rw": false
+          }
+        ]
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-postgres",
+        "id": "78cc6d83f38edb226104ac5e0ca6007bdb10ce8b0818acd1145b0fc867545243",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "exit": 0,
+        "run_label": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+        "mounts": [
+          {
+            "type": "bind",
+            "name": null,
+            "destination": "/run/credentials/pgpass",
+            "rw": false
+          },
+          {
+            "type": "volume",
+            "name": "dpp-lifecycle307-30cc0c1e-postgres",
+            "destination": "/var/lib/postgresql/data",
+            "rw": true
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-objects",
+        "labels": {
+          "lifecycle307.run": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5"
+        },
+        "driver": "local"
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-postgres",
+        "labels": {
+          "lifecycle307.run": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5"
+        },
+        "driver": "local"
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-redis-data",
+        "labels": {
+          "lifecycle307.run": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5"
+        },
+        "driver": "local"
+      }
+    ],
+    "network": {
+      "name": "dpp-lifecycle307-30cc0c1e-private",
+      "id": "00b799de1811fa623b4c97d5d5ae6762d032be25e90ace2c31d38433804aadb8",
+      "internal": true,
+      "labels": {
+        "lifecycle307.run": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5"
+      }
+    },
+    "recorded_helper_ids_checked": 9,
+    "missing_recorded_helper_ids": [],
+    "required_named_volumes": [
+      "dpp-lifecycle307-30cc0c1e-objects",
+      "dpp-lifecycle307-30cc0c1e-postgres",
+      "dpp-lifecycle307-30cc0c1e-redis-data"
+    ],
+    "independent_witness": {
+      "private_retained": true
+    },
+    "no_cleanup_invocations": true
+  }
+}

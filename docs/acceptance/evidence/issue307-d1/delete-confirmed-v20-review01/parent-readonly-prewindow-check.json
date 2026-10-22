@@ -1,0 +1,39 @@
+{
+  "status": "PASS_ACTUAL_READONLY_PREWINDOW_REVIEW_CHECK",
+  "at": "2026-10-18T07:35:38.548756+00:00",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "support_check": {
+    "status": "PASS_PREWINDOW_CLOSED",
+    "at": "2026-10-18T07:35:37.865861+00:00",
+    "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+    "permissions_disabled": 32,
+    "containers_stopped": 58,
+    "containment_anchor": "5eb3aec724f55e97ee05595439f74781d0e4b989",
+    "containment_snapshot_available": true,
+    "native_delete": 0,
+    "provider_io": 0,
+    "container_starts": 0
+  },
+  "actual_all_generations_containers_stopped": 205,
+  "actual_all_generations_permissions_false": 128,
+  "frozen_references_exact": 14,
+  "execution_preparation_index_exact": true,
+  "actual_schedule": {
+    "id": "307-d1-candidate10-v20",
+    "kind": "heartbeat",
+    "status": "ACTIVE",
+    "rrule": "FREQ=DAILY;COUNT=1;BYHOUR=18;BYMINUTE=0;BYSECOND=0",
+    "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a"
+  },
+  "schedule_prompt_sha256": "ea553adace261d0fe0cef395fe3aa17145b84f861d6454b7d2ff7fd991bf5ebd",
+  "old_v17_heartbeat": "PAUSED",
+  "source_container_starts": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "worker_authority_materialized": false,
+  "fresh_native_Core_IAM_window_checks": "NOT_RUN_REQUIRED_IN_WINDOW",
+  "business_cases_and_send": "NOT_RUN",
+  "independent_review": "PENDING",
+  "PR323": "DRAFT",
+  "Issue307": "OPEN"
+}

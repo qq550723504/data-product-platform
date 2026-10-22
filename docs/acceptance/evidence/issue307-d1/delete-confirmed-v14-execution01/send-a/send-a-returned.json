@@ -1,0 +1,30 @@
+{
+  "attempt": {
+    "ID": "c163dca9-4650-4efe-bdef-e3380bdc9da0",
+    "WorkspaceID": "89eba3fd-9763-4f66-8cec-1a779104f155",
+    "DispatchID": "33fe793a-f793-41c0-bc6e-33c0c1cdd80f",
+    "PlanID": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+    "CopyID": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+    "Action": "DELETE_EXACT",
+    "ProviderRequestKey": "lifecycle-delete:c163dca9-4650-4efe-bdef-e3380bdc9da0",
+    "StartedAt": "2026-10-15T08:58:58.795995Z",
+    "DependencyRevision": 89
+  },
+  "completion": "NOT_CLAIMED",
+  "confirmed_invocation_observed": true,
+  "copy": {
+    "ID": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+    "WorkspaceID": "89eba3fd-9763-4f66-8cec-1a779104f155",
+    "DatasetVersionID": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+    "ProviderInstanceID": "1980751b-c50e-4895-93a8-cb55960cd635",
+    "IncarnationID": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+    "Namespace": "dpp-lifecycle307-online",
+    "Key": "fixture/a.csv",
+    "ProviderVersion": "312365a9-f984-43de-b9d5-7e26009ccd82",
+    "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+    "ByteSize": 232
+  },
+  "recovery": "READ_ONLY_ONLY; no resend or next stage before exact absence",
+  "response_unknown": true,
+  "work_id": "144b5fde-01f3-48a1-ba86-a41c79ebe933"
+}

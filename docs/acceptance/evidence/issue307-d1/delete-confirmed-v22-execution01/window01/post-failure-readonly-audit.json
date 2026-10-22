@@ -1,0 +1,688 @@
+{
+  "status": "PASS_READONLY_POST_FAILURE_CONTAINMENT",
+  "at": "2026-10-19T06:18:09.011145+00:00",
+  "physical_owners": [
+    {
+      "id": "0305609543ea2029e8bb7e1b3100b0c1598c8eefdbf67b2577ccea56542b6d5f",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:33.945514054Z"
+    },
+    {
+      "id": "04ce9972b7c2da4d2a540600d2fa853a282398dc8a94bb6918a365028a60b05f",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:36.862602657Z"
+    },
+    {
+      "id": "082d4921b7a430f0c7f667b528fd5f8d1b049a51c24f98931315345e6bff0ed3",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-16T08:49:50.897449527Z"
+    },
+    {
+      "id": "0a1ff2d2dca3db2d6de30cdedfcf5f1e4507aef8e09ccfc4a1cb1b8167421a34",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:47.018948804Z"
+    },
+    {
+      "id": "0a9d9e0edb110c3027e4d61ce03e89ed8e46bfad5bf7bbfed4d05d93249fa263",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:48.002183739Z"
+    },
+    {
+      "id": "17545a3f50626c46976ee853e87221627f17e19ffdf20e25b9f0d1d067d6307c",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:41.684087246Z"
+    },
+    {
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:42.008076848Z"
+    },
+    {
+      "id": "25a4e218f72527e8f93a1df2eeb7a09833e5028c03d5ee178009bd9c71ee33e6",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:47.078137884Z"
+    },
+    {
+      "id": "2e2192530e9ff4d45bfdae8fc797089fd8ce0969d37cba97e00d63986f4e194c",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:43.725084502Z"
+    },
+    {
+      "id": "3166956c6449116e0a2716201ad9274d95265461a6f6b86064fdf55961b6655f",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:07:00.412719813Z"
+    },
+    {
+      "id": "4bef9dbef2d6ce32d04aa5233fdd491b036e404ab69b59c745616c982040b7f6",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "4c9bb37a8d325729e2ba81a4decdc062534384862d12338c5b3f679fa37f91d9",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:44.703887705Z"
+    },
+    {
+      "id": "4f81a9bb2f9e6a841f1634cd54e5b6cad23e1a842bb52dde32c9ef617b85844f",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:41.054333016Z"
+    },
+    {
+      "id": "57c7833cbf519f451003ac9a073f3c4c2a853e76d15927142a3eccd1b7f4c141",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:36.294447944Z"
+    },
+    {
+      "id": "5ce094c5beac39c734225169cef76f1adb41b598b1993d203bd2fa71a21f83c3",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:45.340512889Z"
+    },
+    {
+      "id": "64ae4bfbada8cbe48820524af866662a2a5d4e9b7c3207cf900781952e5a01b6",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:06:00.625397555Z"
+    },
+    {
+      "id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:45.781512815Z"
+    },
+    {
+      "id": "67cbb08fce688d3e3ed446065eceae350568e04a5b59a367a974a4301a77ac8f",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-16T08:49:51.32975104Z"
+    },
+    {
+      "id": "689fc3fedf2dc7423ed2a5db8bc6efe5f4d521b5aeeff42d8a06411e25a0c574",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "728e4dbdbf94713c5467edd31e4f9b5669535f6dc23878714504c6016405fe3c",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-16T08:46:43.077307316Z"
+    },
+    {
+      "id": "73001e579026a5e9ad3c8efe543bd43046ea40a107f3cf9e5b5013cce7c79d80",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:05:54.900749086Z"
+    },
+    {
+      "id": "784d99ba0f39405203d6e5dfc3bfa9d87cc2874c0fbe659c5925eee15ac5dfb3",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:05:49.377151051Z"
+    },
+    {
+      "id": "7886a1602a6bcd2cb820264674a89de4224510de39df707dcc217111ca036a7f",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:51.152069371Z"
+    },
+    {
+      "id": "7ba6a70d54b49021ab50156a9fdf3bd7a57bdd9b93dbbb441b3837614a665639",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-16T09:18:53.378860301Z"
+    },
+    {
+      "id": "7f873b6bb7633fa430dcbfe64087f91532fd3329d101574676179deef3812d0e",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "82024ecd2d4cd8afa46b33d1d28abfddffa4093d6b9dd9b24d67fc046bb6eabd",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-16T09:18:52.963506014Z"
+    },
+    {
+      "id": "857355208a10c440b5dba5b3ebaa3297bd300553665c80ee3b7d24cede4adcfc",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:40.416302085Z"
+    },
+    {
+      "id": "8926e79ef19497bc2d765eaa4318896ab2da8fc8731044a06fa1f964416d06b5",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:50.752047554Z"
+    },
+    {
+      "id": "8a7c2f1f1e43c96471d99e559ae55462b164d595874cf2f449bb66898c349b69",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:50.444001781Z"
+    },
+    {
+      "id": "8b3c242615920a1ceedf37376e69feee05fedcec5c9d3ca6209ef3204c016714",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:03:41.648840216Z"
+    },
+    {
+      "id": "8b62ccf3aaf90a55dc4de50c85e79f9b6bf00e99e084daacbcfb9c6839756fa5",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:29.333248284Z"
+    },
+    {
+      "id": "9651b267c0add02658d4e4ec891adf1be81b004deee9fbecf8d771ee87fcf1ab",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:49.414349469Z"
+    },
+    {
+      "id": "9658ce7c7284f56c7e171cbfa608a2af6aff02ff98406591255a85f8581e42b1",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:03:26.486065031Z"
+    },
+    {
+      "id": "967e43ac8d8010c2321a8d3cce160edfab9cd8512d9e8755c3b13816e55b9a10",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:44.410170413Z"
+    },
+    {
+      "id": "9710619052bce872dfb5ca248dc883f4a4a710edb9edf2fd551a716a42d43033",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:50.012726557Z"
+    },
+    {
+      "id": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:44.454291344Z"
+    },
+    {
+      "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:42.805205772Z"
+    },
+    {
+      "id": "aa8360ebe90ab053d8a5641274e6915d7f5414556f603af37408d751165c02a6",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:05:54.104583488Z"
+    },
+    {
+      "id": "c2081fc4862968502ddcca7072194a55468e32d22116852809eac215099a494c",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:05:48.319635846Z"
+    },
+    {
+      "id": "c50a5e3a3fcd511c5142e097fb20eb1c72f262f0f52e91ccdb7e0d66be01600c",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:48.703990354Z"
+    },
+    {
+      "id": "c651c2c8000dfb932fdd79d0a1e09552851f733e65076b8722724bb221c9b55d",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:44.11221048Z"
+    },
+    {
+      "id": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:46.126713575Z"
+    },
+    {
+      "id": "cbb9ce20fd61918d1d31f956f184f4d75c80fcbade23e3d2706525d66f77e40d",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "cdf0bcd7b364453300a28581e76e2a989605266be8f107c441ec247358217496",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "d0036b46b7d63912fe638b1311cc512c0c2e9db8ee519f25245703ce31fe2253",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:47.297046863Z"
+    },
+    {
+      "id": "d1332aac5b3a4ff378b3345f3e73c7ba49ebdf10308376696f6d166cb78a4d72",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "d8c7a52c84b9dd518f4d34b7cc3b8cf0fd1b4f23465cdaae91287d1620e76348",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "e7e87af761f8f522bd1fe090db8a279f233ecc866a83a3aeae0955f83c7c0082",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:03:34.527599437Z"
+    },
+    {
+      "id": "e9b195926d584d0505e546e33c4e259a5dbe97b03323101a6b79402e75af5399",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:49.715345494Z"
+    },
+    {
+      "id": "ede3ebe05c62ff51c8292e974fed6e1f93d25363d79d31aa9fe9ec19796472a7",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "created",
+      "finished_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "ee8ca5d8fd9818c3bbcf1d194c0cb37e397a85ac9163929054c16ac3ef233290",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-16T08:46:43.804297594Z"
+    },
+    {
+      "id": "ef51026764ba8b6327471fe24d9d9816aa93c8c464d789fa30ed5f57767a580e",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:45.012578768Z"
+    },
+    {
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:42.439028578Z"
+    },
+    {
+      "id": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:08:44.119215311Z"
+    },
+    {
+      "id": "f385ab10af837f81444fbe0e5d1a9f3842bd9dca4978660c33fe3ba23095e835",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:05:59.70721468Z"
+    },
+    {
+      "id": "f3a29ad7ddfd8b24fbde54e8354a126d3471635d056c5c549c711ba55322e1e6",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:48.975503296Z"
+    },
+    {
+      "id": "f3ab62b50ca093963668f353d5b4053914dd5be1d8bcad0cbaddbb5ae5654ea0",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:47.712680706Z"
+    },
+    {
+      "id": "f4b20af2a23f7331a1de84ef00695f1e3929f9d77f7c10d90f1bd612e70452c3",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:48.414182681Z"
+    },
+    {
+      "id": "f5a58ebb3cfffae976a8e6300258a26611c97ae64ba6a1f7ddd68e9ba2d2e8a9",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:46.319529028Z"
+    },
+    {
+      "id": "f82c3652f6aee6b90b1ceeaee481f56fd242626ad440afb9fdfece8af27dc326",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-18T14:51:45.328811315Z"
+    },
+    {
+      "id": "f8ba4d5fb2009bad9dc19bf3683667927bcf373db86dbd6a2ce3802ec4758a28",
+      "stopped_pid_zero_noports_norestart": true,
+      "status": "exited",
+      "finished_at": "2026-10-19T06:06:44.08366545Z"
+    }
+  ],
+  "permissions": [
+    {
+      "group": "business-races",
+      "stage": "wire",
+      "enabled": false,
+      "sha256": "d3e841acf1c6f4aefd35dbd2eeff05eb42ecbdab89c808e0f04046a997755c0f"
+    },
+    {
+      "group": "business-races",
+      "stage": "P1",
+      "enabled": false,
+      "sha256": "2e2b328d26f71f0a99b7e46986ca932dd7a9c3b28c7ba2eed05fbf8d7cd24c72"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-P1",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "business-races",
+      "stage": "P2",
+      "enabled": false,
+      "sha256": "e036f9015f4883ae450677eaefa615278bbc1ca2c9ec036a6b1c0f5995e50fa4"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-P2",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "business-races",
+      "stage": "T1",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T1",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "business-races",
+      "stage": "T2",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T2",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "business-races",
+      "stage": "root-check-disabled",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "business-races",
+      "stage": "root-enable-read",
+      "enabled": false,
+      "sha256": "3f7756c4c8a8dfd443e657289d5cdc26a722cfa642992dc67ce3d410e04388ea"
+    },
+    {
+      "group": "business-races",
+      "stage": "root-enable-send",
+      "enabled": false,
+      "sha256": "5ffa6bbc8fcfb6592801851d82ffc182d912c8df3a539633fd12117441c9cdb2"
+    },
+    {
+      "group": "business-races",
+      "stage": "root-disable-send",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "business-races",
+      "stage": "root-disable-all",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "late-hold",
+      "stage": "wire",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "late-hold",
+      "stage": "H2",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "late-hold",
+      "stage": "recover-H2",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-check-disabled",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-enable-read",
+      "enabled": false,
+      "sha256": "ee49106eb976b1b1d64cd6c3b929e6db757a2c870ed8b6ae6077b4d84f6b2dfa"
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-enable-send",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-disable-send",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-disable-all",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "mixed",
+      "stage": "wire",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "mixed",
+      "stage": "M1A",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1A",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "mixed",
+      "stage": "M1B",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1B",
+      "enabled": false,
+      "sha256": "157806764489dcbc1bdc46943d8059b821e8f1d800de0f489e3d6cf14c6b2e4d"
+    },
+    {
+      "group": "mixed",
+      "stage": "root-check-disabled",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "mixed",
+      "stage": "root-enable-read",
+      "enabled": false,
+      "sha256": "1d7fbd8f90218d4736910f622ebef8cd048acd23c24209a6662004ff951e7317"
+    },
+    {
+      "group": "mixed",
+      "stage": "root-enable-send",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "mixed",
+      "stage": "root-disable-send",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    },
+    {
+      "group": "mixed",
+      "stage": "root-disable-all",
+      "enabled": false,
+      "sha256": "075a1d57ee3fb49a3bba24767e08f9adc0a008757952b7908e6e3366ab3cdfd8"
+    }
+  ],
+  "cases": [
+    {
+      "group": "business-races",
+      "stage": "renew",
+      "enabled": false,
+      "sha256": "ca776d5e27626b3f48e86bf265ab022eb33512928e869cc14ff57c849e968b3d"
+    },
+    {
+      "group": "business-races",
+      "stage": "business",
+      "enabled": false,
+      "sha256": "ca776d5e27626b3f48e86bf265ab022eb33512928e869cc14ff57c849e968b3d"
+    },
+    {
+      "group": "late-hold",
+      "stage": "late",
+      "enabled": false,
+      "sha256": "0d4fb00944264625ee78a569f66c84957274ba0be7028fcb4e0e9784f3c3467d"
+    },
+    {
+      "group": "late-hold",
+      "stage": "close-H1",
+      "enabled": false,
+      "sha256": "a55019ee2db1cad81e0ae25d54d505ee334a7fe8dac0d4a799bb76d9961331ff"
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed",
+      "enabled": false,
+      "sha256": "b89c5977e9ff6d0bd82a094b86ee64ff42a332fc1a14a871da53ce11d1801cdb"
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-b",
+      "enabled": false,
+      "sha256": "b89c5977e9ff6d0bd82a094b86ee64ff42a332fc1a14a871da53ce11d1801cdb"
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-c",
+      "enabled": false,
+      "sha256": "b89c5977e9ff6d0bd82a094b86ee64ff42a332fc1a14a871da53ce11d1801cdb"
+    }
+  ],
+  "recoveries": [
+    {
+      "group": "business-races",
+      "stage": "recover-P1",
+      "enabled": false,
+      "sha256": "7e3ac7b0622335e6828a111709d7d6c98a5399636add7a7c902aed8ce019c78e"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-P2",
+      "enabled": false,
+      "sha256": "7e3ac7b0622335e6828a111709d7d6c98a5399636add7a7c902aed8ce019c78e"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T1",
+      "enabled": false,
+      "sha256": "7e3ac7b0622335e6828a111709d7d6c98a5399636add7a7c902aed8ce019c78e"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T2",
+      "enabled": false,
+      "sha256": "7e3ac7b0622335e6828a111709d7d6c98a5399636add7a7c902aed8ce019c78e"
+    },
+    {
+      "group": "late-hold",
+      "stage": "recover-H2",
+      "enabled": false,
+      "sha256": "d6bb3865e25a04eb66ba7a1e99f37dab79d992f648be3c7ee826466fea3bae49"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1A",
+      "enabled": false,
+      "sha256": "bd6ed217027705b237f4695f843995ac01edb5527895abe8fa8c3ff8e046344d"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1B",
+      "enabled": false,
+      "sha256": "bd6ed217027705b237f4695f843995ac01edb5527895abe8fa8c3ff8e046344d"
+    }
+  ],
+  "gateways": [
+    {
+      "group": "business-races",
+      "stopped": true,
+      "sealed_sha256": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad",
+      "expected": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad"
+    },
+    {
+      "group": "late-hold",
+      "stopped": true,
+      "sealed_sha256": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad",
+      "expected": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad"
+    },
+    {
+      "group": "mixed",
+      "stopped": true,
+      "sealed_sha256": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad",
+      "expected": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad"
+    }
+  ],
+  "budget_preservation": {
+    "business-races": {
+      "5a4c9789-3e67-4e54-ab58-128d111cbd65.json": "dcd9ea81e45fc05afc31a91b37b60e9c6390e3f064c416ef8ddbfca89e8dbcc9",
+      "6fabf3b5-76b8-4245-8f5d-01e64f610146.json": "29dc38591157a1d40f3283e6c508452353ad13fbb650399479d06c6d027881db",
+      "wire-5a4c9789-3e67-4e54-ab58-128d111cbd65.json": "9287e64246160e3b531b3ec8b73416c801be3ef6bc87db353cebda7bccfe7320"
+    },
+    "late-hold": {},
+    "mixed": {}
+  },
+  "P1_witness_signature_verified": true,
+  "P1_signed_upstream_status": 204,
+  "native_delete_wire_slots": 1,
+  "send_budget_slots_consumed": 2,
+  "no_source_or_enable_restart_for_audit": true
+}

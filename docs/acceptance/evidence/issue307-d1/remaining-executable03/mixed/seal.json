@@ -1,0 +1,111 @@
+{
+  "containers": [
+    {
+      "id": "25be53ec0eaf1aedb6796eac5b17a3cba416d62f512ff86536eb46a7c11bd916",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-C-protected",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "86323f279008e8f455c70474dd816d3cf45333c8906186471f615e941a20a52a",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-clone-inspect-enable",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "0d928b5997ee076a24c667fb9c2b3a1796f835688bde3756c908f6bf126c6554",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "607c942538730896aadbc54e42175149b63aeb44b7ccf8de8d32a02debcc88ec",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-restored-readonly",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "082d4921b7a430f0c7f667b528fd5f8d1b049a51c24f98931315345e6bff0ed3",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "32aaa0b78b4df84b9ac25748df8b5b8d8d6b44220a51342a425db06de7062420",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-compare",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "9493e72ec350fe828c411461865d7bec2c17cba874bbb609d5ac9a4f5331e7d7",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-unpack",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "67cbb08fce688d3e3ed446065eceae350568e04a5b59a367a974a4301a77ac8f",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-checkpoint",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "31d145339134a8076fde411f91f6d2d1163a96dda9216c28c5e8f6b26eab8046",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-archive",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "924239dfe3a8c3c20cf5e41735b9490b6356b4668064fec5d49e62d7d6817738",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-source-readonly",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "ff063c9fa72ab66c6a04c79433ea20f64f327e59d303643e0b7a189becc22143",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-03-migrate",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "name": "/dpp-lifecycle307-dfda43b4-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "name": "/dpp-lifecycle307-dfda43b4-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    }
+  ],
+  "retained": true,
+  "native_delete": 0,
+  "cleanup": 0
+}

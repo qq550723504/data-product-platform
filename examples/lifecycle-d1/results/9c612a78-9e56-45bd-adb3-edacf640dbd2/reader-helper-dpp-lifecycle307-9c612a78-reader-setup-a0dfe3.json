@@ -1,0 +1,12 @@
+{
+  "expected_exit": 0,
+  "exit_code": 0,
+  "mode": "setup",
+  "id": "a5dadb645846a516dd0a6065a78038b8d683f1cebc1c610f7d3fcc7327180326",
+  "cleanup": 0,
+  "binary_sha256": "2df1a935dffa184f0879217509509efceb222d21f5492651dac5e786d513e37f",
+  "container": "dpp-lifecycle307-9c612a78-reader-setup-a0dfe3",
+  "root_mounted": false,
+  "delete": 0,
+  "run_id": "9c612a78-9e56-45bd-adb3-edacf640dbd2"
+}

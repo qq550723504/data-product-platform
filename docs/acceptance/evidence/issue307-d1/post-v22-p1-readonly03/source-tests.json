@@ -1,0 +1,14 @@
+{
+  "observed_at": "2026-10-19T10:26:47.824048+00:00",
+  "command": "go test -count=1 ./cmd/lifecycle-fixture-recovery ./internal/lifecycle/pilot ./internal/platform/storage",
+  "cwd": "apps/platform",
+  "exit_code": 0,
+  "observed_tool_output": "ok recovery 2.362s; ok pilot 0.547s; ok storage 5.191s",
+  "scope": "Unit/loopback; no retained native",
+  "host": "normal/-O each 8 passed",
+  "runtime_files": {
+    "apps\\platform\\cmd\\lifecycle-fixture-recovery\\p1_post_v22.go": "c232599a2ea29db0df1f57a5d0e502f26accb3b67ea3b724e7edefb122180e46",
+    "apps\\platform\\internal\\lifecycle\\pilot\\recovery_bootstrap.go": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+    "apps\\platform\\internal\\platform\\storage\\lifecycle_inspection.go": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b"
+  }
+}

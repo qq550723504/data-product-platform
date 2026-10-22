@@ -1,0 +1,49 @@
+{
+  "containers": [
+    {
+      "id": "cd11df578923457b78f9cd1a3b86ce5cd2eac32adb8fab592ed5d5649dfcc4e7",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-04-final-readonly",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "5e319493a7ea7464c9144f61922797632664bdad912c50e995b4846a4b848c99",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-04-inspect-disable",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "8e3d293c4ec1dee0bc576a7a45607278879363732376523deac8a2fbc9826f79",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-04-C-protected",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "50ecd28b911a195ab1869cae55ed231ca90e9b0d4c1beeb35f3abe2cea5ec95d",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-04-M1-ready",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "0d928b5997ee076a24c667fb9c2b3a1796f835688bde3756c908f6bf126c6554",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-gateway",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "082d4921b7a430f0c7f667b528fd5f8d1b049a51c24f98931315345e6bff0ed3",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-minio",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "67cbb08fce688d3e3ed446065eceae350568e04a5b59a367a974a4301a77ac8f",
+      "name": "/dpp-lifecycle307-dfda43b4-candidate07-checkpoint",
+      "pid": 0,
+      "ports": {}
+    }
+  ],
+  "retained": true,
+  "native_delete": 0,
+  "cleanup": 0
+}

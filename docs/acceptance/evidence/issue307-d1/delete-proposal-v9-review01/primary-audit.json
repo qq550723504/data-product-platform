@@ -1,0 +1,503 @@
+{
+  "checked_at": "2026-10-15T03:23:24.038829+00:00",
+  "reviewed_head": "d01c6cdc5918e04eb0981b4bff2a152bb72ee0a6",
+  "status": "PASS_OFFLINE_INTEGRITY_AND_HOST_METADATA_ONLY",
+  "preserved_indexes": [
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6",
+      "indexed_payloads": 3,
+      "index_sha256": "025c962ab750c3c2cf71e1d6a9b04a43ef7482e3aca49f21fc9ea99b2bc6cbc8"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6-review01",
+      "indexed_payloads": 4,
+      "index_sha256": "211f4ac4ec46306f8f91dcf5abbda1bd9e8bacb44cc9488697a124ce1e846180"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04",
+      "indexed_payloads": 37,
+      "index_sha256": "c41d560631c18ee919187ceacd98c1fd432923999673b2da26ebfce00dd952d0"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01",
+      "indexed_payloads": 11,
+      "index_sha256": "77553cad038bc8010ac7bb3a060a3f1326e6a28af5d980c444dc2807d75d90ca"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02",
+      "indexed_payloads": 19,
+      "index_sha256": "27f127f63043f26db0ca8c1bef8f6a681853d1e318825eae90ae27638cc8dcb9"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-proposal-v7-review01",
+      "indexed_payloads": 2,
+      "index_sha256": "753593728117bc8eaae87e53683f8cc6a0b64512edd1b6264e4f39d29c2f326c"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-readonly-v7-refresh01",
+      "indexed_payloads": 20,
+      "index_sha256": "bbd12d8f3372c5ad30b22c547dbb5a4df974bfa4d70d22e85dccd256e3813108"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-proposal-v8-review01",
+      "indexed_payloads": 2,
+      "index_sha256": "d510ba2062f3e806cea0df2162af7c9f998075a3d4812cfbec398050195937cd"
+    },
+    {
+      "directory": "docs/acceptance/evidence/issue307-d1/delete-readonly-v8-refresh01",
+      "indexed_payloads": 20,
+      "index_sha256": "12c3ab5b5e7c871370967f1ecd80796864f371cc029a1bdaf3e173b7ea74c5ce"
+    }
+  ],
+  "indexed_payloads": 118,
+  "indexes": 9,
+  "all_127_checkout_files_match_reviewed_head_raw_blobs": true,
+  "historical_106_raw_files_match_42d47ffa": true,
+  "operator_source_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "fa09ffd77a6e4b142f4fc8f0cfb0fa282896a4eaee2698f3964372d6a6d7795a",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "805380eba983ceaa36ae2fa5f6ca756504e6c19a8dc44602e89df1061d1124f3",
+    "examples/lifecycle-d1/refresh-reference-v8-readonly.py": "f0e4ff3377ca64beb3ccf57e79fc6d91b3b832235dab13eb4dafee750bad4935",
+    "examples/lifecycle-d1/check-reference-refresh.py": "41aee5c9aa0be9b47f397eeac25e5ce7495735518307f3dba783e5777a6958f6",
+    "examples/lifecycle-d1/check-reference-v9.py": "fe476424c1def99503d92a36b2771dd86b51c09be53f37bfdb62b06a1ad16a4a"
+  },
+  "native_operator_base_head": "42d47ffa63840aaea8b1c18839caddd412c069c0",
+  "network": {
+    "id": "33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c",
+    "name": "dpp-lifecycle307-5d2274ee-private",
+    "internal": true
+  },
+  "containers": [
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-provision-4986d8",
+      "id": "032d7098b0640df9a25c510d1f93cb1f4d48b7a32333acae1e6d9817b11c83e4",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-objects",
+      "id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01-native-inspect",
+      "id": "0776f9a254c7c8ebb97d87c4c9f6b09ff9b38c05148a804644926e810b3cf06c",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-minio",
+      "id": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-05",
+      "id": "1066e08167c14d2fbea941beb87e71ff5b252572871aaefe1ab9a8709d84092c",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "id": "1976c314879a819f548c22e621a81277e43c80fa6e3de7969eadc4f169a19332",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-rehearse02",
+      "id": "1c48196ee6d7a189d721c6af26e4d4e90a1404d52f17021eaa82f3f4de019467",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01",
+      "id": "1d0563416990122a9041fe78bb62c13954261b9a0eedd4c4f8df12ad3a5d2a24",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-03",
+      "id": "212c05ef13f0b983466d3ab7e78481bf2acf4027a62f3767a7bdcee920b435b3",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-07",
+      "id": "29b120180bd7957ede29aa710869616d43f0046dc4e824b7fe05391dcf35eb9e",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-migrate-restored",
+      "id": "305d95b583c8f70288d11647bb10925fda3bd06d721bf7d80bfe94ff5d248244",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send",
+      "id": "3b690acc53d079278b37259e0072651046f0d0a5ee28caa36e79ef3d22ccb21d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-render02",
+      "id": "3bbee19e26165b673096ee078b3fd95c15042f531df5d9123d46460dd6ae440a",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-08",
+      "id": "4abb8886eab817d6d8a7623b367efdd4ddaae0c603c4dac46bc3f21d3bc52837",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-07",
+      "id": "4d09852043780fb5ad5d6a8ce44c3a803d4c9501b31323916925e43d9a6a5d6a",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-positive-02",
+      "id": "50b7eafc2e55870470487cda73f0c8178dabc1d3f5883fd0fc78edae452d1a06",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-06-native-inspect",
+      "id": "563f6da4f80b29a4bb328c4f259ce5e58ea0a5d2971f2c67cb7f8ce2f82c076c",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-render",
+      "id": "5b0aa940122cc8fa64b5947ee4129143bb29d9c0247b415d4fb98906a8fd656d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-caddy-validation",
+      "id": "5ec8887f1c93eb1a12c7d84414eead958c6fdc151c923a96bdd39838e054cf3f",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-negative-02",
+      "id": "65059bce000e03a1a1e44c98a45e833039d52ce75c54668a1444d91228d19436",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-08",
+      "id": "653af2e285b0da8ed248d550bf70713d4eeb7f99fcb18b0dcc5e3b5bcc60fe95",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-06",
+      "id": "65f6fbef5cd57519bf35e357cd4087de59eab80f42ed7c837d8b88b85ac052d8",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-final-b91470",
+      "id": "6ac9e4e493895b172bd9113456fcdfc436eaa9de0a417b244f3b10c3416dd93f",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-04",
+      "id": "76198f610d3b80706da057603392e1a18025eefa89c031fd0bdff82678bbfd5d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-04-retry02",
+      "id": "7ad7a3fbe887aefe3692b5cf13a5b32481913ce088c9ce285d239e0f39d1d709",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-after",
+      "id": "81c3a96acb7a8da97a0bb31e8576624404f0b063291bbda4349b6201876dd4ed",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send-replay",
+      "id": "81e99a0f4a43a1c89e5cfc0edf2240b6e2c00e9b4ac0c42365d8e067b9c1c0d1",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-08-native-inspect",
+      "id": "8238bff5b9df8390fb9f2441a3b3ca92adb63d73fdb44a6a3f7e3f763b8b7285",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send02",
+      "id": "846b96e4c7c58baff9cb1f77851488c65e47008e270be9f267a2ef92e81e993d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-restored",
+      "id": "92a4341a9cd2407cb4fc0081cea77be3c462fa9926e546aca42e4cee13466d5d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-seal-93c177",
+      "id": "9b20260d5efa4391b82c491544087af151e5f7aa8f14a8318c3eed79c257bf56",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-before",
+      "id": "a3c610922f40ecb0c1410d6e9783fa7d58b9db5590a68fb92d45c77a387854a9",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-migrate-source",
+      "id": "a56312d2496b278acfca9c96f374e42690dfb183bb8af05f835eb668a6f27d80",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02",
+      "id": "b233ab150632fdd0791804e88519a37b3b64d0d47471dcba401568da7f288964",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-04",
+      "id": "b29f2c22a2582dd891a87e549e20c87bc091129d670b01a5af5bd2f47c7bd930",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-05",
+      "id": "b4865c31044dc389cc9aeca9b4b36856f276fc95371479acf32dbac040e2c10e",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres",
+      "id": "b57c6b44e63d6ccb797b2f8f82b885d8dc5601307bc0984f82306e08b79267b6",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-gateway",
+      "id": "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-07-native-inspect",
+      "id": "c0c735fe9a3fde5b452aef7780b84ab28e4a01aa7cd3dd2e23b9603f3bbb3fa9",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-native-snapshot",
+      "id": "c670834f6e0d7f1ba550bc5dcbeb7fc2618bc4067ac46688bc226828a0ffd543",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-postgres",
+      "id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-setup-5653d3",
+      "id": "ccd16e027a6a5e643422796285214a1b0e27c6da34f01897a870d30e99c19741",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-prepare",
+      "id": "d0cb29545a79ed706f368c72ba8ad72561f563be6240e4ce12e21e72eb73695a",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02-native-inspect",
+      "id": "d3efbb54ead478631e3633a7208dbb3c5effd7ed017feeca19eb42cc8efb7ee0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-rehearse",
+      "id": "d8f4b8fd7a582004642774484611f8c0d61e9aec0df4e85769eb93795f1a7996",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-positive",
+      "id": "df2d65af81b1880790113f0e460c0c6b8773211309b85d2b9c50519a05bd66a1",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-negative",
+      "id": "e10f24864d953c25a65232c78c9e0bb12e6a08122e905c8ebde22ec9cca1fd2c",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-06",
+      "id": "e98905d7ceae27a02c3a71a7803637d378244fc6c9878bc87540d1ce79b5da69",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-03-native-inspect",
+      "id": "f2f3b5602abda0461df35d0dd2a28e77c7bb0564d4ca2ae616c32c747a82b802",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-04-native-inspect",
+      "id": "f3e4a876a4371857cff1ceda8acbb8d33a5e7c91f8106017ef97039477b93e05",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-reference-races-d85398",
+      "id": "fb92bdcd150127c50163448de9d918f3a2d9a18e2384274b30febfaf647bdb87",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    }
+  ],
+  "same_51_container_ids_images_states_as_refresh08": true,
+  "backups_sha256": {
+    "reference-disposal-preparation01/native-snapshot/native-store.tar": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+    "predelete-core-checkpoint-04/core.dump": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a"
+  },
+  "source_seals": {
+    "business_and_delete_enabled_false_files": 15,
+    "caddy_sha256": "b301fc4fe59f64ebe1e11f1488dde521b774622641ccc8377fe41cb64e839e80",
+    "refresh08_preparation_enabled": false,
+    "delete_permission_enabled": false
+  },
+  "native_protection_observation_unchanged": {
+    "from": "2026-10-15T03:01:24.823375493Z",
+    "to": "2026-10-15T03:01:25.064935255Z"
+  },
+  "effects": {
+    "container_starts": 0,
+    "provider_io": 0,
+    "core_mutation": 0,
+    "iam_changes": 0,
+    "delete": 0,
+    "merge": 0,
+    "cleanup": 0
+  }
+}

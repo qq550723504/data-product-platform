@@ -1,0 +1,212 @@
+{
+  "schema": "lifecycle307-exact-delete-proposal-v1",
+  "status": "PENDING_USER_CONFIRMATION",
+  "created_at": "2026-10-14T01:48:27.4010253+00:00",
+  "project": "dpp-lifecycle307-5d2274ee",
+  "environment_run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "source_head": "fc009d88ce2e145d10bcf086addca80eb8686fee",
+  "native_code_source": "4650c435f8ba89fdb0b2dc0591152d25ded182d7",
+  "native_binary_sha256": "5e04e88bbd65880a5e65da5795dcdc116021512e04d27a200ec0d03f83e972c8",
+  "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+  "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635",
+  "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+  "private_root": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-5d2274ee",
+  "network_id": "33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c",
+  "namespaces": [
+    "dpp-lifecycle307-online",
+    "dpp-lifecycle307-quarantine"
+  ],
+  "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+  "plan_hash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+  "plan_status": "FINALIZED",
+  "inventory_plan_id": "dfd47e35-b99a-4581-942f-96ab5d3941f1",
+  "inventory_hash": "2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8",
+  "targets": [
+    {
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "provider_version": "846d0c7c-289d-4667-bc7c-aa04e44357d4",
+      "content_sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "byte_size": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-14T01:11:11.490029133Z",
+      "protection_status": "LAST_SEALED_NATIVE_OBSERVATION; mandatory fresh inspection before each future send"
+    },
+    {
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "provider_version": "312365a9-f984-43de-b9d5-7e26009ccd82",
+      "content_sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "byte_size": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-14T01:11:11.230892211Z",
+      "protection_status": "LAST_SEALED_NATIVE_OBSERVATION; mandatory fresh inspection before each future send"
+    }
+  ],
+  "total_bytes": 129560,
+  "survivors": [
+    {
+      "copy_id": "3feb660b-21aa-4494-ada8-110cf3cf0e22",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "provider_version": "159e90c3-adb6-4ea3-b2e8-2804e578e86f",
+      "content_sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "byte_size": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-14T01:11:11.277480177Z",
+      "delete_authorized": false
+    },
+    {
+      "copy_id": "7d85a166-59ae-4a72-a562-138e9a1617c7",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/processed.csv",
+      "provider_version": "7c8ad93b-31ee-445c-9402-816dda0410ec",
+      "content_sha256": "99cefa99326fb2e5daa5f23ae8802b057e5f467d5ed9813c73cdecd71f4368ad",
+      "byte_size": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-14T01:11:11.330069831Z",
+      "delete_authorized": false
+    },
+    {
+      "copy_id": "686f6ecc-40a2-4a8f-a10b-ceaf026c6ada",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/standardized.csv",
+      "provider_version": "2139f293-87f4-4d49-a9f0-941b22275093",
+      "content_sha256": "044a854f6cf61dec3d77c6a907b0b30363ec5e96d5dca12649865772d7ee9163",
+      "byte_size": 494,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-14T01:11:11.374468797Z",
+      "delete_authorized": false
+    },
+    {
+      "copy_id": "dbe34c34-cecb-4183-a121-5eac1035d176",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "provider_version": "5a7ce790-9093-4569-a8fd-0726009a5eb4",
+      "content_sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "byte_size": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-15T00:58:47Z",
+      "protection_observed_at": "2026-10-14T01:11:11.425386875Z",
+      "delete_authorized": false
+    }
+  ],
+  "authority": {
+    "human_confirmation": "NOT_RECEIVED",
+    "provider_delete_authorized": false,
+    "permission_enabled": false,
+    "business_windows": "SEALED; do not reopen",
+    "future_execution_run_id": "614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+    "future_execution_run_status": "RESERVED_IDENTIFIER_ONLY; no basis/approval/credentials/resources created",
+    "max_window_minutes": 40,
+    "new_basis_and_approval_required": true,
+    "existing_basis": "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE; immutable and not a deletion approval",
+    "old_approval_expired": true,
+    "old_approval_expires_at": "2026-10-14T09:44:38.439783+08:00"
+  },
+  "unresolved_trial_attempts": [
+    {
+      "id": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+      "action": "DELETE_EXACT",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T08:59:53.349245+08:00",
+      "dispatch_id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 83,
+      "provider_request_key": "lifecycle-delete:0a86461d-d5c2-4c00-99ae-0d44ac6dde2a"
+    },
+    {
+      "id": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+      "action": "DELETE_EXACT",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T08:59:53.615357+08:00",
+      "dispatch_id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 84,
+      "provider_request_key": "lifecycle-delete:d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9"
+    }
+  ],
+  "execution_preconditions": [
+    "Fresh exact-list user confirmation of this project/provider/incarnation/plan and exactly two versions",
+    "New bounded composition profile and independent non-delete validation; existing hard-coded old drivers are unsupported here",
+    "Trusted executor no-send proof plus append-only NOT_SENT observations/releases for both trial reservations; send-claim absence alone is insufficient",
+    "Fresh distinct execution RunID/basis/approval; never update or relabel the non-delete basis or reuse expired approval/attempts",
+    "Verified independent pre-delete backup/restore checkpoint including current Core facts and all six native exact versions; backup payloads retained/excluded",
+    "Fresh current authority/approval, complete native inventory/protection, qualified reference guards/releases, pins/quiescence, pending-copy and ledger/fence checks before dispatch and ClaimExactSend"
+  ],
+  "execution_budget": {
+    "max_provider_delete_requests": 2,
+    "max_per_target": 1,
+    "protected_or_output_delete_requests": 0,
+    "unknown_delete_resend": "FORBIDDEN; read-only existing worker reconciliation only",
+    "sdk_and_proxy_send_retries": 0,
+    "hold_release": 0,
+    "retention_release": 0,
+    "retention_bypass": 0,
+    "bare_key_delete": 0,
+    "bucket_cleanup": 0
+  },
+  "serial_sequence": [
+    "online/a: fresh dispatch/send gate -> one exact DELETE -> read-only recovery -> exact absence receipt",
+    "quarantine/b: fresh gate with receipt-backed five-version present inventory -> one exact DELETE -> read-only recovery -> second receipt -> scoped completion"
+  ],
+  "inventory_closure": "Immutable registry retains six identities; present native versions must be six, then five only after first receipt, then four only after both receipts. Unexpected missing/extra versions remain UNKNOWN/BLOCKED.",
+  "cleanup": [],
+  "excluded": [
+    "Four listed survivor versions, even after retention expires",
+    "All original/other runs including e1487ce7/9812f0fc/#298/#294/Pilot/demo",
+    "All Core history/database/container/named volumes and new retained backup/restored payloads",
+    "Provider internal replicas/media/backups and external recipient copies"
+  ],
+  "proposed_retained_resources": {
+    "status": "NOT_CREATED; proposed only",
+    "checkpoint_postgres": "dpp-lifecycle307-5d2274ee-predelete-postgres",
+    "checkpoint_objects": "dpp-lifecycle307-5d2274ee-predelete-objects",
+    "checkpoint_network": "dpp-lifecycle307-5d2274ee-predelete-private",
+    "redis_container": "dpp-lifecycle307-5d2274ee-delete-recovery-redis",
+    "redis_volume": "dpp-lifecycle307-5d2274ee-delete-recovery-redis-data",
+    "redis_image_id": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "helper_scope": "one-shot backup/admin/executor/read-only-recovery helpers owned by this proposal; retained, no host ports"
+  },
+  "as_of_provider_protection": "2026-10-14T01:11:11.230892211Z through 2026-10-14T01:11:11.490029133Z",
+  "current_native_refresh": "NOT_RUN; no gateway/window reopened",
+  "current_sql_counts": {
+    "pins": 7,
+    "copies": 6,
+    "completion": 0,
+    "active_pins": 0,
+    "send_claims": 0,
+    "requirements": 23,
+    "terminations": 7,
+    "storage_calls": 52,
+    "copy_operations": 0,
+    "absence_receipts": 0,
+    "reference_releases": 23,
+    "typed_storage_costs": 52,
+    "storage_observations": 52,
+    "provider_observations": 0,
+    "processing_output_ready": 2,
+    "processing_output_intents": 2
+  },
+  "this_turn_database_mutation": 0,
+  "this_turn_provider_io": 0,
+  "this_turn_provider_delete": 0,
+  "full_D1": "NOT_ACCEPTED; scope completion alone does not accept remaining D1 cases"
+}

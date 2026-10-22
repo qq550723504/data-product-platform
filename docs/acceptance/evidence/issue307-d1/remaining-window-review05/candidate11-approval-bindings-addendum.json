@@ -1,0 +1,47 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_APPROVAL_INDEX_ADDENDUM",
+  "remaining_blockers": [],
+  "at": "2026-10-18T10:59:12.482942+00:00",
+  "reviewer": "/root/v20_independent_review",
+  "approval_bindings": {
+    "path": "docs/acceptance/evidence/issue307-d1/remaining-window-review05/approval-bindings.json",
+    "sha256": "e30974a9e72c3d039be70d7d00b447021c3ff71fa68becac46c3d26e7b36532c",
+    "entries_checked": 17,
+    "scope_fields_checked": {
+      "status": "PREPARED_NOT_AUTHORIZED",
+      "profile": "candidate11/v21",
+      "execution": "602acafe-065a-4385-b739-5776408f5448",
+      "send_window": [
+        "2026-10-18T14:00:00Z",
+        "2026-10-18T14:40:00Z"
+      ],
+      "recovery_not_after": "2026-10-18T16:40:00Z",
+      "new_human_authorization": "NOT_RECEIVED",
+      "old_authorization_reused": false,
+      "new_schedule": "NOT_CREATED",
+      "max_per_target": 1,
+      "max_total": 7,
+      "unknown_resend": false,
+      "survivors": 11,
+      "cleanup": 0,
+      "hold_release": 0,
+      "bypass": 0,
+      "native_delete": 0,
+      "PR323": "DRAFT",
+      "Issue307": "OPEN"
+    }
+  },
+  "parent_exact_binding_audit02": {
+    "path": "docs/acceptance/evidence/issue307-d1/remaining-window-review05/parent-exact-binding-audit02.json",
+    "sha256": "fc28b4c6d1b0714ef4d450bfe4ef412fffcf589d376d15795b2960e8e94e1b93",
+    "RB1_current_document_references": "PASS"
+  },
+  "attributes_addendum": {
+    "file": "candidate11-attributes-addendum.json",
+    "sha256": "433bea05d725a5d6c277be74b696f5078e9f6e0775654fe410a2968178b6f4f2",
+    "classification": "INVALID_ALREADY_ENFORCED"
+  },
+  "conclusion": "The 17-entry file is an immutable reference index for a future human decision, not authorization. It changes no frozen runtime source, candidate, machine template or host support; it creates no schedule, permission or deletion authority. Original efbf report and 433b attributes addendum remain unchanged.",
+  "reviewer_Docker_provider_permission_io": 0,
+  "additional_native_or_Go_tests": false
+}

@@ -1,5 +1,6 @@
 import { BackLink, Badge, DefinitionList, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
+import { ResourceSource } from "@/components/resource-source";
 
 export default async function ResourceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   if (!configuredWorkspaceId()) {
@@ -40,6 +41,7 @@ export default async function ResourceDetailPage({ params }: { params: Promise<{
             </div>
           </aside>
         </section>
+        <ResourceSource id={resource.id} />
       </>
     );
   } catch (error) {

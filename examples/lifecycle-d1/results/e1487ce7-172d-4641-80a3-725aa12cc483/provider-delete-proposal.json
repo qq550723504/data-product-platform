@@ -1,0 +1,49 @@
+{
+  "actual_delete": "NOT_RUN",
+  "business_reader_window": "SEALED; no reopening",
+  "run_id": "e1487ce7-172d-4641-80a3-725aa12cc483",
+  "plan_id": "6cb1b6b7-d855-4da1-8909-cc9184855036",
+  "excluded": [
+    "All original retained environments and scopes including #298/#294/Pilot/demo",
+    "Two protected versions in this new environment",
+    "New standardized/processed output versions",
+    "All Core history, databases, containers and named volumes",
+    "Provider internal replicas/media/backups and external copies"
+  ],
+  "cleanup": [],
+  "project": "dpp-lifecycle307-e1487ce7",
+  "source_commit": "a7116c355428ee71ff621870ceafeb6ede9e9205",
+  "next_requirement": "Fresh human confirmation plus fresh current authority/protection/reference/pin checks; this is not a send approval and must not reuse prior consumed approval",
+  "hold_or_retention_release": false,
+  "status": "PENDING_USER_CONFIRMATION",
+  "plan_hash": "10d024ed7554739ed52409bd939259181738af0550f83129abfee8d724f7bcb9",
+  "scope": "Exactly two listed source provider versions; no other objects",
+  "provider_delete_authorized": false,
+  "bypass": false,
+  "targets": [
+    {
+      "ID": "dec2782b-fa3d-42a1-8874-6aac4758f200",
+      "WorkspaceID": "00afbb2f-60c6-4336-a67a-a87fd9f05392",
+      "DatasetVersionID": "5530b09c-fecb-4a0a-8c28-c837db7a2d91",
+      "ProviderInstanceID": "ccc14054-8af3-4191-ab14-aeaa725c34e9",
+      "IncarnationID": "a6bd68f2-95bc-4075-8f9a-38f77b816592",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/a.csv",
+      "ProviderVersion": "ac15b44b-9944-4326-9e19-aecf7c62b57f",
+      "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "ByteSize": 232
+    },
+    {
+      "ID": "13a8866b-c648-4979-8073-d7687f6d97b0",
+      "WorkspaceID": "00afbb2f-60c6-4336-a67a-a87fd9f05392",
+      "DatasetVersionID": "74db97c0-ca97-499d-bd41-2af49d8fae1d",
+      "ProviderInstanceID": "ccc14054-8af3-4191-ab14-aeaa725c34e9",
+      "IncarnationID": "a6bd68f2-95bc-4075-8f9a-38f77b816592",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/b.csv",
+      "ProviderVersion": "92af5ef2-e26f-46bf-8189-acbf67e2e5bc",
+      "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "ByteSize": 129328
+    }
+  ]
+}

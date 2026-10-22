@@ -1,0 +1,6 @@
+test_only_enabled_change_works_with_actual_windows_manifest_key (__main__.ProfilePaths.test_only_enabled_change_works_with_actual_windows_manifest_key) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK

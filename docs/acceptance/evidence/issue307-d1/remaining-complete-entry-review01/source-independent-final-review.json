@@ -1,0 +1,223 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_COMPLETE_ENTRY_SOURCE_REVIEW",
+  "reviewer": "/root/v20_independent_review",
+  "at": "2026-10-18T14:38:06.663120+00:00",
+  "base_HEAD": "77e2a77b7ff688f545d05f3c8de25f1ee0a0953e",
+  "scope_contract": "docs/acceptance/issue307-d1-complete-preflight-contract.md",
+  "remaining_blockers": [],
+  "resolved_findings": [
+    {
+      "id": "B1_PRIVATE_DIRECTORY_EXPOSURE",
+      "status": "CLOSED",
+      "initial_proof": "Two independent complete-main recording counterexamples with an extra fake root.json in case-renew or fake host topology key in recover-P1 were accepted and completed native collection. The original two failing tests and logs are retained.",
+      "root_fix": "Existing attester directory allow-list extracted into private_files/helper_private_contract and reused by both attester and full gate. All mounted members must be regular, no symlinks/subdirectories, with explicit required/allowed files. Case manifest SHA must match actual bytes, Base and binding; operator candidate/template exact bytes and restricted recovery contents checked.",
+      "independent_recheck": "Original two counterexamples now reject via real main before any recorded create/start, with failure.json and no complete.json, normal and -O. New regression includes extra unbound case directory."
+    },
+    {
+      "id": "B2_CURRENT_CI_USES_TERMINAL_FROZEN_CANDIDATE11",
+      "status": "CLOSED",
+      "initial_proof": "The existing direct candidate11 CI command rejected changed source, as expected for its immutable packet. Original failure retained.",
+      "root_fix": "Original checker and old packet unchanged. Existing history driver reconstructs v21 at source3d62/packetc00d and requires exact source/raw hashes; direct current11 CI invocation replaced with current full-main composition regression. A fresh strict current checker must be connected when a new executable packet exists.",
+      "independent_recheck": "Whole historical driver passed v17/v19/v20/v21 original strict audits; new14-method current source regression passes normal/-O in both CI paths."
+    }
+  ],
+  "checked_contract": [
+    "call/docker use a bytes return contract; docker_text explicitly performs strict UTF-8 decoding. str including empty string and invalid UTF-8 are rejected, no fallback transcoding. JSON consumers use bytes directly.",
+    "Complete main resolves paths, validates actual case/recovery cross-fields/SHA before owner/source I/O, checks candidate/reader/checker anchors and creates new evidence directories. It runs the full sealed host gate before any recorded source create/start; failure produces retained failure receipt and no complete success.",
+    "Host gate covers finite historical closure/backups, 17 operator/wire/recovery plus15 root permissions (32 false), 7 case security/command/mount/private contracts, 7 independently restricted recovery profiles, source images/full CIDs and internal network,3 persistent budget execution labels, exact complete mounted-CID membership and read-only empty-directory copies.",
+    "Actual source collection/official Go policy aggregation/Core before-after/journals/finally-close remain one maintained composition. Replay success traverses all3 actual Python collectors and built Go file checker,76 recorded GET/HEAD observations, physical-close receipts and full host_gate in complete.json.",
+    "Freeze now invokes the real complete CLI via subprocess after initial resources are closed and before final evidence indexing. It binds exit status, candidate SHA/execution, host execution and finite permissions/case/recovery/network/budget counts. Nonzero main exit retains stdout/stderr/exit/hash receipt and rejects freezing. Existing close loop continues other known owners after stop/inspect failure.",
+    "Terminated v20/v21 owners are evaluated only for explicitly named retained/terminal physical closure. Revoked profiles and original terminal/IAM-unconfirmed facts are not rewritten or un-revoked; old authorization is not reused. Unchanged historical checkers execute at their own immutable source/packet anchors.",
+    "No new workflow/IAM/provider infrastructure: reuses subprocess/Docker CLI, existing attester contracts, original reader/file checker/MinIO semantic equality and existing finally-close."
+  ],
+  "actual_tests": [
+    {
+      "name": "complete main + wrapper boundary normal",
+      "methods_or_generations": 14,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "complete-normal-final.txt",
+      "log_sha256": "fc39dfb7e9e352c88f8340a2a7ad1003e6db5e6d39c65d63011ae612cf2370a3"
+    },
+    {
+      "name": "complete main + wrapper boundary optimized",
+      "methods_or_generations": 14,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "complete-optimized-final.txt",
+      "log_sha256": "eb33f66363d2fd67fe5305ac648cae780d88013a0e1484fd4598b00a2edbf753"
+    },
+    {
+      "name": "independent extra mounted credential/key files normal",
+      "methods_or_generations": 2,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "private-exposure-normal-final.txt",
+      "log_sha256": "7a1bf469e7038d686fd435fa95cfdf1247e0ea6176812e70bc1a688b516bd005"
+    },
+    {
+      "name": "independent extra mounted credential/key files optimized",
+      "methods_or_generations": 2,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "private-exposure-optimized-final.txt",
+      "log_sha256": "23348abbe41dcf391df8cab896e10ba206f0482b01d90449d72de8bbdaa4894a"
+    },
+    {
+      "name": "policy sort/expansion, paths and closure normal",
+      "methods_or_generations": 5,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "native-normal-final.txt",
+      "log_sha256": "ef70c6896898b82558e2fff53438b873297debe07df1cec9af278d0e8f15b34b"
+    },
+    {
+      "name": "policy sort/expansion, paths and closure optimized",
+      "methods_or_generations": 5,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "native-optimized-final.txt",
+      "log_sha256": "d39288ae856c65c34be02f8f054d5233a606a2eef3a571c2d48eac5aa3d7a494"
+    },
+    {
+      "name": "freeze failure/close normal",
+      "methods_or_generations": 2,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "close-normal-final02.txt",
+      "log_sha256": "93cbb10a67ac9004b405cbc3b703a1ee5acf08bfeced981b3017cab30ffa0ee7"
+    },
+    {
+      "name": "freeze failure/close optimized",
+      "methods_or_generations": 2,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "close-optimized-final02.txt",
+      "log_sha256": "93cbb10a67ac9004b405cbc3b703a1ee5acf08bfeced981b3017cab30ffa0ee7"
+    },
+    {
+      "name": "R1 cross-fields normal",
+      "methods_or_generations": 4,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "window-normal-final.txt",
+      "log_sha256": "9901ba26df5bcb1644de0264c72a18fccdab8695c5a537f87f1a37a90ee9bd93"
+    },
+    {
+      "name": "R1 cross-fields optimized",
+      "methods_or_generations": 4,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "window-optimized-final.txt",
+      "log_sha256": "db80bf195ab1a809be3ebd15798474020fb4998a9b53b33dd45bc9001cf32b91"
+    },
+    {
+      "name": "v17/v19/v20/v21 historical driver",
+      "methods_or_generations": 4,
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "history-final.txt",
+      "log_sha256": "0408a08f14c5c7cace23ad210765ef3789870bad635362da2d16bae37fd5da5d"
+    }
+  ],
+  "initial_failures_retained": {
+    "initial-findings.json": "6a1811c78d3f17fa3f6b54331ef6f5afd1446ac67f732e5116d1138e52fa4f7f",
+    "private-exposure-initial.txt": "88598241804302716b068e777e08d07add094f724a710cc121fba8ef3046669c",
+    "current-candidate11-ci-initial.txt": "a223a2829012624c91f4c3e06078247786bad863380d4b669ee6013cc4a47731",
+    "complete-normal-initial.txt": "ef4822f8f6d4cdc35f3cc6bb364ff51adf1fa96ef4f7c851290811f69adf7200",
+    "complete-optimized-initial.txt": "65234081bab0c5f02abc8e532d68d96d4848639309aee5af59e60945352166a0"
+  },
+  "independent_counterexample_script": {
+    "file": "test_independent_private_exposure.py",
+    "sha256": "f077fe45371b7a616c05b01d757f32b919e42db13a50007ff8cb8057c6e3e063"
+  },
+  "source_file_hashes": {
+    "docs/acceptance/issue307-d1-complete-preflight-contract.md": {
+      "raw_sha256": "c679efedc5ece26bce73c77d7850ab7a50d7cd4d5aa2340afba0d469a3e8b0f1",
+      "lf_sha256": "c679efedc5ece26bce73c77d7850ab7a50d7cd4d5aa2340afba0d469a3e8b0f1"
+    },
+    "examples/lifecycle-d1/prepare-remaining-runner.py": {
+      "raw_sha256": "78414341fea8225b66c9e934c82337a3d424b449415ccbc9246f8808defe3a18",
+      "lf_sha256": "78414341fea8225b66c9e934c82337a3d424b449415ccbc9246f8808defe3a18"
+    },
+    "examples/lifecycle-d1/verify-remaining-native.py": {
+      "raw_sha256": "fa57c33b01b9ae83c1a0cfe0867d7ec8618da3722667d9caf2224f91bada78b0",
+      "lf_sha256": "fa57c33b01b9ae83c1a0cfe0867d7ec8618da3722667d9caf2224f91bada78b0"
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "raw_sha256": "45e704544a02762bd55eeed80a92a6861e189f38b4e183a055ca0c38a7ebf395",
+      "lf_sha256": "45e704544a02762bd55eeed80a92a6861e189f38b4e183a055ca0c38a7ebf395"
+    },
+    "examples/lifecycle-d1/freeze-remaining-executable.py": {
+      "raw_sha256": "b5e0f741c7e3f75a815af14995865233bf608d023866612cfe2275d79f62fbc4",
+      "lf_sha256": "b5e0f741c7e3f75a815af14995865233bf608d023866612cfe2275d79f62fbc4"
+    },
+    "examples/lifecycle-d1/test_complete_remaining_preflight.py": {
+      "raw_sha256": "e1ae612005b1e4810522c0601ade20e7473b1238fb240d3493e69f28fe89f71a",
+      "lf_sha256": "e1ae612005b1e4810522c0601ade20e7473b1238fb240d3493e69f28fe89f71a"
+    },
+    "examples/lifecycle-d1/test_freeze_remaining_executable.py": {
+      "raw_sha256": "29e33319027a51b93d4060c0c8d9417f6c6e15cb2e1fc51c72411bdaad68fb91",
+      "lf_sha256": "29e33319027a51b93d4060c0c8d9417f6c6e15cb2e1fc51c72411bdaad68fb91"
+    },
+    "examples/lifecycle-d1/remaining_window.py": {
+      "raw_sha256": "a8c6152372b3266fd4fa0bff1f78a03e1240ee1743fd9d154307b483f089987f",
+      "lf_sha256": "a8c6152372b3266fd4fa0bff1f78a03e1240ee1743fd9d154307b483f089987f"
+    },
+    ".github/scripts/check-lifecycle307-history.py": {
+      "raw_sha256": "fe6adfad69789de4ea16c0f2c9b989fe8fb5775747233f70e680006a66c7fd1c",
+      "lf_sha256": "fe6adfad69789de4ea16c0f2c9b989fe8fb5775747233f70e680006a66c7fd1c"
+    },
+    ".github/workflows/ci.yml": {
+      "raw_sha256": "6be318282150de09ada38222be7b6c3decf943a400614fb35097e2762f05b566",
+      "lf_sha256": "7761376a85f8a1ac25e94be330c1d3a0f3f77907c0d8ac1ba4596c6a92995996"
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "raw_sha256": "f22eab0711966ec81e718ec0d721976c39dbb9c50128b9122413da577954deae",
+      "lf_sha256": "f22eab0711966ec81e718ec0d721976c39dbb9c50128b9122413da577954deae"
+    }
+  },
+  "historical_strict_audits": {
+    "v17": {
+      "source_files": 812,
+      "raw_evidence": 940
+    },
+    "v19": {
+      "source_files": 823,
+      "raw_evidence": 1118
+    },
+    "v20": {
+      "source_files": 824,
+      "raw_evidence": 1119
+    },
+    "v21": {
+      "source_files": 829,
+      "raw_evidence": 1122,
+      "source": "3d62dacb36b94096a364f32525853fbe95aaa2ed",
+      "packet_anchor": "c00d4a8f85aaaaa71b9c19c76d042dee6aad1802"
+    }
+  },
+  "history_label_note": "The final JSON current-runtime label was clarified while the independent full history audit was running. Historical function logic and strict inputs are unchanged; the retained output uses the earlier label. This is historical integrity acceptance, not current runnable-candidate or native acceptance.",
+  "pending_work_not_current_slice_blockers": [
+    "Full real native non-deletion acceptance of the new maintained main in a new unapproved preparation environment remains NOT_RUN. Recording/replay, local Go file checking, history auditing and post-terminal budget observations do not substitute for it.",
+    "No new window, execution, frozen executable candidate, precise delete authorization or schedule has been selected/created by this review. Do not revive v21 or reuse any old authority.",
+    "When a new packet is frozen, connect its strict current checker, verify all source/binary/Core/IAM/gateway/owner/budget bindings and run that exact main without weakening gates. Current source review is not a prepared native candidate.",
+    "Exact publication HEAD CI and PR state require parent readback after commit/push. This is local independent verification, not PR CI/main CI, merge approval or complete D1 acceptance."
+  ],
+  "additional_Go_package_suite": "Not rerun because no Go code changed; native/replay tests independently built and executed the real current Go readonly file checker.",
+  "side_effects": {
+    "repo_writes": 0,
+    "Docker_io": 0,
+    "provider_io": 0,
+    "credential_reads": 0,
+    "permission_changes": 0,
+    "real_source_starts": 0,
+    "signatures": 0,
+    "native_delete": 0,
+    "Git_writes": 0,
+    "GitHub_writes": 0
+  },
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

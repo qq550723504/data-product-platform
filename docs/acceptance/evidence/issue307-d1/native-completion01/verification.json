@@ -1,0 +1,77 @@
+{
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "command": "go test -race -count=1 -p 1 -json ./...",
+  "exit": 0,
+  "package_pass": 89,
+  "test_and_subtest_pass": 1117,
+  "failures": [],
+  "race_reports": 0,
+  "skips": [
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance",
+      "test": "TestBrowserCSVIngest"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance",
+      "test": "TestBrowserLiveCorePOC"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/acceptance",
+      "test": "TestBrowserLiveGoldExistingCore"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio",
+      "test": "TestLabelStudioLiveCoreResultReviewAndSnapshot"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio",
+      "test": "TestLabelStudioLiveReference"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue",
+      "test": "TestRedisDuplicateWakeupUsesOneTask"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application",
+      "test": "TestLiveGoldWorkerBuildAndFormalQuality"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot",
+      "test": "TestLiveCoreBatch"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue",
+      "test": "TestRedisRecoveryDeadlineCoversFullBoundedLookupSequence"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata",
+      "test": "TestSourceSchemaNativeReceiptCostRecovery"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox",
+      "test": "TestExecutionQueueRedisRecoveryAfterOutboxFailure"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox",
+      "test": "TestExecutionQueueRedeliveryAfterLostConfirmationUsesProductionHandler"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage",
+      "test": "TestIngestionStorageIsolation"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/gx",
+      "test": "TestGXLiveReferenceMatchesNativePassFailSemantics"
+    }
+  ],
+  "raw_log_sha256": "61fc0c52ddcac48a134b4d22f5df622e5d16eac31fc705dd7db5c07bd3d6dc99",
+  "database": "ref307_native_e173364e",
+  "validation_pg": "7ca2126fb7d56f3a32e66b1fee13b3105e309bed5715e85ce87476b22b03192c",
+  "fresh_database_migrated_through": 68,
+  "actual_host_port_after_runtime_restart": 63947,
+  "later_source_changes": "Driver/seal/docs/evidence only; Go sources unchanged",
+  "vet": "go vet ./... PASS",
+  "python_normal": 22,
+  "python_optimized": 22,
+  "native_delete": 0
+}

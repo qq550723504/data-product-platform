@@ -1,0 +1,47 @@
+{
+  "runId": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+  "status": "PASS",
+  "volumes": [
+    {
+      "source": "dpp-pgi-b3-storage-47203cb12b93-data",
+      "restored": "dpp-ind299-restored-47203cb12b93-0",
+      "path": "/data",
+      "container": "/dpp-pgi-b3-storage-47203cb12b93",
+      "archiveSha256": "d57aa13116811fb004dab3f425b01954e6bc7b4ff07211261e058a09e1f5a81d",
+      "fileManifestSha256": "aa7b5e7d232cf290e7d53ed01b450180439a69d22b547c9593868fb7c2192aa1",
+      "status": "PASS"
+    },
+    {
+      "source": "dpp-pgi-b3-redis-47203cb12b93-data",
+      "restored": "dpp-ind299-restored-47203cb12b93-1",
+      "path": "/data",
+      "container": "/dpp-pgi-b3-redis-47203cb12b93",
+      "archiveSha256": "3a1d8bd6d600accbbcbf48a68b9237f112b0e66c075d4603e6a2ed9d3d72b5e0",
+      "fileManifestSha256": "bf5017ef288c45a44efbabcc9b4c2ba71e2f88a0a2b2b11f0b6bcca782229b6a",
+      "status": "PASS"
+    },
+    {
+      "source": "dpp-pgi-47203cb12b93-hop-files",
+      "restored": "dpp-ind299-restored-47203cb12b93-2",
+      "path": "/files",
+      "container": "/dpp-pgi-47203cb12b93-hop",
+      "archiveSha256": "3a7e2e4f55f516833c4725934a3bbae2f8de810660fe2d142893db822dbc4e6b",
+      "fileManifestSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "source": "dpp-pgi-47203cb12b93-hop-tmp",
+      "restored": "dpp-ind299-restored-47203cb12b93-3",
+      "path": "/tmp",
+      "container": "/dpp-pgi-47203cb12b93-hop",
+      "archiveSha256": "fe549072c56941866d821cc7b86b3e0e2479bbcdf58ae7a98500540cf271247f",
+      "fileManifestSha256": "154c8447a057de15b4a3b9bb9834d0a215244d47414a0fc81e8c09990e5600af",
+      "status": "PASS"
+    }
+  ],
+  "nativeObjects": 9,
+  "nativeRedis": "PONG",
+  "backupPrivate": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-volumes-final",
+  "cleanup": 0,
+  "providerDelete": 0
+}

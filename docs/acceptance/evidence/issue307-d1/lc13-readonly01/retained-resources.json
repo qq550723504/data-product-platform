@@ -1,0 +1,586 @@
+{
+  "at": "2026-10-14T09:42:29.912148+00:00",
+  "containers": [
+    {
+      "id": "00c11c04f7917cb6ad67fabb8e4389c08a35cced7ba3dea688f6a702c2a78e74",
+      "name": "dpp-lifecycle307-04a6ff55-reader-lc13-final-0c63f1",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "032d7098b0640df9a25c510d1f93cb1f4d48b7a32333acae1e6d9817b11c83e4",
+      "name": "dpp-lifecycle307-5d2274ee-reader-provision-4986d8",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+      "name": "dpp-lifecycle307-5d2274ee-predelete-objects",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-predelete-objects",
+          "destination": "/data"
+        }
+      ]
+    },
+    {
+      "id": "0776f9a254c7c8ebb97d87c4c9f6b09ff9b38c05148a804644926e810b3cf06c",
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01-native-inspect",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 2,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+      "name": "dpp-lifecycle307-5d2274ee-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-objects",
+          "destination": "/data"
+        }
+      ]
+    },
+    {
+      "id": "0cf21b880d4c27e10a0f903b6659b2a83ef67d30e3cbdc4ced815cf7e6912678",
+      "name": "dpp-lifecycle307-04a6ff55-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "running",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-04a6ff55-objects",
+          "destination": "/data"
+        }
+      ]
+    },
+    {
+      "id": "12ff9d7949309d79ddf99191a04ed2f42d8d5c5344baac438c0b7f910c9bc07e",
+      "name": "dpp-lifecycle307-04a6ff55-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "1976c314879a819f548c22e621a81277e43c80fa6e3de7969eadc4f169a19332",
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "1b10b60819a5647a34fbd870c93e47a3076fa20c3df4c06fbc7f879de7b30cc9",
+      "name": "dpp-lifecycle307-04a6ff55-redis",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "state": "running",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-04a6ff55-redis-data",
+          "destination": "/data"
+        }
+      ]
+    },
+    {
+      "id": "1c48196ee6d7a189d721c6af26e4d4e90a1404d52f17021eaa82f3f4de019467",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-rehearse02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "560b5da263a1bf14372fcc88f7542c3ab9e82d426e7dd731356cd6b0556a7a45",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "1d0563416990122a9041fe78bb62c13954261b9a0eedd4c4f8df12ad3a5d2a24",
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01-data",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "212c05ef13f0b983466d3ab7e78481bf2acf4027a62f3767a7bdcee920b435b3",
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-03",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-03-data",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "2c05f8e773259658107d1d732926d8a2c520835e3edca4d9e172370714171dc6",
+      "name": "dpp-lifecycle307-04a6ff55-reader-lc13-lease-recovery-8918d7",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "2cb38f348cccdfd68a26a0db5454fd8c8561d2f2ed32235c4df6babb31b8b14a",
+      "name": "dpp-lifecycle307-04a6ff55-reader-setup-30a8ab",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "305d95b583c8f70288d11647bb10925fda3bd06d721bf7d80bfe94ff5d248244",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-migrate-restored",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "8dc38f5b0e99643513e1f87610048f27ed58b989621688aa096aa39906d91d77",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "3b690acc53d079278b37259e0072651046f0d0a5ee28caa36e79ef3d22ccb21d",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 1,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "ca390e272560fdcafd5bf7de15f475f3b060356a52ba544d5aa17c6cc15d0a2c",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "3bbee19e26165b673096ee078b3fd95c15042f531df5d9123d46460dd6ae440a",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-render02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "208642da181c3ddd7f318e1ef7b2044a117606193b395fb835be3ea9e33c3767",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "490d5aaff1c5ec635ffeb9d5145b99cbb2a761e239dac959e2ed09ed24b864e6",
+      "name": "dpp-lifecycle307-04a6ff55-reader-lc13-crash-one-e8f4c1",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 95,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "4fcb1f4ed8046ac6ecc7fd8be3d8c8a16e3629b360026ad72fd2411ef6bb1584",
+      "name": "dpp-lifecycle307-04a6ff55-reader-lc13-init-db2b72",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "50b7eafc2e55870470487cda73f0c8178dabc1d3f5883fd0fc78edae452d1a06",
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-positive-02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "5b0aa940122cc8fa64b5947ee4129143bb29d9c0247b415d4fb98906a8fd656d",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-render",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "90489346a2544c343b482f4b6832faf5addb986152abca12cb7bd5a8ce3df1e5",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "5ec8887f1c93eb1a12c7d84414eead958c6fdc151c923a96bdd39838e054cf3f",
+      "name": "dpp-lifecycle307-5d2274ee-reference-caddy-validation",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "65059bce000e03a1a1e44c98a45e833039d52ce75c54668a1444d91228d19436",
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-negative-02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 2,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "6ac9e4e493895b172bd9113456fcdfc436eaa9de0a417b244f3b10c3416dd93f",
+      "name": "dpp-lifecycle307-5d2274ee-reader-final-b91470",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "81c3a96acb7a8da97a0bb31e8576624404f0b063291bbda4349b6201876dd4ed",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-after",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "ea10c881acd77b9d7526e5f7c372df492d9943f20987bea686d84432bea254aa",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "81e99a0f4a43a1c89e5cfc0edf2240b6e2c00e9b4ac0c42365d8e067b9c1c0d1",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send-replay",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "83b6d863584b92a423858606a7de179bacf874dcd45c1cdb810580b7897d7406",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "8447a03164ff098821f557c4855cb2fe1069d70891a65055b4c3c25073769954",
+      "name": "dpp-lifecycle307-04a6ff55-reader-lc13-crash-two-8a72a4",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 95,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "846b96e4c7c58baff9cb1f77851488c65e47008e270be9f267a2ef92e81e993d",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "4badce7836e46b051e688d7113fb18b7b6ed48ea289d8ea6568a631333221687",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "8db2b5cd7bef110653851d0d8f0c7757cf42f5f2a40d3dde029992adb01cb79a",
+      "name": "dpp-lifecycle307-04a6ff55-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-04a6ff55-postgres",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "92a4341a9cd2407cb4fc0081cea77be3c462fa9926e546aca42e4cee13466d5d",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-restored",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "f361d040c9ee1d9fae6877679b77a2270f7a9d840c582a1e75a3b18e6672de1a",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "93cc2b47d57dc4fdcc58fbaa8b5e4ef73cab5951894c9ed28eb71e3fb8cde822",
+      "name": "dpp-lifecycle307-04a6ff55-prepare",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "9b20260d5efa4391b82c491544087af151e5f7aa8f14a8318c3eed79c257bf56",
+      "name": "dpp-lifecycle307-5d2274ee-reader-seal-93c177",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "a062e016aea2e853d3bb6ae9066859aef3792b64b56dc4535d249d0a22cb7cbb",
+      "name": "dpp-lifecycle307-04a6ff55-reader-seal-ea285c",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "a3c610922f40ecb0c1410d6e9783fa7d58b9db5590a68fb92d45c77a387854a9",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-before",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "e02b829af30ef73121027726aa42e441a70c0b107860492c0b59f30ce42c3142",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "a56312d2496b278acfca9c96f374e42690dfb183bb8af05f835eb668a6f27d80",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-migrate-source",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "f69845924039ff292b0c7998b7dc69a0762799d1e701bfa33ae65a9ad3140583",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "b233ab150632fdd0791804e88519a37b3b64d0d47471dcba401568da7f288964",
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02-data",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "b57c6b44e63d6ccb797b2f8f82b885d8dc5601307bc0984f82306e08b79267b6",
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-predelete-postgres",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "b6577ad8107cfb0c8db4796f61677df88b4294f68aaf0f51afad8b39b551abda",
+      "name": "dpp-lifecycle307-04a6ff55-reader-lc13-orphan-76eb5a",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4",
+      "name": "dpp-lifecycle307-5d2274ee-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "exited",
+      "exit_code": 255,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "c670834f6e0d7f1ba550bc5dcbeb7fc2618bc4067ac46688bc226828a0ffd543",
+      "name": "dpp-lifecycle307-5d2274ee-reference-native-snapshot",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-predelete-objects",
+          "destination": "/restore"
+        },
+        {
+          "name": "dpp-lifecycle307-5d2274ee-objects",
+          "destination": "/source"
+        },
+        {
+          "name": "e85d9947bdd493b3f6222ac22f9b2369b676d8bbda376dfdc62c1df73ecc106b",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "name": "dpp-lifecycle307-5d2274ee-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-5d2274ee-postgres",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "ccd16e027a6a5e643422796285214a1b0e27c6da34f01897a870d30e99c19741",
+      "name": "dpp-lifecycle307-5d2274ee-reader-setup-5653d3",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "d0cb29545a79ed706f368c72ba8ad72561f563be6240e4ce12e21e72eb73695a",
+      "name": "dpp-lifecycle307-5d2274ee-prepare",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "d3efbb54ead478631e3633a7208dbb3c5effd7ed017feeca19eb42cc8efb7ee0",
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02-native-inspect",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 1,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "d8f4b8fd7a582004642774484611f8c0d61e9aec0df4e85769eb93795f1a7996",
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-rehearse",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": [
+        {
+          "name": "59f951527006d20a1821366d14f04c44dbbc231ce0ae13350e1eafc39182f541",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "id": "dd048f439c993ba157a5cdab3866b184a55db06040e0ff031c8ce1b38e3e0a88",
+      "name": "dpp-lifecycle307-04a6ff55-reader-provision-2760ee",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "df2d65af81b1880790113f0e460c0c6b8773211309b85d2b9c50519a05bd66a1",
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-positive",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "e10f24864d953c25a65232c78c9e0bb12e6a08122e905c8ebde22ec9cca1fd2c",
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-negative",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 2,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "f2f3b5602abda0461df35d0dd2a28e77c7bb0564d4ca2ae616c32c747a82b802",
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-03-native-inspect",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    },
+    {
+      "id": "fb92bdcd150127c50163448de9d918f3a2d9a18e2384274b30febfaf647bdb87",
+      "name": "dpp-lifecycle307-5d2274ee-reader-reference-races-d85398",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "exit_code": 0,
+      "host_ports": {},
+      "volumes": []
+    }
+  ],
+  "lc13_window": "SEALED",
+  "source_5d": "STOPPED_RETAINED",
+  "cleanup": 0
+}

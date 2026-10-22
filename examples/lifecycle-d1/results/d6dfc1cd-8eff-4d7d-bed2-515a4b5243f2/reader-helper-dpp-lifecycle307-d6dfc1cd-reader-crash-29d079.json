@@ -1,0 +1,12 @@
+{
+  "root_mounted": false,
+  "container": "dpp-lifecycle307-d6dfc1cd-reader-crash-29d079",
+  "cleanup": 0,
+  "run_id": "d6dfc1cd-8eff-4d7d-bed2-515a4b5243f2",
+  "binary_sha256": "5205e182928d53d1a0f4bc80e58967206bbfb6c3de0a2ee7589e1c661c23c172",
+  "id": "a9014189691625ef0f82c054befe3fb338706a8f77cecec8223887e2e39b759b",
+  "expected_exit": 95,
+  "delete": 0,
+  "mode": "crash",
+  "exit_code": 95
+}

@@ -1,0 +1,132 @@
+{
+  "plane": {
+    "services": [
+      {
+        "name": "dpp-lifecycle307-4176888e-postgres",
+        "id": "612706e91ae71b2d6800ce270cc8ad60e64b0e09a77f8578488f5ac9a9e64912",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-gateway",
+        "id": "c5ff1f7e62f063e6e3e1d3bdd9a412bed06f7e5f420f4cf23d0002f897b38497",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "exited",
+        "ports": {}
+      },
+      {
+        "name": "dpp-lifecycle307-4176888e-minio",
+        "id": "c62244fe672646c67f081950cc2aa10955d8e069daff447090117c7c7f8fbe08",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "exited",
+        "ports": {}
+      }
+    ],
+    "gateway_sha256": "5695d4337b06d2c420194a3fec04dbcbfbe95fde94dc1705e81d2f3f78834f59",
+    "gateway": "DENY_ALL",
+    "stage": "AFTER_FINAL_READ_ONLY_CORE_ACCOUNTING"
+  },
+  "archive": {
+    "services": [
+      {
+        "name": "dpp-lifecycle307-df27ccf8-gateway",
+        "id": "2371ba9bee99d5564a35ed83195ae391629cc62dc4f5456589f78edd36821643",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "exited",
+        "ports": {}
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-minio",
+        "id": "dab25bf2f9b8b2293e93c2910116b95b8eee8c954162878ee21e5feb873ffeaa",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "exited",
+        "ports": {}
+      },
+      {
+        "name": "dpp-lifecycle307-df27ccf8-postgres",
+        "id": "d02a3dc4b63f8ec36d02b8aff55309c30eebb14d8c3de2fadf60b77655729c01",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "ports": {
+          "5432/tcp": null
+        }
+      }
+    ],
+    "gateway_sha256": "5695d4337b06d2c420194a3fec04dbcbfbe95fde94dc1705e81d2f3f78834f59",
+    "gateway": "DENY_ALL",
+    "stage": "AFTER_FINAL_READ_ONLY_CORE_ACCOUNTING"
+  },
+  "copy": {
+    "services": [
+      {
+        "name": "dpp-lifecycle307-74b0dd66-minio",
+        "id": "9fb52f3936729083cc31e7bc023baae8b07ff154d834cd75fb73015d91ee89d5",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "running",
+        "ports": {}
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-gateway",
+        "id": "354ef8421234084fec4d58fd029eb5ec4c0a512f4fbe29fee8d205cf48d7346b",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "running",
+        "ports": {
+          "2019/tcp": null,
+          "443/tcp": null,
+          "443/udp": null,
+          "80/tcp": null
+        }
+      },
+      {
+        "name": "dpp-lifecycle307-74b0dd66-postgres",
+        "id": "18790cf170e4ddca5bab55f1bd80e955022041cda1ec18c78975aadfbb7a2390",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "ports": {
+          "5432/tcp": null
+        }
+      }
+    ],
+    "gateway_sha256": "5695d4337b06d2c420194a3fec04dbcbfbe95fde94dc1705e81d2f3f78834f59",
+    "gateway": "DENY_ALL",
+    "stage": "AFTER_FINAL_READ_ONLY_CORE_ACCOUNTING"
+  },
+  "metadata": {
+    "services": [
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-minio",
+        "id": "b9ab72ba7173cdff1b32a79181f42b25a967330028eddc4c13891f1c821f7da3",
+        "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "state": "running",
+        "ports": {}
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-postgres",
+        "id": "78cc6d83f38edb226104ac5e0ca6007bdb10ce8b0818acd1145b0fc867545243",
+        "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "state": "running",
+        "ports": {
+          "5432/tcp": null
+        }
+      },
+      {
+        "name": "dpp-lifecycle307-30cc0c1e-gateway",
+        "id": "4484607d0179236ed897f239ba67d642af4f7ab160c83735098f9fc764d753a2",
+        "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "state": "running",
+        "ports": {
+          "2019/tcp": null,
+          "443/tcp": null,
+          "443/udp": null,
+          "80/tcp": null
+        }
+      }
+    ],
+    "gateway_sha256": "5695d4337b06d2c420194a3fec04dbcbfbe95fde94dc1705e81d2f3f78834f59",
+    "gateway": "DENY_ALL",
+    "stage": "AFTER_FINAL_READ_ONLY_CORE_ACCOUNTING"
+  }
+}

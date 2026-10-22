@@ -1,0 +1,23 @@
+{
+  "observed_at": "2026-10-11T19:07:12.26483+08:00",
+  "plans": 2,
+  "scope_hashes_valid": true,
+  "inspection_calls": 19,
+  "cost_records": 19,
+  "events": 42,
+  "audits": 42,
+  "evidence": 42,
+  "approvals": 0,
+  "dispatches": 0,
+  "delete_attempts": 0,
+  "scope_helper": {
+    "status": "exited",
+    "network_mode": "container:102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+    "exit_code": 0,
+    "id": "a6d4b0e134ff9afb212cdfc3c94afac92f79d1a11e8b4b4f967454eb4fcc30b5",
+    "named_volumes": [],
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+  },
+  "scope_binary_sha256": "e71ea7d722567815f04dc0323ae14957201c0e8e721c6481c30fb4a64ac32eed",
+  "principal_enabled": false
+}

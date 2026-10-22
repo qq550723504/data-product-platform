@@ -1,0 +1,9 @@
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/adapters/workflow	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	190.833s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain	1.264s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/infrastructure	2.438s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.445s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/http	1.368s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue	1.865s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/contentreference	1.295s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing	1.295s

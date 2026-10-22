@@ -1,0 +1,18 @@
+{
+  "attempts": 1,
+  "send_claims": 1,
+  "confirmed_accepted": 1,
+  "absence_receipts": 1,
+  "completions": 1,
+  "storage_calls": 154,
+  "storage_observations": 154,
+  "cost_events": 155,
+  "cost_allocations": 155,
+  "events": 348,
+  "audit": 348,
+  "evidence": 348,
+  "active_readers": 0,
+  "pending_copies": 0,
+  "archive_facts": 1,
+  "copy_verifications": 5
+}

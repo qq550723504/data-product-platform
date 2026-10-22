@@ -1,0 +1,87 @@
+{
+  "status": "PASS_NATIVE_READONLY_REFRESH",
+  "operator_base_head": "4ee5f1a6b74ecb3653202939d253208529a9edc3",
+  "operator_worktree_changes": true,
+  "operator_source_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "c8a97e9f5dbba1f914277420ecd42f24cf69a7cbcc5dc2fdb4836f23882a3e61",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "5b36fb2f21e9ecf7813a33955be7cc76ad695722c145840d528e6b3e436c4bbc",
+    "examples/lifecycle-d1/refresh-reference-v7-readonly.py": "7386fd6a82c2bc322aea9cef2368d9db7f435c25e92dad200b2b7d8ef7d20688",
+    "examples/lifecycle-d1/check-reference-refresh.py": "3b45fc3d5d9e10e42258a72e2643e0b9a982f44b01bb11abcebe8f86b8c8ebb9",
+    "examples/lifecycle-d1/check-reference-v8.py": "bd82ac6642c5b0b1217c7c41f310f6e1a975923d688dfe58fd09f04ce7d5f79d"
+  },
+  "runtime_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "runtime_source_files": 317,
+  "native_observed_at": "2026-10-15T02:14:11Z",
+  "native_observations_within_source_before_after": true,
+  "full_source_matches_v7": true,
+  "storage_native_reads": 20,
+  "management_gets_this_refresh": 4,
+  "source_core_mutation": 0,
+  "clone_storage_calls_observations_costs": 112,
+  "source_storage_calls": 92,
+  "all_retained_containers": 48,
+  "source_configs_unchanged_and_sealed": true,
+  "new_maintenance_sealed": true,
+  "backups_sha256": {
+    "reference-disposal-preparation01/native-snapshot/native-store.tar": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+    "predelete-core-checkpoint-04/core.dump": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a"
+  },
+  "delete": 0,
+  "merge": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "retention_bypass": 0,
+  "independent_review": "Reviewed v7 baseline retained; this new native refresh/operator extension is primary acceptance, no new independent review claimed",
+  "tests_status": "PASS",
+  "tests": [
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": false,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": false,
+      "tests": 9,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": false,
+      "tests": 5,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": true,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": true,
+      "tests": 9,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": true,
+      "tests": 5,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    }
+  ],
+  "tests_per_mode": 25
+}

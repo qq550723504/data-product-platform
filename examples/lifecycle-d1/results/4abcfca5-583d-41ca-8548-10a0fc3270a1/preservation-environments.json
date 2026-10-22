@@ -1,0 +1,14 @@
+{
+  "retained_old_containers_checked": 29,
+  "pre_existing_volume_count": 2430,
+  "new_volumes": [
+    "dpp-lifecycle307-4abcfca5-objects",
+    "dpp-lifecycle307-4abcfca5-postgres",
+    "dpp-lifecycle307-4abcfca5-redis-data"
+  ],
+  "all_volumes_retained": true,
+  "changed_old_containers": [],
+  "missing_pre_existing_volumes": [],
+  "result": "PASS",
+  "old_object_access": "NOT_PERFORMED; every native helper scoped to the fresh run only"
+}

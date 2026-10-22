@@ -1,0 +1,4 @@
+RED on af3ce6f42ef39342220f3e4d5b1452ba2834007a with the real row-lock / packetized provider-reply regression added.
+=== RUN   TestLiveCoreBatch/dispatch-lock-does-not-lose-register-reply
+    live_test.go:97: POST /api/v1/ingestions/71a3ef9d-b398-42e1-b11f-ae46e83963fc/dispatch status=503 want=200 response={"code":"OUTCOME_UNKNOWN"}
+    --- FAIL: TestLiveCoreBatch/dispatch-lock-does-not-lose-register-reply (2.23s)

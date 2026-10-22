@@ -1,0 +1,14 @@
+{
+  "attempt_id": "00000000-0000-0000-0000-000000000000",
+  "scenario": "metadata-outbox",
+  "name": "dpp-lifecycle307-30cc0c1e-recovery-metadata-outbox",
+  "container_id": "b9d18601a227ed4c2a60fd01c3ec8040e73296f2f445c87abac79c9bcdd2d3a7",
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "workspace_id": "cb4937fb-cb09-4063-8f83-4ca8c8e8924d",
+  "cleanup_requests": 0,
+  "native_delete": "DENY_ALL",
+  "mode": "outbox",
+  "work_id": "5dabef70-cde3-4130-a68a-fe787bdde72c",
+  "binary_sha256": "33bc8135a6aa1713a8ae1597be9ad744843044652fb0348483a1236d25e9d249",
+  "gateway_sha256": "6ae8a380aaa644adbf7b02c5ebe01cce26b5d62620a9c8b8d834fefba96d9e1d"
+}

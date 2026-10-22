@@ -1,0 +1,3 @@
+{"event": "BUILD_INTENT", "image_id": null, "tag": "dpp-pgi-minio:trial-18d97329d314437fb0ea1cc6b4f35d9b"}
+{"event": "BOUND", "image_id": "sha256:bdf89dd92f88e109867b9f102b756f103cef58b6acd342194ba346e5fdb45b3c", "owned_digests": ["dpp-pgi-minio@sha256:bdf89dd92f88e109867b9f102b756f103cef58b6acd342194ba346e5fdb45b3c"], "tag": "dpp-pgi-minio:trial-18d97329d314437fb0ea1cc6b4f35d9b"}
+{"event": "CLEANUP_OBSERVATION", "image_id": "sha256:bdf89dd92f88e109867b9f102b756f103cef58b6acd342194ba346e5fdb45b3c", "reason": "EXPLICIT_RETENTION", "status": "RETAINED", "tag": "dpp-pgi-minio:trial-18d97329d314437fb0ea1cc6b4f35d9b"}

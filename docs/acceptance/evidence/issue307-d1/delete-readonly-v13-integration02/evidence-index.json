@@ -1,0 +1,15 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v13-integration02/retain-boundary-verification.json",
+      "bytes": 4598,
+      "sha256": "8692cb676727988f5ffc4ca2dc9ce90aa365370a27e03818df450fd6dcf77c79"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v13-integration02/wrapper-wiring-regression.json",
+      "bytes": 2870,
+      "sha256": "2ad52d5d18421cc0084583d3154bdece1c8f2ab78361e9d6e18230c51ed2e157"
+    }
+  ],
+  "scope": "Finalized new/uncommitted integration02 receipt plus17-case wrapper regression. Prior225 committed raw files remain untouched;draft index before regression retained privately;no native or execution authority"
+}

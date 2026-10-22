@@ -1,0 +1,20 @@
+=== RUN   TestArchiveRestoreCurrentWitnessAndRestrictions
+--- PASS: TestArchiveRestoreCurrentWitnessAndRestrictions (12.63s)
+=== RUN   TestCopyPolicyRenewalRetainsOldFactAndSerializesExpectedHead
+--- PASS: TestCopyPolicyRenewalRetainsOldFactAndSerializesExpectedHead (13.34s)
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/authority
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/wide
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/restriction
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/hold
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/reader
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/dispatch
+--- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy (50.06s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/authority (12.45s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/wide (9.09s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/restriction (10.32s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/hold (6.97s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/reader (4.39s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/dispatch (6.84s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	78.711s

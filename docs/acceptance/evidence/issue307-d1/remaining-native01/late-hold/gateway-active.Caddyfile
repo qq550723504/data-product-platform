@@ -1,0 +1,23 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @bypass header X-Amz-Bypass-Governance-Retention *
+  respond @bypass 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  @exact3 {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=delete754ea8f0/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/h2-a.csv?versionId=453c6f42-fbb2-4fdf-9f86-00a20a54b7bc'
+  }
+  reverse_proxy @exact3 minio:9000 {
+   @accepted status 204
+   handle_response @accepted {
+    abort
+   }
+  }
+  respond 403
+ }
+}

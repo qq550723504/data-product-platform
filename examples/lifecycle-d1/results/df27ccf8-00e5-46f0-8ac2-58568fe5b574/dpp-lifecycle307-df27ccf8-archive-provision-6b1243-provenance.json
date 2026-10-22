@@ -1,0 +1,17 @@
+{
+  "run_id": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+  "gateway_sha256": "b2b171abe827a34c431e329f3baee80f32543f5dd925e37656268ce4cce458d4",
+  "mode": "provision",
+  "recorded_before_start": "2026-10-14T06:34:06.9590398Z",
+  "binary_sha256": "30881214c17f7ce03a092f572ab54906c4ccf47efe51580d7cce216b9a667efe",
+  "source_head": "38f4a0946aa9aadd92f5147828231ac04218c36e",
+  "topology_sha256": "d7b06367a237c84c615baa4f7032d1f26f3616355da21726ab97adc013474d98",
+  "helper_id": "00f8864ea43529967a70581a55bae3e658576cea8d9d47deb534f4dc792048c3",
+  "source_hashes": {
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "90fed81431e30fad9fe32e7063dbd891314444dc3d5bd1686edde84b6bddc089",
+    "apps/platform/cmd/lifecycle-fixture-archive/main.go": "beb8a46767fec298ba53b5cf0e32b37b94050bc52e02aa5a2f56b75403ffe59f",
+    "apps/platform/internal/lifecycle/infrastructure/file_restore_ledger.go": "ad9349bc2c26a5461dc474e16bfe6268bd71971709a1cd5f32580e7a3ce830cc",
+    "migrations/000063_lifecycle_archive_restore.up.sql": "e6a19d7b162e5f79cd1e2b1067515261b7593ef388c5571d06ac2a3b9c1fd9a9",
+    "apps/platform/internal/lifecycle/application/copy_service.go": "7ae665b1f21ce1fb282637c03359e2dc99c1c4f8befbba7baf9e0fdb2b4ff8fc"
+  }
+}

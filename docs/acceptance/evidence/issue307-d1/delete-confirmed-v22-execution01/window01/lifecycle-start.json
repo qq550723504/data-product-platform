@@ -1,0 +1,9 @@
+{
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "started_at": "2026-10-19T06:01:48.469728+00:00",
+  "phase": "FRESH_READONLY_PREFLIGHT",
+  "authorization_sha256": "4235dc7205b9479d7fe0c36b88484ba9e780c2d166b094a7700bed31a3311dc4",
+  "approved_reference_artifacts": 30,
+  "new_send_allowed": false,
+  "native_delete": 0
+}

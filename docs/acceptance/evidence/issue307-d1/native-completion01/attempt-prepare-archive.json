@@ -1,0 +1,6 @@
+{
+  "phase": "prepare-archive",
+  "source_head": "38f4a0946aa9aadd92f5147828231ac04218c36e",
+  "driver_sha256": "f413aaa6c147a61eb14eaf8d9406119bd314919fa8b615c992e68ad380008629",
+  "intent": "ONE_SHOT_NON_DELETE; append-only, failure never auto-resumes"
+}

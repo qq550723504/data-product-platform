@@ -1,0 +1,236 @@
+{"status": "PASS", "checks": 5, "runId": "00000000-0000-0000-0000-000000000999", "minioImages": ["sha256:0000000000000000000000000000000000000000000000000000000000000001", "sha256:0000000000000000000000000000000000000000000000000000000000000002"], "hopImage": "sha256:00000000000000000000000000000000000000000000000000000000000003e7"}
+FFFFFFFFF
+======================================================================
+FAIL: test_absent_mixed_and_present_aliases_reach_the_checks (__main__.ImageIsolationRunnerContract.test_absent_mixed_and_present_aliases_reach_the_checks) (aliases={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 27, in run
+    before={ref:image(ref) for ref in shared}
+                ~~~~~^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 25, in image
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 52, in command
+    raise RuntimeError('docker command failed (exit 1); raw output withheld')
+RuntimeError: docker command failed (exit 1); raw output withheld
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 108, in test_absent_mixed_and_present_aliases_reach_the_checks
+    report = self.invoke(docker)
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DF060> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D5885F12B0>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_absent_mixed_and_present_aliases_reach_the_checks (__main__.ImageIsolationRunnerContract.test_absent_mixed_and_present_aliases_reach_the_checks) (aliases={'dpp-pgi-hop-jdbc:42.7.14': 'sha256:000000000000000000000000000000000000000000000000000000000000000a'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 27, in run
+    before={ref:image(ref) for ref in shared}
+                ~~~~~^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 25, in image
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 52, in command
+    raise RuntimeError('docker command failed (exit 1); raw output withheld')
+RuntimeError: docker command failed (exit 1); raw output withheld
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 108, in test_absent_mixed_and_present_aliases_reach_the_checks
+    report = self.invoke(docker)
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DF270> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D58858BED0>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_absent_mixed_and_present_aliases_reach_the_checks (__main__.ImageIsolationRunnerContract.test_absent_mixed_and_present_aliases_reach_the_checks) (aliases={'dpp-pgi-hop-jdbc:42.7.14': 'sha256:000000000000000000000000000000000000000000000000000000000000000a', 'dpp-pgi-minio:2025-10-15': 'sha256:000000000000000000000000000000000000000000000000000000000000000b'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 108, in test_absent_mixed_and_present_aliases_reach_the_checks
+    report = self.invoke(docker)
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885B6A30> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D5885F8B90>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_command_override_restored_after_trial_failure (__main__.ImageIsolationRunnerContract.test_command_override_restored_after_trial_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 45, in run
+    trial.setup()
+    ~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 67, in setup
+    raise RuntimeError('controlled trial failure')
+RuntimeError: controlled trial failure
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 135, in test_command_override_restored_after_trial_failure
+    self.invoke(docker)
+    ~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DB8A0> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D588566C40>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_created_removed_or_repointed_alias_is_rejected (__main__.ImageIsolationRunnerContract.test_created_removed_or_repointed_alias_is_rejected) (mutation='create')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 27, in run
+    before={ref:image(ref) for ref in shared}
+                ~~~~~^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 25, in image
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 52, in command
+    raise RuntimeError('docker command failed (exit 1); raw output withheld')
+RuntimeError: docker command failed (exit 1); raw output withheld
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 130, in test_created_removed_or_repointed_alias_is_rejected
+    self.invoke(ControlledDocker(self.binary, aliases, mutation=mutation))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DBCC0> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D5885669E0>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_created_removed_or_repointed_alias_is_rejected (__main__.ImageIsolationRunnerContract.test_created_removed_or_repointed_alias_is_rejected) (mutation='remove')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 27, in run
+    before={ref:image(ref) for ref in shared}
+                ~~~~~^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 25, in image
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 52, in command
+    raise RuntimeError('docker command failed (exit 1); raw output withheld')
+RuntimeError: docker command failed (exit 1); raw output withheld
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 130, in test_created_removed_or_repointed_alias_is_rejected
+    self.invoke(ControlledDocker(self.binary, aliases, mutation=mutation))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DB8A0> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D58855B1D0>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_created_removed_or_repointed_alias_is_rejected (__main__.ImageIsolationRunnerContract.test_created_removed_or_repointed_alias_is_rejected) (mutation='repoint')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 27, in run
+    before={ref:image(ref) for ref in shared}
+                ~~~~~^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 25, in image
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 52, in command
+    raise RuntimeError('docker command failed (exit 1); raw output withheld')
+RuntimeError: docker command failed (exit 1); raw output withheld
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 130, in test_created_removed_or_repointed_alias_is_rejected
+    self.invoke(ControlledDocker(self.binary, aliases, mutation=mutation))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DBC10> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D5884F7790>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_daemon_error_is_not_missing_image (__main__.ImageIsolationRunnerContract.test_daemon_error_is_not_missing_image)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 27, in run
+    before={ref:image(ref) for ref in shared}
+                ~~~~~^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 25, in image
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 52, in command
+    raise RuntimeError('docker command failed (exit 1); raw output withheld')
+RuntimeError: docker command failed (exit 1); raw output withheld
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 117, in test_daemon_error_is_not_missing_image
+    self.invoke(docker)
+    ~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DBB60> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D5884F7570>> : runner leaked its global command override
+
+======================================================================
+FAIL: test_missing_error_for_another_reference_is_not_swallowed (__main__.ImageIsolationRunnerContract.test_missing_error_for_another_reference_is_not_swallowed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 27, in run
+    before={ref:image(ref) for ref in shared}
+                ~~~~~^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 25, in image
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+                                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 52, in command
+    raise RuntimeError('docker command failed (exit 1); raw output withheld')
+RuntimeError: docker command failed (exit 1); raw output withheld
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 123, in test_missing_error_for_another_reference_is_not_swallowed
+    self.invoke(docker)
+    ~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 101, in invoke
+    self.assertIs(runner.smoke.command, command, 'runner leaked its global command override')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: <function run.<locals>.command at 0x000001D5885DB7F0> is not <bound method ControlledDocker.command of <__main__.ControlledDocker object at 0x000001D586918750>> : runner leaked its global command override
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.036s
+
+FAILED (failures=9)

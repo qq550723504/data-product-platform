@@ -2,11 +2,19 @@
 
 ## 产品定位
 
-Data Product Platform 是一套数据产品与高质量数据集生产治理平台。
+Data Product Platform 的长期定位是**全生命周期数据治理与可信数据生产平台**，面向企业、政府与行业数据场景。
 
-它围绕不可变 DatasetVersion，把数据接入、标准化、实体对齐、加工、质量评测、权利证明、合规、认证、交付和数据产品发布串成可验证的生产链。
+在已具备的数据产品与高质量数据集生产治理基础上，逐步覆盖数据发现/登记、准入/接入、标准化/清洗/加工、质量与权利、认证/交付、持续监督，以及保留/归档/销毁。既支持外部数据纳管，也支持接纳实际产物为不可变 DatasetVersion；并非所有治理对象都必须先被复制或产品化。
 
-平台核心数据库负责业务真相；OpenMetadata、Hop、Splink、Soda/GX、Label Studio 等外部系统通过 Adapter 提供能力，不拥有核心业务状态。能力规划不等同于这些适配器都已实现。
+平台核心数据库负责业务真相；OpenMetadata、Hop、Splink、Soda/GX、Label Studio 等外部系统通过 Adapter 提供能力，不拥有核心业务状态。长期定位和能力规划不等同于相应功能或适配器已经实现。
+
+### V2 产品蓝图与实施入口
+
+[全生命周期产品蓝图 V2](full-lifecycle-governance-v2.md) 是新增产品范围与分批需求的权威入口；[能力差距评估](full-lifecycle-governance-gap-assessment.md) 区分已验收、有限实现、架构候选与未验证能力；[ADR-0014](../adr/0014-full-lifecycle-governance-boundary.md) 定义目标边界。
+
+首批路线为 [#296](https://github.com/qq550723504/data-product-platform/issues/296)：A/#297 文档 → B/#298 单数据库源治理与生产 → C/#299 质量修复与持续治理；A 后可并行 D-design/#300 保留/归档/销毁设计。销毁 runtime 仍需后续立项。
+
+V2 不改写下述历史 Pilot 的完成定义，不改变既有运行架构或放松不可变/授权门禁。#294/#295 的受控 Submission 收尾继续按原契约执行；本轮文档不将其未合并或未运行结果计入 main。
 
 ## 当前阶段
 
@@ -58,6 +66,8 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 
 第二阶段进一步回答：谁标注、谁审核、选中了哪个不可变结果，哪些任务被拒绝，为什么这份具体输出满足明确 Gold Profile？
 
+V2 在上述基础上扩展：哪些外部数据已经纳管、谁负责、规则与观察是否仍有效；问题如何处理和复检；何时停止使用或进入处置流程、哪些范围已经验证。V2 目标不代表这些闭环已实现。
+
 ## 核心链路
 
 ~~~text
@@ -108,6 +118,8 @@ Certified Dataset / Data Product Core
         ↓
 Engine Adapter Layer
 ~~~
+
+以上保留已形成的生产治理能力结构；全生命周期外围能力的目标范围、归属与增量路径见 V2 蓝图，不把规划模块当作已运行服务。
 
 ## Certified Dataset
 

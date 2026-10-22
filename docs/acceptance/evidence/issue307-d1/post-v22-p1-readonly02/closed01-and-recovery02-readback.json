@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-19T10:17:11.252825+00:00",
+  "manifest02_sha256": "cd7cd06bfb46ab0703252af9f2668ed6453a4da4b84e860a736d80fa979ddb14",
+  "manifest01_sha256": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+  "old01_terminal_sha256": "db6b254cfa57b5d9d16e9a1024daae9a0032c0cf4f279c330c2b639ded525fd7",
+  "old01_owners": [
+    {
+      "cid": "74d2fb9aed18285a1a5183d0c3359d5ddf4b7e8a268df79f96c8bda7bfd549fe",
+      "running": false,
+      "pid": 0,
+      "restart": "no"
+    },
+    {
+      "cid": "6c52adb21e33b73c911c874104eafefa10948abf8f9ba8fcf7ad12768bda7599",
+      "running": false,
+      "pid": 0,
+      "restart": "no"
+    },
+    {
+      "cid": "99eff7a3dd85b4a2648362d684b055d8255803a933dc08a710cdc49351538159",
+      "running": false,
+      "pid": 0,
+      "restart": "no"
+    },
+    {
+      "cid": "768f0aaf409eae6ccaf24e12591f2d43c278325158785fe58f9e1a4493444a62",
+      "running": false,
+      "pid": 0,
+      "restart": "no"
+    }
+  ],
+  "old01_profiles": [
+    {
+      "name": "worker-private/recovery.json",
+      "enabled": false,
+      "sha256": "1d012e2c198cbbc875963103604727ca33ca013bd6ddc4fdf8616f4288ba0656"
+    },
+    {
+      "name": "root-private/p1-readonly-permission.json",
+      "enabled": false,
+      "sha256": "40047a13d086258d59ec8913e9b2a037d36cd31e819bcca818f5fde7704229ad"
+    }
+  ],
+  "new02_recovery": {
+    "Enabled": false,
+    "SyntheticOnly": true,
+    "RunID": "669e16cb-c671-4f36-92ad-ab3a3b051b81",
+    "ValidUntil": "2026-10-19T10:55:00.568705+00:00",
+    "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+    "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+    "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+    "ActorID": "033a56ad-99c2-43e3-89e0-a749979a8644",
+    "Endpoint": "127.0.0.1:9000",
+    "InspectAccess": "inspect808a69606c36",
+    "ManifestSHA256": "2fd4356702a7903af53d4f1f6f8dc6c40372bed11b7069bb32beb130a5077c35"
+  },
+  "new02_recovery_sha256": "778645d5521e833f69a5a24f1a505198004fb3b2649407bd1f9bb7d3a60d2c3d",
+  "new02_actual_parsed_DSN": {
+    "scheme": "postgres",
+    "host": "dpp-lifecycle307-808a6960-postgres",
+    "port": 5432,
+    "user": "fixture",
+    "database": "lifecycle307",
+    "query": "sslmode=disable",
+    "password": "PRESENT_PRIVATE_NOT_EMITTED",
+    "fixed_target_check": "PASS"
+  },
+  "source_started": false,
+  "identity_enabled": false,
+  "native_delete": 0
+}

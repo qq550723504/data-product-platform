@@ -1,0 +1,28 @@
+{
+  "status": "RETAINED_NON_DELETE_PREPARATION_FAILURES",
+  "source_parent": "0c9c3f0fb46d384285a6d9b13a729423ebd9878f",
+  "failures": [
+    {
+      "stage": "initial build",
+      "result": "FAIL",
+      "reason": "DispatchResult.Started field does not exist",
+      "repair": "use nonzero AttemptID; existing DispatchResult contract"
+    },
+    {
+      "stage": "topology build",
+      "result": "FAIL",
+      "reason": "unused uuid import",
+      "repair": "remove unused import"
+    },
+    {
+      "stage": "first PostgreSQL targeted race wrapper",
+      "result": "FAIL_BEFORE_BUSINESS_TESTS",
+      "reason": "POSTGRES_USER and POSTGRES_DB missing from retained default-image environment; empty DSN username",
+      "repair": "explicit PostgreSQL default postgres identity/database with fresh owned test DBs"
+    }
+  ],
+  "provider_delete": 0,
+  "source_native_io": 0,
+  "core_source_mutation": 0,
+  "cleanup": 0
+}

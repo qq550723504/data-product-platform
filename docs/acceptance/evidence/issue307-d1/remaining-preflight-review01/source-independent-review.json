@@ -1,0 +1,37 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_REVIEW",
+  "at": "2026-10-17T02:52:45.279680+00:00",
+  "reviewer": "/root/v18_preflight_independent_review",
+  "scope": "source and offline regression only; candidate08 native packet not yet generated",
+  "remaining_blockers": [],
+  "closed_blockers": [
+    "semantic equality instead of raw SHA; JSON EOF and exact integer comparison",
+    "native reader owns expected 400 response semantics; complete 34-request replay",
+    "isolated offline fake-private tests",
+    "shared actual mount/permission/owner/backup precondition",
+    "continue all known physical closes; preserve original failure"
+  ],
+  "files": {
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go": "0a1339473e9e157a55fef6804540adbae313ff821ee5ab202d45316bbd293a3c",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main_test.go": "ba7924c1632dec4b60c6ea5c3de46c8d68ccab7f1e83501fc7af0bc502e3d58a",
+    "examples/lifecycle-d1/verify-remaining-native.py": "5eb92622e3ab838388ca030719aaf395e970a152e8d7f1fe9abeb870063b3d9d",
+    "examples/lifecycle-d1/test_verify_remaining_native.py": "abe9d6c2db168056729146dc26c5df3831827d21192fdb7b0f2a494ad4523430",
+    "examples/lifecycle-d1/freeze-remaining-executable.py": "d18aa30df7d3d2ba53661c16a99de1c144b9018a03509904a79421530f01b79a",
+    "examples/lifecycle-d1/test_freeze_remaining_executable.py": "ba7237f8dab69158bcab0e9914f88108e25c0946150f6687213c67bf78d1b077",
+    "examples/lifecycle-d1/check-remaining-candidate08.py": "5712aec1b8f7fa5babdbf5a7537ed54d1637555545d03aa603a1d9dee7f7bd29",
+    "docs/acceptance/issue307-d1-v18-preflight-contract.md": "924e50fdb66003d87105fd7cfdb5a2080eb660935598679b9a8221da27549482"
+  },
+  "verification": {
+    "Go_target_packages": 5,
+    "Go": "PASS",
+    "Python_complete_normal": 4,
+    "Python_complete_optimized": 4,
+    "Python_close_normal": 1,
+    "Python_close_optimized": 1,
+    "diff_check": "PASS"
+  },
+  "review_provider_io": 0,
+  "review_container_starts": 0,
+  "review_credentials_read": false,
+  "send_authority": "NONE"
+}

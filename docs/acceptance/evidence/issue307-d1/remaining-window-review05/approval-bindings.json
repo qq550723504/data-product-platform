@@ -1,0 +1,42 @@
+{
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "profile": "candidate11/v21",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "send_window": [
+    "2026-10-18T14:00:00Z",
+    "2026-10-18T14:40:00Z"
+  ],
+  "recovery_not_after": "2026-10-18T16:40:00Z",
+  "frozen_bindings": {
+    "docs/acceptance/issue307-d1-candidate11-confirmation.md": "841cb0f424de3095fedef1e82f4d749a82f3424d711a1553a4c321c096cdc1f7",
+    "docs/acceptance/issue307-d1-v21-window-runbook.md": "dce7d5fc85eb05d1f41920bf13c85cc110d12c209b0c6edef382334d15b5b619",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/candidate.json": "0e55e28ea69b3894cfd8a032edbc6e4dcf811917c7cbc54d50e41aa79ba49e01",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/bindings.json": "28fc59c26c3adb3d7afffa3ec0b730d8de485172c7de016f5de15bc48ce139c8",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/confirmation-template.txt": "0967a70197972c23020a55a13d721f8de25097b78779ee8d0137b1ab5d68b5ea",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/source-freeze.json": "f658e65bb5ec705f06bfe0af89b8a8b37178a237aca53ee78dd5d118ff479863",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/profile-windows.json": "2df4bdea674e150938a2756bbfd7734cafae8ee60358857c2fd4dbe8884ce170",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/evidence-index.json": "b7a7ebf6a8d413f4b6b7715bb87c6b07cd056e545bed0cc5b2edfa5ad09196b8",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/window_support.py": "c3e765364aafd1ec311aec736cb951d7df2704b168cea0d566a0ee3a97aaf5f3",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/test_window_support.py": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/independent-final-review.json": "efbf2ab25a3f15bf09d9506ae990744deafd78465eb95e94cf69bc4e96db9d1d",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/source-independent-review.json": "ace683a1d9839c3975d877157bd46b7e8c02b28a5f40e112d743a832150ecc25",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native04/complete.json": "df01742edfa7e7e9ece45fbfde91455480463a3f7c51ab9d643fc9c453a68281",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native04/evidence-index.json": "9bb919059db5bc3e3c93ce0f84e2d42ccf3cfd9fb4cb3363690b5893f3f5c73f",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native04/technical-read-ledger.json": "10fcddd6c007af37e6d9e74abeebb56618eab3aa9500374000143baa994f03e4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/physical-close-recheck.json": "35107e766401c5b1fd7193808227c329f573954f90897de015469495c0ee3706",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/case-recovery-budget-recheck.json": "a1ce7381a7bd43557bf55c2633e48e27c93629f8dd6be8c4adb87d96f3a41523"
+  },
+  "new_human_authorization": "NOT_RECEIVED",
+  "old_authorization_reused": false,
+  "new_schedule": "NOT_CREATED",
+  "max_per_target": 1,
+  "max_total": 7,
+  "unknown_resend": false,
+  "survivors": 11,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "native_delete": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN"
+}

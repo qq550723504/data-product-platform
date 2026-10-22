@@ -1,0 +1,143 @@
+{
+  "issue": 87,
+  "pr": 312,
+  "review_round": 1,
+  "date": "2026-10-11T21:05:54.5977206+08:00",
+  "parent_sha": "5ef3a1321e95b2a889cda5b065177d89db1ab3b6",
+  "thread": "PRRT_kwDOUdQLBs6rNuFc",
+  "comment_id": 4241655962,
+  "root_cause": "Pending durable pulls filtered by current registry membership and empty-registry early return",
+  "source_fingerprint_scope": "Current Go/SQL workspace bytes from initial source inventory; documentation excluded",
+  "source": [
+    {
+      "path": "apps/platform/cmd/worker/main.go",
+      "sha256": "223fddde58406e622c4740120a51f81bbd3af142da5e768c20bd6c2fca245488"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/application/usage_acceptance.go",
+      "sha256": "7040467dcfe98cb4ab105fe0bf117b35f1e748e5b6ebb0d2988c7fafebd4c406"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/application/usage.go",
+      "sha256": "8212cb446954e2cd1e9c5665c557e0fed43d7de4bd114a8ef87152f5d0e2993b"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/domain/usage_test.go",
+      "sha256": "ddc264a854a736cd5431b455e2614af8b1411de8cae4f31695d965eb7c4a5218"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/domain/usage.go",
+      "sha256": "a91320c404da1c43c064240ed27b631ece0d1e917cd5e6ef1b841bdd5de30d7c"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/infrastructure/usage.go",
+      "sha256": "9ab4d0f2ce8790049f1a16d6f1fb59fa27ef52fd6409330610e8f7c2523df451"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/integration/usage_migration_test.go",
+      "sha256": "b5739b71eadd0a4ffb4659d87212f77ebeda5c2f7963a632534b7a0218529145"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/integration/usage_test.go",
+      "sha256": "5e49b5436b049a2d52f1069256c3e383c09166bf757e20bcbf0b3678b497b9ff"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/pilot/build.go",
+      "sha256": "ea2984cbb89beb36723d8393245776a81cbeb77afa4b6596e50838c3c1cbc2ce"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/ports/contracttest/usage.go",
+      "sha256": "c88cf5566535854dc788dc41c2ce90a7e65c5008694ec0c1f0e72ee2ed8caba8"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/ports/ports.go",
+      "sha256": "6f31fd95eacdcaf0e91825df3bafdf843955070d4a0ac6bb28e9d26d8c683910"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/reference/client.go",
+      "sha256": "acf3a42f0c73c45ab8cf93f856cb65c661c8a15e80e113418b3acde8b21521eb"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/reference/usage_test.go",
+      "sha256": "9d96bbfd82b37463049e7fa84f686fe2f86e7002c3b320b348064776ee51e14a"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/reference/usage.go",
+      "sha256": "33373ec6c04ef362cce5eb388042a2ff2add66715035c8a2324debfd1073d06c"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/testkit/provider.go",
+      "sha256": "0d3b6be0129e21710f30240eeba71a57fc64dc33bd5029a84565ad5e85ec6eff"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/testkit/usage.go",
+      "sha256": "3701e8676a116a62d9467d9a2a5ea2a6d9439b272015ed5b2650b9d4a9d27b6e"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/transport/http/handler.go",
+      "sha256": "72a245562e1970f5c54aafde6b48d4e8bd3861d60393981e9a539dc1bd0a93a3"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/transport/http/usage.go",
+      "sha256": "08d64af89722eb66e45187ab636675b40761323269808454cbf6dcf9b7a07d1d"
+    },
+    {
+      "path": "apps/platform/internal/platform/routing/routing_test.go",
+      "sha256": "db4db65f65fb3f6c934a94bfe154679f0040d6e66089b3ff9066c26f125a554d"
+    },
+    {
+      "path": "apps/platform/internal/platform/routing/routing.go",
+      "sha256": "d7d44e6ccfd48a1f053a092cf468fe42bdab298defc99d8dcaa34c1c87683284"
+    },
+    {
+      "path": "migrations/000058_external_usage_evidence.down.sql",
+      "sha256": "fffd0475e76f5462d8b12d579c4f3b0aeff3b7dcbfdae11c9123fe859c56772d"
+    },
+    {
+      "path": "migrations/000058_external_usage_evidence.up.sql",
+      "sha256": "5000f2c7f6dc2926c9de63b6f04da3325586b2ca018049c96ff1b35e04b89471"
+    }
+  ],
+  "logs": [
+    {
+      "path": "apps/platform/tmp/issue87/review1-migrate.log",
+      "sha256": "a069d6e8dea9ee531ad7b11eba94a778771d5ce8dfb96ff52b3831bd54bac0d8"
+    },
+    {
+      "path": "apps/platform/tmp/issue87/review1-red.log",
+      "sha256": "16dfd555d899af89b6a631763c46b3fee7830964669283042f1449a49286d9bf"
+    },
+    {
+      "path": "apps/platform/tmp/issue87/review1-green.log",
+      "sha256": "6dcbea7aba8bb24c24c8bf7c6f934590d50ff8f14b848945dbf46d51f16540d6"
+    },
+    {
+      "path": "apps/platform/tmp/issue87/review1-go-all.log",
+      "sha256": "35415ecd857045ac246cf1ad15451fdb6759f380cda6367c71a79f8b1071723e"
+    },
+    {
+      "path": "apps/platform/tmp/issue87/review1-race.log",
+      "sha256": "c7fea3c965a2fb2d993ef3458a2d465f790ee9747627f6ac083a8babc25fa6d9"
+    },
+    {
+      "path": "apps/platform/tmp/issue87/review1-vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apps/platform/tmp/issue87/review1-build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "checks": {
+    "red": "EXPECTED_FAIL: empty registry and unrelated provider both stranded PENDING",
+    "focused": "PASS: removed adapter restart/idempotency/zero-I-O-cost-cursor + binding/adapter/concurrent authority",
+    "go_all": "PASS 75 tested packages; real PostgreSQL and Redis",
+    "vet": "PASS",
+    "build": "PASS api/worker/migrate/outbox-replay",
+    "race": "PASS externalintegration, real PostgreSQL and Redis",
+    "gofmt_diff": "PASS",
+    "candidate_ci_review": "NOT_RUN on unpushed fix",
+    "merge_main_ci": "NOT_RUN",
+    "real_provider_deployment": "NOT_RUN"
+  }
+}

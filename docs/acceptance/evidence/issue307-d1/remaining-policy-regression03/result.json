@@ -1,0 +1,8 @@
+{
+  "container": "f74e2a8f46d0ee56d5ee7867d7a09a74ccd751438a27a0afd2e2e1022578deec",
+  "source": "a9ac59179836c667d29640f61ddf8699d287f2c8",
+  "exit_code": 0,
+  "native_provider_configured": false,
+  "native_delete": 0,
+  "retained_volume": "dpp-lifecycle307-policy-regression01-data"
+}

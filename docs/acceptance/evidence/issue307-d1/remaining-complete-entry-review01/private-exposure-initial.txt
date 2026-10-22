@@ -1,0 +1,31 @@
+test_extra_case_private_root_profile_refused (__main__.PrivateExposure.test_extra_case_private_root_profile_refused) ... FAIL
+test_extra_recovery_private_host_key_refused (__main__.PrivateExposure.test_extra_recovery_private_host_key_refused) ... FAIL
+
+======================================================================
+FAIL: test_extra_case_private_root_profile_refused (__main__.PrivateExposure.test_extra_case_private_root_profile_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-complete-entry-review01\test_independent_private_exposure.py", line 22, in test_extra_case_private_root_profile_refused
+    self.run_entry(mutate,denied=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\examples\lifecycle-d1\test_complete_remaining_preflight.py", line 140, in run_entry
+    with self.assertRaises((ValueError,TypeError)):v.main()
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (<class 'ValueError'>, <class 'TypeError'>) not raised
+
+======================================================================
+FAIL: test_extra_recovery_private_host_key_refused (__main__.PrivateExposure.test_extra_recovery_private_host_key_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-complete-entry-review01\test_independent_private_exposure.py", line 26, in test_extra_recovery_private_host_key_refused
+    self.run_entry(mutate,denied=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\examples\lifecycle-d1\test_complete_remaining_preflight.py", line 140, in run_entry
+    with self.assertRaises((ValueError,TypeError)):v.main()
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (<class 'ValueError'>, <class 'TypeError'>) not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 3.046s
+
+FAILED (failures=2)

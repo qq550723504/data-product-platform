@@ -20,9 +20,14 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	externalapp "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/application"
+	externalpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/pilot"
+	externalqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue"
 	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
+	lifecyclepilot "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
+	lifecyclequeue "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
@@ -82,19 +87,19 @@ func main() {
 	}
 	defer nativeLockDB.Close()
 
-	objectStore, err := storage.New(
-		cfg.Storage.Endpoint,
-		cfg.Storage.AccessKey,
-		cfg.Storage.SecretKey,
-		cfg.Storage.Bucket,
-		cfg.Storage.UseSSL,
-	)
-	if err != nil {
-		logger.Error("create object storage client", "error", err)
-		os.Exit(1)
+	var objectStore storage.RuntimeStore
+	if cfg.Storage.WorkspaceProfile != "" {
+		objectStore, err = lifecyclepilot.BuildWorkspaceObjects(db, cfg.Storage.WorkspaceProfile)
+	} else {
+		var bootstrap *storage.Store
+		bootstrap, err = storage.New(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey, cfg.Storage.Bucket, cfg.Storage.UseSSL)
+		if err == nil {
+			err = bootstrap.EnsureBucket(ctx)
+		}
+		objectStore = bootstrap
 	}
-	if err := objectStore.EnsureBucket(ctx); err != nil {
-		logger.Error("ensure object storage bucket", "error", err)
+	if err != nil {
+		logger.Error("configure object storage runtime", "error", "storage binding unavailable")
 		os.Exit(1)
 	}
 
@@ -113,12 +118,29 @@ func main() {
 
 	txManager := transaction.NewManager(db)
 	nativeLockManager := transaction.NewManager(nativeLockDB)
+	externalExecutor, err := externalpilot.BuildExecutor(db)
+	if err != nil {
+		logger.Error("configure external publication executor", "error", err)
+		os.Exit(1)
+	}
+	externalExecutor.WithLocker(nativeLockManager)
+	usageImporter := externalapp.NewUsageImporter(externalExecutor)
+	externalEnqueuer := externalqueue.NewClient(queueClient)
+	lifecycleEnqueuer := lifecyclequeue.NewClient(queueClient)
+	lifecycleRecovery, err := lifecyclepilot.BuildRecovery(db, nativeLockManager, lifecycleEnqueuer)
+	if err != nil {
+		logger.Error("configure lifecycle recovery", "error", err)
+		os.Exit(1)
+	}
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	annotationRepo := annotationinfra.NewRepository(db)
 	rightsRepo := rightsinfra.NewPostgresRepository(db)
 	entityRepo := entityinfra.NewPostgresRepository(db)
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
+	if lease, ok := objectStore.(datasetapp.VersionPublicationLease); ok {
+		datasetWriter.WithPublicationLease(lease)
+	}
 	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	goldService := goldapp.NewService(
 		txManager,
@@ -246,10 +268,16 @@ func main() {
 			productinfra.NewPostgresRepository(db),
 			metadataEngine,
 		)
+		if err := openmetadata.ConfigureSourceSchema(metadataService, db, os.Getenv("OPENMETADATA_SCHEMA_PROFILE")); err != nil {
+			logger.Error("configure finite source schema observer", "error", err)
+			os.Exit(1)
+		}
 		logger.Info("OpenMetadata governance projection enabled", "base_url", cfg.OpenMetadata.BaseURL, "domain", cfg.OpenMetadata.Domain)
 	}
 
 	mux := asynq.NewServeMux()
+	mux.HandleFunc(externalqueue.TaskExecute, externalqueue.Handle(externalExecutor))
+	mux.HandleFunc(lifecyclequeue.TaskRecover, lifecyclequeue.Handle(lifecycleRecovery))
 	mux.HandleFunc(queue.TaskHealthPing, func(_ context.Context, task *asynq.Task) error {
 		logger.Info("worker health ping consumed", "task_type", task.Type())
 		return nil
@@ -263,6 +291,23 @@ func main() {
 	})
 
 	errCh := make(chan error, 2)
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				if err := externalExecutor.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+					logger.Error("external publication reconciliation failed", "error", err)
+				}
+				if err := usageImporter.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+					logger.Error("external usage reconciliation failed", "error", err)
+				}
+			}
+		}
+	}()
 	go func() {
 		logger.Info("asynq worker started", "redis", cfg.Redis.Addr, "env", cfg.Environment)
 		if err := server.Run(mux); err != nil {
@@ -338,7 +383,23 @@ func main() {
 	if metadataService != nil {
 		projector = metadataService
 	}
-	dispatcher, err := newOutboxDispatcher(db, logger, projector, executionEnqueuer)
+	if lifecycleRecovery != nil {
+		go func() {
+			ticker := time.NewTicker(5 * time.Second)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-ticker.C:
+					if err := lifecycleRecovery.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+						logger.Error("reconcile lifecycle queue", "error", err)
+					}
+				}
+			}
+		}()
+	}
+	dispatcher, err := newOutboxDispatcher(db, logger, projector, executionEnqueuer, externalEnqueuer, lifecycleEnqueuer)
 	if err != nil {
 		logger.Error("create outbox dispatcher", "error", err)
 		os.Exit(1)

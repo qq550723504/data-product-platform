@@ -1,0 +1,161 @@
+{
+  "status": "PASS",
+  "finding": "post-start cost commit error or worker crash could close an uncharged physical attempt",
+  "rootFix": "existing native runtime first allocated unstarted; exact Docker container ID and frozen preparation/launch/stop/invocation-probe contract persist with attempt before start; native durable STARTED receipt confirmed before marker/cost; pending recovery contains runtime, confirms receipt and dedupes same-attempt charge before INTERRUPTED or new scan",
+  "unconfirmed": "charge or receipt unavailable keeps attempt pending; no observation/new scan; known current cost failure retries same charge, not provider invocation",
+  "notStarted": "durable CREATED receipt proves no native invocation, no phantom charge; missing/deleted/unavailable receipt fails closed",
+  "reuse": "existing Port/Adapter, retained Docker native state/ID, PG attempt/runtime facts, ChargeScan, advisory lock, Worker/Outbox; no new queue, ledger, file journal or migration",
+  "realDockerPostgresCases": [
+    {
+      "case": "prepared before launch",
+      "oldCost": 0,
+      "nextInvocationCost": 1,
+      "observations": "INTERRUPTED,MATCH"
+    },
+    {
+      "case": "started before cost commit",
+      "recoveredOldCost": 1,
+      "nextInvocationCost": 1,
+      "observations": "INTERRUPTED,MATCH"
+    },
+    {
+      "case": "database charge outage",
+      "whileUnavailable": "zero cost/observation; pending retained; no source IO",
+      "recoveredOldCost": 1,
+      "nextInvocationCost": 1,
+      "observations": "INTERRUPTED,MATCH"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "8c04975085b719354cb4682387181710e56e6855747c69ae79b90c0db20e04f1",
+      "name": "/dpp-c2-cost-recovery-31ef07c2-11e2-4ffb-ae04-13ef4577af81-a30480e9-3dc3-43dd-903c-389382451eed",
+      "status": "created",
+      "nativeStartedAt": "0001-01-01T00:00:00Z",
+      "retained": true,
+      "network": "none"
+    },
+    {
+      "id": "f884b990a886096be45c89206938efec10f4fe7ed05f627574366950ee9343af",
+      "name": "/dpp-c2-cost-recovery-31ef07c2-11e2-4ffb-ae04-13ef4577af81-1652164b-98ac-42a4-9342-dc278c9fcec1",
+      "status": "exited",
+      "nativeStartedAt": "2026-10-12T05:47:32.479818345Z",
+      "retained": true,
+      "network": "none"
+    },
+    {
+      "id": "da82065ac218707365e53e3f552f241d9ae10846f0b96613a1a4b94f396cd267",
+      "name": "/dpp-c2-cost-recovery-bbed27fe-10d2-42f7-9bae-4c8343358996-e291695d-6d74-489c-abf5-ab7bff830e18",
+      "status": "exited",
+      "nativeStartedAt": "2026-10-12T05:47:33.199320746Z",
+      "retained": true,
+      "network": "none"
+    },
+    {
+      "id": "3dd281a9c5160582641262f120c74a548413531cfec46acc59ca278b067eadfa",
+      "name": "/dpp-c2-cost-recovery-bbed27fe-10d2-42f7-9bae-4c8343358996-91ec7d6e-6b17-4c21-9ead-504d9dac6fb1",
+      "status": "exited",
+      "nativeStartedAt": "2026-10-12T05:47:33.9056237Z",
+      "retained": true,
+      "network": "none"
+    },
+    {
+      "id": "71a6ee8a685a97997992ddad0f81abfc59ee2ee056a82ad9363d627841e52a1f",
+      "name": "/dpp-c2-cost-recovery-59281188-4363-4561-9eb7-8ecf3637e3b8-170d6964-eaeb-4164-8d3a-23567a082767",
+      "status": "exited",
+      "nativeStartedAt": "2026-10-12T05:47:34.625597453Z",
+      "retained": true,
+      "network": "none"
+    },
+    {
+      "id": "edec50b8be442c26a96f39cc17f38c9e487179d5d8e61cd1998e51d11988dac2",
+      "name": "/dpp-c2-cost-recovery-59281188-4363-4561-9eb7-8ecf3637e3b8-b9a136c3-2414-4780-a464-07060fa79791",
+      "status": "exited",
+      "nativeStartedAt": "2026-10-12T05:47:35.228039885Z",
+      "retained": true,
+      "network": "none"
+    }
+  ],
+  "fixtureScope": "actual Docker provider receipt and actual PG recovery/typed costs, controlled schema protocol/network-none, not native OpenMetadata/PostgreSQL discovery or authentic entitlement acceptance",
+  "independentPortPG": "unknown provider receipt prevents new scan/outcome; database recovery retains both actual activity costs; successful replay adds no work/cost",
+  "combinedSource": {
+    "status": "PASS",
+    "d1Head": "fcef3dd28cf271634534e32ae34c19c97e7fdb57",
+    "c2": "cost-recovery working candidate after 405f6927",
+    "nativeDockerRealPGRecovery": "PASS",
+    "fullGoRealPostgresRace": "PASS",
+    "metadataRealPG": "PASS",
+    "vet": "PASS",
+    "bothFrozenRegistrations": "PASS",
+    "sourceSHA256": {
+      "apps/platform/internal/platform/routing/routing.go": "765560e26bbb92ad1488a9c1560ebc3563e0bb78598d95e514f389f14aa2bf03",
+      "apps/platform/internal/metadata/application/schema.go": "238dd56c21041680cc24526a6eae183d85afb3c487efa3fce1feb07ca417389d",
+      "apps/platform/internal/metadata/application/schema_cost_recovery_integration_test.go": "9292c6db62746b455713b9149aa52918db6cf079d61e0762ca11f5b2c9b0e50f",
+      "apps/platform/internal/metadata/application/schema_retry_integration_test.go": "0526cdafd27bb42504bd9680d4f00a68e8124a62dda346fa97dc07e7ac294b76",
+      "apps/platform/internal/metadata/openmetadata/schema.go": "1ff162a7b199e327e923ef4d56a1008956a180ef5febc099b98b4ebdd68b5546",
+      "apps/platform/internal/metadata/openmetadata/schema_cost_recovery_integration_test.go": "36aabd64922f653d14c1f4e15091f5786de112245acde705431379150ffcce2d",
+      "apps/platform/internal/metadata/openmetadata/schema_test.go": "a259a7b53f1a337637928fc292caa030dfe2f8408776777af3b67b91138ebbe6",
+      "apps/platform/internal/engine/metadata/schema.go": "4c7722347da367e99d14281a54b0e2d53876dd401319e82105c09659742109dd",
+      "apps/platform/cmd/worker/routing_test.go": "5faa8f32aaccc1c179c34d5487c8e1d6efe5cc6196d71a808d21bfccc155a106"
+    },
+    "scope": "complete D1+C2 source, independent named-volume PG; actual Docker retained receipts with controlled network-none scanner; no provider discovery success claimed",
+    "completeManifestSHA256": "bae6ad3784df97d3e9659a57033c895ffa369e3a4dd9fa38e007972bd5071de0",
+    "logs": {
+      "api-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "merged-full-race.log": "0626958d2c152c169f504b7b175f481522bb01817624f11ee4796234f22e3e0a",
+      "merged-migrate.log": "0f7a24d213d734cdfba85d65ad8984620422382e2ea3bc00fc034f396b5b3c9f",
+      "merged-registration.log": "495ef2df47614cf4e481a603f1e266bb6d79cc5338b3b9e54eb6dd7a74ebf695",
+      "merged-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata-real-pg-race.log": "c7211a6c14dff7459b10979debfc3ce69d1dd121de2965923fa8adc5c4a2af6b",
+      "native-real-pg-recovery.log": "e280d0ea55759c897bf49abf1330cc97bcf7af725e234196845dee34f3ed6155",
+      "worker-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "profileGeneratorSHA256": "c7709f29541aec27883564f697be37db266c4c9e425b32d48e422cad1d0b4422",
+  "currentCodeBackup": {
+    "status": "PASS",
+    "supplement": "C:\\Users\\Henry\\.codex\\worktrees\\issue299-c2\\data-product-platform\\.data\\c2-new-persistent\\backup-tools\\dpp-retention-backups\\20261012T045440Z\\code-supplements\\20261012T055446Z",
+    "completeDataBackup": "C:\\Users\\Henry\\.codex\\worktrees\\issue299-c2\\data-product-platform\\.data\\c2-new-persistent\\backup-tools\\dpp-retention-backups\\20261012T045440Z",
+    "unchangedSchemaLatest": 66,
+    "allCoreRelations": 192,
+    "fullCoreMatchesIndependentlyRestoredBackup": true,
+    "coreHashBefore": "7722043e5478ad93a59632739ecb6919c0696e8e8454984cc2f02d21e85d04e4",
+    "apiSHA256": "ce065691507c4b5f6ab99f1076bbfe3f9fdf4d3d3e3b9e150af95e75dd75042d",
+    "sourceArchiveSHA256": "71f2d03c4677758b6d9df73e427bad66335ea15d88264765e2479faa42b5663f",
+    "sourceAuthorization": "still REVOKED; no regrant",
+    "metadataAuth": "same existing identity, duration and grants retained; routine refresh with identical account, permissions and duration",
+    "scope": "current code/config binaries supplement of unchanged schema66 data backup; old snapshot preserved; original lost Core not restored"
+  },
+  "actualBrowser": {
+    "status": "PASS",
+    "binaryPrefix": "pgi-b3-c2-costrecovery",
+    "apiSHA256": "ce065691507c4b5f6ab99f1076bbfe3f9fdf4d3d3e3b9e150af95e75dd75042d",
+    "browser": "real Edge / production Next; reloaded after actual new process start",
+    "source": "OBSERVED; both old MATCH requests and five UNAVAILABLE preserved; actual new scan click SCHEMA_AUTHORITY_DENIED",
+    "delivery": "CurrentCertification ALLOWED, CurrentEntitlement BLOCKED, download disabled; no payload attempt",
+    "allTables": {
+      "core": {
+        "relations": 192,
+        "sha256": "7722043e5478ad93a59632739ecb6919c0696e8e8454984cc2f02d21e85d04e4",
+        "matchesIndependentlyRestoredBackup": true
+      },
+      "source": {
+        "relations": 3,
+        "sha256": "893a19132be10d934463bdcb6ca8622142dfd4fb68de1e9cc8758306bd151673",
+        "matchesIndependentlyRestoredBackup": true
+      }
+    },
+    "coreBeforeAfterEqual": true,
+    "exactNativeVersions": 8,
+    "objectIDSizePayloadSHA256Equal": true,
+    "newWorkOrCost": 0,
+    "sourceAuthority": "REVOKED, no regrant",
+    "scope": "post-recoverable-cost code history/read/denial regression; no new healthy native discovery or download claimed",
+    "humanExplanation": "NOT_RUN / deferred",
+    "originalLostCore": "NOT_RESTORED / untouched"
+  },
+  "migrationOrder": "unchanged main59 -> D1 60-64 -> C2 65-66",
+  "originalLostCore": "FAIL / NOT_RESTORED",
+  "humanExplanation": "NOT_RUN / deferred",
+  "draft": "no Ready/merge/Issue closure; current-head CI/review separate"
+}

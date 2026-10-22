@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "actualTCPLogin": "dpp_reader",
+  "rows": 14,
+  "denied": [
+    "INSERT",
+    "UPDATE",
+    "DELETE",
+    "CREATE",
+    "SET_ROLE"
+  ],
+  "allMutationsInRollbackTransaction": true,
+  "scope": "new synthetic source only, no credentials printed"
+}

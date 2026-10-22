@@ -1,0 +1,3 @@
+RED on 3d6e8878f23a1135934293109bcd0cc4f6422d05 with startup contract regression added.
+    live_test.go:391: unsupported HTTPS Hop configuration was accepted
+    --- FAIL: TestLiveCoreBatch/https-hop-is-rejected-before-dispatch (0.02s)

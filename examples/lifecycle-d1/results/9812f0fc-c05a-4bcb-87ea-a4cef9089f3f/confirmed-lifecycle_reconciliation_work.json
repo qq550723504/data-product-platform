@@ -1,0 +1,24 @@
+[
+  {
+    "id": "2f881f91-58fc-46dc-b582-82756acf5056",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "attempt_id": "681bf9c7-1c06-4e03-846f-1a2bf8dc3dd0",
+    "copy_call_id": null,
+    "basis_ref": "DURABLE_DISPATCH_RECOVERY",
+    "requested_at": "2026-10-13T11:07:08.943688+00:00",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "dependency_revision": 21
+  },
+  {
+    "id": "89afa9e4-5835-4b32-9187-eb45ee4640d1",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "attempt_id": "20df2726-e16d-4d2d-b42f-bb215c00ed55",
+    "copy_call_id": null,
+    "basis_ref": "DURABLE_DISPATCH_RECOVERY",
+    "requested_at": "2026-10-13T11:05:06.177203+00:00",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "dependency_revision": 12
+  }
+]

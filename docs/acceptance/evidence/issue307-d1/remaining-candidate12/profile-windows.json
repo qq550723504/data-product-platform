@@ -1,0 +1,125 @@
+{
+  "cases": [
+    {
+      "group": "business-races",
+      "stage": "renew",
+      "config_sha256": "87e7fcb2c8c49e35d1f973566a5c5a7668f630c19c3286ba963fe64051b63c5f",
+      "Batch": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+      "CandidateUseUntil": "2026-10-19T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-19T06:00:00Z",
+        "ExpiresAt": "2026-10-19T06:40:00Z"
+      }
+    },
+    {
+      "group": "business-races",
+      "stage": "business",
+      "config_sha256": "87e7fcb2c8c49e35d1f973566a5c5a7668f630c19c3286ba963fe64051b63c5f",
+      "Batch": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+      "CandidateUseUntil": "2026-10-19T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-19T06:00:00Z",
+        "ExpiresAt": "2026-10-19T06:40:00Z"
+      }
+    },
+    {
+      "group": "late-hold",
+      "stage": "late",
+      "config_sha256": "f5e8e83cc7104d7d1ff2cc4e48b35e0e62478c215180664410f3ed9bc36efaf3",
+      "Batch": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+      "CandidateUseUntil": "2026-10-19T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-19T06:00:00Z",
+        "ExpiresAt": "2026-10-19T06:40:00Z"
+      }
+    },
+    {
+      "group": "late-hold",
+      "stage": "close-H1",
+      "config_sha256": "c2bfd721a3bb98b4dcb8336da82bc7f1d783d8e6d04c8c52c2e413d08972e5fd",
+      "Batch": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+      "CandidateUseUntil": "2026-10-19T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-19T06:00:00Z",
+        "ExpiresAt": "2026-10-19T06:40:00Z"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed",
+      "config_sha256": "8c99b20e777a85f07c419dcd7779faa4ebaada81f872d6804c5a94c303626d29",
+      "Batch": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+      "CandidateUseUntil": "2026-10-19T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-19T06:00:00Z",
+        "ExpiresAt": "2026-10-19T06:40:00Z"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-b",
+      "config_sha256": "8c99b20e777a85f07c419dcd7779faa4ebaada81f872d6804c5a94c303626d29",
+      "Batch": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+      "CandidateUseUntil": "2026-10-19T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-19T06:00:00Z",
+        "ExpiresAt": "2026-10-19T06:40:00Z"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-c",
+      "config_sha256": "8c99b20e777a85f07c419dcd7779faa4ebaada81f872d6804c5a94c303626d29",
+      "Batch": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+      "CandidateUseUntil": "2026-10-19T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-19T06:00:00Z",
+        "ExpiresAt": "2026-10-19T06:40:00Z"
+      }
+    }
+  ],
+  "recoveries": [
+    {
+      "group": "business-races",
+      "stage": "recover-P1",
+      "config_sha256": "5ff8e1cf4470b2dbcfb00872c8a08f06d9714ae6539416398f3ba5ff6c0fa7f7",
+      "ValidUntil": "2026-10-19T08:40:00Z"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-P2",
+      "config_sha256": "5ff8e1cf4470b2dbcfb00872c8a08f06d9714ae6539416398f3ba5ff6c0fa7f7",
+      "ValidUntil": "2026-10-19T08:40:00Z"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T1",
+      "config_sha256": "5ff8e1cf4470b2dbcfb00872c8a08f06d9714ae6539416398f3ba5ff6c0fa7f7",
+      "ValidUntil": "2026-10-19T08:40:00Z"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T2",
+      "config_sha256": "5ff8e1cf4470b2dbcfb00872c8a08f06d9714ae6539416398f3ba5ff6c0fa7f7",
+      "ValidUntil": "2026-10-19T08:40:00Z"
+    },
+    {
+      "group": "late-hold",
+      "stage": "recover-H2",
+      "config_sha256": "88f3c89488c8e2266175c97921a7ccdad6ed82816c64651f1035eb905c3fea53",
+      "ValidUntil": "2026-10-19T08:40:00Z"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1A",
+      "config_sha256": "bcc5deb4e58c694334f00718d03f13c9718a2d1fb5fc28589ec476e42987ca5f",
+      "ValidUntil": "2026-10-19T08:40:00Z"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1B",
+      "config_sha256": "bcc5deb4e58c694334f00718d03f13c9718a2d1fb5fc28589ec476e42987ca5f",
+      "ValidUntil": "2026-10-19T08:40:00Z"
+    }
+  ]
+}

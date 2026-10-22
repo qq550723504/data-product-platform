@@ -1,0 +1,14 @@
+{
+  "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+  "work_id": "00000000-0000-0000-0000-000000000000",
+  "cleanup_requests": 0,
+  "binary_sha256": "fbeae3833ccf8501587d47815a520e7c8d16b44fae9620dad775b318012f3723",
+  "gateway_sha256": "81b26869b3ee1074035798a4bb6ba8c455ec71d69b57b7a7434d0da4d6011662",
+  "container_id": "1f550feb8a91e641e505c286a1b8fb74d77d334e496ad1f453da0f94f3fa2b58",
+  "scenario": "real-delete-survivors-after",
+  "attempt_id": "00000000-0000-0000-0000-000000000000",
+  "native_delete": "DENY_ALL",
+  "source_head": "34ea8193f6d93ca98b648091c588a471fba942fe",
+  "name": "dpp-lifecycle307-4abcfca5-recovery-real-delete-survivors-after",
+  "mode": "survivors"
+}

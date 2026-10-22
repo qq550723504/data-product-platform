@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-19T06:20:11.645051+00:00",
+  "toml_status": "PAUSED",
+  "config_sha256": "fd57947cd1d9e8db76d19211acfba95f6698026adf07b8d9a93607fed75f4608",
+  "schedule": {
+    "id": "307-d1-candidate12-v22",
+    "status": "PAUSED",
+    "next_run_at": null,
+    "last_run_at": 1792389629796,
+    "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a"
+  },
+  "original_active_snapshot_preserved": true
+}

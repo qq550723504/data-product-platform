@@ -34,9 +34,12 @@ import (
 	entitysplink "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/splink"
 	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	externalpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/pilot"
 	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	goldhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/transport/http"
+	ingestionpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot"
+	lifecyclepilot "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
@@ -56,6 +59,9 @@ import (
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitygx "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/gx"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	remediationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/application"
+	remediationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/infrastructure"
+	remediationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/transport/http"
 	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
 	readmodelhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel/transport/http"
@@ -104,19 +110,19 @@ func main() {
 	}
 	defer db.Close()
 
-	objectStore, err := storage.New(
-		cfg.Storage.Endpoint,
-		cfg.Storage.AccessKey,
-		cfg.Storage.SecretKey,
-		cfg.Storage.Bucket,
-		cfg.Storage.UseSSL,
-	)
-	if err != nil {
-		logger.Error("create object storage client", "error", err)
-		os.Exit(1)
+	var objectStore storage.RuntimeStore
+	if cfg.Storage.WorkspaceProfile != "" {
+		objectStore, err = lifecyclepilot.BuildWorkspaceObjects(db, cfg.Storage.WorkspaceProfile)
+	} else {
+		var bootstrap *storage.Store
+		bootstrap, err = storage.New(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey, cfg.Storage.Bucket, cfg.Storage.UseSSL)
+		if err == nil {
+			err = bootstrap.EnsureBucket(ctx)
+		}
+		objectStore = bootstrap
 	}
-	if err := objectStore.EnsureBucket(ctx); err != nil {
-		logger.Error("ensure object storage bucket", "error", err)
+	if err != nil {
+		logger.Error("configure object storage runtime", "error", "storage binding unavailable")
 		os.Exit(1)
 	}
 
@@ -145,6 +151,9 @@ func main() {
 
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
+	if lease, ok := objectStore.(datasetapp.VersionPublicationLease); ok {
+		datasetWriter.WithPublicationLease(lease)
+	}
 	datasetHandler := datasethttp.NewHandler(
 		datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceRepo),
 		datasetWriter,
@@ -239,6 +248,8 @@ func main() {
 		os.Exit(1)
 	}
 	rightsHandler := rightshttp.NewHandler(rightsService, rightsRepo, rightsAuthorizer)
+	workflowHandler.Authorize = rightsAuthorizer.Authorize
+	entityHandler.Authorize = rightsAuthorizer.Authorize
 
 	contractRepo := contractinfra.NewPostgresRepository(db)
 	contractService := contractapp.NewService(txManager, contractRepo)
@@ -272,12 +283,25 @@ func main() {
 		)
 	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
+	remediationRepo := remediationinfra.NewRepository(db)
+	var remediationService *remediationapp.Service
+	if ref := os.Getenv("QUALITY_REMEDIATION_PLAN_REF"); ref != "" {
+		plan, err := remediationapp.LoadPlan(cfg.IndustryPackRoot, ref)
+		if err != nil {
+			logger.Error("configure remediation plan", "error", err)
+			os.Exit(1)
+		}
+		remediationService = &remediationapp.Service{Tx: txManager, Repo: remediationRepo, Quality: qualityService, Executions: executionService, Workflows: workflowRepo, Plan: plan}
+	}
+	remediationHandler := remediationhttp.NewHandler(remediationService, remediationRepo, humanDecisionResolver)
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
 	certificationRepo := certificationinfra.NewCertificationRepository(db)
-	certificationService := certificationapp.NewCertificationService(txManager, certificationProfileRepo, certificationRepo, nil)
+	certificationService := certificationapp.NewCertificationService(txManager, certificationProfileRepo, certificationRepo, certificationapp.NewReferenceEvidenceResolver())
 	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility, datasetRepo)
+	certificationHandler.Authorize = rightsAuthorizer.Authorize
+	certificationHandler.Rights = rightsService
 
 	deliveryRepo := deliveryinfra.NewPostgresRepository(db)
 	deliveryGate := deliveryapp.NewCertificationDirectDataGate(certificationEligibility)
@@ -315,14 +339,33 @@ func main() {
 			productRepo,
 			metadataEngine,
 		)
+		if err := openmetadata.ConfigureSourceSchema(metadataService, db, os.Getenv("OPENMETADATA_SCHEMA_PROFILE")); err != nil {
+			logger.Error("configure finite source schema observer", "error", err)
+			os.Exit(1)
+		}
 	}
 	metadataHandler := metadatahttp.NewHandler(metadataService, metadataRepo)
+	metadataHandler.Authorize = rightsAuthorizer.Authorize
+	registerIngestion := func(*http.ServeMux) {}
+	if path := os.Getenv("INGESTION_PROFILE"); path != "" {
+		h, err := ingestionpilot.Build(db, path)
+		if err != nil {
+			logger.Error("ingestion profile invalid")
+			os.Exit(1)
+		}
+		registerIngestion = h.Register
+	}
 
 	traceabilityHandler := traceabilityhttp.NewHandler(
 		evidence.NewQueryRepository(db),
 		cost.NewQueryRepository(db),
 		traceability.NewRepository(db),
 	)
+	externalHandler, err := externalpilot.Build(db)
+	if err != nil {
+		logger.Error("configure external integration principal boundary", "error", err)
+		os.Exit(1)
+	}
 
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
@@ -340,11 +383,14 @@ func main() {
 			rightsHandler.Register,
 			contractHandler.Register,
 			qualityHandler.Register,
+			remediationHandler.Register,
 			certificationHandler.Register,
 			deliveryHandler.Register,
 			complianceHandler.Register,
 			metadataHandler.Register,
+			registerIngestion,
 			traceabilityHandler.Register,
+			externalHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
 	}

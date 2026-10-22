@@ -1,0 +1,253 @@
+{
+  "status": "PASS_FINAL_NATIVE_FACTS_AND_SEALED_AUTHORITY",
+  "as_of": "2026-10-14T04:58:48.225356+00:00",
+  "facts": {
+    "no_send_audits": 4,
+    "no_send_events": 4,
+    "checkpoint_reads": 12,
+    "no_send_evidence": 4
+  },
+  "configs": [
+    {
+      "phase": "migrate-restored",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "migrate-source",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "native-after",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "native-before",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "native-restored",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "no-send",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "no-send-replay",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "no-send02",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "rehearse",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "rehearse02",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "render",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    },
+    {
+      "phase": "render02",
+      "preparation_enabled": false,
+      "send_enabled": false,
+      "root_credential_fields_empty": true
+    }
+  ],
+  "services": [
+    {
+      "name": "dpp-lifecycle307-5d2274ee-postgres",
+      "id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running",
+      "started_at": "2026-10-14T00:58:26.645964312Z",
+      "restart_count": 0,
+      "network_mode": "dpp-lifecycle307-5d2274ee-private",
+      "host_ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/pgpass",
+          "read_write": false
+        },
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-5d2274ee-postgres",
+          "destination": "/var/lib/postgresql/data",
+          "read_write": true
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-minio",
+      "id": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "running",
+      "started_at": "2026-10-14T00:58:26.964571806Z",
+      "restart_count": 0,
+      "network_mode": "dpp-lifecycle307-5d2274ee-private",
+      "host_ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-5d2274ee-objects",
+          "destination": "/data",
+          "read_write": true
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/access",
+          "read_write": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/secret",
+          "read_write": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/start.sh",
+          "read_write": false
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-gateway",
+      "id": "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running",
+      "started_at": "2026-10-14T01:11:14.014930372Z",
+      "restart_count": 0,
+      "network_mode": "dpp-lifecycle307-5d2274ee-private",
+      "host_ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/etc/caddy/Caddyfile",
+          "read_write": false
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres",
+      "id": "b57c6b44e63d6ccb797b2f8f82b885d8dc5601307bc0984f82306e08b79267b6",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "started_at": "2026-10-14T04:49:53.243150654Z",
+      "restart_count": 0,
+      "network_mode": "dpp-lifecycle307-5d2274ee-predelete-private",
+      "host_ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/backup",
+          "read_write": false
+        },
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-5d2274ee-predelete-postgres",
+          "destination": "/var/lib/postgresql/data",
+          "read_write": true
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "id": "1976c314879a819f548c22e621a81277e43c80fa6e3de7969eadc4f169a19332",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "started_at": "2026-10-14T04:50:33.883630569Z",
+      "restart_count": 0,
+      "network_mode": "dpp-lifecycle307-5d2274ee-predelete-private-02",
+      "host_ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/backup",
+          "read_write": false
+        },
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+          "destination": "/var/lib/postgresql/data",
+          "read_write": true
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-objects",
+      "id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "exited",
+      "started_at": "2026-10-14T04:49:48.287148533Z",
+      "restart_count": 0,
+      "network_mode": "dpp-lifecycle307-5d2274ee-predelete-private",
+      "host_ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-5d2274ee-predelete-objects",
+          "destination": "/data",
+          "read_write": true
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/access",
+          "read_write": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/secret",
+          "read_write": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/start.sh",
+          "read_write": false
+        }
+      ]
+    }
+  ],
+  "provider_delete": 0,
+  "hold_release": 0,
+  "retention_bypass": 0,
+  "cleanup": 0,
+  "source_gateway_sha256": "b301fc4fe59f64ebe1e11f1488dde521b774622641ccc8377fe41cb64e839e80"
+}

@@ -1,0 +1,46 @@
+{
+  "status": "PASS_FINAL_CONVERGENCE_CHECKPOINT",
+  "reviewed_runtime_execution_head": "f1b03843ce26929d10cb71e744082ba77b2ebdda",
+  "review_kind": "Primary finite final closeout; prior independent LC13/candidate05/v15 results retained",
+  "technical_blockers": [],
+  "closed_findings": [
+    {
+      "id": "CURRENT_PR_DESCRIPTION",
+      "root": "Current description still used v14/pre-authorization and NOT_RUN claims",
+      "resolution": "Rewritten final PR description links current closure and v15 actual execution; old evidence stays immutable"
+    },
+    {
+      "id": "CURRENT_ENTRY_TIME_BOUNDARY",
+      "root": "Stage-specific preparation text could be read as current aggregate status",
+      "resolution": "Five contract/acceptance entries link final closure and label historical stage"
+    }
+  ],
+  "prior_independent_review_blockers": 0,
+  "formal_review_submissions": 0,
+  "unresolved_review_threads": 0,
+  "required_approval_count": 0,
+  "full_issue307_d1_accepted": false,
+  "followup_owner": "Open Issue307; parent Epic296",
+  "unaccepted_native_combinations": [
+    "Actual processing/DirectData vs actual DELETE in both orders",
+    "In-flight DELETE late hold",
+    "Three-copy mixed delete/timeout/retention result"
+  ],
+  "premerge_contract": [
+    "Same-head final documentation CI green and current base/threads/closure unchanged",
+    "Explicit user authorization to end Draft and merge",
+    "Honor actual GitHub conditional extra-approval rules; no invented APPROVED review"
+  ],
+  "postmerge_contract": "Actual merge SHA plus matching push/main CI; no deployment or Issue closure implied",
+  "pr_state": "OPEN_DRAFT",
+  "ready_or_merge_authorized": false,
+  "effects": {
+    "provider_io": 0,
+    "db_io": 0,
+    "container_starts": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "merge": 0
+  },
+  "conditional_approval_rule": "Enabled; final GitHub evaluation must pass after authorized Draft exit"
+}

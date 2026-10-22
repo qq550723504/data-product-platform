@@ -1,0 +1,148 @@
+{
+  "as_of": "2026-10-11T13:10:05.6184390Z",
+  "survivor_exact_identity_count": 8,
+  "environments": [
+    {
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-a6b30840-postgres",
+          "run_label": "a6b30840-3e76-49ad-91d3-f0c399fcf170"
+        },
+        {
+          "name": "dpp-lifecycle307-a6b30840-objects",
+          "run_label": "a6b30840-3e76-49ad-91d3-f0c399fcf170"
+        }
+      ],
+      "project": "dpp-lifecycle307-a6b30840",
+      "containers": [
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-a6b30840-postgres",
+          "id": "2dac61950f7bec8b9cc03a5ca2c9acb279640daff161a428885f0eef5bfaa414",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-a6b30840-minio",
+          "id": "4b7287adcc0c6b221f2516f0c4af8065d281c18a90322fbcdfcb01325e52f7c2",
+          "image": "sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-a6b30840-gateway",
+          "id": "102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+        }
+      ]
+    },
+    {
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-a1647373-postgres",
+          "run_label": "a1647373-8412-47da-8bf7-993b182adbac"
+        },
+        {
+          "name": "dpp-lifecycle307-a1647373-objects",
+          "run_label": "a1647373-8412-47da-8bf7-993b182adbac"
+        }
+      ],
+      "project": "dpp-lifecycle307-a1647373",
+      "containers": [
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-a1647373-postgres",
+          "id": "463eeed21004f7bfac686d36102549417996418abeb7d33aa9cf628ee26288a0",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-a1647373-minio",
+          "id": "7c89aaa430c020dc14ea66cad76642ca479a86848f4cb86fb4789f0fe7417c24",
+          "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-a1647373-gateway",
+          "id": "b37398dd78a38ba33fdf18aa1d7c47261b9db3958d0fc7d719846e48447e2d1b",
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+        }
+      ]
+    },
+    {
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-bb44901c-postgres",
+          "run_label": "bb44901c-b469-481b-ba3f-0d89029b8f20"
+        },
+        {
+          "name": "dpp-lifecycle307-bb44901c-objects",
+          "run_label": "bb44901c-b469-481b-ba3f-0d89029b8f20"
+        }
+      ],
+      "project": "dpp-lifecycle307-bb44901c",
+      "containers": [
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-bb44901c-postgres",
+          "id": "0732aea1d8943c8c677d24ce8ffa7806da2826a8255a66e30e333df00dd0f230",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-bb44901c-minio",
+          "id": "02f59785ee7356b75f22b89cc062015129a60626854bff378ed45e96a43752f5",
+          "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-bb44901c-gateway",
+          "id": "8bd0d14d645dfa7b4d9860eaa42f8efa5d41b112177a3eaec618fc262ee3e8ee",
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+        }
+      ]
+    },
+    {
+      "volumes": [
+        {
+          "name": "dpp-lifecycle307-c9f47cab-postgres",
+          "run_label": "c9f47cab-23c6-4d16-8102-a4a34bac1501"
+        },
+        {
+          "name": "dpp-lifecycle307-c9f47cab-objects",
+          "run_label": "c9f47cab-23c6-4d16-8102-a4a34bac1501"
+        }
+      ],
+      "project": "dpp-lifecycle307-c9f47cab",
+      "containers": [
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-c9f47cab-postgres",
+          "id": "08f55f18ce8520d4bd35a3314e208ce19c543737fa342db48214495d4facc786",
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-c9f47cab-minio",
+          "id": "8877f5980344b5278ba86b2dcac0ce2efb783c2f89c7bd184c6e37eb62335138",
+          "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741"
+        },
+        {
+          "state": "running",
+          "name": "dpp-lifecycle307-c9f47cab-gateway",
+          "id": "78dbb57abd29a36113cc5d13624aacbe6888bcbff3694ccca24ce6fd500b61c5",
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+        }
+      ]
+    }
+  ],
+  "scope": "Post-execution native inventory/HEAD/protection receipts verified; this independent audit sends no provider object requests",
+  "disabled_authorities": [
+    "bootstrap",
+    "copy",
+    "exact-delete"
+  ],
+  "gateway": "ALL_DELETE_DENIED_NO_ADMIN_ROUTE",
+  "check": "PASS_INDEPENDENT_READ_ONLY_FACTS_AND_PRESERVATION",
+  "object_cleanup": 0,
+  "volume_cleanup": 0
+}

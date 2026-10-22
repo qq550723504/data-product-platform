@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-19T09:02:39.087270+00:00",
+  "initial_check": "FAIL_CLOSED_NO_PUBLISHED_PORT_ON_INTERNAL_NETWORK",
+  "cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "original_volume_retained": "dpp307-postv22-regression-74cef6fd9fb2-data",
+  "retained_native_started": false,
+  "correction": "Add only this test-owned PG to a separate test-owned host-access network; localhost published PG only; no provider credentials or retained mounts"
+}

@@ -1,0 +1,7 @@
+{
+  "classification": "INVALID_REVIEWER_HISTORICAL_PATH_LOOKUP_NOT_COUNTED",
+  "error": "KeyError: worker-private/recovery.json",
+  "cause": "Reviewer audit used a POSIX literal against immutable audit01 Windows-backslash input keys. B4 already fixed current generation; this is a historical lookup assumption in reviewer-only code, not a current runtime or manifest failure. No Docker/source/provider or shared writes occurred.",
+  "correction": "Normalize only historical input-key separators to compare existing hashes; never rewrite old manifest or SHA.",
+  "at": "2026-10-19T10:52:59.296480+00:00"
+}

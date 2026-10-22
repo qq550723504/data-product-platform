@@ -1,0 +1,62 @@
+[
+  {
+    "evaluation_id": "4af2ca0f-ab74-4afc-82c0-cefc6928b964",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "disposal_due_at": "2026-10-13T10:58:16.835064+00:00",
+    "inventory_complete": "SATISFIED",
+    "references_released": "SATISFIED",
+    "provider_retention_allows": "SATISFIED",
+    "ledger_current": "SATISFIED",
+    "use_restricted": "SATISFIED",
+    "hold_free": "SATISFIED",
+    "readers_drained": "DENIED",
+    "unresolved_dispatches": 0,
+    "window_mode": "DEADLINE",
+    "valid_until": "2026-10-13T11:06:06.044343+00:00"
+  },
+  {
+    "evaluation_id": "6d8a89c0-f670-4064-b5e8-98688951c0f7",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "disposal_due_at": "2026-10-13T10:58:16.835064+00:00",
+    "inventory_complete": "SATISFIED",
+    "references_released": "SATISFIED",
+    "provider_retention_allows": "SATISFIED",
+    "ledger_current": "SATISFIED",
+    "use_restricted": "SATISFIED",
+    "hold_free": "SATISFIED",
+    "readers_drained": "DENIED",
+    "unresolved_dispatches": 0,
+    "window_mode": "DEADLINE",
+    "valid_until": "2026-10-13T11:08:08.808119+00:00"
+  },
+  {
+    "evaluation_id": "8475eb47-1e74-418b-8d75-70c0c76a43ad",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "disposal_due_at": "2026-10-13T10:58:16.835064+00:00",
+    "inventory_complete": "SATISFIED",
+    "references_released": "SATISFIED",
+    "provider_retention_allows": "SATISFIED",
+    "ledger_current": "SATISFIED",
+    "use_restricted": "SATISFIED",
+    "hold_free": "SATISFIED",
+    "readers_drained": "SATISFIED",
+    "unresolved_dispatches": 0,
+    "window_mode": "DEADLINE",
+    "valid_until": "2026-10-13T11:06:06.14525+00:00"
+  },
+  {
+    "evaluation_id": "f6ca00cb-92a1-42a1-b0e3-12a374fd9140",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "disposal_due_at": "2026-10-13T10:58:16.835064+00:00",
+    "inventory_complete": "SATISFIED",
+    "references_released": "SATISFIED",
+    "provider_retention_allows": "SATISFIED",
+    "ledger_current": "SATISFIED",
+    "use_restricted": "SATISFIED",
+    "hold_free": "SATISFIED",
+    "readers_drained": "SATISFIED",
+    "unresolved_dispatches": 0,
+    "window_mode": "DEADLINE",
+    "valid_until": "2026-10-13T11:08:08.910091+00:00"
+  }
+]

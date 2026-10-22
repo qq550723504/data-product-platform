@@ -1,0 +1,56 @@
+{
+  "containers": [
+    {
+      "id": "1595264ddcbabfcbac5cc952656652aff1e244a8b9cf23b790c4232f5ddf436b",
+      "name": "/dpp-lifecycle307-dfda43b4-remaining-regression-inspect-disable",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "45a4302e6342eab168a95555945c633ec6e9752e46718a266d2690a72cba97a6",
+      "name": "/dpp-lifecycle307-dfda43b4-remaining-regression-cases",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "0418ffd4cec5688e1cf899112e4321d116482b1ef0cfb6b3d20114c094c0f400",
+      "name": "/dpp-lifecycle307-dfda43b4-remaining-regression-inspect-enable",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "cd6af9fd802b191583b877a12173e5bceea4f3ee01100e020617b783cf413005",
+      "name": "/dpp-lifecycle307-dfda43b4-remaining-regression-gateway",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "6b20718928fa66f4d40f7c18a65aa73e1e82a794990868f0b8d38df6342ee5d3",
+      "name": "/dpp-lifecycle307-dfda43b4-remaining-regression-minio",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "1dd0b9bb4bc0793c12c5287e07aa7298f7c4d8b1cc58df7a894b8966358dcc8e",
+      "name": "/dpp-lifecycle307-dfda43b4-remaining-regression-unpack",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "a36a3c25b3c8d5d52d638ce2bfcde3378fb3d13963c39e525555c06f8542595a",
+      "name": "/dpp-lifecycle307-dfda43b4-remaining-regression-pg",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    }
+  ],
+  "retained": true,
+  "native_delete": 0,
+  "cleanup": 0
+}

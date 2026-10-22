@@ -1,0 +1,122 @@
+{
+  "issue": 298,
+  "pr": 305,
+  "scope": "Ready-triggered review minimal fixes",
+  "preFixHead": "019497690da4991cff8f703fe92000275fefbc71",
+  "readyReviewCompletedAt": "2026-10-11T08:01:05Z",
+  "regressions": {
+    "red": "ready-review-red.txt",
+    "green": "ready-review-green.txt",
+    "realPostgres": true,
+    "race": true,
+    "migration": "000053"
+  },
+  "localGoTest": "PASS",
+  "localGoVet": "PASS",
+  "runtime": {
+    "api": "http://127.0.0.1:51170",
+    "web": "http://127.0.0.1:51172",
+    "apiSha256": "411cfee9b617879270b82bf5b2b0f7c763b6c0d52415616e96d0b4a9dfedd460"
+  },
+  "binding": {
+    "bindingMetadata": {
+      "serviceType": "Postgres",
+      "version": 0.2
+    },
+    "entityType": "TABLE",
+    "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+    "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+    "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+    "primary": true,
+    "provider": "OPENMETADATA",
+    "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+    "updatedAt": "2026-10-11T16:08:40.678153+08:00"
+  },
+  "observation": {
+    "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+    "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+    "lastConfirmedAt": "2026-10-11T16:08:40.678153+08:00",
+    "lastConfirmedVersion": 0.2,
+    "observedAt": "2026-10-11T08:09:17.4061122Z",
+    "provider": "OPENMETADATA",
+    "status": "OBSERVED",
+    "version": 0.2
+  },
+  "crossResourceConflictHttp": 409,
+  "coreAfter": {
+    "data_resource": {
+      "count": 3,
+      "sha256": "4b9a8f720a9c83ce2f5a6ee988e60a60dd9a9ce419f3fd3519d537b7f9777b76"
+    },
+    "dataset": {
+      "count": 5,
+      "sha256": "236e0f60926a2c22d0ef0ef619a1a458572048c3f0c4f3a860a80b48448dd83a"
+    },
+    "dataset_version": {
+      "count": 3,
+      "sha256": "7e0c5a40d5ad0e7caff323f769f176eb6b46f75ec4f7408d7eb7de5248ee2ccd"
+    },
+    "quality_result": {
+      "count": 1,
+      "sha256": "d614f88af8093cd072c579a6905882b911038638bf21d7b53d9a35cd969d3dc3"
+    },
+    "dataset_certification": {
+      "count": 1,
+      "sha256": "fcb65920fe854f72cb7cfc0eff0d6b291161c101b3a0c0efc9d8c0edf549e713"
+    },
+    "certification_disposition": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "rights_snapshot": {
+      "count": 1,
+      "sha256": "78831a3b2093d5aa7c1dda032754a3c8a611536b15576801cfef9f0201729b5d"
+    },
+    "effective_rights_snapshot": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "rights_declaration": {
+      "count": 3,
+      "sha256": "e849f5067860f5fe0f6f8a994598203bb9d501e9ecc6085056afabb17b032fd3"
+    },
+    "data_authorization": {
+      "count": 1,
+      "sha256": "eafa48a9c88d9ee4e24239a70517aa11b2d4c1b55d8fc896207c00b63abde8d1"
+    },
+    "authorization_provenance_binding": {
+      "count": 3,
+      "sha256": "2571f18ef95a5a2c69417a60ce6c0b7d403bb139e095c470771f889664659da3"
+    },
+    "evidence_snapshot": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "product_release": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "product_version": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "evidence": {
+      "count": 20,
+      "sha256": "e018264a0ce04f35a25da75c06fb2dd42945e7dbd08b8dbb181b1cbffe9ae530"
+    }
+  },
+  "coreMatchesOriginalTrialBaseline": true,
+  "browserScreenshot": "ready-review-health.png",
+  "implementation_sha256_lf": {
+    "apps/platform/internal/metadata/application/service.go": "91b95e03f69f20a51d2fc024fdbc473d5a7e745c5e7bccb4dcdace318fb572a7",
+    "apps/platform/internal/metadata/infrastructure/postgres_repository.go": "02c9a1cdce43013d7e7092836f87803576cef7dec199dd2c93cdf15940e191ff",
+    "apps/platform/internal/metadata/transport/http/handler.go": "237398b2cd49d65d9f5e8f19470c70d78a5403f0c49bc2a69074cdc95bebd79f",
+    "migrations/000053_metadata_binding_identity.up.sql": "588b3d4a85d08d1ac437d12f8325e17da73cf8586866e7f2e42d4645f00836db",
+    "migrations/000053_metadata_binding_identity.down.sql": "2929f41292920e29575fb6893d765a777132aed3f46fc1a84f9d3ce6874afe09"
+  },
+  "nativeRename": {
+    "status": "NOT_RUN",
+    "reason": "OpenMetadata 2.0.5 table name JSON Patch returned the unchanged name/FQN/ID/version; original lease name verified afterward. Stable-ID rename and concurrent ownership are verified against real PostgreSQL, without claiming a native catalog rename."
+  },
+  "humanExplanation": "NOT_RUN - deferred by user"
+}

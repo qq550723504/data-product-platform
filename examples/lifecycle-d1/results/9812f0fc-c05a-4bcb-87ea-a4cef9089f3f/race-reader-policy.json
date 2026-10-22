@@ -1,0 +1,35 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "0f6aa755-4b86-496b-9ee1-43d7c59a8bb3"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "e1611b0a-efc0-4939-abc2-30394ec2c8d2"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/b.csv"
+      ]
+    }
+  ],
+  "Version": "2012-10-17"
+}

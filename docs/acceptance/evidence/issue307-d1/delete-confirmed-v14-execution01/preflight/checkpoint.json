@@ -1,0 +1,12 @@
+{
+  "status": "PASS_EXACT_SIX_AND_CURRENT_CORE",
+  "source_rows": 1879,
+  "restored_core": "dpp-lifecycle307-5d2274ee-delete-checkpoint-core-01",
+  "restored_core_id": "24eec81a207fe360d506cf0675677097c6b21c4b30949f450b3c4a522386a028",
+  "fresh_dump_sha256": "1bedd62f199baf72f6cc79d4b1fc2e0fd45970731460c5a8777fc53c22a08e64",
+  "source_business_mutations": 0,
+  "native_read_calls": 20,
+  "native_delete": 0,
+  "activation": "NOT_OPENED",
+  "cleanup": 0
+}

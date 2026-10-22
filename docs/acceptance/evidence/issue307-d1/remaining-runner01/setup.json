@@ -1,0 +1,8 @@
+{
+  "container": "f040101a6f7e2a0654958dec3842714356e5762f009bc4d02610c1d7ce124e12",
+  "source": "e311423a81dd9fd6848aad90acbb41e270537511",
+  "binary_sha256": "edfd2d3aa96df8391d525c4b37963d723278b5f2e15398344b44454352e7f1a5",
+  "exit_code": 1,
+  "root_mount": false,
+  "delete": 0
+}
