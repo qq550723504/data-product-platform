@@ -139,7 +139,10 @@ export default async function AttentionPage({ searchParams }: { searchParams: Pr
   const model = loadAttention(workspace, offsets);
   return <>
     <PageHeader eyebrow="Attention" title="待办中心" description="各分区独立读取；历史异常与无观察请求不计为当前未恢复待办。" action={<Suspense fallback={<span>审核、执行与发布：UNKNOWN · 读取中</span>}><Total model={model} /></Suspense>} />
-    <QualityAttention query={query} /><SchemaAttention query={query} /><SchemaExceptions query={query} /><SchemaRequests query={query} />
+    <Suspense fallback={<section id="quality-attention" data-testid="quality-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="质量异常汇总读取中" /></section>}><QualityAttention query={query} /></Suspense>
+    <Suspense fallback={<section id="source-schema-attention" data-testid="schema-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 漂移汇总读取中" /></section>}><SchemaAttention query={query} /></Suspense>
+    <Suspense fallback={<section id="schema-exception-history" data-testid="schema-exceptions-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 扫描异常历史读取中" /></section>}><SchemaExceptions query={query} /></Suspense>
+    <Suspense fallback={<section id="schema-unobserved-requests" data-testid="schema-requests-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察请求读取中" /></section>}><SchemaRequests query={query} /></Suspense>
     <p className="panel-meta">各分区按各自读取结果展示，不是同一个冻结快照；产品名称不可用时使用已读取的对象 ID。</p>
     <div className="attention-grid">
       <Suspense fallback={<ReadUnavailable title="实体审核读取中" />}><ReviewQueue model={model} offsets={offsets} /></Suspense>

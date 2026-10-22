@@ -141,7 +141,10 @@ export default function WorkbenchPage() {
   return <>
     <PageHeader eyebrow="Workbench" title="数据产品工作台" description="观察资源、生产、实体审核与发布状态。各分区独立读取，未知结果明确标记。" action={<span className="mono">Workspace · {workspace.slice(0, 8)}…</span>} />
     <Suspense fallback={<ReadUnavailable title="工作台概览读取中" />}><Metrics model={model} /></Suspense>
-    <QualityAttention compact /><SchemaAttention compact /><SchemaExceptions compact /><SchemaRequests compact />
+    <Suspense fallback={<section id="quality-attention" data-testid="quality-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="质量异常汇总读取中" /></section>}><QualityAttention compact /></Suspense>
+    <Suspense fallback={<section id="source-schema-attention" data-testid="schema-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 漂移汇总读取中" /></section>}><SchemaAttention compact /></Suspense>
+    <Suspense fallback={<section id="schema-exception-history" data-testid="schema-exceptions-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 扫描异常历史读取中" /></section>}><SchemaExceptions compact /></Suspense>
+    <Suspense fallback={<section id="schema-unobserved-requests" data-testid="schema-requests-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察请求读取中" /></section>}><SchemaRequests compact /></Suspense>
     <WorkbenchAttention model={model} />
     <section className="section-grid">
       <Suspense fallback={<ReadUnavailable title="最近生产执行读取中" />}><RecentExecutions model={model} /></Suspense>

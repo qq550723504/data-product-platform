@@ -55,7 +55,11 @@ The helper bounds the UI wait at 60 seconds. This is a read-display deadline,
 not a source scan timeout or a persisted business/runtime state. It does not
 cancel the existing underlying GET, retry it or invoke a provider. Timers are
 cleared after resolution. Other Suspense regions can render while that read is
-still pending; product-label hold tests verify this before releasing the GET.
+still pending. Each of the four governance components also has its own native
+Suspense boundary on both host pages. Its local UNKNOWN/loading placeholder
+retains the section's existing anchor without inventing a count or business
+state. Product-label and governance hold tests verify independence before
+releasing the GET.
 
 ## Count and evidence contract
 
@@ -88,7 +92,7 @@ still pending; product-label hold tests verify this before releasing the GET.
 - PASS: browser fixture contracts 14/14. Faults are token-controlled and limited
   to named GET routes; unknown keys/modes are rejected. They do not alter business
   Commands. A held read is released explicitly or by fixture reset.
-- PASS: complete browser contracts 78/78, including 18 new isolation journeys.
+- PASS: complete browser contracts 86/86, including 26 isolation journeys.
   These cover each existing host prerequisite failure, denied/malformed reads,
   reverse governance failures, all reads unavailable, successful empty versus
   unknown totals, recovery on refresh, selected release page/snapshot independence,
@@ -96,7 +100,20 @@ still pending; product-label hold tests verify this before releasing the GET.
   arriving observation -> original evidence/filter/page navigation during an
   unrelated release failure. New read-only journeys assert GET-only, no forms,
   no provider/source/batch reads and no credential/private-error sentinels in HTML.
-- The first browser pass was 77/78: the pending-label assertion required an
+- PASS: eight reverse held-GET cases (two pages x four governance reads). While
+  the GET is still held, the local placeholder is UNKNOWN/loading (no zero or
+  CLEAR/READY), page identity and the other three governance sections are visible,
+  the independent current-task total stays known, and the exact release link is
+  usable. Available request links retain the exact resource/request identity.
+  Releasing the GET removes only its placeholder and restores that same section
+  with one anchor. Every hold is released in finally; GET-only and secret checks
+  run before and after release.
+- Review of the original HEAD found that the four governance async components
+  still blocked the root shell when pending, despite instant-503 tests passing.
+  The review probe reproduced eight failures with two passing product-hold
+  controls. The independent boundaries above fix that root cause; all eight
+  reverse cases now pass in the complete 86-test run.
+- The original implementation's first browser pass was 77/78: the pending-label assertion required an
   isolated exact text node while it was part of a release row. It was replaced
   with a deterministic held-GET assertion against the containing section, then
   the full suite passed. The wait is released in finally.

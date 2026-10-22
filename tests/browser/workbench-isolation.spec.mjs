@@ -137,6 +137,46 @@ test("pending product labels do not block independent facts or evidence", async 
     await pure(page, request);
   }
 });
+for (const path of ["/", "/attention"]) {
+  for (const [fault, panel, anchor] of [
+    ["quality", "quality-attention", "quality-attention"],
+    ["schema", "schema-attention", "source-schema-attention"],
+    ["exceptions", "schema-exceptions", "schema-exception-history"],
+    ["requests", "schema-requests", "schema-unobserved-requests"],
+  ]) {
+    test(path + " isolates pending " + fault + " governance GET before it resolves", async ({ page, request }) => {
+      await reset(request, { [fault]: "hold" });
+      const pending = page.getByTestId(panel + "-pending");
+      try {
+        await page.goto(path, { waitUntil: "commit", timeout: 5000 });
+        await expect(page.getByRole("heading", { level: 1, name: path === "/" ? "数据产品工作台" : "待办中心" })).toBeVisible();
+        await expect(pending).toContainText("UNKNOWN");
+        await expect(pending).toContainText("读取中");
+        await expect(pending).not.toContainText(/CLEAR|READY|0 条|0 个/);
+        await expect(page.locator("#" + anchor)).toHaveCount(1);
+        await expect(page.getByTestId(path === "/" ? "workbench-attention-total" : "attention-total")).toContainText("2 条");
+        await expect(page.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute("href", "/products/" + ids.product + "#releases");
+        for (const other of ["quality-attention", "schema-attention", "schema-exceptions", "schema-requests"].filter(value => value !== panel)) {
+          await expect(page.getByTestId(other)).toBeVisible();
+        }
+        if (path === "/attention" && fault !== "requests") {
+          const link = page.getByTestId("schema-requests").locator("tbody tr").filter({ hasText: unobservedRequestId(1) }).getByRole("link", { name: "查看精确请求" });
+          await expect(link).toHaveAttribute("href", new RegExp("^/resources/" + ids.sourceResource + "\\?view=source-schema-request&requestId=" + unobservedRequestId(1) + "&"));
+        }
+        const state = await (await request.get(control + "/state", { headers })).json();
+        expect(state.heldReadCount).toBe(1);
+        await pure(page, request);
+      } finally {
+        expect((await request.post(control + "/release-reads", { headers })).ok()).toBeTruthy();
+      }
+      await expect(pending).toHaveCount(0);
+      await expect(page.getByTestId(panel)).toBeVisible();
+      await expect(page.locator("#" + anchor)).toHaveCount(1);
+      await pure(page, request);
+    });
+  }
+}
+
 test("precise attempt and arriving observation round trip survives an unrelated release failure", async ({ page, request }, info) => {
   await reset(request, { releases: "fail" });
   await page.goto("/attention?schemaRequestView=ALL&schemaRequestOffset=100");
