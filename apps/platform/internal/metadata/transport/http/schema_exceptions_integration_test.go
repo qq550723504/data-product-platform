@@ -64,7 +64,11 @@ func TestSchemaExceptionHistoryReadOnly(t *testing.T) {
 		}
 		if status == "MATCH" || status == "DRIFT" {
 			now := time.Now().UTC()
-			o.Columns, o.SchemaHash, o.StartedAt, o.CompletedAt = p.Columns, d.Hash(p.Columns), &now, &now
+			o.Columns = append([]d.SchemaColumn{}, p.Columns...)
+			if status == "DRIFT" {
+				o.Columns = append(o.Columns, d.SchemaColumn{Name: "extra", Type: "TEXT", Constraint: "NULL"})
+			}
+			o.SchemaHash, o.StartedAt, o.CompletedAt = d.Hash(o.Columns), &now, &now
 		}
 		if err := repo.AppendSchemaObservation(ctx, tx, o); err != nil {
 			t.Fatal(err)
@@ -73,7 +77,7 @@ func TestSchemaExceptionHistoryReadOnly(t *testing.T) {
 		return o.ID
 	}
 	wanted := map[uuid.UUID]string{}
-	var oldReq d.SchemaRequest
+	var oldReq, driftReq d.SchemaRequest
 	var oldObservation, deniedWithout, deniedWith uuid.UUID
 	for i := 0; i < 105; i++ {
 		plan := p
@@ -96,12 +100,15 @@ func TestSchemaExceptionHistoryReadOnly(t *testing.T) {
 		if i == 4 {
 			deniedWith = id
 		}
+		if i == 104 {
+			driftReq = req
+		}
 	}
 	// A single request retains two exception attempts followed by success.
 	wanted[appendObservation(oldReq, "INTERRUPTED", false)] = "INTERRUPTED"
 	appendObservation(oldReq, "MATCH", false)
 	// DRIFT and its multiple handling records belong only to the existing queue.
-	drift := appendObservation(oldReq, "DRIFT", false)
+	drift := appendObservation(driftReq, "DRIFT", false)
 	for i := 0; i < 3; i++ {
 		if _, err = repo.HandleSchema(ctx, tx, resource, ws, actor, drift, fmt.Sprintf("handling-%d", i), "investigating drift"); err != nil {
 			t.Fatal(err)

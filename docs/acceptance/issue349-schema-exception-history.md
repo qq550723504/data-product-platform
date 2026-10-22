@@ -80,6 +80,14 @@ The final responsibility/attempt binding checks passed on real PostgreSQL. After
 the evidence wording and fixture attempt IDs were finalized, the production Web
 build and all four new browser cases passed again.
 
+Final fixture review also keeps terminal request semantics realistic: the old
+request is UNAVAILABLE -> INTERRUPTED -> MATCH; another request is INTERRUPTED
+-> DRIFT with three handling records, and its observed columns differ from the
+baseline. The revised real PostgreSQL regression passes. Its first recheck hit
+the old loopback port after Docker reassigned the owned container's ephemeral
+port on restart; refreshing only `.data/q349/dsn.txt` resolved that setup error.
+No application timeout, query, assertion or gate was relaxed.
+
 Local test resources belong only to `codex.issue=349`, `codex.worktree=e349`.
 The new PostgreSQL container/volume is `dpp-q349-pg-e349-20261022`, loopback-only;
 test configuration is ignored under `.data/q349`. No existing PostgreSQL,
