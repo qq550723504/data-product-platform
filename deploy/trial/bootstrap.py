@@ -147,6 +147,24 @@ def binding(s, stage):
 
 
 def native(s, *, hosts=False):
+    def observe(owner):
+        actual = r.process_identity(owner["pid"], expected=owner, allow_missing=True)
+        r.need(hosts or actual is None, "Recorded host still live")
+        return actual
+    return _native(s, observe)
+
+
+def stopped_native(s):
+    """Recovery observes absence of the recorded owner, never owns a reused PID."""
+    def observe(owner):
+        actual = r.process_identity(owner["pid"], allow_missing=True)
+        r.need(actual != owner, "Recorded host still live")
+        # Foreign PID identities are transient and are never recovery targets.
+        return None
+    return _native(s, observe)
+
+
+def _native(s, observe):
     result = {}
     for role, owner in s["containers"].items():
         item = json.loads(r.docker("inspect", owner["id"]))[0]; r.verify_container(s, role, item)
@@ -154,9 +172,7 @@ def native(s, *, hosts=False):
         result[role] = {"id": item["Id"], "image": item["Image"], "configHash": r.container_hash(item)}
     processes = {}
     for role, owner in s["processes"].items():
-        observed = r.process_identity(owner["pid"], expected=owner, allow_missing=True)
-        r.need(hosts or observed is None, "Recorded host still live")
-        processes[role] = observed
+        processes[role] = observe(owner)
     for name, port in s.get("ports", {}).items():
         if name in ("api", "web") and any(processes.values()): continue
         with socket.socket() as sock:

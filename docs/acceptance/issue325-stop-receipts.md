@@ -47,6 +47,15 @@ ledger artifacts must still match. The current protected inventory must match
 the accepted activation. A foreign path, mismatched identity, additional drift,
 or an orphan recovery journal refuses the plan.
 
+Stopped recovery uses `bootstrap.stopped_native`: absence is relative to the
+recorded PID + creation time + executable identity. An absent process or a PID
+now held by a different identity proves that the original owner is absent; the
+foreign process is never a stop target and its transient identity is not frozen
+into the plan. The same recorded owner still live, an unreadable identity, a
+container/configuration change or an occupied original port refuses. Ordinary
+`bootstrap.native` (including `hosts=True`) keeps its exact-owner checks, as do
+all process termination paths; this is not a global PID mismatch bypass.
+
 Recovery source admission verifies the immutable activation document, its
 identity/previous business and ledger references, frozen Git sources, original
 business artifacts, activated binaries/Web and bound protected profile before
@@ -74,7 +83,8 @@ An interrupted operation remains STOPPED with an UNKNOWN recovery claim;
 ordinary resume remains blocked. The same plan can finish from its exact saved
 archives, including a lost response after restoration or before registry commit.
 Every unfinished attempt rechecks both frozen ledger manifests and all their
-files before writing recovery state, archives, receipts or restoration bytes,
+files, plus the original daemon and stopped native owners, before writing
+recovery state, archives, receipts or restoration bytes,
 even when its journal already exists. Only the one reviewed bootstrap pathname
 may contain either its reviewed current hash or its original frozen hash after
 an interrupted restoration; every other file must still match exactly. Drift
@@ -111,6 +121,14 @@ the final registry commit, then inject bootstrap/custody manifest or file drift.
 The real CLI must refuse before recovery writes, preserve bytes/mtimes and
 bindings, and finish/replay the same journal once only that injected drift is
 removed. No business validation chain is mocked.
+Nonempty process-table regressions also exercise the real Windows identity
+adapter against a live PID with a different recorded creation time/executable,
+and an exactly matching live owner. Native handle failures/absence are simulated
+at the handle adapter while real CLI/source/business/ledger validation remains
+in place. A journal interrupted before or after its UNKNOWN claim must reject
+an unreadable owner before further claim/archive writes, and finish/replay the
+same plan after observation becomes available. Port occupancy still refuses;
+ordinary native observations retain their strict identity behavior.
 These controller regressions do not claim a live restart of the retained run.
 
 Merge blockers: historical bytes/bindings can be lost or changed; any recovery
