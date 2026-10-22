@@ -51,6 +51,9 @@ func respond(w http.ResponseWriter, value any, e error) {
 		case errors.Is(e, ErrConflict):
 			code = ErrConflict.Error()
 			status = 409
+		case errors.Is(e, ErrPublicationConflict):
+			code = ErrPublicationConflict.Error()
+			status = 409
 		case errors.Is(e, ErrIntegrity):
 			code = ErrIntegrity.Error()
 			status = 409

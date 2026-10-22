@@ -4,11 +4,30 @@ const root = process.env.SOURCE_ADMISSION_E2E_DIR;
 const meta = JSON.parse(await readFile(root + "/browser-fixture.json", "utf8"));
 async function control(request, action) { const r = await request.post(meta.api + "/__fixture/control", { headers: { "X-Fixture-Control": "synthetic-hfa-control" }, data: { action } }); expect(r.status()).toBe(204); }
 const text = {
-  "en-US": { title: "Accept annotation source", submit: "Accept / resume original request", lookup: "Check original request", accepted: "Source accepted", denied: "Current access denied.", unknown: "The result is unknown." },
-  "zh-CN": { title: "接纳标注来源", submit: "接纳 / 继续原请求", lookup: "查询原请求", accepted: "来源已接纳", denied: "当前权限不足。", unknown: "结果尚未确认。" },
+  "en-US": { title: "Accept annotation source", submit: "Accept / resume original request", lookup: "Check original request", accepted: "Source accepted", denied: "Current access denied.", unknown: "The result is unknown.", publicationConflict: "A newer dataset version was accepted first." },
+  "zh-CN": { title: "接纳标注来源", submit: "接纳 / 继续原请求", lookup: "查询原请求", accepted: "来源已接纳", denied: "当前权限不足。", unknown: "结果尚未确认。", publicationConflict: "已有更新的数据版本完成接纳。" },
 };
 async function fill(page) { await page.locator('input[name="releaseId"]').fill(meta.releaseId); await page.locator('input[name="snapshotId"]').fill(meta.snapshotId); await page.locator('input[name="manifestSha256"]').fill(meta.manifestSha256); }
 for (const lang of ["en-US", "zh-CN"]) {
+  test(`${lang}: terminal publication conflict UI and lost-response lookup`, async ({ page }) => {
+    const t = text[lang];
+    // UI contract only; the actual out-of-order PostgreSQL race is exercised
+    // in TestPostgresOutOfOrderSnapshotPublicationTerminatesOriginalKey.
+    await page.route("**/api/source-admissions*", async route => {
+      const post = route.request().method() === "POST";
+      await route.fulfill({ status: post ? 409 : 200, contentType: "application/json", body: JSON.stringify(post ? { error: { code: "SOURCE_PUBLICATION_CONFLICT" } } : { state: "FAILED_FINAL", errorCode: "SOURCE_PUBLICATION_CONFLICT" }) });
+    });
+    await page.goto(`/source-admissions?lang=${lang}`); await fill(page);
+    await page.getByRole("button", { name: t.submit }).click();
+    await expect(page.getByRole("status")).toContainText(t.publicationConflict);
+    await expect(page.getByRole("button", { name: t.submit })).toBeDisabled();
+    const key = await page.getByTestId("request-key").textContent();
+    await page.reload(); await page.getByRole("button", { name: t.lookup }).click();
+    await expect(page.getByRole("status")).toContainText(t.publicationConflict);
+    await expect(page.getByTestId("request-key")).toHaveText(key);
+    await expect(page.getByRole("button", { name: t.submit })).toBeDisabled();
+    await expect(page.getByTestId("accepted-version")).toHaveCount(0);
+  });
   test(`${lang}: real acceptance, replay, reload and stale access`, async ({ page, request }) => {
     const t = text[lang]; await control(request, "enable");
     await page.goto(`/source-admissions?lang=${lang}`); await expect(page.getByRole("heading", { name: t.title })).toBeVisible(); await fill(page);

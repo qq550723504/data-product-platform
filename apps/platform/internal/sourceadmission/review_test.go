@@ -12,10 +12,109 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	dd "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 )
+
+type orderedSnapshotStore struct {
+	VersionStore
+	entered chan struct{}
+	release chan struct{}
+}
+
+func (s *orderedSnapshotStore) PutVersion(ctx context.Context, v dd.DatasetVersion, key string, r io.Reader, size int64, mediaType string) (string, error) {
+	if v.VersionNo == 1 && strings.HasSuffix(key, "/manifest.json") {
+		close(s.entered)
+		select {
+		case <-s.release:
+		case <-ctx.Done():
+			return "", ctx.Err()
+		}
+	}
+	return s.VersionStore.PutVersion(ctx, v, key, r, size, mediaType)
+}
+
+func TestPostgresOutOfOrderSnapshotPublicationTerminatesOriginalKey(t *testing.T) {
+	f := newFixture(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 45*time.Second)
+	defer cancel()
+	base, _ := f.s.Store(f.c)
+	store := &orderedSnapshotStore{VersionStore: base, entered: make(chan struct{}), release: make(chan struct{})}
+	f.s.Store = func(Connection) (VersionStore, error) { return store, nil }
+	oldRequest := f.r
+	type result struct {
+		receipt Receipt
+		err     error
+	}
+	done := make(chan result, 1)
+	go func() {
+		rec, e := f.s.Admit(ctx, oldRequest, f.caller)
+		done <- result{rec, e}
+	}()
+	select {
+	case <-store.entered:
+	case <-ctx.Done():
+		t.Fatal("first snapshot never reserved its version")
+	}
+	// The first request has finished all source reads and is paused outside a
+	// transaction. Publish a distinct, internally valid snapshot ahead of it.
+	f.sourceMu.Lock()
+	var envelope map[string]any
+	_ = json.Unmarshal(f.blobs["manifest.json"], &envelope)
+	f.r.SnapshotID, f.r.ReleaseID, f.r.Key = uuid.New(), uuid.New(), "newer-snapshot"
+	envelope["snapshot_id"] = f.r.SnapshotID.String()
+	envelope["receipt"].(map[string]any)["release_id"] = f.r.ReleaseID.String()
+	f.blobs["manifest.json"] = nativeEncode(envelope)
+	f.r.ManifestSHA = Hash(f.blobs["manifest.json"])
+	f.sourceMu.Unlock()
+	newer := f.admit(t)
+	close(store.release)
+	older := <-done
+	const want = "SOURCE_PUBLICATION_CONFLICT"
+	if older.err == nil || older.err.Error() != want || older.receipt.State != "FAILED_FINAL" {
+		t.Fatalf("stale reservation remains retryable: %+v %v", older.receipt, older.err)
+	}
+	for _, byKey := range []bool{false, true} {
+		var rec Receipt
+		var e error
+		if byKey {
+			rec, e = f.s.LookupKey(ctx, oldRequest.WorkspaceID, oldRequest.Key, f.caller)
+		} else {
+			rec, e = f.s.Lookup(ctx, oldRequest.WorkspaceID, older.receipt.ID, f.caller)
+		}
+		if e != nil || rec.State != "FAILED_FINAL" || rec.ErrorCode != want || rec.VersionID != nil {
+			t.Fatalf("lost terminal response not recoverable: %+v %v", rec, e)
+		}
+	}
+	calls, writes := f.sourceCalls.Load(), f.port.writes
+	replay, e := f.s.Admit(ctx, oldRequest, f.caller)
+	if e == nil || e.Error() != want || replay.ID != older.receipt.ID || replay.State != "FAILED_FINAL" {
+		t.Fatalf("original key changed outcome: %+v %v", replay, e)
+	}
+	if f.sourceCalls.Load() != calls || f.port.writes != writes {
+		t.Fatal("terminal replay performed external work")
+	}
+	if n := f.count(t, `SELECT count(*) FROM dataset WHERE id=$1 AND current_version_id=$2`, f.r.DatasetID, newer.VersionID); n != 1 {
+		t.Fatal("late lower version rewound current version")
+	}
+	if n := f.count(t, `SELECT count(*) FROM dataset_version WHERE dataset_id=$1`, f.r.DatasetID); n != 2 {
+		t.Fatalf("terminal replay allocated another version: %d", n)
+	}
+	if n := f.count(t, `SELECT count(*) FROM source_admission_capture WHERE dataset_id=$1 AND state='ACCEPTED_SOURCE'`, f.r.DatasetID); n != 1 {
+		t.Fatal("late snapshot published partial acceptance")
+	}
+	if n := f.count(t, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='SourceAdmissionRejected'`, older.receipt.ID); n != 1 {
+		t.Fatalf("terminal rejection facts=%d want=1", n)
+	}
+	w := httptest.NewRecorder()
+	respond(w, replay, e)
+	if w.Code != http.StatusConflict || !strings.Contains(w.Body.String(), want) {
+		t.Fatalf("terminal HTTP contract: %d %s", w.Code, w.Body.String())
+	}
+}
 
 func TestPostgresReplacementConnectionBindings(t *testing.T) {
 	f := newFixture(t)

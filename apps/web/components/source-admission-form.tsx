@@ -21,6 +21,7 @@ export function SourceAdmissionForm({ lang, scope }: { lang: AdmissionLocale; sc
     if (code === "SOURCE_AUTHORITY_DENIED") { setBlocked(true); return t.denied; }
     if (code === "SOURCE_INTEGRITY_FAILED") return t.integrity;
     if (code === "SOURCE_IDEMPOTENCY_CONFLICT") return t.conflict;
+    if (code === "SOURCE_PUBLICATION_CONFLICT") { setBlocked(true); return t.publicationConflict; }
     if (code === "SOURCE_PROFILE_UNSUPPORTED") return t.unsupported;
     return t.unknown;
   }
@@ -32,7 +33,7 @@ export function SourceAdmissionForm({ lang, scope }: { lang: AdmissionLocale; sc
       const r = await fetch(`/api/source-admissions${lookup ? `?key=${encodeURIComponent(i.key)}` : ""}`, { method: lookup ? "GET" : "POST", cache: "no-store", headers: { "Content-Type": "application/json", "Idempotency-Key": i.key }, ...(lookup ? {} : { body: JSON.stringify({ releaseId: i.releaseId, snapshotId: i.snapshotId, manifestSha256: i.manifestSha256 }) }) });
       const data = await r.json();
       if (!r.ok) { setMessage(problem(data.error?.code)); return; }
-      if (data.state === "FAILED_FINAL") { setBlocked(true); setMessage(t.failed); return; }
+      if (data.state === "FAILED_FINAL") { setBlocked(true); setMessage(data.errorCode === "SOURCE_PUBLICATION_CONFLICT" ? t.publicationConflict : t.failed); return; }
       setReceipt(data); setMessage(data.state === "ACCEPTED_SOURCE" ? t.accepted : t.prepared);
     } catch { setMessage(problem("SOURCE_TRANSPORT_UNKNOWN")); }
     finally { setBusy(false); }

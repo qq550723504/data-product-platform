@@ -225,6 +225,9 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 		return rec, err
 	}
 	if rec.State == "FAILED_FINAL" {
+		if rec.ErrorCode == ErrPublicationConflict.Error() {
+			return rec, ErrPublicationConflict
+		}
 		if rec.ErrorCode == ErrConflict.Error() {
 			return rec, ErrConflict
 		}
@@ -409,6 +412,11 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 					return e
 				}
 				previous, e := s.Datasets.SetReady(ctx, tx, v)
+				if errors.Is(e, dd.ErrStaleVersionRecovery) {
+					// Keep the existing monotonic current-version rule. This reserved
+					// version can never publish; persist a terminal original-key result.
+					return ErrPublicationConflict
+				}
 				if e != nil {
 					return e
 				}
@@ -473,7 +481,7 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 			return nil
 		})
 	}(ctx)
-	if errors.Is(err, ErrIntegrity) || errors.Is(err, ErrUnsupported) || errors.Is(err, ErrConflict) {
+	if errors.Is(err, ErrIntegrity) || errors.Is(err, ErrUnsupported) || errors.Is(err, ErrConflict) || errors.Is(err, ErrPublicationConflict) {
 		original := err
 		if e := s.Tx.Do(context.WithoutCancel(ctx), func(ctx context.Context, tx pgx.Tx) error {
 			_, p, e := s.gate(ctx, tx, r, caller)

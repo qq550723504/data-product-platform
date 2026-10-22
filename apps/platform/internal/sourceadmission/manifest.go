@@ -27,11 +27,12 @@ const MaxBytes = 32 << 20
 const Capability = "INGEST_RAW"
 
 var (
-	ErrDenied      = errors.New("SOURCE_AUTHORITY_DENIED")
-	ErrConflict    = errors.New("SOURCE_IDEMPOTENCY_CONFLICT")
-	ErrIntegrity   = errors.New("SOURCE_INTEGRITY_FAILED")
-	ErrUnsupported = errors.New("SOURCE_PROFILE_UNSUPPORTED")
-	ErrUnknown     = errors.New("SOURCE_TRANSPORT_UNKNOWN")
+	ErrDenied              = errors.New("SOURCE_AUTHORITY_DENIED")
+	ErrConflict            = errors.New("SOURCE_IDEMPOTENCY_CONFLICT")
+	ErrPublicationConflict = errors.New("SOURCE_PUBLICATION_CONFLICT")
+	ErrIntegrity           = errors.New("SOURCE_INTEGRITY_FAILED")
+	ErrUnsupported         = errors.New("SOURCE_PROFILE_UNSUPPORTED")
+	ErrUnknown             = errors.New("SOURCE_TRANSPORT_UNKNOWN")
 )
 
 //go:embed release-manifest-v1.schema.json
