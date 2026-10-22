@@ -47,6 +47,19 @@ test("exception history fixture preserves classification counts and exact nullab
   assert.deepEqual(exact.handling,[]);
 });
 test("control routes require a token", async () => assert.equal((await fetch(`${base}/__control/state`)).status, 403));
+
+test("read faults are explicit token-controlled fixed routes and leave independent data readable", async () => {
+  const options = { method: "POST", headers: controlHeaders, body: JSON.stringify({ scenario: "schema-requests", readFaults: { summary: "fail", products: "invalid" } }) };
+  assert.equal((await fetch(`${base}/__control/reset`, { ...options, headers: {} })).status, 403);
+  assert.equal((await fetch(`${base}/__control/reset`, options)).status, 200);
+  const workspace = `${base}/api/v1/workspaces/${ids.workspace}`;
+  assert.equal((await fetch(`${workspace}/workbench`)).status, 503);
+  assert.deepEqual(await (await fetch(`${workspace}/data-products`)).json(), {});
+  const r = await fetch(`${workspace}/source-schema-requests/unobserved`, { headers: { Authorization: "Bearer rights-fixture-secret" } });
+  assert.equal((await r.json()).page.total, 105);
+  assert.equal((await fetch(`${base}/__control/reset`, { ...options, body: JSON.stringify({ readFaults: { arbitrary: "fail" } }) })).status, 400);
+  assert.equal((await fetch(`${base}/__control/reset`, { ...options, body: JSON.stringify({ readFaults: { summary: "typo" } }) })).status, 400);
+});
 test("unknown scenario is rejected rather than silently returning ready", async () => {
   assert.equal((await fetch(`${base}/__control/scenario`, { method: "POST", headers: controlHeaders, body: '{"scenario":"typo"}' })).status, 400);
 });
