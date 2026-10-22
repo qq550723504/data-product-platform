@@ -254,22 +254,26 @@ func (s *Service) datasetFact(ctx context.Context, tx pgx.Tx, r Request, p princ
 	return err
 }
 
+func terminalAdmissionError(code string) error {
+	switch code {
+	case ErrPublicationConflict.Error():
+		return ErrPublicationConflict
+	case ErrConflict.Error():
+		return ErrConflict
+	case ErrUnsupported.Error():
+		return ErrUnsupported
+	default:
+		return ErrIntegrity
+	}
+}
+
 func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt, error) {
 	rec, err := s.prepare(ctx, r, caller)
 	if err != nil {
 		return rec, err
 	}
 	if rec.State == "FAILED_FINAL" {
-		if rec.ErrorCode == ErrPublicationConflict.Error() {
-			return rec, ErrPublicationConflict
-		}
-		if rec.ErrorCode == ErrConflict.Error() {
-			return rec, ErrConflict
-		}
-		if rec.ErrorCode == ErrUnsupported.Error() {
-			return rec, ErrUnsupported
-		}
-		return rec, ErrIntegrity
+		return rec, terminalAdmissionError(rec.ErrorCode)
 	}
 	// Only short workspace/parent-row fences cross transactions. Do not hold a
 	// pooled connection/advisory lock across HTTP: blocked contenders could
@@ -530,9 +534,16 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 			if e != nil {
 				return e
 			}
-			var state string
-			if e = tx.QueryRow(ctx, `SELECT state FROM source_admission_operation WHERE id=$1 FOR UPDATE`, rec.ID).Scan(&state); e != nil {
+			var state, code string
+			if e = tx.QueryRow(ctx, `SELECT state,coalesce(error_code,'') FROM source_admission_operation WHERE id=$1 FOR UPDATE`, rec.ID).Scan(&state, &code); e != nil {
 				return e
+			}
+			if state == "FAILED_FINAL" {
+				// A same-key contender may have committed while this call read
+				// the source. Return the frozen outcome after fresh authorization,
+				// preserving this call's own transport observation and cost.
+				rec.State, rec.ErrorCode = state, code
+				return nil
 			}
 			if state != "PREPARED" {
 				return nil
@@ -545,6 +556,9 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 			return s.fact(ctx, tx, r, p, rec.ID, "SourceAdmissionRejected", map[string]any{"operationId": rec.ID, "code": original.Error()})
 		}); e != nil {
 			return rec, errors.Join(original, e)
+		}
+		if rec.State == "FAILED_FINAL" {
+			return rec, terminalAdmissionError(rec.ErrorCode)
 		}
 	}
 	return rec, err
