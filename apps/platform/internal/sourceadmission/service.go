@@ -343,7 +343,11 @@ func (s *Service) Admit(ctx context.Context, r Request, caller Caller) (Receipt,
 					return ErrIntegrity
 				}
 				key := fmt.Sprintf("core/%s/datasets/%s/v%06d/source/%s/%s", r.WorkspaceID, r.DatasetID, v.VersionNo, capture, name)
-				loc, e := store.PutVersion(ctx, v, key, bytes.NewReader(blobs[name]), size, "application/x-ndjson")
+				contentType := "application/json"
+				if name == "records.jsonl" {
+					contentType = "application/x-ndjson"
+				}
+				loc, e := store.PutVersion(ctx, v, key, bytes.NewReader(blobs[name]), size, contentType)
 				if e != nil {
 					return e
 				}

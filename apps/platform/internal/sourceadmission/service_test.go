@@ -377,6 +377,11 @@ func TestPostgresAdmissionReplayAndCopyClosure(t *testing.T) {
 	if n := f.count(t, `SELECT count(*) FROM lifecycle_fixture_copy WHERE dataset_version_id=$1`, first.VersionID); n != 3 {
 		t.Fatalf("protected objects=%d", n)
 	}
+	for name, mediaType := range map[string]string{"manifest.json": "application/json", "records.json": "application/json", "records.jsonl": "application/x-ndjson"} {
+		if n := f.count(t, `SELECT count(*) FROM lifecycle_protected_object_intent WHERE dataset_version_id=$1 AND purpose='CREATE' AND object_key LIKE '%/'||$2 AND content_type=$3 AND content_sha256=$4`, first.VersionID, name, mediaType, Hash(f.blobs[name])); n != 1 {
+			t.Fatalf("frozen media type for %s: matching intents=%d", name, n)
+		}
+	}
 	if n := f.count(t, `SELECT count(*) FROM source_admission_member WHERE capture_id=$1`, first.CaptureID); n != 3 {
 		t.Fatalf("members=%d", n)
 	}
