@@ -1,0 +1,3 @@
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_5ecfd3aa49524fddad58f5bb0965dd04\",0]","question":"删除授权已记录，绑定 candidate19/v29、execution a5d1e569-f80e-4b38-8f32-d8139a30a077。是否安排2026年10月22日新加坡14:00的一次定时续跑？仅在14:00–14:40内、全部新鲜前置通过后执行，完成、失败或过期即停止。这里只确认调度，删除授权无需重复。冻结的 [v29 手册第8行](C:/Users/Henry/.codex/worktrees/d1-c19/data-product-platform/docs/acceptance/issue307-d1-v29-window-runbook.md:8) 要求“未来定时续跑仅按人类另行指令建立”。","answer":"安排固定窗口续跑（推荐）"}]
+</send_user_message_question_reply>

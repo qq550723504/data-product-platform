@@ -89,6 +89,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - name: Install the existing host signature dependency
+        run: python -m pip install 'cryptography==49.0.0'
       - name: Test explicit evidence indexes and complete readonly entry without Docker
         shell: bash
         run: |
@@ -98,6 +100,14 @@ jobs:
           python -O -B examples/lifecycle-d1/test_six_native_entry.py
           python -B examples/lifecycle-d1/test_retained_v26.py
           python -O -B examples/lifecycle-d1/test_retained_v26.py
+          python -B examples/lifecycle-d1/test_execution_freeze.py
+          python -O -B examples/lifecycle-d1/test_execution_freeze.py
+          python -B examples/lifecycle-d1/test_freeze_six_candidate.py
+          python -O -B examples/lifecycle-d1/test_freeze_six_candidate.py
+          python -B examples/lifecycle-d1/test_window_six_support.py
+          python -O -B examples/lifecycle-d1/test_window_six_support.py
+          python -B examples/lifecycle-d1/test_attest_remaining_executable.py
+          python -O -B examples/lifecycle-d1/test_attest_remaining_executable.py
       - name: Test completed helper ownership, archival, and safe collection
         run: python examples/temporary_containers_test.py
       - name: Test lifecycle wrapper default retirement and explicit retention without Docker

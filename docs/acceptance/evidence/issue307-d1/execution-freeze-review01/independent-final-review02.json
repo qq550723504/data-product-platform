@@ -1,0 +1,178 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_EXECUTION_FREEZE_REVIEW",
+  "at": "2026-10-22T06:45:01.787434+00:00",
+  "reviewer": "independent c18_independent_review subagent",
+  "scope": "Execution/PR branch freeze repair only; no new candidate, DELETE, scheduling or merge authority.",
+  "working_directory": "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform",
+  "base_head": "17c5248a868376603ae9c3951123c545f2f7e56f",
+  "reviewed_state": "Uncommitted repair patch, bound by exact raw SHA256/length inputs; final repair HEAD pull_request CI remains NOT_RUN in this report.",
+  "remaining_blockers": [],
+  "closed_findings": [
+    {
+      "id": "B1",
+      "problem": "New branch guard prevented all six attester success combinations and caused normal/-O CI failure; topology negatives could stop at the unrelated guard.",
+      "resolution": "Synthetic composition explicitly records branch gate success. Separate wire/P2/recover-P2 branch rejection cases prove no inspect, SQL or emitted signature; original topology negatives and real Ed25519 signature verification execute again.",
+      "original_failure": "independent-test_attest_remaining_executable-normal.stderr.txt",
+      "final_proof": "independent-regression02.json"
+    },
+    {
+      "id": "B2",
+      "problem": "An arbitrary same-HEAD check named required, including foreign app or workflow_dispatch, could satisfy the old freeze CI gate.",
+      "resolution": "Latest ci.yml pull_request run/attempt is selected without falling back to earlier green; repository, head repository, exact HEAD, PR332, Actions app/slug, suite and full job/check membership are checked.",
+      "original_counterexample": "independent-ci-provenance-counterexample01.json",
+      "final_proof": "independent-native-replay02.json"
+    }
+  ],
+  "verified_invariants": [
+    "GitHub native exact rule owns the five freeze flags only; existing non-freeze REST protection is compared before/after; wildcard/shared/already-locked adoption is rejected.",
+    "No atomic expected-HEAD/protection CAS claim. Post-lock drift/unknown API/receipt failure stops without retry or automatic unlock; trusted protection owner remains an explicit premise.",
+    "All candidate/source/binary/template bindings and final review HEAD remain exact. New execution-binding SHA must be in new authorization and approved references.",
+    "Full readonly CLI requires the new binding after actual human control text appears; Host.check, H1 proof and attester branch rejection precede Docker/Source/SQL/signing boundaries; containment seal has no branch-authority prerequisite.",
+    "Terminal, unreadable and aliased control facts fail closed. Audit-only stays offline; read-only preparation does not grant send permission.",
+    "Frozen-HEAD phase prohibits push/main synchronization; appended lock/auth/schedule/window receipts do not advance frozen HEAD. Unlock is an explicit native protection-owner step after terminal/physical closure/schedule stop, with no automatic unlock implementation."
+  ],
+  "regression": {
+    "mode_counts": {
+      "normal": 33,
+      "optimized": 33
+    },
+    "groups": {
+      "freeze": 13,
+      "full_entry": 8,
+      "host_support": 7,
+      "attester": 4,
+      "generator": 1
+    },
+    "commands": 10,
+    "all_returncodes_zero": true,
+    "raw_inputs_stable_before_after": true,
+    "receipt": "independent-regression02.json",
+    "semantics": "Pure doubles for Docker/SQL/provider; real Ed25519 signatures in synthetic attester tests. This is not native object-store acceptance."
+  },
+  "native_evidence": {
+    "rehearsal": "native-rehearsal01/native-result.json",
+    "branch": "codex/issue307-freeze-rehearsal-4047394d6311",
+    "valid_same_tree_fast_forward_rejected": true,
+    "actual_update_attempts": 1,
+    "actual_http_status": 422,
+    "head_preserved": true,
+    "branch_and_lock_retained": true,
+    "new_ci_readback": "native-ci-provenance-readback02/readback.json",
+    "ci_run": 39715490720,
+    "ci_event": "pull_request",
+    "ci_head": "17c5248a868376603ae9c3951123c545f2f7e56f",
+    "ci_jobs_checks": 13,
+    "meaning": "Native lock and API provenance rehearsal only; this existing base-HEAD CI is not final repair HEAD CI. Independent reviewer replayed retained bytes and performed no native mutation."
+  },
+  "independent_replay": {
+    "recorded_snapshot_requests": 8,
+    "successful_projection_matches_native_receipt": true,
+    "rejected_cases": [
+      "workflow_dispatch",
+      "foreign PR",
+      "foreign workflow",
+      "foreign app",
+      "missing job",
+      "latest failed run without fallback"
+    ],
+    "receipt": "independent-native-replay02.json"
+  },
+  "history": {
+    "original_v29_index": "retained-v29-receipt-index.json",
+    "original_members_verified": 124,
+    "current_copy_equals_original_checkout": true,
+    "original_failure": "FAILED_PR_HEAD_DRIFT_PHYSICALLY_SEALED_NO_DELETE",
+    "original_IAM_status": "UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START",
+    "old_authorization_reused": false,
+    "budgets_pins_backups": "No runtime access or modification in this review; prior seal facts remain historical."
+  },
+  "matrix_review": {
+    "path": "docs/acceptance/issue307-d1-execution-freeze-review01.md",
+    "reviewed_sha256": "666006f68aea12378e9fb5cd9500ae12ea7ea34ea2e92f0e2be922966698bf31",
+    "snapshot": "independent-matrix-input02.md",
+    "live_matrix_excluded_from_indices": true,
+    "note": "Reviewed PENDING independent/final CI cells are truthful at this snapshot; later append-only CI/publication updates are not pre-approved by this report."
+  },
+  "reviewed_inputs": {
+    ".github/workflows/ci.yml": {
+      "sha256": "11a49f0030c642258fcf8e029b370a3e01ec6df014db6927419bdf4180beed5e",
+      "bytes": 32607
+    },
+    "docs/acceptance/issue307-d1-execution-freeze-boundary.md": {
+      "sha256": "67651f93635657202dbe36a8c211228e8bbbcf7fe6d4cfb0df44104f531f1ecc",
+      "bytes": 5172
+    },
+    "examples/lifecycle-d1/execution_freeze.py": {
+      "sha256": "5bef20a44683732627de635c71f0315e81913724da54405e9b90a96989ed52cc",
+      "bytes": 17877
+    },
+    "examples/lifecycle-d1/branch-freeze.py": {
+      "sha256": "17fa7ef8f6796fdd577ab8a25c0fa2a3218364f64c2590d98666eb1fdb689fb9",
+      "bytes": 3023
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "3ab2229c436fe7bd4337c03323c030ec9f426922e800510eb9db24331d20ff3c",
+      "bytes": 23541
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "82e736f4647dac6921c6a31f11980e1bc4af0d999d94d3742eb9ad10427a8408",
+      "bytes": 17065
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "e2d1c0bbf5e80343fdf5980063ea006fe38aacc932d2a5e673ba01bdda36fc30",
+      "bytes": 12988
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "sha256": "c527ff491dcc0c638847909e78602ce86012e9d84d03f0a6e719cadee83f928b",
+      "bytes": 12046
+    },
+    "examples/lifecycle-d1/test_execution_freeze.py": {
+      "sha256": "103468ec5c1f0157d4230b5e6b0e6892c055e8c734ddc2e61387272c913e6394",
+      "bytes": 15028
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "5fefea35f1432da3b1e14e0259b479433be1392d409fc8b1b93186d946c1aa6e",
+      "bytes": 7354
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "5e0058fe271a907428931d8c73f51a80fb0ac66c69f71154403ee554cbee10ab",
+      "bytes": 17241
+    },
+    "examples/lifecycle-d1/test_window_six_support.py": {
+      "sha256": "1b4eab4e1a84c86d13136c07142c0bc8431c3d82155019fd9a86ec076c1f8f4d",
+      "bytes": 14775
+    },
+    "examples/lifecycle-d1/test_attest_remaining_executable.py": {
+      "sha256": "84803bb366e1986682f106c5c9b4ae643417f191ae14d98ec0e6fcc43172bcdd",
+      "bytes": 16227
+    }
+  },
+  "reviewed_artifact_index": {
+    "path": "independent-reviewed-artifacts02.json",
+    "sha256": "7fb25da557d0c2617f811f633847da6a512ccba1bbd296f121a3b005c86d440e",
+    "bytes": 74698,
+    "count": 337
+  },
+  "reviewer_effects": {
+    "GitHub_mutations": 0,
+    "Git_mutations": 0,
+    "Docker_requests": 0,
+    "source_start": 0,
+    "provider_requests": 0,
+    "delete": 0,
+    "enable_identity": 0,
+    "schedule": 0,
+    "merge": 0
+  },
+  "not_proven_or_authorized": [
+    "Final repair commit PR CI",
+    "New candidate/execution/window/budgets",
+    "Actual #332 branch lock for a new candidate",
+    "New human DELETE authorization or schedule",
+    "Any provider deletion or full D1 acceptance"
+  ],
+  "official_reuse_boundary": [
+    "https://docs.github.com/en/graphql/reference/branches#updatebranchprotectionruleinput",
+    "https://docs.github.com/en/rest/branches/branch-protection#update-branch-protection"
+  ]
+}

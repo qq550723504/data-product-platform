@@ -18,6 +18,7 @@ spec=importlib.util.spec_from_file_location('six_complete_runtime',Path(__file__
 r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 p=r.p
 import evidence_indexes
+import execution_freeze
 need,load,sha,save=r.need,r.load,r.sha,r.save
 PACKET=r.ROOT/'docs/acceptance/evidence/issue307-d1'/('remaining-'+p.GENERATION)
 
@@ -170,6 +171,7 @@ def main():
     parser.add_argument('--evidence-audit-plan',type=Path,required=True)
     parser.add_argument('--evidence-audit-plan-sha256',required=True)
     parser.add_argument('--audit-only',action='store_true',help='Audit saved evidence only; never inspect Docker or start native preflight')
+    parser.add_argument('--execution-binding-sha256',help='Exact separately frozen PR/branch binding required after human authorization')
     args=parser.parse_args()
     need(sha(PACKET/'candidate.json')==args.candidate_sha256 and sha(PACKET/'bindings.json')==args.bindings_sha256 and sha(r.CONTROL/'readonly-check.exe')==args.checker_sha256,'exact frozen invocation bindings differ')
     output=args.output.resolve();need(not output.exists() and output.is_relative_to((r.ROOT/'docs/acceptance/evidence/issue307-d1').resolve()),'new complete output must be an evidence subdirectory')
@@ -179,6 +181,14 @@ def main():
         print(json.dumps({'status':'PASS_SAVED_EVIDENCE_AUDIT_ONLY','execution':audit['execution'],'output':str(output),'native_preflight':'NOT_RUN','execution_authority':False,'native_delete':0}))
         return
     require_unfinished_execution()
+    # Preparation is read-only and precedes final publication/freeze. Once an
+    # actual human grant exists, the complete window entry must prove the same
+    # native branch fence that Host.check and every topology signer enforce.
+    authorized=execution_freeze.control_fact_present(r.CONTROL,'user-message-verbatim.txt')
+    need(authorized or args.execution_binding_sha256 is None,'execution binding requires actual new human authority')
+    if authorized:
+        need(args.execution_binding_sha256 is not None,'authorized complete entry requires exact branch freeze binding')
+        execution_freeze.authorized_gate(r.ROOT,r.CONTROL,PACKET,load(PACKET/'candidate.json'),expected_sha=args.execution_binding_sha256)
     gate=sealed_gate();output.mkdir();save(output/'evidence-audit.json',audit)
     private=r.CONTROL/('complete-'+uuid.uuid4().hex);private.mkdir()
     candidate=load(PACKET/'candidate.json');bindings=load(PACKET/'bindings.json');results=[];deadline=r.now().replace(microsecond=0)+dt.timedelta(minutes=50)

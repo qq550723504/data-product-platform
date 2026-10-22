@@ -12,6 +12,7 @@ import importlib.util
 import json
 from pathlib import Path
 from docker_host_paths import hostpath
+import execution_freeze
 
 spec=importlib.util.spec_from_file_location('freeze',Path(__file__).with_name('freeze-remaining-executable.py'))
 f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
@@ -70,6 +71,7 @@ def main():
     folder=f.PRIVATE/args.group/args.stage;permission=r.load(folder/'permission.json')
     # Refuse before Docker inspection or signing while this candidate is sealed.
     authority(candidate,permission,(folder/'human-confirmation.txt').read_bytes(),(f.PUBLIC/'confirmation-template.txt').read_bytes(),r.utc(),args.stage.startswith('recover-'))
+    execution_freeze.authorized_gate(f.ROOT,f.PRIVATE,f.PUBLIC,candidate)
     require(permission['CandidateSHA256']==r.sha(f.PUBLIC/'candidate.json') and permission['ConfirmationSHA256']==r.sha(f.PUBLIC/'confirmation-template.txt') and permission['BinarySHA256']==candidate['SenderBinarySHA256'],'confirmation candidate/binary hash differs')
     require((folder/'candidate.json').read_bytes()==(f.PUBLIC/'candidate.json').read_bytes() and r.sha(folder/'operator.json')==group['ConfigSHA256'][args.stage] and r.sha(f.PRIVATE/'operator')==candidate['SenderBinarySHA256'],'frozen helper files drifted')
     config=r.load(folder/'operator.json');require(not any(k in config for k in ('RootAccess','RootSecret')),'root credentials in helper config')

@@ -12,6 +12,7 @@ import importlib.util
 import json
 from pathlib import Path
 import uuid
+import execution_freeze
 
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('six_complete_for_host',Path(__file__).with_name('verify-six-native.py'))
@@ -65,6 +66,7 @@ class Host(base.Host):
     def check(self):
         need(base.approved_packet('candidate.json',base.CANDIDATE)==self.candidate and base.approved_packet('bindings.json',base.BINDINGS)==self.bindings,'approved containment snapshot unavailable or differs')
         auth=load(base.AUTHORIZATION_PUBLIC)
+        branch_gate=execution_freeze.authorized_gate(ROOT,PRIVATE,PACKET,self.candidate)
         expected=dict(execution=p.EXECUTION,candidate_sha256=base.CANDIDATE,bindings_sha256=base.BINDINGS,referenced_template_sha256=base.TEMPLATE,
                       not_before=p.W['NotBefore'],not_after=p.W['NotAfter'],max_per_target=1,max_total=6,survivors=11,unknown_resend=False,cleanup=0,hold_release=0,bypass=0,old_authorization_reused=False)
         need(all(auth.get(k)==value for k,value in expected.items()),'new six-target authorization scope/window differs')
@@ -75,7 +77,7 @@ class Host(base.Host):
         for artifact in references:
             path=(ROOT/artifact['path']).resolve();need(path.is_relative_to(ROOT) and sha(path)==artifact['sha256'],'approved reference byte drift')
         gate=v.sealed_gate(PACKET)
-        return {'status':'PASS_PREWINDOW_CLOSED','execution':p.EXECUTION,'host_gate':gate,'containment_anchor':base.PACKET_ANCHOR,'source_provider_io':0,'native_delete':0}
+        return {'status':'PASS_PREWINDOW_CLOSED','execution':p.EXECUTION,'host_gate':gate,'branch_gate':branch_gate,'containment_anchor':base.PACKET_ANCHOR,'source_provider_io':0,'native_delete':0}
 
     def disable_all(self,group):
         need(self.inspect(group['Native'])['State']['Running'],'native stopped; fresh identity readback unavailable')
@@ -110,6 +112,7 @@ class Host(base.Host):
         return {'gateway_stopped_and_sealed':True}
 
     def h1_proof(self):
+        execution_freeze.authorized_gate(ROOT,PRIVATE,PACKET,self.candidate)
         at=base.now();base.maintenance_time(at,signing=True)
         group=self.group('late-hold');folder=PRIVATE/'late-hold';cfg=load(folder/'case-close-H1/remaining.json')
         need(sha(folder/'case-close-H1/remaining.json')==group['CaseConfigSHA256']['close-H1'] and cfg['ClosureOwners']=={group['CaseHelpers']['late']:self.candidate['ReaderBinarySHA256']}

@@ -126,6 +126,7 @@ class SixSupportTests(unittest.TestCase):
 
     def h1(self,fault=None):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+            stack.enter_context(patch.object(w.execution_freeze,'authorized_gate',return_value={'status':'RECORDED_BRANCH_FREEZE_DOUBLE'}))
             private=Path(tmp);control=private/'authorized';control.mkdir();folder=private/'late-hold';folder.mkdir()
             for obj,name,value in [(w,'PRIVATE',private),(w,'CONTROL',control),(w.base,'PRIVATE',private),(w.base,'CONTROL',control)]:stack.enter_context(patch.object(obj,name,value))
             at=w.p.window.instant(w.p.W['NotBefore'])+dt.timedelta(minutes=5)

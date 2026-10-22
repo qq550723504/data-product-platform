@@ -26,7 +26,7 @@ r, p = v.r, v.p
 
 
 class SixNativeEntryTests(unittest.TestCase):
-    def composition(self, fault=None, audit_only=False):
+    def composition(self, fault=None, audit_only=False, authorized=False):
         # A recorded fixture must exist before the new generation is allocated.
         # This is a double, never a production candidate fallback.
         fixture = r.ROOT / 'docs/acceptance/evidence/issue307-d1/remaining-candidate16/candidate.json'
@@ -103,6 +103,11 @@ class SixNativeEntryTests(unittest.TestCase):
                     '--evidence-audit-plan-sha256', r.sha(plan)]
             if audit_only:
                 argv.append('--audit-only')
+            if authorized:
+                (control/'authorized-execution01').mkdir(exist_ok=True)
+                (control/'authorized-execution01/user-message-verbatim.txt').write_bytes(b'ACTUAL_RECORDED_AUTHORITY_DOUBLE')
+                if fault != 'missing-freeze-flag':
+                    argv += ['--execution-binding-sha256','a'*64]
             if fault == 'missing-plan':
                 argv = argv[:-4]
             if fault == 'plan-binding':
@@ -110,6 +115,11 @@ class SixNativeEntryTests(unittest.TestCase):
             if fault == 'existing-output':
                 output.mkdir(); (output / 'original.txt').write_bytes(b'preserved')
             calls, states, owners, current = [], {}, {}, {}
+            def branch_freeze(*args,**kwargs):
+                calls.append(('branch-freeze',))
+                if fault=='branch-freeze':raise ValueError('recorded unlocked or drifted branch')
+                return {'status':'RECORDED_NATIVE_BRANCH_FREEZE_DOUBLE'}
+            stack.enter_context(patch.object(v.execution_freeze,'authorized_gate',branch_freeze))
 
             def owner_state(cid, g):
                 return {'Id': cid, 'Image': p.p1.PG, 'Name': '/' + cid,
@@ -231,6 +241,8 @@ class SixNativeEntryTests(unittest.TestCase):
                 self.assertFalse((output / 'complete.json').exists())
             else:
                 result = r.load(output / 'complete.json')
+                if authorized:
+                    self.assertLess(calls.index(('branch-freeze',)),calls.index(('sealed-gate',)))
                 self.assertEqual([x['copies'] for x in result['groups']], [7, 6, 4])
                 self.assertEqual(result['evidence_audit']['members_verified'], 3)
                 self.assertEqual(len(result['evidence_audit']['indexes']), 3)
@@ -243,6 +255,13 @@ class SixNativeEntryTests(unittest.TestCase):
 
     def test_main_real_audit_three_real_collects_and_finally_success(self):
         self.composition()
+
+    def test_authorized_complete_entry_checks_branch_before_cold_gate_and_three_collects(self):
+        self.composition(authorized=True)
+
+    def test_authorized_complete_entry_rejects_missing_or_rejected_freeze_without_source_io(self):
+        for fault in ('missing-freeze-flag','branch-freeze'):
+            with self.subTest(fault=fault):self.composition(fault=fault,authorized=True)
 
     def test_main_audit_only_never_enters_host_or_native(self):
         self.composition(audit_only=True)

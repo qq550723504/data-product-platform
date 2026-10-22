@@ -1,0 +1,9 @@
+{
+  "started_at": "2026-10-22T06:29:18.138107+00:00",
+  "method": "POST",
+  "endpoint": "repos/qq550723504/data-product-platform/git/refs",
+  "body": {
+    "ref": "refs/heads/codex/issue307-freeze-rehearsal-4047394d6311",
+    "sha": "17c5248a868376603ae9c3951123c545f2f7e56f"
+  }
+}

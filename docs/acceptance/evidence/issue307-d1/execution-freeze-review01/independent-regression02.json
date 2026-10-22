@@ -1,0 +1,290 @@
+{
+  "status": "PASS_INDEPENDENT_EXECUTION_FREEZE_REGRESSION",
+  "inputs_before": {
+    ".github/workflows/ci.yml": {
+      "sha256": "11a49f0030c642258fcf8e029b370a3e01ec6df014db6927419bdf4180beed5e",
+      "bytes": 32607
+    },
+    "docs/acceptance/issue307-d1-execution-freeze-boundary.md": {
+      "sha256": "67651f93635657202dbe36a8c211228e8bbbcf7fe6d4cfb0df44104f531f1ecc",
+      "bytes": 5172
+    },
+    "examples/lifecycle-d1/execution_freeze.py": {
+      "sha256": "5bef20a44683732627de635c71f0315e81913724da54405e9b90a96989ed52cc",
+      "bytes": 17877
+    },
+    "examples/lifecycle-d1/branch-freeze.py": {
+      "sha256": "17fa7ef8f6796fdd577ab8a25c0fa2a3218364f64c2590d98666eb1fdb689fb9",
+      "bytes": 3023
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "3ab2229c436fe7bd4337c03323c030ec9f426922e800510eb9db24331d20ff3c",
+      "bytes": 23541
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "82e736f4647dac6921c6a31f11980e1bc4af0d999d94d3742eb9ad10427a8408",
+      "bytes": 17065
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "e2d1c0bbf5e80343fdf5980063ea006fe38aacc932d2a5e673ba01bdda36fc30",
+      "bytes": 12988
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "sha256": "c527ff491dcc0c638847909e78602ce86012e9d84d03f0a6e719cadee83f928b",
+      "bytes": 12046
+    },
+    "examples/lifecycle-d1/test_execution_freeze.py": {
+      "sha256": "103468ec5c1f0157d4230b5e6b0e6892c055e8c734ddc2e61387272c913e6394",
+      "bytes": 15028
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "5fefea35f1432da3b1e14e0259b479433be1392d409fc8b1b93186d946c1aa6e",
+      "bytes": 7354
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "5e0058fe271a907428931d8c73f51a80fb0ac66c69f71154403ee554cbee10ab",
+      "bytes": 17241
+    },
+    "examples/lifecycle-d1/test_window_six_support.py": {
+      "sha256": "1b4eab4e1a84c86d13136c07142c0bc8431c3d82155019fd9a86ec076c1f8f4d",
+      "bytes": 14775
+    },
+    "examples/lifecycle-d1/test_attest_remaining_executable.py": {
+      "sha256": "84803bb366e1986682f106c5c9b4ae643417f191ae14d98ec0e6fcc43172bcdd",
+      "bytes": 16227
+    }
+  },
+  "inputs_after": {
+    ".github/workflows/ci.yml": {
+      "sha256": "11a49f0030c642258fcf8e029b370a3e01ec6df014db6927419bdf4180beed5e",
+      "bytes": 32607
+    },
+    "docs/acceptance/issue307-d1-execution-freeze-boundary.md": {
+      "sha256": "67651f93635657202dbe36a8c211228e8bbbcf7fe6d4cfb0df44104f531f1ecc",
+      "bytes": 5172
+    },
+    "examples/lifecycle-d1/execution_freeze.py": {
+      "sha256": "5bef20a44683732627de635c71f0315e81913724da54405e9b90a96989ed52cc",
+      "bytes": 17877
+    },
+    "examples/lifecycle-d1/branch-freeze.py": {
+      "sha256": "17fa7ef8f6796fdd577ab8a25c0fa2a3218364f64c2590d98666eb1fdb689fb9",
+      "bytes": 3023
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "3ab2229c436fe7bd4337c03323c030ec9f426922e800510eb9db24331d20ff3c",
+      "bytes": 23541
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "82e736f4647dac6921c6a31f11980e1bc4af0d999d94d3742eb9ad10427a8408",
+      "bytes": 17065
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "e2d1c0bbf5e80343fdf5980063ea006fe38aacc932d2a5e673ba01bdda36fc30",
+      "bytes": 12988
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "sha256": "c527ff491dcc0c638847909e78602ce86012e9d84d03f0a6e719cadee83f928b",
+      "bytes": 12046
+    },
+    "examples/lifecycle-d1/test_execution_freeze.py": {
+      "sha256": "103468ec5c1f0157d4230b5e6b0e6892c055e8c734ddc2e61387272c913e6394",
+      "bytes": 15028
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "5fefea35f1432da3b1e14e0259b479433be1392d409fc8b1b93186d946c1aa6e",
+      "bytes": 7354
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "5e0058fe271a907428931d8c73f51a80fb0ac66c69f71154403ee554cbee10ab",
+      "bytes": 17241
+    },
+    "examples/lifecycle-d1/test_window_six_support.py": {
+      "sha256": "1b4eab4e1a84c86d13136c07142c0bc8431c3d82155019fd9a86ec076c1f8f4d",
+      "bytes": 14775
+    },
+    "examples/lifecycle-d1/test_attest_remaining_executable.py": {
+      "sha256": "84803bb366e1986682f106c5c9b4ae643417f191ae14d98ec0e6fcc43172bcdd",
+      "bytes": 16227
+    }
+  },
+  "stable_inputs": true,
+  "commands": [
+    {
+      "test": "test_execution_freeze.py",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_execution_freeze.py"
+      ],
+      "started_at": "2026-10-22T06:40:36.746855+00:00",
+      "observed_at": "2026-10-22T06:40:37.471253+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "b335188865cd4b0b9b44389483b84af0bf4ac6d47ce4495555342eba46ead0ae",
+      "stdout_bytes": 0,
+      "stderr_bytes": 117,
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.457s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_execution_freeze.py",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_execution_freeze.py"
+      ],
+      "started_at": "2026-10-22T06:40:37.471332+00:00",
+      "observed_at": "2026-10-22T06:40:38.072762+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "1fe02028371a9bd0d85afefbd1e78ad74970bac4d50050abba5e8d62cf037275",
+      "stdout_bytes": 0,
+      "stderr_bytes": 117,
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.369s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_native_entry.py",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_six_native_entry.py"
+      ],
+      "started_at": "2026-10-22T06:40:38.072808+00:00",
+      "observed_at": "2026-10-22T06:40:39.422541+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "561bc89d6ceabeaec22ceb474adee2cbcd1eab2b09b5abca3f655f932e2f6021",
+      "stdout_bytes": 0,
+      "stderr_bytes": 111,
+      "stderr_tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 1.023s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_native_entry.py",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_six_native_entry.py"
+      ],
+      "started_at": "2026-10-22T06:40:39.422601+00:00",
+      "observed_at": "2026-10-22T06:40:40.843182+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "bf556783f5cfc8819a6d80303aeedf46838fef47786793a5135a0ce0466aab52",
+      "stdout_bytes": 0,
+      "stderr_bytes": 111,
+      "stderr_tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.975s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_window_six_support.py",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_window_six_support.py"
+      ],
+      "started_at": "2026-10-22T06:40:40.843243+00:00",
+      "observed_at": "2026-10-22T06:40:41.604573+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "97e716f7707567df35d5d237e0116af0bd01d670ca13bfed81a6566ddf0fc3e6",
+      "stdout_bytes": 0,
+      "stderr_bytes": 110,
+      "stderr_tail": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.430s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_window_six_support.py",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_window_six_support.py"
+      ],
+      "started_at": "2026-10-22T06:40:41.604642+00:00",
+      "observed_at": "2026-10-22T06:40:42.370159+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "c57f3a79351163fe4f60f0fbac389ae917164aabd395e6aa3d9ed50e4f3a7982",
+      "stdout_bytes": 0,
+      "stderr_bytes": 110,
+      "stderr_tail": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.423s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_attest_remaining_executable.py",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_attest_remaining_executable.py"
+      ],
+      "started_at": "2026-10-22T06:40:42.370231+00:00",
+      "observed_at": "2026-10-22T06:40:46.888671+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "bb0d011b5215d6a25952c310aabdb6f29301b76e99a0cca9baee43905a802d25",
+      "stdout_bytes": 0,
+      "stderr_bytes": 107,
+      "stderr_tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 4.185s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_attest_remaining_executable.py",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_attest_remaining_executable.py"
+      ],
+      "started_at": "2026-10-22T06:40:46.888762+00:00",
+      "observed_at": "2026-10-22T06:40:51.493046+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "39ad5c816ea0fc4fe4088be46b0c7a6354d9b2fd88c68f6465fd150595a4eb18",
+      "stdout_bytes": 0,
+      "stderr_bytes": 107,
+      "stderr_tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 4.292s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_freeze_six_candidate.py",
+      "mode": "normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_freeze_six_candidate.py"
+      ],
+      "started_at": "2026-10-22T06:40:51.493117+00:00",
+      "observed_at": "2026-10-22T06:40:52.377867+00:00",
+      "returncode": 0,
+      "stdout_sha256": "9680ae3d35aa46e591d96cd1aa26a7085a19ed3328848f0974ba7e73c105111b",
+      "stderr_sha256": "9927aa10ba6ca764b955b97c68c4921cd36b0031cd686ad0f33eb89012fa15e8",
+      "stdout_bytes": 189,
+      "stderr_bytes": 103,
+      "stderr_tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.558s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_freeze_six_candidate.py",
+      "mode": "optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform\\examples\\lifecycle-d1\\test_freeze_six_candidate.py"
+      ],
+      "started_at": "2026-10-22T06:40:52.377919+00:00",
+      "observed_at": "2026-10-22T06:40:53.180635+00:00",
+      "returncode": 0,
+      "stdout_sha256": "8b77b0b1ff13d3b0cc90ed5b4a9a7ed7c0c737deb7f70bf2e4a05499abcad7ba",
+      "stderr_sha256": "2d4cd1af78fda8ae68fdd9f33d1d28c360177d21c77f4eead5e86ad6a1e3f8d9",
+      "stdout_bytes": 189,
+      "stderr_bytes": 103,
+      "stderr_tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.459s\r\n\r\nOK\r\n"
+    }
+  ],
+  "native_io": "NOT_RUN_PURE_TESTS_ONLY"
+}

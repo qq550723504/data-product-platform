@@ -1,0 +1,12 @@
+{
+  "started_at": "2026-10-22T06:29:19.817639+00:00",
+  "method": "POST",
+  "endpoint": "repos/qq550723504/data-product-platform/git/commits",
+  "body": {
+    "message": "#307 non-delete native branch-lock rehearsal; same tree",
+    "tree": "fd8cafdfee05a49e878b94f3b0129d7afd589665",
+    "parents": [
+      "17c5248a868376603ae9c3951123c545f2f7e56f"
+    ]
+  }
+}

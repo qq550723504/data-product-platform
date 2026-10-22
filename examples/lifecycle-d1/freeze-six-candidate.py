@@ -217,6 +217,8 @@ def confirmation(c,bindings,targets):
             protection=next(x for x in b['copy_protection'] if x['Copy']['ID']==cp['ID'])
             lines.append(('删除目标' if target else '保留版本')+f' {b["project"]} {cp["Namespace"]}/{cp["Key"]}@{cp["ProviderVersion"]}；copy {cp["ID"]}；DV {cp["DatasetVersionID"]}；SHA256 {cp["ContentSHA256"]}；bytes {cp["ByteSize"]}；hold={protection["LegalHold"]}；retention={protection["Retention"]}；retain-until={protection["RetainUntil"]}；'+(f'plan {plan["id"]}；hash {plan["scope_hash"]}。' if plan else '非发送目标。'))
     lines.extend(['严格顺序P2→T1→T2→H2A→M1A→M1B；每份至多一次、全局至多六次，UNKNOWN不重发；每份send后关闭发送，经既有选定Outbox→Asynq只读恢复并提交absence，再进入下一份。三Core保持可读以核全局顺序。',
+                  '最终PR HEAD的源码/候选/评审/CI全部完成后，必须先以GitHub原生精确分支锁冻结该HEAD并锁后重新核对；锁后execution-binding.json的SHA须纳入新授权及完整批准引用，未绑定不得授权或调度。',
+                  '已授权窗口的完整入口必须提供--execution-binding-sha256；Host.check及每次发送拓扑/H1签名前fresh核对HEAD、ruleID与完整保护；锁定期间不push/同步main，授权/执行回执单独追加保存，终态不自动解锁。',
                   'H0/H1零发送；可信owner终止、profile撤销、enabler关闭、fresh disabled-IAM及sealed gateway后H1才NOT_SENT。H2仅A真实204后witness/late hold A+B/revoke/响应丢失，B永不dispatch。M1先A absence，B UNKNOWN+C-only保护阻断checkpoint原字节复制并核SHA后才B lookup，C永不删除。',
                   '全部新鲜前置及精确当前HEAD PR CI/评审通过后才可启用发送；每个sender/wire/recovery前≤1分钟新鲜实际host topology；wire context≤3分钟，每目标刷新；SDK无重试，持久预算先于Core claim。',
                   '11份survivor、其他全部环境、全部旧/新备份、旧pins、旧预算、失败/UNKNOWN/真实attempt/成本事实保留。cleanup=0；hold-release=0；bypass=0。不得退款、补发、重发UNKNOWN、修改旧事实或复用旧授权。',

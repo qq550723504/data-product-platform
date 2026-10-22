@@ -1,0 +1,154 @@
+{
+  "status": "REPRODUCED_CI_PROVENANCE_GAP",
+  "at": "2026-10-22T06:33:57.862858+00:00",
+  "scope": "PURE_MODEL_NO_GITHUB_DOCKER_SOURCE_PROVIDER_IO",
+  "reviewed_sha256": "0a5225137f5f6199616565801e111ce069e5097caa2d98f0a2fee0d6f949524c",
+  "cases": [
+    {
+      "case": "foreign-check-app",
+      "accepted": true,
+      "snapshot": {
+        "repository": "qq550723504/data-product-platform",
+        "repository_id": "REPO_ID",
+        "branch": "codex/issue307-post-v22-dispatch-closure",
+        "expected_branch": "codex/issue307-post-v22-dispatch-closure",
+        "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pr": 332,
+        "draft": true,
+        "state": "open",
+        "merged": false,
+        "issue_state": "open",
+        "rule": {
+          "id": "RULE_EXACT",
+          "pattern": "codex/issue307-post-v22-dispatch-closure",
+          "lockBranch": true,
+          "isAdminEnforced": true,
+          "lockAllowsFetchAndMerge": false,
+          "allowsForcePushes": false,
+          "allowsDeletions": false
+        },
+        "protection": {
+          "required_status_checks": {
+            "strict": true,
+            "contexts": [
+              "required"
+            ]
+          },
+          "required_pull_request_reviews": {
+            "required_approving_review_count": 2
+          },
+          "restrictions": {
+            "users": [
+              {
+                "login": "trusted-owner"
+              }
+            ]
+          },
+          "required_signatures": {
+            "enabled": true
+          },
+          "enforce_admins": {
+            "enabled": true
+          },
+          "allow_deletions": {
+            "enabled": false
+          },
+          "allow_fork_syncing": {
+            "enabled": false
+          },
+          "lock_branch": {
+            "enabled": true
+          },
+          "allow_force_pushes": {
+            "enabled": false
+          }
+        },
+        "checks": [
+          {
+            "id": 1,
+            "name": "required",
+            "app_id": 987654,
+            "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "completed",
+            "conclusion": "success",
+            "event": "workflow_dispatch",
+            "workflow": ".github/workflows/other.yml"
+          }
+        ]
+      }
+    },
+    {
+      "case": "workflow-dispatch-with-actions-app",
+      "accepted": true,
+      "snapshot": {
+        "repository": "qq550723504/data-product-platform",
+        "repository_id": "REPO_ID",
+        "branch": "codex/issue307-post-v22-dispatch-closure",
+        "expected_branch": "codex/issue307-post-v22-dispatch-closure",
+        "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pr": 332,
+        "draft": true,
+        "state": "open",
+        "merged": false,
+        "issue_state": "open",
+        "rule": {
+          "id": "RULE_EXACT",
+          "pattern": "codex/issue307-post-v22-dispatch-closure",
+          "lockBranch": true,
+          "isAdminEnforced": true,
+          "lockAllowsFetchAndMerge": false,
+          "allowsForcePushes": false,
+          "allowsDeletions": false
+        },
+        "protection": {
+          "required_status_checks": {
+            "strict": true,
+            "contexts": [
+              "required"
+            ]
+          },
+          "required_pull_request_reviews": {
+            "required_approving_review_count": 2
+          },
+          "restrictions": {
+            "users": [
+              {
+                "login": "trusted-owner"
+              }
+            ]
+          },
+          "required_signatures": {
+            "enabled": true
+          },
+          "enforce_admins": {
+            "enabled": true
+          },
+          "allow_deletions": {
+            "enabled": false
+          },
+          "allow_fork_syncing": {
+            "enabled": false
+          },
+          "lock_branch": {
+            "enabled": true
+          },
+          "allow_force_pushes": {
+            "enabled": false
+          }
+        },
+        "checks": [
+          {
+            "id": 1,
+            "name": "required",
+            "app_id": 15368,
+            "head_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "completed",
+            "conclusion": "success",
+            "event": "workflow_dispatch",
+            "workflow": ".github/workflows/other.yml"
+          }
+        ]
+      }
+    }
+  ]
+}

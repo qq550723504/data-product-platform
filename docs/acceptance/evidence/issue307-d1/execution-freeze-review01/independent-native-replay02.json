@@ -1,0 +1,64 @@
+{
+  "status": "PASS_INDEPENDENT_RECORDED_NATIVE_FREEZE_AND_CI_REPLAY",
+  "at": "2026-10-22T06:42:27.767606+00:00",
+  "runtime_source_sha256": "5bef20a44683732627de635c71f0315e81913724da54405e9b90a96989ed52cc",
+  "ci_replays": [
+    {
+      "fault": null,
+      "accepted": true,
+      "requests_replayed": 8,
+      "error": null
+    },
+    {
+      "fault": "dispatch",
+      "accepted": false,
+      "requests_replayed": 8,
+      "error": "required CI must be the exact repository/HEAD/PR pull_request workflow"
+    },
+    {
+      "fault": "foreign-pr",
+      "accepted": false,
+      "requests_replayed": 8,
+      "error": "required CI must be the exact repository/HEAD/PR pull_request workflow"
+    },
+    {
+      "fault": "foreign-workflow",
+      "accepted": false,
+      "requests_replayed": 7,
+      "error": "No exact CI workflow run; a check named required is insufficient"
+    },
+    {
+      "fault": "foreign-app",
+      "accepted": false,
+      "requests_replayed": 8,
+      "error": "exact HEAD GitHub Actions CI provenance differs"
+    },
+    {
+      "fault": "missing-job",
+      "accepted": false,
+      "requests_replayed": 8,
+      "error": "necessary workflow jobs/check-run membership is incomplete or failed"
+    },
+    {
+      "fault": "latest-failed-run",
+      "accepted": false,
+      "requests_replayed": 8,
+      "error": "required CI must be the exact repository/HEAD/PR pull_request workflow"
+    }
+  ],
+  "native_lock": {
+    "branch": "codex/issue307-freeze-rehearsal-4047394d6311",
+    "same_tree_direct_fast_forward": true,
+    "actual_update_attempts": 1,
+    "actual_http_status": 422,
+    "actual_message": "Cannot change this locked branch",
+    "head_preserved": true,
+    "five_flags_verified": true,
+    "automatic_unlock": false
+  },
+  "original_v29_evidence_members_verified": 124,
+  "reviewer_native_requests": 0,
+  "reviewer_source_start": 0,
+  "reviewer_delete": 0,
+  "note": "Native requests belong to original author rehearsal/readback; this independent verification only replayed retained bytes."
+}

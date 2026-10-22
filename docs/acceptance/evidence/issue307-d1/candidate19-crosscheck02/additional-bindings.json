@@ -1,0 +1,28 @@
+{
+  "status": "PASS_ADDITIONAL_DISPLAY_ROOTS_BUILD_LOGS_TARGET_DIGEST_AND_PUBLIC_KEYS",
+  "rows": {
+    "source ZIP，3625455 bytes／2143 选定源码成员": "139662b5a908aacb59ba71a18132cc1480ba79d1eced71d31b43a516fe035a3a",
+    "containment 专用 packet Git anchor": "749257f15e13ee7ab64b4b828857e2e88a054fbc",
+    "私有 host-anchor 文件": "dad1ac517edab8d0fa40bc27dd975b1aec85f55d1bc403692d4531ba2e22bdb5",
+    "当前发布 HEAD": "caab46da8761e71e1d80d0c0931707a410c13a4d"
+  },
+  "original_empty_log_members": [
+    "reader-build.stdout",
+    "reader-build.stderr",
+    "operator-build.stdout",
+    "operator-build.stderr",
+    "owner-build.stdout",
+    "owner-build.stderr",
+    "checker-build.stdout",
+    "checker-build.stderr"
+  ],
+  "target_digest": "2a3b9c31e27de4bdf0185c3500600093356410b2f87ea0e4809863b78c2dacf4",
+  "host_public": "2c45eebf0452f822b3cdd80a5e2fd5d1da2d6ae7f9f65f106d966470172fba0c",
+  "wire_public": "1d89a6a5b7569443c217c5a609ff437eb991775ef533c487c9e129a3001572dc",
+  "wire_owners": 3,
+  "nonwire_owners_without_wire_key": 12,
+  "proof_signatures": 0,
+  "source_provider_io": 0,
+  "permission_enable": 0,
+  "native_delete": 0
+}

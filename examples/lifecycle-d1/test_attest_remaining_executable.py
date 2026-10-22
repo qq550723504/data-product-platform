@@ -158,7 +158,14 @@ class AttesterTests(unittest.TestCase):
                 target['HostConfig']['PortBindings'] = {'9000/tcp': [{}]}
             elif fault == 'source-network':
                 states[group['Native']]['NetworkSettings']['Networks']['foreign'] = dict(NetworkID='other')
-            seen = []
+            seen, inspected, queried, branch_checks = [], [], [], []
+            def branch_gate(*args,**kwargs):
+                branch_checks.append('recorded branch check')
+                if fault=='branch-freeze':raise ValueError('recorded branch drift')
+                return {'status':'RECORDED_NATIVE_BRANCH_FREEZE_DOUBLE'}
+            def inspect(cid):
+                inspected.append(cid)
+                return copy.deepcopy(states[cid])
             def docker(*args):
                 seen.append(args)
                 if args[:2] == ('network', 'inspect'):
@@ -171,15 +178,17 @@ class AttesterTests(unittest.TestCase):
                         info = tarfile.TarInfo('budget/foreign.json'); info.size = 2; info.uid = info.gid = 10001; tar.addfile(info, io.BytesIO(b'{}'))
                 return blob.getvalue()
             def sql(core, query):
+                queried.append(core)
                 self.assertIn('lifecycle_copy_absence_receipt', query)
                 self.assertNotIn('UPDATE', query.upper())
                 return json.dumps([g['ID'] for g in group['Copies'] if g['Key'] == 'fixture/p1.csv']) if core == group['Core'] else '[]'
             for obj, name, val in [(m.f, 'PRIVATE', private), (m.f, 'PUBLIC', public), (m.f, 'EXECUTION', execution),
                     (m.f, 'PROFILE', candidate['Profile']), (m.f, 'GENERATION', 'test-attester'), (m.f, 'START', candidate['NotBefore']),
-                    (m.f, 'END', candidate['NotAfter']), (m.r, 'utc', lambda: at), (m.r, 'inspect', lambda cid: copy.deepcopy(states[cid])),
+                    (m.f, 'END', candidate['NotAfter']), (m.r, 'utc', lambda: at), (m.r, 'inspect', inspect),
                     (m.r, 'docker', docker), (m.r, 'docker_text', lambda *args: '\n'.join([*group['Helpers'].values(), bindings[0]['budget_initializer'], *extras])),
                     (m.r.native, 'sql', sql)]:
                 stack.enter_context(patch.object(obj, name, val))
+            stack.enter_context(patch.object(m.execution_freeze,'authorized_gate',branch_gate))
             stack.enter_context(patch.object(sys, 'argv', ['attest', '--group', 'business-races', '--stage', stage]))
             path = selected / ('topology-' + stage + '.json')
             with redirect_stdout(io.StringIO()):
@@ -189,6 +198,10 @@ class AttesterTests(unittest.TestCase):
                     self.assertFalse(path.exists(), 'rejected contract must never emit a signature')
                     if fault in ('sealed', 'foreign-confirmation'):
                         self.assertEqual(seen, [])
+                        self.assertEqual(branch_checks, [])
+                    if fault=='branch-freeze':
+                        self.assertEqual((seen,inspected,queried),([],[],[]))
+                        self.assertEqual(len(branch_checks),1)
                     return
                 m.main()
             signed = json.loads(path.read_bytes()); body = base64.b64decode(signed['Body'])
@@ -213,6 +226,10 @@ class AttesterTests(unittest.TestCase):
                 'foreign-budget', 'budget-expanded', 'budget-nonempty', 'root-user', 'root-env', 'ports', 'source-network'):
             with self.subTest(fault=fault):
                 self.composition(fault=fault)
+
+    def test_native_branch_rejection_precedes_docker_sql_and_signature(self):
+        for stage in ('wire','P2','recover-P2'):
+            with self.subTest(stage=stage):self.composition(stage=stage,fault='branch-freeze')
 
     def test_path_boundary_is_strict_and_reuses_existing_contract(self):
         self.assertEqual(normalize_source('/run/desktop/mnt/host/c/one two/file'), 'C:/one two/file')
