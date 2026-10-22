@@ -209,6 +209,9 @@ func remainingStep(ctx context.Context, mode string) error {
 		return err
 	}
 	defer pool.Close()
+	if err := pilot.ValidateRemainingFixtureSchema(ctx, pool); err != nil {
+		return err
+	}
 	router, err := routing.NewRouter(false)
 	if err != nil {
 		return err

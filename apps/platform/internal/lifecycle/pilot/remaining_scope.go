@@ -18,10 +18,10 @@ var remainingScopes []byte
 
 // A different UTC slot requires a new frozen candidate/confirmation. It cannot
 // be opened by editing a permission file or replaying an old confirmation text.
-const RemainingExecution = "a5d1e569-f80e-4b38-8f32-d8139a30a077"
-const RemainingProfile = "candidate19/v29"
-const RemainingNotBefore = "2026-10-22T06:00:00Z"
-const RemainingNotAfter = "2026-10-22T06:40:00Z"
+const RemainingExecution = "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6"
+const RemainingProfile = "candidate20/v30"
+const RemainingNotBefore = "2026-10-22T10:00:00Z"
+const RemainingNotAfter = "2026-10-22T10:40:00Z"
 
 // New execution-owned identities never reuse the retained v22 users. Policy
 // construction and the root status owner share this one naming contract.
