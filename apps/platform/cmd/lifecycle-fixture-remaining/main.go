@@ -432,6 +432,9 @@ func send(ctx context.Context, stage string) error {
 		return e
 	}
 	defer pool.Close()
+	if err := pilot.ValidateRemainingFixtureSchema(ctx, pool); err != nil {
+		return err
+	}
 	router, e := routing.NewRouter(false)
 	if e != nil {
 		return e

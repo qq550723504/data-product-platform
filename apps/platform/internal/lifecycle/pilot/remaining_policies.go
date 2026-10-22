@@ -85,7 +85,7 @@ func RemainingUncreatedIdentities(group string) []string {
 	return []string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}
 }
 
-// These actual c14/c15/c16/c17/c18 users remain disabled with a sole policy and no groups.
+// These actual c14/c15/c16/c17/c18/c19 users remain disabled with a sole policy and no groups.
 // Current workers and enable paths select only the new execution's identities.
 func RemainingRetainedIdentities(group string) map[string]string {
 	result := map[string]string{}
@@ -96,7 +96,7 @@ func RemainingRetainedIdentities(group string) map[string]string {
 		}
 	}
 	if scope, err := RemainingScopeFor(group); err == nil {
-		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7"} {
+		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7", "a5d1e569"} {
 			for _, prefix := range []string{"i", "d"} {
 				user := prefix + execution + scope.Run.String()[:8]
 				result[user] = "lifecycle307-six-" + user
@@ -125,7 +125,13 @@ func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]str
 		if user[0] == 'i' {
 			kind = "inspect"
 		}
-		policies[name] = append([]byte(nil), retained[RemainingPolicyName(group, kind)]...)
+		frozen := retained[RemainingPolicyName(group, kind)]
+		// The real retained c19 policy already had the exact-version action
+		// pair. Audit its actual frozen semantics; never rewrite old IAM.
+		if scope, scopeErr := RemainingScopeFor(group); scopeErr == nil && user == map[string]string{"inspect": "i", "delete": "d"}[kind]+"a5d1e569"+scope.Run.String()[:8] {
+			frozen = policies[RemainingPolicyName(group, kind)]
+		}
+		policies[name] = append([]byte(nil), frozen...)
 	}
 	if user, name := RemainingDormantIdentity(group); user != "" {
 		users[user] = ""
