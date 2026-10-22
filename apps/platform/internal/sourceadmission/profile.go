@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -39,6 +40,12 @@ func (s *evidenceStore) Get(ctx context.Context, uri string) (io.ReadCloser, err
 	}
 	data, e := s.port.ReadProtected(ctx, i)
 	if e != nil {
+		// Native exact-copy length/contract verification can fail before our
+		// hash comparison. Preserve proven corruption as an integrity failure;
+		// actual transport uncertainty must remain recoverable as UNKNOWN.
+		if errors.Is(e, lc.ErrStorageContract) {
+			return nil, ErrIntegrity
+		}
 		return nil, e
 	}
 	if int64(len(data)) != i.ByteSize || Hash(data) != i.SHA256 {
