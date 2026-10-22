@@ -1,0 +1,46 @@
+{
+  "status": "PASS_C21_ACTUAL_DOCUMENTS_HOST74_COLD996_BACKUP66_AND_AUTHORITY_ABSENCE_FILE_AUDIT",
+  "host_index_typed": {
+    "id": "actual-host-bindings",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/candidate21-planning01/candidate21-host-bindings01.json",
+    "sha256": "f257059fe67dd04e533ba91f9e3878c4246c55c1272299f7f1c531fb497a0596",
+    "members_verified": 74
+  },
+  "actual_four_documents": {
+    "docs/acceptance/.gitattributes": {
+      "sha256": "5663a2d642aaff3b9712742fe62adb176b204fbe827b008af743440de2836a3a",
+      "bytes": 227
+    },
+    "docs/acceptance/issue307-d1-candidate21-confirmation.md": {
+      "sha256": "13ed713271888c8216ab15383fd6529d5d383f99378ad17bc3a6f9064e38d267",
+      "bytes": 51800
+    },
+    "docs/acceptance/issue307-d1-v31-window-runbook.md": {
+      "sha256": "bc82818172ba525059238ee453d265760874947a4908f93a6852b748c30b7120",
+      "bytes": 9721
+    },
+    "docs/acceptance/issue307-d1-v31-preparation-contract.md": {
+      "sha256": "0d54e272f87566c753fd844c69002d00982e0b3d8a66ba03deb1ed1ce8b3a365",
+      "bytes": 3118
+    }
+  },
+  "independent_actual_Git_blob_archive_autocrlf_true_false_all_equal": true,
+  "machine_block_exact137_lines": true,
+  "six_targets_eleven_survivors_full_exact_tuples_equal": true,
+  "cold_known_cids": 996,
+  "old_cids": 907,
+  "new_owners": 86,
+  "new_readers": 3,
+  "old_budgets": 27,
+  "new_empty_budgets": 3,
+  "permissions_false": 30,
+  "old_backups": 57,
+  "new_backups": 9,
+  "backup_all_actual_private_SHA_readback": true,
+  "new_authorization": "NOT_RECEIVED",
+  "new_schedule": "NOT_CREATED",
+  "final_branch_lock_execution_binding": "NOT_YET_CREATED",
+  "actual_independent_Docker_Core_provider_actions": 0,
+  "native_delete": 0
+}
