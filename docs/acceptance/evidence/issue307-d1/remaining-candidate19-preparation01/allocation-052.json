@@ -1,0 +1,33 @@
+{
+  "role": "remaining-late",
+  "group": "late-hold",
+  "cid": "d832231a0f67f3ecabf369c888572ccc26b95325ed33319b2cc54fbdcba9f29b",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate19-rehearsal-late",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:61fe1b2206cef8fb9da1b09487007ff77587f5c6a2b5fbb9a244acdc528da530",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\rehearsal-late,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\outputs\\rehearsal-late,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "remaining-late"
+  ]
+}

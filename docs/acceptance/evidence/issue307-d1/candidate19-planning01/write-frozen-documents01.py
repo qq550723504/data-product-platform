@@ -27,6 +27,10 @@ def main():
     prep=load(BASE/'remaining-candidate19-preparation01/non-delete-terminal.json')
     anchor=load(HERE/'host-anchor-readback01.json')['anchor']
     template=(PACKET/'confirmation-template.txt').read_bytes()
+    windows=load(PACKET/'profile-windows.json')
+    recovery_ends={x['ValidUntil'] for x in windows['recoveries']}
+    need(len(windows['recoveries'])==6 and len(recovery_ends)==1,'recovery deadline membership differs')
+    recovery_end=next(iter(recovery_ends))
     need(c['Profile']=='candidate19/v29' and c['Execution']=='a5d1e569-f80e-4b38-8f32-d8139a30a077','current scope differs')
     need(complete['status']=='PASS_COMPLETE_SIX_NATIVE_ENTRY' and complete['present_versions']==17 and complete['native_delete']==0,'complete actual read missing')
     need(prep['status']=='PASS_NONDELETE_SOURCE_RESTORE_PREPARATION' and prep['groups_completed']==3,'native preparation missing')
@@ -93,10 +97,10 @@ SDK无重试，持久target/wire budget先于Core claim，UNKNOWN不重发。失
 
 1. 当前运行source `{c['Source']}`，candidate `{s['candidate_sha256']}`，bindings `{s['bindings_sha256']}`，template `{s['confirmation_sha256']}`。本代packet anchor `{anchor['packet_commit']}`仅供containment定位。准备已完成，不重跑allocate/materialize/initialize-budgets/run-non-delete/freeze，不改source/binary/candidate/config来规避漂移。旧失败/预算/pins/backup及原授权按其历史字节保留。
 2. 当前唯一完整核验入口verify-six-native.py、维护入口window_six_support.py、签名入口attest-remaining-executable.py，及review06封存依赖全部按宿主索引实际SHA绑定。旧代入口不用于本代发送。复用官方MinIO SDK ParseConfig/Equals与已有Outbox→Asynq；没有平行queue、policy engine或手工业务SQL。
-3. 新三预算卷归本execution/独立allocation nonce，完整挂载CID集合、local driver/options、UID/GID10001及初始空均通过；15新卷/3internal networks、source/clean/rehearsal不别名。9新及36旧备份保留。源Core业务Commands=0、source PUT/DELETE=0；disabled IAM provisioning独立记录。业务Command只在独立rehearsal，不能以副本验收冒充真实H2/mixed结果。
+3. 新三预算卷归本execution/独立allocation nonce，完整挂载CID集合、local driver/options、UID/GID10001及初始空均通过；15新卷/3internal networks、source/clean/rehearsal不别名。9新及48旧备份保留（旧48含45完整与3失败partial）。本代候选准备source Core业务Commands=0（此前v28可信闭合另列）、source object PUT/DELETE=0；disabled IAM provisioning独立记录。业务Command只在独立rehearsal，不能以副本验收冒充真实H2/mixed结果。
 4. 新授权必须重新绑定本代完整模板、冻结reference manifest、宿主/全部静态证据、精确发布HEAD。实际人类原文、批准模板及envelope分别保留，user_retyped_template=false。未来定时续跑仅按人类另行指令建立；本手册不创建调度。准备NOT_RECEIVED/NOT_CREATED不回写。
 5. 若未来获授权，先读本聊天最新真实人类消息，撤销/收窄优先。实时核UTC、已有terminal、当前实际HEAD/PR head/全部必要PR CI/评审线程/#332 Draft/#307 OPEN。已有terminal不再次执行；早醒只读关闭核验，过窗立即封存，不延长/平移/重开。
-6. 在新的O_EXCL证据目录运行下方固定完整CLI。未来窗口内使用最终审批manifest所列final-static plan精确SHA；实际授权/调度出现后以追加phase plan核它们的真实索引，不伪造未来记录、不覆盖准备plan。语义先于permission/Docker：六case.Batch=本execution，Base.StartedAt=14:00Z、Base.ExpiresAt=CandidateUseUntil=14:40Z，六recovery.ValidUntil=16:40Z。
+6. 在新的O_EXCL证据目录运行下方固定完整CLI。未来窗口内使用最终审批manifest所列final-static plan精确SHA；实际授权/调度出现后以追加phase plan核它们的真实索引，不伪造未来记录、不覆盖准备plan。语义先于permission/Docker：六case.Batch=本execution，Base.StartedAt={c['NotBefore']}、Base.ExpiresAt=CandidateUseUntil={c['NotAfter']}，六recovery.ValidUntil={recovery_end}。
 7. 同一入口核实际CID/image/command/完整mount/netns/noports/no-socket/no-restart与私有文件白名单。worker UID10001、固定tmpfs/cap-drop/no-new-privileges，不挂root或host私钥；PG/native/Redis/Caddy/initializer按各自固定service descriptor，不误套worker约束。核30permission=false、3新空预算归属与完整挂载集。Docker raw wrapper仅bytes，文本严格UTF-8；类型、挂载、非空预算等失败即停，不补丁或重建budget。
 8. 同一入口新鲜核三源Core REPEATABLE READ READ ONLY全关系/roles/ACL前后不变；17exact bytes/SHA/version/full namespace inventory/hold/retention、P1真实NoSuchVersion404；41 known全disabled、40sole-policy/no-groups加唯一c13 partial严格NONE/no-groups及其未分配policy官方Equals，9 absent fresh NoSuchUser。不能用raw policy SHA或2xx-only替代语义；NoSuchObjectLockConfiguration400不表示对象缺失。保存所有technical请求start/observation/真实HTTP/provider attempts与成本，金额未知NOT_ASSESSED。
 9. 完整CLI关闭Source/helper后，任何重启Core/native之前先运行window_six_support.py check，要求本代实际新授权闭合且资源stopped。随后只在窗口内启动固定三Core/native，六slot及恢复期间Core保持可读；下一slot proof直接查实际immutable absence，不读host进度projection。五policy heads只读核aab0 checkpoint，不Renew、新Rights、重跑Processing/DirectData或P1。

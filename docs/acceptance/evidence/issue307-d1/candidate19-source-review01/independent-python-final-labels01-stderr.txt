@@ -1,0 +1,15 @@
+test_new_read_audit_uses_post_closure_checkpoint_and_still_rejects_drift (test_verify_six_native.SixCompleteTests.test_new_read_audit_uses_post_closure_checkpoint_and_still_rejects_drift) ... ok
+test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close (test_verify_six_native.SixCompleteTests.test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close) ... ok
+test_three_source_groups_use_current_six_checker_and_close (test_verify_six_native.SixCompleteTests.test_three_source_groups_use_current_six_checker_and_close) ... ok
+test_main_audit_only_never_enters_host_or_native (test_six_native_entry.SixNativeEntryTests.test_main_audit_only_never_enters_host_or_native) ... ok
+test_main_can_only_audit_saved_evidence_of_a_terminal_execution (test_six_native_entry.SixNativeEntryTests.test_main_can_only_audit_saved_evidence_of_a_terminal_execution) ... ok
+test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (test_six_native_entry.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) ... ok
+test_main_real_audit_three_real_collects_and_finally_success (test_six_native_entry.SixNativeEntryTests.test_main_real_audit_three_real_collects_and_finally_success) ... ok
+test_main_second_group_failure_closes_and_does_not_collect_third (test_six_native_entry.SixNativeEntryTests.test_main_second_group_failure_closes_and_does_not_collect_third) ... ok
+test_unreadable_terminal_is_not_absence (test_six_native_entry.SixNativeEntryTests.test_unreadable_terminal_is_not_absence) ... ok
+test_complete_six_packet_and_confirmation_with_eleven_survivors (test_freeze_six_candidate.FreezeSixTests.test_complete_six_packet_and_confirmation_with_eleven_survivors) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.496s
+
+OK

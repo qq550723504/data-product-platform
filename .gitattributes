@@ -284,6 +284,7 @@ docs/acceptance/evidence/issue307-d1/candidate19-source-review01/** -text whites
 docs/acceptance/evidence/issue307-d1/candidate19-review01/** -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-candidate19-preparation01/** -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-candidate19/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate19-freeze-failure01/** -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-candidate19-readonly01/** -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/issue307-d1-candidate19-confirmation.md -text
 docs/acceptance/issue307-d1-v29-window-runbook.md -text

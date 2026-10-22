@@ -1,0 +1,7 @@
+{
+  "enable_returned": true,
+  "disabled_readback": "FRESH_CONFIRMED_DISABLED",
+  "failure": null,
+  "source_identity_enabled": false,
+  "native_delete": 0
+}

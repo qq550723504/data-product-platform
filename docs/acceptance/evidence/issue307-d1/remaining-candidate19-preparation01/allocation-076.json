@@ -1,0 +1,33 @@
+{
+  "role": "six-verify-native",
+  "group": "mixed",
+  "cid": "c4cc63e71c6ec67bbb7bece8019f52f42d78132cbbf71c11a335f7a507267bfe",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate19-maintenance-source",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\mixed\\maintenance-source,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\mixed\\outputs\\maintenance-source,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "six-verify-native"
+  ]
+}
