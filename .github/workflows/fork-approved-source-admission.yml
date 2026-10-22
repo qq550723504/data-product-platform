@@ -36,6 +36,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify private live-trial preparation boundaries without Docker
+        run: node --test tests/fork-host-live/prepare-isolation.test.mjs
       - name: Migrate dedicated synthetic database and verify PostgreSQL contract
         working-directory: apps/platform
         run: |

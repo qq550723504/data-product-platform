@@ -6,9 +6,10 @@ import path from 'node:path';
 import {randomBytes} from 'node:crypto';
 if(process.env.FORK_HOST_LIVE_SYNTHETIC!=='1') throw Error('Explicit synthetic authorization gate required');
 const root=process.env.HFRAW_OUTPUT, fork=process.env.HFRAW_FORK_WORKTREE;
-if(!root||!fork) throw Error('New output directory and independent Fork worktree required');
-await mkdir(root,{recursive:true});
-try {await readFile(path.join(root,'target.json'));throw Error('Refusing to adopt existing target');}catch(e){if(e.code!=='ENOENT')throw e;}
+if(!root||!path.isAbsolute(root)||!fork) throw Error('New absolute output directory and independent Fork worktree required');
+// Claim a fresh private directory before generating credentials or doing any
+// Docker work. Existing paths (including empty directories/symlinks) fail closed.
+await mkdir(root,{mode:0o700});
 const id='hfraw-'+Date.now(), image=id+':fork', pass=randomBytes(24).toString('hex');
 const minio={AccessKey:'hfrawadmin',SecretKey:randomBytes(24).toString('hex'),SessionToken:''};
 const target={id,image,fork,pg:id+'-pg',redis:id+'-redis',minio:id+'-minio',app:id+'-fork',worker:id+'-worker',network:id,ports:{fork:25510,pg:25511,minio:25512,api:25513,web:25514,gateway:25515},synthetic:true,coreEnabled:false,containers:[]};

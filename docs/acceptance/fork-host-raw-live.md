@@ -68,7 +68,12 @@ and command replay. Historical accepted facts are never rewritten as failure.
 
 ## Run (Windows local worktree)
 
-Use a new private report directory and verified free ports 25510–25517. Inspect
+Use a new absolute report path whose parent already exists; do not create the
+output directory first. Preparation exclusively creates it before any credential
+write or Docker work and rejects existing paths, including empty directories.
+POSIX output directories use mode 0700. On Windows the parent must have a
+user-private ACL; POSIX mode flags do not configure NTFS ACLs.
+Use verified free ports 25510–25517. Inspect
 Docker subnets first; `HFRAW_SUBNET` must be a new non-overlapping /28. Never
 prune existing networks to obtain capacity. Set:
 
