@@ -61,3 +61,4 @@ jobs:
             ${{ runner.temp }}/hfa-acceptance/browser-results.json
             ${{ runner.temp }}/hfa-acceptance/*-accepted-source.png
             ${{ runner.temp }}/hfa-acceptance/*-stale-access.png
+            ${{ runner.temp }}/hfa-acceptance/*-budget-original-key.png
