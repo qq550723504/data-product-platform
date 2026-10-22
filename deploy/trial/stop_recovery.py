@@ -49,7 +49,7 @@ def plan(s, historical):
                "Known activated STOPPED run without recovery required")
         stops.guard(s); b.guard(s)
         r.need(r.local_docker_identity()["daemonId"] == s["host"]["daemonId"], "Docker daemon drift")
-        native = b.native(s)
+        native = b.stopped_native(s)
         source = controller(s)
         registry = b.file(r.STATE / "state.json")
         r.need(r.read(registry["path"]) == s, "Recovery registry drift")
@@ -122,6 +122,8 @@ def run(s, plan_path, expected_sha):
         # A prior attempt may already have restored the one reviewed target.
         r.need(check_ledger(s, reviewed["current"], reviewed["historical"]) == reviewed["frozen"],
                "Reviewed frozen ledger artifact drift")
+        r.need(r.local_docker_identity()["daemonId"] == s["host"]["daemonId"] and
+               b.stopped_native(s) == reviewed["native"], "Stopped native identity drift")
     if not folder.exists():
         r.need(plan(s, reviewed["historical"]["path"]) == reviewed, "Stop recovery plan drift")
         folder.mkdir(parents=True, exist_ok=False)
@@ -140,9 +142,6 @@ def run(s, plan_path, expected_sha):
     if not previous:
         s["stopRecovery"] = {"status": "UNKNOWN", "planSha256": expected_sha, "path": str(folder)}
         r.save(s)
-    # Every retry remains metadata-only and must verify exact stopped owners.
-    r.need(r.local_docker_identity()["daemonId"] == s["host"]["daemonId"] and
-           b.native(s) == reviewed["native"], "Stopped native identity drift")
     for name, source in (("current-facts.json", reviewed["current"]), ("historical-facts.json", reviewed["historical"])):
         destination = folder / name
         if not destination.exists():
