@@ -28,13 +28,17 @@ def controller_only(path):
     return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/", "apps/platform/cmd/trial-activate/", "apps/platform/cmd/trial-business/"))
 
 
+def check_controller_delta(baseline, current):
+    changed = sorted(p for p in set(current) | set(baseline) if current.get(p) != baseline.get(p))
+    r.need(all(controller_only(p) for p in changed), "Business source drift; this resume only reuses original business artifacts")
+    return changed
+
+
 def check_sources(s, current):
     baseline = s["sources"]
     if "businessBinding" in s:
         baseline = r.active_business(s)["sources"]
-    changed = sorted(p for p in set(current) | set(baseline) if current.get(p) != baseline.get(p))
-    r.need(all(controller_only(p) for p in changed), "Business source drift; this resume only reuses original business artifacts")
-    return changed
+    return check_controller_delta(baseline, current)
 
 
 def verify_origin(s):

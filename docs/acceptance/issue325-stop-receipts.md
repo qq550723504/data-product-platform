@@ -47,6 +47,16 @@ ledger artifacts must still match. The current protected inventory must match
 the accepted activation. A foreign path, mismatched identity, additional drift,
 or an orphan recovery journal refuses the plan.
 
+Recovery source admission verifies the immutable activation document, its
+identity/previous business and ledger references, frozen Git sources, original
+business artifacts, activated binaries/Web and bound protected profile before
+comparing the current committed controller-only delta. It does not call the
+ordinary full activation validator before classifying the collision. The plan
+still verifies both ledger headers and every ledger file, allowing exactly the
+single root stop pathname with its exact-hash retained historical copy. Ordinary
+`activation.verify_binding`, `runtime.active_business` and resume source checks
+continue to require complete ledger validation; there is no skip/relax flag.
+
 Only separate approval of that exact plan permits:
 
 ```powershell
@@ -79,11 +89,14 @@ validator, and Python's `os.replace`. This is a repair of the existing trial
 assembly contract, not new workflow/storage infrastructure; an OSS workflow
 runtime or a second persistence system would not repair these local references.
 
-`test_stop_receipts.py` invokes the real CLI, stop, resume precheck, frozen
-ledger validator, receipt/recovery implementation, and protected probe ledger
-comparison against temporary files. Only native/provider I/O and environment
-adapters are mocked. The regression would fail if stop still overwrote the
-frozen root pathname. Recovery tests cover read-only planning, exact-byte
+`test_stop_receipts.py` invokes the real CLI, stop, resume precheck, full
+business/activation/ledger validators, receipt/recovery implementation, and
+protected probe ledger comparison against temporary files and a real temporary
+Git repository. Sources, committed archives, origin, active business and expected
+activation proof are not mocked. Native/provider I/O and environment adapters
+are simulated. The previous #342 fixture mocked `active_business` and missed the
+real activated validation chain; this regression reproduces that failure before
+the source-admission fix. Recovery tests cover read-only planning, exact-byte
 restoration, same-plan replay, interruptions after restore and before registry
 commit, identity/path/hash tampering, unrelated artifact drift, and orphan claims.
 These controller regressions do not claim a live restart of the retained run.

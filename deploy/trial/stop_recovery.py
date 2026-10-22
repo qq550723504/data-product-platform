@@ -7,6 +7,7 @@ from pathlib import Path
 import runtime as r
 import resume as c
 import bootstrap as b
+import activation as a
 import protected_resume as p
 import stop_receipts as stops
 
@@ -17,7 +18,10 @@ def controller(s):
     head = r.command(["git", "rev-parse", "HEAD"]).decode().strip()
     sources = r.sources()
     r.need(c.committed_sources(head) == sources, "Committed recovery controller required")
-    c.check_sources(s, sources)
+    # Full activation validation rejects the known historical stop collision.
+    # Verify its frozen business/source baseline here; plan() independently
+    # validates every ledger file and admits only the exact legacy collision.
+    c.check_controller_delta(a.binding_document(s)["sources"], sources)
     return {"head": head, "sources": sources}
 
 
