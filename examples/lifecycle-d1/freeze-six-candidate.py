@@ -76,7 +76,7 @@ def source_freeze(a):
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
                                     'initial_allocation_build_source':a['source'],'initial_build_files':a['build_files'],
-                                    'retained_failed_generation':'candidate13/v23 through candidate17/v27; immutable historical failures, budgets, pins and terminal facts; never execution authority'})
+                                    'retained_failed_generation':'candidate13/v23 through candidate18/v28; immutable failures including v28 CONFIRMED DENIED, used budgets, pins and terminal facts; never execution authority'})
 
 
 def main():

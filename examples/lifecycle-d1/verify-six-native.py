@@ -88,7 +88,7 @@ def sealed_gate(packet=PACKET):
         need(not mount['RW'] and sha(p.p1.hostpath(mount['Source']))==g['SealedGatewaySHA256'],'gateway not actually sealed')
     need(count==30,'finite permission count differs')
     return {'status':'PASS_COMPLETE_SIX_SEALED_HOST_GATE','cases':6,'recoveries':6,'permissions_false':count,'owners_closed':len(a['owners']),
-            'backup_hashes':9,'old_backups_retained':27,'budgets_empty':3,'native_delete':0,'source_provider_io':0}
+            'backup_hashes':9,'old_backups_retained':48,'budgets_empty':3,'native_delete':0,'source_provider_io':0}
 
 
 def collect(g,b,packet,private,output,deadline,*,core_baseline=None):
