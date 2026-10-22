@@ -1,341 +1,150 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { QualityAttention } from "@/components/quality-attention";
 import { SchemaAttention } from "@/components/schema-attention";
 import { SchemaExceptions } from "@/components/schema-exceptions";
 import { SchemaRequests } from "@/components/schema-requests";
+import { ReadUnavailable } from "@/components/read-unavailable";
 import { schemaRequestView } from "@/lib/schema-request-filter";
 import { schemaExceptionFilter } from "@/lib/schema-exception-filter";
 import { schemaView } from "@/lib/schema-observation";
 import { attentionOffset, attentionView } from "@/lib/quality-attention";
-import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { Badge, EmptyState, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { collectAllPages } from "@/lib/pagination";
-import { configuredWorkspaceId, platform } from "@/lib/platform";
+import { configuredWorkspaceId, platform, type DataProduct } from "@/lib/platform";
+import { attentionTotal, readSection, validExecution, validPage, validProduct, validRelease, validReleaseAttention, validReview } from "@/lib/workbench-read";
 
 const PAGE_SIZE = 25;
+type Query = Record<string, string | undefined>;
+type Offsets = Record<string, number | string>;
+type ReleaseKind = "failed" | "validating" | "ready";
+const releaseGroups = [
+  { key: "failed", status: "FAILED", title: "Release 失败", offset: "failedReleaseOffset", action: "查看 Release" },
+  { key: "validating", status: "VALIDATING", title: "Readiness 阻塞", offset: "validatingReleaseOffset", action: "查看 Blockers" },
+  { key: "ready", status: "READY", title: "Release 待发布", offset: "readyReleaseOffset", action: "去发布" },
+] as const;
 
-type AttentionSearchParams = {
-  schemaRequestView?: string;
-  schemaRequestOffset?: string;
-  schemaExceptionStatus?: string;
-  schemaExceptionOffset?: string;
-  schemaView?: string;
-  schemaOffset?: string;
-  qualityView?: string;
-  qualityOffset?: string;
-  reviewOffset?: string;
-  failureOffset?: string;
-  failedReleaseOffset?: string;
-  validatingReleaseOffset?: string;
-  readyReleaseOffset?: string;
-};
-
-function parseOffset(value?: string): number {
-  const parsed = Number(value ?? 0);
-  return Number.isSafeInteger(parsed) && parsed >= 0 ? Math.min(parsed, 2147483647) : 0;
-}
-
-function attentionHref(
-  current: Record<string, number | string>,
-  key: keyof AttentionSearchParams,
-  offset: number,
-): string {
+function attentionHref(current: Offsets, key: string, offset: number): string {
   const query = new URLSearchParams();
   for (const [name, value] of Object.entries(current)) {
     if (typeof value === "string" || value > 0) query.set(name, String(value));
   }
-  if (offset > 0) query.set(key, String(offset));
-  else query.delete(key);
-  const encoded = query.toString();
-  return encoded ? `/attention?${encoded}` : "/attention";
+  if (offset > 0) query.set(key, String(offset)); else query.delete(key);
+  return "/attention?" + query;
 }
 
-function AttentionPager({
-  keyName,
-  offset,
-  itemCount,
-  total,
-  current,
-}: {
-  keyName: keyof AttentionSearchParams;
-  offset: number;
-  itemCount: number;
-  total: number;
-  current: Record<string, number | string>;
-}) {
+function AttentionPager({ keyName, offset, itemCount, total, current }: { keyName: string; offset: number; itemCount: number; total: number; current: Offsets }) {
   if (total <= PAGE_SIZE && offset === 0) return null;
-  const previous = offset > 0 ? Math.max(0, offset - PAGE_SIZE) : null;
-  const next = offset + itemCount < total ? offset + PAGE_SIZE : null;
-  return (
-    <nav className="pagination attention-pagination" aria-label="待办分页">
-      {previous === null ? (
-        <span className="pagination-step pagination-step-disabled" aria-disabled="true">上一页</span>
-      ) : (
-        <Link className="pagination-step" href={attentionHref(current, keyName, previous)}>上一页</Link>
-      )}
-      <span className="pagination-summary">
-        {total === 0 ? "0 条" : `${Math.min(offset + 1, total)}–${Math.min(offset + itemCount, total)} / ${total}`}
-      </span>
-      {next === null ? (
-        <span className="pagination-step pagination-step-disabled" aria-disabled="true">下一页</span>
-      ) : (
-        <Link className="pagination-step" href={attentionHref(current, keyName, next)}>下一页</Link>
-      )}
-    </nav>
-  );
+  return <nav className="pagination attention-pagination" aria-label="待办分页">
+    {offset > 0 ? <Link prefetch={false} className="pagination-step" href={attentionHref(current, keyName, Math.max(0, offset - PAGE_SIZE))}>上一页</Link> : <span className="pagination-step pagination-step-disabled" aria-disabled="true">上一页</span>}
+    <span className="pagination-summary">{total === 0 ? "0 条" : Math.min(offset + 1, total) + "–" + Math.min(offset + itemCount, total) + " / " + total}</span>
+    {offset + itemCount < total ? <Link prefetch={false} className="pagination-step" href={attentionHref(current, keyName, offset + PAGE_SIZE)}>下一页</Link> : <span className="pagination-step pagination-step-disabled" aria-disabled="true">下一页</span>}
+  </nav>;
 }
 
-export default async function AttentionPage({
-  searchParams,
-}: {
-  searchParams: Promise<AttentionSearchParams>;
-}) {
-  if (!configuredWorkspaceId()) {
-    return (
-      <>
-        <PageHeader
-          eyebrow="Attention"
-          title="待办中心"
-          description="集中处理需要人工决策、故障跟进或发布动作的当前事项。"
-        />
-        <SetupRequired />
-      </>
-    );
-  }
+function loadAttention(workspace: string, offsets: Offsets) {
+  const reviewOffset = Number(offsets.reviewOffset), failureOffset = Number(offsets.failureOffset);
+  const reviews = readSection(() => platform.reviews("PENDING", PAGE_SIZE, reviewOffset), p => validPage(p, PAGE_SIZE, reviewOffset, r => validReview(r, workspace)));
+  const failures = readSection(() => platform.unresolvedFailedExecutions(PAGE_SIZE, failureOffset), p => validPage(p, PAGE_SIZE, failureOffset, e => validExecution(e, workspace) && e.status === "FAILED"));
+  const products = readSection(() => collectAllPages(async (limit, offset) => {
+    const p = await platform.products(limit, offset);
+    if (!validPage(p, limit, offset, product => validProduct(product, workspace))) throw new Error("product labels unavailable");
+    return p;
+  }, 100), items => new Set(items.map(p => p.id)).size === items.length);
+  const snapshot = readSection(() => platform.releaseAttention(PAGE_SIZE), r => validReleaseAttention(r, PAGE_SIZE));
+  const releases = Object.fromEntries(releaseGroups.map(g => {
+    const offset = Number(offsets[g.offset]);
+    return [g.key, offset === 0 ? snapshot.then(s => s?.[g.key] ?? null) :
+      readSection(() => platform.workspaceReleases(g.status, PAGE_SIZE, offset), p => validPage(p, PAGE_SIZE, offset, r => validRelease(r, g.status)))];
+  })) as Record<ReleaseKind, Promise<Awaited<ReturnType<typeof platform.workspaceReleases>> | null>>;
+  const counts = Object.fromEntries(releaseGroups.map(g => [g.key, releases[g.key].then(async p => p?.page.total ?? (await snapshot)?.[g.key].page.total ?? null)])) as Record<ReleaseKind, Promise<number | null>>;
+  return { reviews, failures, products, releases, counts };
+}
+type Model = ReturnType<typeof loadAttention>;
 
+async function Total({ model }: { model: Model }) {
+  const [reviews, failures, failed, validating, ready] = await Promise.all([model.reviews, model.failures, model.counts.failed, model.counts.validating, model.counts.ready]);
+  const total = attentionTotal([reviews?.page.total, failures?.page.total, failed, validating, ready]);
+  return <span data-testid="attention-total">{total === null ? "审核、执行与发布：UNKNOWN · 未完整获取" : "审核、执行与发布：" + total + " 条"}</span>;
+}
+
+function FirstPage({ offsets, keyName, offset }: { offsets: Offsets; keyName: string; offset: number }) {
+  return offset > 0 ? <Link prefetch={false} href={attentionHref(offsets, keyName, 0)}>返回该分区首页</Link> : null;
+}
+
+async function ReviewQueue({ model, offsets }: { model: Model; offsets: Offsets }) {
+  const p = await model.reviews, offset = Number(offsets.reviewOffset);
+  return <section className="panel attention-panel" data-testid="review-queue">
+    <div className="panel-header"><div><h2>实体审核</h2><span className="panel-meta">{p ? p.page.total + " 条待人工决策" : "数量 UNKNOWN"}</span></div><Link prefetch={false} href="/reviews">进入审核队列</Link></div>
+    {!p ? <><ReadUnavailable title="实体审核" /><FirstPage offsets={offsets} keyName="reviewOffset" offset={offset} /></> : <>
+      {p.items.length === 0 ? <EmptyState title="本页无审核事项" description="使用下方分页返回有效页，或进入审核队列查看完整记录。" /> :
+        <div className="table-card"><table className="data-table"><thead><tr><th>来源</th><th>匹配方式</th><th>置信度</th><th>状态</th></tr></thead><tbody>
+          {p.items.map(r => <tr key={r.candidateId}><td className="primary-cell"><strong>{r.sourceName || r.sourceKey}</strong><span>{r.sourceKey}</span></td><td>{r.matchMethod || "—"}</td><td>{r.confidence.toFixed(2)}</td><td><Badge value={r.status} /></td></tr>)}
+        </tbody></table></div>}
+      <AttentionPager keyName="reviewOffset" offset={offset} itemCount={p.items.length} total={p.page.total} current={offsets} />
+    </>}
+  </section>;
+}
+
+async function FailureQueue({ model, offsets }: { model: Model; offsets: Offsets }) {
+  const p = await model.failures, offset = Number(offsets.failureOffset);
+  return <section className="panel attention-panel" data-testid="failure-queue">
+    <div className="panel-header"><div><h2>生产执行失败</h2><span className="panel-meta">{p ? p.page.total + " 条未解决失败" : "数量 UNKNOWN"}</span></div><Link prefetch={false} href="/production">查看生产历史</Link></div>
+    {!p ? <><ReadUnavailable title="未解决执行失败" /><FirstPage offsets={offsets} keyName="failureOffset" offset={offset} /></> : <>
+      {p.items.length === 0 ? <EmptyState title="本页没有未解决失败" description="成功 retry 或正在 retry 的执行不会出现在这里。" /> :
+        <div className="table-card"><table className="data-table"><thead><tr><th>Workflow</th><th>期间</th><th>错误</th><th>时间</th><th>处理</th></tr></thead><tbody>
+          {p.items.map(e => <tr key={e.id}><td className="primary-cell"><strong>{e.workflowName || e.workflowCode}</strong><span>attempt {e.attempt} · {shortId(e.id)}</span></td>
+            <td>{e.targetPeriod}</td><td><Badge value={e.errorCode || "FAILED"} /></td><td>{formatDate(e.finishedAt ?? e.createdAt)}</td><td><Link prefetch={false} className="text-link" href={"/production/" + e.id}>查看执行</Link></td></tr>)}
+        </tbody></table></div>}
+      <AttentionPager keyName="failureOffset" offset={offset} itemCount={p.items.length} total={p.page.total} current={offsets} />
+    </>}
+  </section>;
+}
+
+async function ProductLabel({ products, id }: { products: Promise<DataProduct[] | null>; id: string }) {
+  const list = await products;
+  return <>{list?.find(p => p.id === id)?.name ?? id + "（名称不可用）"}</>;
+}
+
+async function ReleaseQueue({ model, offsets, group }: { model: Model; offsets: Offsets; group: typeof releaseGroups[number] }) {
+  const [p, count] = await Promise.all([model.releases[group.key], model.counts[group.key]]);
+  const offset = Number(offsets[group.offset]);
+  return <section className="panel attention-panel" data-testid={"release-queue-" + group.key}>
+    <div className="panel-header"><div><h2>{group.title}</h2><span className="panel-meta">{count === null ? "数量 UNKNOWN" : count + " 个 Release"}</span></div>
+      <Badge value={!p ? "UNKNOWN" : count ? group.key === "validating" ? "BLOCKED" : group.status : "CLEAR"} />
+    </div>
+    {!p ? <><ReadUnavailable title={group.title + "当页"} /><FirstPage offsets={offsets} keyName={group.offset} offset={offset} /></> : <>
+      {p.items.length === 0 ? <EmptyState title={"本页没有" + group.title} description="仅说明本次读取的当页；可使用分页查看其他页。" /> :
+        <div className="attention-list">{p.items.map(r => <div className="attention-item" key={r.id}>
+          <div><strong><Suspense fallback={r.productId + "（名称读取中）"}><ProductLabel products={model.products} id={r.productId} /></Suspense> · {r.releaseNo}</strong>
+            <span>{group.key === "validating" ? "等待解除 Release Readiness blockers" : formatDate(r.createdAt)}</span></div>
+          <Link prefetch={false} className="text-link" href={group.key === "failed" ? "/products/" + r.productId + "/releases/" + r.id : "/products/" + r.productId + "#releases"}>{group.action}</Link>
+        </div>)}</div>}
+      <AttentionPager keyName={group.offset} offset={offset} itemCount={p.items.length} total={p.page.total} current={offsets} />
+    </>}
+  </section>;
+}
+
+export default async function AttentionPage({ searchParams }: { searchParams: Promise<Query> }) {
+  const workspace = configuredWorkspaceId();
+  if (!workspace) return <><PageHeader eyebrow="Attention" title="待办中心" /><SetupRequired /></>;
   const query = await searchParams;
-  const reviewOffset = parseOffset(query.reviewOffset);
-  const failureOffset = parseOffset(query.failureOffset);
-  const failedReleaseOffset = parseOffset(query.failedReleaseOffset);
-  const validatingReleaseOffset = parseOffset(query.validatingReleaseOffset);
-  const readyReleaseOffset = parseOffset(query.readyReleaseOffset);
-  const offsets = {
-    schemaRequestView: schemaRequestView(query.schemaRequestView),
-    schemaRequestOffset: attentionOffset(query.schemaRequestOffset),
-    schemaExceptionStatus: schemaExceptionFilter(query.schemaExceptionStatus),
-    schemaExceptionOffset: attentionOffset(query.schemaExceptionOffset),
-    schemaView: schemaView(query.schemaView),
-    schemaOffset: attentionOffset(query.schemaOffset),
-    qualityView: attentionView(query.qualityView),
-    qualityOffset: attentionOffset(query.qualityOffset),
-    reviewOffset,
-    failureOffset,
-    failedReleaseOffset,
-    validatingReleaseOffset,
-    readyReleaseOffset,
+  const offsets: Offsets = {
+    schemaRequestView: schemaRequestView(query.schemaRequestView), schemaRequestOffset: attentionOffset(query.schemaRequestOffset),
+    schemaExceptionStatus: schemaExceptionFilter(query.schemaExceptionStatus), schemaExceptionOffset: attentionOffset(query.schemaExceptionOffset),
+    schemaView: schemaView(query.schemaView), schemaOffset: attentionOffset(query.schemaOffset),
+    qualityView: attentionView(query.qualityView), qualityOffset: attentionOffset(query.qualityOffset),
   };
-
-  try {
-    const [reviews, failures, products, releaseSnapshot] = await Promise.all([
-      platform.reviews("PENDING", PAGE_SIZE, reviewOffset),
-      platform.unresolvedFailedExecutions(PAGE_SIZE, failureOffset),
-      collectAllPages(platform.products, 100),
-      platform.releaseAttention(PAGE_SIZE),
-    ]);
-
-    const [failedPage, validatingPage, readyPage] = await Promise.all([
-      failedReleaseOffset === 0
-        ? Promise.resolve(releaseSnapshot.failed)
-        : platform.workspaceReleases("FAILED", PAGE_SIZE, failedReleaseOffset),
-      validatingReleaseOffset === 0
-        ? Promise.resolve(releaseSnapshot.validating)
-        : platform.workspaceReleases("VALIDATING", PAGE_SIZE, validatingReleaseOffset),
-      readyReleaseOffset === 0
-        ? Promise.resolve(releaseSnapshot.ready)
-        : platform.workspaceReleases("READY", PAGE_SIZE, readyReleaseOffset),
-    ]);
-
-    const releases = {
-      failed: failedPage,
-      validating: validatingPage,
-      ready: readyPage,
-    };
-    const productById = new Map(products.map((product) => [product.id, product]));
-    const total =
-      reviews.page.total +
-      failures.page.total +
-      releases.failed.page.total +
-      releases.validating.page.total +
-      releases.ready.page.total;
-
-    return (
-      <>
-        <PageHeader
-          eyebrow="Attention"
-          title="待办中心"
-          description="集中查看当前待办及单列的扫描异常历史；历史异常不计为当前未恢复待办。"
-          action={<span>审核、执行与发布：{total} 条</span>}
-        />
-
-        <QualityAttention query={query} />
-        <SchemaAttention query={query} />
-        <SchemaExceptions query={query} />
-        <SchemaRequests query={query} />
-
-        {total === 0 ? (
-          <EmptyState
-            title="当前没有审核、执行或发布待办"
-            description="实体审核、未解决执行失败、Release Readiness 阻塞与待发布事项会集中出现在这里。"
-          />
-        ) : (
-          <div className="attention-grid">
-            <section className="panel attention-panel">
-              <div className="panel-header">
-                <div>
-                  <h2>实体审核</h2>
-                  <span className="panel-meta">{reviews.page.total} 条待人工决策</span>
-                </div>
-                <Link href="/reviews">进入审核队列</Link>
-              </div>
-              {reviews.items.length === 0 ? (
-                <EmptyState title="本页无审核事项" description="使用下方分页返回有效页，或进入审核队列查看完整记录。" />
-              ) : (
-                <div className="table-card">
-                  <table className="data-table">
-                    <thead>
-                      <tr><th>来源</th><th>匹配方式</th><th>置信度</th><th>状态</th></tr>
-                    </thead>
-                    <tbody>
-                      {reviews.items.map((review) => (
-                        <tr key={review.candidateId}>
-                          <td className="primary-cell">
-                            <strong>{review.sourceName || review.sourceKey}</strong>
-                            <span>{review.sourceKey}</span>
-                          </td>
-                          <td>{review.matchMethod || "—"}</td>
-                          <td>{Number.isFinite(review.confidence) ? review.confidence.toFixed(2) : "—"}</td>
-                          <td><Badge value={review.status} /></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-              <AttentionPager keyName="reviewOffset" offset={reviewOffset} itemCount={reviews.items.length} total={reviews.page.total} current={offsets} />
-            </section>
-
-            <section className="panel attention-panel">
-              <div className="panel-header">
-                <div>
-                  <h2>生产执行失败</h2>
-                  <span className="panel-meta">{failures.page.total} 条未解决失败</span>
-                </div>
-                <Link href="/production">查看生产历史</Link>
-              </div>
-              {failures.items.length === 0 ? (
-                <EmptyState title="本页没有未解决失败" description="成功 retry 或正在 retry 的执行不会出现在这里。" />
-              ) : (
-                <div className="table-card">
-                  <table className="data-table">
-                    <thead>
-                      <tr><th>Workflow</th><th>期间</th><th>错误</th><th>时间</th><th>处理</th></tr>
-                    </thead>
-                    <tbody>
-                      {failures.items.map((execution) => (
-                        <tr key={execution.id}>
-                          <td className="primary-cell">
-                            <strong>{execution.workflowName || execution.workflowCode}</strong>
-                            <span>attempt {execution.attempt} · {shortId(execution.id)}</span>
-                          </td>
-                          <td>{execution.targetPeriod}</td>
-                          <td><Badge value={execution.errorCode || "FAILED"} /></td>
-                          <td>{formatDate(execution.finishedAt ?? execution.createdAt)}</td>
-                          <td><Link className="text-link" href={`/production/${execution.id}`}>查看执行</Link></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-              <AttentionPager keyName="failureOffset" offset={failureOffset} itemCount={failures.items.length} total={failures.page.total} current={offsets} />
-            </section>
-
-            <section className="panel attention-panel">
-              <div className="panel-header">
-                <div>
-                  <h2>Release 失败</h2>
-                  <span className="panel-meta">{releases.failed.page.total} 个 Release</span>
-                </div>
-                <Badge value={releases.failed.page.total ? "FAILED" : "CLEAR"} />
-              </div>
-              {releases.failed.items.length === 0 ? (
-                <EmptyState title="本页没有失败 Release" description="使用下方分页返回有效页。" />
-              ) : (
-                <div className="attention-list">
-                  {releases.failed.items.map((release) => (
-                    <div className="attention-item" key={release.id}>
-                      <div>
-                        <strong>{productById.get(release.productId)?.name ?? "Data Product"} · {release.releaseNo}</strong>
-                        <span>{formatDate(release.createdAt)}</span>
-                      </div>
-                      <Link className="text-link" href={`/products/${release.productId}/releases/${release.id}`}>查看 Release</Link>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <AttentionPager keyName="failedReleaseOffset" offset={failedReleaseOffset} itemCount={releases.failed.items.length} total={releases.failed.page.total} current={offsets} />
-            </section>
-
-            <section className="panel attention-panel">
-              <div className="panel-header">
-                <div>
-                  <h2>Readiness 阻塞</h2>
-                  <span className="panel-meta">{releases.validating.page.total} 个 Release</span>
-                </div>
-                <Badge value={releases.validating.page.total ? "BLOCKED" : "CLEAR"} />
-              </div>
-              {releases.validating.items.length === 0 ? (
-                <EmptyState title="本页没有 Readiness 阻塞" description="使用下方分页返回有效页。" />
-              ) : (
-                <div className="attention-list">
-                  {releases.validating.items.map((release) => (
-                    <div className="attention-item" key={release.id}>
-                      <div>
-                        <strong>{productById.get(release.productId)?.name ?? "Data Product"} · {release.releaseNo}</strong>
-                        <span>等待解除 Release Readiness blockers</span>
-                      </div>
-                      <Link className="text-link" href={`/products/${release.productId}#releases`}>查看 Blockers</Link>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <AttentionPager keyName="validatingReleaseOffset" offset={validatingReleaseOffset} itemCount={releases.validating.items.length} total={releases.validating.page.total} current={offsets} />
-            </section>
-
-            <section className="panel attention-panel">
-              <div className="panel-header">
-                <div>
-                  <h2>Release 待发布</h2>
-                  <span className="panel-meta">{releases.ready.page.total} 个 Release</span>
-                </div>
-                <Badge value={releases.ready.page.total ? "READY" : "CLEAR"} />
-              </div>
-              {releases.ready.items.length === 0 ? (
-                <EmptyState title="本页没有待发布 Release" description="使用下方分页返回有效页。" />
-              ) : (
-                <div className="attention-list">
-                  {releases.ready.items.map((release) => (
-                    <div className="attention-item" key={release.id}>
-                      <div>
-                        <strong>{productById.get(release.productId)?.name ?? "Data Product"} · {release.releaseNo}</strong>
-                        <span>{formatDate(release.createdAt)}</span>
-                      </div>
-                      <Link className="text-link" href={`/products/${release.productId}#releases`}>去发布</Link>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <AttentionPager keyName="readyReleaseOffset" offset={readyReleaseOffset} itemCount={releases.ready.items.length} total={releases.ready.page.total} current={offsets} />
-            </section>
-          </div>
-        )}
-      </>
-    );
-  } catch (error) {
-    return (
-      <>
-        <PageHeader eyebrow="Attention" title="待办中心" description="Core Read Model 暂时不可用。" />
-        <LoadError error={error} />
-      </>
-    );
-  }
+  for (const name of ["reviewOffset", "failureOffset", "failedReleaseOffset", "validatingReleaseOffset", "readyReleaseOffset"]) offsets[name] = attentionOffset(query[name]);
+  const model = loadAttention(workspace, offsets);
+  return <>
+    <PageHeader eyebrow="Attention" title="待办中心" description="各分区独立读取；历史异常与无观察请求不计为当前未恢复待办。" action={<Suspense fallback={<span>审核、执行与发布：UNKNOWN · 读取中</span>}><Total model={model} /></Suspense>} />
+    <QualityAttention query={query} /><SchemaAttention query={query} /><SchemaExceptions query={query} /><SchemaRequests query={query} />
+    <p className="panel-meta">各分区按各自读取结果展示，不是同一个冻结快照；产品名称不可用时使用已读取的对象 ID。</p>
+    <div className="attention-grid">
+      <Suspense fallback={<ReadUnavailable title="实体审核读取中" />}><ReviewQueue model={model} offsets={offsets} /></Suspense>
+      <Suspense fallback={<ReadUnavailable title="未解决执行失败读取中" />}><FailureQueue model={model} offsets={offsets} /></Suspense>
+      {releaseGroups.map(group => <Suspense key={group.key} fallback={<ReadUnavailable title={group.title + "读取中"} />}><ReleaseQueue model={model} offsets={offsets} group={group} /></Suspense>)}
+    </div>
+  </>;
 }

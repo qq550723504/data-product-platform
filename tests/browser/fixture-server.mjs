@@ -42,6 +42,10 @@ export const requestAttemptId = n => `${String(n).padStart(8,"0")}-3522-4352-835
 export const requestObservationId = n => `${String(n).padStart(8,"0")}-3523-4352-8352-${String(n).padStart(12,"0")}`;
 const stamp = "2026-09-17T00:00:00Z";
 const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
+scenarios.add("isolation-empty");
+scenarios.add("isolation-validating");
+const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests"]);
+const readFaultModes = new Set(["fail", "denied", "invalid", "hold"]);
 for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
 function requestItem(n) {
   return {workspaceId:ids.workspace,resourceId:ids.sourceResource,resourceCode:"REQUEST_FIXTURE",resourceName:"无观察请求导航验收",requestId:unobservedRequestId(n),responsibleActorId:ids.actor,
@@ -151,8 +155,11 @@ async function bodyOf(req) {
 
 export function createFixtureServer() {
   let state;
+  const heldReads = new Set();
+  const releaseReads = () => { for (const resolve of heldReads) resolve(); heldReads.clear(); };
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: scenario.startsWith("quality-attention"), complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [] };
+    releaseReads();
+    state = { scenario, candidateStatus: scenario === "isolation-empty" ? "REJECTED" : "PENDING", releaseStatus: scenario === "isolation-empty" ? "PUBLISHED" : scenario === "isolation-validating" ? "VALIDATING" : "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: scenario.startsWith("quality-attention"), complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [], readFaults: {} };
   };
   reset();
   return createServer(async (req, res) => {
@@ -169,11 +176,14 @@ export function createFixtureServer() {
       if (url.pathname === "/__health" && req.method === "GET") return send(200, { fixture: true });
       if (url.pathname.startsWith("/__control/")) {
         if (req.headers["x-fixture-token"] !== fixtureToken) return send(403, { error: "fixture control token required" });
-        if (url.pathname === "/__control/state" && req.method === "GET") return send(200, state);
+        if (url.pathname === "/__control/state" && req.method === "GET") return send(200, { ...state, heldReadCount: heldReads.size });
+        if (url.pathname === "/__control/release-reads" && req.method === "POST") { releaseReads(); return send(200, { released: true }); }
         if (req.method === "POST" && ["/__control/reset", "/__control/scenario"].includes(url.pathname)) {
-          const { scenario = "ready" } = await bodyOf(req);
+          const { scenario = "ready", readFaults = {} } = await bodyOf(req);
           if (!scenarios.has(scenario)) return send(400, { error: "unknown fixture scenario" });
+          if (!readFaults || Array.isArray(readFaults) || typeof readFaults !== "object" || Object.entries(readFaults).some(([key, value]) => !readFaultKeys.has(key) || !readFaultModes.has(value))) return send(400, { error: "invalid read fault" });
           if (url.pathname.endsWith("/reset")) reset(scenario); else state.scenario = scenario;
+          state.readFaults = readFaults;
           return send(200, { scenario });
         }
         return send(404, { error: "unknown control route" });
@@ -182,6 +192,20 @@ export function createFixtureServer() {
       state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"], gateway: req.headers["x-delivery-web-gateway"], authenticatedPrincipal: req.headers["x-authenticated-principal"] });
       const workspace = `/api/v1/workspaces/${ids.workspace}`;
       const releasePath = `/api/v1/product-releases/${ids.release}`;
+      // Token-controlled fault injection applies only to fixed read routes.
+      const faultRoutes = {
+        [`${workspace}/workbench`]: "summary", [`${workspace}/entity-match-reviews`]: "reviews",
+        [`${workspace}/executions`]: "executions", [`${workspace}/attention/failed-executions`]: "failures",
+        [`${workspace}/data-products`]: "products", [`${workspace}/attention/releases`]: "releases",
+        [`${releasePath}/readiness`]: "readiness", [`${workspace}/quality-remediations/attention`]: "quality",
+        [`${workspace}/source-schema-observations/attention`]: "schema", [`${workspace}/source-schema-observations/exceptions`]: "exceptions",
+        [`${workspace}/source-schema-requests/unobserved`]: "requests",
+      };
+      const pageFault = url.pathname === `${workspace}/product-releases` ? { FAILED: "failed-page", VALIDATING: "validating-page", READY: "ready-page" }[url.searchParams.get("status")] : undefined;
+      const fault = req.method === "GET" ? state.readFaults[pageFault ?? faultRoutes[url.pathname]] : undefined;
+      if (fault === "fail" || fault === "denied") return send(fault === "denied" ? 403 : 503, { code: "FIXTURE_READ_UNAVAILABLE", message: "private-upstream-sentinel" });
+      if (fault === "invalid") return send(200, {});
+      if (fault === "hold") await new Promise(resolve => heldReads.add(resolve));
       const product = {
         id: ids.product, workspaceId: ids.workspace, code: "BROWSER_FIXTURE", name: "浏览器验收产品",
         description: "Synthetic fixture — not production data", domainCode: "TEST", lifecycleStatus: "ACTIVE", healthStatus: "HEALTHY",
