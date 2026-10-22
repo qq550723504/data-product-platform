@@ -100,7 +100,9 @@ def build_contract(a):
     need(record['status']=='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION' and record['head']==ci['head']==a['host']['source']
          and record['run']==ci['run'] and record['execution']==p.EXECUTION
          and sha(snapshot)==record['snapshot_sha256'],'source CI/build or saved snapshot binding differs')
-    p.execution_freeze.ready(load(snapshot),a['host']['source'])
+    captured=load(snapshot)
+    need(captured['ci']['id']==ci['run'],'source CI run differs from pinned actual snapshot')
+    p.execution_freeze.ready(captured,a['host']['source'])
     need(set(a['build_files'])==BUILD_MEMBERS,'initial build membership differs')
     for name,digest in a['build_files'].items():
         path=CONTROL/name

@@ -37,12 +37,16 @@ class SixHostTests(unittest.TestCase):
             a={'source':'a'*40,'build_files':{n:r.sha(control/n) for n in r.BUILD_MEMBERS},'binaries':{n:r.sha(control/n) for n in ('reader','operator','owner','readonly-check.exe')}}
             a['host']={'source':'a'*40}
             r.save(control/'snapshot.json',snapshot())
-            r.save(control/'passed.json',dict(status='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION',head='a'*40,run=100,execution=r.p.EXECUTION,snapshot_sha256=r.sha(control/'snapshot.json')))
-            a['source_ci']={'receipt':'passed.json','sha256':r.sha(control/'passed.json'),'head':'a'*40,'run':100}
+            r.save(control/'passed.json',dict(status='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION',head='a'*40,run=9,execution=r.p.EXECUTION,snapshot_sha256=r.sha(control/'snapshot.json')))
+            a['source_ci']={'receipt':'passed.json','sha256':r.sha(control/'passed.json'),'head':'a'*40,'run':9}
             verified=[]
             stack.enter_context(patch.object(r.p.fixture_artifacts,'verify',lambda root,control,a,contract:verified.append(a) or {}))
             self.assertEqual(r.build_contract(a)['source'],'a'*40)
             self.assertEqual(verified,[a])
+            original_receipt=(control/'passed.json').read_bytes();wrong=r.load(control/'passed.json');wrong['run']=100
+            (control/'passed.json').write_text(json.dumps(wrong));a['source_ci'].update(run=100,sha256=r.sha(control/'passed.json'))
+            with self.assertRaisesRegex(ValueError,'run differs'):r.build_contract(a)
+            (control/'passed.json').write_bytes(original_receipt);a['source_ci'].update(run=9,sha256=r.sha(control/'passed.json'))
             with patch.object(r.p.fixture_artifacts,'verify',side_effect=ValueError('R/P drift')):
                 with self.assertRaises(ValueError):r.build_contract(a)
             for members in ({},a['binaries'],dict(a['build_files'],extra='f'*64),{k:v for k,v in a['build_files'].items() if k!='checker-build.stderr'}):
