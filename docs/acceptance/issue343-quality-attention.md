@@ -78,6 +78,14 @@ No #325/#307 source, active worktree, retained runtime, original data, credentia
 configuration or volume was modified. PostgreSQL uses this Issue's new isolated
 container and persistent volume; no shared cleanup is performed.
 
+Initial PR CI `39718462729` found a live-core locator regression: the report now
+also identifies its assessment, so a global exact-ID locator became ambiguous.
+The existing live-core test now verifies the ID separately inside the latest
+assessment and report sections. This retains both assertions without assuming a
+business identity appears only once on the page. Ownership for this existing test
+was checked against #307; no overlap was found. No runtime/fixture provider behavior
+was changed by this correction.
+
 Historical #298/#299 acceptance and deferred human explanation are not promoted
 to current PASS. Full retained-runtime/provider/deployment acceptance is NOT_RUN.
 PR CI is evaluated for the submitted head; no merge or push/main CI is claimed.
