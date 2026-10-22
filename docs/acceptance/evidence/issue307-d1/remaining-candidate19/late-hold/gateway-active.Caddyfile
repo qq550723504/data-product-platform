@@ -1,0 +1,14 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+ @metadata {
+ method GET HEAD
+ expression {http.request.header.Authorization}.contains('Credential=ia5d1e569754ea8f0/')
+ }
+ reverse_proxy @metadata minio:9000
+ respond 403
+ }
+}
