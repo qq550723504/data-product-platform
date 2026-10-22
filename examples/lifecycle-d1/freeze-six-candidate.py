@@ -1,4 +1,4 @@
-"""Freeze candidate20 only after actual bounded non-delete preparation.
+"""Freeze candidate21 only after actual bounded non-delete preparation.
 
 No IAM enable, deletion, authorization or scheduling function exists here.
 The only container run is the already allocated network-none file validator.
@@ -36,9 +36,9 @@ def audit_preparation_index():
 def preparation_audit_plan(candidate):
     # Source review and preparation exist now. Later human authorization and
     # schedule indexes do not: they are never invented or rewritten here.
-    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01'
+    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate21-source-review01'
     report=load(review/'independent-final-review01.json')
-    need(report['status']=='PASS_BOUNDED_C20_DUAL_ARTIFACT_PREPARATION_REVIEW' and report['remaining_blockers']==[]
+    need(report['status']=='PASS_BOUNDED_C21_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW' and report['remaining_blockers']==[]
          and report['source_head']==load(PACKET/'source-freeze.json')['host']['source']
          and report['runtime_source']==candidate['Source'],'independent R/P source review incomplete')
     index=review/'evidence-index.json';document=load(index)
@@ -71,7 +71,7 @@ def source_freeze(a):
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
                                     'initial_allocation_build_source':a['source'],'initial_build_files':a['build_files'],
-                                    'retained_failed_generation':'candidate13/v23 through candidate19/v29; immutable failures including v28 CONFIRMED DENIED, used budgets, pins and terminal facts; never execution authority'})
+                                    'retained_failed_generation':'candidate13/v23 through terminal unfrozen candidate20/v30; immutable failures including v28 CONFIRMED DENIED, used budgets, pins and terminal facts; never execution authority'})
 
 
 def main():

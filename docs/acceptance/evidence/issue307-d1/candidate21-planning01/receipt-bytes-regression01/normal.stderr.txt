@@ -1,0 +1,7 @@
+test_current_rule_keeps_original_blob_archive_and_both_checkout_modes (test_receipt_bytes.ReceiptBytesTests.test_current_rule_keeps_original_blob_archive_and_both_checkout_modes) ... ok
+test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal (test_receipt_bytes.ReceiptBytesTests.test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.965s
+
+OK

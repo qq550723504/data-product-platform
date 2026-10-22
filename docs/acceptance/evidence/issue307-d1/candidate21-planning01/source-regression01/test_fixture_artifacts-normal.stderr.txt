@@ -1,0 +1,12 @@
+test_archive_bytes_stable_across_inherited_timezones_and_all_members_stored (test_fixture_artifacts.ArtifactTests.test_archive_bytes_stable_across_inherited_timezones_and_all_members_stored) ... ok
+test_archive_rejects_path_escape_links_duplicates_and_extra_members (test_fixture_artifacts.ArtifactTests.test_archive_rejects_path_escape_links_duplicates_and_extra_members) ... C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'apps/platform/a'
+  return self._open_to_write(zinfo, force_zip64=force_zip64)
+ok
+test_cross_artifact_contract_and_schema_refuse_before_build (test_fixture_artifacts.ArtifactTests.test_cross_artifact_contract_and_schema_refuse_before_build) ... fatal: git cat-file: could not get object info
+ok
+test_full_build_uses_R_archive_and_P_host_as_distinct_facts (test_fixture_artifacts.ArtifactTests.test_full_build_uses_R_archive_and_P_host_as_distinct_facts) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.150s
+
+OK

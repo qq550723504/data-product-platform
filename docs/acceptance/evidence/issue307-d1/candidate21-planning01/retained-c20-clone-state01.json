@@ -1,0 +1,19 @@
+{
+  "status": "C20_SCHEMA_CLONE_CLOSED_STATE_OBSERVATION",
+  "at": "2026-10-22T10:17:29.418762+00:00",
+  "cid": "0cada6af39d7bda1ddb42d2d297b9d2a73840816aeb4975cabfd330354e66acc",
+  "state": {
+    "Running": false,
+    "Pid": 0,
+    "Status": "exited",
+    "ExitCode": 0,
+    "StartedAt": "2026-10-22T07:51:36.154138187Z",
+    "FinishedAt": "2026-10-22T07:52:01.007378584Z",
+    "OOMKilled": false,
+    "Dead": false,
+    "Paused": false,
+    "Restarting": false
+  },
+  "source_provider_actions": 0,
+  "native_delete": 0
+}

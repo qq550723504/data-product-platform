@@ -1,0 +1,157 @@
+{
+  "status": "PASS_NONDELETE_SOURCE_REGRESSION",
+  "results": [
+    {
+      "module": "test_retained_v30",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_retained_v30",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_receipt_bytes",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_receipt_bytes",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_retained_v29",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_retained_v29",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_retained_v27",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_retained_v27",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_retained_v26",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_retained_v26",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_fixture_artifacts",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_fixture_artifacts",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_preallocation_ci",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_preallocation_ci",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_remaining_six_window",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_remaining_six_window",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_six_candidate_runtime",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_six_candidate_runtime",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_six_candidate",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_six_candidate",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_six_native_entry",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_six_native_entry",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_window_six_support",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_window_six_support",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_execution_freeze",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_execution_freeze",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_verify_six_native",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_verify_six_native",
+      "mode": "optimized",
+      "exit_code": 0
+    },
+    {
+      "module": "test_attest_remaining_executable",
+      "mode": "normal",
+      "exit_code": 0
+    },
+    {
+      "module": "test_attest_remaining_executable",
+      "mode": "optimized",
+      "exit_code": 0
+    }
+  ],
+  "native_io": 0,
+  "delete": 0
+}

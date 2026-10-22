@@ -307,3 +307,7 @@ docs/acceptance/evidence/issue307-d1/c20-ci-repair-review01/** -text whitespace=
 # Diff context whitespace is original review evidence, not executable source style.
 docs/acceptance/evidence/issue307-d1/candidate20-source-review01/*.patch -text -whitespace
 docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01/*.patch -text -whitespace
+
+# Opaque D1 original receipts: preserve issued bytes in blob, archive and checkout.
+# Later generations inherit this rule; normalization cannot repair an old SHA.
+docs/acceptance/evidence/issue307-d1/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab

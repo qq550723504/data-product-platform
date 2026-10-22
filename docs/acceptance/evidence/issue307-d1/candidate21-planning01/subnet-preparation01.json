@@ -1,0 +1,13 @@
+{
+  "status": "PASS_PROPOSED_RESTORE_SUBNETS_CURRENTLY_UNALLOCATED",
+  "at": "2026-10-22T10:35:07.424463+00:00",
+  "proposed": [
+    "10.246.221.0/28",
+    "10.246.222.0/28",
+    "10.246.223.0/28"
+  ],
+  "conflicts": [],
+  "read_networks": 130,
+  "resources_allocated": 0,
+  "future_Docker_native_IPAM_still_required": true
+}

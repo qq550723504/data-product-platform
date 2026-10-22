@@ -1,0 +1,10 @@
+test_current_source_report_and_preparation_form_exact_typed_plan (test_retained_v26.RetainedV26Tests.test_current_source_report_and_preparation_form_exact_typed_plan) ... ok
+test_only_new_execution_window_and_identities_are_selected (test_retained_v26.RetainedV26Tests.test_only_new_execution_window_and_identities_are_selected) ... ok
+test_rehashing_revocation_cannot_change_other_fields_or_reenable (test_retained_v26.RetainedV26Tests.test_rehashing_revocation_cannot_change_other_fields_or_reenable) ... ok
+test_revoked_case_and_recovery_preserve_every_other_field (test_retained_v26.RetainedV26Tests.test_revoked_case_and_recovery_preserve_every_other_field) ... ok
+test_source_review_or_raw_index_drift_stops_freeze_audit (test_retained_v26.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.126s
+
+OK

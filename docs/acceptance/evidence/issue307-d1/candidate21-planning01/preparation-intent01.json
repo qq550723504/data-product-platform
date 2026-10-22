@@ -1,0 +1,11 @@
+{
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "profile": "candidate21/v31",
+  "window": "PENDING_HUMAN_SELECTION",
+  "created_at": "2026-10-22T10:04:45.934466+00:00",
+  "base_host": "16aa4ec464a1fa14f1aa7ac21624b3855ecb39b3",
+  "base_runtime": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "managed_attempt": "FAILED_FILENAME_TOO_LONG_NO_SOURCE_OR_RESOURCE_ACTION",
+  "new_resource_allocation": 0,
+  "delete_authority": false
+}

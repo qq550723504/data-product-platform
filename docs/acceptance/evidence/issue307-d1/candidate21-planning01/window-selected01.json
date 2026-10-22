@@ -1,0 +1,14 @@
+{
+  "status": "DIRECT_HUMAN_WINDOW_SELECTION_PREPARATION_ONLY",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "profile": "candidate21/v31",
+  "questionItemId": "[\"request_user_input_async\",\"call_23baaab0ff9742239e671ffb568f640c\",0]",
+  "answer": "10月22日22:00–22:40",
+  "timezone": "Asia/Singapore",
+  "not_before": "2026-10-22T14:00:00Z",
+  "not_after": "2026-10-22T14:40:00Z",
+  "recovery_end": "2026-10-22T16:40:00Z",
+  "delete_authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "old_authority_reused": false
+}
