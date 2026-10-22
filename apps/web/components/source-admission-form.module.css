@@ -1,0 +1,14 @@
+.form { display: grid; gap: 18px; max-width: 780px; }
+.field { display: grid; gap: 8px; font-size: 14px; font-weight: 600; }
+.field input { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-weight: 400; color: var(--text); background: var(--surface); }
+.field input:disabled { background: var(--surface-muted); color: var(--muted); }
+.field input:focus-visible, .button:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+.button { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); background: var(--surface); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.button:disabled { opacity: .55; cursor: default; }
+.primary { justify-self: start; border-color: var(--brand); background: var(--brand); color: white; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.identity { overflow-wrap: anywhere; font-size: 13px; color: var(--muted); margin-top: 24px; }
+.result { padding: 14px 16px; border-radius: 8px; background: var(--surface-muted); margin-top: 20px; }
+.facts { display: grid; gap: 8px; overflow-wrap: anywhere; font-size: 14px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0 0 8px; }

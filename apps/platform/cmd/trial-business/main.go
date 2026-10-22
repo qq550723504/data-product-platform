@@ -40,6 +40,10 @@ import (
 )
 
 const businessContract = "issue325/business-prerequisites-v1"
+
+// This binary is built from the schema72 candidate. Retained schema71 binaries
+// and their frozen receipts remain separate; never accept an arbitrary newer DB.
+const requiredBusinessSchema = 72
 const purpose = "ENTERPRISE_CREDIT_RISK_SUPPORT"
 const contractRef = "examples/enterprise-activity/contract/data-contract-v1.yaml"
 
@@ -184,8 +188,8 @@ func makePlan(ctx context.Context, pool *pgxpool.Pool, c config, r registry, s s
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
 	var schema, count int
-	if err = tx.QueryRow(ctx, `SELECT coalesce(max(version),0) FROM schema_migration`).Scan(&schema); err != nil || schema != 71 {
-		return p, fmt.Errorf("schema71 required")
+	if err = tx.QueryRow(ctx, `SELECT coalesce(max(version),0) FROM schema_migration`).Scan(&schema); err != nil || schema != requiredBusinessSchema {
+		return p, fmt.Errorf("schema%d required", requiredBusinessSchema)
 	}
 	ids := []uuid.UUID{}
 	for _, want := range p.Spec.Versions {
