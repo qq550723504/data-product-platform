@@ -2,6 +2,8 @@ import Link from "next/link";
 import { QualityAttention } from "@/components/quality-attention";
 import { SchemaAttention } from "@/components/schema-attention";
 import { SchemaExceptions } from "@/components/schema-exceptions";
+import { SchemaRequests } from "@/components/schema-requests";
+import { schemaRequestView } from "@/lib/schema-request-filter";
 import { schemaExceptionFilter } from "@/lib/schema-exception-filter";
 import { schemaView } from "@/lib/schema-observation";
 import { attentionOffset, attentionView } from "@/lib/quality-attention";
@@ -12,6 +14,8 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 const PAGE_SIZE = 25;
 
 type AttentionSearchParams = {
+  schemaRequestView?: string;
+  schemaRequestOffset?: string;
   schemaExceptionStatus?: string;
   schemaExceptionOffset?: string;
   schemaView?: string;
@@ -105,6 +109,8 @@ export default async function AttentionPage({
   const validatingReleaseOffset = parseOffset(query.validatingReleaseOffset);
   const readyReleaseOffset = parseOffset(query.readyReleaseOffset);
   const offsets = {
+    schemaRequestView: schemaRequestView(query.schemaRequestView),
+    schemaRequestOffset: attentionOffset(query.schemaRequestOffset),
     schemaExceptionStatus: schemaExceptionFilter(query.schemaExceptionStatus),
     schemaExceptionOffset: attentionOffset(query.schemaExceptionOffset),
     schemaView: schemaView(query.schemaView),
@@ -163,6 +169,7 @@ export default async function AttentionPage({
         <QualityAttention query={query} />
         <SchemaAttention query={query} />
         <SchemaExceptions query={query} />
+        <SchemaRequests query={query} />
 
         {total === 0 ? (
           <EmptyState

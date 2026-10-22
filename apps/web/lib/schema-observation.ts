@@ -1,5 +1,6 @@
 import { attentionOffset, attentionView, isIdentity } from "./quality-attention";
 import { preserveSchemaExceptionQuery } from "./schema-exception-filter";
+import { preserveSchemaRequestQuery } from "./schema-request-filter";
 
 export type SchemaView = "UNHANDLED" | "ALL";
 export type SchemaColumn = { name: string; type: string; constraint: string };
@@ -27,6 +28,7 @@ export function schemaView(value?: string): SchemaView { return value === "ALL" 
 export function schemaAttentionHref(query: Record<string, string | undefined>, view: SchemaView, offset: number): string {
   const next = new URLSearchParams();
   preserveSchemaExceptionQuery(query, next);
+  preserveSchemaRequestQuery(query, next);
   for (const key of ["reviewOffset", "failureOffset", "failedReleaseOffset", "validatingReleaseOffset", "readyReleaseOffset", "qualityOffset"]) {
     const value = attentionOffset(query[key]);
     if (value) next.set(key, String(value));

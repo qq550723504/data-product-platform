@@ -1,0 +1,34 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {createRequire} from "node:module";
+const require=createRequire(import.meta.url);
+const {schemaRequestHref,schemaRequestsHref,schemaRequestObservationHref,assertSchemaRequestPage,assertSchemaRequestDetail}=require("../.schema-tests/schema-requests.js");
+const {qualityAttentionHref}=require("../.schema-tests/quality-attention.js");
+const {schemaAttentionHref}=require("../.schema-tests/schema-observation.js");
+const {schemaExceptionsHref}=require("../.schema-tests/schema-exceptions.js");
+const ws="11111111-1111-4111-8111-111111111111",resource="22222222-2222-4222-8222-222222222222",request="33333333-3333-4333-8333-333333333333",attempt="44444444-4444-4444-8444-444444444444",stamp="2026-10-22T00:00:00Z";
+const item={workspaceId:ws,resourceId:resource,requestId:request,responsibleActorId:ws,attemptCount:1,requestedAt:stamp};
+const page={items:[item],page:{limit:25,offset:0,total:1},summary:{noAttemptCount:0,attemptRecordedCount:1},readAt:stamp};
+test("unobserved filters preserve independent queues and reject scope/count substitution",()=>{
+  assert.equal(assertSchemaRequestPage(page,ws,"ALL",25,0),page);
+  for(const change of [{page:{...page.page,total:2}},{items:[{...item,workspaceId:resource}]},{summary:{noAttemptCount:1,attemptRecordedCount:1}}])assert.throws(()=>assertSchemaRequestPage({...page,...change},ws,"ALL",25,0));
+  assert.throws(()=>assertSchemaRequestPage(page,ws,"NO_ATTEMPT",25,0));
+  const q={schemaRequestView:"ATTEMPT_RECORDED",schemaRequestOffset:"100",schemaExceptionStatus:"DENIED",schemaExceptionOffset:"25",qualityView:"CLOSED",schemaView:"ALL"};
+  for(const href of [qualityAttentionHref(q,"ALL",0),schemaAttentionHref(q,"ALL",0),schemaExceptionsHref(q,"ALL",0)])assert.match(href,/schemaRequestView=ATTEMPT_RECORDED&schemaRequestOffset=100/);
+  const href=schemaRequestsHref(q,"NO_ATTEMPT",25);assert.match(href,/schemaExceptionStatus=DENIED&schemaExceptionOffset=25/);assert.match(href,/schemaRequestView=NO_ATTEMPT&schemaRequestOffset=25/);
+  assert.ok(!schemaRequestsHref({schemaRequestView:"https://evil",schemaRequestOffset:"-1"},"ALL",0).includes("evil"));
+});
+test("explicit attempt survives pagination and post-observation detail; never pick latest",()=>{
+  const a={id:attempt,workspaceId:ws,requestId:request,registeredAt:stamp,observationId:attempt};
+  const d={...item,bindingId:resource,baseline:[],selectedAttempt:a,attempts:{items:[],page:{limit:25,offset:25,total:1}},observations:{items:[{id:attempt,requestId:request,attemptId:attempt,status:"DENIED",recordedAt:stamp}],page:{limit:25,offset:0,total:1}},readAt:stamp};
+  assert.equal(assertSchemaRequestDetail(d,ws,resource,request,attempt,25,0),d);
+  assert.throws(()=>assertSchemaRequestDetail(d,ws,resource,request,undefined,25,0));
+  assert.throws(()=>assertSchemaRequestDetail({...d,selectedAttempt:{...a,requestId:resource}},ws,resource,request,attempt,25,0));
+  assert.throws(()=>assertSchemaRequestDetail({...d,observations:{...d.observations,items:[{...d.observations.items[0],requestId:resource}]}},ws,resource,request,attempt,25,0));
+  const url=schemaRequestHref(resource,request,"ATTEMPT_RECORDED",100,attempt,25,50);
+  assert.match(url,/view=source-schema-request/);assert.match(url,/attemptId=44444444/);assert.match(url,/attemptOffset=25&observationOffset=50$/);
+  assert.throws(()=>schemaRequestHref(resource,request,"ALL",0,""));
+  const observationHref=schemaRequestObservationHref(resource,request,attempt,"NO_ATTEMPT",100,25,50);
+  assert.match(observationHref,/view=source-schema&requestId=/);assert.match(observationHref,/requestEvidence=1&schemaRequestView=NO_ATTEMPT&schemaRequestOffset=100&attemptOffset=25&observationOffset=50$/);
+  assert.throws(()=>schemaRequestObservationHref(resource,request,"/evil","ALL",0,0,0));
+});

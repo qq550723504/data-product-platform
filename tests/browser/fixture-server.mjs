@@ -37,8 +37,24 @@ export const ids = {
   recheckAssessment: "54545454-5454-4454-8454-545454545454",
 };
 export const fixtureToken = "local-browser-test-only";
+export const unobservedRequestId = n => `${String(n).padStart(8,"0")}-3521-4352-8352-${String(n).padStart(12,"0")}`;
+export const requestAttemptId = n => `${String(n).padStart(8,"0")}-3522-4352-8352-${String(n).padStart(12,"0")}`;
+export const requestObservationId = n => `${String(n).padStart(8,"0")}-3523-4352-8352-${String(n).padStart(12,"0")}`;
 const stamp = "2026-09-17T00:00:00Z";
 const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
+for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
+function requestItem(n) {
+  return {workspaceId:ids.workspace,resourceId:ids.sourceResource,resourceCode:"REQUEST_FIXTURE",resourceName:"无观察请求导航验收",requestId:unobservedRequestId(n),responsibleActorId:ids.actor,
+    externalFqn:"historical.request-energy",ruleRef:"fixture/schema-request",ruleVersion:"1",ruleHash:"a".repeat(64),planHash:"b".repeat(64),requestedAt:stamp,attemptCount:n===106?31:n%2};
+}
+function requestAttempts(n) {
+  return Array.from({length:requestItem(n).attemptCount},(_,i)=>({id:requestAttemptId(n===106?106000+i:n),requestId:unobservedRequestId(n),workspaceId:ids.workspace,registeredAt:stamp,observationId:n===106?requestObservationId(106000+i):null}));
+}
+function requestObservations(scenario) {
+  const numbers=Array.from({length:31},(_,i)=>106000+i);
+  if(scenario==="schema-requests-arrived")numbers.push(105);
+  return numbers.map(n=>({...requestItem(n===105?105:106),observationId:requestObservationId(n),attemptId:requestAttemptId(n),status:"UNAVAILABLE",reason:`RECORDED_UNAVAILABLE ${n}`,schemaHash:"",startedAt:null,completedAt:null,recordedAt:stamp,handlingCount:0}));
+}
 export const schemaObservationId = n => `${String(n).padStart(8,"0")}-3460-4346-8346-${String(n).padStart(12,"0")}`;
 export const schemaRequestId = n => `${String(n).padStart(8,"0")}-3461-4346-8346-${String(n).padStart(12,"0")}`;
 function schemaItems() {
@@ -365,6 +381,28 @@ export function createFixtureServer() {
         return { items: items.slice(offset, offset + limit), page: { total: items.length, limit, offset } };
       }
       if (req.method === "GET") {
+        if (url.pathname === `${workspace}/source-schema-requests/unobserved`) {
+          if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
+          if(state.scenario==="schema-requests-unavailable")return send(503,{code:"SCHEMA_REQUESTS_UNAVAILABLE"});
+          const all=state.scenario.startsWith("schema-requests")&&state.scenario!=="schema-requests-empty"?Array.from({length:105},(_,i)=>requestItem(i+1)).filter(r=>state.scenario!=="schema-requests-arrived"||r.requestId!==unobservedRequestId(105)):[];
+          if(state.scenario==="schema-requests-foreign")all[0].workspaceId=ids.goldDataset;
+          const view=url.searchParams.get("view")??"ALL";
+          if(!["ALL","NO_ATTEMPT","ATTEMPT_RECORDED"].includes(view))return send(400,{});
+          return send(200,{...page(all.filter(r=>view==="ALL"||(view==="NO_ATTEMPT"?r.attemptCount===0:r.attemptCount>0))),summary:{noAttemptCount:all.filter(r=>!r.attemptCount).length,attemptRecordedCount:all.filter(r=>r.attemptCount).length},readAt:stamp});
+        }
+        if (url.pathname.startsWith(`/api/v1/data-resources/${ids.sourceResource}/schema-requests/`)) {
+          if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
+          if(url.searchParams.get("workspaceId")!==ids.workspace)return send(404,{});
+          const n=Array.from({length:106},(_,i)=>i+1).find(n=>url.pathname.endsWith(`/${unobservedRequestId(n)}`));
+          if(!n)return send(404,{});
+          const attempts=requestAttempts(n);
+          if(n===105&&state.scenario==="schema-requests-arrived")attempts[0].observationId=requestObservationId(105);
+          const selected=url.searchParams.get("attemptId"),chosen=attempts.find(a=>a.id===selected);
+          if(selected&&!chosen)return send(404,{});
+          const observations=requestObservations(state.scenario).filter(o=>o.requestId===unobservedRequestId(n)).map(o=>({id:o.observationId,requestId:o.requestId,attemptId:o.attemptId,status:o.status,reason:o.reason,recordedAt:o.recordedAt}));
+          const detailPage=(items,key)=>{const limit=Number(url.searchParams.get("limit")??25),offset=Number(url.searchParams.get(key)??0);return{items:items.slice(offset,offset+limit),page:{limit,offset,total:items.length}};};
+          return send(200,{...requestItem(n),requestId:state.scenario==="schema-requests-mismatch"?unobservedRequestId(1):unobservedRequestId(n),bindingId:ids.goldBinding,externalId:"historical-request-provider-id",connectorHash:"d".repeat(64),baseline:[{name:"energy_kwh",type:"TEXT",constraint:"NOT_NULL"}],selectedAttempt:chosen??null,attempts:detailPage(attempts,"attemptOffset"),observations:detailPage(observations,"observationOffset"),readAt:stamp});
+        }
         if (url.pathname === `${workspace}/source-schema-observations/exceptions`) {
           if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(403, {});
           if (state.scenario === "schema-exceptions-unavailable") return send(503,{code:"SCHEMA_EXCEPTIONS_UNAVAILABLE"});
@@ -385,11 +423,11 @@ export function createFixtureServer() {
         }
         if (url.pathname.startsWith(`/api/v1/data-resources/${ids.sourceResource}/schema-observations/`)) {
           if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
-          const item=[...schemaItems(),...exceptionItems()].find(o=>url.pathname.endsWith(`/${o.observationId}`));
+          const item=[...schemaItems(),...exceptionItems(),...requestObservations(state.scenario)].find(o=>url.pathname.endsWith(`/${o.observationId}`));
           if(!item)return send(404,{});
           const exception=item.status!=="DRIFT";
           return send(200,{...item,requestId:state.scenario==="schema-attention-mismatch"?schemaRequestId(1):state.scenario==="schema-exceptions-mismatch"?exceptionRequestId(1):item.requestId,
-            bindingId:ids.goldBinding,externalId:"historical-provider-id",connectorHash:"d".repeat(64),startedAt:exception?null:stamp,
+            bindingId:ids.goldBinding,externalId:item.ruleRef==="fixture/schema-request"?"historical-request-provider-id":"historical-provider-id",connectorHash:"d".repeat(64),startedAt:exception?null:stamp,
             baseline:[{name:"energy_kwh",type:"TEXT",constraint:"NOT_NULL"}],columns:exception?[]:[{name:"energy_kwh",type:"BIGINT",constraint:"NULL"},{name:"new_optional",type:"TEXT",constraint:"NULL"}],handlingCount:item.handlingCount??0,
             handling:Array.from({length:item.handlingCount??0},(_,i)=>({id:schemaObservationId(201+i),observationId:item.observationId,actorId:ids.actor,reason:`历史处理 ${i+1}`,createdAt:stamp}))});
         }
