@@ -146,6 +146,43 @@ func TestPostgresReplacementConnectionBindings(t *testing.T) {
 	}
 }
 
+func TestNativeTextURLSchemeBoundary(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		deny  bool
+	}{
+		{"https://example.invalid/file", true},
+		{"HTTPS://example.invalid/file", true},
+		{"hTtPs://example.invalid/file", true},
+		{"HTTP://example.invalid/file", true},
+		{" \tHtTp://example.invalid/file\n", true},
+		{"/data/upload/source.txt", true},
+		{"Literal text mentions HTTPS://example.invalid/file 中文", false},
+	} {
+		t.Run(tc.value, func(t *testing.T) {
+			f := &fixture{blobs: map[string][]byte{}}
+			for _, name := range []string{"manifest.json", "records.json", "records.jsonl"} {
+				b, e := os.ReadFile(filepath.Join("testdata", name))
+				if e != nil {
+					t.Fatal(e)
+				}
+				f.blobs[name] = b
+			}
+			_ = json.Unmarshal(f.blobs["manifest.json"], &f.manifest)
+			changeSourceText(f, tc.value)
+			c := Connection{Namespace: uuid.MustParse(f.manifest.Content.Namespace), Project: f.manifest.Content.Project, Organization: f.manifest.Content.Organization, Mode: "fork_approved"}
+			m, e := ValidateManifest(f.blobs["manifest.json"], c, f.r)
+			if e != nil {
+				t.Fatal(e)
+			}
+			e = ValidateBundle(m, f.blobs)
+			if (tc.deny && !errors.Is(e, ErrUnsupported)) || (!tc.deny && e != nil) {
+				t.Fatalf("text boundary deny=%t: %v", tc.deny, e)
+			}
+		})
+	}
+}
+
 func TestPostgresDatasetPublicationFactsKeepAggregateContract(t *testing.T) {
 	f := newFixture(t)
 	first := f.admit(t)

@@ -376,7 +376,10 @@ func ValidateBundle(m Manifest, blobs map[string][]byte) error {
 				return ErrUnsupported
 			}
 			v := strings.TrimSpace(value)
-			if strings.HasPrefix(v, "http://") || strings.HasPrefix(v, "https://") || strings.HasPrefix(v, "/data/") {
+			// URI schemes are case-insensitive; validate without rewriting the
+			// original native bytes or changing case-sensitive media paths.
+			schemeValue := strings.ToLower(v)
+			if strings.HasPrefix(schemeValue, "http://") || strings.HasPrefix(schemeValue, "https://") || strings.HasPrefix(v, "/data/") {
 				return ErrUnsupported
 			}
 		}

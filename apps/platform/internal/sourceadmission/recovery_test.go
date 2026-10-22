@@ -29,13 +29,17 @@ func nativeEncode(v any) []byte {
 // Submission identity and changed immutable native content. The Host must reject
 // it even though every independently recomputed byte hash is internally valid.
 func changeSource(f *fixture) {
+	changeSourceText(f, "changed source 中文")
+}
+
+func changeSourceText(f *fixture, text string) {
 	lines := bytes.Split(bytes.TrimSuffix(f.blobs["records.jsonl"], []byte("\n")), []byte("\n"))
 	var row map[string]json.RawMessage
 	_ = json.Unmarshal(lines[0], &row)
 	snapshot := rawObject(row, "result_snapshot")
 	task := rawObject(snapshot, "task")
 	data := rawObject(task, "data")
-	data["text"] = json.RawMessage(`"changed source 中文"`)
+	data["text"] = nativeEncode(text)
 	task["data"] = nativeEncode(data)
 	snapshot["task"] = nativeEncode(task)
 	row["result_snapshot"] = nativeEncode(snapshot)
