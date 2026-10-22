@@ -65,7 +65,7 @@ test("workbench surfaces actionable review and release items", async ({ page }) 
   await page.goto("/");
   const attention = page.getByTestId("needs-attention");
   await expect(attention).toBeVisible();
-  await expect(attention.getByRole("heading", { name: "Needs Attention", exact: true })).toBeVisible();
+  await expect(attention.getByRole("heading", { name: "审核、执行与发布待办", exact: true })).toBeVisible();
   await expect(attention.getByText("实体审核队列", { exact: true })).toBeVisible();
   await expect(attention.getByText("Release 待发布", { exact: true })).toBeVisible();
   await expect(attention.getByRole("link", { name: "进入审核", exact: true })).toHaveAttribute("href", "/reviews");
@@ -276,7 +276,8 @@ test("Quality Check preserves attempt identity across refresh and does not dupli
   await expect(recoveredForm.getByTestId("quality-attempt-status")).toContainText("SUCCEEDED");
   await expect(recoveredForm.getByLabel("Quality Rule Set")).toHaveValue("park/quality/enterprise-activity-quality-v1.yaml");
   await expect(recoveredForm.getByLabel("Quality Engine")).toHaveValue("native");
-  await expect(page.getByText(ids.qualityAssessment, { exact: true })).toBeVisible();
+  const latestAssessment = page.locator("section").filter({ has: page.getByRole("heading", { name: "最新评测", exact: true }) });
+  await expect(latestAssessment.getByText(ids.qualityAssessment, { exact: true })).toBeVisible();
 
   commands = await writes(request);
   qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);

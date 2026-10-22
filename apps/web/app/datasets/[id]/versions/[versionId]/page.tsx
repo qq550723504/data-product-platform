@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { assessmentHref, assertReportScope, isIdentity } from "@/lib/quality-attention";
 import {
   BackLink,
   Badge,
@@ -24,6 +25,7 @@ import { isComplianceAttemptId } from "@/lib/compliance-command";
 type DatasetVersionView = "overview" | "quality" | "compliance" | "certification" | "eligibility" | "provenance";
 
 type Query = {
+  assessmentId?: string;
   view?: string;
   profileId?: string;
   consumer?: string;
@@ -221,6 +223,13 @@ export default async function DatasetVersionDetailPage({
     }
     const latestAssessment = assessmentOffset === 0 ? quality.items[0] : latestQuality?.items[0];
     const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset) : null;
+    const selectedAssessmentId = view === "quality" ? query.assessmentId : undefined;
+    if (selectedAssessmentId && !isIdentity(selectedAssessmentId)) throw new Error("评测引用无效");
+    // Report selection is reading only: latestAssessment remains the source for
+    // current summaries and certification defaults below.
+    const displayReport = selectedAssessmentId
+      ? assertReportScope(await platform.qualityReport(selectedAssessmentId, findingsLimit, findingsOffset), selectedAssessmentId, version.id, configuredWorkspaceId()!)
+      : latestReport;
     const evidenceCertification = eligibility?.certification.current
       ?? history.items.find((item) => item.profile.id === selectedProfile?.id);
     const goldExplanation = evidenceCertification?.profile.profileRef === "gold/dataset-v1"
@@ -345,6 +354,7 @@ export default async function DatasetVersionDetailPage({
         {view === "quality" ? (
           <>
         <div className="panel-header"><h2>Quality Assessment</h2><span className="eyebrow">{quality.page.total} Assessments</span></div>
+        {selectedAssessmentId ? <div className="callout" data-testid="selected-quality-assessment"><strong>指定评测：{selectedAssessmentId}</strong><p>下方报告绑定此评测；最新质量摘要、认证输入和当前交付判断保持独立。</p></div> : null}
         <QualityCheckForm
           key={qualityAttemptId ?? "new"}
           datasetId={dataset.id}
@@ -383,20 +393,21 @@ export default async function DatasetVersionDetailPage({
                 </table>
               </div>
             </section>
-            {latestReport ? (
-              <section className="detail-card" style={{ marginBottom: 18 }}>
+            {displayReport ? (
+              <section className="detail-card" style={{ marginBottom: 18 }} data-testid="quality-report">
                 <div className="panel-header">
                   <h3>Quality Report</h3>
-                  <span className="eyebrow">{latestReport.findings.page.total} Findings</span>
+                  <span className="eyebrow">{displayReport.findings.page.total} Findings</span>
                 </div>
-                {latestReport.findings.items.length === 0 ? (
-                  <EmptyState title="无规则明细" description="最新 QualityAssessment 没有 finding。" />
+                <p>报告评测 <span className="mono">{displayReport.id}</span> · {displayReport.ruleSetRef} · <Badge value={displayReport.gateDecision} /></p>
+                {displayReport.findings.items.length === 0 ? (
+                  <EmptyState title="无规则明细" description="所选 QualityAssessment 没有 finding。" />
                 ) : (
                   <div className="table-card">
                     <table className="data-table">
                       <thead><tr><th>Rule</th><th>维度</th><th>状态</th><th>严重度</th><th>Affected</th><th>原因 / 样例</th></tr></thead>
                       <tbody>
-                        {latestReport.findings.items.map((finding) => (
+                        {displayReport.findings.items.map((finding) => (
                           <tr key={finding.id}>
                             <td className="mono">{finding.ruleId}</td>
                             <td>{finding.dimension}</td>
@@ -413,31 +424,31 @@ export default async function DatasetVersionDetailPage({
                     </table>
                   </div>
                 )}
-                {latestReport.findings.page.total > findingsLimit ? (
+                {displayReport.findings.page.total > findingsLimit ? (
                   <div className="panel-header" style={{ marginTop: 14 }}>
                     <span className="eyebrow">
-                      {latestReport.findings.page.offset + 1}–{Math.min(latestReport.findings.page.offset + latestReport.findings.items.length, latestReport.findings.page.total)}
-                      {" / "}{latestReport.findings.page.total}
+                      {displayReport.findings.page.offset + 1}–{Math.min(displayReport.findings.page.offset + displayReport.findings.items.length, displayReport.findings.page.total)}
+                      {" / "}{displayReport.findings.page.total}
                     </span>
                     <div className="badge-row">
-                      {latestReport.findings.page.offset > 0 ? (
-                        <Link href={pageHref("findingsOffset", Math.max(0, latestReport.findings.page.offset - findingsLimit))}>上一页</Link>
+                      {displayReport.findings.page.offset > 0 ? (
+                        <Link href={pageHref("findingsOffset", Math.max(0, displayReport.findings.page.offset - findingsLimit))}>上一页</Link>
                       ) : null}
-                      {latestReport.findings.page.offset + latestReport.findings.items.length < latestReport.findings.page.total ? (
-                        <Link href={pageHref("findingsOffset", latestReport.findings.page.offset + findingsLimit)}>下一页</Link>
+                      {displayReport.findings.page.offset + displayReport.findings.items.length < displayReport.findings.page.total ? (
+                        <Link href={pageHref("findingsOffset", displayReport.findings.page.offset + findingsLimit)}>下一页</Link>
                       ) : null}
                     </div>
                   </div>
                 ) : null}
                 <div className="panel-header" style={{ marginTop: 18 }}>
                   <h3>Quality Evidence / Audit</h3>
-                  <span className="eyebrow">{latestReport.evidence.length} Evidence · {latestReport.auditEvents.length} Audit</span>
+                  <span className="eyebrow">{displayReport.evidence.length} Evidence · {displayReport.auditEvents.length} Audit</span>
                 </div>
                 <div className="table-card">
                   <table className="data-table">
                     <thead><tr><th>类型</th><th>引用</th><th>来源 / 动作</th><th>Hash / Trace</th><th>时间</th></tr></thead>
                     <tbody>
-                      {latestReport.evidence.map((item) => (
+                      {displayReport.evidence.map((item) => (
                         <tr key={`evidence:${item.id}`}>
                           <td>Evidence · {item.evidenceType}</td>
                           <td className="mono">{shortId(item.id)}</td>
@@ -446,7 +457,7 @@ export default async function DatasetVersionDetailPage({
                           <td>{formatDate(item.createdAt)}</td>
                         </tr>
                       ))}
-                      {latestReport.auditEvents.map((item) => (
+                      {displayReport.auditEvents.map((item) => (
                         <tr key={`audit:${item.id}`}>
                           <td>Audit · {item.actorType}</td>
                           <td className="mono">{shortId(item.id)}</td>
@@ -469,7 +480,7 @@ export default async function DatasetVersionDetailPage({
                       <td>{formatDate(assessment.createdAt)}</td>
                       <td><Badge value={assessment.gateDecision} /></td>
                       <td>{assessment.ruleSetRef} <span className="mono">{assessment.ruleSetVersion}</span></td>
-                      <td className="mono">{shortId(assessment.id)}</td>
+                      <td className="mono"><Link href={assessmentHref(dataset.id, version.id, assessment.id)}>{shortId(assessment.id)}</Link></td>
                     </tr>
                   ))}
                 </tbody>
