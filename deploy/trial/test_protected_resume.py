@@ -130,13 +130,13 @@ class ProtectedResumeContracts(unittest.TestCase):
         for status in ('PASS','UNKNOWN'):
             s,before,_=self.fixture();s.update(phase='STOPPED',activationBinding={'path':'bound'},head='a'*40,sources={},containers={},processes={},ports={},stopInspection={'status':status})
             old={'workspaceId':s['workspaceId'],'facts':{'versions':[]}}
-            with patch.object(r,'verify'),patch.object(c,'committed_sources',return_value={}),patch.object(r,'sources',return_value={}),patch.object(r,'command',return_value=b'a'*40),patch.object(r,'read',return_value=old),patch.object(r,'docker') as docker,patch.object(c,'refresh_identity') as renew:
+            with patch.object(r,'verify'),patch.object(c,'committed_sources',return_value={}),patch.object(r,'sources',return_value={}),patch.object(r,'command',return_value=b'a'*40),patch('stop_receipts.read',return_value=old),patch.object(r,'docker') as docker,patch.object(c,'refresh_identity') as renew:
                 with self.assertRaises(r.Refused):c.precheck(s)
                 docker.assert_not_called();renew.assert_not_called()
 
     def test_matching_protected_precheck_uses_sql_baseline_without_provider_work(self):
         s,before,_=self.fixture();s.update(phase='STOPPED',activationBinding={'path':'bound'},head='a'*40,sources={},containers={},processes={},ports={},stopInspection={'status':'PASS'})
-        with patch.object(r,'verify'),patch.object(c,'committed_sources',return_value={}),patch.object(r,'sources',return_value={}),patch.object(r,'command',return_value=b'a'*40),patch.object(r,'read',return_value=before),patch.object(p,'expected',return_value=before['expected']),patch.object(p,'invoke') as invoke,patch.object(c,'refresh_identity') as renew:
+        with patch.object(r,'verify'),patch.object(c,'committed_sources',return_value={}),patch.object(r,'sources',return_value={}),patch.object(r,'command',return_value=b'a'*40),patch('stop_receipts.read',return_value=before),patch.object(p,'expected',return_value=before['expected']),patch.object(p,'invoke') as invoke,patch.object(c,'refresh_identity') as renew:
             binding,baseline=c.precheck(s)
             self.assertEqual(baseline,before);self.assertEqual(binding['head'],'a'*40)
             invoke.assert_not_called();renew.assert_not_called()

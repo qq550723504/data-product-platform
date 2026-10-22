@@ -47,7 +47,7 @@ class TrialContracts(unittest.TestCase):
 
     def state(self):
         item=self.container()
-        return {"runId":"mine","root":str(r.ROOT),"phase":"UNKNOWN","host":{"daemonId":"local"},"containers":{"core":{"name":"mine-core","id":"sha-container","configHash":r.container_hash(item)}},"images":{"core":{"id":"sha-image"}},"processes":{},"volumes":{"core":"retained"}}
+        return {"runId":"mine","workspaceId":"workspace","actorId":"actor","root":str(r.ROOT),"phase":"UNKNOWN","host":{"daemonId":"local"},"containers":{"core":{"name":"mine-core","id":"sha-container","configHash":r.container_hash(item)}},"images":{"core":{"id":"sha-image"}},"processes":{},"volumes":{"core":"retained"}}
 
     def test_foreign_or_replaced_container_cannot_be_stopped(self):
         for field,value in (("Id","replaced"),("Image","foreign-image"),("Name","/foreign")):
@@ -103,11 +103,11 @@ class TrialContracts(unittest.TestCase):
                 self.assertEqual(calls[-1],("stop","--time","30","sha-container"))
                 self.assertEqual(result["phase"],"STOPPED")
                 self.assertTrue(result["retained"])
-                observation=r.read(Path(d)/"before-stop-observation.json")
+                observation=r.read(s["stopInspection"]["observation"]["path"])
                 self.assertEqual(observation["status"],"UNKNOWN")
                 self.assertEqual(observation["runId"],"mine")
                 self.assertEqual(r.read(Path(d)/"before-stop-facts.json"),previous)
-                self.assertEqual(s["stopInspection"],observation)
+                self.assertEqual(s["stopInspection"]["status"],observation["status"])
 
     def test_stop_does_not_require_build_tools_or_fixture_health(self):
         s=self.state();item=self.container();calls=[]

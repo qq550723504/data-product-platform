@@ -126,7 +126,8 @@ def resume_guard(s):
            "Bootstrapped ledger requires explicit custody/activation; ordinary resume is blocked")
 
 
-def binding(s, stage):
+def binding_document(s, stage):
+    """Verify the frozen manifest header; binding() also verifies every artifact."""
     ref = s[stage + "Binding"]
     source = file(ref["path"], below=Path(s["private"]) / (stage + "-attempts"))
     r.need(source["sha256"] == ref["sha256"], "Ledger binding drift")
@@ -135,6 +136,11 @@ def binding(s, stage):
            and all(value[k] == s[k] for k in ("runId", "workspaceId", "actorId", "root"))
            and value["previousBusinessBinding"] == s["businessBinding"] and value["origin"] == s["originSnapshot"],
            "Ledger identity/original binding drift")
+    return value
+
+
+def binding(s, stage):
+    value = binding_document(s, stage)
     for artifact in value["files"]:
         r.need(file(artifact["path"])["sha256"] == artifact["sha256"], "Ledger artifact drift")
     return value
