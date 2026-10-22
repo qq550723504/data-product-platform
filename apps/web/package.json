@@ -6,7 +6,7 @@
     "dev": "next dev",
     "start": "next start",
     "build": "npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && npm run test:schema && next build",
-    "test:schema": "tsc lib/schema-observation.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .schema-tests && node --test tests/schema-observation.test.mjs",
+    "test:schema": "tsc lib/schema-observation.ts lib/schema-exceptions.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .schema-tests && node --test tests/schema-observation.test.mjs tests/schema-exceptions.test.mjs",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test:reviews": "tsc lib/review-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .review-tests && node --test tests/review-command.test.mjs",
