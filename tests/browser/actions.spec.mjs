@@ -264,7 +264,8 @@ test("Quality Check preserves attempt identity across refresh and does not dupli
   let commands = await writes(request);
   let qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);
   expect(qualityCalls).toHaveLength(1);
-  expect(qualityCalls[0].actor).toBe(ids.actor);
+  expect(qualityCalls[0].actor).toBeUndefined();
+  expect(qualityCalls[0].authorization).toBe("Bearer review-secret");
   expect(qualityCalls[0].body.assessmentAttemptId).toBe(attemptId);
   expect(qualityCalls[0].body.ruleSetRef).toBe("park/quality/enterprise-activity-quality-v1.yaml");
 

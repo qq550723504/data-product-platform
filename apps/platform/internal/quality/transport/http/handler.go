@@ -13,12 +13,14 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 )
 
 type Handler struct {
+	Principal    principal.Resolver
 	service      *application.Service
 	repo         *infrastructure.PostgresRepository
 	evidenceRepo *evidence.QueryRepository
@@ -81,11 +83,6 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a UUID", nil)
 		return
 	}
-	actorID, err := parseActorID(r)
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
-		return
-	}
 	ruleSetRef := strings.TrimSpace(req.RuleSetRef)
 	if ruleSetRef == "" {
 		ruleSetRef = "park/quality/enterprise-activity-quality-v1.yaml"
@@ -99,6 +96,10 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 	assessmentAttemptID, err = uuid.Parse(assessmentAttemptRef)
 	if err != nil || assessmentAttemptID == uuid.Nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a non-nil UUID", nil)
+		return
+	}
+	actorID, allowed := h.authorizeWorkspace(w, r, workspaceID)
+	if !allowed || !h.versionInWorkspace(w, r, workspaceID, versionID) {
 		return
 	}
 	result, err := h.service.Run(r.Context(), application.RunCommand{
@@ -151,9 +152,8 @@ func (h *Handler) runGold(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a non-nil UUID", nil)
 		return
 	}
-	actorID, err := parseActorID(r)
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+	actorID, allowed := h.authorizeWorkspace(w, r, workspaceID)
+	if !allowed || !h.versionInWorkspace(w, r, workspaceID, versionID) {
 		return
 	}
 
@@ -200,6 +200,12 @@ func (h *Handler) getAssessmentAttempt(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a non-nil UUID", nil)
 		return
 	}
+	if _, allowed := h.authorizeWorkspace(w, r, workspaceID); !allowed {
+		return
+	}
+	if !h.objectInWorkspace(w, r, workspaceID, attemptID, true) {
+		return
+	}
 	attempt, err := h.repo.GetAssessmentAttempt(r.Context(), attemptID, time.Now().UTC())
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptNotFound) {
@@ -233,6 +239,10 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_QUALITY_RESULT_ID", "resultId must be a UUID", nil)
 		return
 	}
+	workspaceID, allowed := h.authorizedQuery(w, r)
+	if !allowed || !h.objectInWorkspace(w, r, workspaceID, resultID, false) {
+		return
+	}
 	result, err := h.repo.GetAssessment(r.Context(), resultID)
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrNotFound) {
@@ -251,6 +261,10 @@ func (h *Handler) getAssessment(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_QUALITY_ASSESSMENT_ID", "assessmentId must be a UUID", nil)
 		return
 	}
+	workspaceID, allowed := h.authorizedQuery(w, r)
+	if !allowed || !h.objectInWorkspace(w, r, workspaceID, assessmentID, false) {
+		return
+	}
 	assessment, err := h.repo.GetAssessment(r.Context(), assessmentID)
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrNotFound) {
@@ -262,12 +276,12 @@ func (h *Handler) getAssessment(w http.ResponseWriter, r *http.Request) {
 	}
 	response := resultResponse(assessment)
 	if h.evidenceRepo != nil {
-		evidenceItems, err := h.evidenceRepo.ListForObject(r.Context(), "QUALITY_RESULT", assessmentID)
+		evidenceItems, err := h.evidenceRepo.ListForObjectInWorkspace(r.Context(), "QUALITY_RESULT", assessmentID, workspaceID)
 		if err != nil {
 			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_EVIDENCE_READ_FAILED", err.Error(), nil)
 			return
 		}
-		auditEvents, err := h.repo.ListAuditEvents(r.Context(), assessmentID)
+		auditEvents, err := h.repo.ListAuditEvents(r.Context(), assessmentID, workspaceID)
 		if err != nil {
 			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_AUDIT_READ_FAILED", err.Error(), nil)
 			return
@@ -276,7 +290,7 @@ func (h *Handler) getAssessment(w http.ResponseWriter, r *http.Request) {
 		response["auditEvents"] = auditEvents
 	}
 	if h.costRepo != nil {
-		costEvents, err := h.costRepo.ListByQualityAssessment(r.Context(), assessmentID)
+		costEvents, err := h.costRepo.ListByQualityAssessmentInWorkspace(r.Context(), assessmentID, workspaceID)
 		if err != nil {
 			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_COST_READ_FAILED", err.Error(), nil)
 			return
@@ -308,6 +322,12 @@ func (h *Handler) getReport(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	if _, allowed := h.authorizeWorkspace(w, r, workspaceID); !allowed {
+		return
+	}
+	if !h.objectInWorkspace(w, r, workspaceID, assessmentID, false) {
+		return
+	}
 
 	assessment, findings, err := h.repo.GetReport(r.Context(), workspaceID, assessmentID, limit, offset)
 	if err != nil {
@@ -327,7 +347,7 @@ func (h *Handler) getReport(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	auditEvents, err := h.repo.ListAuditEventReferences(r.Context(), assessmentID, maxAssessmentLimit)
+	auditEvents, err := h.repo.ListAuditEventReferences(r.Context(), assessmentID, workspaceID, maxAssessmentLimit)
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_REPORT_AUDIT_READ_FAILED", err.Error(), nil)
 		return
@@ -342,7 +362,7 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
 		return
 	}
-	workspaceID, ok := requiredWorkspaceQuery(w, r)
+	workspaceID, ok := h.authorizedQuery(w, r)
 	if !ok {
 		return
 	}
@@ -372,6 +392,10 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 	}
 	items := make([]map[string]any, 0, len(page.Items))
 	for _, assessment := range page.Items {
+		if assessment.WorkspaceID != workspaceID || assessment.DatasetVersionID != versionID {
+			scopeResult(w, r, false, nil)
+			return
+		}
 		if summaryOnly {
 			items = append(items, assessmentSummaryResponse(assessment))
 		} else {
@@ -453,7 +477,7 @@ func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
 		return
 	}
-	workspaceID, ok := requiredWorkspaceQuery(w, r)
+	workspaceID, ok := h.authorizedQuery(w, r)
 	if !ok {
 		return
 	}
@@ -473,6 +497,10 @@ func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_READ_FAILED", err.Error(), nil)
+		return
+	}
+	if assessment.WorkspaceID != workspaceID || assessment.DatasetVersionID != versionID {
+		scopeResult(w, r, false, nil)
 		return
 	}
 	writeJSON(w, http.StatusOK, resultResponse(assessment))
@@ -616,18 +644,6 @@ func observedValue(observed map[string]any, key string) any {
 		return nil
 	}
 	return observed[key]
-}
-
-func parseActorID(r *http.Request) (*uuid.UUID, error) {
-	value := strings.TrimSpace(r.Header.Get("X-Actor-ID"))
-	if value == "" {
-		return nil, nil
-	}
-	parsed, err := uuid.Parse(value)
-	if err != nil {
-		return nil, err
-	}
-	return &parsed, nil
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {

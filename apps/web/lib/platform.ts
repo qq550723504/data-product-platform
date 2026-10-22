@@ -1,3 +1,5 @@
+import { qualityRead } from "./quality-server";
+
 const apiBaseUrl = (process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080").replace(/\/$/, "");
 
 export type PageMeta = {
@@ -623,15 +625,15 @@ export const platform = {
       `/api/v1/compliance-assessment-attempts/${encodeURIComponent(attemptId)}?workspaceId=${encodeURIComponent(requireWorkspace())}`,
     ),
   qualityAttempt: (attemptId: string) =>
-    apiGet<QualityAttempt>(
+    qualityRead<QualityAttempt>(
       `/api/v1/quality-assessment-attempts/${encodeURIComponent(attemptId)}?workspaceId=${encodeURIComponent(requireWorkspace())}`,
     ),
   qualityAssessments: (versionId: string, limit = 25, offset = 0) =>
-    apiGet<{ datasetVersionId: string; items: QualityAssessment[]; page: PageMeta }>(
+    qualityRead<{ datasetVersionId: string; items: QualityAssessment[]; page: PageMeta }>(
       `/api/v1/dataset-versions/${encodeURIComponent(versionId)}/quality-assessments?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}&summary=true`,
     ),
   qualityReport: (assessmentId: string, limit = 50, offset = 0) =>
-    apiGet<QualityReport>(
+    qualityRead<QualityReport>(
       `/api/v1/quality-assessments/${encodeURIComponent(assessmentId)}/report?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
     ),
   certificationHistory: (

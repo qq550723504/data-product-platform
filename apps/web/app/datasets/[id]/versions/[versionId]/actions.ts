@@ -72,7 +72,7 @@ export async function runQualityCheck(
   const result = await executeQualityCheck(form, {
     enabled: process.env.POC_ENABLE_QUALITY_ACTIONS === "true",
     workspaceId: configuredWorkspaceId(),
-    actorId: process.env.POC_QUALITY_ACTOR_ID?.trim(),
+    token: process.env.HUMAN_DECISION_API_TOKEN?.trim(),
     apiBaseUrl: process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080",
   });
 

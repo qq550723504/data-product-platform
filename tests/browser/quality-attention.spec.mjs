@@ -14,6 +14,24 @@ async function calls(request) {
 }
 test.beforeEach(async ({ request }) => reset(request));
 
+test("Quality credentials stay server-side and denied evidence remains local UNKNOWN with the exact historical link", async ({ page, request }) => {
+  await page.goto(`${versionPath}?view=quality&assessmentId=${ids.goldAssessment}`);
+  await expect(page.getByTestId("quality-report")).toContainText(ids.goldAssessment);
+  const qualityReads = (await calls(request)).filter(c => c.method === "GET" && /\/quality-(assessments|assessment-attempts)/.test(c.path));
+  expect(qualityReads.length).toBeGreaterThan(0);
+  expect(qualityReads.every(c => c.authorization === "Bearer review-secret")).toBe(true);
+  expect(await page.content()).not.toContain("review-secret");
+  await reset(request, "quality-evidence-denied");
+  await page.reload();
+  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText("UNKNOWN");
+  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText(ids.goldAssessment);
+  await expect(page.getByRole("heading", {name:"版本事实",exact:true})).toBeVisible();
+  await expect(page.getByTestId("quality-report")).toHaveCount(0);
+  await expect(page).toHaveURL(new RegExp(`assessmentId=${ids.goldAssessment}`));
+  expect((await calls(request)).every(c => c.method === "GET")).toBe(true);
+  expect((await calls(request)).filter(c => /\/quality-/.test(c.path)).every(c => c.authorization === "Bearer review-secret")).toBe(true);
+});
+
 test("quality attention pages past 100 without fetching case details, then focuses one case read-only", async ({ page, request }, testInfo) => {
   await page.goto("/attention?qualityView=ALL&qualityOffset=100");
   const panel = page.getByTestId("quality-attention");
@@ -89,7 +107,7 @@ test("foreign case or assessment scope fails without a latest-result fallback", 
   await expect(page.getByText("异常不属于所选版本或 workspace", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: `异常 ${attentionCaseId(105)}`, exact: true })).toHaveCount(0);
   await page.goto(`${versionPath}?view=quality&assessmentId=${ids.goldAssessment}`);
-  await expect(page.getByText("评测不属于所选版本或 workspace", { exact: true })).toBeVisible();
+  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText("UNKNOWN");
   await expect(page.getByTestId("quality-report")).toHaveCount(0);
   expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
 });

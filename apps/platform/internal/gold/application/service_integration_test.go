@@ -5,8 +5,11 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"sync"
@@ -30,10 +33,12 @@ import (
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	readmodel "github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
 	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
@@ -390,18 +395,36 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		"", txManager, datasetRepo, qualityRepo, store, evidence.NewQueryRepository(pool),
 	).ConfigureGold(goldRepo, annotationService)
 	assessmentAttemptID := uuid.New()
-	assessment, err := qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
-		WorkspaceID:         workspaceID,
-		DatasetVersionID:    output.ID,
-		AssessmentAttemptID: assessmentAttemptID,
-		ActorID:             &actorID,
-		TraceID:             "gold-builder-formal-quality",
-	})
+	qualityHandler := qualityhttp.NewHandler(qualityService, qualityRepo)
+	qualityHandler.Principal, err = principal.NewStaticResolver(true, "gold-quality-secret", "gold-test", actorID.String(), []string{workspaceID.String()}, []string{principal.CapabilityHumanDecision})
+	if err != nil {
+		t.Fatal(err)
+	}
+	qualityMux := http.NewServeMux()
+	qualityHandler.Register(qualityMux)
+	qualityRequest := httptest.NewRequest("POST", "/api/v1/dataset-versions/"+output.ID.String()+"/gold-quality-checks", strings.NewReader(`{"workspaceId":"`+workspaceID.String()+`","assessmentAttemptId":"`+assessmentAttemptID.String()+`"}`))
+	qualityRequest.Header.Set("Authorization", "Bearer gold-quality-secret")
+	qualityRequest.Header.Set("X-Actor-ID", uuid.NewString())
+	qualityResponse := httptest.NewRecorder()
+	qualityMux.ServeHTTP(qualityResponse, qualityRequest)
+	if qualityResponse.Code != http.StatusCreated {
+		t.Fatalf("Gold Quality HTTP: %d %s", qualityResponse.Code, qualityResponse.Body)
+	}
+	var qualityIdentity struct {
+		ID uuid.UUID `json:"id"`
+	}
+	if err := json.Unmarshal(qualityResponse.Body.Bytes(), &qualityIdentity); err != nil {
+		t.Fatal(err)
+	}
+	assessment, err := qualityRepo.GetAssessment(ctx, qualityIdentity.ID)
 	if err != nil {
 		t.Fatalf("run formal Gold quality: %v", err)
 	}
 	if assessment.DatasetVersionID != output.ID || assessment.GateDecision != "PASS" {
 		t.Fatalf("formal Gold assessment target/gate=%s/%s want=%s/PASS", assessment.DatasetVersionID, assessment.GateDecision, output.ID)
+	}
+	if assessment.CreatedBy == nil || *assessment.CreatedBy != actorID {
+		t.Fatal("forged actor changed Gold Assessment")
 	}
 	if assessment.RuleSetRef != qualityapp.GoldRuleSetRef ||
 		assessment.EvaluatorName != qualityapp.GoldEvaluatorName {

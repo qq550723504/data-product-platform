@@ -44,7 +44,7 @@ export const observedRequestId = unobservedRequestId(107);
 export const observedAttemptId = n => requestAttemptId(1070030+n);
 export const observedObservationId = n => requestObservationId(1070030+n);
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-evidence-denied", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
 scenarios.add("isolation-empty");
 scenarios.add("isolation-validating");
 const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts"]);
@@ -198,6 +198,12 @@ export function createFixtureServer() {
       const body = req.method === "POST" ? await bodyOf(req) : undefined;
       state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"], gateway: req.headers["x-delivery-web-gateway"], authenticatedPrincipal: req.headers["x-authenticated-principal"] });
       const workspace = `/api/v1/workspaces/${ids.workspace}`;
+      const qualityRoute = /^\/api\/v1\/(?:quality-(?:results|assessments|assessment-attempts)\/|dataset-versions\/[^/]+\/(?:quality-assessments|quality-checks|gold-quality-checks)(?:\/|$))/.test(url.pathname);
+      if (qualityRoute) {
+        if (req.headers.authorization !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
+        if ((req.method === "GET" ? url.searchParams.get("workspaceId") : body?.workspaceId) !== ids.workspace) return send(403, { error: { code: "QUALITY_AUTHORITY_DENIED" } });
+        if (req.method === "GET" && state.scenario === "quality-evidence-denied") return send(403, { error: { code: "QUALITY_AUTHORITY_DENIED" } });
+      }
       const releasePath = `/api/v1/product-releases/${ids.release}`;
       // Token-controlled fault injection applies only to fixed read routes.
       const faultRoutes = {
@@ -751,7 +757,7 @@ export function createFixtureServer() {
           return send(200, { ...job, status: "SUCCEEDED" });
         }
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`) {
-          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (req.headers.authorization !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
           if (body.workspaceId !== ids.workspace) return send(400, { error: { code: "DATASET_WORKSPACE_MISMATCH" } });
           if (typeof body.assessmentAttemptId !== "string" || !body.assessmentAttemptId) return send(400, { error: { code: "MISSING_ASSESSMENT_ATTEMPT_ID" } });
           if (body.ruleSetRef !== "park/quality/enterprise-activity-quality-v1.yaml") return send(400, { error: { code: "INVALID_RULE_SET" } });
