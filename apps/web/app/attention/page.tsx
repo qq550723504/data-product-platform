@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { QualityAttention } from "@/components/quality-attention";
+import { attentionOffset, attentionView } from "@/lib/quality-attention";
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { collectAllPages } from "@/lib/pagination";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
@@ -6,6 +8,8 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 const PAGE_SIZE = 25;
 
 type AttentionSearchParams = {
+  qualityView?: string;
+  qualityOffset?: string;
   reviewOffset?: string;
   failureOffset?: string;
   failedReleaseOffset?: string;
@@ -19,13 +23,13 @@ function parseOffset(value?: string): number {
 }
 
 function attentionHref(
-  current: Record<string, number>,
+  current: Record<string, number | string>,
   key: keyof AttentionSearchParams,
   offset: number,
 ): string {
   const query = new URLSearchParams();
   for (const [name, value] of Object.entries(current)) {
-    if (value > 0) query.set(name, String(value));
+    if (typeof value === "string" || value > 0) query.set(name, String(value));
   }
   if (offset > 0) query.set(key, String(offset));
   else query.delete(key);
@@ -44,7 +48,7 @@ function AttentionPager({
   offset: number;
   itemCount: number;
   total: number;
-  current: Record<string, number>;
+  current: Record<string, number | string>;
 }) {
   if (total <= PAGE_SIZE && offset === 0) return null;
   const previous = offset > 0 ? Math.max(0, offset - PAGE_SIZE) : null;
@@ -93,6 +97,8 @@ export default async function AttentionPage({
   const validatingReleaseOffset = parseOffset(query.validatingReleaseOffset);
   const readyReleaseOffset = parseOffset(query.readyReleaseOffset);
   const offsets = {
+    qualityView: attentionView(query.qualityView),
+    qualityOffset: attentionOffset(query.qualityOffset),
     reviewOffset,
     failureOffset,
     failedReleaseOffset,
@@ -139,12 +145,14 @@ export default async function AttentionPage({
           eyebrow="Attention"
           title="待办中心"
           description="这里只展示当前仍需处理的事项；已被成功 retry 解决的历史失败不会继续占用待办。"
-          action={<Badge value={total ? "ACTION_REQUIRED" : "CLEAR"} />}
+          action={<span>审核、执行与发布：{total} 条</span>}
         />
+
+        <QualityAttention query={query} />
 
         {total === 0 ? (
           <EmptyState
-            title="当前没有待办"
+            title="当前没有审核、执行或发布待办"
             description="实体审核、未解决执行失败、Release Readiness 阻塞与待发布事项会集中出现在这里。"
           />
         ) : (

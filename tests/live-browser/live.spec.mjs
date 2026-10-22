@@ -71,8 +71,9 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page).toHaveURL(/view=quality/);
     await expect(page.getByRole("heading", { name: "Quality Assessment", exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Quality Report", exact: true })).toBeVisible();
-    await expect(page.getByText(data.qualityAssessmentId, { exact: true })).toBeVisible();
     const latestAssessment = page.getByRole("heading", { name: "最新评测", exact: true }).locator("xpath=ancestor::section");
+    await expect(latestAssessment.getByText(data.qualityAssessmentId, { exact: true })).toBeVisible();
+    await expect(page.getByTestId("quality-report").getByText(data.qualityAssessmentId, { exact: true })).toBeVisible();
     await expect(latestAssessment.locator("tbody tr")).toHaveCount(data.qualityDimensions.length);
     for (const dimension of data.qualityDimensions) {
       const row = latestAssessment.locator("tbody tr").filter({ hasText: dimension });

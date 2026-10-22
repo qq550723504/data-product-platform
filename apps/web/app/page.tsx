@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { QualityAttention } from "@/components/quality-attention";
 import { Badge, EmptyState, LoadError, MetricCard, PageHeader, SetupRequired, formatDate } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
@@ -63,9 +64,10 @@ export default async function WorkbenchPage() {
           <MetricCard label="已发布 Release" value={summary.releases.published} hint={`${summary.releases.ready} 个已具备发布条件`} />
         </section>
 
+        <QualityAttention compact />
         <section className="panel" style={{ marginTop: 18 }} data-testid="needs-attention">
           <div className="panel-header">
-            <h2>Needs Attention</h2>
+            <h2>审核、执行与发布待办</h2>
             <div className="badge-row">
               <Badge value={attentionCount ? "ACTION_REQUIRED" : "CLEAR"} />
               <Link href="/attention">查看全部</Link>

@@ -26,6 +26,7 @@ func NewHandler(s *application.Service, r *infrastructure.Repository, p principa
 	return &Handler{s, r, p}
 }
 func (h *Handler) Register(m *http.ServeMux) {
+	m.HandleFunc("GET /api/v1/workspaces/{workspaceId}/quality-remediations/attention", h.attention)
 	m.HandleFunc("GET /api/v1/workspaces/{workspaceId}/quality-remediations", h.list)
 	m.HandleFunc("GET /api/v1/workspaces/{workspaceId}/quality-remediations/{caseId}", h.detail)
 	m.HandleFunc("POST /api/v1/workspaces/{workspaceId}/quality-remediations/detect", h.detect)

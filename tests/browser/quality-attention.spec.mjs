@@ -1,0 +1,95 @@
+import { test, expect } from "@playwright/test";
+import { ids, fixtureToken, attentionCaseId } from "./fixture-server.mjs";
+
+const control = "http://127.0.0.1:4400/__control";
+const headers = { "x-fixture-token": fixtureToken };
+const versionPath = `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`;
+async function reset(request, scenario = "quality-attention") {
+  expect((await request.post(`${control}/reset`, { headers, data: { scenario } })).ok()).toBeTruthy();
+}
+async function calls(request) {
+  const response = await request.get(`${control}/state`, { headers });
+  expect(response.ok()).toBeTruthy();
+  return (await response.json()).requests;
+}
+test.beforeEach(async ({ request }) => reset(request));
+
+test("quality attention pages past 100 without fetching case details, then focuses one case read-only", async ({ page, request }, testInfo) => {
+  await page.goto("/attention?qualityView=ALL&qualityOffset=100");
+  const panel = page.getByTestId("quality-attention");
+  await expect(panel.locator("tbody tr")).toHaveCount(5);
+  await expect(panel.getByRole("navigation", { name: "质量异常分页" })).toContainText("101–105 / 105");
+  const row = panel.locator("tbody tr").filter({ hasText: "负数用电异常 105" });
+  await expect(panel.locator("tbody tr").filter({ hasText: "负数用电异常 101" }).getByRole("link", { name: "FAILED", exact: true })).toBeVisible();
+  await expect(panel.locator("tbody tr").filter({ hasText: "负数用电异常 102" })).toContainText("FAILED 尚无质量结论");
+  await expect(row).toContainText("已人工关闭（不代表合格）");
+  await expect(row).toContainText("存在原复检待核对");
+  const initial = await calls(request);
+  expect(initial.filter(c => c.path.endsWith("/quality-remediations/attention"))).toHaveLength(1);
+  expect(initial.filter(c => /quality-remediations\/[0-9a-f-]+$/.test(c.path))).toHaveLength(0);
+  expect(initial.some(c => c.method !== "GET")).toBe(false);
+  expect(await page.content()).not.toContain("review-secret");
+  await page.screenshot({ path: testInfo.outputPath("quality-attention.png"), fullPage: true });
+
+  await row.getByRole("link", { name: "查看异常", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`caseId=${attentionCaseId(105)}$`));
+  await expect(page.getByRole("heading", { name: `异常 ${attentionCaseId(105)}`, exact: true })).toBeVisible();
+  await expect(page.getByText("当前为单个异常的只读导航。", { exact: false })).toBeVisible();
+  await expect(page.locator("form")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "查看原评测、Finding 与证据" })).toHaveAttribute("href", `${versionPath}?view=quality&assessmentId=${ids.goldAssessment}`);
+  const after = await calls(request);
+  expect(after.filter(c => c.path.endsWith(`/quality-remediations/${attentionCaseId(105)}`))).toHaveLength(1);
+  expect(after.some(c => c.path.endsWith("/quality-remediations") || c.path.endsWith("/batches"))).toBe(false);
+  expect(after.some(c => c.method !== "GET")).toBe(false);
+});
+
+test("original evidence opens the exact historical assessment and preserves latest quality", async ({ page, request }) => {
+  await page.goto("/attention?qualityView=ALL&qualityOffset=100");
+  await page.getByTestId("quality-attention").getByRole("link", { name: "原评测与证据", exact: true }).last().click();
+  await expect(page.getByTestId("selected-quality-assessment")).toContainText(ids.goldAssessment);
+  const report = page.getByTestId("quality-report");
+  await expect(report).toContainText(ids.goldAssessment);
+  await expect(report).toContainText("GOLD_QUALITY_ASSESSMENT");
+  const latest = page.locator("section").filter({ has: page.getByRole("heading", { name: "最新评测", exact: true }) });
+  await expect(latest).toContainText(ids.qualityAssessment);
+  expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
+});
+
+test("workbench enters follow-up view and recheck evidence opens its output version", async ({ page, request }) => {
+  await page.goto("/");
+  const compact = page.getByTestId("quality-attention");
+  await expect(compact).toContainText("需跟进 104 条");
+  await compact.getByRole("link", { name: "查看质量异常" }).click();
+  await expect(page).toHaveURL(/qualityView=FOLLOW_UP#quality-attention$/);
+  await page.getByRole("navigation", { name: "质量异常视图" }).getByRole("link", { name: "已人工关闭", exact: true }).click();
+  const panel = page.getByTestId("quality-attention");
+  await expect(panel.locator("tbody tr")).toHaveCount(2);
+  const link = panel.getByRole("link", { name: "本次复检与证据", exact: true });
+  await expect(link).toHaveAttribute("href", `/datasets/${ids.goldDataset}/versions/${ids.qualityOutputVersion}?view=quality&assessmentId=${ids.recheckAssessment}`);
+  await link.click();
+  await expect(page.getByTestId("quality-report")).toContainText(ids.recheckAssessment);
+  await expect(page.getByTestId("selected-quality-assessment")).toContainText(ids.recheckAssessment);
+  expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
+});
+
+test("failed quality read stays UNKNOWN while existing attention remains visible", async ({ page, request }) => {
+  await reset(request, "quality-attention-unavailable");
+  for (const path of ["/", "/attention"]) {
+    await page.goto(path);
+    await expect(page.getByTestId("quality-attention-unavailable")).toContainText("UNKNOWN");
+    await expect(page.getByText("Release 待发布", { exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "去发布", exact: true })).toBeVisible();
+  }
+  expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
+});
+
+test("foreign case or assessment scope fails without a latest-result fallback", async ({ page, request }) => {
+  await reset(request, "quality-attention-foreign");
+  await page.goto(`${versionPath}/remediation?caseId=${attentionCaseId(105)}`);
+  await expect(page.getByText("异常不属于所选版本或 workspace", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: `异常 ${attentionCaseId(105)}`, exact: true })).toHaveCount(0);
+  await page.goto(`${versionPath}?view=quality&assessmentId=${ids.goldAssessment}`);
+  await expect(page.getByText("评测不属于所选版本或 workspace", { exact: true })).toBeVisible();
+  await expect(page.getByTestId("quality-report")).toHaveCount(0);
+  expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
+});
