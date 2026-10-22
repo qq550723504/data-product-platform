@@ -1,0 +1,11 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	1.377s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	2.715s
+--- FAIL: TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory (0.05s)
+    six_test.go:169: new IAM expectation incomplete
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	8.843s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage	(cached)
+FAIL

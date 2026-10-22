@@ -42,7 +42,8 @@ class AttesterTests(unittest.TestCase):
             root = Path(tmp)
             private, public = root / 'private', root / 'packet'
             private.mkdir(); public.mkdir()
-            candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+            # Fixed recorded bytes for a synthetic contract; never the current runtime packet.
+            candidate = copy.deepcopy(m.r.load(m.r.ROOT / 'docs/acceptance/evidence/issue307-d1/remaining-candidate18/candidate.json'))
             execution = 'dd6321d9-d838-42d8-ac32-c921ac1c02c4'
             candidate.update(Execution=execution, Profile='test-attester/nondelete', NotBefore='2026-01-01T00:00:00Z', NotAfter='2026-01-01T00:40:00Z')
             at = dt.datetime(2026, 1, 1, 0, 10, tzinfo=dt.timezone.utc)

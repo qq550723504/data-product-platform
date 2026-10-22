@@ -1,4 +1,4 @@
-"""Fixed non-delete preparation primitives for candidate18.
+"""Fixed non-delete preparation primitives for candidate19.
 
 No send permission writer, authorization loader or S3 DELETE exists here.
 Allocation, budget initialization, native preparation and freeze are separate
@@ -413,8 +413,8 @@ def maintenance(g,role):
 
 
 def baseline_core(group):
-    import retained_v27
-    path,digest=retained_v27.CORE_BASELINES[group]
+    import retained_v28
+    path,digest=retained_v28.CORE_BASELINES[group]
     baseline=ROOT/'docs/acceptance/evidence/issue307-d1'/path
     need(sha(baseline)==digest,'current post-closure Core checkpoint bytes drift')
     return load(baseline)

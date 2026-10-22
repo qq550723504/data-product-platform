@@ -1,0 +1,7 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	6.512s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage	(cached)

@@ -24,7 +24,7 @@ class RetainedV27Tests(unittest.TestCase):
 
     def test_new_generation_does_not_enter_the_fixed_old_profile_set(self):
         with tempfile.TemporaryDirectory() as tmp:
-            private=Path(tmp);prior=private/'remaining-candidate17';new=private/'remaining-candidate18'
+            private=Path(tmp);prior=private/'remaining-candidate17';new=private/'remaining-candidate19'
             for folder in (prior,new):
                 (folder/'business-races/P2').mkdir(parents=True)
                 (folder/'business-races/P2/permission.json').write_bytes(b'{"Enabled":false}')
@@ -56,7 +56,8 @@ class RetainedV27Tests(unittest.TestCase):
             with self.subTest(key=key),self.assertRaises(ValueError):old.budget_owner(dict(good,**{key:value}),'old-budget','old-nonce')
 
     def test_core_checkpoint_bytes_and_live_core_are_independent_of_old_policy_fact(self):
-        for group,(name,digest) in old.CORE_BASELINES.items():
+        import retained_v28 as current
+        for group,(name,digest) in current.CORE_BASELINES.items():
             raw=(r.ROOT/'docs/acceptance/evidence/issue307-d1'/name).read_bytes()
             self.assertEqual(old.sha(r.ROOT/'docs/acceptance/evidence/issue307-d1'/name),digest)
             with tempfile.TemporaryDirectory() as tmp,patch.object(r,'ROOT',Path(tmp)):
@@ -65,7 +66,7 @@ class RetainedV27Tests(unittest.TestCase):
                 path.write_bytes(raw+b' ')
                 with self.assertRaises(ValueError):r.baseline_core(group)
         self.assertEqual(r.p.window.POLICY_CHECKPOINT_SHA256,'aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8')
-        self.assertEqual(r.p.EXECUTION,'4fd5a7e7-779e-41d7-a35a-3bab7dd615b5')
+        self.assertEqual(r.p.EXECUTION,'a5d1e569-f80e-4b38-8f32-d8139a30a077')
         self.assertNotEqual(r.p.EXECUTION,old.EXECUTION)
 
 

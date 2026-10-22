@@ -1,0 +1,71 @@
+{
+  "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+  "group": "mixed",
+  "copies": 4,
+  "policies": [
+    {
+      "policy": "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd",
+      "baseline_file_sha256": "247ebba00c26d1237177ce4208ab8017b2a7779314f4ccf512e24111a1c0e0b2",
+      "fresh_file_sha256": "08e87d0e9af337f6a00f88194b9386d1ee285e4a156e29f3108e45c0553650a8",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd",
+      "baseline_file_sha256": "da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf",
+      "fresh_file_sha256": "da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-d4fd5a7e7dfda43b4",
+      "baseline_file_sha256": "97276e678c32c9b22387eb7f811199de7dafac7b990aa7cb330eb2a6d3dacc3f",
+      "fresh_file_sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-d6f40bca9dfda43b4",
+      "baseline_file_sha256": "97276e678c32c9b22387eb7f811199de7dafac7b990aa7cb330eb2a6d3dacc3f",
+      "fresh_file_sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-d9f9c67d7dfda43b4",
+      "baseline_file_sha256": "97276e678c32c9b22387eb7f811199de7dafac7b990aa7cb330eb2a6d3dacc3f",
+      "fresh_file_sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-daa2605a5dfda43b4",
+      "baseline_file_sha256": "97276e678c32c9b22387eb7f811199de7dafac7b990aa7cb330eb2a6d3dacc3f",
+      "fresh_file_sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-i4fd5a7e7dfda43b4",
+      "baseline_file_sha256": "e264840e1f32ad218499047ba32752a3db130f7e64bf58ef304631c90e75ffe3",
+      "fresh_file_sha256": "d15137ba648f22984812697e269238df21ceaa11db3b91f64624304616329ccd",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-i6f40bca9dfda43b4",
+      "baseline_file_sha256": "e264840e1f32ad218499047ba32752a3db130f7e64bf58ef304631c90e75ffe3",
+      "fresh_file_sha256": "9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-i9f9c67d7dfda43b4",
+      "baseline_file_sha256": "e264840e1f32ad218499047ba32752a3db130f7e64bf58ef304631c90e75ffe3",
+      "fresh_file_sha256": "5745ee6cfa55162ec1419516706994793ba87fff912e96b159ff318fce6a6e10",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-six-iaa2605a5dfda43b4",
+      "baseline_file_sha256": "e264840e1f32ad218499047ba32752a3db130f7e64bf58ef304631c90e75ffe3",
+      "fresh_file_sha256": "531c237d720e67df1d31f94fe9639e1027a4186773bcf687b1c08f0e56a5ea92",
+      "official_equals": true
+    }
+  ],
+  "provider_io": 0,
+  "delete": 0,
+  "technical_requests": 38,
+  "amount": "NOT_ASSESSED"
+}

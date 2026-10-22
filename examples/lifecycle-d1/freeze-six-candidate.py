@@ -1,4 +1,4 @@
-"""Freeze candidate18 only after actual bounded non-delete preparation.
+"""Freeze candidate19 only after actual bounded non-delete preparation.
 
 No IAM enable, deletion, authorization or scheduling function exists here.
 The only container run is the already allocated network-none file validator.
@@ -36,9 +36,9 @@ def audit_preparation_index():
 def preparation_audit_plan(candidate):
     # Source review and preparation exist now. Later human authorization and
     # schedule indexes do not: they are never invented or rewritten here.
-    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate18-source-review01'
+    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate19-source-review01'
     report=load(review/'independent-final-review01.json')
-    need(report['status']=='PASS_BOUNDED_C18_SOURCE_PREPARATION_REVIEW' and report['remaining_blockers']==[]
+    need(report['status']=='PASS_BOUNDED_C19_SOURCE_PREPARATION_REVIEW' and report['remaining_blockers']==[]
          and report['source_head']==candidate['Source'],'independent current-source review incomplete')
     index=review/'evidence-index.json';document=load(index)
     audit_preparation_index()
