@@ -93,3 +93,37 @@ func TestOldDispatchV27CompositionIsFiniteAndObserveOnly(t *testing.T) {
 		}
 	}
 }
+
+func TestV28MaintenancePurposeCannotAuthorizeSendOrLeakIntoOldPurpose(t *testing.T) {
+	at := time.Now().UTC()
+	c := observerConfig(at)
+	c.Purpose = v28Purpose
+	for _, cap := range []string{lc.CapabilityRevokeApproval, lc.CapabilityObserveAttempt, lc.CapabilityInspectStorage, lc.CapabilityVerifyAbsence} {
+		p, e := (authority{c}).resolve(c, c.WorkspaceID, cap, at)
+		if e != nil || len(p.Capabilities) != 4 {
+			t.Fatal(cap, e)
+		}
+	}
+	for _, cap := range []string{lc.CapabilityDispatch, lc.CapabilityApproveDisposition, lc.CapabilityReleaseHold, lc.CapabilityTerminateReader} {
+		if _, e := (authority{c}).resolve(c, c.WorkspaceID, cap, at); e == nil {
+			t.Fatal("expanded authority", cap)
+		}
+	}
+	for _, oldPurpose := range []string{purpose, v27Purpose} {
+		old := c
+		old.Purpose = oldPurpose
+		for _, cap := range []string{lc.CapabilityInspectStorage, lc.CapabilityVerifyAbsence} {
+			if _, e := (authority{old}).resolve(old, old.WorkspaceID, cap, at); e == nil {
+				t.Fatal("old purpose gained storage", cap)
+			}
+		}
+	}
+	_, targets, prefix := composition(c, nil, pilot.SignedClosedReferenceExecutor{})
+	if prefix != "post-v28-closed:" || len(targets) != 2 || targets[0].Case != "T1" || targets[1].Case != "T2" {
+		t.Fatal("P2 admitted to NOT_SENT composition")
+	}
+	c.AuditID = uuid.MustParse(pilot.PostV28Execution)
+	if validate(c, at) == nil {
+		t.Fatal("old execution reused")
+	}
+}

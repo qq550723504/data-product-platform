@@ -1,4 +1,5 @@
-// One finite non-delete observer. No storage port, sender, queue or IAM secret.
+// Finite maintenance Commands. Older NOT_SENT owners have no storage secret.
+// The separately reviewed v28 owner has only an instrumented exact HEAD port.
 package main
 
 import (
@@ -29,6 +30,7 @@ import (
 
 const purpose = "POST_V22_BUSINESS_NOT_SENT_CLOSURE"
 const v27Purpose = "POST_V27_BUSINESS_NOT_SENT_CLOSURE"
+const v28Purpose = "POST_V28_BUSINESS_DENIED_AND_NOT_SENT_CLOSURE"
 const configPath = "/run/private/closure.json"
 
 type config struct {
@@ -72,7 +74,7 @@ func validate(c config, at time.Time) error {
 	if e != nil || pc.ConnConfig.Host != u.Hostname() || pc.ConnConfig.Port != 5432 || pc.ConnConfig.Database != "lifecycle307" || pc.ConnConfig.User != "fixture" || pc.ConnConfig.Password != password || pc.ConnConfig.TLSConfig != nil || len(pc.ConnConfig.Fallbacks) != 0 {
 		return lc.ErrStorageScope
 	}
-	if !c.Enabled || c.AuditID == uuid.Nil || c.AuditID.String() == pilot.PostV22Execution || c.AuditID.String() == pilot.PostV27Execution || (c.Purpose != purpose && c.Purpose != v27Purpose) || c.Core != pilot.PostV22Core || c.MaxProviderDeletes != 0 ||
+	if !c.Enabled || c.AuditID == uuid.Nil || c.AuditID.String() == pilot.PostV22Execution || c.AuditID.String() == pilot.PostV27Execution || c.AuditID.String() == pilot.PostV28Execution || (c.Purpose != purpose && c.Purpose != v27Purpose && c.Purpose != v28Purpose) || c.Core != pilot.PostV22Core || c.MaxProviderDeletes != 0 ||
 		c.WorkspaceID.String() != "a4aa2689-6e8f-4180-a567-dfb875407eac" || c.ActorID.String() != "033a56ad-99c2-43e3-89e0-a749979a8644" ||
 		c.NotBefore.IsZero() || !c.ExpiresAt.After(c.NotBefore) || c.ExpiresAt.Sub(c.NotBefore) > 40*time.Minute || at.Before(c.NotBefore) || !at.Before(c.ExpiresAt) || len(c.Owners) == 0 || len(c.Token) < 32 {
 		return lc.ErrStorageScope
@@ -96,16 +98,27 @@ func (a authority) AuthorizeLifecycle(_ context.Context, _ pgx.Tx, w uuid.UUID, 
 }
 
 func (a authority) resolve(current config, w uuid.UUID, capability string, at time.Time) (principal.RequestPrincipal, error) {
+	capabilities := []string{lc.CapabilityRevokeApproval, lc.CapabilityObserveAttempt}
+	if current.Purpose == v28Purpose {
+		capabilities = append(capabilities, lc.CapabilityInspectStorage, lc.CapabilityVerifyAbsence)
+	}
+	allowed := false
+	for _, c := range capabilities {
+		allowed = allowed || c == capability
+	}
 	if validate(current, at) != nil || !reflect.DeepEqual(current, a.original) || w != current.WorkspaceID ||
-		(capability != lc.CapabilityRevokeApproval && capability != lc.CapabilityObserveAttempt) {
+		!allowed {
 		return principal.RequestPrincipal{}, lc.ErrStorageScope
 	}
 	label := "post-v22"
 	if current.Purpose == v27Purpose {
 		label = "post-v27"
 	}
+	if current.Purpose == v28Purpose {
+		label = "post-v28"
+	}
 	resolver, err := principal.NewStaticResolver(true, current.Token, label+"-dispatch-observer:"+current.AuditID.String(), current.ActorID.String(),
-		[]string{current.WorkspaceID.String()}, []string{lc.CapabilityRevokeApproval, lc.CapabilityObserveAttempt})
+		[]string{current.WorkspaceID.String()}, capabilities)
 	if err != nil {
 		return principal.RequestPrincipal{}, err
 	}
@@ -165,6 +178,11 @@ func run(ctx context.Context, c config, results *[]map[string]any) error {
 	defer pool.Close()
 	o := lc.NewOccupancyService(transaction.NewManager(pool), &infrastructure.PostgresRepository{}, authority{c}, nil, nil)
 	service := lc.NewDispositionService(o, nil, nil, verifier)
+	if c.Purpose == v28Purpose {
+		if e = closeV28Denied(ctx, c, pool, o, service, results); e != nil {
+			return e
+		}
+	}
 	for _, d := range targets {
 		var revoked bool
 		if e = pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_approval_revocation WHERE approval_id=$1)`, d.Approval).Scan(&revoked); e != nil {
@@ -200,6 +218,9 @@ func composition(c config, public []byte, proof pilot.SignedClosedReferenceExecu
 	if c.Purpose == v27Purpose {
 		return pilot.PostV27NoSendVerifier(v), pilot.PostV27BusinessDispatches(), "post-v27-closed:"
 	}
+	if c.Purpose == v28Purpose {
+		return pilot.PostV28NoSendVerifier(v), pilot.PostV28BusinessDispatches()[1:], "post-v28-closed:"
+	}
 	return v, pilot.PostV22BusinessDispatches(), "post-v22-closed:"
 }
 
@@ -207,7 +228,7 @@ func main() {
 	var c config
 	results := []map[string]any{}
 	e := read(configPath, &c)
-	if e == nil && (len(os.Args) != 2 || (os.Args[1] != "post-v22-close" || c.Purpose != purpose) && (os.Args[1] != "post-v27-close" || c.Purpose != v27Purpose)) {
+	if e == nil && (len(os.Args) != 2 || (os.Args[1] != "post-v22-close" || c.Purpose != purpose) && (os.Args[1] != "post-v27-close" || c.Purpose != v27Purpose) && (os.Args[1] != "post-v28-close" || c.Purpose != v28Purpose)) {
 		e = lc.ErrStorageScope
 	}
 	if e == nil {
