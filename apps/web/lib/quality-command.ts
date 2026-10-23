@@ -1,7 +1,9 @@
+import { qualityHeaders } from "./quality-transport";
+
 export type QualityCommandConfig = {
   enabled: boolean;
   workspaceId?: string | null;
-  actorId?: string | null;
+  token?: string | null;
   apiBaseUrl: string;
 };
 
@@ -45,7 +47,7 @@ function sameId(a:unknown,b:string){ return isUUID(a) && a.toLowerCase()===b.toL
 export function qualityConfigurationError(config:QualityCommandConfig):string|null {
   if(!config.enabled) return "Quality 写入默认关闭；仅在受信任的 POC 环境设置 POC_ENABLE_QUALITY_ACTIONS=true。";
   if(!isUUID(config.workspaceId)) return "请配置有效的 POC_WORKSPACE_ID。";
-  if(!isUUID(config.actorId)) return "请配置有效的服务端 POC_QUALITY_ACTOR_ID。";
+  if(!config.token?.trim()) return "受信任的 Quality 凭据未配置。";
   return null;
 }
 
@@ -58,7 +60,6 @@ export async function executeQualityCheck(
   const configError=qualityConfigurationError(config);
   if(configError) return {ok:false,message:configError};
   const workspaceId=config.workspaceId as string;
-  const actorId=config.actorId as string;
   const datasetId=form.get("datasetId");
   const versionId=form.get("versionId");
   const attemptId=form.get("assessmentAttemptId");
@@ -72,7 +73,8 @@ export async function executeQualityCheck(
 
   const base=config.apiBaseUrl.replace(/\/$/,"");
   async function raw(path:string,init:RequestInit={},timeoutMs=15000){
-    return request(`${base}${path}`,{...init,cache:"no-store",redirect:"error",signal:AbortSignal.timeout(timeoutMs),headers:{Accept:"application/json",...init.headers}});
+    const headers = path.includes("/quality-") ? qualityHeaders(config.token) : {Accept:"application/json"};
+    return request(`${base}${path}`,{...init,cache:"no-store",redirect:"error",signal:AbortSignal.timeout(timeoutMs),headers:{...headers,...init.headers}});
   }
   async function json(path:string,init:RequestInit={}){
     const response=await raw(path,init);
@@ -122,7 +124,7 @@ export async function executeQualityCheck(
     attemptedWrite=true;
     const writeResponse=await raw(`/api/v1/dataset-versions/${versionId}/quality-checks`,{
       method:"POST",
-      headers:{"Content-Type":"application/json","X-Actor-ID":actorId},
+      headers:{"Content-Type":"application/json"},
       body:JSON.stringify({workspaceId,ruleSetRef:effectiveRuleSetRef,engineName,assessmentAttemptId:attemptId}),
     },60000);
     if(!writeResponse.ok){

@@ -10,6 +10,17 @@ before(async () => {
 });
 after(async () => { await new Promise((resolve) => server.close(resolve)); });
 beforeEach(async () => { await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: "{}" }); });
+
+test("Quality fault injection rejects one exact read and preserves the other authenticated report", async () => {
+  const response = await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: JSON.stringify({ scenario: "quality-attention", readFaults: { "quality-original-report": "notfound" } }) });
+  assert.equal(response.status, 200);
+  const headers = { Authorization: "Bearer review-secret" };
+  const exact = `${base}/api/v1/quality-assessments/${ids.goldAssessment}/report?workspaceId=${ids.workspace}`;
+  const latest = `${base}/api/v1/quality-assessments/${ids.qualityAssessment}/report?workspaceId=${ids.workspace}`;
+  assert.equal((await fetch(exact, { headers })).status, 404);
+  assert.equal((await fetch(latest, { headers })).status, 200);
+  assert.equal((await fetch(latest)).status, 401);
+});
 async function state() { return (await fetch(`${base}/__control/state`, { headers: controlHeaders })).json(); }
 
 test("observed request fixture counts attempts once and keeps selected identity after its observation arrives",async()=>{

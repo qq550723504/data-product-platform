@@ -83,6 +83,14 @@ func (r *QueryRepository) ListByExecution(ctx context.Context, executionID uuid.
 }
 
 func (r *QueryRepository) ListByQualityAssessment(ctx context.Context, assessmentID uuid.UUID) ([]Item, error) {
+	return r.listByQualityAssessment(ctx, assessmentID, nil)
+}
+
+func (r *QueryRepository) ListByQualityAssessmentInWorkspace(ctx context.Context, assessmentID, workspaceID uuid.UUID) ([]Item, error) {
+	return r.listByQualityAssessment(ctx, assessmentID, &workspaceID)
+}
+
+func (r *QueryRepository) listByQualityAssessment(ctx context.Context, assessmentID uuid.UUID, workspaceID *uuid.UUID) ([]Item, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT e.id, e.workspace_id, e.execution_id, e.activity_id, e.cost_type,
 		       e.quantity, e.unit, e.amount::text, COALESCE(e.currency,''), e.pricing_mode,
@@ -91,11 +99,12 @@ func (r *QueryRepository) ListByQualityAssessment(ctx context.Context, assessmen
 		JOIN cost_allocation a ON a.cost_event_id=e.id
 		LEFT JOIN quality_assessment_attempt_outcome o
 		  ON o.attempt_id=a.quality_assessment_attempt_id
-		WHERE a.quality_assessment_id=$1
+		WHERE (a.quality_assessment_id=$1
 		   OR (a.quality_assessment_attempt_id IS NOT NULL
-		       AND o.assessment_id=$1 AND o.outcome='SUCCEEDED')
+		       AND o.assessment_id=$1 AND o.outcome='SUCCEEDED'))
+		  AND ($2::uuid IS NULL OR e.workspace_id=$2)
 		ORDER BY e.occurred_at, e.id
-	`, assessmentID)
+	`, assessmentID, workspaceID)
 	if err != nil {
 		return nil, fmt.Errorf("query cost events for quality assessment %s: %w", assessmentID, err)
 	}

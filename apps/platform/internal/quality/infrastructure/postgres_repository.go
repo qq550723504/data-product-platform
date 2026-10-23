@@ -624,14 +624,14 @@ func (r *PostgresRepository) LatestAssessment(ctx context.Context, datasetVersio
 	return r.GetAssessment(ctx, id)
 }
 
-func (r *PostgresRepository) ListAuditEvents(ctx context.Context, assessmentID uuid.UUID) ([]AuditEvent, error) {
+func (r *PostgresRepository) ListAuditEvents(ctx context.Context, assessmentID, workspaceID uuid.UUID) ([]AuditEvent, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT id, action, object_type, object_id, actor_type, actor_id,
 		       before_state, after_state, COALESCE(reason,''), COALESCE(trace_id,''), metadata, occurred_at
 		FROM audit_event
-		WHERE object_type='QUALITY_RESULT' AND object_id=$1
+		WHERE object_type='QUALITY_RESULT' AND object_id=$1 AND workspace_id=$2
 		ORDER BY occurred_at, id
-	`, assessmentID)
+	`, assessmentID, workspaceID)
 	if err != nil {
 		return nil, fmt.Errorf("list quality assessment audit events: %w", err)
 	}
@@ -671,7 +671,7 @@ func (r *PostgresRepository) ListAuditEvents(ctx context.Context, assessmentID u
 // ListAuditEventReferences returns only the audit identity and routing fields
 // needed by the bounded Quality Report. It deliberately does not hydrate
 // historical state or metadata payloads.
-func (r *PostgresRepository) ListAuditEventReferences(ctx context.Context, assessmentID uuid.UUID, limit int) ([]AuditEventReference, error) {
+func (r *PostgresRepository) ListAuditEventReferences(ctx context.Context, assessmentID, workspaceID uuid.UUID, limit int) ([]AuditEventReference, error) {
 	if limit <= 0 || limit > 100 {
 		return nil, fmt.Errorf("audit reference limit must be between 1 and 100")
 	}
@@ -679,10 +679,10 @@ func (r *PostgresRepository) ListAuditEventReferences(ctx context.Context, asses
 		SELECT id, action, object_type, object_id, actor_type, actor_id,
 		       COALESCE(trace_id,''), occurred_at
 		FROM audit_event
-		WHERE object_type='QUALITY_RESULT' AND object_id=$1
+		WHERE object_type='QUALITY_RESULT' AND object_id=$1 AND workspace_id=$3
 		ORDER BY occurred_at, id
 		LIMIT $2
-	`, assessmentID, limit)
+	`, assessmentID, limit, workspaceID)
 	if err != nil {
 		return nil, fmt.Errorf("list quality assessment audit references: %w", err)
 	}

@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 )
@@ -140,6 +142,22 @@ func TestQualityReportIsBoundedAndWorkspaceScoped(t *testing.T) {
 	if err := tx.Commit(ctx); err != nil {
 		t.Fatalf("commit fixture: %v", err)
 	}
+	// An object reference alone must not pull another workspace's attachments
+	// into either the detail endpoint or the bounded report.
+	foreignTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer foreignTx.Rollback(ctx)
+	if _, err := evidence.Append(ctx, foreignTx, evidence.Record{WorkspaceID: foreignWorkspaceID, EvidenceType: "QUALITY_RESULT", Title: "foreign-secret", SourceType: "QUALITY_RESULT", SourceID: &assessmentID, Metadata: map[string]any{"secret": "foreign-secret"}, CreatedAt: createdAt, CreatedBy: &actorID}, evidence.Relation{ObjectType: "QUALITY_RESULT", ObjectID: assessmentID, RelationType: "EVIDENCE_FOR"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := foreignTx.Exec(ctx, `INSERT INTO audit_event (id,workspace_id,actor_type,action,object_type,object_id,metadata,occurred_at) VALUES ($1,$2,'SYSTEM','FOREIGN_SECRET','QUALITY_RESULT',$3,'{"secret":"foreign-secret"}',$4)`, uuid.New(), foreignWorkspaceID, assessmentID, createdAt); err != nil {
+		t.Fatal(err)
+	}
+	if err := foreignTx.Commit(ctx); err != nil {
+		t.Fatal(err)
+	}
 
 	repo := qualityinfra.NewPostgresRepository(pool)
 	assessment, page, err := repo.GetReport(ctx, workspaceID, assessmentID, 1, 1)
@@ -164,10 +182,24 @@ func TestQualityReportIsBoundedAndWorkspaceScoped(t *testing.T) {
 	}
 
 	mux := http.NewServeMux()
-	qualityhttp.NewHandler(nil, repo, evidence.NewQueryRepository(pool)).Register(mux)
+	resolver, err := principal.NewStaticResolver(true, "quality-report-secret", "quality-test", actorID.String(), []string{workspaceID.String(), foreignWorkspaceID.String()}, []string{principal.CapabilityHumanDecision})
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler := qualityhttp.NewHandler(nil, repo, evidence.NewQueryRepository(pool))
+	handler.Principal = resolver
+	handler.Register(mux)
 	server := httptest.NewServer(mux)
 	defer server.Close()
-	response, err := server.Client().Get(server.URL + "/api/v1/quality-assessments/" + assessmentID.String() + "/report?workspaceId=" + workspaceID.String() + "&limit=1&offset=1")
+	get := func(path string) (*http.Response, error) {
+		req, err := http.NewRequest(http.MethodGet, server.URL+path, nil)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("Authorization", "Bearer quality-report-secret")
+		return server.Client().Do(req)
+	}
+	response, err := get("/api/v1/quality-assessments/" + assessmentID.String() + "/report?workspaceId=" + workspaceID.String() + "&limit=1&offset=1")
 	if err != nil {
 		t.Fatalf("request quality report: %v", err)
 	}
@@ -202,13 +234,88 @@ func TestQualityReportIsBoundedAndWorkspaceScoped(t *testing.T) {
 		t.Fatal("HTTP report exposed evidence metadata")
 	}
 
-	foreignResponse, err := server.Client().Get(server.URL + "/api/v1/quality-assessments/" + assessmentID.String() + "/report?workspaceId=" + foreignWorkspaceID.String())
+	foreignResponse, err := get("/api/v1/quality-assessments/" + assessmentID.String() + "/report?workspaceId=" + foreignWorkspaceID.String())
 	if err != nil {
 		t.Fatalf("request foreign quality report: %v", err)
 	}
 	defer foreignResponse.Body.Close()
 	if foreignResponse.StatusCode != http.StatusNotFound {
 		t.Fatalf("foreign HTTP report status = %d, want %d", foreignResponse.StatusCode, http.StatusNotFound)
+	}
+
+	attemptID := uuid.New()
+	if _, err := pool.Exec(ctx, `INSERT INTO quality_assessment_attempt
+		(id,workspace_id,dataset_version_id,rule_set_ref,engine_name,engine_version,started_at,lease_expires_at,created_by)
+		VALUES ($1,$2,$3,'fixture/quality.yaml','fixture-evaluator','1',$4,$5,$6)`, attemptID, workspaceID, versionID, createdAt, createdAt.Add(time.Hour), actorID); err != nil {
+		t.Fatal(err)
+	}
+	// All reads are authenticated, scoped and read only, including the old alias.
+	var before string
+	snapshot := `SELECT jsonb_build_array(
+		(SELECT jsonb_agg(to_jsonb(q) ORDER BY id) FROM quality_result q WHERE workspace_id=$1),
+		(SELECT jsonb_agg(to_jsonb(a) ORDER BY id) FROM quality_assessment_attempt a WHERE workspace_id=$1),
+		(SELECT jsonb_agg(to_jsonb(c) ORDER BY id) FROM cost_event c WHERE workspace_id=$1)
+	)::text`
+	if err := pool.QueryRow(ctx, snapshot, workspaceID).Scan(&before); err != nil {
+		t.Fatal(err)
+	}
+	for _, path := range []string{
+		"/quality-results/" + assessmentID.String(),
+		"/quality-assessments/" + assessmentID.String(),
+		"/quality-assessments/" + assessmentID.String() + "/report",
+		"/quality-assessment-attempts/" + attemptID.String(),
+		"/dataset-versions/" + versionID.String() + "/quality-assessments",
+		"/dataset-versions/" + versionID.String() + "/quality-assessments/latest",
+	} {
+		for _, scope := range []struct {
+			ws     uuid.UUID
+			status int
+		}{{workspaceID, 200}, {foreignWorkspaceID, 404}} {
+			res, err := get("/api/v1" + path + "?workspaceId=" + scope.ws.String())
+			if err != nil {
+				t.Fatal(err)
+			}
+			var payload any
+			if err := json.NewDecoder(res.Body).Decode(&payload); err != nil {
+				t.Fatal(err)
+			}
+			res.Body.Close()
+			encoded, err := json.Marshal(payload)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if strings.Contains(string(encoded), "foreign-secret") || strings.Contains(string(encoded), "FOREIGN_SECRET") {
+				t.Fatal("foreign attachment leaked")
+			}
+			if res.StatusCode != scope.status {
+				t.Fatalf("%s: status=%d want=%d", path, res.StatusCode, scope.status)
+			}
+		}
+	}
+	// An authorized workspace with another workspace's version must not reach
+	// either Command. The handler intentionally has a nil application service.
+	for _, command := range []string{"quality-checks", "gold-quality-checks"} {
+		req := httptest.NewRequest("POST", "/api/v1/dataset-versions/"+versionID.String()+"/"+command, strings.NewReader(`{"workspaceId":"`+foreignWorkspaceID.String()+`","assessmentAttemptId":"`+uuid.NewString()+`"}`))
+		req.Header.Set("Authorization", "Bearer quality-report-secret")
+		res := httptest.NewRecorder()
+		mux.ServeHTTP(res, req)
+		if res.Code != 404 {
+			t.Fatalf("foreign version %s: %d %s", command, res.Code, res.Body)
+		}
+	}
+	var after string
+	if err := pool.QueryRow(ctx, snapshot, workspaceID).Scan(&after); err != nil {
+		t.Fatal(err)
+	}
+	if before != after {
+		t.Fatal("read or rejected command changed Quality/attempt/cost facts")
+	}
+	var assessments, attempts int
+	if err := pool.QueryRow(ctx, `SELECT (SELECT count(*) FROM quality_result WHERE workspace_id=$1), (SELECT count(*) FROM quality_assessment_attempt WHERE workspace_id=$1)`, workspaceID).Scan(&assessments, &attempts); err != nil {
+		t.Fatal(err)
+	}
+	if assessments != 1 || attempts != 1 {
+		t.Fatalf("GET mutated facts: assessments=%d attempts=%d", assessments, attempts)
 	}
 }
 
