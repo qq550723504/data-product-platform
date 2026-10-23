@@ -1,9 +1,11 @@
 """Host composition doubles only; no Docker/provider or retained source I/O."""
 import base64
 import copy
+import ctypes
 import datetime as dt
 import json
 import os
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -92,6 +94,51 @@ class HostTests(unittest.TestCase):
                 if fault=='none':m.topology(b,host,'mixed',items.__getitem__,lambda:list(items.values()))
                 else:
                     with self.assertRaises((ValueError,FileNotFoundError)):m.topology(b,host,'mixed',items.__getitem__,lambda:list(items.values()))
+
+    def test_real_directory_aliases_share_one_mount_identity(self):
+        modes=['canonical','upper-case','short-name'] if os.name=='nt' else ['canonical']
+        for mode in modes:
+            with self.subTest(mode=mode),tempfile.TemporaryDirectory(prefix='retention-path-alias-') as directory:
+                folder=Path(directory).resolve()
+                if mode=='upper-case':folder=Path(str(folder).upper())
+                elif mode=='short-name':
+                    query=ctypes.windll.kernel32.GetShortPathNameW
+                    query.argtypes=[ctypes.c_wchar_p,ctypes.c_wchar_p,ctypes.c_uint];query.restype=ctypes.c_uint
+                    buffer=ctypes.create_unicode_buffer(32768)
+                    self.assertGreater(query(str(folder),buffer,len(buffer)),0)
+                    folder=Path(buffer.value)
+                self.assertTrue(folder.samefile(folder.resolve()))
+                b,host,items,_=self.fixture(folder)
+                m.topology(b,host,'business-races',items.__getitem__,lambda:list(items.values()))
+
+    def test_rehashed_wrong_and_linked_mount_paths_still_rejected(self):
+        for fault in ['wrong-directory','linked-alias']:
+            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as directory:
+                folder=Path(directory).resolve();b,host,items,_=self.fixture(folder)
+                other=folder/'other';other.mkdir()
+                if fault=='linked-alias':
+                    other.rmdir()
+                    try:other.symlink_to(host['owners']['business-races']['private'],target_is_directory=True)
+                    except OSError:
+                        if os.name!='nt':raise
+                        # Existing native PowerShell Junction support needs no
+                        # symlink privilege. Arguments are data, not script.
+                        result=subprocess.run(['powershell','-NoProfile','-NonInteractive','-Command',
+                            '& { param($link,$target) New-Item -ItemType Junction -Path $link -Target $target -ErrorAction Stop | Out-Null }',
+                            str(other),host['owners']['business-races']['private']],capture_output=True,timeout=30)
+                        self.assertEqual(result.returncode,0,result.stderr.decode('utf-8','replace'))
+                    self.assertTrue(other.is_symlink() or other.is_junction())
+                try:
+                    items['1'*64]['Mounts'][0]['Source']=str(other)
+                    # Even a matching newly supplied descriptor cannot approve
+                    # another directory or hide a link into the expected one.
+                    digest=m.sha(m.canonical(m.descriptor(items['1'*64])))
+                    b['Owners'][0]['DescriptorSHA256']=digest;host['owners']['business-races']['descriptor_sha256']=digest
+                    self.bind(b,host)
+                    with self.assertRaises(ValueError):m.topology(b,host,'business-races',items.__getitem__,lambda:list(items.values()))
+                finally:
+                    if other.is_junction():other.rmdir()
+                    elif other.is_symlink():other.unlink()
 
     def test_seal_continues_after_archive_and_inspect_failures(self):
         with tempfile.TemporaryDirectory() as d:

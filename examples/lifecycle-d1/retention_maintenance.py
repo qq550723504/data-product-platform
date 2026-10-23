@@ -83,14 +83,18 @@ def topology(b,host,group,get=inspect,list_items=None):
     need(not actual['NetworkSettings']['Ports'] and hc['RestartPolicy']['Name']=='no' and not hc['Privileged'] and hc['ReadonlyRootfs'] and
          hc['NetworkMode']=='container:'+selected['Native'] and cfg['User']=='10001:10001' and set(hc['CapDrop'])=={'ALL'} and
          set(hc['SecurityOpt'])=={'no-new-privileges:true'} and hc['Tmpfs']=={'/tmp':'rw,noexec,nosuid,size=16m'},'MAINTENANCE_SANDBOX')
-    expected={'/run/private':(str(Path(item['private']).resolve()),False,'bind'),
-              '/run/output':(str(Path(item['output']).resolve()),True,'bind'),
+    expected={'/run/private':(str(unlinked_absolute(item['private'])),False,'bind'),
+              '/run/output':(str(unlinked_absolute(item['output'])),True,'bind'),
               '/run/budget':(host['budget_name'],True,'volume'),
-              '/runtime/retention':(str(Path(host['binary']).resolve()),False,'bind')}
+              '/runtime/retention':(str(unlinked_absolute(host['binary'])),False,'bind')}
     mounts={x['Destination']:x for x in actual['Mounts']}
     need(len(mounts)==len(actual['Mounts']) and set(mounts)==set(expected),'MAINTENANCE_MOUNT_SET')
     for dest,(source,rw,kind) in expected.items():
-        m=mounts[dest];need(m['Type']==kind and m['RW'] is rw and (m['Name'] if kind=='volume' else m['Source'])==source,'MAINTENANCE_MOUNT_DRIFT')
+        m=mounts[dest];need(m['Type']==kind and m['RW'] is rw,'MAINTENANCE_MOUNT_DRIFT')
+        # Compare the same existing filesystem identity on both sides. Check
+        # links before resolving short/long Windows spellings, as the complete
+        # native entry already does. The signed raw descriptor remains exact.
+        need(m['Name']==source if kind=='volume' else unlinked_absolute(m['Source'])==unlinked_absolute(source),'MAINTENANCE_MOUNT_DRIFT')
     for owner in b['Owners']:
         if owner['Group']!=group:
             previous=get(owner['CID']);need(closed(previous),'MAINTENANCE_OTHER_OWNER_ACTIVE')
