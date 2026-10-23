@@ -53,3 +53,15 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 - 新增 Agent DatasetVersion FK 必须接入现有生命周期准入 fence。migration 73 为 source/input 关系安装现有 admission guard，保留全量 FK 发现与 unreleased demand；Q2 没有释放命令，不将 Agent 引用排除，不放宽 UNKNOWN。新增真实 PostgreSQL 测试检查两个关系各自的内容 pin。
 - 全路径 rewrite 会吞掉实际 Core 深链，属于实现缺陷。收敛为只重写根演示页，现有服务端业务路由在同一新版壳内保留；Core 工作台明确位于 `/core/workbench`。原浏览器契约只调整工作台入口，保留原断言。发布 Trace 的断言随新安全投影改为明确决策 ID、快照/哈希及禁止原始自由文本，历史事实要求不削弱。
 - 上述修复仅改源码及离线/CI测试；本机不执行 migration，不重启预览，不启动 GUI。新增现场 Trace 验收仍 NOT_RUN。
+
+
+作者复核另修正两个历史展示问题：映射列表按 immutable decision ID 识别，允许同一 mutable mapping 的不同真实决策同时出现；冻结快照成员与后来追加的关联证据分别展示，不能把整个关联证据列表冒充发布时冻结 membership。这不是独立评审 PASS；仍需完整范围独立评审。
+
+
+后续 CI 的 action trace 显示服务端已返回成功/明确拒绝及完整 Flight，而嵌在 client-only dynamic 壳内的已连接页面仍保留 pending/旧事实。已连接壳改为稳定、可 SSR 的客户端边界，直接保留 Next router/action children；只有纯演示页使用浏览器存储 provider 与 `ssr:false`。Core 不监听演示 hash、不按演示页面 key 重挂载服务端 children。没有增加自动重发或执行重试，也不放宽既有动作断言。另一个 Trace CI 失败是测试未展开数据版本 details 就用可访问性 locator 查找内部链接，测试改为先执行实际展开交互。
+
+
+整套 Go CI 另暴露两个前置集成缺口：未来 Agent dispatch obligation 不能直接成为当前 worker 的启动必需 handler；现有 dispatcher 的 frozen-obligation 机制已能把未注册 handler 的事件保持失败/未确认。生产者保留完整 obligation，当前 worker 使用明确版本化的已实现消费 profile，仅不声明尚未实现的 AgentActionRequested，其他 route 与 startup 校验不变；不注册空实现，不把意图当 retention-only，不启动新 worker。既有 Redis 故障回归使用同一消费 profile。新编译的 trial-business candidate 严格 schema gate 跟随新增 migration 73，仍拒绝任意旧/新 schema；保留 schema71/72 二进制、运行实例与冻结收据不变，不执行升级或该 CLI。
+
+
+独立复核入口为协调线程 `01a1699c-721d-7125-8b0c-6b3f734f90d8` 对 `fe0bf8f49bbcd87de63a8c817b07631d80580935` 的局部只读源码评审（不是 GitHub 全量批准）。其新增 P2：Agent 2xx 收据未绑定校验，且确认与后续 GET 共用 catch，可能丢失原键并把已保存误报未知。修复在收到匹配收据前保留原请求；确认后先保存事实和明确 task/plan URL，再独立读取，GET 失败只提供只读恢复并禁用新写。离线回归验证畸形/错绑收据、同键同内容重试、有效确认后两个独立 GET 失败及只读恢复不增加 POST。完整 UI/其余文件仍无独立全范围 PASS，且上述修复后的新 HEAD 仍需复核。

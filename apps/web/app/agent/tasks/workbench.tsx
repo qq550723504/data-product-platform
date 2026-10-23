@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Sparkle,MagnifyingGlass,FileText,ArrowRight } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui";
+import {submitAgentCommand,refreshAgentViews,type PendingAgentCommand,type AgentReceipt} from "@/lib/agent-command-receipt";
 
 type Task = { workspaceId:string; id: string; revision: number; controlState: string; currentPlanRevisionId: string; createdAt: string };
 type Plan = { caseId?:string; workflowVersionId?:string; outputDatasetId?:string; targetPeriod?:string; sourceAssessmentId?:string; findingId?:string; id: string; ordinal: number; phase: string; sourceVersionId: string; goal: string; purposeNote: string; acceptanceText: string; contentHash: string; templateRef: string; templateVersion: string; inputs: {inputName: string; datasetVersionId: string}[]; actions: {ordinal:number;commandKind:string}[] };
 type Detail = { task: Task; plan: Plan; plans: {id:string;ordinal:number;phase:string}[]; planPage:{offset:number;total:number}; approvals:{id:string;phase:string;actorId:string;createdAt:string}[]; actions:{id:string;planRevisionId:string;commandKind:string;dispatchState:string}[] };
-type Pending = { path:string; key:string; body:Record<string,unknown> };
+type Pending = PendingAgentCommand;
 const storage = "agent-q2-pending-command";
 const labels:Record<string,string>={ACTIVE:"办理中",PAUSED:"已暂停",STOPPED:"已停止",REQUESTED:"意图已保存 · 未派发",CANCELLED:"意图已取消",DETECT:"质量诊断",ASSIGN_SELF:"受理修复",EXECUTE_REPAIR:"执行修复",RECHECK:"质量复检"};
 const errors:Record<string,string>={AUTHENTICATION_REQUIRED:"尚未验证当前办理人，当前仅可查看。",STALE_TASK_REVISION:"记录已更新，请刷新详情后重新核对。",INVALID_AGENT_COMMAND:"请求字段或格式不正确，请核对必填项。",AGENT_OBJECT_NOT_FOUND:"未找到当前空间内的记录。",PLAN_BINDING_CHANGED:"计划范围已变化，请重新核对并确认。",ACTION_UNRESOLVED:"存在待处理动作意图，不能修订计划。",ACTION_SLOT_CONSUMED:"该动作意图已保存，不能重复受理。",AGENT_WRITES_DISABLED:"当前入口关闭写入。",INPUT_BINDING_INCOMPLETE:"数据、模板或修复依赖尚不完整。",TASK_STOPPED:"委托已停止。",TASK_PAUSED:"请先恢复委托。"};
@@ -16,23 +17,38 @@ export default function TaskWorkbench({repairEditor=false,home=false}:{repairEdi
  const [loading,setLoading]=useState(true),[loadError,setLoadError]=useState("");
  const [view,setView]=useState("plan"),[query,setQuery]=useState(""),[filter,setFilter]=useState("ALL");
  const [tasks,setTasks]=useState<Task[]>([]),[detail,setDetail]=useState<Detail|null>(null),[authority,setAuthority]=useState<{actorId:string;subject:string;writeEnabled:boolean}|null>(null);
+ const [readRecovery,setReadRecovery]=useState<AgentReceipt|null>(null);
  const [offset,setOffset]=useState(0),[total,setTotal]=useState(0),[busy,setBusy]=useState(false),[message,setMessage]=useState(""),[pending,setPending]=useState<Pending|null>(null),[editing,setEditing]=useState(false);
  const [caseId,setCaseId]=useState(""),[workflowId,setWorkflowId]=useState(""),[outputId,setOutputId]=useState(""),[period,setPeriod]=useState(""),[bindings,setBindings]=useState<{inputName:string;datasetVersionId:string}[]>([{inputName:"",datasetVersionId:""}]);
  const [source,setSource]=useState(""),[goal,setGoal]=useState("诊断数据质量问题并整理发现依据"),[purpose,setPurpose]=useState("内部数据治理"),[acceptance,setAcceptance]=useState("保留明确版本、发现项和证据引用"),[reason,setReason]=useState(""),[confirmed,setConfirmed]=useState(false);
  async function list(page=offset){const data=await read(`?offset=${page}`);setTasks(data.items);setOffset(page);setTotal(data.page.total);}
- async function open(id:string,planId?:string,planOffset=0){if(home){location.assign(`/agent/tasks?taskId=${id}`);return;}const d=await read(`/${id}?planOffset=${planOffset}${planId?`&planId=${planId}`:""}`);setDetail(d);setEditing(repairEditor);if(repairEditor)loadFields(d.plan);setConfirmed(false);const url=new URL(location.href);url.searchParams.set("taskId",id);if(planId)url.searchParams.set("planId",planId);else url.searchParams.delete("planId");history.replaceState(null,"",url);}
+ async function open(id:string,planId?:string,planOffset=0){if(home){const target=new URLSearchParams({taskId:id});if(planId)target.set("planId",planId);location.assign(`/agent/tasks?${target}`);return;}const d=await read(`/${id}?planOffset=${planOffset}${planId?`&planId=${planId}`:""}`);setDetail(d);setEditing(repairEditor);if(repairEditor)loadFields(d.plan);setConfirmed(false);const url=new URL(location.href);url.searchParams.set("taskId",id);if(planId)url.searchParams.set("planId",planId);else url.searchParams.delete("planId");history.replaceState(null,"",url);}
  useEffect(()=>{let active=true;async function init(){try{const saved=sessionStorage.getItem(storage);const recovered:Pending|null=saved?JSON.parse(saved):null;if(recovered&&active){setPending(recovered);setMessage("有一笔提交结果尚未核实，请使用原请求重试。");}await list(0);const params=new URLSearchParams(location.search);setView(params.get("view")==="history"?"history":"plan");setSource(params.get("versionId")??"");if(params.get("taskId")){await open(params.get("taskId")!,params.get("planId")??undefined);if(repairEditor&&recovered?.path===`/${params.get("taskId")}/revisions`){const b=recovered.body;setSource(String(b.sourceVersionId??""));setGoal(String(b.goal??""));setPurpose(String(b.purposeNote??""));setAcceptance(String(b.acceptanceText??""));setCaseId(String(b.caseId??""));setWorkflowId(String(b.workflowVersionId??""));setOutputId(String(b.outputDatasetId??""));setPeriod(String(b.targetPeriod??""));setReason(String(b.reason??""));if(Array.isArray(b.inputs))setBindings(b.inputs.map(i=>({inputName:String(i.Name),datasetVersionId:String(i.DatasetVersionID)})));}}}catch(e){if(active){setMessage(String(e));setLoadError(String(e));}}try{const a=await read("/authority");if(active)setAuthority(a);}catch{if(active)setAuthority(null);}finally{if(active)setLoading(false);}}void init();return()=>{active=false;};
  // The initial URL is read once; subsequent selection is explicit.
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[]);
  const writable=authority?.writeEnabled===true;
  const current=detail?.plan.id===detail?.task.currentPlanRevisionId;
- const editable=writable&&!busy&&!pending;
- async function submit(request:Pending){setBusy(true);setPending(request);sessionStorage.setItem(storage,JSON.stringify(request));setMessage("");try{
-  const r=await fetch(`/api/agent-tasks${request.path}`,{method:"POST",headers:{"Content-Type":"application/json","Idempotency-Key":request.key},body:JSON.stringify(request.body)});const data=await r.json();
-  if(!r.ok){const code=data.error?.code??"AGENT_UNAVAILABLE";if(r.status<500){setPending(null);sessionStorage.removeItem(storage);}setMessage(errors[code]??`${code}${r.status<500?"：请求已拒绝，请核对后重新提交。":"：提交结果尚未核实，请重试原请求。"}`);return;}
-  setPending(null);sessionStorage.removeItem(storage);setMessage(`记录已保存 · 收据 ${data.id}`);setReason("");await list();await open(data.taskId);if(repairEditor)location.assign(`/agent/tasks?taskId=${data.taskId}`);
- }catch{setMessage("暂未收到可靠响应。请重试原请求，避免重复办理。");}finally{setBusy(false);}}
+ const editable=writable&&!busy&&!pending&&!readRecovery;
+ async function refreshReceipt(receipt:AgentReceipt){await refreshAgentViews(()=>list(),()=>home?read(`/${receipt.taskId}?planId=${receipt.planRevisionId}`):open(receipt.taskId,receipt.planRevisionId));}
+ function savedLocation(receipt:AgentReceipt){return `/agent/tasks?${new URLSearchParams({taskId:receipt.taskId,planId:receipt.planRevisionId})}`;}
+ async function recoverSaved(receipt:AgentReceipt){setBusy(true);try{await refreshReceipt(receipt);setReadRecovery(null);setMessage(`记录已保存 · 收据 ${receipt.id}`);if(home||repairEditor)location.assign(savedLocation(receipt));}catch{setMessage(`记录已保存 · 收据 ${receipt.id}。只读刷新仍未完成，请继续读取已保存记录，无需重放写入。`);}finally{setBusy(false);}}
+ async function submit(request:Pending){
+  setBusy(true);setPending(request);setMessage("");
+  try{sessionStorage.setItem(storage,JSON.stringify(request));}catch{setMessage("浏览器无法保存恢复信息，本次尚未提交。请恢复存储后重试同一请求。");setBusy(false);return;}
+  try{
+   const result=await submitAgentCommand(request,{post:fetch,confirmed:receipt=>{
+    setPending(null);try{sessionStorage.removeItem(storage);}catch{/* Receipt is confirmed even when browser cleanup fails. */}
+    setReadRecovery(receipt);setMessage(`记录已保存 · 收据 ${receipt.id}`);setReason("");
+    const url=new URL(location.href);url.searchParams.set("taskId",receipt.taskId);url.searchParams.set("planId",receipt.planRevisionId);history.replaceState(null,"",url);
+   },refresh:refreshReceipt});
+   if(result.state==='UNKNOWN'){setMessage("暂未收到匹配的命令收据。提交结果尚未核实，请重试原内容和原幂等键。");return;}
+   if(result.state==='REJECTED'){setPending(null);try{sessionStorage.removeItem(storage);}catch{}setMessage(errors[result.code]??`${result.code}：请求已拒绝，请核对后重新提交。`);return;}
+   if(result.readFailed){setMessage(`记录已保存 · 收据 ${result.receipt.id}。只读刷新失败，已保留保存事实，请读取已保存记录，无需重放写入。`);return;}
+   setReadRecovery(null);if(home||repairEditor)location.assign(savedLocation(result.receipt));
+  }finally{setBusy(false);}
+ }
+ const recoveryBanner=readRecovery&&<div className="callout"><strong>记录已保存，只读恢复</strong><p>收据 {readRecovery.id} · 委托 {readRecovery.taskId} · 计划 {readRecovery.planRevisionId}</p><button className="button" disabled={busy} onClick={()=>void recoverSaved(readRecovery)}>重新读取已保存记录</button> <a href={savedLocation(readRecovery)}>打开已保存委托</a></div>;
  function send(path:string,body:Record<string,unknown>){void submit({path,key:crypto.randomUUID(),body});}
  function loadFields(p:Plan){setSource(p.sourceVersionId);setGoal(p.goal);setPurpose(p.purposeNote);setAcceptance(p.acceptanceText);setCaseId(p.caseId??"");setWorkflowId(p.workflowVersionId??"");setOutputId(p.outputDatasetId??"");setPeriod(p.targetPeriod??"");setBindings(p.phase==="REPAIR"?p.inputs.map(i=>({...i})):[{inputName:"",datasetVersionId:""}]);}
  function edit(){if(!detail)return;if(detail.plan.phase==="REPAIR"){location.assign(`/agent/tasks/repair?taskId=${detail.task.id}`);return;}loadFields(detail.plan);setEditing(true);setConfirmed(false);}
@@ -57,10 +73,10 @@ export default function TaskWorkbench({repairEditor=false,home=false}:{repairEdi
  </form>;
  if(loading)return <div className="design-empty" role="status">正在读取当前工作空间与委托记录…</div>;
  if(loadError)return <div className="callout" role="alert"><h2>未能读取委托记录</h2><p>{errors[loadError.replace("Error: ","")]??"当前查询失败，请核对入口后重新读取。"}</p><button className="button" onClick={()=>location.reload()}>重新读取</button> <Link href="/agent">返回 Agent 工作台</Link></div>;
- if(repairEditor)return <main className="agent-task-form"><Link href={`/agent/tasks${detail?`?taskId=${detail.task.id}`:""}`} className="text-link">← 返回委托详情</Link>{message&&<div role="status" className="callout">{message}</div>}{pending&&<div className="callout">提交结果待核实，保留原内容与幂等键。<button className="button" disabled={busy||!writable} onClick={()=>void submit(pending)}>重试相同提交</button></div>}{!detail?<p>正在加载委托，请从委托详情进入。</p>:!current||detail.task.controlState!=="ACTIVE"||detail.actions.some(a=>a.dispatchState==="REQUESTED")?<p>当前计划不可修订，请返回详情核对状态和待处理意图。</p>:planForm}</main>;
+ if(repairEditor)return <main className="agent-task-form"><Link href={`/agent/tasks${detail?`?taskId=${detail.task.id}`:""}`} className="text-link">← 返回委托详情</Link>{message&&<div role="status" className="callout">{message}</div>}{recoveryBanner}{pending&&<div className="callout">提交结果待核实，保留原内容与幂等键。<button className="button" disabled={busy||!writable} onClick={()=>void submit(pending)}>重试相同提交</button></div>}{!detail?<p>正在加载委托，请从委托详情进入。</p>:!current||detail.task.controlState!=="ACTIVE"||detail.actions.some(a=>a.dispatchState==="REQUESTED")?<p>当前计划不可修订，请返回详情核对状态和待处理意图。</p>:planForm}</main>;
  return <>
   <div className="design-boundary"><Sparkle size={16}/> 确定性模板 · 计划已接入 Core · 模型与执行保持关闭</div>
-  {message&&<div className="callout" role="status">{message}</div>}{pending&&<div className="callout"><strong>提交待核实</strong><p>原幂等键：{pending.key}。重试将使用同一内容和同一键。</p><button className="button" disabled={busy||!writable} onClick={()=>void submit(pending)}>重试相同提交</button></div>}
+  {message&&<div className="callout" role="status">{message}</div>}{recoveryBanner}{pending&&<div className="callout"><strong>提交待核实</strong><p>原幂等键：{pending.key}。重试将使用同一内容和同一键。</p><button className="button" disabled={busy||!writable} onClick={()=>void submit(pending)}>重试相同提交</button></div>}
   {(!detail||editing)&&<>{!editing&&<div className="design-scenarios"><div className="selected"><MagnifyingGlass size={25}/><div><strong>诊断一个质量问题</strong><small>引用明确版本，先审阅诊断计划</small></div><ArrowRight size={19}/></div><div><FileText size={25}/><div><strong>确认一份修复计划</strong><small>从任务详情绑定依赖，独立确认</small></div></div></div>}{planForm}</>}
   {detail&&!editing&&<><div className="design-detail-back"><Link href="/agent">← 返回 Agent 工作台</Link><small>{detail.task.id}</small></div><header className="design-heading design-task-heading"><div><h1>{detail.plan.phase==="REPAIR"?"质量问题修复":"质量问题诊断"}</h1><p>{detail.plan.goal}</p></div><Badge value={labels[detail.task.controlState]} /></header><ol className="design-process" aria-label="委托进度">{[["创建委托",true],["冻结计划",true],["人工确认",detail.approvals.length>0],["保存意图",detail.actions.some(a=>a.planRevisionId===detail.plan.id)]].map(([label,done],index)=><li key={String(label)} className={done?"complete":""}><span>{done?"✓":index+1}</span><strong>{label}</strong><small>{done?"已记录":"待办理"}</small></li>)}</ol><div className="design-detail-grid"><div className="design-task-main"><div className="design-tabs" role="tablist" aria-label="任务视图">{[["plan","计划与确认"],["history","意图与历史"]].map(([key,label])=><button role="tab" aria-selected={view===key} key={key} onClick={()=>{setView(key);const url=new URL(location.href);url.searchParams.set("view",key);history.replaceState(null,"",url);}}>{label}</button>)}</div>
 {view==="plan"&&<>   <section className="card"><div className="design-section-title"><h2>已冻结的计划</h2><span>V{detail.plan.ordinal} · {detail.plan.phase==="REPAIR"?"质量修复":"质量诊断"}</span></div>{!current&&<div className="callout">当前查看历史计划，只用于追溯，不能办理。</div>}

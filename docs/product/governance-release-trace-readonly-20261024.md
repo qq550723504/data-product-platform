@@ -35,3 +35,6 @@
 已建立 [Draft PR #363](https://github.com/qq550723504/data-product-platform/pull/363)，包括前序尚未提交的已批准 Agent/Q1/Q2、新版全站和 Core 只读前置工作，完整范围见 `governance-preview-merge-contract.md`。初始提交为 `4fde49fe8523636da898ada5aff1ba66d0f97426`，不是只提交 Trace。
 
 首轮 CI 暴露 Vet 和新增 Agent FK 未接生命周期准入 guard；源码修复保留强类型 FK 发现与不可释放内容 pin，未变更现场数据、预算、#332 资源或 owner。路由修复只重写根演示页，保留真实 Core 深链并增加 `/core/workbench`；原浏览器测试保留原业务断言。新增现代根页/明确 Trace/越界与缺失 Trace 的 CI 浏览器用例，并复用既有真实 Core 发布历史验收覆盖新投影。最新 CI 结果需按实际修复 HEAD 查询，未完成前不得记录 PASS。独立全范围评审与本地最新预览验收仍未完成，不合并。
+
+
+保留预览库的只读核对发现：其 migration 73 来自本轮源码修复前，当前未安装两个新的 Agent reference admission triggers。没有在现场补装或扩权。未来获准恢复预览时，必须先核对实际 DDL 与新源码、在批准的隔离环境中安装当前 contract 并验证最小锁权限；不能只凭 schema_migration 的数字 73 宣称升级完成。现有计划/意图历史继续保留，不能自动重置。验收 seed/repair-locks 的源码已补上既有 fence/copy 的最小锁权限与同一 preview-only owner-mutation 拒绝保护，本轮未执行。

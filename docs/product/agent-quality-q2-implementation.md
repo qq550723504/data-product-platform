@@ -63,3 +63,10 @@ Agent 工作台、任务详情、上下文侧栏及独立修复绑定页已迁�
 ## 后续全站设计收敛
 
 此前“仅 Agent 使用新壳”的范围已被全站统一界面取代，详见 docs/product/governance-modern-ui-acceptance.md。原 Agent Commands、API 与冻结/幂等契约不变。其他页面仍为本地演示，不能作为真实执行、认证或交付证据。
+
+
+## 2026-10-24 交付评审修复
+
+命令 2xx 响应先验证收据身份、明确 task/plan 与预期修订及命令类型。未匹配收据保留原请求/原键；有效收据先记录已保存事实和明确 task/plan URL，再分别刷新列表/详情。只读刷新失败不变回“提交未知”，不开放新的 CREATE，不重放 POST，提供仅 GET 的已保存记录恢复入口。离线回归覆盖错绑与畸形收据、同键同内容重试和确认后的 GET 故障。
+
+生产者继续冻结 AgentActionRequested 的未履行 dispatch obligation；当前 worker 使用明确版本化的已实现消费 profile，不声明未实现 Agent route，不装空 handler，不消除已有 event 上的 frozen obligation。既有 Dispatcher 在发现缺少 frozen handler 时保持失败/未确认，不把意图变为已执行。此为源码/CI 收口，不启动现场 worker。

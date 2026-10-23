@@ -42,9 +42,13 @@ func TestTraceBoundaryBeforeRepository(t *testing.T) {
 }
 func TestTraceProjectionExcludesSecrets(t *testing.T) {
 	raw := map[string]any{"releaseId": "release", "metadata": map[string]any{"secret": "secret"}, "evidence": []any{map[string]any{"id": "evidence", "storageUri": "secret", "title": "secret", "hashValue": "hash"}}, "executions": []any{map[string]any{"id": "execution", "metrics": map[string]any{"secret": "secret"}}}}
+	raw["evidenceSnapshot"] = map[string]any{"id": "snapshot", "manifest": map[string]any{"secret": "secret"}, "items": []any{map[string]any{"evidenceId": "evidence", "category": "FROZEN"}}}
 	encoded, _ := json.Marshal(redactTrace(raw))
 	if strings.Contains(string(encoded), "secret") {
 		t.Fatal(string(encoded))
+	}
+	if !strings.Contains(string(encoded), "FROZEN") || !strings.Contains(string(encoded), "evidenceId") {
+		t.Fatal("frozen membership lost")
 	}
 	if !strings.Contains(string(encoded), "hash") {
 		t.Fatal("integrity lost")

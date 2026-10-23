@@ -19,9 +19,11 @@ test('exact release trace shows safe historical facts, survives refresh and pres
  await page.goto(url);await expect(page.getByRole('heading',{name:'SYNTHETIC_TRACE · PUBLISHED',exact:true})).toBeVisible();
  await expect(page.getByText('a'.repeat(64),{exact:true})).toBeVisible();
  await expect(page.getByText('INTEGRITY_OK',{exact:true})).toBeVisible();
- await page.locator('summary').filter({hasText:ids.candidate}).click();await expect(page.getByText(ids.decision,{exact:true})).toBeVisible();
+ await page.locator('summary').filter({hasText:ids.decision}).click();await expect(page.getByText(ids.decision,{exact:true})).toBeVisible();
  await page.locator('summary').filter({hasText:ids.deliveryOperation}).click();await expect(page.getByText('0.000000000000000001',{exact:true})).toBeVisible();
+ await page.locator('summary').filter({hasText:ids.goldVersion}).click();
  await expect(page.getByRole('link',{name:'查看明确版本与质量',exact:true})).toHaveAttribute('href',`/core/assets?datasetId=${ids.goldDataset}&versionId=${ids.goldVersion}`);
+ await test.info().attach('modern-release-trace',{body:await page.screenshot({fullPage:true}),contentType:'image/png'});
  await page.reload();await expect(page.getByRole('heading',{name:'SYNTHETIC_TRACE · PUBLISHED',exact:true})).toBeVisible();
  await page.getByRole('link',{name:'返回发布历史',exact:true}).click();await expect(page).toHaveURL(new RegExp(`offset=25&status=PUBLISHED&releaseId=${ids.release}$`));
  expect((await calls(request)).some(c=>c.method!=='GET')).toBe(false);
@@ -33,4 +35,13 @@ test('cross-workspace or missing release never falls back to a known release',as
  await expect(page.getByRole('status')).toContainText('UNKNOWN');
  const reads=await calls(request);expect(reads.filter(c=>c.path.startsWith('/api/v1/traceability/')).map(c=>c.path)).toEqual([`/api/v1/traceability/product-releases/${ids.createdRelease}`]);
  expect(reads.some(c=>c.method!=='GET')).toBe(false);
+});
+
+test('frontend field projection does not render unexpected upstream storage or source fields',async({page,request})=>{
+ await reset(request,'modern-trace-extra');await page.goto(`/core/release-trace?releaseId=${ids.release}`);
+ await expect(page.getByRole('heading',{name:'SYNTHETIC_TRACE · PUBLISHED',exact:true})).toBeVisible();
+ for(const detail of await page.locator('details').all())await detail.locator('summary').click();
+ expect(await page.content()).not.toContain('private-trace-storage-sentinel');
+ expect(await page.content()).not.toContain('private-trace-source-key');
+ expect((await calls(request)).some(c=>c.method!=='GET')).toBe(false);
 });

@@ -13,6 +13,7 @@ package routing
 
 import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"strings"
 )
 
 // Handler names are the per-handler confirmation identities recorded in
@@ -264,4 +265,25 @@ func sourceSchemaHandlers(enabled bool) []string {
 		return []string{HandlerSourceSchemaObservation}
 	}
 	return []string{}
+}
+
+// WorkerVersionFor identifies the currently implemented consumer profile.
+// Producer obligations remain authoritative on each persisted event.
+func WorkerVersionFor(governance bool) string {
+	return strings.Replace(VersionFor(governance), "c1-v", "c1-w", 1)
+}
+
+// NewWorkerRouter declares only implemented worker routes. Q2 records a future
+// Agent dispatch obligation but has no consumer: it must neither prevent the
+// existing worker from starting nor be declared retention-only/acknowledged.
+// A claimed Agent event retains its frozen missing-handler obligation and the
+// existing Dispatcher fails that claim without confirming or publishing it.
+func NewWorkerRouter(governance bool) (*outbox.Router, error) {
+	routes := []outbox.Route{}
+	for _, route := range Routes(governance) {
+		if route.EventType != "AgentActionRequested" {
+			routes = append(routes, route)
+		}
+	}
+	return outbox.NewRouter(WorkerVersionFor(governance), routes)
 }

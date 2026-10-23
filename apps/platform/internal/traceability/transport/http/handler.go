@@ -159,7 +159,7 @@ func redactTrace(value any) any {
 	var data any
 	_ = json.Unmarshal(raw, &data)
 	allowed := map[string]bool{}
-	for _, key := range strings.Fields("workspaceId objectType objectId releaseId releaseNo status productId productVersionId evidenceSnapshot datasetVersions executions entityMatchJobs entityMappings evidence costEvents auditEvents id rootHash integrityValid createdAt datasetId datasetCode datasetType versionNo releaseRole generatedByExecutionId workflowVersionId workflowVersion workflowDefinitionHash attempt engineType outputDatasetVersionId dependencyPreparationStatus decisionId entityId evidenceId sourceOrigin sourceJobId decidedAt evidenceType hashAlgorithm hashValue relationType costType quantity unit amount currency pricingMode occurredAt action actorType") {
+	for _, key := range strings.Fields("workspaceId objectType objectId releaseId releaseNo status productId productVersionId evidenceSnapshot datasetVersions executions entityMatchJobs entityMappings evidence costEvents auditEvents id rootHash integrityValid items category createdAt datasetId datasetCode datasetType versionNo releaseRole generatedByExecutionId workflowVersionId workflowVersion workflowDefinitionHash attempt engineType outputDatasetVersionId dependencyPreparationStatus decisionId entityId evidenceId sourceOrigin sourceJobId decidedAt evidenceType hashAlgorithm hashValue relationType costType quantity unit amount currency pricingMode occurredAt action actorType") {
 		allowed[key] = true
 	}
 	var clean func(any) any

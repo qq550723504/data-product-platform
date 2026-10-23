@@ -48,7 +48,7 @@ const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-ch
 scenarios.add("isolation-empty");
 scenarios.add("isolation-validating");
 scenarios.add("agent-quality-pages");
-scenarios.add("modern-trace");scenarios.add("modern-trace-foreign");
+scenarios.add("modern-trace");scenarios.add("modern-trace-foreign");scenarios.add("modern-trace-extra");
 const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt", "agent-context"]);
 const readFaultModes = new Set(["fail", "denied", "notfound", "invalid", "hold"]);
 for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
@@ -234,9 +234,9 @@ export function createFixtureServer() {
         if(url.searchParams.get('workspaceId')!==ids.workspace)return send(403,{code:'WORKSPACE_AUTHORITY_DENIED'});
         if(!state.scenario.startsWith('modern-trace')||url.pathname!==`/api/v1/traceability/product-releases/${ids.release}`)return send(404,{code:'PRODUCT_RELEASE_NOT_FOUND'});
         return send(200,{workspaceId:ids.workspace,releaseId:ids.release,releaseNo:'SYNTHETIC_TRACE',status:'PUBLISHED',productId:ids.product,productVersionId:ids.version,
-          evidenceSnapshot:{id:ids.goldSnapshot,rootHash:'a'.repeat(64),integrityValid:true,createdAt:stamp},
-          datasetVersions:[{id:ids.goldVersion,datasetId:ids.goldDataset,datasetCode:'SYNTHETIC_GOLD',datasetType:'CURATED',versionNo:1,status:'READY',releaseRole:'OUTPUT'}],
-          executions:[],entityMatchJobs:[],entityMappings:[{id:ids.candidate,decisionId:ids.decision,entityId:ids.entity}],
+          evidenceSnapshot:{id:ids.goldSnapshot,rootHash:'a'.repeat(64),integrityValid:true,createdAt:stamp,items:[{evidenceId:ids.secondEvidence,category:'TEST_EVIDENCE'}]},
+          datasetVersions:[{id:ids.goldVersion,datasetId:ids.goldDataset,datasetCode:'SYNTHETIC_GOLD',datasetType:'CURATED',versionNo:1,status:'READY',releaseRole:'OUTPUT',...(state.scenario==='modern-trace-extra'?{storageUri:'private-trace-storage-sentinel'}:{})}],
+          executions:[],entityMatchJobs:[],entityMappings:[{id:ids.candidate,decisionId:ids.decision,entityId:ids.entity,...(state.scenario==='modern-trace-extra'?{sourceKey:'private-trace-source-key'}:{})}],
           evidence:[{id:ids.secondEvidence,workspaceId:state.scenario==='modern-trace-foreign'?ids.product:ids.workspace,evidenceType:'TEST_EVIDENCE',hashValue:'b'.repeat(64),integrityValid:true}],
           costEvents:[{id:ids.deliveryOperation,workspaceId:ids.workspace,costType:'TEST_COST',quantity:1,unit:'attempt',amount:'0.000000000000000001',currency:'USD',pricingMode:'ACTUAL'}],
           auditEvents:[{id:ids.goldBinding,action:'PRODUCT_RELEASE_PUBLISHED',objectType:'PRODUCT_RELEASE',objectId:ids.release,occurredAt:stamp}]});

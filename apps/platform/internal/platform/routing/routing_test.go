@@ -2,6 +2,7 @@ package routing
 
 import (
 	"sort"
+	"strings"
 	"testing"
 )
 
@@ -301,5 +302,38 @@ func TestRouterImplementsObligationSource(t *testing.T) {
 	}
 	if handlers == nil {
 		t.Fatal("a retention-only obligation must be a non-nil empty handler set, not nil")
+	}
+}
+
+func TestWorkerProfileDoesNotAcceptOrEraseFutureAgentObligations(t *testing.T) {
+	for _, governance := range []bool{false, true} {
+		producer, err := NewRouter(governance)
+		if err != nil {
+			t.Fatal(err)
+		}
+		worker, err := NewWorkerRouter(governance)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if worker.Version() == producer.Version() || len(worker.Version()) > 64 {
+			t.Fatal("consumer profile must have a distinct bounded identity")
+		}
+		required, ok := producer.RequiredHandlers("AgentActionRequested")
+		if !ok || len(required) != 1 || required[0] != "agent-action-dispatch" {
+			t.Fatal("Agent producer obligation erased", required)
+		}
+		if _, ok = worker.RequiredHandlers("AgentActionRequested"); ok {
+			t.Fatal("unimplemented Agent route must not become retention-only")
+		}
+		for _, event := range producer.EventTypes() {
+			if event == "AgentActionRequested" {
+				continue
+			}
+			a, _ := producer.RequiredHandlers(event)
+			b, ok := worker.RequiredHandlers(event)
+			if !ok || strings.Join(a, "|") != strings.Join(b, "|") {
+				t.Fatal("unrelated worker route changed", event)
+			}
+		}
 	}
 }

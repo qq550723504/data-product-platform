@@ -124,7 +124,11 @@ func (r *Repository) productReleaseInWorkspace(ctx context.Context, ws, id uuid.
 			return ReleaseTrace{}, err
 		}
 	}
-	if len(t.DatasetVersions)+len(t.Executions)+len(t.EntityMappings)+len(t.EntityMatchJobs)+len(t.Evidence)+len(t.CostEvents)+len(t.AuditEvents) > 1000 {
+	memberCount := 0
+	if t.EvidenceSnapshot != nil {
+		memberCount = len(t.EvidenceSnapshot.Items)
+	}
+	if len(t.DatasetVersions)+len(t.Executions)+len(t.EntityMappings)+len(t.EntityMatchJobs)+len(t.Evidence)+len(t.CostEvents)+len(t.AuditEvents)+memberCount > 1000 {
 		return ReleaseTrace{}, ErrScope
 	}
 	return t, nil

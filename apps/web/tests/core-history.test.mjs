@@ -81,3 +81,12 @@ test('trace refresh and return retain exact release and filtered history; invali
  assert.equal(new URL(traceSelection({}).back,'http://local').searchParams.has('releaseId'),false);
  for(const q of [{releaseId:[id,other]},{releaseId:'latest'},{returnOffset:'-1'},{returnStatus:'SUSPENDED'}])assert.throws(()=>traceSelection(q));
 });
+
+test('mapping history uses immutable decision identity; snapshot membership stays separate from related evidence',()=>{
+ const mapping={id:other,decisionId:id,entityId:version};
+ const t={workspaceId:ws,releaseId:id,releaseNo:'r1',status:'PUBLISHED',productId:other,productVersionId:version,datasetVersions:[],executions:[],entityMappings:[mapping,{...mapping,decisionId:other}],entityMatchJobs:[],evidence:[{id,workspaceId:ws},{id:version,workspaceId:ws}],costEvents:[],auditEvents:[],evidenceSnapshot:{id:version,rootHash:'a'.repeat(64),integrityValid:true,createdAt:time,items:[{evidenceId:id,category:'FROZEN'}]}};
+ assert.equal(validReleaseTrace(t,ws,id),true); // One mutable mapping, two actual historical decisions.
+ assert.equal(validReleaseTrace({...t,entityMappings:[mapping,mapping]},ws,id),false);
+ assert.equal(validReleaseTrace({...t,evidenceSnapshot:{...t.evidenceSnapshot,items:[{evidenceId:other,category:'MISSING'}]}},ws,id),false);
+ assert.equal(validReleaseTrace({...t,evidenceSnapshot:{...t.evidenceSnapshot,items:undefined}},ws,id),false);
+});
