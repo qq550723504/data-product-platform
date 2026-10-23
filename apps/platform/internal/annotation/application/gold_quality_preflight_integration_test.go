@@ -110,6 +110,9 @@ type goldPreflightIntegrationFixture struct {
 }
 
 func seedGoldPreflightIntegrationFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool) goldPreflightIntegrationFixture {
+	return seedGoldPreflightBaseFixture(t, ctx, pool, true)
+}
+func seedGoldPreflightBaseFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool, recordResult bool) goldPreflightIntegrationFixture {
 	t.Helper()
 	workspaceID := uuid.New()
 	resourceID := uuid.New()
@@ -199,16 +202,18 @@ func seedGoldPreflightIntegrationFixture(t *testing.T, ctx context.Context, pool
 		 WHERE id=$1
 	`, campaignID, strings.Repeat("c", 64), inputChecksum)
 
-	payload := []byte(`{"label":"A"}`)
-	goldPreflightExec(t, ctx, pool, `
+	if recordResult {
+		payload := []byte(`{"label":"A"}`)
+		goldPreflightExec(t, ctx, pool, `
 		INSERT INTO annotation_result(
 			id, workspace_id, campaign_id, task_id, author_ref,
 			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
 			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
 		) VALUES ($1,$2,$3,$4,'annotator','fixture-provider','gold-preflight-task','gold-preflight-annotation','1',$5,$6,$7,'fixture-v1')
 	`, resultID, workspaceID, campaignID, taskID, "gold-preflight:"+uuid.NewString(), payload, goldPreflightSHA256(payload))
-	goldPreflightExec(t, ctx, pool, "UPDATE annotation_task SET status='REVIEWABLE', revision=2 WHERE id=$1", taskID)
+		goldPreflightExec(t, ctx, pool, "UPDATE annotation_task SET status='REVIEWABLE', revision=2 WHERE id=$1", taskID)
 
+	}
 	return goldPreflightIntegrationFixture{
 		workspaceID: workspaceID,
 		campaignID:  campaignID,

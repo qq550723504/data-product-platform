@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,15 +18,17 @@ import (
 
 	"github.com/google/uuid"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
+	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 )
 
 const Provider = "LABEL_STUDIO"
 
 type Client struct {
-	baseURL     string
-	token       string
-	instanceRef string
-	httpClient  *http.Client
+	sourceContract annotationdomain.SourceContract
+	baseURL        string
+	token          string
+	instanceRef    string
+	httpClient     *http.Client
 }
 
 func NewClient(baseURL, token, instanceRef string, httpClient *http.Client) (*Client, error) {
@@ -47,10 +50,15 @@ func NewClient(baseURL, token, instanceRef string, httpClient *http.Client) (*Cl
 	return &Client{baseURL: baseURL, token: token, instanceRef: instanceRef, httpClient: httpClient}, nil
 }
 
+func (c *Client) SourceContract() annotationdomain.SourceContract { return c.sourceContract }
+
 func (c *Client) Provider() string    { return Provider }
 func (c *Client) InstanceRef() string { return c.instanceRef }
 
 func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.EngineCampaignRequest) (annotationapp.EngineCampaignBinding, error) {
+	if err := c.validateContract(req.SourceContract); err != nil {
+		return annotationapp.EngineCampaignBinding{}, err
+	}
 	if req.WorkspaceID == uuid.Nil || req.CampaignID == uuid.Nil ||
 		strings.TrimSpace(req.RequestID) == "" || strings.TrimSpace(req.RequestFingerprint) == "" ||
 		strings.TrimSpace(req.Title) == "" || strings.TrimSpace(req.SchemaContent) == "" ||
@@ -90,7 +98,7 @@ func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.En
 		)
 	}
 	if strings.TrimSpace(project.LabelConfig) != "" &&
-		strings.TrimSpace(project.LabelConfig) != strings.TrimSpace(labelConfig) {
+		project.LabelConfig != labelConfig {
 		return annotationapp.EngineCampaignBinding{}, annotationapp.NewAnnotationEngineError(
 			annotationapp.ErrAnnotationEngineInvalidResponse, "verify project config", false, 0, nil,
 		)
@@ -125,6 +133,9 @@ func (c *Client) LookupCampaignBinding(
 	ctx context.Context,
 	req annotationapp.EngineCampaignRequest,
 ) (annotationapp.EngineCampaignLookup, error) {
+	if err := c.validateContract(req.SourceContract); err != nil {
+		return annotationapp.EngineCampaignLookup{}, err
+	}
 	if req.WorkspaceID == uuid.Nil || req.CampaignID == uuid.Nil ||
 		strings.TrimSpace(req.RequestID) == "" || strings.TrimSpace(req.RequestFingerprint) == "" ||
 		strings.TrimSpace(req.SchemaContent) == "" || strings.TrimSpace(req.SchemaSHA256) == "" {
@@ -169,13 +180,14 @@ func (c *Client) LookupCampaignBinding(
 			if strings.TrimSpace(project.Description) != expectedDescription {
 				continue
 			}
-			if strings.TrimSpace(project.LabelConfig) != strings.TrimSpace(labelConfig) {
+			if project.LabelConfig != labelConfig {
 				return annotationapp.EngineCampaignLookup{
 					State:         annotationapp.EngineLookupConflict,
 					DiagnosticRef: "correlated project config mismatch",
 				}, nil
 			}
 			binding := annotationapp.EngineCampaignBinding{
+				SourceContract:    c.sourceContract,
 				Provider:          Provider,
 				ProviderInstance:  c.instanceRef,
 				ExternalProjectID: project.ID.String(),
@@ -225,6 +237,9 @@ func (c *Client) VerifyCampaignBinding(
 	ctx context.Context,
 	binding annotationapp.EngineCampaignBinding,
 ) error {
+	if err := c.validateContract(binding.SourceContract); err != nil {
+		return err
+	}
 	if err := validateBinding(c.instanceRef, binding); err != nil {
 		return err
 	}
@@ -245,7 +260,7 @@ func (c *Client) VerifyCampaignBinding(
 			nil,
 		)
 	}
-	sum := sha256.Sum256([]byte(strings.TrimSpace(project.LabelConfig)))
+	sum := sha256.Sum256([]byte(project.LabelConfig))
 	if hex.EncodeToString(sum[:]) != strings.TrimSpace(binding.ConfigSHA256) {
 		return annotationapp.NewAnnotationEngineError(
 			annotationapp.ErrAnnotationEngineInvalidResponse,
@@ -259,6 +274,9 @@ func (c *Client) VerifyCampaignBinding(
 }
 
 func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmitRequest) (annotationapp.EngineSubmission, error) {
+	if err := c.validateContract(req.Binding.SourceContract); err != nil {
+		return annotationapp.EngineSubmission{}, err
+	}
 	if err := validateBinding(c.instanceRef, req.Binding); err != nil {
 		return annotationapp.EngineSubmission{}, err
 	}
@@ -340,6 +358,9 @@ func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmit
 }
 
 func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineLookupRequest) (annotationapp.EngineSubmission, error) {
+	if err := c.validateContract(req.Binding.SourceContract); err != nil {
+		return annotationapp.EngineSubmission{}, err
+	}
 	if err := validateBinding(c.instanceRef, req.Binding); err != nil {
 		return annotationapp.EngineSubmission{}, err
 	}
@@ -431,6 +452,12 @@ func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineL
 }
 
 func (c *Client) FetchResults(ctx context.Context, req annotationapp.EngineLookupRequest, cursor annotationapp.EngineResultCursor) (annotationapp.EngineResultPage, error) {
+	if req.Binding.Protocol() == annotationdomain.ControlledSubmissionProtocol {
+		return c.fetchSubmissions(ctx, req, cursor)
+	}
+	if req.Binding.Protocol() != annotationdomain.OfficialCEProtocol || c.sourceContract.Protocol() != annotationdomain.OfficialCEProtocol {
+		return annotationapp.EngineResultPage{}, annotationapp.ErrAnnotationEngineInvalidRequest
+	}
 	if err := validateBinding(c.instanceRef, req.Binding); err != nil {
 		return annotationapp.EngineResultPage{}, err
 	}
@@ -614,7 +641,7 @@ func (c *Client) verifyProjectConfig(
 			nil,
 		)
 	}
-	sum := sha256.Sum256([]byte(strings.TrimSpace(project.LabelConfig)))
+	sum := sha256.Sum256([]byte(project.LabelConfig))
 	if hex.EncodeToString(sum[:]) != strings.TrimSpace(binding.ConfigSHA256) {
 		return annotationapp.NewAnnotationEngineError(
 			annotationapp.ErrAnnotationEngineInvalidResponse,
@@ -726,7 +753,7 @@ func (c *Client) authorizationHeader(_ context.Context) (string, error) {
 	return "Token " + c.token, nil
 }
 
-func (c *Client) requestJSON(ctx context.Context, method, path string, query url.Values, body []byte, target any) error {
+func (c *Client) requestJSON(ctx context.Context, method, path string, query url.Values, body []byte, target any) (retErr error) {
 	requestURL := c.baseURL + path
 	if len(query) > 0 {
 		requestURL += "?" + query.Encode()
@@ -749,6 +776,18 @@ func (c *Client) requestJSON(ctx context.Context, method, path string, query url
 	req.Header.Set("Accept", "application/json")
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
+	}
+	if c.sourceContract.Protocol() == annotationdomain.ControlledSubmissionProtocol {
+		observer := annotationapp.EngineInvocationFromContext(ctx)
+		if observer == nil || observer.Start == nil || observer.Finish == nil {
+			return annotationapp.ErrAnnotationEngineInvalidRequest
+		}
+		attempt, startErr := observer.Start(ctx)
+		if startErr != nil {
+			return startErr
+		}
+		observer.LastAttemptID = attempt.ID
+		defer func() { retErr = errors.Join(retErr, observer.Finish(ctx, attempt, retErr)) }()
 	}
 	resp, err := c.httpClient.Do(req)
 	if err != nil {

@@ -79,7 +79,7 @@ B [#72 固定交接](https://github.com/qq550723504/annotation-engine-label-stud
 
 ## 实施差额与生效门禁
 
-当前 DPP 尚未实现新协议所需的完整 SourceResultBinding、所有 Result replay 的来源复核、Snapshot 来源闭包完整性以及 REVIEWED/SEALED 后到留证；差额和必要负例以 Domain 文档为权威。本 ADR 不能把已有 #205/#208 CE PASS、B 的本地服务端 PASS 或文档 CI 当作这些功能已实现。
+截至 #293 文档准入基线，DPP 尚未实现新协议所需的完整 SourceResultBinding、所有 Result replay 的来源复核、Snapshot 来源闭包完整性以及 REVIEWED/SEALED 后到留证；差额和必要负例以 Domain 文档为权威。本 ADR 不能把已有 #205/#208 CE PASS、B 的本地服务端 PASS 或文档 CI 当作这些功能已实现。#294 的实现与验收差额另见 [实施验收记录](../acceptance/issue294-controlled-submission.md)，不改写本 ADR 的设计准入历史或候选门禁。
 
 - 本次仅新增 ADR 并同步旧 ADR、能力地图和 integration 的准入索引，保留已确认的三文档业务契约；文档准入随本 PR 合并生效，合并仍需用户单独授权。
 - D 只有在文档评审/精确 HEAD CI、获授权文档合并及对应 main CI、B 的获授权可消费产物/环境边界，以及独立 D 实施授权后才能开工；不得因本 ADR 落盘或 CI 通过自行启动。
