@@ -73,3 +73,9 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 `b992606c` 的 Go/Web、来源接纳和 107 项浏览器契约通过，真实 Core 的 review/publish/certified/history 也全部通过并生成 LIVE_CORE_BROWSER_VERIFIED。后续 Gold 阶段失败截图明确显示 Quality HTTP 401：它只设置 token，没有像第一阶段配置启用的可信 actor/subject/workspace，强化后的读取正确拒绝。仅补齐该隔离 fixture 的明确身份，不放宽接口校验，保留 Gold 的全部事实断言。本机仍不运行该 fixture。trial 契约首个本 HEAD run 终态 cancelled（所有步骤为 success 也不能算通过），已对该精确 HEAD 的 cancelled job 请求一次完整有效重跑；旧取消记录保留。
 
 `582cc7f6` 的完整 Go/Web、真实 Core（含 LIVE_CORE_BROWSER_VERIFIED 与 LIVE_GOLD_BROWSER_VERIFIED）、demo、来源准入和 trial 契约均通过；浏览器契约 106/107 通过。唯一失败的 trace.zip 显示测试在工作台→attention 的导航尚未提交时即开始连续点击旧分页链接，最终停于 offset75，期望 offset100/5行。已保留 artifact12522785890（SHA256 9fce7fb813f0c8c86a596954af3a8ad247b58f61be4233533403db507590af84），仅补测试的逐页目标 href / URL 提交见证，保留末页5行、筛选页码与无写入断言，不增加 sleep/retry、不改产品逻辑。新 HEAD 仍需完整 CI，旧失败不能算 PASS。本机与完整独立评审门禁不变。
+
+## 完整独立审查中的阻塞修复批次
+
+协调审查逐模块展开后确认三个当前合同内 BLOCKER：B01 Agent/Core 读取校验遗漏直接渲染字段（configured template name/version、history.ruleSetRef、report.ruleSetVersion、finding.reason/severity，及时间字段类型），可能让畸形响应突破区域 UNKNOWN 并导致 React 页面错误；B02 UNKNOWN 原请求在后续身份/写开关拒绝时被误作确定未提交，清掉原幂等键；B03 Trace 使用大小写敏感 UUID 字符串比较，拒绝 Go 已接受的大写配置。
+
+B01 补齐所有该组件直接渲染字段与所选上下文形状校验；实际 CoreQualityView 离线 render 负例保留明确版本与成功兄弟区域，不发 latest/fallback 读取。B02 在发送前持久化 unresolved 标记，刷新恢复一律保持未决；仅首次明确拒绝可清理，曾未决请求的4xx不终结其历史结果。协议序列与实际 workbench hook/存储/按钮回归验证原键原body保留、新CREATE被禁、恢复后匹配收据才清理；不自动增加POST。B03 统一 UUID identity 比较、规范化重复检测和冻结成员展示；保留真实越界/非法/重复负例。同根因同时补齐认证/发布历史直接展示的可选依据UUID引用校验，保留缺失/null；实际历史页render负例保持明确版本并局部UNKNOWN。Agent离线回归20项、历史回归11项通过，B01原始负例已在修复前复现。新提交必须重新完整CI并由独立审查入口复核，作者修复不构成独立签核。现场API/浏览器/DDL继续NOT_RUN，无本机启动或迁移。

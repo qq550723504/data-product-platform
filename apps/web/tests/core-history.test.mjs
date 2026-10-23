@@ -90,3 +90,45 @@ test('mapping history uses immutable decision identity; snapshot membership stay
  assert.equal(validReleaseTrace({...t,evidenceSnapshot:{...t.evidenceSnapshot,items:[{evidenceId:other,category:'MISSING'}]}},ws,id),false);
  assert.equal(validReleaseTrace({...t,evidenceSnapshot:{...t.evidenceSnapshot,items:undefined}},ws,id),false);
 });
+
+test('Trace UUID equivalence accepts uppercase configured scopes and rejects case-variant duplicates',()=>{
+ const scope='abcdefab-abcd-4abc-8abc-abcdefabcdef';
+ const t={workspaceId:scope,releaseId:id,releaseNo:'r1',status:'PUBLISHED',productId:version,productVersionId:other,datasetVersions:[],executions:[],entityMappings:[],entityMatchJobs:[],evidence:[{id,workspaceId:scope.toUpperCase()}],costEvents:[],auditEvents:[],evidenceSnapshot:{id:other,rootHash:'hash',integrityValid:true,items:[{evidenceId:id.toUpperCase(),category:'FROZEN'}]}};
+ assert.equal(validReleaseTrace(t,scope.toUpperCase(),id.toUpperCase(),version.toUpperCase()),true);
+ assert.equal(validReleaseTrace({...t,workspaceId:other},scope.toUpperCase(),id),false);
+ assert.equal(validReleaseTrace({...t,evidence:[{id,workspaceId:other}]},scope,id),false);
+ assert.equal(validReleaseTrace({...t,evidence:[...t.evidence,{...t.evidence[0],id:id.toUpperCase()}]},scope,id),false);
+ assert.equal(validReleaseTrace({...t,evidenceSnapshot:{...t.evidenceSnapshot,items:[...t.evidenceSnapshot.items,{evidenceId:id,category:'FROZEN'}]}},scope,id),false);
+ assert.equal(validReleaseTrace(t,'invalid',id),false);
+});
+
+test('history binding references accept absent/null identities but reject object children before actual page render',async()=>{
+ const release={id,productId:id,productVersionId:other,releaseNo:'r1',status:'DRAFT',createdAt:time,releaseNotes:''};
+ const page={limit:25,offset:0,total:1};
+ const certKeys=['rightsSnapshotId','effectiveRightsSnapshotId','complianceResultId','contractVersionId','evidenceSnapshotId'];
+ const releaseKeys=['qualityResultId','rightsSnapshotId','complianceResultId','contractVersionId','evidenceSnapshotId'];
+ for(const [certification,record,keys] of [[true,cert,certKeys],[false,release,releaseKeys]]){
+  const h=value=>certification?{...history,items:[value]}:{workspaceId:ws,items:[value],page};
+  const valid=value=>certification?validCertificationHistory(h(value),ws,s):validReleaseHistory(h(value),ws,{offset:0,status:''});
+  for(const key of keys){
+   for(const value of [undefined,null,id])assert.equal(valid({...record,[key]:value}),true,key);
+   for(const value of [{},[],false,0,'not-a-uuid'])assert.equal(valid({...record,[key]:value}),false,key);
+   const imports={
+    'react/jsx-runtime':require('react/jsx-runtime'),
+    './core-history-records':require('../components/core-history-records.tsx'),
+    '@/components/ui':{PageHeader:({title})=>React.createElement('h1',null,title),EmptyState:()=>null},
+    '@/lib/platform':{configuredWorkspaceId:()=>ws},
+    '@/lib/quality-server':{qualityRead:async()=>h({...record,[key]:{}})},
+    '@/lib/workbench-read':require('../.history-tests/workbench-read.js'),
+    '@/lib/agent-quality-server':{readAgentContext:async()=>({dataset:{name:'known source'},version:{id:version,versionNo:1}})},
+    '@/lib/agent-quality':{agentSelection:x=>x,validAgentContext:()=>true},
+    '@/lib/core-history':require('../.history-tests/core-history.js'),
+   };
+   const code=ts.transpileModule(fs.readFileSync(new URL('../components/core-history-view.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS}}).outputText;
+   const mod={exports:{}};new Function('require','module','exports',code)(name=>{assert.ok(name in imports,name);return imports[name];},mod,mod.exports);
+   const element=await mod.exports.default({certification,searchParams:Promise.resolve(certification?{versionId:version}:{})});
+   const html=renderToStaticMarkup(element);assert.match(html,/UNKNOWN/);assert.match(html,/历史读取失败/);
+   if(certification)assert.ok(html.includes(version));
+  }
+ }
+});

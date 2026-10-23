@@ -1,5 +1,5 @@
 import {isIdentity} from './quality-attention';
-export type PendingAgentCommand={path:string;key:string;body:Record<string,unknown>};
+export type PendingAgentCommand={path:string;key:string;body:Record<string,unknown>;unresolved?:boolean};
 export type AgentReceipt={id:string;taskId:string;planRevisionId:string;taskRevision:number;approvalId?:string;actionId?:string};
 type Reply={ok:boolean;status:number;json():Promise<unknown>};
 type Result={state:'UNKNOWN'}|{state:'REJECTED';code:string}|{state:'CONFIRMED';receipt:AgentReceipt;readFailed:boolean};
@@ -27,7 +27,9 @@ export async function submitAgentCommand(request:PendingAgentCommand,io:{post:(u
   const data=await response.json();
   if(!response.ok){
    const code=data&&typeof data==='object'?(data as {error?:{code?:unknown}}).error?.code:undefined;
-   if(response.status>=400&&response.status<500&&![408,425,429].includes(response.status)&&typeof code==='string'&&/^[A-Z][A-Z0-9_]+$/.test(code))return {state:'REJECTED',code};
+   // A refusal before receipt lookup (auth, workspace, write switch, etc.)
+   // cannot settle an earlier attempt whose response was lost.
+   if(!request.unresolved&&response.status>=400&&response.status<500&&![408,425,429].includes(response.status)&&typeof code==='string'&&/^[A-Z][A-Z0-9_]+$/.test(code))return {state:'REJECTED',code};
    return {state:'UNKNOWN'};
   }
   if(!matchingAgentReceipt(data,request))return {state:'UNKNOWN'};

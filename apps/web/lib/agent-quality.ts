@@ -53,7 +53,10 @@ export type AgentSelection = {
 };
 export const AGENT_PAGE_SIZE = 25;
 const same = (a: string, b: string) =>
+  typeof a === "string" && typeof b === "string" &&
   isIdentity(a) && isIdentity(b) && a.toLowerCase() === b.toLowerCase();
+const time = (value: string) =>
+  typeof value === "string" && Number.isFinite(Date.parse(value));
 
 export function agentSelection(
   query: Record<string, string | string[] | undefined>,
@@ -131,27 +134,30 @@ export function validAgentContext(
   workspace: string,
   s: AgentSelection,
 ): boolean {
+  if (!c || !c.template) return false;
   const dataset = (d: AgentDataset) =>
+    !!d &&
     same(d.workspaceId, workspace) &&
     isIdentity(d.id) &&
     typeof d.name === "string" &&
     typeof d.code === "string" &&
     typeof d.datasetType === "string";
   const version = (v: AgentVersion) =>
+    !!v &&
     isIdentity(v.id) &&
     !!c.dataset &&
     same(v.datasetId, c.dataset.id) &&
     Number.isSafeInteger(v.versionNo) &&
     v.versionNo > 0 &&
     typeof v.status === "string" &&
-    Number.isFinite(Date.parse(v.createdAt)) &&
+    time(v.createdAt) &&
     (v.rowCount === undefined ||
       (Number.isSafeInteger(v.rowCount) && v.rowCount >= 0));
   if (
     !same(c.workspaceId, workspace) ||
     c.mode !== "READ_ONLY" ||
     c.executionReadiness !== "NOT_EVALUATED" ||
-    !Number.isFinite(Date.parse(c.readAt)) ||
+    !time(c.readAt) ||
     typeof c.template.configured !== "boolean" ||
     !Array.isArray(c.template.inputs) ||
     !Array.isArray(c.unverified) ||
@@ -160,8 +166,10 @@ export function validAgentContext(
     return false;
   if (
     c.template.configured &&
-    (!c.template.name ||
-      !c.template.version ||
+    (typeof c.template.name !== "string" || !c.template.name ||
+      typeof c.template.version !== "string" || !c.template.version ||
+      typeof c.template.hash !== "string" ||
+      typeof c.template.workflowHash !== "string" ||
       !/^[a-f0-9]{64}$/.test(c.template.hash ?? "") ||
       !/^[a-f0-9]{64}$/.test(c.template.workflowHash ?? ""))
   )
@@ -169,6 +177,7 @@ export function validAgentContext(
   if (
     !c.template.inputs.every(
       (i) =>
+        !!i &&
         typeof i.name === "string" &&
         typeof i.datasetType === "string" &&
         typeof i.required === "boolean",
@@ -177,6 +186,7 @@ export function validAgentContext(
     return false;
   if (s.versionId)
     return (
+      c.datasets === undefined && c.versions === undefined &&
       !!c.dataset &&
       dataset(c.dataset) &&
       !!c.version &&
@@ -186,6 +196,7 @@ export function validAgentContext(
     );
   if (s.datasetId)
     return (
+      c.datasets === undefined && c.version === undefined &&
       !!c.dataset &&
       dataset(c.dataset) &&
       same(c.dataset.id, s.datasetId) &&
@@ -193,6 +204,7 @@ export function validAgentContext(
       validPage(c.versions, AGENT_PAGE_SIZE, s.offset, version)
     );
   return (
+    c.dataset === undefined && c.version === undefined && c.versions === undefined &&
     !!c.datasets && validPage(c.datasets, AGENT_PAGE_SIZE, s.offset, dataset)
   );
 }
@@ -231,6 +243,7 @@ export async function readAgentEvidence(
             same(a.workspaceId, workspace) &&
             same(a.datasetVersionId, version) &&
             isIdentity(a.id) &&
+            typeof a.ruleSetRef === "string" &&
             typeof a.gateDecision === "string",
         ),
     ),
@@ -242,7 +255,8 @@ export async function readAgentEvidence(
             return (
               typeof r.gateDecision === "string" &&
               typeof r.ruleSetRef === "string" &&
-              Number.isFinite(Date.parse(r.createdAt)) &&
+              typeof r.ruleSetVersion === "string" &&
+              time(r.createdAt) &&
               validPage(
                 r.findings,
                 AGENT_PAGE_SIZE,
@@ -251,14 +265,16 @@ export async function readAgentEvidence(
                   isIdentity(f.id) &&
                   same(f.resultId, r.id) &&
                   typeof f.ruleId === "string" &&
+                  typeof f.severity === "string" &&
+                  (f.reason === undefined || typeof f.reason === "string") &&
                   typeof f.status === "string",
               ) &&
               Array.isArray(r.evidence) &&
               r.evidence.every(
-                (e) => isIdentity(e.id) && same(e.workspaceId, workspace) && typeof e.evidenceType==='string' && typeof e.relationType==='string' && typeof e.sourceType==='string' && (!e.sourceId || isIdentity(e.sourceId)) && (e.hashAlgorithm===undefined || typeof e.hashAlgorithm==='string') && (e.hashValue===undefined || typeof e.hashValue==='string') && Number.isFinite(Date.parse(e.createdAt)),
+                (e) => isIdentity(e.id) && same(e.workspaceId, workspace) && typeof e.evidenceType==='string' && typeof e.relationType==='string' && typeof e.sourceType==='string' && (e.sourceId === undefined || (typeof e.sourceId==='string' && isIdentity(e.sourceId))) && (e.hashAlgorithm===undefined || typeof e.hashAlgorithm==='string') && (e.hashValue===undefined || typeof e.hashValue==='string') && time(e.createdAt),
               ) &&
               Array.isArray(r.auditEvents) &&
-              r.auditEvents.every((e) => isIdentity(e.id) && same(e.objectId,r.id) && typeof e.action==='string' && typeof e.objectType==='string' && typeof e.actorType==='string' && Number.isFinite(Date.parse(e.occurredAt)))
+              r.auditEvents.every((e) => isIdentity(e.id) && same(e.objectId,r.id) && typeof e.action==='string' && typeof e.objectType==='string' && typeof e.actorType==='string' && time(e.occurredAt))
             );
           },
         )
@@ -271,7 +287,7 @@ export async function readAgentEvidence(
             same(a.workspaceId, workspace) &&
             same(a.datasetVersionId, version) &&
             typeof a.outcome === "string" &&
-            (!a.assessmentId || isIdentity(a.assessmentId)),
+            (a.assessmentId === undefined || (typeof a.assessmentId === "string" && isIdentity(a.assessmentId))),
         )
       : Promise.resolve(null),
   ]);

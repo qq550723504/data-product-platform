@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 const require = createRequire(import.meta.url);
 const {
   agentSelection,
@@ -24,6 +25,7 @@ const assessment = {
   workspaceId: ws,
   datasetVersionId: version,
   ruleSetRef: "fixture/rules",
+  ruleSetVersion: "v1",
   createdAt: "2026-10-23T00:00:00Z",
   gateDecision: "BLOCKED",
 };
@@ -213,4 +215,70 @@ test("expanded evidence and audit facts require renderable fields and the exact 
  const reads={history:async()=>({datasetVersionId:version,...page([assessment])}),report:async()=>full,attempt:async()=>{throw Error('unknown')}};
  assert.equal((await readAgentEvidence(ws,selection,reads)).report.id,old);
  assert.equal((await readAgentEvidence(ws,selection,{...reads,report:async()=>({...full,auditEvents:[{...full.auditEvents[0],objectId:newer}]})})).report,null);
+});
+
+test("all template and selected report display fields reject objects before rendering",async()=>{
+ const template={configured:true,name:'repair',version:'v1',hash:'a'.repeat(64),workflowHash:'b'.repeat(64),inputs:[]};
+ for(const key of ['name','version','hash','workflowHash'])assert.equal(validAgentContext({...context,template:{...template,[key]:{}}},ws,selection),false,key);
+ const finding={id:newer,resultId:old,ruleId:'r',severity:'CRITICAL',status:'FAIL',reason:'known reason'};
+ const reads={history:async()=>({datasetVersionId:version,...page([assessment])}),report:async()=>report,attempt:async()=>({id:attemptId,workspaceId:ws,datasetVersionId:version,outcome:'SUCCEEDED'})};
+ for(const changed of [
+  ...['ruleSetVersion','createdAt'].map(key=>({...report,[key]:{}})),
+  ...['reason','severity'].map(key=>({...report,findings:page([{...finding,[key]:{}}])})),
+ ]){
+  const result=await readAgentEvidence(ws,selection,{...reads,report:async()=>changed});
+  assert.equal(result.report,null);assert.equal(result.history.items[0].id,old);assert.equal(result.attempt.id,attemptId);
+ }
+ const result=await readAgentEvidence(ws,selection,{...reads,history:async()=>({datasetVersionId:version,...page([{...assessment,ruleSetRef:{}}])})});
+ assert.equal(result.history,null);assert.equal(result.report.id,old);
+});
+
+async function renderQuality({source=context,history=assessment,selected=report}={}){
+ const ts=require('typescript'),React=require('react');
+ const sourceCode=readFileSync(new URL('../components/core-quality-view.tsx',import.meta.url),'utf8');
+ const code=ts.transpileModule(sourceCode,{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ const calls=[];
+ const modules={
+  'react/jsx-runtime':require('react/jsx-runtime'),
+  './core-quality-cost':{default:()=>null},
+  '@/components/ui':{
+   Badge:({value})=>React.createElement('span',null,value),
+   BackLink:({children,href})=>React.createElement('a',{href},children),
+   EmptyState:({title,description})=>React.createElement('p',null,title,description),
+   PageHeader:({title})=>React.createElement('h1',null,title),
+  },
+  '@/lib/platform':{configuredWorkspaceId:()=>ws,platform:{
+   qualityAssessments:async()=>({datasetVersionId:version,...page([history])}),
+   qualityReport:async id=>{calls.push(id);return selected;},
+   qualityAttempt:async()=>({id:attemptId,workspaceId:ws,datasetVersionId:version,outcome:'SUCCEEDED'}),
+  }},
+  '@/lib/workbench-read':require('../.agent-tests/workbench-read.js'),
+  '@/lib/agent-quality-server':{readAgentContext:async()=>source},
+  '@/lib/agent-quality':require('../.agent-tests/agent-quality.js'),
+ };
+ const mod={exports:{}};new Function('require','module','exports',code)(name=>{assert.ok(name in modules,name);return modules[name];},mod,mod.exports);
+ const element=await mod.exports.default({searchParams:Promise.resolve({datasetId:ds,versionId:version,assessmentId:old,attemptId})});
+ return {html:require('react-dom/server').renderToStaticMarkup(element),calls};
+}
+
+test('actual CoreQualityView renders malformed report/history as local UNKNOWN with known siblings intact',async()=>{
+ const finding={id:newer,resultId:old,ruleId:'r',severity:'CRITICAL',status:'FAIL',reason:'known reason'};
+ for(const selected of [
+  {...report,ruleSetVersion:{}},
+  ...['reason','severity'].map(key=>({...report,findings:page([{...finding,[key]:{}}])})),
+ ]){
+  const {html,calls}=await renderQuality({selected});
+  assert.match(html,/UNKNOWN/);assert.match(html,/所选报告/);
+  assert.ok(html.includes(version));assert.match(html,/fixture\/rules/);assert.match(html,/SUCCEEDED/);
+  assert.deepEqual(calls,[old]);
+ }
+ const {html,calls}=await renderQuality({history:{...assessment,ruleSetRef:{}}});
+ assert.match(html,/评测列表读取失败/);assert.match(html,/fixture\/rules/);assert.match(html,/v1/);assert.ok(html.includes(version));assert.deepEqual(calls,[old]);
+});
+
+test('actual CoreQualityView rejects malformed configured template before rendering and reads no unrelated evidence',async()=>{
+ for(const key of ['name','version']){
+  const {html,calls}=await renderQuality({source:{...context,template:{configured:true,name:'repair',version:'v1',hash:'a'.repeat(64),workflowHash:'b'.repeat(64),inputs:[],[key]:{}}}});
+  assert.match(html,/UNKNOWN/);assert.deepEqual(calls,[]);
+ }
 });
