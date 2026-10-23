@@ -99,7 +99,7 @@ func RemainingRetainedIdentities(group string) map[string]string {
 		}
 	}
 	if scope, err := RemainingScopeFor(group); err == nil {
-		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7", "a5d1e569", "9ba214bd"} {
+		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7", "a5d1e569", "9ba214bd", "0e5cb8f3"} {
 			for _, prefix := range []string{"i", "d"} {
 				user := prefix + execution + scope.Run.String()[:8]
 				result[user] = "lifecycle307-six-" + user
@@ -132,7 +132,7 @@ func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]str
 		// The real retained c19/c21 policies already had the exact-version action
 		// pair. Audit its actual frozen semantics; never rewrite old IAM.
 		if scope, scopeErr := RemainingScopeFor(group); scopeErr == nil {
-			for _, execution := range []string{"a5d1e569", "9ba214bd"} {
+			for _, execution := range []string{"a5d1e569", "9ba214bd", "0e5cb8f3"} {
 				if user == map[string]string{"inspect": "i", "delete": "d"}[kind]+execution+scope.Run.String()[:8] {
 					frozen = policies[RemainingPolicyName(group, kind)]
 				}
