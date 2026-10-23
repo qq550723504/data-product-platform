@@ -13,13 +13,15 @@ export async function QualityAttention({ compact = false, query = {} }: {
     return <section className="panel" id="quality-attention" style={{ marginTop: 18 }} data-testid="quality-attention">
       <div className="panel-header">
         <div><h2>质量异常</h2><span className="panel-meta">需跟进 {result.summary.followUpCount} 条 · 已人工关闭 {result.summary.closedCount} 条</span></div>
-        {compact ? <Link href="/attention?qualityView=FOLLOW_UP#quality-attention">查看质量异常</Link> : null}
+        {compact ? <a href={qualityAttentionHref({}, "FOLLOW_UP", 0)}>查看质量异常</a> : null}
       </div>
       <p>当前 workspace 已登记的用电异常。人工关闭、处理执行、复检结论分别展示；关闭不代表合格或可交付。</p>
+      {/* Query-only navigation uses the browser document boundary so an
+          unfinished client route transition cannot retain another view. */}
       {compact ? <p>{result.summary.followUpCount ? "存在待分派、处理中或待核对的异常。" : "当前没有需跟进的已登记质量异常；未检测不代表质量合格。"}</p> : <>
         <nav className="detail-tabs" style={{ margin: "0 0 14px" }} aria-label="质量异常视图">
           {([["FOLLOW_UP", "需跟进"], ["ALL", "全部"], ["CLOSED", "已人工关闭"]] as const).map(([value, label]) =>
-            <Link key={value} className={`detail-tab ${view === value ? "active" : ""}`} href={qualityAttentionHref(query, value, 0)} aria-current={view === value ? "page" : undefined}>{label}</Link>)}
+            <a key={value} className={`detail-tab ${view === value ? "active" : ""}`} href={qualityAttentionHref(query, value, 0)} aria-current={view === value ? "page" : undefined}>{label}</a>)}
         </nav>
         {result.items.length === 0 ? <EmptyState title={result.page.total ? "本页没有记录" : "当前视图没有已登记异常"} description="使用分页返回有效页；没有登记记录不代表数据质量合格。" /> : <div className="table-card" style={{ overflowX: "auto" }}>
           <table className="data-table" style={{ minWidth: 1040 }}><thead><tr><th>数据集 / 版本</th><th>异常</th><th>处置责任人</th><th>执行</th><th>复检</th><th>人工关闭</th><th>创建时间</th><th>查看</th></tr></thead>
@@ -39,9 +41,9 @@ export async function QualityAttention({ compact = false, query = {} }: {
             </tr>)}</tbody></table>
         </div>}
         <nav className="pagination" aria-label="质量异常分页">
-          {offset > 0 ? <Link href={qualityAttentionHref(query, view, Math.max(0, offset - 25))}>上一页</Link> : null}
+          {offset > 0 ? <a href={qualityAttentionHref(query, view, Math.max(0, offset - 25))}>上一页</a> : null}
           <span>{result.page.total ? `${Math.min(offset + 1, result.page.total)}–${Math.min(offset + result.items.length, result.page.total)} / ${result.page.total}` : "0 条"}</span>
-          {offset + result.items.length < result.page.total ? <Link href={qualityAttentionHref(query, view, offset + 25)}>下一页</Link> : null}
+          {offset + result.items.length < result.page.total ? <a href={qualityAttentionHref(query, view, offset + 25)}>下一页</a> : null}
         </nav>
       </>}
       <p className="panel-meta">读取时间：{formatDate(result.readAt)}。两类计数可能重叠，不合并为去重任务总数。</p>

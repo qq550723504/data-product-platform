@@ -44,11 +44,11 @@ export const observedRequestId = unobservedRequestId(107);
 export const observedAttemptId = n => requestAttemptId(1070030+n);
 export const observedObservationId = n => requestObservationId(1070030+n);
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-evidence-denied", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
 scenarios.add("isolation-empty");
 scenarios.add("isolation-validating");
-const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts"]);
-const readFaultModes = new Set(["fail", "denied", "invalid", "hold"]);
+const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt"]);
+const readFaultModes = new Set(["fail", "denied", "notfound", "invalid", "hold"]);
 for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
 for (const scenario of ["schema-attempts", "schema-attempts-arrived", "schema-attempts-empty", "schema-attempts-foreign", "schema-attempts-mismatch"]) scenarios.add(scenario);
 function requestItem(n) {
@@ -198,6 +198,12 @@ export function createFixtureServer() {
       const body = req.method === "POST" ? await bodyOf(req) : undefined;
       state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"], gateway: req.headers["x-delivery-web-gateway"], authenticatedPrincipal: req.headers["x-authenticated-principal"] });
       const workspace = `/api/v1/workspaces/${ids.workspace}`;
+      const qualityRoute = /^\/api\/v1\/(?:quality-(?:results|assessments|assessment-attempts)\/|dataset-versions\/[^/]+\/(?:quality-assessments|quality-checks|gold-quality-checks)(?:\/|$))/.test(url.pathname);
+      if (qualityRoute) {
+        if (req.headers.authorization !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
+        if ((req.method === "GET" ? url.searchParams.get("workspaceId") : body?.workspaceId) !== ids.workspace) return send(403, { error: { code: "QUALITY_AUTHORITY_DENIED" } });
+        if (req.method === "GET" && state.scenario === "quality-evidence-denied") return send(403, { error: { code: "QUALITY_AUTHORITY_DENIED" } });
+      }
       const releasePath = `/api/v1/product-releases/${ids.release}`;
       // Token-controlled fault injection applies only to fixed read routes.
       const faultRoutes = {
@@ -208,10 +214,15 @@ export function createFixtureServer() {
         [`${workspace}/source-schema-observations/attention`]: "schema", [`${workspace}/source-schema-observations/exceptions`]: "exceptions",
         [`${workspace}/source-schema-requests/unobserved`]: "requests",
         [`${workspace}/source-schema-requests/observed/unobserved-attempts`]: "attempts",
+        [`/api/v1/quality-assessments/${ids.goldAssessment}/report`]: "quality-original-report",
+        [`/api/v1/quality-assessments/${ids.qualityAssessment}/report`]: "quality-latest-report",
       };
       const pageFault = url.pathname === `${workspace}/product-releases` ? { FAILED: "failed-page", VALIDATING: "validating-page", READY: "ready-page" }[url.searchParams.get("status")] : undefined;
-      const fault = req.method === "GET" ? state.readFaults[pageFault ?? faultRoutes[url.pathname]] : undefined;
-      if (fault === "fail" || fault === "denied") return send(fault === "denied" ? 403 : 503, { code: "FIXTURE_READ_UNAVAILABLE", message: "private-upstream-sentinel" });
+      const qualityFault = url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments`
+        ? (url.searchParams.get("limit") === "1" ? "quality-latest-summary" : "quality-history")
+        : /^\/api\/v1\/quality-assessment-attempts\//.test(url.pathname) ? "quality-attempt" : undefined;
+      const fault = req.method === "GET" ? state.readFaults[qualityFault ?? pageFault ?? faultRoutes[url.pathname]] : undefined;
+      if (fault === "fail" || fault === "denied" || fault === "notfound") return send(fault === "denied" ? 403 : fault === "notfound" ? 404 : 503, { code: "FIXTURE_READ_UNAVAILABLE", message: "private-upstream-sentinel" });
       if (fault === "invalid") return send(200, {});
       if (fault === "hold") await new Promise(resolve => heldReads.add(resolve));
       const product = {
@@ -490,7 +501,7 @@ export function createFixtureServer() {
           });
         }
         if (url.pathname === `/api/v1/dataset-versions/${ids.qualityOutputVersion}`) return send(200, { ...goldVersion, id: ids.qualityOutputVersion, versionNo: 2 });
-        if (url.pathname === `/api/v1/dataset-versions/${ids.qualityOutputVersion}/quality-assessments`) return send(200, page([{ ...goldAssessment, id: ids.recheckAssessment, datasetVersionId: ids.qualityOutputVersion }]));
+        if (url.pathname === `/api/v1/dataset-versions/${ids.qualityOutputVersion}/quality-assessments`) return send(200, { datasetVersionId: ids.qualityOutputVersion, ...page([{ ...goldAssessment, id: ids.recheckAssessment, datasetVersionId: ids.qualityOutputVersion }]) });
         if (url.pathname === `${workspace}/dataset-versions/${ids.qualityOutputVersion}/certifications`) return send(200, { workspaceId: ids.workspace, datasetVersionId: ids.qualityOutputVersion, asOf: stamp, ...page([]), profiles: [] });
         if (url.pathname === `/api/v1/quality-assessments/${ids.recheckAssessment}/report`) return send(200, {
           ...goldAssessment, id: ids.recheckAssessment, datasetVersionId: ids.qualityOutputVersion,
@@ -572,7 +583,7 @@ export function createFixtureServer() {
             createdAt: "2026-09-29T08:00:00Z",
           };
           const items = state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
-          return send(200, { datasetVersionId: ids.goldVersion, items, page: { total: items.length, limit: 25, offset: 0 } });
+          return send(200, { datasetVersionId: ids.goldVersion, ...page(items) });
         }
         const qualityAttemptMatch = url.pathname.match(/^\/api\/v1\/quality-assessment-attempts\/([0-9a-f-]+)$/);
         if (qualityAttemptMatch) {
@@ -751,7 +762,7 @@ export function createFixtureServer() {
           return send(200, { ...job, status: "SUCCEEDED" });
         }
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`) {
-          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (req.headers.authorization !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
           if (body.workspaceId !== ids.workspace) return send(400, { error: { code: "DATASET_WORKSPACE_MISMATCH" } });
           if (typeof body.assessmentAttemptId !== "string" || !body.assessmentAttemptId) return send(400, { error: { code: "MISSING_ASSESSMENT_ATTEMPT_ID" } });
           if (body.ruleSetRef !== "park/quality/enterprise-activity-quality-v1.yaml") return send(400, { error: { code: "INVALID_RULE_SET" } });

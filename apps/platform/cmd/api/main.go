@@ -283,6 +283,7 @@ func main() {
 		)
 	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
+	qualityHandler.Principal = humanDecisionResolver
 	remediationRepo := remediationinfra.NewRepository(db)
 	var remediationService *remediationapp.Service
 	if ref := os.Getenv("QUALITY_REMEDIATION_PLAN_REF"); ref != "" {

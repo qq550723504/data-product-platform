@@ -41,6 +41,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
@@ -354,6 +355,10 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		evidence.NewQueryRepository(pool),
 	)
 	qualityMux := http.NewServeMux()
+	qualityHandler.Principal, err = principal.NewStaticResolver(true, "pilot-quality-secret", "pilot-quality", actorID.String(), []string{workspaceID.String()}, []string{principal.CapabilityHumanDecision})
+	if err != nil {
+		t.Fatal(err)
+	}
 	qualityHandler.Register(qualityMux)
 	reportRequest := httptest.NewRequest(
 		http.MethodGet,
@@ -361,6 +366,7 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		nil,
 	)
 	reportResponse := httptest.NewRecorder()
+	reportRequest.Header.Set("Authorization", "Bearer pilot-quality-secret")
 	qualityMux.ServeHTTP(reportResponse, reportRequest)
 	if reportResponse.Code != http.StatusOK {
 		t.Fatalf("pilot Quality Report = %d %s, want 200", reportResponse.Code, reportResponse.Body.String())
