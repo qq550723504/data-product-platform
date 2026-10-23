@@ -510,7 +510,18 @@ func mainRun(check bool) error {
 		return denied
 	}
 	for _, dir := range []string{"/run/private", "/run/budget", "/run/output"} {
-		if pilot.CheckCustodyPrivatePath(dir, true) != nil {
+		// These three literal mount points belong to the frozen Linux image.
+		// Use the standard library Root boundary without depending on newer
+		// product custody/schema code absent from the retained fixture R.
+		info, e := os.Lstat(dir)
+		if e != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm()&0077 != 0 {
+			return denied
+		}
+		root, e := os.OpenRoot(dir)
+		if e != nil {
+			return denied
+		}
+		if root.Close() != nil {
 			return denied
 		}
 	}
