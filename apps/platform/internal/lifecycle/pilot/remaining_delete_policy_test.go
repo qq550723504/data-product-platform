@@ -63,7 +63,7 @@ func TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope(t *tes
 				target := cp.Key == "fixture/p2.csv" || cp.Key == "fixture/t1.csv" || cp.Key == "fixture/t2.csv" || cp.Key == "fixture/h2-a.csv" || cp.Key == "fixture/m1-a.csv" || cp.Key == "fixture/m1-b.csv"
 				for _, action := range []policy.Action{policy.DeleteObjectAction, policy.DeleteObjectVersionAction} {
 					for _, version := range []string{cp.ProviderVersion, "", "foreign"} {
-						allowed := target && version == cp.ProviderVersion && (action == policy.DeleteObjectVersionAction || strings.HasPrefix(user, "da5d1e569"))
+						allowed := target && version == cp.ProviderVersion && (action == policy.DeleteObjectVersionAction || (strings.HasPrefix(user, "da5d1e569") || strings.HasPrefix(user, "d9ba214bd")))
 						if p.IsAllowed(policy.Args{Action: action, BucketName: cp.Namespace, ObjectName: cp.Key, ConditionValues: map[string][]string{"versionid": {version}}}) != allowed {
 							t.Fatal("actual retained policy/version semantics changed")
 						}

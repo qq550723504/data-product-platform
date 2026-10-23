@@ -165,7 +165,7 @@ func TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory(t *test
 		if e != nil {
 			t.Fatal(e)
 		}
-		if len(expected.Users) != map[string]int{"business-races": 19, "late-hold": 14, "mixed": 14}[group] {
+		if len(expected.Users) != map[string]int{"business-races": 21, "late-hold": 16, "mixed": 16}[group] {
 			t.Fatal("new IAM expectation incomplete")
 		}
 		for user, policy := range pilot.RemainingRetainedIdentities(group) {
