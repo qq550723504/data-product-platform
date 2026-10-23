@@ -153,7 +153,7 @@ func NewExecution(workspaceID, workflowVersionID, outputDatasetID uuid.UUID, tar
 		return Execution{}, ErrInvalidExecutionOutput
 	}
 	targetPeriod = strings.TrimSpace(targetPeriod)
-	if targetPeriod != "" && !validTargetPeriod(targetPeriod) {
+	if targetPeriod != "" && !ValidTargetPeriod(targetPeriod) {
 		return Execution{}, ErrInvalidTargetPeriod
 	}
 	if len(inputs) == 0 {
@@ -278,7 +278,8 @@ func (e Execution) Retry(createdBy *uuid.UUID) (Execution, error) {
 	}, nil
 }
 
-func validTargetPeriod(value string) bool {
+// ValidTargetPeriod is shared by execution and read-only plan preparation.
+func ValidTargetPeriod(value string) bool {
 	if len(value) != 7 || value[4] != '-' {
 		return false
 	}

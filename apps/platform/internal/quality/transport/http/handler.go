@@ -47,6 +47,11 @@ func NewHandlerWithCost(service *application.Service, repo *infrastructure.Postg
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/quality-checks", h.run)
 	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/gold-quality-checks", h.runGold)
+	h.RegisterReadOnly(mux)
+}
+
+// RegisterReadOnly exposes existing queries without evaluation commands.
+func (h *Handler) RegisterReadOnly(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/quality-results/{resultId}", h.get)
 	mux.HandleFunc("GET /api/v1/quality-assessments/{assessmentId}", h.getAssessment)
 	mux.HandleFunc("GET /api/v1/quality-assessments/{assessmentId}/report", h.getReport)

@@ -316,6 +316,12 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 // every workflow input. The generic Execution service cannot decide C1's batch
 // semantics; missing or substituted inputs must fail before costing engine work.
 func (s *Service) validateInputs(ctx context.Context, tx pgx.Tx, c domain.Case, inputs []workflowdomain.InputBinding) error {
+	return s.validateInputProvenance(ctx, tx, c, inputs, nil, nil)
+}
+
+// validateInputProvenance is the existing owner rule, also used by the Agent's
+// read-only plan preparation. Collecting references does not run any Command.
+func (s *Service) validateInputProvenance(ctx context.Context, tx pgx.Tx, c domain.Case, inputs []workflowdomain.InputBinding, receiptOut *uuid.UUID, resolutionOut map[string]uuid.UUID) error {
 	if len(inputs) != len(s.Plan.Inputs) {
 		return domain.ErrScope
 	}
@@ -333,6 +339,9 @@ func (s *Service) validateInputs(ctx context.Context, tx pgx.Tx, c domain.Case, 
 	}
 	if err != nil {
 		return err
+	}
+	if receiptOut != nil {
+		*receiptOut = receipt
 	}
 	rows, err := tx.Query(ctx, `SELECT b.code,b.version_id,ds.workspace_id,ds.dataset_type FROM ingestion_receipt_slot b JOIN dataset_version v ON v.id=b.version_id JOIN dataset ds ON ds.id=v.dataset_id WHERE b.receipt_id=$1`, receipt)
 	if err != nil {
@@ -374,6 +383,9 @@ func (s *Service) validateInputs(ctx context.Context, tx pgx.Tx, c domain.Case, 
 			}
 			if err != nil {
 				return err
+			}
+			if resolutionOut != nil {
+				resolutionOut[input.Name] = job
 			}
 		default:
 			return domain.ErrScope

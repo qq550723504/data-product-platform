@@ -24,6 +24,7 @@ func TestVersionFitsPersistedOutboxContract(t *testing.T) {
 // fails dispatch at runtime with a diagnosable error instead of being completed
 // implicitly.
 var eventVocabulary = []string{
+	"AgentTaskCreated", "AgentPlanRevised", "AgentPlanApproved", "AgentTaskPaused", "AgentTaskResumed", "AgentTaskStopped", "AgentActionRequested",
 	"SourceAdmissionPrepared",
 	"SourceAdmissionAccepted",
 	"SourceAdmissionRecorded",

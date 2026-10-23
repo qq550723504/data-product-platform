@@ -3,17 +3,22 @@ package application_test
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v5"
+	agentapp "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/application"
+	agentdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/domain"
+	agentinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
@@ -222,6 +227,89 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 		t.Fatal(err)
 	}
 	cmd.Key = "assign"
+	t.Run("Agent preparation reuses exact owner provenance without execution", func(t *testing.T) {
+		calls := qe.calls.Load()
+		prepareTx, e := pool.Begin(ctx)
+		if e != nil {
+			t.Fatal(e)
+		}
+		defer prepareTx.Rollback(ctx)
+		prepared, e := service.PrepareAgentRepairTx(ctx, prepareTx, ws, cmd.CaseID, wf.ID, output.ID, "2025-03", approvedInputs)
+		if e != nil || prepared.ReceiptID == uuid.Nil || len(prepared.ResolutionJobs) == 0 || prepared.Case.ID != cmd.CaseID {
+			t.Fatalf("prepare: %+v %v", prepared, e)
+		}
+		if _, e = service.PrepareAgentRepairTx(ctx, prepareTx, ws, cmd.CaseID, wf.ID, output.ID, "invalid", approvedInputs); !errors.Is(e, domain.ErrScope) {
+			t.Fatalf("period: %v", e)
+		}
+		if _, e = service.PrepareAgentRepairTx(ctx, prepareTx, ws, cmd.CaseID, wf.ID, output.ID, "2025-03", approvedInputs[:len(approvedInputs)-1]); !errors.Is(e, domain.ErrScope) {
+			t.Fatalf("missing input: %v", e)
+		}
+		if qe.calls.Load() != calls {
+			t.Fatal("preparation called quality engine")
+		}
+		var executions int
+		if e = prepareTx.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, ws).Scan(&executions); e != nil || executions != 0 {
+			t.Fatal("preparation created execution", executions, e)
+		}
+	})
+	t.Run("Agent freezes a repair plan and separate repair approval without dispatch", func(t *testing.T) {
+		svc := agentapp.Service{Tx: tx, Repo: &agentinfra.Repository{Pool: pool}, Remediation: service}
+		c := agentapp.Command{Principal: principal.RequestPrincipal{WorkspaceID: ws, ActorID: actor, Subject: "repair-test/operator", Capabilities: map[string]struct{}{principal.CapabilityHumanDecision: {}}}, Key: "agent-create"}
+		request := agentapp.Request{Phase: agentdomain.Diagnosis, SourceVersionID: input.ID, Goal: "Repair planning", AcceptanceText: "Exact owner bindings", Reason: "test"}
+		created, e := svc.Handle(ctx, c, "CREATE", request)
+		if e != nil {
+			t.Fatal(e)
+		}
+		c.TaskID = created.TaskID
+		c.Key = "agent-repair"
+		request.Phase = agentdomain.Repair
+		request.ExpectedRevision = 1
+		request.BasePlanID = created.PlanID
+		request.CaseID = cmd.CaseID
+		request.WorkflowVersionID = wf.ID
+		request.OutputDatasetID = output.ID
+		request.TargetPeriod = "2025-03"
+		request.Inputs = approvedInputs
+		revised, e := svc.Handle(ctx, c, "REVISE", request)
+		if e != nil {
+			t.Fatal(e)
+		}
+		read, e := pool.Begin(ctx)
+		if e != nil {
+			t.Fatal(e)
+		}
+		p, e := svc.Repo.PlanTx(ctx, read, c.TaskID, revised.PlanID)
+		read.Rollback(ctx)
+		if e != nil {
+			t.Fatal(e)
+		}
+		if p.Phase != agentdomain.Repair || len(p.Inputs) != len(approvedInputs) || len(p.Actions) != 3 {
+			t.Fatalf("repair plan: %+v", p)
+		}
+		c.Key = "agent-approve-repair"
+		approval := agentapp.Request{ExpectedRevision: 2, PlanID: p.ID, ContentHash: p.ContentHash, Phase: p.Phase, Reason: "Repair approval"}
+		approved, e := svc.Handle(ctx, c, "APPROVE", approval)
+		if e != nil {
+			t.Fatal(e)
+		}
+		c.Key = "agent-assign-intent"
+		approval.ExpectedRevision = 3
+		approval.ApprovalID = *approved.ApprovalID
+		approval.Action = "ASSIGN_SELF"
+		if _, e = svc.Handle(ctx, c, "REQUEST_ACTION", approval); e != nil {
+			t.Fatal(e)
+		}
+		c.Key = "agent-execute-blocked"
+		approval.ExpectedRevision = 4
+		approval.Action = "EXECUTE_REPAIR"
+		if _, e = svc.Handle(ctx, c, "REQUEST_ACTION", approval); !errors.Is(e, agentdomain.ErrOrder) {
+			t.Fatal("execution accepted without real owner receipt", e)
+		}
+		var assigned int
+		if e = pool.QueryRow(ctx, `SELECT count(*) FROM quality_remediation_assignment WHERE case_id=$1`, cmd.CaseID).Scan(&assigned); e != nil || assigned != 0 {
+			t.Fatal("intent dispatched assignment", assigned, e)
+		}
+	})
 	assignmentID, err := service.Assign(ctx, cmd)
 	if err != nil {
 		t.Fatal(err)
@@ -609,4 +697,98 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 		})
 	})
 	t.Logf("real PG: 8 same-key requests -> one execution; failed+retry native calls/costs=2; detection/recheck/format evidence quality physical calls=%d; old RAW unchanged", qe.calls.Load())
+}
+
+// Explicit disposable preview fixture only. Reuses controlled test providers and
+// in-memory storage; it never invokes a real engine, model, or Execution worker.
+func TestAgentRepairBrowserFixture(t *testing.T) {
+	if os.Getenv("AGENT_REPAIR_FIXTURE_ACK") == "ISOLATED_SYNTHETIC_ONLY" {
+		if _, err := os.Stat(filepath.Join("..", "..", "..", "..", "..", "..", ".data", "agent-q2-preview", "repair-fixture.json")); err == nil {
+			t.Skip("existing preview fixture retained")
+		}
+	}
+	if os.Getenv("AGENT_REPAIR_FIXTURE_ACK") != "ISOLATED_SYNTHETIC_ONLY" {
+		t.Skip("fixture generation not requested")
+	}
+	if os.Getenv("TEST_POSTGRES_DSN") != "postgres://postgres:agent-q2-test-only@127.0.0.1:25494/agent_q2_test?sslmode=disable" {
+		t.Fatal("not the owned preview database")
+	}
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 80*time.Second)
+	defer cancel()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer pool.Close()
+	router, err := routing.NewRouter(false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	outbox.ConfigureAppendObligation(router)
+	defer outbox.ConfigureAppendObligation(nil)
+	_, file, _, _ := runtime.Caller(0)
+	root := filepath.Dir(file)
+	for {
+		if _, e := os.Stat(filepath.Join(root, "AGENTS.md")); e == nil {
+			break
+		}
+		next := filepath.Dir(root)
+		if next == root {
+			t.Fatal("repository root not found")
+		}
+		root = next
+	}
+	plan, err := application.LoadPlan(filepath.Join(root, "industry-packs"), "park/remediation/energy-quarantine-v1.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	tx := transaction.NewManager(pool)
+	ds := datasetinfra.NewPostgresRepository(pool)
+	store := &memoryStore{objects: map[string][]byte{}}
+	creator := datasetapp.NewCreateDatasetService(tx, ds, resourceinfra.NewPostgresRepository())
+	writer := datasetapp.NewUploadVersionService(tx, ds, store)
+	ws, actor := uuid.MustParse("11111111-1111-4111-8111-111111111111"), uuid.MustParse("22222222-2222-4222-8222-222222222222")
+	_, input, approvedInputs := acceptedBatch(t, ctx, pool, tx, ds, store, creator, writer, root, ws, actor)
+	output, err := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: plan.Spec.OutputDatasetCode, Name: "C1 approved output", DatasetType: datasetdomain.DatasetTypeCurated})
+	if err != nil {
+		t.Fatal(err)
+	}
+	wfRepo := workflowinfra.NewPostgresRepository(pool)
+	exec := workflowapp.NewExecutionService(tx, wfRepo)
+	wfBytes, err := os.ReadFile(filepath.Join(root, plan.Spec.WorkflowDefinitionRef))
+	if err != nil {
+		t.Fatal(err)
+	}
+	wf, err := workflowapp.NewWorkflowVersionService(tx, wfRepo).Create(ctx, workflowapp.CreateWorkflowVersionCommand{WorkspaceID: ws, Code: uuid.NewString(), Name: "C1 approved", Version: "1", DefinitionRef: plan.Spec.WorkflowDefinitionRef, DefinitionYAML: wfBytes, ActorID: &actor})
+	if err != nil {
+		t.Fatal(err)
+	}
+	qe := &physicalQuality{native: qualitynative.NewEngine()}
+	q := qualityapp.NewService(filepath.Join(root, "industry-packs"), tx, ds, qualityinfra.NewPostgresRepository(pool), store)
+	if err = q.RegisterEngine(qe); err != nil {
+		t.Fatal(err)
+	}
+	service := &application.Service{Tx: tx, Repo: infrastructure.NewRepository(pool), Quality: qualityRunner{q}, Executions: exec, Workflows: wfRepo, Plan: plan}
+	cmd := application.Command{WorkspaceID: ws, ActorID: actor, Key: "detect", Reason: "controlled test"}
+	detection, err := service.Detect(ctx, cmd, input.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if detection.CaseID == nil {
+		t.Fatal("negative reading not detected")
+	}
+
+	manifest := map[string]any{"sourceVersionId": input.ID, "caseId": detection.CaseID, "workflowVersionId": wf.ID, "outputDatasetId": output.ID, "targetPeriod": "2025-03", "inputs": approvedInputs}
+	encoded, e := json.MarshalIndent(manifest, "", "  ")
+	if e != nil {
+		t.Fatal(e)
+	}
+	path := filepath.Join(root, ".data", "agent-q2-preview", "repair-fixture.json")
+	if e = os.WriteFile(path, encoded, 0600); e != nil {
+		t.Fatal(e)
+	}
 }

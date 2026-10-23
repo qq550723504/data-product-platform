@@ -16,10 +16,12 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
 )
 
 type Handler struct {
+	Principal      principal.Resolver
 	certifications *application.CertificationService
 	eligibility    *application.EligibilityService
 	datasets       *datasetinfra.PostgresRepository
@@ -36,7 +38,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certification-inputs", h.inputs)
 	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certification-inputs", h.prepareInputs)
 	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/certifications/{certificationId}/supersede", h.supersede)
-	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certifications", h.history)
+	h.RegisterHistoryReadOnly(mux)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/delivery-eligibility", h.deliveryEligibility)
 	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certifications", h.evaluate)
 }
@@ -219,6 +221,19 @@ func (h *Handler) evaluate(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 	workspaceID, versionID, ok := parseWorkspaceVersion(w, r)
 	if !ok {
+		return
+	}
+	if h.Principal == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted workspace principal required", nil)
+		return
+	}
+	actor, authErr := h.Principal.Resolve(r, workspaceID, principal.CapabilityHumanDecision)
+	if errors.Is(authErr, principal.ErrUnauthenticated) || errors.Is(authErr, principal.ErrNotConfigured) {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted workspace principal required", nil)
+		return
+	}
+	if authErr != nil || actor.ActorID == uuid.Nil || actor.WorkspaceID != workspaceID || !actor.HasCapability(principal.CapabilityHumanDecision) {
+		httpserver.WriteError(w, r, 403, "WORKSPACE_AUTHORITY_DENIED", "workspace authority denied", nil)
 		return
 	}
 	if !h.requireVersionWorkspace(w, r, workspaceID, versionID) {
@@ -484,4 +499,9 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(value)
+}
+
+// RegisterHistoryReadOnly exposes only immutable certification history queries.
+func (h *Handler) RegisterHistoryReadOnly(mux *http.ServeMux) {
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certifications", h.history)
 }

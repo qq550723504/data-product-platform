@@ -12,6 +12,8 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/traceability"
 )
 
 func TestExecutionTraceabilityReturnsEvidenceAndCost(t *testing.T) {
@@ -103,11 +105,13 @@ func TestExecutionTraceabilityReturnsEvidenceAndCost(t *testing.T) {
 		t.Fatalf("commit traceability fixture transaction: %v", err)
 	}
 
-	handler := NewHandler(evidence.NewQueryRepository(pool), cost.NewQueryRepository(pool))
+	handler := NewHandler(traceability.NewRepository(pool))
 	mux := http.NewServeMux()
+	handler.Principal, _ = principal.NewStaticResolver(true, "test-token", "operator", uuid.NewString(), []string{workspaceID.String()}, []string{principal.CapabilityHumanDecision})
 	handler.Register(mux)
 
-	req := httptest.NewRequest(http.MethodGet, "/api/v1/traceability/EXECUTION/"+executionID.String(), nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/traceability/EXECUTION/"+executionID.String()+"?workspaceId="+workspaceID.String(), nil)
+	req.Header.Set("Authorization", "Bearer test-token")
 	recorder := httptest.NewRecorder()
 	mux.ServeHTTP(recorder, req)
 

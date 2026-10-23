@@ -47,7 +47,8 @@ const stamp = "2026-09-17T00:00:00Z";
 const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-evidence-denied", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
 scenarios.add("isolation-empty");
 scenarios.add("isolation-validating");
-const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt"]);
+scenarios.add("agent-quality-pages");
+const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt", "agent-context"]);
 const readFaultModes = new Set(["fail", "denied", "notfound", "invalid", "hold"]);
 for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
 for (const scenario of ["schema-attempts", "schema-attempts-arrived", "schema-attempts-empty", "schema-attempts-foreign", "schema-attempts-mismatch"]) scenarios.add(scenario);
@@ -190,6 +191,7 @@ export function createFixtureServer() {
           if (!scenarios.has(scenario)) return send(400, { error: "unknown fixture scenario" });
           if (!readFaults || Array.isArray(readFaults) || typeof readFaults !== "object" || Object.entries(readFaults).some(([key, value]) => !readFaultKeys.has(key) || !readFaultModes.has(value))) return send(400, { error: "invalid read fault" });
           if (url.pathname.endsWith("/reset")) reset(scenario); else state.scenario = scenario;
+          if (scenario === "agent-quality-pages") state.qualityCompleted = true;
           state.readFaults = readFaults;
           return send(200, { scenario });
         }
@@ -216,6 +218,7 @@ export function createFixtureServer() {
         [`${workspace}/source-schema-requests/observed/unobserved-attempts`]: "attempts",
         [`/api/v1/quality-assessments/${ids.goldAssessment}/report`]: "quality-original-report",
         [`/api/v1/quality-assessments/${ids.qualityAssessment}/report`]: "quality-latest-report",
+        [`${workspace}/agent-quality-context`]: "agent-context",
       };
       const pageFault = url.pathname === `${workspace}/product-releases` ? { FAILED: "failed-page", VALIDATING: "validating-page", READY: "ready-page" }[url.searchParams.get("status")] : undefined;
       const qualityFault = url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments`
@@ -424,6 +427,23 @@ export function createFixtureServer() {
         return { items: items.slice(offset, offset + limit), page: { total: items.length, limit, offset } };
       }
       if (req.method === "GET") {
+        if (/^\/api\/v1\/workspaces\/[^/]+\/agent-quality-context$/.test(url.pathname)) {
+          if (req.headers.authorization !== "Bearer review-secret") return send(401, { code: "AUTHENTICATION_REQUIRED" });
+          if (url.pathname !== `${workspace}/agent-quality-context`) return send(403, { code: "QUALITY_AUTHORITY_DENIED" });
+          const datasetId = url.searchParams.get("datasetId"), versionId = url.searchParams.get("versionId");
+          if ((datasetId && datasetId !== ids.goldDataset) || (versionId && versionId !== ids.goldVersion)) return send(404, { code: "SOURCE_NOT_FOUND" });
+          const { storageUri, ...safeVersion } = goldVersion;
+          void storageUri;
+          const context = {
+            workspaceId: ids.workspace, readAt: stamp, mode: "READ_ONLY", executionReadiness: "NOT_EVALUATED",
+            template: { configured: true, name: "浏览器测试模板", version: "1.0.0", hash: "a".repeat(64), workflowHash: "b".repeat(64), inputs: [
+              { name: "company", datasetType: "RAW", required: true }, { name: "tax", datasetType: "RAW", required: true }, { name: "energy", datasetType: "RAW", required: true }, { name: "resolved", datasetType: "STANDARDIZED", required: true },
+            ] }, unverified: ["ACCEPTED_BATCH_THREE_RAW", "MATCHING_ENTITY_RESOLUTION_OUTPUT", "OUTPUT_DATASET_BINDING", "CURRENT_EXECUTION_AUTHORITY"],
+          };
+          if (versionId) return send(200, { ...context, dataset: goldDataset, version: safeVersion });
+          if (datasetId) return send(200, { ...context, dataset: goldDataset, versions: page([safeVersion]) });
+          return send(200, { ...context, datasets: page([goldDataset]) });
+        }
         if (url.pathname === `${workspace}/source-schema-requests/observed/unobserved-attempts`) {
           if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
           const all=state.scenario.startsWith("schema-attempts")&&state.scenario!=="schema-attempts-empty"?Array.from({length:105},(_,i)=>({...requestItem(107),attemptId:observedAttemptId(i+1),registeredAt:stamp,requestObservationCount:state.scenario==="schema-attempts-arrived"?32:31})).reverse().filter(a=>state.scenario!=="schema-attempts-arrived"||a.attemptId!==observedAttemptId(1)):[];
@@ -582,23 +602,26 @@ export function createFixtureServer() {
             ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
             createdAt: "2026-09-29T08:00:00Z",
           };
-          const items = state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
+          const items = state.scenario === "agent-quality-pages"
+            ? [generatedAssessment, ...Array.from({length:24},(_,i)=>({...goldAssessment,id:`a1100003-a101-4101-8101-${String(i+1).padStart(12,"0")}`,ruleSetRef:`fixture/history-${i+1}`})), goldAssessment]
+            : state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
           return send(200, { datasetVersionId: ids.goldVersion, ...page(items) });
         }
         const qualityAttemptMatch = url.pathname.match(/^\/api\/v1\/quality-assessment-attempts\/([0-9a-f-]+)$/);
         if (qualityAttemptMatch) {
-          if (!state.qualityAttemptId || qualityAttemptMatch[1] !== state.qualityAttemptId) {
+          const selectedAttempt = state.scenario === "agent-quality-pages" ? ids.job : state.qualityAttemptId;
+          if (!selectedAttempt || qualityAttemptMatch[1] !== selectedAttempt) {
             return send(404, { error: { code: "QUALITY_ASSESSMENT_ATTEMPT_NOT_FOUND" } });
           }
           return send(200, {
-            id: state.qualityAttemptId,
+            id: selectedAttempt,
             workspaceId: ids.workspace,
             datasetVersionId: ids.goldVersion,
             ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
             engineName: "native",
             engineVersion: "1",
-            outcome: state.qualityCompleted ? "SUCCEEDED" : "IN_PROGRESS",
-            ...(state.qualityCompleted ? { assessmentId: ids.qualityAssessment } : {}),
+            outcome: state.scenario === "agent-quality-pages" || state.qualityCompleted ? "SUCCEEDED" : "IN_PROGRESS",
+            ...(state.scenario === "agent-quality-pages" ? { assessmentId: ids.goldAssessment } : state.qualityCompleted ? { assessmentId: ids.qualityAssessment } : {}),
             leaseExpiresAt: "2026-09-29T09:00:00Z",
             leaseExpired: false,
           });
@@ -627,16 +650,20 @@ export function createFixtureServer() {
             id: ids.qualityAssessment,
             ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
             createdAt: "2026-09-29T08:00:00Z",
-            findings: { items: [], page: { total: 0, limit: 50, offset: 0 } },
+            findings: page([]),
             evidence: [],
             auditEvents: [],
           });
         }
         if (url.pathname === `/api/v1/quality-assessments/${ids.goldAssessment}/report`) {
+          const findings = state.scenario === "agent-quality-pages" ? Array.from({length:26},(_,i)=>({
+            id:`a1100004-a101-4101-8101-${String(i+1).padStart(12,"0")}`,resultId:ids.goldAssessment,
+            ruleId:`FIXTURE-${String(i+1).padStart(2,"0")}`,dimension:"COMPLETENESS",severity:"INFO",status:"PASS",reason:`分页验收记录 ${i+1}`,createdAt:stamp,
+          })) : [];
           return send(200, {
             ...goldAssessment,
             ...(state.scenario === "quality-attention-foreign" ? { datasetVersionId: ids.version } : {}),
-            findings: { items: [], page: { total: 0, limit: 50, offset: 0 } },
+            findings: page(findings),
             evidence: [{ id: "78787878-7878-4878-8878-787878787878", workspaceId: ids.workspace, evidenceType: "GOLD_QUALITY_ASSESSMENT", relationType: "ASSESSMENT_EVIDENCE", sourceType: "QUALITY_ASSESSMENT", sourceId: ids.goldAssessment, hashAlgorithm: "SHA256", hashValue: "a".repeat(64), createdAt: stamp }],
             auditEvents: [],
           });

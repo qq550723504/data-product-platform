@@ -23,6 +23,33 @@ test("Quality fault injection rejects one exact read and preserves the other aut
 });
 async function state() { return (await fetch(`${base}/__control/state`, { headers: controlHeaders })).json(); }
 
+test("Agent context fixture is scoped, authenticated and records only GET queries", async () => {
+  const path = `/api/v1/workspaces/${ids.workspace}/agent-quality-context?limit=25&offset=0`;
+  assert.equal((await fetch(base + path)).status, 401);
+  const headers = { Authorization: "Bearer review-secret" };
+  const catalog = await (await fetch(base + path, { headers })).json();
+  assert.equal(catalog.datasets.page.total, 1);
+  const context = await (await fetch(base + path + `&versionId=${ids.goldVersion}`, { headers })).json();
+  assert.equal(context.version.id, ids.goldVersion);
+  assert.equal(context.executionReadiness, "NOT_EVALUATED");
+  assert.equal(context.version.storageUri, undefined);
+  assert.equal((await fetch(base + path + `&versionId=${ids.version}`, { headers })).status, 404);
+  assert.equal((await fetch(base + path.replace(ids.workspace, ids.actor), { headers })).status, 403);
+  assert.ok((await state()).requests.every(r => r.method === "GET"));
+});
+
+test("Agent acceptance fixture has independent history/finding pages and an exact recoverable attempt", async () => {
+  await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: JSON.stringify({scenario:"agent-quality-pages"}) });
+  const headers={ Authorization:"Bearer review-secret" };
+  const history=await(await fetch(`${base}/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments?workspaceId=${ids.workspace}&limit=25&offset=25`,{headers})).json();
+  assert.equal(history.page.total,26);assert.equal(history.items.length,1);assert.equal(history.items[0].id,ids.goldAssessment);
+  const report=await(await fetch(`${base}/api/v1/quality-assessments/${ids.goldAssessment}/report?workspaceId=${ids.workspace}&limit=25&offset=25`,{headers})).json();
+  assert.equal(report.id,ids.goldAssessment);assert.equal(report.findings.page.total,26);assert.equal(report.findings.items.length,1);assert.equal(report.findings.items[0].ruleId,"FIXTURE-26");
+  const attempt=await(await fetch(`${base}/api/v1/quality-assessment-attempts/${ids.job}?workspaceId=${ids.workspace}`,{headers})).json();
+  assert.equal(attempt.outcome,"SUCCEEDED");assert.equal(attempt.assessmentId,ids.goldAssessment);
+  assert.ok((await state()).requests.every(r=>r.method==="GET"));
+});
+
 test("observed request fixture counts attempts once and keeps selected identity after its observation arrives",async()=>{
   const headers={Authorization:"Bearer rights-fixture-secret"};
   await fetch(`${base}/__control/reset`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-attempts"})});

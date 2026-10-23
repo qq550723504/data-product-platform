@@ -10,6 +10,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality"
+	agentqualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality/infrastructure"
+	agentqualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality/transport/http"
+	agenttaskapp "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/application"
+	agenttaskinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/infrastructure"
+	agenttaskhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/transport/http"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	annotationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http"
@@ -144,7 +150,8 @@ func main() {
 	}
 
 	txManager := transaction.NewManager(db)
-	readModelHandler := readmodelhttp.NewHandler(readmodel.NewRepository(db))
+	readModelRepo := readmodel.NewRepository(db)
+	readModelHandler := readmodelhttp.NewHandler(readModelRepo)
 
 	resourceRepo := resourceinfra.NewPostgresRepository()
 	resourceHandler := resourcehttp.NewHandler(resourceapp.NewCreateService(txManager, resourceRepo))
@@ -284,8 +291,10 @@ func main() {
 	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
 	qualityHandler.Principal = humanDecisionResolver
+	readModelHandler.Principal = humanDecisionResolver
 	remediationRepo := remediationinfra.NewRepository(db)
 	var remediationService *remediationapp.Service
+	agentTemplate := agentquality.Template{Inputs: []agentquality.Input{}}
 	if ref := os.Getenv("QUALITY_REMEDIATION_PLAN_REF"); ref != "" {
 		plan, err := remediationapp.LoadPlan(cfg.IndustryPackRoot, ref)
 		if err != nil {
@@ -293,8 +302,17 @@ func main() {
 			os.Exit(1)
 		}
 		remediationService = &remediationapp.Service{Tx: txManager, Repo: remediationRepo, Quality: qualityService, Executions: executionService, Workflows: workflowRepo, Plan: plan}
+		agentTemplate = agentquality.Template{Configured: true, Name: plan.Metadata.Name, Version: plan.Metadata.Version, Hash: plan.Hash, WorkflowHash: plan.WorkflowHash, Inputs: []agentquality.Input{}}
+		for _, input := range plan.Inputs {
+			agentTemplate.Inputs = append(agentTemplate.Inputs, agentquality.Input{Name: input.Name, DatasetType: input.DatasetType, Required: input.Required})
+		}
 	}
 	remediationHandler := remediationhttp.NewHandler(remediationService, remediationRepo, humanDecisionResolver)
+	agentTaskHandler := &agenttaskhttp.Handler{Principal: humanDecisionResolver, WriteEnabled: cfg.AgentTasksWriteEnabled,
+		Service: &agenttaskapp.Service{Tx: txManager, Repo: &agenttaskinfra.Repository{Pool: db}, Remediation: remediationService}}
+	agentQualityHandler := &agentqualityhttp.Handler{Principal: humanDecisionResolver, Service: &agentquality.Service{
+		Reader: agentqualityinfra.Reader{Catalog: readModelRepo, DatasetRepo: datasetRepo}, Template: agentTemplate,
+	}}
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
 	certificationRepo := certificationinfra.NewCertificationRepository(db)
@@ -302,6 +320,7 @@ func main() {
 	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility, datasetRepo)
 	certificationHandler.Authorize = rightsAuthorizer.Authorize
+	certificationHandler.Principal = humanDecisionResolver
 	certificationHandler.Rights = rightsService
 
 	deliveryRepo := deliveryinfra.NewPostgresRepository(db)
@@ -357,11 +376,8 @@ func main() {
 		registerIngestion = h.Register
 	}
 
-	traceabilityHandler := traceabilityhttp.NewHandler(
-		evidence.NewQueryRepository(db),
-		cost.NewQueryRepository(db),
-		traceability.NewRepository(db),
-	)
+	traceabilityHandler := traceabilityhttp.NewHandler(traceability.NewRepository(db))
+	traceabilityHandler.Principal = humanDecisionResolver
 	registerSourceAdmission, sourceAdmissionErr := sourceAdmissionRoutes(db)
 	if sourceAdmissionErr != nil {
 		logger.Error("configure fork-approved source admission")
@@ -389,6 +405,8 @@ func main() {
 			rightsHandler.Register,
 			contractHandler.Register,
 			qualityHandler.Register,
+			agentQualityHandler.Register,
+			agentTaskHandler.Register,
 			remediationHandler.Register,
 			certificationHandler.Register,
 			deliveryHandler.Register,
