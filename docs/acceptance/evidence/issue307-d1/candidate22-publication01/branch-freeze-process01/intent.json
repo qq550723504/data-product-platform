@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/branch-freeze.py",
+    "--head",
+    "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-publication01\\branch-freeze01"
+  ],
+  "at": "2026-10-23T06:27:50.973101+00:00",
+  "maintenance_protection": "FULL_EXACT_MATCH",
+  "expected_only_change": "lockBranch false to true",
+  "native_delete_authority": false
+}

@@ -106,6 +106,8 @@ jobs:
           python -O -B examples/lifecycle-d1/test_retained_v30.py
           python -B examples/lifecycle-d1/test_retained_v31.py
           python -O -B examples/lifecycle-d1/test_retained_v31.py
+          python -B examples/lifecycle-d1/test_retained_v32.py
+          python -O -B examples/lifecycle-d1/test_retained_v32.py
           python -B examples/lifecycle-d1/test_receipt_bytes.py
           python -O -B examples/lifecycle-d1/test_receipt_bytes.py
           python -B examples/lifecycle-d1/test_fixture_artifacts.py

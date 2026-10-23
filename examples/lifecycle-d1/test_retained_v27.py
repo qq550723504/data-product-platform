@@ -66,7 +66,7 @@ class RetainedV27Tests(unittest.TestCase):
                 path.write_bytes(raw+b' ')
                 with self.assertRaises(ValueError):r.baseline_core(group)
         self.assertEqual(r.p.window.POLICY_CHECKPOINT_SHA256,'aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8')
-        self.assertEqual(r.p.EXECUTION,'0e5cb8f3-46a9-4339-88e4-7154d6ebe13f')
+        self.assertEqual(r.p.EXECUTION,'4fad1007-6595-4037-a7a5-1d8d38cb8bcc')
         self.assertNotEqual(r.p.EXECUTION,old.EXECUTION)
 
 

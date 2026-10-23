@@ -1,0 +1,15 @@
+{
+  "status": "EXPIRED_UNAUTHORIZED_FROZEN_PREPARATION_CLOSED",
+  "observed_at": "2026-10-23T11:37:16.483527+00:00",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "profile": "candidate22/v32",
+  "retry_allowed": false,
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "owners_closed": 1085,
+  "native_delete_this_observation": 0,
+  "source_started": false,
+  "fresh_native_IAM": "NOT_OBSERVED_SOURCE_NOT_STARTED",
+  "old_budgets_preserved": 40,
+  "pins_released": 0
+}

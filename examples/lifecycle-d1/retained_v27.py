@@ -9,6 +9,7 @@ from pathlib import Path
 import subprocess
 
 import evidence_indexes as audit
+import historical_descriptors
 
 OLD_ROOT=Path('C:/Users/Henry/.codex/worktrees/d1-c17/data-product-platform')
 READ_ROOT=Path('C:/Users/Henry/.codex/worktrees/d1-path/data-product-platform')
@@ -37,7 +38,8 @@ def need(value,message):
 
 def sha(path):return hashlib.sha256(audit.unlinked_absolute(path).read_bytes()).hexdigest()
 def load(path):return audit.decode(audit.unlinked_absolute(path).read_bytes())
-def cfg_hash(item):return hashlib.sha256(json.dumps({k:item[k] for k in ('Image','Config','HostConfig','Mounts')},sort_keys=True).encode()).hexdigest()
+def cfg_hash(item,accepted=None):
+    return historical_descriptors.original_digest(item) if accepted is None else historical_descriptors.comparison_digest(item,accepted)
 
 
 def load_bindings(path):
@@ -125,7 +127,8 @@ def verify(root,inspect,closed,docker,ids,private,hostpath):
     need(len(all_items)==623 and {x['Id'] for x in all_items}==set(cids),'retained CID lookup substituted')
     actual={x['Id']:x for x in all_items}
     need(all(closed(x) for x in all_items),'retained owner is active')
-    for cid,digest in preservation['descriptors'].items():need(cfg_hash(actual[cid])==digest,'accepted owner descriptor changed')
+    accepted=historical_descriptors.expected(root)
+    for cid,digest in preservation['descriptors'].items():need(accepted.get(cid)==digest and cfg_hash(actual[cid],accepted)==digest,'accepted owner descriptor changed')
     candidate=load(evidence/'remaining-candidate17/candidate.json')
     bindings=load_bindings(evidence/'remaining-candidate17/bindings.json')
     allocation=evidence/'remaining-candidate17-preparation01/allocation.json'

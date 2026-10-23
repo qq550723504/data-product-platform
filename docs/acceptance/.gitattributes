@@ -1,6 +1,10 @@
 # These C21 documents enter the exact approval manifest as issued bytes.
 /.gitattributes -text
 issue307-d1-candidate21-confirmation.md -text
+issue307-d1-candidate21-final-confirmation01.md -text
+issue307-d1-candidate21-final-confirmation02.md -text
+issue307-d1-v31-postlock-matrix01.md -text
+issue307-d1-v31-postlock-matrix02.md -text
 issue307-d1-v31-window-runbook.md -text
 issue307-d1-v31-preparation-contract.md -text
 # Current v32 approval documents are opaque issued bytes too.
@@ -9,3 +13,12 @@ issue307-d1-candidate22-final-confirmation01.md -text
 issue307-d1-v32-window-runbook.md -text
 issue307-d1-v32-preparation-contract03.md -text
 issue307-d1-v32-preparation.md -text
+# Successor preparation and eventual exact confirmation retain issued bytes.
+issue307-d1-v33-preparation.md -text
+issue307-d1-v33-window-runbook.md -text
+issue307-d1-candidate23-confirmation.md -text
+issue307-d1-candidate23-final-confirmation01.md -text
+issue307-d1-v32-postlock-matrix01.md -text
+issue307-d1-v32-preparation-contract.md -text
+issue307-d1-v32-preparation-contract02.md -text
+issue307-d1-v32-preparation-matrix01.md -text

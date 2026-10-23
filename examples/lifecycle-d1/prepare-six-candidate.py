@@ -1,4 +1,4 @@
-"""Finite candidate22 preparation. Allocate stopped owners; never send/enable DELETE.
+"""Finite candidate23 preparation. Allocate stopped owners; never send/enable DELETE.
 
 Allocation, source/restore non-delete verification and final freeze are distinct
 checkpoints. A stopped allocation is not a native PASS or deletion permission.
@@ -31,7 +31,7 @@ ZERO='0001-01-01T00:00:00Z'
 GROUPS=('business-races','late-hold','mixed')
 # This generation's independent restore networks. The prior generation's
 # 221/222/223 networks remain allocated and are never reused or removed.
-RESTORE_SUBNETS=('10.246.225.0/28','10.246.226.0/28','10.246.227.0/28')
+RESTORE_SUBNETS=('10.246.228.0/28','10.246.229.0/28','10.246.230.0/28')
 need,load,sha,save=prior.need,prior.load,prior.sha,prior.save
 inspect,closed=p1.inspect,p1.closed
 
@@ -80,7 +80,7 @@ def project_owner(item):
             'mounts':[{k:m.get(k) for k in ('Type','Name','Source','Destination','RW','Propagation')} for m in item['Mounts']]}
 
 
-def historical_gate():
+def historical_gate_before_c22():
     base=prior.retained()
     packet=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-seventeen01'
     need(sha(packet/'terminal.json')=='c6e12ffdb14b64c139d7352f67b6c54b1c3ff859fe0400f03c3343dcd4c92a33','accepted seventeen terminal differs')
@@ -151,6 +151,12 @@ def historical_gate():
     c21=retained_v31.verify(ROOT,inspect,closed,project_owner,docker,sequence,ids,p1.PRIVATE,p1.hostpath)
     need(len(ids)==996,'retained expired frozen C21 owner union differs')
     return {'c21':c21,'c20':c20,'c19':c19,'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_996_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
+
+
+def historical_gate():
+    import retained_v32
+    base=historical_gate_before_c22()
+    return retained_v32.verify(ROOT,inspect,closed,project_owner,docker,sequence,base,p1.PRIVATE,p1.hostpath)
 
 
 def retained_c14(ids):
@@ -347,7 +353,7 @@ def preallocation_ci():
 
 def allocate():
     window.policy_checkpoint()
-    need(PROFILE=='candidate22/v32' and EXECUTION=='0e5cb8f3-46a9-4339-88e4-7154d6ebe13f','only the new proposed execution is supported')
+    need(PROFILE=='candidate23/v33' and EXECUTION=='4fad1007-6595-4037-a7a5-1d8d38cb8bcc','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
     source_ci=preallocation_ci()
     subnets=preallocation_networks()

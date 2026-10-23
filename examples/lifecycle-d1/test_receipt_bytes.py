@@ -11,8 +11,12 @@ ROOT=Path(__file__).resolve().parents[2]
 RULE='docs/acceptance/evidence/issue307-d1/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab'
 MARKDOWN=[f'docs/acceptance/issue307-d1-v29-{suffix}.md' for suffix in ('crosscheck01','execution01','schedule01','window01')]
 MARKDOWN.append('docs/acceptance/issue307-d1-v31-preparation.md')
-CURRENT_DOCUMENTS=('issue307-d1-candidate22-confirmation.md','issue307-d1-candidate22-final-confirmation01.md',
-                   'issue307-d1-v32-window-runbook.md','issue307-d1-v32-preparation-contract03.md',
+CURRENT_DOCUMENTS=('issue307-d1-candidate21-final-confirmation01.md','issue307-d1-candidate21-final-confirmation02.md',
+                   'issue307-d1-v31-postlock-matrix01.md','issue307-d1-v31-postlock-matrix02.md',
+                   'issue307-d1-candidate22-confirmation.md','issue307-d1-candidate22-final-confirmation01.md',
+                   'issue307-d1-v32-window-runbook.md','issue307-d1-v32-preparation-contract.md',
+                   'issue307-d1-v32-preparation-contract02.md','issue307-d1-v32-preparation-matrix01.md',
+                   'issue307-d1-v32-postlock-matrix01.md','issue307-d1-v32-preparation-contract03.md',
                    'issue307-d1-v32-preparation.md')
 
 

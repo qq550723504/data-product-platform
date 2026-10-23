@@ -1,0 +1,1441 @@
+{
+  "status": "C22_FINAL_PUBLICATION_READBACK_EVIDENCE_INDEX",
+  "at": "2026-10-23T06:36:47.100327+00:00",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "head": "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+  "count": 357,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze-only-lock-change01.json": {
+      "sha256": "1238a07223b1c405345e28498ee11e14de79ef479441ab057a57227a8aa086c1",
+      "bytes": 382
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze-process01/intent.json": {
+      "sha256": "7bb5da2ddadc5ddeb6b38c1773d699a0a68c45183c987d7fb10c2c10c9b4ac9f",
+      "bytes": 530
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze-process01/result.json": {
+      "sha256": "93fb727566c62b16e1cafb30e603067fff2718dd163952a8be171f6fa5052fcd",
+      "bytes": 114
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze-process01/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze-process01/stdout.txt": {
+      "sha256": "d1e7100a7f3fbf11b4ac7712414f78b9ddd25836a7548f4b3f70ff2d777bb5c5",
+      "bytes": 306
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/001-intent.json": {
+      "sha256": "c15604d1d0f872bfe83101cc653d0aa2940c92669b968dc404704e2456f397a7",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/001-process.json": {
+      "sha256": "a51fdad22533394365b86f6393d0b0f3919de76b6b0f7cc5881e50ad2d2ebfcb",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/001-stdout.json": {
+      "sha256": "e3a12f2305637cf63089e097b3769d616d3bc512c68153b238169bed327b961e",
+      "bytes": 4089
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/002-intent.json": {
+      "sha256": "0e36871846d9cde9f913a33b1c89bf95e8a2636489dd2d183208a2359a8cdbd1",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/002-process.json": {
+      "sha256": "9c7d932747b581a6b4d6302b636197d9fad2b05ec166813710a4a4f007057aff",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/002-stdout.json": {
+      "sha256": "a0c6b7483122434e0b105c21c90cd376ebc1c04c7e57924fee08fb0990928e3b",
+      "bytes": 785
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/003-intent.json": {
+      "sha256": "e458e2343c917b604e9bacba5aece4a5ed68fcd55efcfb7c325369a9c3d7bc13",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/003-process.json": {
+      "sha256": "bddf792b23814662913d7ea5c85fd950fd8779ee6af14923e3391495fcbd6fe4",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/003-stdout.json": {
+      "sha256": "00ce0aa5e91213e8e68ad356ab4523daf6bf8d7ca58638615fc5f4a2f2888e10",
+      "bytes": 395
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/004-intent.json": {
+      "sha256": "8893d3858b428ab0b40fd9061ddeebc1b7feeac788d9daf6c5a8e24976c037e9",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/004-process.json": {
+      "sha256": "f6aa2bf20e309569bd19035d2057ed9c226a0dd83ce686f1a9ec98302f9c9e1a",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/004-stdout.json": {
+      "sha256": "88bd5bffd979fca016fc5a2a33ae9f1fe40a5fed3ad909aea7ed4dd269d28eb5",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/005-intent.json": {
+      "sha256": "5b8b42f78f91a89c9fe869e6b4969ac5285dd8ef128528da916b484fdfb6eb17",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/005-process.json": {
+      "sha256": "49cf17518e7821093098124c6c10165e522e7296d7b1709f5926a3a82085b50d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/006-intent.json": {
+      "sha256": "1eba850dcbde616708a3d5f98e919156e5904f36e849797172f7c48bb3e2757e",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/006-process.json": {
+      "sha256": "47ebb353f5d5b4e9fffd925fa8da005994772a18a62e32bd06d3cba244c83eca",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/006-stdout.json": {
+      "sha256": "c30d5d0032419f27971ac36b400aa27d56865e48a43d403aa45d30907d212a0e",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/007-intent.json": {
+      "sha256": "f97035ab0497cba2330a0ef94a9abdb18839e8f3511a691d0dabca62ec0d0d7b",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/007-process.json": {
+      "sha256": "62ec0bda5a76ee24f2e104ae567f36894a73b174bd609e441f27832daa20c905",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/007-stdout.json": {
+      "sha256": "bcb51096a14faca0682ca064ef198e700d4af862b812321eba312eef6253c224",
+      "bytes": 28622
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/008-intent.json": {
+      "sha256": "c8061a0cc08f2354aa12a749591d1561ae88a738202519fc88bc74c3143a747d",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/008-process.json": {
+      "sha256": "c2738eb1beec6e5da92b6d0273077866b85073722e4d11baa07565b89d55dfd8",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/008-stdout.json": {
+      "sha256": "e4b91c0b3eb91901f3edbd1492eff5c5a75ec648eb32578f08ad97b3e0b111db",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/009-intent.json": {
+      "sha256": "2ed3b4a4b3f0fb8b0d836d47a7452a06f21f64a2f729b51cf0385793ed24f001",
+      "bytes": 624
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/009-process.json": {
+      "sha256": "929551b58b5951d050a2817d617d4941bdd60a221ab8969e0501feba1b97893a",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/009-stdout.json": {
+      "sha256": "ec4fecb0210a5904f2e6ad37715a675a26e195218dc043b341dff8e102a91eeb",
+      "bytes": 270
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/010-intent.json": {
+      "sha256": "2e5c6758c80bb93cb18af250f969cb533300a49ec619c168700065d383052f32",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/010-process.json": {
+      "sha256": "876ef5561b4649d793346d8a6deefcb3cd464aacccc9a19f967039e9efcbe4bd",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/010-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/010-stdout.json": {
+      "sha256": "e3a12f2305637cf63089e097b3769d616d3bc512c68153b238169bed327b961e",
+      "bytes": 4089
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/011-intent.json": {
+      "sha256": "eb3c68144ef64dc742e3c3bdb3a41fdd4490637be7d8f6a112e68f45c3d8432a",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/011-process.json": {
+      "sha256": "5a33ba6720160655e88234167621498c051091666350345708d215ff1c94e44f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/011-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/011-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/012-intent.json": {
+      "sha256": "7eb872f50468cb718a8d3adb278a6f55de8c4c8162ed1eb914de1f1563474ad1",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/012-process.json": {
+      "sha256": "0f671ac9993fc7dc4e82936650017af479fbcf6f111d8bef1db8830e0d0d6aea",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/012-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/012-stdout.json": {
+      "sha256": "dc177d5bf5997aea6f90450695e4d8932873bee8bc00eb0c13410321d57efaa1",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/013-intent.json": {
+      "sha256": "211403e5c5a3a38c897e72d14b77be9151bb23fe295208e033f81bfede829980",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/013-process.json": {
+      "sha256": "a3078ce8f354f8ed31af3785fd1657136a667cca4f61a4c0f585d77654bd540f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/013-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/013-stdout.json": {
+      "sha256": "88bd5bffd979fca016fc5a2a33ae9f1fe40a5fed3ad909aea7ed4dd269d28eb5",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/014-intent.json": {
+      "sha256": "ad2f29712e6a98dd10105d0bd35a242214b93061bf871b589790616728d0642b",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/014-process.json": {
+      "sha256": "0130b9f5fe78927325fcc4e55000e16a1cdcbe2034e9080876da4369e8471b63",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/014-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/014-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/015-intent.json": {
+      "sha256": "35b891b44a0b0cd70884ad14eee1a1fbb95aa361f930227acf99ddc434eee593",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/015-process.json": {
+      "sha256": "b6a5442ae7c2fb89a4828e1ae734dbef8ac5d90c2db51e5e4a8756ba0f972249",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/015-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/015-stdout.json": {
+      "sha256": "c30d5d0032419f27971ac36b400aa27d56865e48a43d403aa45d30907d212a0e",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/016-intent.json": {
+      "sha256": "2ca5d2005b7a3e57db5482d2e32b2cb03dac77510f6683f1f43aa1df0aab3197",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/016-process.json": {
+      "sha256": "7f5826e20e01808e1b0b32cef8ff883afb5ef00f1babe9687f76ac083180a5ac",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/016-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/016-stdout.json": {
+      "sha256": "bcb51096a14faca0682ca064ef198e700d4af862b812321eba312eef6253c224",
+      "bytes": 28622
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/017-intent.json": {
+      "sha256": "5e77e794a1ffbae2a37ee62216ce746f73c6326603cfc4dd6942dbca230d1ca0",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/017-process.json": {
+      "sha256": "7a5b25f1367610510e2f3d30567e03d4f4c5b7178e61819e78ece45502363da1",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/017-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/017-stdout.json": {
+      "sha256": "e4b91c0b3eb91901f3edbd1492eff5c5a75ec648eb32578f08ad97b3e0b111db",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/after.json": {
+      "sha256": "8b2a4d8d722368465a0212762aaae020540a440af228e6077065b7a5023bbcf3",
+      "bytes": 9496
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/before.json": {
+      "sha256": "4a21f75cfc5323861bf5f0525820a3277eaf2ae76a7373e688be79622b9b1553",
+      "bytes": 9498
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/branch-lock.json": {
+      "sha256": "50d31134a69ef60625f46f1fbd3ad304518a3febbde740c2444939c2b6fd038d",
+      "bytes": 21685
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/execution-binding.json": {
+      "sha256": "a76132a5abc97b16209cf95317376ce0a9cfb8b3a3d7c9c845fd0509071bc437",
+      "bytes": 24451
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/lock-intent.json": {
+      "sha256": "de723b0936632abdd9c44d896bb600188d3f39065da80d77f4cc338b772724f8",
+      "bytes": 170
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/001-intent.json": {
+      "sha256": "8b9d89ac6d8f5abb79e7b7d6ff25914ed600a32630584e057025a884e0d662b8",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/001-process.json": {
+      "sha256": "e133fcb5143c663fef7d896db91dd074d31e6525022dc8544b178419b762706f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/001-stdout.json": {
+      "sha256": "e3a12f2305637cf63089e097b3769d616d3bc512c68153b238169bed327b961e",
+      "bytes": 4089
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/002-intent.json": {
+      "sha256": "a4a24a5f073da3946b41243270d6d04bc47ad29ae4a32b999b9f27679e9662ec",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/002-process.json": {
+      "sha256": "1da7010ccf11f871fe9271db0f8723b04ea20b70cae31fb904ea5427879f1970",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/002-stdout.json": {
+      "sha256": "a0c6b7483122434e0b105c21c90cd376ebc1c04c7e57924fee08fb0990928e3b",
+      "bytes": 785
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/003-intent.json": {
+      "sha256": "392d96dab3efde8f5c683e8a5267bb6eb92d86bb79c49e4a19ee6a2226d554ff",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/003-process.json": {
+      "sha256": "62c4c6987e35e6ad1f3520380af443b0363ce5eb2c98cba89134b8eaeeef4f92",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/003-stdout.json": {
+      "sha256": "00ce0aa5e91213e8e68ad356ab4523daf6bf8d7ca58638615fc5f4a2f2888e10",
+      "bytes": 395
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/004-intent.json": {
+      "sha256": "680e08fa02a6faf25b29b864cbc142c0b06bb2687ffe86d06ea796cc91201651",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/004-process.json": {
+      "sha256": "53050434264911eea338ae3995b115dfd68424d021ca4a7b6b878d6d72cf681c",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/004-stdout.json": {
+      "sha256": "88bd5bffd979fca016fc5a2a33ae9f1fe40a5fed3ad909aea7ed4dd269d28eb5",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/005-intent.json": {
+      "sha256": "2cccada64ba99dee12458eaa691c73a7750cd708118664a344e835fafe6698ee",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/005-process.json": {
+      "sha256": "197dd0c5af8c75439af2578540c4e4c6397263608389b706237c8f7e3195c614",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/006-intent.json": {
+      "sha256": "fdb9cdfe13cb0fc2a03f999d1db9f32acbc16f4b97f0422df5c19f457d9bb867",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/006-process.json": {
+      "sha256": "74ded617228a68b68cd2843b456e6be3b99c2321d288e3ca9ed9039f10d2353e",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/006-stdout.json": {
+      "sha256": "c30d5d0032419f27971ac36b400aa27d56865e48a43d403aa45d30907d212a0e",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/007-intent.json": {
+      "sha256": "67b12f08b7511fcfdd71225897939b484a990ab82074ab7c6544b97772505f82",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/007-process.json": {
+      "sha256": "885ec10e9ca1be741bfcebfb57c84f5732464c2d50639fc503ecfd45ff57f52d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/007-stdout.json": {
+      "sha256": "bcb51096a14faca0682ca064ef198e700d4af862b812321eba312eef6253c224",
+      "bytes": 28622
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/008-intent.json": {
+      "sha256": "11bcd2858a15547a95c50f4db6cb7c86581cdd374adceaa362110ce693970c4d",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/008-process.json": {
+      "sha256": "57055cbc41b6c877a45705838f40e747d553ae680ed2ea6537c5d3ebd6a9235a",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/008-stdout.json": {
+      "sha256": "e4b91c0b3eb91901f3edbd1492eff5c5a75ec648eb32578f08ad97b3e0b111db",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/009-intent.json": {
+      "sha256": "c828fe42f0996e880e62af93ee990774cd8b0bd65a3193f146d2c9d0641f1751",
+      "bytes": 433
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/009-process.json": {
+      "sha256": "31434543e56c37a20a5f833b4d0bb2b596e9564fc8824dac2213e60f9f7992d4",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/009-stdout.json": {
+      "sha256": "a9e757cae696f7046507f4bf84b9daa10c27ca9c17b49dfae38497df17ec157c",
+      "bytes": 229
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/result.json": {
+      "sha256": "a109c7e6dcc9304a815fd83ca32a904761d7691bc173fc6221a5c5a44574ca22",
+      "bytes": 387
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/review-threads.json": {
+      "sha256": "cd3983d01ab13cdb8aa751505cbe490f22ba03f4e7bc34ce4dbb02c32a14237b",
+      "bytes": 295
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/exact-final-head01/snapshot.json": {
+      "sha256": "4a21f75cfc5323861bf5f0525820a3277eaf2ae76a7373e688be79622b9b1553",
+      "bytes": 9498
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/01-intent.json": {
+      "sha256": "548b20e6587ebe2c5b6d6d502820e63cea535a3fdb6f8ea6547a9ab0c3855663",
+      "bytes": 191
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/01-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/01-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/01-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/02-intent.json": {
+      "sha256": "56be95b4a9dfa0cdec1a9ccc8f7e7b22726a73bd2ec7a7e713c5fc49bbb07086",
+      "bytes": 195
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/02-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/02-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/02-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/03-intent.json": {
+      "sha256": "2c5a71849689cdd78c32d4e2bea6580e60c33370125a205bb93885690d43275a",
+      "bytes": 238
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/03-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/03-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/03-stdout.txt": {
+      "sha256": "b3c5ad2d96db3cae54df873266b378b0d036ba1e0fcbfd4c799e7bf08f8e8984",
+      "bytes": 93
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/04-intent.json": {
+      "sha256": "81636d1550e58808f35ac000923d0cbcb4214de7d7d7d01be3728442da95a355",
+      "bytes": 177
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/04-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/04-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/04-stdout.txt": {
+      "sha256": "9160f06283eb400ac38842f51d362146e848450e38d9d3d0594671bf5eacf66e",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/05-intent.json": {
+      "sha256": "ded98128e24a732a42d2b983db373a206c03a70c3549b5463ac534ee5ebd200f",
+      "bytes": 1044
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/05-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/05-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/05-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/06-intent.json": {
+      "sha256": "157f08733d1633acc1b3ff98fff5bc70fc670407aa02de5faaeb609fb632554e",
+      "bytes": 195
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/06-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/06-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/06-stdout.txt": {
+      "sha256": "753b5e5ea9709d0cddf47e91016c20ebaa4a7f1647c52cc0238a28a245e06115",
+      "bytes": 302580
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/07-intent.json": {
+      "sha256": "b39ec0179d92b2e757d72546d6ca3b8acaa58f768ac3d59112fe00c5d912ea7d",
+      "bytes": 305
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/07-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/07-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/07-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/08-intent.json": {
+      "sha256": "cdb75c73429b7b9b0ac272d7c68c5dfef9c561fd948b477afc3afae5ff374f19",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/08-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/08-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/08-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/09-intent.json": {
+      "sha256": "06e64c69a0f1962769e087265629c743036ddfe1f4855625225d450ed4ce7031",
+      "bytes": 177
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/09-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/09-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/09-stdout.txt": {
+      "sha256": "2477627fc86d34544b02224957f436fa5793b4e3d243696d749c1720d1e6baad",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/10-intent.json": {
+      "sha256": "aa7fb0de19088c7dd7d2236b085a6b33628137622b9093cc015236919b8ce982",
+      "bytes": 214
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/10-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/10-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/10-stdout.txt": {
+      "sha256": "9160f06283eb400ac38842f51d362146e848450e38d9d3d0594671bf5eacf66e",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-commit01/result.json": {
+      "sha256": "79af2908937bf756e0aa7743f675414b7e45c4442b88dbf6746d4e4087ed1690",
+      "bytes": 240
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/001-intent.json": {
+      "sha256": "7987b16099d1b6f5c1ee6461e58e47997864bceb43d19e122c8427b5acf9111a",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/001-process.json": {
+      "sha256": "3cae43e18450eec2e693cdbc77047dc6493baeadd1b465f23a921274bc144319",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/001-stdout.json": {
+      "sha256": "01ef4dbc17f24ef59bbc61c9101f837f4c6a4bc0e5edb43a808d7c16318b1dd8",
+      "bytes": 4075
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/002-intent.json": {
+      "sha256": "a73780e7aa0fcaccf49303f479e5dfe7f8d5644aaa5b138999869f668550cccb",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/002-process.json": {
+      "sha256": "4afd83e9ebf22fa9a88ad93b434f066974de1be9fee741d612114c8c4092c7bb",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/002-stderr.txt": {
+      "sha256": "6650996cc0688f96c7da03c9f3cd058b95c3b9db635a740a4358d0b9b9a530e1",
+      "bytes": 354
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/002-stdout.json": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/01-intent.json": {
+      "sha256": "c5abc038ac3c9251a028134a9b1843889a33baf6216d2df067553299d5a9b2da",
+      "bytes": 191
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/01-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/01-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/01-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/02-intent.json": {
+      "sha256": "1e51fb833a78e97904063b818a650c901fb3f036bf68ddff8d41645d4425d0a2",
+      "bytes": 195
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/02-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/02-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/02-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/03-intent.json": {
+      "sha256": "1b4f0726c00f7bb86d70d9412ce47816333ed1799182327a226bc08c2c36ab41",
+      "bytes": 238
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/03-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/03-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/03-stdout.txt": {
+      "sha256": "b3c5ad2d96db3cae54df873266b378b0d036ba1e0fcbfd4c799e7bf08f8e8984",
+      "bytes": 93
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/04-intent.json": {
+      "sha256": "1c83feb1de7d88794b18c655b6dbc4724f8fb509e8d6b6b990eccae01538dad6",
+      "bytes": 177
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/04-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/04-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/04-stdout.txt": {
+      "sha256": "2477627fc86d34544b02224957f436fa5793b4e3d243696d749c1720d1e6baad",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/05-intent.json": {
+      "sha256": "3e668e65d09ba9071391c9f2933e2142208c006972ab271eb981322a575528ef",
+      "bytes": 262
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/05-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/05-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/05-stdout.txt": {
+      "sha256": "a5b30ce6d03ed5e94cafd8743bc1e6f890368dd84ccf0e5909056bede67b2628",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push01/failure-classification.json": {
+      "sha256": "18dbbb6466b870a2afdb95e9b9b04a0974bb6ef5ba7ae0c67e0a037d6fa91d43",
+      "bytes": 239
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/001-intent.json": {
+      "sha256": "bfe15b6bfc0339554ada0f3c0d09b767dffa76e53061a9ab47c9df9b8ed16d95",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/001-process.json": {
+      "sha256": "d68f081532b4e247a8a60be14a8ce3725d2f8b07b499424fff8cc90ff9d47342",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/001-stdout.json": {
+      "sha256": "01ef4dbc17f24ef59bbc61c9101f837f4c6a4bc0e5edb43a808d7c16318b1dd8",
+      "bytes": 4075
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/002-intent.json": {
+      "sha256": "16a7123b3750144c3fb74185a4c90f9bccd2c73449a70481966c7867b01a0cca",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/002-process.json": {
+      "sha256": "a27cd86e596580db7028423761e46ce2286c1d388028587a3f00038291190189",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/002-stdout.json": {
+      "sha256": "a0c6b7483122434e0b105c21c90cd376ebc1c04c7e57924fee08fb0990928e3b",
+      "bytes": 785
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/003-intent.json": {
+      "sha256": "8220868461432d1853f60f655bdf2944298379afb028d0a55e2609ffa3efaac2",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/003-process.json": {
+      "sha256": "1202abfed16f3b6cb466820c07bd2d81a5361b184e357b584fd560a3450b5782",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/003-stdout.json": {
+      "sha256": "10c5fd43587c4c900ce46d5079a38f18fdb95b1392d61521642bead8992e63dd",
+      "bytes": 395
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/004-intent.json": {
+      "sha256": "33867516fe625e31db28376b52cf66066926892d2455bf66f056c33d6a7fca9f",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/004-process.json": {
+      "sha256": "fd253e876e08fbd0f9ee797ea0de6fbf6964755284df120a55b17842ebba8a8f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/004-stdout.json": {
+      "sha256": "22540c07afd8fce2d6f9b92827dd80407219f855bc5f4ad2e87e681c971e6ef2",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/005-intent.json": {
+      "sha256": "ed2c1fe7eb7a2d2552369c7a134896191291c2938c2b074bdaef2e1e9d639951",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/005-process.json": {
+      "sha256": "92c53f64913dac4367bea1197ac286ab6a7acc8677b06ca894bf1bfd64fdeb10",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/006-intent.json": {
+      "sha256": "4f1f1a5f7dedacce3e58929d63d15127a582eca3c14083fb6d39548ae7fc3fb5",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/006-process.json": {
+      "sha256": "69fe698adceaa817e24e691fa3d58b9357f002ca4c61581baa3d303babfc6892",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/006-stdout.json": {
+      "sha256": "6a734974f339647acc4fbf89d0567602c58a27b878fc0f2d3b530cc328569765",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/007-intent.json": {
+      "sha256": "e44457d990fa959039354bb113a6a03483b99cd1035b95ec5da0ad4cad052f0b",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/007-process.json": {
+      "sha256": "6e2e355f90e2f9a918331b96dcdc6da341a4e78f8b3d55a3eba542d5dc6b7bc8",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/007-stdout.json": {
+      "sha256": "f141a5026b4df0a3d777373b0f54bbcf6126165d0a2eecbf8f074bd4fbf65f3a",
+      "bytes": 28594
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/008-intent.json": {
+      "sha256": "5d611ea167f87752c4f847c08307b434874650f26913113819181b9ff759e9e5",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/008-process.json": {
+      "sha256": "1e9857f6ea84086c746e96ecf9a6aea91e67f1a7f2743632b7d23bf736d39a34",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/008-stdout.json": {
+      "sha256": "1796a08715b626eb043fead6a4966d86568e9e21011df658a7335aae09f5d35a",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/01-intent.json": {
+      "sha256": "36c2c5ce4a57b2fe8b1be92c58a47cc0e49ab3181302e69faac34b6d28102fd1",
+      "bytes": 191
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/01-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/01-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/01-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/02-intent.json": {
+      "sha256": "cd49287628b2995f3a3fc8f8312958d3a163f16560d9d48e1bb84f0eddcb9414",
+      "bytes": 195
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/02-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/02-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/02-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/03-intent.json": {
+      "sha256": "1eea15ae3e2f775a276cb1b72887749e1aabe55b04d1cdc4e1aff2d297f1da8e",
+      "bytes": 238
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/03-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/03-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/03-stdout.txt": {
+      "sha256": "b3c5ad2d96db3cae54df873266b378b0d036ba1e0fcbfd4c799e7bf08f8e8984",
+      "bytes": 93
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/04-intent.json": {
+      "sha256": "4211df3687daaf9ef47daa2f2c96944b385616d27a3fc2139c7eac405be09826",
+      "bytes": 177
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/04-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/04-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/04-stdout.txt": {
+      "sha256": "2477627fc86d34544b02224957f436fa5793b4e3d243696d749c1720d1e6baad",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/05-intent.json": {
+      "sha256": "5e31ceb904ea2e012e7100d9fedcdea4cc600df11393e32e8bd998b5c63f3ea4",
+      "bytes": 262
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/05-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/05-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/05-stdout.txt": {
+      "sha256": "a5b30ce6d03ed5e94cafd8743bc1e6f890368dd84ccf0e5909056bede67b2628",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push02/failure-classification.json": {
+      "sha256": "b5f58dd5eda6ccfb463ec8e3473540daafcee13a02d490a0bfc9c52d94995284",
+      "bytes": 298
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/001-intent.json": {
+      "sha256": "2d0f342c4945918838c38f97e02435437b2ff1272e0339c7b15984125589dc9e",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/001-process.json": {
+      "sha256": "3ca9b73457b7bfed2be4b14bcdd097f5a9f306e1b65f67c1bc60d4d04311f90e",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/001-stdout.json": {
+      "sha256": "01ef4dbc17f24ef59bbc61c9101f837f4c6a4bc0e5edb43a808d7c16318b1dd8",
+      "bytes": 4075
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/002-intent.json": {
+      "sha256": "5db5579dbda226f89f1ad0871485ce7d2d56067ae6f3a0740a6e9b934ea87281",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/002-process.json": {
+      "sha256": "f1453dc929c6eee1853deb71d035e91ce7def5fc3ee8578992db47d060457755",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/002-stdout.json": {
+      "sha256": "a0c6b7483122434e0b105c21c90cd376ebc1c04c7e57924fee08fb0990928e3b",
+      "bytes": 785
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/003-intent.json": {
+      "sha256": "289f143a2b3a075fd0b27244fab87e2690d2131bb7bde1d4cd62f72f1a9ae406",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/003-process.json": {
+      "sha256": "59ff13de463a0cf69aff8d0b6917320a23fbed41e3901a74c222ee4522bacf00",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/003-stdout.json": {
+      "sha256": "10c5fd43587c4c900ce46d5079a38f18fdb95b1392d61521642bead8992e63dd",
+      "bytes": 395
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/004-intent.json": {
+      "sha256": "40335c4003756fdc57c8923a88644a5dca8f144be6f28314ccdf2d7521952ce9",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/004-process.json": {
+      "sha256": "c356b1f5fe7c9aeac5cf8663785e41f5d286bb3b25ca18711f13239d98e845a1",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/004-stdout.json": {
+      "sha256": "22540c07afd8fce2d6f9b92827dd80407219f855bc5f4ad2e87e681c971e6ef2",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/005-intent.json": {
+      "sha256": "399c9115c254292b043de7b1b4cf2dba37281fb0e632570b16779d81026c7508",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/005-process.json": {
+      "sha256": "f8a6a3bb38cb7c49c5b5def344759bc78e79d69f4f4fdb3257a883bb33ed207a",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/006-intent.json": {
+      "sha256": "9417982dd57115a07aef46755c60e6d6c091e96567a29a791e759a3c395261fa",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/006-process.json": {
+      "sha256": "41555b23796d358fdecfa468b9ef6d509206f51654280bb3114844b534dd3528",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/006-stdout.json": {
+      "sha256": "6a734974f339647acc4fbf89d0567602c58a27b878fc0f2d3b530cc328569765",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/007-intent.json": {
+      "sha256": "6bbfeba81ca529f86869518b705d9b894747300ac3f02e1c692fc00d3cf0c5a5",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/007-process.json": {
+      "sha256": "075257f1ba84d65cb2438f1d800e5c3188b415588d2ddd542d6d5bb00af3c513",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/007-stdout.json": {
+      "sha256": "f141a5026b4df0a3d777373b0f54bbcf6126165d0a2eecbf8f074bd4fbf65f3a",
+      "bytes": 28594
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/008-intent.json": {
+      "sha256": "90aec0b3d4c1cefc0846c1bcffa49de43bceaf33db805bae3b68d12c5c600518",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/008-process.json": {
+      "sha256": "3891efc751837e71e94439c39493d9a3fb36f8212a30c81dd2ce6f37e736b2e2",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/008-stdout.json": {
+      "sha256": "1796a08715b626eb043fead6a4966d86568e9e21011df658a7335aae09f5d35a",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/01-intent.json": {
+      "sha256": "4b4b510ed8454d8d5573913606f6c19fc33d0df23f5d1b582d7084263cad8a18",
+      "bytes": 191
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/01-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/01-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/01-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/02-intent.json": {
+      "sha256": "58963f1b9db933b43d4f83ca0ad2bdaec491f89f2be891f70b933f2c94467838",
+      "bytes": 195
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/02-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/02-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/02-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/03-intent.json": {
+      "sha256": "3918124208eff4437e6c4c54e04c7ea2c9cbc9f6947d0595735f53d1a284d75d",
+      "bytes": 238
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/03-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/03-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/03-stdout.txt": {
+      "sha256": "b3c5ad2d96db3cae54df873266b378b0d036ba1e0fcbfd4c799e7bf08f8e8984",
+      "bytes": 93
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/04-intent.json": {
+      "sha256": "34bcb66ccdf0a31fcec72888ba05b525bd664a72ee095d21540f2b7a4890e8d7",
+      "bytes": 177
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/04-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/04-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/04-stdout.txt": {
+      "sha256": "2477627fc86d34544b02224957f436fa5793b4e3d243696d749c1720d1e6baad",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/05-intent.json": {
+      "sha256": "2adb2d8a588b288041bb14c8bd23bbe97a6684a00267cec6c7255a32e44343c6",
+      "bytes": 262
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/05-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/05-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/05-stdout.txt": {
+      "sha256": "a5b30ce6d03ed5e94cafd8743bc1e6f890368dd84ccf0e5909056bede67b2628",
+      "bytes": 41
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/06-intent.json": {
+      "sha256": "992d22707e9e387661219ddb07e752a45b76926dfc31e614506513f385887ef9",
+      "bytes": 274
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/06-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/06-stderr.txt": {
+      "sha256": "e07ba2ff0232367984158059e3b2924a5d0a49ce6a8e20b5be32588f201ee8ec",
+      "bytes": 168
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/06-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/07-intent.json": {
+      "sha256": "722a65abef1ed697372680631a38ae25240639297c5caffd29ed02af72443c2f",
+      "bytes": 238
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/07-result.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/07-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/07-stdout.txt": {
+      "sha256": "b2dbb75e8d326f3c1d74859f33bb4905d0c7c3ca482df472ab7915a98a4e9fc0",
+      "bytes": 93
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/protection-before-final-push.json": {
+      "sha256": "524daa247acf1f864057153c9fb49b414b6b814853f6bb665175c79a47beb15a",
+      "bytes": 9498
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-artifact-push03/result.json": {
+      "sha256": "0d714ff6fcd64dfa7c6d0eca2d29bf6a03bc2d1d2d6c536307b8beacacd56a7d",
+      "bytes": 183
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-checkpoint01.json": {
+      "sha256": "7a0dba879c6e398cfc404505cffc81888167d734484f906d8805c56a3de5d388",
+      "bytes": 1377
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-ci-completion01/intent.json": {
+      "sha256": "3d99d3dcfbfa17480eb446e01d794ae16a266279ca357fb3f6c67df68ae76fc3",
+      "bytes": 289
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-ci-completion01/result.json": {
+      "sha256": "88518bd22ef46c43baf7ca2211f0b8ec8eec72702a2f68ea7024bf42b58c4464",
+      "bytes": 174
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-ci-completion01/watch.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-ci-completion01/watch.stdout.txt": {
+      "sha256": "94b1609349f9999b2bbc037caa6522ff7d6db1fe8e737444d97aafe7c748d2bf",
+      "bytes": 186108
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/final-committed-approval-bytes01.json": {
+      "sha256": "23d8520f04bf40f33d16b404902454750796fe642e18dc0fc093018d715c2927",
+      "bytes": 1808
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/001-intent.json": {
+      "sha256": "530b03ee70be2d8bdf34fb8d3854d8cd7a92fd93c30c5810d39cccd9ed11a384",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/001-process.json": {
+      "sha256": "2170ad3ff550bd036c1f69643064ca3444907889f23f32bc4a3b50c8db8462da",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/001-stdout.json": {
+      "sha256": "e3a12f2305637cf63089e097b3769d616d3bc512c68153b238169bed327b961e",
+      "bytes": 4089
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/002-intent.json": {
+      "sha256": "e35e6ef30707d3cd1491c7f72bbce8ce9b8ddbe84d613ed038be15f237747538",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/002-process.json": {
+      "sha256": "a63715f46485899ece8b25ad189ba3406d87683164ec898b1914bf87f977bb37",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/002-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/003-intent.json": {
+      "sha256": "71987f77f6d7f858d3d95c9d5f120c0612b5639d1b35b8f2004df8e131884887",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/003-process.json": {
+      "sha256": "ce873266f4d3088f260565bc34757c4ba6d654421620e122eacf02862b51f3aa",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/003-stdout.json": {
+      "sha256": "dc177d5bf5997aea6f90450695e4d8932873bee8bc00eb0c13410321d57efaa1",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/004-intent.json": {
+      "sha256": "ab5bbef0f8a3c77b1561b1ddc9b6852ec6b34ee7a1d4adb6168dfcf1e33295b4",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/004-process.json": {
+      "sha256": "e9426b4ac33a67f331522418c95fd329a5e89795a76ebbbebade626057c2aa62",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/004-stdout.json": {
+      "sha256": "86c613a259285799f9bf7d5e667aa26aa3209bf4ef42cc33156a5abd3c3d4ae5",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/005-intent.json": {
+      "sha256": "7c38b1e50722f9f3fd4a8d2bc48d5efc242f73417c48aed1bba12d38e6c33066",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/005-process.json": {
+      "sha256": "78a53d7df5814096b3c8cb65135caa68f1ba1e0792730613974d6a25f4763faa",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/006-intent.json": {
+      "sha256": "76a328ff90359ad24505a614a7f6b7549ad4068e5fc3334e91ea2deff4ae8f21",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/006-process.json": {
+      "sha256": "63fccb1dca0004061ddfe9f0c7ca709dd75e7fba250913a3ecc5e16a855884d4",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/006-stdout.json": {
+      "sha256": "c30d5d0032419f27971ac36b400aa27d56865e48a43d403aa45d30907d212a0e",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/007-intent.json": {
+      "sha256": "371e8012b48144ca99a9d78c3e33b9bc01a5e74834c57ca38d9346153c1aae04",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/007-process.json": {
+      "sha256": "3067bf70a6975853cd3e4857a6165b5e325ccb0b55f4ae4794f5bb247fa20015",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/007-stdout.json": {
+      "sha256": "bcb51096a14faca0682ca064ef198e700d4af862b812321eba312eef6253c224",
+      "bytes": 28622
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/008-intent.json": {
+      "sha256": "abc102c2e3c73d73ba97d06578c8e2c3b1842dc41b43c8ef367e72ff92ff5618",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/008-process.json": {
+      "sha256": "c94a1ddec4df3f7cf2b1d730c8f28651250c77f9e54c92addbc02ccfb7427871",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/008-stdout.json": {
+      "sha256": "e4b91c0b3eb91901f3edbd1492eff5c5a75ec648eb32578f08ad97b3e0b111db",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/postlock-verify01/result.json": {
+      "sha256": "bbbfd4c75d461ceb0a7401fe93acc397778a963fedaec1a4fb23306aa6fd5605",
+      "bytes": 3768
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/body.md": {
+      "sha256": "f60056adda3393dcf888eb2f28a8e14c09ac7de6f2be0304e8bb5a0816d39783",
+      "bytes": 1617
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/comparison-failure01.json": {
+      "sha256": "519e634e2e57af55f9ebb6c0ce2fcb404eb339287d887c51e013da5bb5709fef",
+      "bytes": 215
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/intent.json": {
+      "sha256": "cd76557c000665382960e9deb8b5679db5132fcabc9b77940337ba022870cb88",
+      "bytes": 421
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/readback.json": {
+      "sha256": "d5ecb52203ac370f1103455b3c1a003167d5c9faab2661c65c3a85a5e88e59d2",
+      "bytes": 3328
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/readback.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/result02.json": {
+      "sha256": "361ae13cb1d94372fe1461dd97f1cbdd311556e979e9794fb97e1d069ed2a257",
+      "bytes": 388
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/pr-closure-comment01/stdout.txt": {
+      "sha256": "4db86ae4cb963a4bc2ca045f93ae3b9a735fd78adabba4043c1c839cdeb350e1",
+      "bytes": 86
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/publication-secret-scan04.json": {
+      "sha256": "66751ddbd87ff9d99c69a4c15613f2db017e79fa78e1b92db6613b3b4c1a148c",
+      "bytes": 231
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/publication-secret-scan05.json": {
+      "sha256": "c500ece1b958dca03a1313d00f7b0bd40fd8dc2595d35ef8fc12460e581dbac8",
+      "bytes": 231
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/retry-final-push02.py": {
+      "sha256": "d543e615fed03fc6101c1cad326c1e696df6ee80a73da616f7af4ae3d768ebaa",
+      "bytes": 5772
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/retry-final-push03.py": {
+      "sha256": "b694376f894d4a6031b9a64433f098e7830a505da4c85bb148aac20107aa6e7b",
+      "bytes": 5780
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/scan-postlock-publication04.py": {
+      "sha256": "5655ba85a74772c001c9bf96b7ac31597008339af5a224a37c3194d5c07eaed3",
+      "bytes": 3827
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-publication01/scan-postlock-publication05.py": {
+      "sha256": "156b4c895ff04fae765544de5e3bf389c6186a48e5ccb3134a6d5ea7f9fe7b5a",
+      "bytes": 3827
+    },
+    "docs/acceptance/issue307-d1-candidate22-final-confirmation01.md": {
+      "sha256": "40afd412b637597b367a9680dd476d4d9b24cfc993b80b5b04ca23fa5a1bdf29",
+      "bytes": 58709
+    },
+    "docs/acceptance/issue307-d1-v32-postlock-matrix01.md": {
+      "sha256": "fd331b92fd98bf0232f690119276017acf809bea8ca996002d2a7db0fba730ce",
+      "bytes": 1252
+    }
+  },
+  "native_delete": 0,
+  "execution_authority": false,
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED"
+}

@@ -1,0 +1,32 @@
+{
+  "status": "ISSUED_RECEIPT_RAW_RESTORED_LF_EQUAL",
+  "restorations": [
+    {
+      "path": "docs/acceptance/issue307-d1-candidate21-final-confirmation01.md",
+      "before_sha256": "d4e6e65647aba7892dab9b2ccf508a1314ab039c0dde28ece366cda25402ce73",
+      "issued_sha256": "f51754642b34f738cf6313f520432baaf4d43e71005c78c6f147943dad71b9ea",
+      "lf_equal": true
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-candidate21-final-confirmation02.md",
+      "before_sha256": "028bb01bea06b7f40e84c5bacfd608cc7dcd49cdbd9f0331ec2cd1094466d54e",
+      "issued_sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989",
+      "lf_equal": true
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v31-postlock-matrix01.md",
+      "before_sha256": "271f5fcad8e936d749805f5bace3bbeb1ee510f8a82fb520239975a62c65a174",
+      "issued_sha256": "8c7adc901482a21f6e0302e01117c64a60db9c7ff9395c2fed503abf3afbd7f2",
+      "lf_equal": true
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v31-postlock-matrix02.md",
+      "before_sha256": "8014496edc38f4698efac1f09d528d1cf386487f7141ed4ff2a5522475eb6df3",
+      "issued_sha256": "37df8a49fb56b526516732e5c3d6420d0bbd1c437df1af1deddf4bed339b6467",
+      "lf_equal": true
+    }
+  ],
+  "old_facts_changed": false,
+  "source_start": 0,
+  "native_delete": 0
+}

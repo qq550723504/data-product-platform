@@ -66,6 +66,7 @@ def snapshot():
  owners,rows=physical();rv=module('v28_prior_history','retained_v27.py')
  prior=rv.verify(ROOT,inspect,closed,docker,set(),PRIVATE,p.hostpath)
  candidate,_=packet();allocation=load(OLD/'allocation.json');budgets={};backups={}
+ accepted=rv.historical_descriptors.expected(ROOT)
  for g,a in zip(candidate['Groups'],allocation['groups']):
   name=a['volumes']['budget'];users=sorted(x['Id'] for x in rows if any(m['Type']=='volume' and m['Name']==name for m in x['Mounts']))
   actual=docker('ps','-aq','--no-trunc','--filter','volume='+name).decode('utf-8','strict').split();need(sorted(actual)==users and len(users)==len(set(actual)),'budget mount expansion')
@@ -77,7 +78,7 @@ def snapshot():
    path=OLD/g['Group']/'checkpoint'/file;need(sha(path)==g[key],'old backup changed');backups[str(path)]=sha(path)
  profiles={str(x):sha(x) for group in ('business-races','late-hold','mixed') for x in (OLD/group).rglob('*.json')}
  files={x.relative_to(ROOT).as_posix():sha(x) for x in HISTORY.rglob('*') if x.is_file()}
- return dict(prior=prior,owners=owners,descriptors={x['Id']:rv.cfg_hash(x) for x in rows},budgets=budgets,backups=backups,profiles=profiles,failed_evidence=files)
+ return dict(prior=prior,owners=owners,descriptors={x['Id']:rv.cfg_hash(x,accepted) for x in rows},budgets=budgets,backups=backups,profiles=profiles,failed_evidence=files)
 
 def code_inputs():
  names=p.call(['git','-c','core.longpaths=true','ls-files','apps/platform','examples/lifecycle-d1']).decode().splitlines()

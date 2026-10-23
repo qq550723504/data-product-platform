@@ -30,7 +30,7 @@ def configure():
     anchor=load(PRIVATE/'host-anchor.json')
     need(anchor['execution']==p.EXECUTION and anchor['profile']==p.PROFILE,'new host anchor scope differs')
     base.ROOT=ROOT;base.PACKET=PACKET;base.PACKET_RELATIVE=PACKET.relative_to(ROOT).as_posix()+'/'
-    base.AUTHORIZATION_PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v32-execution01/human-authorization.json'
+    base.AUTHORIZATION_PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v33-execution01/human-authorization.json'
     base.PRIVATE=PRIVATE;base.CONTROL=CONTROL;base.EXECUTION=p.EXECUTION
     base.CANDIDATE=anchor['candidate_sha256'];base.BINDINGS=anchor['bindings_sha256'];base.TEMPLATE=anchor['template_sha256'];base.PACKET_ANCHOR=anchor['packet_commit']
     base.START=p.window.instant(p.W['NotBefore']);base.END=p.window.instant(p.W['NotAfter'])

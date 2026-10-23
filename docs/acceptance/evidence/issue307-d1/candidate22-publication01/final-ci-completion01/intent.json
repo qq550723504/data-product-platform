@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "gh",
+    "run",
+    "watch",
+    "39910327376",
+    "--repo",
+    "qq550723504/data-product-platform",
+    "--exit-status",
+    "--interval",
+    "30"
+  ],
+  "head": "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+  "event": "pull_request",
+  "execution_authority": false
+}

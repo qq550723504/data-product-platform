@@ -43,23 +43,23 @@ class RetainedV26Tests(unittest.TestCase):
                 with self.assertRaises(ValueError):retained.revoked(raw(before),raw(after),record,digest(raw(before)),'Base.Enabled')
 
     def test_only_new_execution_window_and_identities_are_selected(self):
-        self.assertEqual(f.p.PROFILE,'candidate22/v32')
-        self.assertEqual(f.p.EXECUTION,'0e5cb8f3-46a9-4339-88e4-7154d6ebe13f')
-        self.assertEqual(f.p.W['NotBefore'],'2026-10-23T10:00:00Z')
-        self.assertEqual(f.p.W['NotAfter'],'2026-10-23T10:40:00Z')
-        self.assertEqual(f.p.W['RecoveryEnd'],'2026-10-23T12:40:00Z')
+        self.assertEqual(f.p.PROFILE,'candidate23/v33')
+        self.assertEqual(f.p.EXECUTION,'4fad1007-6595-4037-a7a5-1d8d38cb8bcc')
+        self.assertEqual(f.p.W['NotBefore'],'2026-10-24T10:00:00Z')
+        self.assertEqual(f.p.W['NotAfter'],'2026-10-24T10:40:00Z')
+        self.assertEqual(f.p.W['RecoveryEnd'],'2026-10-24T12:40:00Z')
         self.assertNotEqual(f.p.EXECUTION,retained.EXECUTION)
 
     def fixture(self,root):
-        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate22-source-review02'
+        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate23-source-review01'
         for directory in (public,packet,review):directory.mkdir(parents=True)
         candidate={'Execution':f.p.EXECUTION,'Source':'f'*40}
         f.save(packet/'source-freeze.json',{'host':{'source':'d'*40}})
         f.save(packet/'candidate.json',candidate)
-        for directory,name,status in [(public,'non-delete-evidence-index.json','SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX'),(review,'evidence-index.json','C22_SOURCE_REVIEW_EVIDENCE_INDEX')]:
+        for directory,name,status in [(public,'non-delete-evidence-index.json','SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX'),(review,'evidence-index.json','C23_SOURCE_REVIEW_EVIDENCE_INDEX')]:
             (directory/'source.txt').write_bytes(b'recorded-only')
             f.save(directory/name,{'status':status,'count':1,'files':{'source.txt':{'sha256':f.sha(directory/'source.txt'),'bytes':13}}})
-        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C22_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW','source_head':'d'*40,'runtime_source':'f'*40,'remaining_blockers':[]})
+        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C23_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW','source_head':'d'*40,'runtime_source':'f'*40,'remaining_blockers':[]})
         return public,packet,review,candidate
 
     def test_current_source_report_and_preparation_form_exact_typed_plan(self):

@@ -1,4 +1,4 @@
-"""Fixed non-delete preparation primitives for candidate22.
+"""Fixed non-delete preparation primitives for candidate23.
 
 No send permission writer, authorization loader or S3 DELETE exists here.
 Allocation, budget initialization, native preparation and freeze are separate
