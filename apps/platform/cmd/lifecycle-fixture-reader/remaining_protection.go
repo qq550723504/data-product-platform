@@ -30,9 +30,16 @@ type nativeProtectionError struct{ Reason string }
 func (e nativeProtectionError) Error() string { return "native protection required: " + e.Reason }
 
 func requireRemainingProtection(p lc.CopyProtection, cp domain.Copy, at, until time.Time) error {
+	scope, _ := pilot.RemainingScopeFor("mixed")
+	var expected domain.Copy
+	for _, row := range scope.Copies {
+		if row.Key == "fixture/m1-c.csv" {
+			expected = row
+		}
+	}
 	reason := ""
 	switch {
-	case p.Copy != cp:
+	case p.Copy != cp || cp != expected:
 		reason = "EXACT_COPY_DIFFERS"
 	case until.IsZero() || !at.Before(until):
 		reason = "REQUIRED_HORIZON_EXPIRED"
@@ -59,7 +66,7 @@ func remainingProtectedCopy(cp domain.Copy) bool {
 		return false
 	}
 	for _, expected := range scope.Copies {
-		if expected.Key == "fixture/m1-c.csv" && cp == expected {
+		if expected.Key == "fixture/m1-c.csv" && cp.ID == expected.ID {
 			return true
 		}
 	}

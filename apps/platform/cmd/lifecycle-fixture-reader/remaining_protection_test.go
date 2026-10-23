@@ -36,7 +36,7 @@ func protectionFixture(t *testing.T) (domain.Copy, lc.CopyProtection, time.Time,
 }
 
 func TestProtectedRemainingCommandSuccessAndCounterexamples(t *testing.T) {
-	for _, name := range []string{"success", "expired", "equal-now", "short", "missing", "none", "compliance", "hold", "wrong-version", "wrong-provider", "stale", "future", "unknown", "expired-horizon"} {
+	for _, name := range []string{"success", "expired", "equal-now", "short", "missing", "none", "compliance", "hold", "wrong-version", "wrong-provider", "wrong-expected-copy", "stale", "future", "unknown", "expired-horizon"} {
 		t.Run(name, func(t *testing.T) {
 			cp, p, at, until := protectionFixture(t)
 			var inspectErr error
@@ -61,6 +61,12 @@ func TestProtectedRemainingCommandSuccessAndCounterexamples(t *testing.T) {
 				p.Copy.ProviderVersion = uuid.NewString()
 			case "wrong-provider":
 				p.Copy.ProviderInstanceID = uuid.New()
+			case "wrong-expected-copy":
+				cp.ProviderVersion = uuid.NewString()
+				p.Copy = cp
+				if !remainingProtectedCopy(cp) {
+					t.Fatal("known C identity bypassed guard")
+				}
 			case "stale":
 				p.ObservedAt = at.Add(-time.Minute - time.Nanosecond)
 			case "future":
