@@ -81,6 +81,16 @@ def project_owner(item):
 
 
 def historical_gate():
+    # This successor source accepts only explicitly archived/receipted retired
+    # resources. The frozen C22 checkout keeps its original recursive gate.
+    # Its old allocation cannot satisfy this new retained-history contract.
+    import retirement_catalog
+    return retirement_catalog.verify_history()
+
+
+def historical_gate_before_retirement():
+    # Original implementation is retained for historical comparison/tests only;
+    # no automatic fallback from the new catalog to this live-object recursion.
     base=prior.retained()
     packet=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-seventeen01'
     need(sha(packet/'terminal.json')=='c6e12ffdb14b64c139d7352f67b6c54b1c3ff859fe0400f03c3343dcd4c92a33','accepted seventeen terminal differs')

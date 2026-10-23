@@ -1,0 +1,8 @@
+{
+  "source_thread": "01a16786-bcae-77a1-aab6-942e4204628d",
+  "human_message_id": "01a16858-d5ec-7753-9889-68dd478d419b",
+  "human_text": "可以，把报告和精确清单发给 #307 原会话，让它在后继冻结方案中解除不必要的依赖，再清理确认不用的资源，保留必要数据、预算和验收记录，别影响当前任务和其他会话。\n",
+  "scope": "Docker acceptance-resource maintenance only; no provider/object DELETE or volume removal; preserve data/budgets/pins/failures; do not change frozen C22",
+  "source": "trusted Codex read_thread human message",
+  "readback_is_not_claimed_session_raw_bytes": true
+}
