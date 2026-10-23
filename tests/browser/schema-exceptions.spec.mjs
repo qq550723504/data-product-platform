@@ -43,7 +43,7 @@ test("exception history paginates past 100 and binds exact nullable historical e
 });
 
 test("workbench keeps history separate from current queues and filters survive other queue navigation",async({page,request})=>{
-  await page.goto("/");
+  await page.goto("/core/workbench");
   const compact=page.getByTestId("schema-exceptions");
   await expect(compact).toContainText("已记录 105 条扫描异常历史");
   await expect(page.getByTestId("needs-attention")).not.toContainText("105");

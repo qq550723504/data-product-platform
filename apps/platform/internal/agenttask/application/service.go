@@ -92,7 +92,7 @@ func (s *Service) prepare(ctx context.Context, tx pgx.Tx, t domain.Task, q Reque
 			}
 			p.Inputs = append(p.Inputs, v)
 		}
-		p.Actions = []domain.Action{{1, "ASSIGN_SELF", domain.Repair}, {2, "EXECUTE_REPAIR", domain.Repair}, {3, "RECHECK", domain.Repair}}
+		p.Actions = []domain.Action{{Ordinal: 1, Command: "ASSIGN_SELF", Phase: domain.Repair}, {Ordinal: 2, Command: "EXECUTE_REPAIR", Phase: domain.Repair}, {Ordinal: 3, Command: "RECHECK", Phase: domain.Repair}}
 	default:
 		return p, domain.ErrInvalid
 	}

@@ -28,7 +28,7 @@ test("unobserved pagination and exact attempt remain readable after observation 
   await expect(page.locator("form")).toHaveCount(0);expect(await page.content()).not.toContain("rights-fixture-secret");pure(await calls(request));
 });
 test("independent counts and filters survive other queue navigation",async({page,request})=>{
-  await page.goto("/");await expect(page.getByTestId("schema-requests")).toContainText("105 个无观察请求");await expect(page.getByTestId("needs-attention")).not.toContainText("105");
+  await page.goto("/core/workbench");await expect(page.getByTestId("schema-requests")).toContainText("105 个无观察请求");await expect(page.getByTestId("needs-attention")).not.toContainText("105");
   await page.getByRole("link",{name:"查看无观察请求",exact:true}).click();await page.getByRole("navigation",{name:"无观察请求筛选"}).getByRole("link",{name:"尚未登记 attempt",exact:true}).click();
   const panel=page.getByTestId("schema-requests");await expect(panel.locator("tbody tr")).toHaveCount(25);await panel.getByRole("link",{name:"下一页",exact:true}).click();
   await expect(panel.locator("tbody tr")).toHaveCount(25);await page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true}).click();

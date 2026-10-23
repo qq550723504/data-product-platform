@@ -48,6 +48,7 @@ const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-ch
 scenarios.add("isolation-empty");
 scenarios.add("isolation-validating");
 scenarios.add("agent-quality-pages");
+scenarios.add("modern-trace");scenarios.add("modern-trace-foreign");
 const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt", "agent-context"]);
 const readFaultModes = new Set(["fail", "denied", "notfound", "invalid", "hold"]);
 for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
@@ -167,7 +168,7 @@ export function createFixtureServer() {
   const releaseReads = () => { for (const resolve of heldReads) resolve(); heldReads.clear(); };
   const reset = (scenario = "ready") => {
     releaseReads();
-    state = { scenario, candidateStatus: scenario === "isolation-empty" ? "REJECTED" : "PENDING", releaseStatus: scenario === "isolation-empty" ? "PUBLISHED" : scenario === "isolation-validating" ? "VALIDATING" : "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: scenario.startsWith("quality-attention"), complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [], readFaults: {} };
+    state = { scenario, candidateStatus: scenario === "isolation-empty" ? "REJECTED" : "PENDING", releaseStatus: (scenario === "isolation-empty" || scenario.startsWith("modern-trace")) ? "PUBLISHED" : scenario === "isolation-validating" ? "VALIDATING" : "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: scenario.startsWith("quality-attention"), complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [], readFaults: {} };
   };
   reset();
   return createServer(async (req, res) => {
@@ -228,6 +229,19 @@ export function createFixtureServer() {
       if (fault === "fail" || fault === "denied" || fault === "notfound") return send(fault === "denied" ? 403 : fault === "notfound" ? 404 : 503, { code: "FIXTURE_READ_UNAVAILABLE", message: "private-upstream-sentinel" });
       if (fault === "invalid") return send(200, {});
       if (fault === "hold") await new Promise(resolve => heldReads.add(resolve));
+      if(url.pathname.startsWith('/api/v1/traceability/product-releases/')&&req.method==='GET'){
+        if(req.headers.authorization!=='Bearer review-secret')return send(401,{code:'AUTHENTICATION_REQUIRED'});
+        if(url.searchParams.get('workspaceId')!==ids.workspace)return send(403,{code:'WORKSPACE_AUTHORITY_DENIED'});
+        if(!state.scenario.startsWith('modern-trace')||url.pathname!==`/api/v1/traceability/product-releases/${ids.release}`)return send(404,{code:'PRODUCT_RELEASE_NOT_FOUND'});
+        return send(200,{workspaceId:ids.workspace,releaseId:ids.release,releaseNo:'SYNTHETIC_TRACE',status:'PUBLISHED',productId:ids.product,productVersionId:ids.version,
+          evidenceSnapshot:{id:ids.goldSnapshot,rootHash:'a'.repeat(64),integrityValid:true,createdAt:stamp},
+          datasetVersions:[{id:ids.goldVersion,datasetId:ids.goldDataset,datasetCode:'SYNTHETIC_GOLD',datasetType:'CURATED',versionNo:1,status:'READY',releaseRole:'OUTPUT'}],
+          executions:[],entityMatchJobs:[],entityMappings:[{id:ids.candidate,decisionId:ids.decision,entityId:ids.entity}],
+          evidence:[{id:ids.secondEvidence,workspaceId:state.scenario==='modern-trace-foreign'?ids.product:ids.workspace,evidenceType:'TEST_EVIDENCE',hashValue:'b'.repeat(64),integrityValid:true}],
+          costEvents:[{id:ids.deliveryOperation,workspaceId:ids.workspace,costType:'TEST_COST',quantity:1,unit:'attempt',amount:'0.000000000000000001',currency:'USD',pricingMode:'ACTUAL'}],
+          auditEvents:[{id:ids.goldBinding,action:'PRODUCT_RELEASE_PUBLISHED',objectType:'PRODUCT_RELEASE',objectId:ids.release,occurredAt:stamp}]});
+      }
+
       const product = {
         id: ids.product, workspaceId: ids.workspace, code: "BROWSER_FIXTURE", name: "浏览器验收产品",
         description: "Synthetic fixture — not production data", domainCode: "TEST", lifecycleStatus: "ACTIVE", healthStatus: "HEALTHY",
@@ -547,7 +561,7 @@ export function createFixtureServer() {
           const status = url.searchParams.get("status") ?? "";
           const available = [release, ...(state.releaseCreated ? [createdRelease] : [])];
           const items = status ? available.filter((item) => item.status === status) : available;
-          return send(200, page(items));
+          return send(200, {workspaceId:ids.workspace,...page(items)});
         }
         if (url.pathname === `${workspace}/attention/releases`) {
           const limit = Math.max(1, Number(url.searchParams.get("limit")) || 10);

@@ -180,3 +180,13 @@ test("publish requires idempotency header and stores observed command headers", 
   assert.equal((await state()).releaseStatus, "PUBLISHED");
   assert.equal((await state()).requests.at(-1).idempotencyKey, "test-1");
 });
+
+test('modern Trace fixture requires exact workspace and credential and excludes secret fields',async()=>{
+ await fetch(base+'/__control/reset',{method:'POST',headers:controlHeaders,body:JSON.stringify({scenario:'modern-trace'})});
+ const path=`/api/v1/traceability/product-releases/${ids.release}?workspaceId=${ids.workspace}`;
+ assert.equal((await fetch(base+path)).status,401);
+ const headers={Authorization:'Bearer review-secret'};
+ assert.equal((await fetch(base+path.replace(ids.workspace,ids.product),{headers})).status,403);
+ const response=await fetch(base+path,{headers});assert.equal(response.status,200);const t=await response.json();assert.equal(t.releaseId,ids.release);assert.equal(t.workspaceId,ids.workspace);assert.equal(t.entityMappings[0].decisionId,ids.decision);assert.equal(t.costEvents[0].amount,'0.000000000000000001');
+ assert.doesNotMatch(JSON.stringify(t),/metadata|sourceKey|storageUri|review-secret/);
+});

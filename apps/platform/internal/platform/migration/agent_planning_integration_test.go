@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/infrastructure"
+	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
+	ld "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 )
 
 // Uses a disposable database, never the retained Q1 acceptance database.
@@ -72,6 +74,29 @@ func TestAgentPlanningAtomicFreezeAndHistoricalDownGuard(t *testing.T) {
 	if got.ContentHash != p.ContentHash || got.TaskID != task || got.Inputs[0].VersionID != version {
 		t.Fatal("persisted plan differs")
 	}
+	// Newly introduced FK relations must be structurally fenced even when empty,
+	// and accepted immutable Agent facts remain exact content demand.
+	inspect, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	check, refs, err := lc.InspectFixtureReferences(ctx, inspect, ld.Copy{ID: uuid.New(), WorkspaceID: ws, DatasetVersionID: version})
+	inspect.Rollback(ctx)
+	if err != nil || check != ld.Denied {
+		t.Fatalf("Agent content pins must be DENIED, never UNKNOWN or released: %s %v", check, err)
+	}
+	for table, column := range map[string]string{"agent_plan_revision": "source_version_id", "agent_plan_input": "dataset_version_id"} {
+		found := false
+		for _, ref := range refs {
+			if ref.Schema == "public" && ref.Table == table && ref.Column == column {
+				found = ref.Count == 1 && ref.Unreleased == 1
+			}
+		}
+		if !found {
+			t.Fatalf("missing exact Agent content demand: %s.%s: %+v", table, column, refs)
+		}
+	}
+
 	for name, sql := range map[string]string{
 		"header":        `UPDATE agent_plan_revision SET goal='changed' WHERE id=$1`,
 		"input update":  `UPDATE agent_plan_input SET input_name='changed' WHERE plan_revision_id=$1`,

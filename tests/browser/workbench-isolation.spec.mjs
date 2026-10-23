@@ -22,7 +22,7 @@ async function governance(page) {
 
 for (const fault of ["summary", "executions", "failures", "products", "releases"]) {
   test("workbench isolates " + fault + " failure without hiding independent evidence", async ({ page, request }) => {
-    await reset(request, { [fault]: "fail" }); await page.goto("/");
+    await reset(request, { [fault]: "fail" }); await page.goto("/core/workbench");
     await governance(page);
     const count = page.getByTestId("workbench-attention-total");
     await expect(count).toContainText(["summary", "failures", "releases"].includes(fault) ? "UNKNOWN" : "2 条");
@@ -47,9 +47,9 @@ for (const fault of ["reviews", "failures", "products", "releases"]) {
 test("denied and malformed host reads fail closed locally on both pages", async ({ page, request }) => {
   for (const mode of ["denied", "invalid"]) {
     await reset(request, { summary: mode, reviews: mode, releases: mode });
-    for (const path of ["/", "/attention"]) {
+    for (const path of ["/core/workbench", "/attention"]) {
       await page.goto(path); await governance(page);
-      await expect(page.getByTestId(path === "/" ? "workbench-attention-total" : "attention-total")).toContainText("UNKNOWN");
+      await expect(page.getByTestId(path === "/core/workbench" ? "workbench-attention-total" : "attention-total")).toContainText("UNKNOWN");
       await pure(page, request);
     }
   }
@@ -58,10 +58,10 @@ test("each governance failure remains local while original queues stay readable"
   const panels = { quality: "quality-attention", schema: "schema-attention", exceptions: "schema-exceptions", requests: "schema-requests" };
   for (const [fault, panel] of Object.entries(panels)) {
     await reset(request, { [fault]: "fail" });
-    for (const path of ["/", "/attention"]) {
+    for (const path of ["/core/workbench", "/attention"]) {
       await page.goto(path);
       await expect(page.getByTestId(panel + "-unavailable")).toContainText("UNKNOWN");
-      await expect(page.getByTestId(path === "/" ? "workbench-attention-total" : "attention-total")).toContainText("2 条");
+      await expect(page.getByTestId(path === "/core/workbench" ? "workbench-attention-total" : "attention-total")).toContainText("2 条");
       for (const other of Object.values(panels).filter(value => value !== panel)) await expect(page.getByTestId(other)).toBeVisible();
       await pure(page, request);
     }
@@ -69,19 +69,19 @@ test("each governance failure remains local while original queues stay readable"
 });
 test("all read failures preserve page identity without invented clear results", async ({ page, request }, info) => {
   await reset(request, Object.fromEntries(["summary", "reviews", "executions", "failures", "products", "releases", "quality", "schema", "exceptions", "requests", "attempts"].map(key => [key, "fail"])));
-  for (const path of ["/", "/attention"]) {
+  for (const path of ["/core/workbench", "/attention"]) {
     await page.goto(path);
-    await expect(page.getByRole("heading", { level: 1, name: path === "/" ? "数据产品工作台" : "待办中心" })).toBeVisible();
-    await expect(page.getByTestId(path === "/" ? "workbench-attention-total" : "attention-total")).toContainText("UNKNOWN");
+    await expect(page.getByRole("heading", { level: 1, name: path === "/core/workbench" ? "数据产品工作台" : "待办中心" })).toBeVisible();
+    await expect(page.getByTestId(path === "/core/workbench" ? "workbench-attention-total" : "attention-total")).toContainText("UNKNOWN");
     await expect(page.locator(".badge").filter({ hasText: /^(CLEAR|READY)$/ })).toHaveCount(0);
     await expect(page.getByText("Core Read Model 暂时不可用。", { exact: true })).toHaveCount(0);
-    await page.screenshot({ path: info.outputPath(path === "/" ? "workbench-all-unknown.png" : "attention-all-unknown.png"), fullPage: true });
+    await page.screenshot({ path: info.outputPath(path === "/core/workbench" ? "workbench-all-unknown.png" : "attention-all-unknown.png"), fullPage: true });
     await pure(page, request);
   }
 });
 test("successful empty reads remain distinct from unavailable totals and recover on reload", async ({ page, request }) => {
   await reset(request, {}, "isolation-empty");
-  await page.goto("/"); await expect(page.getByTestId("workbench-attention-total")).toContainText("0 条");
+  await page.goto("/core/workbench"); await expect(page.getByTestId("workbench-attention-total")).toContainText("0 条");
   await expect(page.getByTestId("workbench-attention-total")).toContainText("CLEAR");
   await expect(page.getByText("当前没有需要人工处理的事项", { exact: true })).toBeVisible();
   await page.goto("/attention"); await expect(page.getByTestId("attention-total")).toContainText("0 条");
@@ -112,7 +112,7 @@ test("selected release pages remain independent of a failed shared snapshot", as
   await pure(page, request);
 });
 test("readiness failure keeps the known release and its exact navigation", async ({ page, request }) => {
-  await reset(request, { readiness: "fail" }, "isolation-validating"); await page.goto("/");
+  await reset(request, { readiness: "fail" }, "isolation-validating"); await page.goto("/core/workbench");
   const panel = page.getByTestId("needs-attention");
   await expect(page.getByTestId("workbench-attention-total")).toContainText("2 条");
   await expect(panel).toContainText("Readiness 详情：UNKNOWN");
@@ -120,9 +120,9 @@ test("readiness failure keeps the known release and its exact navigation", async
   await pure(page, request);
 });
 test("pending product labels do not block independent facts or evidence", async ({ page, request }) => {
-  for (const path of ["/", "/attention"]) {
+  for (const path of ["/core/workbench", "/attention"]) {
     await reset(request, { products: "hold" });
-    const panel = page.getByTestId(path === "/" ? "needs-attention" : "release-queue-ready");
+    const panel = page.getByTestId(path === "/core/workbench" ? "needs-attention" : "release-queue-ready");
     try {
       await page.goto(path, { waitUntil: "commit" });
       await expect(page.getByRole("link", { name: "去发布", exact: true })).toBeVisible();
@@ -137,7 +137,7 @@ test("pending product labels do not block independent facts or evidence", async 
     await pure(page, request);
   }
 });
-for (const path of ["/", "/attention"]) {
+for (const path of ["/core/workbench", "/attention"]) {
   for (const [fault, panel, anchor] of [
     ["quality", "quality-attention", "quality-attention"],
     ["schema", "schema-attention", "source-schema-attention"],
@@ -149,12 +149,12 @@ for (const path of ["/", "/attention"]) {
       const pending = page.getByTestId(panel + "-pending");
       try {
         await page.goto(path, { waitUntil: "commit", timeout: 5000 });
-        await expect(page.getByRole("heading", { level: 1, name: path === "/" ? "数据产品工作台" : "待办中心" })).toBeVisible();
+        await expect(page.getByRole("heading", { level: 1, name: path === "/core/workbench" ? "数据产品工作台" : "待办中心" })).toBeVisible();
         await expect(pending).toContainText("UNKNOWN");
         await expect(pending).toContainText("读取中");
         await expect(pending).not.toContainText(/CLEAR|READY|0 条|0 个/);
         await expect(page.locator("#" + anchor)).toHaveCount(1);
-        await expect(page.getByTestId(path === "/" ? "workbench-attention-total" : "attention-total")).toContainText("2 条");
+        await expect(page.getByTestId(path === "/core/workbench" ? "workbench-attention-total" : "attention-total")).toContainText("2 条");
         await expect(page.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute("href", "/products/" + ids.product + "#releases");
         for (const other of ["quality-attention", "schema-attention", "schema-exceptions", "schema-requests"].filter(value => value !== panel)) {
           await expect(page.getByTestId(other)).toBeVisible();

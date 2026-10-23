@@ -62,7 +62,7 @@ test("Certification profile selection reloads that profile's evidence before pre
 });
 
 test("workbench surfaces actionable review and release items", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/core/workbench");
   const attention = page.getByTestId("needs-attention");
   await expect(attention).toBeVisible();
   await expect(attention.getByRole("heading", { name: "审核、执行与发布待办", exact: true })).toBeVisible();
@@ -79,7 +79,7 @@ test("workbench surfaces actionable review and release items", async ({ page }) 
 });
 
 test("attention center lists current actionable work", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/core/workbench");
   await expect(page.locator('a[href="/attention"]').first()).toHaveAttribute("href", "/attention");
   await expect(page.getByTestId("needs-attention").getByRole("link", { name: "查看全部", exact: true })).toHaveAttribute("href", "/attention");
 

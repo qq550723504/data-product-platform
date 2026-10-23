@@ -45,3 +45,11 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 - 运行与浏览器门禁解除并完成前，保持 Draft，不开 auto-merge。未来如合并，另核实际 merge SHA 对应 push/main CI 终态；PR CI 不等于 main CI，不构成部署许可。
 
 本地回归证据记录在各批次验收文档和被 gitignore 的 `.data/` 日志中。未运行的项目保持 NOT_RUN，不上传凭据或原始运行数据冒充可复现证据。
+
+
+## 首轮 CI 收口
+
+- Vet 指出跨包 Action 的无字段名初始化，已改为显式字段名。
+- 新增 Agent DatasetVersion FK 必须接入现有生命周期准入 fence。migration 73 为 source/input 关系安装现有 admission guard，保留全量 FK 发现与 unreleased demand；Q2 没有释放命令，不将 Agent 引用排除，不放宽 UNKNOWN。新增真实 PostgreSQL 测试检查两个关系各自的内容 pin。
+- 全路径 rewrite 会吞掉实际 Core 深链，属于实现缺陷。收敛为只重写根演示页，现有服务端业务路由在同一新版壳内保留；Core 工作台明确位于 `/core/workbench`。原浏览器契约只调整工作台入口，保留原断言。发布 Trace 的断言随新安全投影改为明确决策 ID、快照/哈希及禁止原始自由文本，历史事实要求不削弱。
+- 上述修复仅改源码及离线/CI测试；本机不执行 migration，不重启预览，不启动 GUI。新增现场 Trace 验收仍 NOT_RUN。

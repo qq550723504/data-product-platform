@@ -11,7 +11,7 @@ async function pure(page,request) {
 }
 async function others(page,path) {
   for(const name of ["quality-attention","schema-attention","schema-exceptions","schema-requests"])await expect(page.getByTestId(name)).toBeVisible();
-  await expect(page.getByTestId(path==="/"?"workbench-attention-total":"attention-total")).toContainText("2 条");
+  await expect(page.getByTestId(path==="/core/workbench"?"workbench-attention-total":"attention-total")).toContainText("2 条");
   await expect(page.getByRole("link",{name:"去发布",exact:true})).toHaveAttribute("href","/products/"+ids.product+"#releases");
 }
 test.beforeEach(async({request})=>reset(request));
@@ -50,7 +50,7 @@ test("observed-request attempts page independently and retain exact selected ide
   await expect(panel).not.toContainText(observedAttemptId(1));await pure(page,request);
 });
 test("compact and existing section filters keep attempt counts separate and preserve its page",async({page,request})=>{
-  await page.goto("/");await expect(page.getByTestId("schema-attempts")).toContainText("105 个 attempt");await others(page,"/");
+  await page.goto("/core/workbench");await expect(page.getByTestId("schema-attempts")).toContainText("105 个 attempt");await others(page,"/core/workbench");
   await page.getByRole("link",{name:"查看无观察 attempt",exact:true}).click();
   const panel=page.getByTestId("schema-attempts");
   for(let i=0;i<4;i++)await panel.getByRole("link",{name:"下一页",exact:true}).click();
@@ -60,14 +60,14 @@ test("compact and existing section filters keep attempt counts separate and pres
   await pure(page,request);
 });
 test("attempt failures and invalid scope stay local on both pages",async({page,request})=>{
-  for(const mode of ["fail","denied","invalid"])for(const path of ["/","/attention"]){
+  for(const mode of ["fail","denied","invalid"])for(const path of ["/core/workbench","/attention"]){
     await reset(request,"schema-attempts",{attempts:mode});await page.goto(path);
     await expect(page.getByTestId("schema-attempts-unavailable")).toContainText("UNKNOWN");await others(page,path);await pure(page,request);
   }
   await reset(request,"schema-attempts-foreign");await page.goto("/attention");
   await expect(page.getByTestId("schema-attempts-unavailable")).toContainText("UNKNOWN");await pure(page,request);
 });
-for(const path of ["/","/attention"])test(path+" streams independent facts while attempt GET stays held",async({page,request})=>{
+for(const path of ["/core/workbench","/attention"])test(path+" streams independent facts while attempt GET stays held",async({page,request})=>{
   await reset(request,"schema-attempts",{attempts:"hold"});
   try {
     await page.goto(path,{waitUntil:"commit",timeout:5000});

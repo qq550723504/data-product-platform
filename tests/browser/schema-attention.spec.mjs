@@ -42,7 +42,7 @@ test("schema attention paginates past 100 without detail fanout then opens exact
   await page.screenshot({path:testInfo.outputPath("schema-exact-evidence.png"),fullPage:true});
 });
 test("workbench enters unhandled observations and filters preserve quality queue selection",async({page,request})=>{
-  await page.goto("/");
+  await page.goto("/core/workbench");
   const panel=page.getByTestId("schema-attention");
   await expect(panel).toContainText("未记录处理 104 条");
   await panel.getByRole("link",{name:"查看漂移观察"}).click();

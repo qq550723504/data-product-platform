@@ -208,3 +208,14 @@ CREATE TRIGGER agent_approval_guard BEFORE INSERT OR UPDATE OR DELETE ON agent_a
 CREATE TRIGGER agent_intent_guard BEFORE INSERT OR UPDATE OR DELETE ON agent_action_request FOR EACH ROW EXECUTE FUNCTION guard_agent_fact();
 CREATE TRIGGER agent_disposition_guard BEFORE INSERT OR UPDATE OR DELETE ON agent_action_disposition FOR EACH ROW EXECUTE FUNCTION guard_agent_fact();
 CREATE TRIGGER agent_receipt_guard BEFORE INSERT OR UPDATE OR DELETE ON agent_command_receipt FOR EACH ROW EXECUTE FUNCTION guard_agent_fact();
+
+-- Agent plans pin exact source/input content. Participate in the existing
+-- workspace/version admission fence even when these relations are empty.
+-- No owner release command exists in Q2: these immutable references remain
+-- unreleased demand and are never excluded from lifecycle FK discovery.
+CREATE TRIGGER aa_lifecycle_ref_source_version_id
+ BEFORE INSERT OR UPDATE OF source_version_id ON agent_plan_revision
+ FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('source_version_id');
+CREATE TRIGGER aa_lifecycle_ref_dataset_version_id
+ BEFORE INSERT OR UPDATE OF dataset_version_id ON agent_plan_input
+ FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id');
