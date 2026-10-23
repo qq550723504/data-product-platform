@@ -36,7 +36,7 @@ def audit_preparation_index():
 def preparation_audit_plan(candidate):
     # Source review and preparation exist now. Later human authorization and
     # schedule indexes do not: they are never invented or rewritten here.
-    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate22-source-review01'
+    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate22-source-review02'
     report=load(review/'independent-final-review01.json')
     need(report['status']=='PASS_BOUNDED_C22_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW' and report['remaining_blockers']==[]
          and report['source_head']==load(PACKET/'source-freeze.json')['host']['source']

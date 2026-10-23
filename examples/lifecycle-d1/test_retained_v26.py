@@ -51,7 +51,7 @@ class RetainedV26Tests(unittest.TestCase):
         self.assertNotEqual(f.p.EXECUTION,retained.EXECUTION)
 
     def fixture(self,root):
-        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate22-source-review01'
+        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate22-source-review02'
         for directory in (public,packet,review):directory.mkdir(parents=True)
         candidate={'Execution':f.p.EXECUTION,'Source':'f'*40}
         f.save(packet/'source-freeze.json',{'host':{'source':'d'*40}})

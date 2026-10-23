@@ -29,6 +29,9 @@ CONTROL=p1.PRIVATE/('remaining-'+GENERATION)
 PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1'/('remaining-'+GENERATION+'-preparation01')
 ZERO='0001-01-01T00:00:00Z'
 GROUPS=('business-races','late-hold','mixed')
+# This generation's independent restore networks. The prior generation's
+# 221/222/223 networks remain allocated and are never reused or removed.
+RESTORE_SUBNETS=('10.246.225.0/28','10.246.226.0/28','10.246.227.0/28')
 need,load,sha,save=prior.need,prior.load,prior.sha,prior.save
 inspect,closed=p1.inspect,p1.closed
 
@@ -317,6 +320,14 @@ def artifact_contract():
     return dict(execution=EXECUTION,profile=PROFILE,start=W['NotBefore'],end=W['NotAfter'])
 
 
+def preallocation_networks():
+    """Check every proposed network before build or the first allocation."""
+    runner=prior.module('six_allocation_runner','prepare-remaining-runner.py')
+    need(len(RESTORE_SUBNETS)==len(GROUPS) and len(set(RESTORE_SUBNETS))==len(GROUPS),
+         'restore network plan membership differs')
+    return tuple(runner.check_subnet(value) for value in RESTORE_SUBNETS)
+
+
 def preallocation_ci():
     """A completed exact-source CI precedes allocation, not only authorization."""
     # Reuse the existing strict host snapshot before API/history/build I/O.
@@ -339,6 +350,7 @@ def allocate():
     need(PROFILE=='candidate22/v32' and EXECUTION=='0e5cb8f3-46a9-4339-88e4-7154d6ebe13f','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
     source_ci=preallocation_ci()
+    subnets=preallocation_networks()
     # Verify retained history before allocating any owner or volume.
     retained=historical_gate()
     CONTROL.mkdir();PUBLIC.mkdir();save(PUBLIC/'retained-before.json',retained)
@@ -362,7 +374,7 @@ def allocate():
             config=load(p1.PRIVATE/project/'config.json')
             need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
             pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
-            subnet='10.246.'+str(221+n)+'.0/28'
+            subnet=subnets[n]
             # Reuse the existing subnet overlap check; never attach to another run.
             runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
             network=a.network(prefix+'-restore',subnet)

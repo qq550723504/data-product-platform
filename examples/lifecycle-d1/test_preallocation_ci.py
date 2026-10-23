@@ -1,5 +1,6 @@
 """Full allocation refuses non-green exact-source CI before any resource I/O."""
 import copy
+import json
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
@@ -9,8 +10,39 @@ from test_execution_freeze import snapshot, HEAD
 
 loader=importlib.util.spec_from_file_location('preallocation_under_test',Path(__file__).with_name('prepare-six-candidate.py'))
 p=importlib.util.module_from_spec(loader);loader.loader.exec_module(p)
+runner=p.prior.module('six_preallocation_network_test','prepare-remaining-runner.py')
 
 class PreallocationTests(unittest.TestCase):
+    def network_reply(self, conflict=None):
+        networks={str(n):{'Name':'retained-c21-'+str(n),'IPAM':{'Config':[{'Subnet':'10.246.'+str(221+n)+'.0/28'}]}} for n in range(3)}
+        if conflict is not None:
+            networks['new-conflict']={'Name':'other-retained','IPAM':{'Config':[{'Subnet':p.RESTORE_SUBNETS[conflict]}]}}
+        def docker(*args):
+            if args==('network','ls','-q'):return (' '.join(networks)+'\n').encode()
+            self.assertEqual(args[:2],('network','inspect'))
+            return json.dumps([networks[args[2]]]).encode()
+        return docker
+
+    def test_all_new_subnets_pass_real_existing_overlap_check_with_c21_retained(self):
+        with patch.object(p.prior,'module',return_value=runner),patch.object(runner,'docker',side_effect=self.network_reply()):
+            self.assertEqual(p.preallocation_networks(),p.RESTORE_SUBNETS)
+            for old in ('10.246.221.0/28','10.246.222.0/28','10.246.223.0/28'):
+                with self.assertRaisesRegex(RuntimeError,'overlaps'):runner.check_subnet(old)
+
+    def test_any_subnet_conflict_rejects_complete_allocate_before_history_build_or_control(self):
+        for slot in range(3):
+            with self.subTest(slot=slot),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp)
+                with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
+                     patch.object(p.window,'policy_checkpoint'),patch.object(p,'preallocation_ci',return_value={'head':HEAD}),\
+                     patch.object(p.prior,'module',return_value=runner),patch.object(runner,'docker',side_effect=self.network_reply(slot)),\
+                     patch.object(p,'historical_gate',side_effect=AssertionError('history before network gate')) as history,\
+                     patch.object(p,'build',side_effect=AssertionError('build before network gate')) as build,\
+                     patch.object(p.Allocation,'__init__',side_effect=AssertionError('allocation before network gate')) as allocation:
+                    with self.assertRaisesRegex(RuntimeError,'overlaps'):p.allocate()
+                    history.assert_not_called();build.assert_not_called();allocation.assert_not_called()
+                    self.assertFalse((root/'private').exists());self.assertFalse((root/'public').exists())
+
     def test_fresh_exact_source_success_records_provenance_without_lock_or_resources(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);(root/'docs/acceptance/evidence/issue307-d1').mkdir(parents=True)
@@ -71,6 +103,7 @@ class PreallocationTests(unittest.TestCase):
                 artifact={'source':'f'*40,'host':{'source':'b'*40 if fault=='build-head' else HEAD}}
                 with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
                      patch.object(p.window,'policy_checkpoint'),patch.object(p,'preallocation_ci',return_value={'head':HEAD}),\
+                     patch.object(p,'preallocation_networks',return_value=p.RESTORE_SUBNETS),\
                      patch.object(p,'historical_gate',return_value={'recorded':True}),patch.object(p,'build',return_value=artifact),\
                      patch.object(p.fixture_artifacts,'verify_host',side_effect=ValueError('host bytes drift')),\
                      patch.object(p.Allocation,'network',side_effect=AssertionError('network before source binding')),\

@@ -1,0 +1,16 @@
+{
+  "status": "PASS_PROPOSED_C22_RESTORE_SUBNETS_CURRENTLY_UNALLOCATED",
+  "at": "2026-10-23T04:55:38.854964+00:00",
+  "proposed": [
+    "10.246.225.0/28",
+    "10.246.226.0/28",
+    "10.246.227.0/28"
+  ],
+  "conflicts": [],
+  "checker": "existing prepare-remaining-runner.check_subnet",
+  "resources_allocated": 0,
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "future_Docker_native_IPAM_still_required": true
+}
