@@ -53,7 +53,15 @@ test("compact and existing section filters keep attempt counts separate and pres
   await page.goto("/core/workbench");await expect(page.getByTestId("schema-attempts")).toContainText("105 个 attempt");await others(page,"/core/workbench");
   await page.getByRole("link",{name:"查看无观察 attempt",exact:true}).click();
   const panel=page.getByTestId("schema-attempts");
-  for(let i=0;i<4;i++)await panel.getByRole("link",{name:"下一页",exact:true}).click();
+  await expect(page).toHaveURL(/\/attention#schema-unobserved-attempts$/);
+  for(const offset of [25,50,75,100]){
+    const next=panel.getByRole("link",{name:"下一页",exact:true});
+    // A Link click can resolve before the streamed panel commits. Require the
+    // new destination before clicking, rather than clicking the previous page twice.
+    await expect(next).toHaveAttribute("href",new RegExp(`schemaAttemptOffset=${offset}(?:&|#|$)`));
+    await next.click();
+    await expect(page).toHaveURL(new RegExp(`schemaAttemptOffset=${offset}(?:&|#|$)`));
+  }
   await expect(panel.locator("tbody tr")).toHaveCount(5);
   await page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true}).click();
   await expect(page).toHaveURL(/schemaAttemptOffset=100/);await expect(panel.locator("tbody tr")).toHaveCount(5);

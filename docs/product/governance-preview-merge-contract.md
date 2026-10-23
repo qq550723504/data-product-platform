@@ -71,3 +71,5 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 
 
 `b992606c` 的 Go/Web、来源接纳和 107 项浏览器契约通过，真实 Core 的 review/publish/certified/history 也全部通过并生成 LIVE_CORE_BROWSER_VERIFIED。后续 Gold 阶段失败截图明确显示 Quality HTTP 401：它只设置 token，没有像第一阶段配置启用的可信 actor/subject/workspace，强化后的读取正确拒绝。仅补齐该隔离 fixture 的明确身份，不放宽接口校验，保留 Gold 的全部事实断言。本机仍不运行该 fixture。trial 契约首个本 HEAD run 终态 cancelled（所有步骤为 success 也不能算通过），已对该精确 HEAD 的 cancelled job 请求一次完整有效重跑；旧取消记录保留。
+
+`582cc7f6` 的完整 Go/Web、真实 Core（含 LIVE_CORE_BROWSER_VERIFIED 与 LIVE_GOLD_BROWSER_VERIFIED）、demo、来源准入和 trial 契约均通过；浏览器契约 106/107 通过。唯一失败的 trace.zip 显示测试在工作台→attention 的导航尚未提交时即开始连续点击旧分页链接，最终停于 offset75，期望 offset100/5行。已保留 artifact12522785890（SHA256 9fce7fb813f0c8c86a596954af3a8ad247b58f61be4233533403db507590af84），仅补测试的逐页目标 href / URL 提交见证，保留末页5行、筛选页码与无写入断言，不增加 sleep/retry、不改产品逻辑。新 HEAD 仍需完整 CI，旧失败不能算 PASS。本机与完整独立评审门禁不变。
