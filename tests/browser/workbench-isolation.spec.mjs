@@ -68,7 +68,7 @@ test("each governance failure remains local while original queues stay readable"
   }
 });
 test("all read failures preserve page identity without invented clear results", async ({ page, request }, info) => {
-  await reset(request, Object.fromEntries(["summary", "reviews", "executions", "failures", "products", "releases", "quality", "schema", "exceptions", "requests"].map(key => [key, "fail"])));
+  await reset(request, Object.fromEntries(["summary", "reviews", "executions", "failures", "products", "releases", "quality", "schema", "exceptions", "requests", "attempts"].map(key => [key, "fail"])));
   for (const path of ["/", "/attention"]) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 1, name: path === "/" ? "数据产品工作台" : "待办中心" })).toBeVisible();

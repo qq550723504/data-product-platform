@@ -2,18 +2,17 @@ import Link from "next/link";
 import { DefinitionList, LoadError, PageHeader, formatDate } from "./ui";
 import { schemaRequestDetail } from "@/lib/schema-request-client";
 import { attentionOffset } from "@/lib/quality-attention";
-import { schemaRequestView } from "@/lib/schema-request-filter";
-import { schemaRequestHref, schemaRequestsHref, schemaRequestObservationHref } from "@/lib/schema-requests";
+import { schemaRequestOrigin, schemaRequestHref, schemaRequestListHref, schemaRequestObservationHref } from "@/lib/schema-requests";
 
 export async function SchemaRequestEvidence({ resourceId, query }: { resourceId: string; query: Record<string, string | undefined> }) {
-  const view = schemaRequestView(query.schemaRequestView), offset = attentionOffset(query.schemaRequestOffset);
   const aOffset = attentionOffset(query.attemptOffset), oOffset = attentionOffset(query.observationOffset);
   try {
+    const origin = schemaRequestOrigin(query);
     const d = await schemaRequestDetail(resourceId, query.requestId ?? "", query.attemptId, aOffset, oOffset);
-    const href = (attempt: string | undefined, a: number, o: number) => schemaRequestHref(resourceId, d.requestId, view, offset, attempt, a, o);
-    const observationHref = (id: string) => schemaRequestObservationHref(resourceId, d.requestId, id, view, offset, aOffset, oOffset);
+    const href = (attempt: string | undefined, a: number, o: number) => schemaRequestHref(resourceId, d.requestId, origin, attempt, a, o);
+    const observationHref = (id: string) => schemaRequestObservationHref(resourceId, d.requestId, id, origin, query.attemptId, aOffset, oOffset);
     return <>
-      <Link prefetch={false} href={schemaRequestsHref({}, view, offset)}>返回无观察请求</Link>
+      <Link prefetch={false} href={schemaRequestListHref(origin)}>{origin.kind === "OBSERVED_ATTEMPTS" ? "返回无观察 attempt" : "返回无观察请求"}</Link>
       <PageHeader title="来源 schema 精确请求证据" eyebrow={d.resourceCode} description={`${d.resourceName} · 只读事实`} />
       <section className="detail-card" data-testid="schema-request-evidence"><h2>请求 {d.requestId}</h2>
         <p>此处始终读取原请求及其准确关联事实。登记 attempt 不证明原生调用已经发生，也不确认运行或超时；读取时间不等于扫描时间。后到观察不表示来源当前健康。</p>

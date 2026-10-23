@@ -1,6 +1,6 @@
 import test, { before, after, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { createFixtureServer, ids, fixtureToken, exceptionObservationId, exceptionRequestId, unobservedRequestId, requestAttemptId, requestObservationId } from "./fixture-server.mjs";
+import { createFixtureServer, ids, fixtureToken, exceptionObservationId, exceptionRequestId, unobservedRequestId, requestAttemptId, requestObservationId, observedRequestId, observedAttemptId, observedObservationId } from "./fixture-server.mjs";
 let server, base;
 const controlHeaders = { "x-fixture-token": fixtureToken, "Content-Type": "application/json" };
 before(async () => {
@@ -11,6 +11,20 @@ before(async () => {
 after(async () => { await new Promise((resolve) => server.close(resolve)); });
 beforeEach(async () => { await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: "{}" }); });
 async function state() { return (await fetch(`${base}/__control/state`, { headers: controlHeaders })).json(); }
+
+test("observed request fixture counts attempts once and keeps selected identity after its observation arrives",async()=>{
+  const headers={Authorization:"Bearer rights-fixture-secret"};
+  await fetch(`${base}/__control/reset`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-attempts"})});
+  const list=`${base}/api/v1/workspaces/${ids.workspace}/source-schema-requests/observed/unobserved-attempts?limit=25&offset=100`;
+  assert.equal((await fetch(list)).status,403);
+  const page=await(await fetch(list,{headers})).json();assert.equal(page.page.total,105);assert.equal(page.items.length,5);
+  assert.equal(new Set(page.items.map(a=>a.attemptId)).size,5);assert.ok(page.items.every(a=>a.requestId===observedRequestId&&a.requestObservationCount===31));
+  const exact=`${base}/api/v1/data-resources/${ids.sourceResource}/schema-requests/${observedRequestId}?workspaceId=${ids.workspace}&attemptId=${observedAttemptId(1)}&attemptOffset=25`;
+  const before=await(await fetch(exact,{headers})).json();assert.equal(before.selectedAttempt.observationId,null);assert.ok(!before.attempts.items.some(a=>a.id===observedAttemptId(1)));
+  await fetch(`${base}/__control/scenario`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-attempts-arrived"})});
+  const after=await(await fetch(exact,{headers})).json();assert.equal(after.selectedAttempt.id,observedAttemptId(1));assert.equal(after.selectedAttempt.observationId,observedObservationId(1));
+  const remaining=await(await fetch(list,{headers})).json();assert.equal(remaining.page.total,104);assert.ok(remaining.items.every(a=>a.attemptId!==observedAttemptId(1)));
+});
 
 test("unobserved request fixture separates registered facts and retains exact identity after arrival",async()=>{
   const headers={Authorization:"Bearer rights-fixture-secret"};

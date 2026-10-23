@@ -5,14 +5,19 @@ import { SchemaColumnComparison } from "./source-schema-comparison";
 import { attentionOffset } from "@/lib/quality-attention";
 import { schemaExceptionsHref } from "@/lib/schema-exceptions";
 import { isSchemaExceptionStatus, schemaExceptionFilter } from "@/lib/schema-exception-filter";
-import { schemaRequestHref } from "@/lib/schema-requests";
-import { schemaRequestView } from "@/lib/schema-request-filter";
+import { schemaRequestHref, schemaRequestOrigin } from "@/lib/schema-requests";
+import { schemaRequestDetail } from "@/lib/schema-request-client";
 
 export async function SchemaObservationEvidence({ resourceId, requestId, observationId, exceptionStatus, exceptionOffset, requestReturn }: { resourceId: string; requestId?: string; observationId?: string; exceptionStatus?: string; exceptionOffset?: string; requestReturn?: Record<string, string | undefined> }) {
   try {
     const o = await schemaObservation(resourceId, requestId ?? "", observationId ?? "");
+    const origin = requestReturn ? schemaRequestOrigin(requestReturn) : undefined;
+    const selected = requestReturn?.requestAttemptId;
+    // A selected return attempt may differ from this observation's attempt, but
+    // it must still belong to the exact request/resource/workspace. Never reselect.
+    if (selected !== undefined) await schemaRequestDetail(resourceId, o.requestId, selected, 0, 0);
     const exception = isSchemaExceptionStatus(o.status);
-    const back = requestReturn ? schemaRequestHref(resourceId, o.requestId, schemaRequestView(requestReturn.schemaRequestView), attentionOffset(requestReturn.schemaRequestOffset), o.attemptId ?? undefined, attentionOffset(requestReturn.attemptOffset), attentionOffset(requestReturn.observationOffset)) : exception ? schemaExceptionsHref({}, schemaExceptionFilter(exceptionStatus), attentionOffset(exceptionOffset)) : "/attention?schemaView=ALL#source-schema-attention";
+    const back = requestReturn && origin ? schemaRequestHref(resourceId, o.requestId, origin, selected, attentionOffset(requestReturn.attemptOffset), attentionOffset(requestReturn.observationOffset)) : exception ? schemaExceptionsHref({}, schemaExceptionFilter(exceptionStatus), attentionOffset(exceptionOffset)) : "/attention?schemaView=ALL#source-schema-attention";
     return <>
       <Link prefetch={false} className="text-link" href={back}>{requestReturn ? "返回精确请求证据" : exception ? "返回扫描异常历史" : "返回漂移观察"}</Link>
       <PageHeader title="来源 schema 历史观察" eyebrow={o.resourceCode} description={`${o.resourceName} · 精确历史证据，只读`} action={<Badge value={o.status} />} />
