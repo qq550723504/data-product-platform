@@ -42,7 +42,7 @@ def main():
         env.update(GOWORK='off',GOFLAGS='',CGO_ENABLED='0')
         base=control/'apps/platform'
         subprocess.run(['go','test','./internal/lifecycle/pilot','-run','TestRemaining(FixtureSchemaSingleContract|Retained|DeletePolicy)','-count=1'],cwd=base,env=env,check=True)
-        subprocess.run(['go','test','./cmd/lifecycle-fixture-reader','./cmd/lifecycle-fixture-remaining','./cmd/lifecycle-fixture-remaining-iam','./cmd/lifecycle-fixture-readonly-check','-count=1'],cwd=base,env=env,check=True)
+        subprocess.run(['go','test','./cmd/lifecycle-fixture-reader','./cmd/lifecycle-fixture-remaining','./cmd/lifecycle-fixture-remaining-iam','./cmd/lifecycle-fixture-readonly-check','./cmd/lifecycle-fixture-retention','-count=1'],cwd=base,env=env,check=True)
     print('PASS_SEPARATE_R_ARCHIVE_BUILD_AND_OFFLINE_CONTRACTS; no source/provider I/O')
 
 if __name__=="__main__":

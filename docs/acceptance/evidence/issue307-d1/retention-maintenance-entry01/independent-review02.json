@@ -1,0 +1,25 @@
+{
+  "status": "PASS_BOUNDED_RETENTION_MAINTENANCE_ENTRY_SOURCE_REVIEW_ADDENDUM",
+  "remaining_blockers": [],
+  "provenance": {"assessment_by": "/root/c23_preparation_boundary_review", "mode": "human-authorized readonly independent agent", "serialization_by": "/root", "note": "Parent saved the independent agent assessment; parent broader regressions are separate."},
+  "scope": "Finite source-preparation slice only; prior source review plus actual isolated R build and final bindings. No runnable maintenance packet, native acceptance or human write authority is claimed.",
+  "closed_blocker": {"id": "R-RETAINED-PILOT-DEPENDENCY", "cause": "P local Go success did not establish R compile; R712 lacked pilot.CheckCustodyPrivatePath.", "fix": "Literal Linux mount-point Lstat/private mode and standard os.OpenRoot checks remove the product-only dependency. No product custody/schema copy or fallback.", "result": "CLOSED_BY_ACTUAL_R_ARCHIVE_BUILD_AND_TEST"},
+  "final_binding": {"R_commit": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d", "R_direct_parent": "71286535d2b14c5456726d0f6db0aae8879de0cf", "delta": ["apps/platform/cmd/lifecycle-fixture-retention/main.go"], "archive_sha256": "5e86e36808f00f62b9e9c7eb9b6b76d0c306958f4c5118c6d9d4eb4ff00de092", "archive_bytes": 6479934, "archive_files": 774, "shared_contract_members": 11},
+  "reviewed_hashes": {
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go": {"raw_sha256": "8acd9158d353b9588f94c981623876e91f8d1427a674ab453d1924d506cf165f", "lf_sha256": "8acd9158d353b9588f94c981623876e91f8d1427a674ab453d1924d506cf165f"},
+    "apps/platform/cmd/lifecycle-fixture-retention/main_test.go": {"raw_sha256": "3092c6faec6a362cab721eb3ca7296bf175eaa3b09bcbedffac258965c9254e4", "lf_sha256": "3092c6faec6a362cab721eb3ca7296bf175eaa3b09bcbedffac258965c9254e4"},
+    "apps/platform/cmd/lifecycle-fixture-retention/testdata/approved-proposal.json": {"raw_sha256": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f", "lf_sha256": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f"},
+    "examples/lifecycle-d1/retention_maintenance.py": {"raw_sha256": "5e49094c1e7f21423472e7275820378772f410831228207a3d52aed5e1abb51e", "lf_sha256": "5e49094c1e7f21423472e7275820378772f410831228207a3d52aed5e1abb51e"},
+    "examples/lifecycle-d1/test_retention_maintenance.py": {"raw_sha256": "2fad2a28ffae1c2a4f6529ec140cfb409ae378648b17c5ea3a50ce9ae964b430", "lf_sha256": "2fad2a28ffae1c2a4f6529ec140cfb409ae378648b17c5ea3a50ce9ae964b430"},
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": {"raw_sha256": "01caea1dd55c5477a925337899c8444a21f906fcfec9ce637aefdf3ad5b9e94e", "lf_sha256": "01caea1dd55c5477a925337899c8444a21f906fcfec9ce637aefdf3ad5b9e94e"},
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py": {"raw_sha256": "b1f321d3013120980bb8553f32650ba10ff1aee23bd8d7772c0778b87793791b", "lf_sha256": "17c8e21415a9da8ef04421ddc2758d7d74501782ac75f44bc246e64b44f591fc"},
+    ".github/workflows/ci.yml": {"raw_sha256": "254244bc8a00e97b03c1d5bfddf5b976bfbd1d73e6ead71a7740633058f96985", "lf_sha256": "aae10e964227f58f5ba03b92a37fd8dfc2c024afc255a9fe6b118173808a02b3"},
+    "docs/acceptance/evidence/issue307-d1/retention-maintenance-entry01/contract.md": {"raw_sha256": "24d393c36d454b621ece09f5bdceb2efb35a87774985da6688f35c487b6f59d0", "lf_sha256": "24d393c36d454b621ece09f5bdceb2efb35a87774985da6688f35c487b6f59d0"}
+  },
+  "independent_actual_R_validation": {"method": "Extract final Git ZIP into a separate temporary directory, not P checkout", "command": "GOPROXY=off GOWORK=off go test ./cmd/lifecycle-fixture-retention -count=1 -v", "exit_code": 0, "top_level_methods": 7, "table_subcases": 35, "boundary": "Real R compilation and httptest localhost only; not native provider/fsync/containment."},
+  "unchanged_host_tests": "Earlier independent normal/-O each 6 methods retained; not rerun for the Go-only addendum.",
+  "author_checks": "checks02 Python normal/-O each59 methods PASS, whole round remains FAILED; checks03 P4 packages/R6 packages/Linux default-disabled build PASS. Not all independently rerun by reviewer.",
+  "operational_gates_remaining": ["New exact P/R remote PR CI", "Actual owner/binary/config/window/independent maintenance budget bindings and immutable containment anchor", "Fresh human metadata-write grant; no old grant reuse", "Fresh complete17-version/IAM/inventory verification", "Native Linux fsync and actual physical containment", "Actual protection extension and new expectation profile; subsequent deletion candidate remains uncreated"],
+  "reviewer_actions": {"repository_edits": 0, "Docker_calls": 0, "GitHub_calls": 0, "real_provider_calls": 0, "metadata_writes": 0, "DELETE": 0},
+  "required_state": {"PR332": "Draft/unmerged", "Issue307": "OPEN"}
+}

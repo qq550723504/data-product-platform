@@ -1,8 +1,8 @@
 {
   "version": 2,
   "purpose": "RETAINED_D1_FIXTURE_ONLY",
-  "source": "8e53ea564f9b81bdebf7c31d6a99060d1ec3b7db",
-  "base_source": "92b9801dfb7e46295e17165e7762907cb6e87be2",
+  "source": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d",
+  "base_source": "71286535d2b14c5456726d0f6db0aae8879de0cf",
   "execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
   "profile": "candidate23/v33",
   "not_before": "2026-10-24T10:00:00Z",
@@ -13,8 +13,7 @@
     "protected_identity": false
   },
   "runtime_delta_files": [
-    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go",
-    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go"
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go"
   ],
   "shared_contract_files": [
     "apps/platform/internal/lifecycle/pilot/remaining_scope.go",
@@ -24,10 +23,13 @@
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go",
-    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go"
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/main_test.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/testdata/approved-proposal.json"
   ],
-  "archive_sha256": "a57c946610b968a8eaaa1414e85367af43938784c973d723a28a1f7355a5c0f5",
-  "archive_bytes": 6440579,
+  "archive_sha256": "5e86e36808f00f62b9e9c7eb9b6b76d0c306958f4c5118c6d9d4eb4ff00de092",
+  "archive_bytes": 6479934,
   "files": {
     "apps/platform/cmd/api/main.go": "4d7402469b6e208c52186ad134e5b95c250398d8ed2fbc562fafba676bc337db",
     "apps/platform/cmd/ingestion-browser-fixture/main.go": "2dd94df5869849f102313ce1b6644b15e690c946cf9f9f49ddf153142077f447",
@@ -127,6 +129,9 @@
     "apps/platform/cmd/lifecycle-fixture-remaining/wire.go": "eadd72c670264a118e7390b8e338cac90f25167e853b1124bd5658e847b37a94",
     "apps/platform/cmd/lifecycle-fixture-remaining/wire_native_test.go": "969244b12908b6e8105c7874416212e9c805447330a6592b3906e27453577eb3",
     "apps/platform/cmd/lifecycle-fixture-remaining/wire_test.go": "02efd0e23c32a535ad582591e706652e17263a5e441f4b400980364436a66a5d",
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go": "8acd9158d353b9588f94c981623876e91f8d1427a674ab453d1924d506cf165f",
+    "apps/platform/cmd/lifecycle-fixture-retention/main_test.go": "3092c6faec6a362cab721eb3ca7296bf175eaa3b09bcbedffac258965c9254e4",
+    "apps/platform/cmd/lifecycle-fixture-retention/testdata/approved-proposal.json": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f",
     "apps/platform/cmd/migrate/main.go": "bd3af7a95c3462a44fee83bc55b0d90930cbdd668c3b391661d1c0a438012db3",
     "apps/platform/cmd/outbox-replay/main.go": "365545721d3cb69550657ceed87b1dcea2f3532c45209fed706cac24ba9a10be",
     "apps/platform/cmd/poc-demo/main.go": "c43a61ee7e12f8df144f6538c1c1a7aa14c0547108c18049b46b67ff0d4eb477",

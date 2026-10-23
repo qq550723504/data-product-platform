@@ -1,0 +1,5 @@
+FAIL	./internal/storage [setup failed]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-retention	7.601s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	4.027s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	2.825s
+FAIL

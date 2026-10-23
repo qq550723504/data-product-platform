@@ -1,0 +1,14 @@
+{
+  "status": "PASS_EXPLICIT_INDEX_AND_INDEPENDENT_REVIEW_BYTES",
+  "audit": {
+    "id": "retention-maintenance-entry01",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/retention-maintenance-entry01/evidence-index01.json",
+    "sha256": "8f0444fb002c790f41cd9cb103e8535a43b41a93e4c71687d083c7eb6b86d0eb",
+    "members_verified": 137
+  },
+  "reviewed_members": 9,
+  "review_author": "/root/c23_preparation_boundary_review",
+  "receipt_verifier": "author/root",
+  "boundary": "File-only. Not execution authorization/native acceptance."
+}
