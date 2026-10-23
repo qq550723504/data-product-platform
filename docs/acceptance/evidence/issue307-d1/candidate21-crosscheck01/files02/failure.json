@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-22T12:33:36.167936+00:00",
+  "error_type": "ValueError",
+  "message": "Permission enabled or human text materialized",
+  "no_gate_relaxation": true,
+  "native_delete": 0
+}

@@ -1,0 +1,22 @@
+{
+  "status": "PASS_FRESH_FIXED_C21_CLOSED_HOST_GATE",
+  "at": "2026-10-22T12:34:37.376936+00:00",
+  "gate": {
+    "status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+    "cases": 6,
+    "recoveries": 6,
+    "permissions_false": 30,
+    "owners_closed": 86,
+    "backup_hashes": 9,
+    "old_backups_retained": 57,
+    "budgets_empty": 3,
+    "native_delete": 0,
+    "source_provider_io": 0
+  },
+  "source_start": 0,
+  "enable": 0,
+  "sender_wire_signing": 0,
+  "native_delete": 0,
+  "execution_authority": false,
+  "limitation": "This is a fresh closed host/budget/topology readback, not a fresh native/Core/IAM source preflight. Window-time full native verification remains required after new authorization."
+}

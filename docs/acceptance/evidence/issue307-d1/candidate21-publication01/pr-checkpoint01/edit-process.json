@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "gh",
+    "pr",
+    "edit",
+    "332",
+    "--repo",
+    "qq550723504/data-product-platform",
+    "--body-file",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c21\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate21-publication01\\pr-checkpoint01\\body.md"
+  ],
+  "exit": 0,
+  "at": "2026-10-22T12:06:20.751724+00:00"
+}

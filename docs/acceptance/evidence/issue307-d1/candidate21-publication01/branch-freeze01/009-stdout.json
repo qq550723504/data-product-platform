@@ -1,0 +1,1 @@
+{"data":{"createBranchProtectionRule":{"branchProtectionRule":{"id":"BPR_kwDOUdQLBs4FE_7b","pattern":"codex/issue307-post-v22-dispatch-closure","lockBranch":true,"isAdminEnforced":true,"lockAllowsFetchAndMerge":false,"allowsForcePushes":false,"allowsDeletions":false}}}}

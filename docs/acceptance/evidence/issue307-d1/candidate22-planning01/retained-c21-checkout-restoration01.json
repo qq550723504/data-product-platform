@@ -1,0 +1,12 @@
+{
+  "status": "ISSUED_RECEIPT_BYTES_RESTORED_WITH_LF_EQUIVALENCE",
+  "restorations": [
+    {
+      "path": "docs/acceptance/issue307-d1-v31-preparation.md",
+      "before_sha256": "a0b9be7a336b7d9ffa6b3fe8f68bd2a191f7817e1bedebaee214749cfa78b2d7",
+      "issued_sha256": "14f81fdeffc338d399b7a6c12f33ab86089dde4b7481575ca0c6a3c03bdef24c",
+      "LF_equivalent": true,
+      "original_new_checkout_preserved": "C:\\Users\\Henry\\.codex\\fixture-private\\candidate22-bootstrap01\\checkout-raw-restoration01\\docs\\acceptance\\issue307-d1-v31-preparation.md"
+    }
+  ]
+}

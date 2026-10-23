@@ -15,6 +15,7 @@ class PreallocationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);(root/'docs/acceptance/evidence/issue307-d1').mkdir(parents=True)
             with patch.object(p,'ROOT',root),patch.object(p.subprocess,'check_output',return_value=(HEAD+'\n').encode()),\
+                 patch.object(p.fixture_artifacts,'host_snapshot',return_value={'source':HEAD,'files':{}}),\
                  patch.object(p.execution_freeze.GitHub,'snapshot',return_value=snapshot()),\
                  patch.object(p.Allocation,'__init__',side_effect=AssertionError('allocation before CI')):
                 self.assertEqual(p.preallocation_ci()['head'],HEAD)
@@ -32,11 +33,35 @@ class PreallocationTests(unittest.TestCase):
                 if fault=='provenance':state['checks'][0]['app_id']=9876
                 with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
                      patch.object(p.window,'policy_checkpoint'),patch.object(p.subprocess,'check_output',return_value=(HEAD+'\n').encode()),\
+                     patch.object(p.fixture_artifacts,'host_snapshot',return_value={'source':HEAD,'files':{}}),\
                      patch.object(p.execution_freeze.GitHub,'snapshot',side_effect=OSError('unavailable') if fault=='unknown' else None,return_value=state),\
                      patch.object(p,'historical_gate',side_effect=AssertionError('Docker/history before CI')),\
                      patch.object(p,'build',side_effect=AssertionError('build before CI')),\
                      patch.object(p.Allocation,'__init__',side_effect=AssertionError('allocate before CI')):
                     with self.assertRaises((ValueError,OSError)):p.allocate()
+                    self.assertFalse((root/'private').exists());self.assertFalse((root/'public').exists())
+
+    def test_dirty_or_untracked_host_cannot_adopt_old_green_ci_or_read_history(self):
+        for kind in ('tracked runtime edit','untracked host module'):
+            with self.subTest(kind=kind),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp)
+                host=root/'apps/platform/host.go';host.parent.mkdir(parents=True)
+                host.write_bytes(b'package host\n')
+                p.fixture_artifacts.git(root,'init','-q')
+                p.fixture_artifacts.git(root,'add','apps/platform/host.go')
+                p.fixture_artifacts.git(root,'-c','user.name=Boundary Test','-c','user.email=boundary@example.invalid','commit','-qm','old green source')
+                if kind=='tracked runtime edit':host.write_bytes(b'package changed\n')
+                else:
+                    extra=root/'examples/lifecycle-d1/extra.py';extra.parent.mkdir(parents=True)
+                    extra.write_bytes(b'new host code\n')
+                with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
+                     patch.object(p.window,'policy_checkpoint'),\
+                     patch.object(p.execution_freeze.GitHub,'snapshot',side_effect=AssertionError('CI request before clean host')) as api,\
+                     patch.object(p,'historical_gate',side_effect=AssertionError('history before clean host')),\
+                     patch.object(p,'build',side_effect=AssertionError('build before clean host')),\
+                     patch.object(p.Allocation,'__init__',side_effect=AssertionError('allocation before clean host')):
+                    with self.assertRaisesRegex(ValueError,'commit reviewed host'):p.allocate()
+                    api.assert_not_called()
                     self.assertFalse((root/'private').exists());self.assertFalse((root/'public').exists())
 
     def test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build(self):

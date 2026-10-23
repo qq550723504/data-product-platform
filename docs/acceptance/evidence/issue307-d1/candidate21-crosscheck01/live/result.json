@@ -1,0 +1,14 @@
+{
+  "status": "PASS_FRESH_C21_HEAD_NATIVE_LOCK_FULL_PROTECTION_CI_AND_THREADS",
+  "at": "2026-10-22T12:32:28.526226+00:00",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "review_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "binding_sha256": "f27a617f278fcbaf64db29ddf536d5816d88acaba8a0d760280eb23bbe55d0de",
+  "unresolved_threads": 0,
+  "Draft": true,
+  "Issue307": "OPEN",
+  "execution_authority": false,
+  "native_delete": 0,
+  "rule_operation": "READ_ONLY_NO_UPDATE_NO_UNLOCK"
+}

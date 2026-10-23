@@ -1,0 +1,94 @@
+{
+  "status": "PASS_BOUNDED_C21_POSTLOCK_CONFIRMATION_REVIEW",
+  "reviewed_at": "2026-10-22T12:15:20.328024+00:00",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "profile": "candidate21/v31",
+  "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "host_source": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "final_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "execution_binding_sha256": "f27a617f278fcbaf64db29ddf536d5816d88acaba8a0d760280eb23bbe55d0de",
+  "remaining_blockers": [],
+  "current_human_crosscheck_text": {
+    "path": "docs/acceptance/issue307-d1-candidate21-final-confirmation02.md",
+    "sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989",
+    "checkpoint": "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-checkpoint02.json",
+    "checkpoint_sha256": "174dc9ec36dbc0a35b11a86bc3f391803a5511c72b843c21b746cb86795d1f41",
+    "machine_lines": 137,
+    "targets": 6,
+    "survivors": 11
+  },
+  "scope": "Supplementary file-only independent verification of completed saved final PR CI/native lock/confirmation02 facts. Not a live GitHub refresh,not product acceptance,not new human authority. Original frozen preparation report,index,matrix and snapshots remain unchanged.",
+  "verified_facts": [
+    "Final local/PR/ref snapshot HEAD f4f27c... is identical before/after native lock and current local tracked diff is empty. R514 runtime and Pcef build/source-CI artifact boundary is unchanged; final publication HEAD is distinct from initial build P source.",
+    "Exact final-head native Actions run39773563527 attempt1,event pull_request,workflow .github/workflows/ci.yml,repository/head repository,PR332,latest matching run,suite107792156247,all13job/check memberships/GitHubActions app15368/slug and success match raw native replies. Saved complete thread pagination has0unresolved. This is PR CI,not main CI or merge.",
+    "Before rule/protection absence is proven by native branch protectedfalse,REST404 Branch not protected andGraphQLnull. Exactly one GraphQL createBranchProtectionRule targets only the fixedbranch,repository and five freeze flags. No REST PUT,retry,unlock,force/delete or other mutation appears in17 saved API operations.",
+    "After exact rule BPR_kwDOUdQLBs4FE_7b has lockBranch/admin enforcement true and fork fetch-merge/force/delete false,matching complete REST protection. Before had no policy; no existing protection was relaxed. Prior nonfreeze dictionary equality is NOT_APPLICABLE,not claimed. Snapshot lock/readback is explicitly not atomic CAS and not automatic unlock.",
+    "Public/private execution-binding are exact same bytes SHA f27a... and are FROZEN_EXECUTION_BINDING_NOT_AUTHORIZED/send_authorizationfalse. execution/profile,eight artifact fields(candidate,bindings,template,source-freeze,R,reader,sender,owner),reviewHEAD/ruleID and full protection match frozenpacket and actualnative lock receipt.",
+    "Original final static typed plan and every manifest member are rehashed and audited;8indexes/6366references remain unchanged. Direct manifest1102members and74host-index members retain exact bytes,with completed source and frozenpacket independent reviews. Later lock/binding/text02 supplement is intentionally not forged into the prior manifest.",
+    "Current full proposal02 preserves the exact137line machine block,all six exact target and eleven survivor tuples/source versions,12build hashes and82public reference-table file hashes. Complete protection JSON equals savedafter RESTobject. Window2026-10-22SGT22:00-22:40=UTC14:00-14:40;readonly cutoff16:40Z;P1 exclusion,max1/global6,UNKNOWN no-resend and preservation restrictions unchanged.",
+    "Proposal01/checkpoint01/rawcrosscheck are retained. Proposal02 only clarifies creation from no prior native protection and appends that clarification;candidate/runtime/binaries/HEAD/binding/template/window are unchanged. Checkpoint02 pins prior checkpoint01 and proposal01 SHA.",
+    "Current new actual authorization and schedule paths remain absent. DELETE0/six sendsNOT_RUN/fullD1NOT_ACCEPTED remain explicit. PR332 remains Draft/open/unmerged andIssue307open in saved native snapshots. Future window must repeat all required fresh checks and needs new human authority; no old authorization is reused."
+  ],
+  "clarification_01_to02": {
+    "classification": "RESOLVED_RENDERED_FACT_PRECISION",
+    "original_01_phrase": "non-freeze protection unchanged",
+    "actual_native_fact": "No native prior rule/protection existed; a new exact restrictive rule was created",
+    "current_02_fact_corrected": true,
+    "proposal01_sha256": "f51754642b34f738cf6313f520432baaf4d43e71005c78c6f147943dad71b9ea",
+    "checkpoint01_sha256": "5323e9d0af86e02133e88988329b2c26aeffd8e1ee83445c942b5746b30c6840",
+    "no_source_or_frozen_artifact_changed": true
+  },
+  "CI": {
+    "run_id": 39773563527,
+    "attempt": 1,
+    "event": "pull_request",
+    "head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+    "workflow": ".github/workflows/ci.yml",
+    "suite_id": 107792156247,
+    "success_jobs_and_checks": 13,
+    "unresolved_threads_in_saved_snapshot": 0,
+    "main_CI": "NOT_RUN_NOT_MERGED"
+  },
+  "static_audit": {
+    "indexes": 8,
+    "member_references": 6366,
+    "direct_manifest_members": 1102,
+    "manifest_sha256": "eb28982a4104906f81ce56740a981365f00bcdb41bc0c9c1dced0ae16def9708",
+    "plan_sha256": "dcc6c136e40950aa6c98a79e3673f820f6885993e82cdba65a5459d7ba83aedc",
+    "host_index_sha256": "f257059fe67dd04e533ba91f9e3878c4246c55c1272299f7f1c531fb497a0596"
+  },
+  "independent_receipts": [
+    "independent-saved-lock-ci-audit01.json",
+    "independent-current-proposal02-audit01.json"
+  ],
+  "freshness_and_replay": "The before/after normalized snapshots were recomputed via the fixed native parser against saved raw API replies only. Saved-API-replay folders are expressly NOT_NETWORK/NOT_FRESH. Native observations are12:01-12:05UTC; future execution gates must freshly query HEAD/CI/protection/threads/authority/native state as required.",
+  "current_status": {
+    "new_delete_authorization": "NOT_RECEIVED",
+    "new_schedule": "NOT_CREATED",
+    "old_authorization_reused": false,
+    "send_authorization": false,
+    "six_real_sends": "NOT_RUN",
+    "native_DELETE": 0,
+    "full_D1": "NOT_ACCEPTED",
+    "PR332": "OPEN_DRAFT_UNMERGED_AS_SAVED",
+    "Issue307": "OPEN_AS_SAVED",
+    "merge": "NOT_PERFORMED",
+    "source_upgrade": "NOT_EXECUTED",
+    "automatic_unlock": false
+  },
+  "reviewed_artifacts_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/reviewed-artifacts01.json",
+    "sha256": "885e2a378ff3d85bba11d0e112153c12287c7d8d85f8fdeb23c885178cb5abf5",
+    "count": 1223
+  },
+  "excluded_later_work": "Later PR body/comment/secret scan and their dynamic indices are not claimed complete and are not inputs to the older frozen manifest or this finite audit. Their absence from original static manifest does not reopen this bounded conclusion.",
+  "reviewer_actions": {
+    "Docker_Core_provider_calls": 0,
+    "live_GitHub_calls_or_mutations": 0,
+    "permission_changes_or_signing": 0,
+    "delete": 0,
+    "HEAD_advance_or_unlock": 0,
+    "writes": "Only this new independent-postlock-review01 directory"
+  }
+}

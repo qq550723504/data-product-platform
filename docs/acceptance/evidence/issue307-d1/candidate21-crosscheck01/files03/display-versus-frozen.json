@@ -1,0 +1,7 @@
+{
+  "status": "PASS_EXACT_CHAT_DISPLAY_MACHINE_AND_ALL_BINDING_ROWS",
+  "machine_equal": true,
+  "all_94_rows_equal": true,
+  "display_sha256": "fa2d2fa00235104195c84703e0a62db27bb6f42ac63c544ef83328194dc454d0",
+  "proposal_sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989"
+}

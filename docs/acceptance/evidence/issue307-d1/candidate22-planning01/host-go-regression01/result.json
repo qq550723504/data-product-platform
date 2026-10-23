@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "go",
+    "test",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-readonly-check"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:07:06.949029+00:00",
+  "kind": "LOCAL_HOST_TEST_NOT_NATIVE",
+  "native_delete": 0
+}

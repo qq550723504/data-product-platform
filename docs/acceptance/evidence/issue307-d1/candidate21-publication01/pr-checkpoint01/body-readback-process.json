@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "gh",
+    "pr",
+    "view",
+    "332",
+    "--repo",
+    "qq550723504/data-product-platform",
+    "--json",
+    "title,body,headRefOid,isDraft,state,mergedAt"
+  ],
+  "exit": 0,
+  "at": "2026-10-22T12:06:21.707489+00:00"
+}

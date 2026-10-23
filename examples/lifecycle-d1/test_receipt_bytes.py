@@ -10,6 +10,7 @@ import zipfile
 ROOT=Path(__file__).resolve().parents[2]
 RULE='docs/acceptance/evidence/issue307-d1/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab'
 MARKDOWN=[f'docs/acceptance/issue307-d1-v29-{suffix}.md' for suffix in ('crosscheck01','execution01','schedule01','window01')]
+MARKDOWN.append('docs/acceptance/issue307-d1-v31-preparation.md')
 
 
 class ReceiptBytesTests(unittest.TestCase):

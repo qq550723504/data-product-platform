@@ -1,0 +1,8 @@
+.......................................................C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'apps/platform/a'
+  return self._open_to_write(zinfo, force_zip64=force_zip64)
+.fatal: git cat-file: could not get object info
+..............................s...............
+----------------------------------------------------------------------
+Ran 102 tests in 48.582s
+
+OK (skipped=1)

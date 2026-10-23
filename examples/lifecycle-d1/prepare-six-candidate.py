@@ -1,4 +1,4 @@
-"""Finite candidate21 preparation. Allocate stopped owners; never send/enable DELETE.
+"""Finite candidate22 preparation. Allocate stopped owners; never send/enable DELETE.
 
 Allocation, source/restore non-delete verification and final freeze are distinct
 checkpoints. A stopped allocation is not a native PASS or deletion permission.
@@ -144,7 +144,10 @@ def historical_gate():
     import retained_v30
     c20=retained_v30.verify(ROOT,inspect,closed,project_owner,docker,sequence,ids,p1.PRIVATE,p1.hostpath)
     need(len(ids)==907,'retained C20 and schema-clone closed owner count differs')
-    return {'c20':c20,'c19':c19,'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_907_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
+    import retained_v31
+    c21=retained_v31.verify(ROOT,inspect,closed,project_owner,docker,sequence,ids,p1.PRIVATE,p1.hostpath)
+    need(len(ids)==996,'retained expired frozen C21 owner union differs')
+    return {'c21':c21,'c20':c20,'c19':c19,'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_996_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
 
 
 def retained_c14(ids):
@@ -316,7 +319,10 @@ def artifact_contract():
 
 def preallocation_ci():
     """A completed exact-source CI precedes allocation, not only authorization."""
-    head=subprocess.check_output(['git','-c','core.longpaths=true','rev-parse','HEAD'],cwd=ROOT).decode().strip()
+    # Reuse the existing strict host snapshot before API/history/build I/O.
+    # HEAD alone could select its old green CI while current host code is dirty.
+    host=fixture_artifacts.host_snapshot(ROOT)
+    head=host['source']
     journal=ROOT/'docs/acceptance/evidence/issue307-d1'/('preallocation-ci-'+uuid.uuid4().hex)
     journal.mkdir()
     snapshot=execution_freeze.GitHub(journal).snapshot()
@@ -330,7 +336,7 @@ def preallocation_ci():
 
 def allocate():
     window.policy_checkpoint()
-    need(PROFILE=='candidate21/v31' and EXECUTION=='9ba214bd-a481-499b-bef6-ca7a789ef501','only the new proposed execution is supported')
+    need(PROFILE=='candidate22/v32' and EXECUTION=='0e5cb8f3-46a9-4339-88e4-7154d6ebe13f','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
     source_ci=preallocation_ci()
     # Verify retained history before allocating any owner or volume.
