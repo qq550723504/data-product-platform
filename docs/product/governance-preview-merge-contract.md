@@ -65,3 +65,6 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 
 
 独立复核入口为协调线程 `01a1699c-721d-7125-8b0c-6b3f734f90d8` 对 `fe0bf8f49bbcd87de63a8c817b07631d80580935` 的局部只读源码评审（不是 GitHub 全量批准）。其新增 P2：Agent 2xx 收据未绑定校验，且确认与后续 GET 共用 catch，可能丢失原键并把已保存误报未知。修复在收到匹配收据前保留原请求；确认后先保存事实和明确 task/plan URL，再独立读取，GET 失败只提供只读恢复并禁用新写。离线回归验证畸形/错绑收据、同键同内容重试、有效确认后两个独立 GET 失败及只读恢复不增加 POST。完整 UI/其余文件仍无独立全范围 PASS，且上述修复后的新 HEAD 仍需复核。
+
+
+协调入口对 `56ca8e11855bf69d22fedeecc30272e4d1a96d7d` 增量独立核验了收据/刷新 P2 的修复与 15 项离线用例、worker consumer profile 与既有 frozen-obligation claim 路径、严格 schema73，确认这些已核范围 PASS；不是整个 166 文件 PR 的独立批准。该提交来源接纳、trial 契约和整套 Go CI 已通过；live-Core 的 review/publish 已推进到新 Trace 断言，但 publish 阶段 fixture 尚未提供 decisionId，Playwright 对 undefined locator 报 TypeError。补齐实际已审核不可变 decision ID 的前置见证，不跳过该断言、不伪造发布数据，旧失败运行保留。其余浏览器/最终候选 CI 尚需按新 HEAD 验证。

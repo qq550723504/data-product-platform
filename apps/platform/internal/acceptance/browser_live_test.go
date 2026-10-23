@@ -410,6 +410,13 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	liveOK(t, pool.QueryRow(ctx, frozenQuery, version.ID, frozenIDs).Scan(&frozenBefore), "capture immutable rows before browser publishing")
 	assertLiveCount(t, ctx, pool, 0, "SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ProductReleased'", release.ID)
 	livePost(t, ctx, "/api/v1/product-releases/"+blocked.ID.String()+"/publish", publisherID, uuid.NewString(), map[string]any{}, http.StatusConflict)
+	// Pin the actual reviewed immutable decision before the publish browser
+	// phase. The later history phase used to be the first place this fixture
+	// supplied decisionId, which left the publish assertion without a witness.
+	if mapping.CurrentDecisionID == nil {
+		t.Fatal("reviewed mapping has no immutable decision")
+	}
+	manifest["decisionId"] = *mapping.CurrentDecisionID
 	runLiveBrowser(t, ctx, "publish", manifest, artifacts)
 
 	published, err := productRepo.GetRelease(ctx, release.ID)
