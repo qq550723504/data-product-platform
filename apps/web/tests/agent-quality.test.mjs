@@ -215,6 +215,8 @@ test("expanded evidence and audit facts require renderable fields and the exact 
  const reads={history:async()=>({datasetVersionId:version,...page([assessment])}),report:async()=>full,attempt:async()=>{throw Error('unknown')}};
  assert.equal((await readAgentEvidence(ws,selection,reads)).report.id,old);
  assert.equal((await readAgentEvidence(ws,selection,{...reads,report:async()=>({...full,auditEvents:[{...full.auditEvents[0],objectId:newer}]})})).report,null);
+ const nullable=await readAgentEvidence(ws,selection,{...reads,report:async()=>({...full,evidence:[{...full.evidence[0],sourceId:null}]}),attempt:async()=>({id:attemptId,workspaceId:ws,datasetVersionId:version,outcome:'RUNNING',assessmentId:null})});
+ assert.equal(nullable.report.id,old);assert.equal(nullable.attempt.id,attemptId);
 });
 
 test("all template and selected report display fields reject objects before rendering",async()=>{

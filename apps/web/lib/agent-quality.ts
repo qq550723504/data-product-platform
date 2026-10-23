@@ -271,7 +271,7 @@ export async function readAgentEvidence(
               ) &&
               Array.isArray(r.evidence) &&
               r.evidence.every(
-                (e) => isIdentity(e.id) && same(e.workspaceId, workspace) && typeof e.evidenceType==='string' && typeof e.relationType==='string' && typeof e.sourceType==='string' && (e.sourceId === undefined || (typeof e.sourceId==='string' && isIdentity(e.sourceId))) && (e.hashAlgorithm===undefined || typeof e.hashAlgorithm==='string') && (e.hashValue===undefined || typeof e.hashValue==='string') && time(e.createdAt),
+                (e) => isIdentity(e.id) && same(e.workspaceId, workspace) && typeof e.evidenceType==='string' && typeof e.relationType==='string' && typeof e.sourceType==='string' && (e.sourceId == null || (typeof e.sourceId==='string' && isIdentity(e.sourceId))) && (e.hashAlgorithm===undefined || typeof e.hashAlgorithm==='string') && (e.hashValue===undefined || typeof e.hashValue==='string') && time(e.createdAt),
               ) &&
               Array.isArray(r.auditEvents) &&
               r.auditEvents.every((e) => isIdentity(e.id) && same(e.objectId,r.id) && typeof e.action==='string' && typeof e.objectType==='string' && typeof e.actorType==='string' && time(e.occurredAt))
@@ -287,7 +287,7 @@ export async function readAgentEvidence(
             same(a.workspaceId, workspace) &&
             same(a.datasetVersionId, version) &&
             typeof a.outcome === "string" &&
-            (a.assessmentId === undefined || (typeof a.assessmentId === "string" && isIdentity(a.assessmentId))),
+            (a.assessmentId == null || (typeof a.assessmentId === "string" && isIdentity(a.assessmentId))),
         )
       : Promise.resolve(null),
   ]);
