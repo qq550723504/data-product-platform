@@ -1,0 +1,15 @@
+{
+  "status": "PASS_V32_NATIVE_GIT_RAW_BYTE_RULES",
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "exit": 0
+    }
+  ],
+  "at": "2026-10-23T04:58:53.125369+00:00",
+  "native_delete": 0
+}
