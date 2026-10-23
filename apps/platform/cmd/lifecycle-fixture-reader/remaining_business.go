@@ -84,6 +84,15 @@ func (d *remainingDisposition) dispatch(ctx context.Context, name, key string, c
 	if err := d.refresh(ctx, cp); err != nil {
 		return lc.DispatchResult{}, err
 	}
+	if remainingProtectedCopy(cp) {
+		until, err := remainingProtectionDeadline(d.r)
+		if err != nil {
+			return lc.DispatchResult{}, err
+		}
+		return protectedRemainingCommand(ctx, cp, until,
+			func(context.Context, domain.Copy) (lc.CopyProtection, error) { return d.deps.Protection[cp.ID], nil },
+			func() (lc.DispatchResult, error) { return d.commandDispatch(ctx, name, key, cp) }, time.Now)
+	}
 	return d.commandDispatch(ctx, name, key, cp)
 }
 func (d *remainingDisposition) refresh(ctx context.Context, cp domain.Copy) error {

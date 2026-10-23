@@ -1,8 +1,8 @@
 {
   "version": 2,
   "purpose": "RETAINED_D1_FIXTURE_ONLY",
-  "source": "6255b62b94ffdb2453b89c7caaa777e69cc6a6d8",
-  "base_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "source": "8e53ea564f9b81bdebf7c31d6a99060d1ec3b7db",
+  "base_source": "92b9801dfb7e46295e17165e7762907cb6e87be2",
   "execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
   "profile": "candidate23/v33",
   "not_before": "2026-10-24T10:00:00Z",
@@ -13,20 +13,21 @@
     "protected_identity": false
   },
   "runtime_delta_files": [
-    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go",
-    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go",
-    "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
-    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go",
-    "apps/platform/internal/lifecycle/pilot/remaining_scope.go"
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go"
   ],
   "shared_contract_files": [
     "apps/platform/internal/lifecycle/pilot/remaining_scope.go",
     "apps/platform/internal/lifecycle/pilot/remaining_scope.json",
     "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
-    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go"
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go"
   ],
-  "archive_sha256": "0936e6cd685134d9b850b1a770e097bf3632e56a547b12460bdcb4b5ebe78e02",
-  "archive_bytes": 6428279,
+  "archive_sha256": "a57c946610b968a8eaaa1414e85367af43938784c973d723a28a1f7355a5c0f5",
+  "archive_bytes": 6440579,
   "files": {
     "apps/platform/cmd/api/main.go": "4d7402469b6e208c52186ad134e5b95c250398d8ed2fbc562fafba676bc337db",
     "apps/platform/cmd/ingestion-browser-fixture/main.go": "2dd94df5869849f102313ce1b6644b15e690c946cf9f9f49ddf153142077f447",
@@ -73,11 +74,13 @@
     "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify_test.go": "e56a67e88effab0c3bbba148e4aa8e13f17ba4884d9b9d8586a5e12df096a092",
     "apps/platform/cmd/lifecycle-fixture-reader/reference_races.go": "c3349ce6b63c9dfde95680f0d5756fb6176ee72e2f605dcf5ec2ea456aed0ef3",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining.go": "01ed74a436b45c1ea5f6e8b5dc265c315a9067080d922ff6317efc4ef0b18b3c",
-    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "956521917ee5465d87ea0915f8eaa00cc7ef6d06227006f89f3e9b914d162467",
-    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go": "f97a2d7c5ff3a0a064044bedfc475909e693050c77e6e7ea3333ef565c17eb71",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "0169d981c9ebcae68dcc6bcbbf4592d884aadae9998190b8a854ef392f2ddc0a",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go": "c35e9563274a48d0a2d0aad5a67438f0143d87b36c0fb5cc4c75e933e0698f8e",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_certification.go": "5af56116f82fd22cd3e9a05241681fd75cd578e1fe19710bd49e31cba8eb6908",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_close.go": "248c991d148b1eff90b214a75f3ef5ae6d95827b67f4116310f4c2b15f1569ec",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_iam.go": "d5cc4c48f3a3fe2015b3b5535f3c6d528480060a04f431f60949b754358cb791",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go": "9523a02f91f07c994085c5cac9fd997b63075fcdb50553248c12a38632cfde4e",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go": "f5b6b3ac64ffde6789d475ef3254a152c4cb995f3c14094c2a5aa131d682fb4e",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_queue.go": "95c1a378fabee003958ac57181a68264c21e882daafe60bff665352462303495",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_setup.go": "6f1b432d95d87710ed96c7d67afa7863f04a86618d0a4c6a1da28900109192ca",
     "apps/platform/cmd/lifecycle-fixture-reader/remaining_test.go": "986003213cc126a97da581d9714a7b657a429c7d64785a7c99aac46d548f75d4",

@@ -15,6 +15,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
+from protection_test_fixtures import receipt as protection_receipt
 
 spec=importlib.util.spec_from_file_location('six_verify_under_test',Path(__file__).with_name('verify-six-native.py'))
 v=importlib.util.module_from_spec(spec);spec.loader.exec_module(v)
@@ -71,6 +72,10 @@ class SixCompleteTests(unittest.TestCase):
                     if args[1] not in (g['Core'],g['Native']):
                         r.save(output/'files/readonly-start-request.json',{'id':'request','method':'GET'})
                         r.save(output/'files/readonly-observation-request.json',{'id':'request','status':200,'transport_error':False})
+                        observation=protection_receipt(group,r.now(),p.W['RecoveryEnd'])
+                        if fault=='protection-expired' and group!='late-hold':observation['verification']['copies'][0]['RetainUntil']='2026-10-23T06:25:44Z'
+                        if fault=='protection-version' and group!='late-hold':observation['verification']['copies'][0]['Copy']['ProviderVersion']='different'
+                        r.save(output/'files/six-native-verification.json',observation)
                 return b''
             stack.enter_context(patch.object(r,'docker',docker))
             def process(args,**kw):
@@ -112,7 +117,7 @@ class SixCompleteTests(unittest.TestCase):
         self.composition(post_closure=True,fault='Core-drift')
 
     def test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close(self):
-        for fault in ('source-start','namespace','create-result','create-unknown','wait-timeout','logs-timeout','checker','Core-drift','profile-revoke'):
+        for fault in ('source-start','namespace','create-result','create-unknown','wait-timeout','logs-timeout','checker','Core-drift','profile-revoke','protection-expired','protection-version'):
             with self.subTest(fault=fault):self.composition(fault=fault)
 
 

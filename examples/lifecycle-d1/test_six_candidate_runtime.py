@@ -15,6 +15,7 @@ import tarfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
+from protection_test_fixtures import receipt as protection_receipt
 from test_execution_freeze import snapshot
 
 spec=importlib.util.spec_from_file_location('six_host_under_test',Path(__file__).with_name('six_candidate_runtime.py'))
@@ -267,7 +268,7 @@ class SixHostTests(unittest.TestCase):
 
 
 
-    def composition(self,fail_dump=False,stale_checkpoint=False):
+    def composition(self,fail_dump=False,stale_checkpoint=False,expired=False):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             control,public=Path(tmp)/'private',Path(tmp)/'public';control.mkdir();public.mkdir()
             stack.enter_context(patch.object(r,'CONTROL',control));stack.enter_context(patch.object(r,'PUBLIC',public))
@@ -314,29 +315,53 @@ class SixHostTests(unittest.TestCase):
                     r.write_raw(kw['output'],b'recorded-dump')
                 return b''
             stack.enter_context(patch.object(r,'docker',docker))
-            def maintenance(g,role):roles.append((g['group'],role));return {'role':role,'status':'RECORDED_LINUX_AND_CHECKER_DOUBLE'}
-            stack.enter_context(patch.object(r,'maintenance',maintenance));stack.enter_context(patch.object(r,'trial',lambda g:None))
+            def maintenance(g,role):
+                roles.append((g['group'],role))
+                target=public/g['group']/('maintenance-'+role.lower());(target/'files').mkdir(parents=True)
+                result={'role':role,'status':'RECORDED_LINUX_AND_CHECKER_DOUBLE'}
+                r.save(target/'result.json',result)
+                if role in ('SOURCE','RESTORE'):
+                    protection=protection_receipt(g['group'],r.now(),r.p.W['RecoveryEnd'])
+                    if expired and g['group']=='mixed':protection['verification']['copies'][0]['RetainUntil']='2026-10-23T06:33:33Z'
+                    r.save(target/'files/six-native-verification.json',protection)
+                return result
+            stack.enter_context(patch.object(r,'maintenance',maintenance));stack.enter_context(patch.object(r,'trial',lambda g:calls.append(('trial',g['group']))))
             if stale_checkpoint:
                 with self.assertRaises(ValueError):r.run_non_delete()
             elif fail_dump:
                 with self.assertRaises(OSError):r.run_non_delete()
+            elif expired:
+                with self.assertRaisesRegex(ValueError,'GOVERNANCE_RETENTION_EXPIRED'):r.run_non_delete()
             else:r.run_non_delete()
             self.assertFalse(any(states.values()))
             terminal=r.load(public/'non-delete-terminal.json')
-            if fail_dump or stale_checkpoint:
+            if fail_dump or stale_checkpoint or expired:
                 self.assertEqual(terminal['status'],'FAILED_OR_UNCONFIRMED_RETAINED')
-                self.assertFalse(any(row==('start','late-hold-source-core') for row in calls))
-                if stale_checkpoint:self.assertEqual(roles,[])
+                self.assertFalse(any(row[0]=='trial' for row in calls))
+                if expired:self.assertFalse(any('pg_dump' in row for row in calls))
+                if stale_checkpoint:
+                    self.assertFalse(any(row==('start','late-hold-source-core') for row in calls))
+                    self.assertEqual(roles,[])
+                else:self.assertFalse(any(row==('start','late-hold-restore-core') for row in calls))
             else:
                 self.assertEqual(terminal['status'],'PASS_NONDELETE_SOURCE_RESTORE_PREPARATION')
                 self.assertEqual(terminal['groups_completed'],3)
-                self.assertEqual(roles,[(g,role) for g in r.p.GROUPS for role in ('PROVISION','SOURCE','RESTORE')])
+                self.assertEqual(roles,[(g,role) for g in r.p.GROUPS for role in ('PROVISION','SOURCE')]+[(g,'RESTORE') for g in r.p.GROUPS])
                 self.assertEqual(sum('pg_dump' in row for row in calls),3)
                 self.assertEqual(sum('pg_restore' in row for row in calls),6)
 
     def test_full_three_group_source_backup_restore_sequence(self):self.composition()
     def test_dump_failure_stops_new_groups_and_closes_every_known_owner(self):self.composition(True)
     def test_current_Core_checkpoint_mismatch_stops_before_IAM(self):self.composition(stale_checkpoint=True)
+    def test_mixed_expiry_rejects_before_any_backup_or_business_rehearsal(self):self.composition(expired=True)
+
+    def test_rehearsal_rechecks_restore_protection_before_inspector_enable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);group='mixed';output=root/group/'maintenance-restore/files';output.mkdir(parents=True)
+            r.save(output/'six-native-verification.json',protection_receipt(group,r.now(),'2026-10-23T06:33:33Z'))
+            with patch.object(r,'PUBLIC',root),patch.object(r,'maintenance',side_effect=AssertionError('must not enable')),patch.object(r,'immutable_rows',side_effect=AssertionError('must not dispatch')):
+                with self.assertRaisesRegex(ValueError,'GOVERNANCE_RETENTION_EXPIRED'):
+                    r.trial({'group':group,'private':str(root/'private'),'rehearsal_core':'double'})
 
 
 if __name__=='__main__':unittest.main()

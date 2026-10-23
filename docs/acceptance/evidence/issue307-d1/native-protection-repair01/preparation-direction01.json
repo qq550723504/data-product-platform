@@ -1,0 +1,11 @@
+{
+  "source": "direct human question reply",
+  "question_item_id": "call_48fb96834cbf4f3a96fc5a707d8583b8",
+  "answer": "按保留期延期方向准备修复（推荐）",
+  "scope": "Prepare gates, regression, independent review and the finite two-version extension proposal only",
+  "native_protection_write_authorized": false,
+  "delete_authorized": false,
+  "branch_unlock_or_publish_authorized": false,
+  "old_authorization_reused": false,
+  "representation": "Parsed facts of the human reply; not a purported byte-for-byte full authorization envelope"
+}

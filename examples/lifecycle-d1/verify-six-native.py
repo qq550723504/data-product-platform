@@ -19,6 +19,7 @@ r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 p=r.p
 import evidence_indexes
 import execution_freeze
+import native_protection
 need,load,sha,save=r.need,r.load,r.sha,r.save
 PACKET=r.ROOT/'docs/acceptance/evidence/issue307-d1'/('remaining-'+p.GENERATION)
 
@@ -137,6 +138,8 @@ def collect(g,b,packet,private,output,deadline,*,core_baseline=None):
         r.write_raw(output/'checker-stdout.txt',completed.stdout);r.write_raw(output/'checker-stderr.txt',completed.stderr)
         need(completed.returncode==0,'complete six readonly aggregation denied')
         result=json.loads(completed.stdout);need(result['status']=='PASS_COMPLETE_SIX_NATIVE_AGGREGATION','complete six result missing')
+        protection=native_protection.validate_group(g['Group'],load(output/'files/six-native-verification.json'),r.now(),p.W['RecoveryEnd'])
+        save(output/'native-protection-precondition.json',protection)
         result.update(technical_requests=p.prior.old_verifier.journals(output/'files'),amount='NOT_ASSESSED')
         save(output/'result.json',result)
         return result

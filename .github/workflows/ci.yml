@@ -116,6 +116,10 @@ jobs:
           python -O -B examples/lifecycle-d1/test_preallocation_ci.py
           python -B examples/lifecycle-d1/test_six_candidate_runtime.py
           python -O -B examples/lifecycle-d1/test_six_candidate_runtime.py
+            python -B examples/lifecycle-d1/test_native_protection.py
+            python -O -B examples/lifecycle-d1/test_native_protection.py
+            python -B examples/lifecycle-d1/test_retention_renewal.py
+            python -O -B examples/lifecycle-d1/test_retention_renewal.py
           python -B examples/lifecycle-d1/test_execution_freeze.py
           python -O -B examples/lifecycle-d1/test_execution_freeze.py
           python -B examples/lifecycle-d1/test_freeze_six_candidate.py

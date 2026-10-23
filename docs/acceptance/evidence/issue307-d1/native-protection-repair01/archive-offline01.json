@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "python",
+    "-B",
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+  ],
+  "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-protect",
+  "exit": 1,
+  "native_source_calls": 0,
+  "delete": 0,
+  "at": "2026-10-23T13:14:03.528299+00:00"
+}

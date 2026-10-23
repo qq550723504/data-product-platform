@@ -1,0 +1,320 @@
+{
+  "status": "PASS_LOCAL_REPAIR_SOURCE_AND_EVIDENCE_INDEX",
+  "format": "files-map-v1",
+  "count": 78,
+  "files": {
+    ".github/workflows/ci.yml": {
+      "sha256": "85855165b02ef66f2df822643ec8bed70dede81ccaab294a15ccc7e56cfe2d9e",
+      "bytes": 34234
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": {
+      "sha256": "0169d981c9ebcae68dcc6bcbbf4592d884aadae9998190b8a854ef392f2ddc0a",
+      "bytes": 15975
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go": {
+      "sha256": "c35e9563274a48d0a2d0aad5a67438f0143d87b36c0fb5cc4c75e933e0698f8e",
+      "bytes": 9976
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go": {
+      "sha256": "9523a02f91f07c994085c5cac9fd997b63075fcdb50553248c12a38632cfde4e",
+      "bytes": 4465
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go": {
+      "sha256": "f5b6b3ac64ffde6789d475ef3254a152c4cb995f3c14094c2a5aa131d682fb4e",
+      "bytes": 6971
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-final03.json": {
+      "sha256": "2ca518bfbe267d96776744e46486680963471dd786ae0bba6d3ce8266e170ae4",
+      "bytes": 269
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-final03.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-final03.stdout.txt": {
+      "sha256": "a5cd99838ec152ba965d0c8a5646f0cdefd71bbd6e7a63485bb62ea5639ff1a0",
+      "bytes": 765
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-offline01.json": {
+      "sha256": "cd48b8d12c04b0963f805a7c70d41e7b2ca713bc9742e22dec7b72a48a99d81b",
+      "bytes": 269
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-offline01.stderr.txt": {
+      "sha256": "7d3c97acb9488c7f013effaa10936b859b1ffef81466d608bd237da879a92c2e",
+      "bytes": 1449
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-offline01.stdout.txt": {
+      "sha256": "3656011125c3634e6b21f323b427ee8a65b26c0fb31551ec685f9d69597e9171",
+      "bytes": 118
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-offline02.json": {
+      "sha256": "e2f9829b2463c19be5e3859367a2f5570e2ce50776e3285d11cc37f84020f65c",
+      "bytes": 269
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-offline02.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/archive-offline02.stdout.txt": {
+      "sha256": "ed124aca6f910fc2a7db575e024af0eb735ee82528e3229317671431f2c40f7e",
+      "bytes": 764
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/composition-fixed-results01.json": {
+      "sha256": "c8105afbc98fec7817cc6dd45aba9c4427f0ae2deaf5c5b1e68614078512b4e9",
+      "bytes": 398
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/contract.md": {
+      "sha256": "ce61219892fa2cf56abed7c9198fb0422eb2ea8d33384fbdce920f3005883dc0",
+      "bytes": 3743
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/exact-two-proposal01.json": {
+      "sha256": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f",
+      "bytes": 3141
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/host-go-final02.json": {
+      "sha256": "883a5e83ce231022b366ec1a7fecc0fed312f9c7a95546a5c36829191f7a9475",
+      "bytes": 336
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/host-go-final02.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/host-go-final02.stdout.txt": {
+      "sha256": "d784fe55457c87413bf8fef81a25850b504d0f6816bb3f56334fbc98ca5503b2",
+      "bytes": 297
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/host-go01.json": {
+      "sha256": "8362db34c22ae3e79eb66598ef47b605681e0cdd0fcfd19619c481cbdbc51395",
+      "bytes": 336
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/host-go01.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/host-go01.stdout.txt": {
+      "sha256": "f04e286dcf3da439467d1d0b3599523f4fa237212655469988e8ccfe8ae0de83",
+      "bytes": 299
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/independent-final-review01.json": {
+      "sha256": "9714b67479fb6a9ca034421d4b69d684f28b13f402fadf1f1f5089a4fd19be4d",
+      "bytes": 6758
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/native_protection-normal.stderr.txt": {
+      "sha256": "a8b891365bbb435bd7bed6c642219e70496046a553384837ec9931abce59a9b1",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/native_protection-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/native_protection-optimized.stderr.txt": {
+      "sha256": "93aab7491f99e126200056d9161cc62265740ad0ecd0f431aadb47340ba2443c",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/native_protection-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/preparation-direction01.json": {
+      "sha256": "6531d68fe76208764ab06e657c63377a7ef0effff681141f4ad3aa749ed2d2ef",
+      "bytes": 560
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/python-results01.json": {
+      "sha256": "666424bb43a3c19c0994e42f1574919139affbbd9563b05b03135fb3c0cdb495",
+      "bytes": 1155
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/related-results01.json": {
+      "sha256": "c45dc50c387b9577df5069605d634f99d7fc7a37166ec4d7c1a3901b4734ef9c",
+      "bytes": 576
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/renewal-runbook01.md": {
+      "sha256": "07f5f5b69aaf056b78ca76bfc5330fec080621bb72355507c3292bc08bbe2cfc",
+      "bytes": 3451
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/repair-inputs01.json": {
+      "sha256": "7327c20e9345da454db096d148df8c775641e1a6cab50be2bcb3d9582b230622",
+      "bytes": 3627
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/retained-c23-audit01.json": {
+      "sha256": "2ca24ceed6a751f24e8726a18c128e2ed2ad6b325af51c529495df0b9a2176ad",
+      "bytes": 422
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/retention_renewal-normal.stderr.txt": {
+      "sha256": "3759cee2e417c50fca65da9d571a97787f0a6a330557a226d9780e64bfa4d80d",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/retention_renewal-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/retention_renewal-optimized.stderr.txt": {
+      "sha256": "ccdeed50397d60467aa49189c1602a123cebda7c5779e234842581ae9a8410b7",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/retention_renewal-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_candidate_runtime-normal.stderr.txt": {
+      "sha256": "c2d85b5d916c76d9f6ae46feb4c3dec920b36b06e7765f1cbc8bec8c1b75e965",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_candidate_runtime-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_candidate_runtime-optimized.stderr.txt": {
+      "sha256": "5f3798eee9c2c437498ab3dce748c2fb7c596445a797e909dbe0481aee8c05c5",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_candidate_runtime-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-fixed01-normal.stderr.txt": {
+      "sha256": "03b01df5353f6c341cf6b3d692d5ef3f80691d7a5a8825b17580c8d267e6504b",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-fixed01-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-fixed01-optimized.stderr.txt": {
+      "sha256": "632a4a852c33dc1d1816267df6a500a887413928dcecff499335719574d8a962",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-fixed01-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-normal.stderr.txt": {
+      "sha256": "b1de2227cfcebc37a556ed0f05e906740940cb47e974a97b3ea39a281f74b036",
+      "bytes": 1807
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-optimized.stderr.txt": {
+      "sha256": "140149586e75a4cff7a536d34cabf37f6a0a1f05a7d6843a6e82e14aae242a8a",
+      "bytes": 1807
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/six_native_entry-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_fixture_artifacts-normal.stderr.txt": {
+      "sha256": "5f011e353c5032f8d99e25139e7068a61d151a8b9639e09abe867dbb2f31bc49",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_fixture_artifacts-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_fixture_artifacts-optimized.stderr.txt": {
+      "sha256": "110aab4b1a06f14067f83c13a53998738582c4bec2f9b99282f4dcdada3f3121",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_fixture_artifacts-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_freeze_six_candidate-normal.stderr.txt": {
+      "sha256": "1d9ffce63529ef668f48644f39f73bdd24baa792799c884d5078663ac50cb7bb",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_freeze_six_candidate-normal.stdout.txt": {
+      "sha256": "d609ad6de01de8d8dea6d0cb5e64f211fc03302ff0215237bc84256ecdbf1991",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_freeze_six_candidate-optimized.stderr.txt": {
+      "sha256": "594f37adc9397336bfacd731e898c2da87ce44b4edef1654a3a0b4f55de76ef4",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_freeze_six_candidate-optimized.stdout.txt": {
+      "sha256": "331a1b21bd2255b4a53549fe3f118a9823c156c11be3537d685ec72f6f30e5f4",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_remaining_six_window-normal.stderr.txt": {
+      "sha256": "5732164a6d4c1484967749785a2895fec7b4d67b2f8bc20e19aeb8e8f32ef7f9",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_remaining_six_window-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_remaining_six_window-optimized.stderr.txt": {
+      "sha256": "01800c87ea3651e80ba0e4fffecc9ac55d01a3ceea5665d487702829f3c62f95",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/test_remaining_six_window-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/verify_six_native-normal.stderr.txt": {
+      "sha256": "33fe10f55afe53d7afa58987491c2644dce4d95f3896e8560fa0c3821d0c5358",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/verify_six_native-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/verify_six_native-optimized.stderr.txt": {
+      "sha256": "6680be776e78aa7a830a8684aa528b4f661daa6acd0ccbf4d1a679126b831788",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/verify_six_native-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "bytes": 8053
+    },
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": {
+      "sha256": "89d38d616f00c013631d8d69a7a5652aba7409391fb847f4da3f6b4104223f7e",
+      "bytes": 106532
+    },
+    "examples/lifecycle-d1/native_protection.py": {
+      "sha256": "158fd8dd956c595b742a6f69bd6fbef205ecec2898daa90f40dadc62655c7293",
+      "bytes": 3478
+    },
+    "examples/lifecycle-d1/prepare-retention-renewal.py": {
+      "sha256": "ce74ff4d22d03e035c51776c549eb098163e78eb19b8b3a9cbc7953016ff2cda",
+      "bytes": 4893
+    },
+    "examples/lifecycle-d1/protection_test_fixtures.py": {
+      "sha256": "1b65411516f9fe2edb24eb371dd8df03954f39ee8fb06f307b7e6dde4d8a6f4a",
+      "bytes": 590
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "bc14c6cf52dd6269587fcdbcaf5446f29abe12d1cb103762460fe9f20a26b561",
+      "bytes": 44856
+    },
+    "examples/lifecycle-d1/test_native_protection.py": {
+      "sha256": "948c8f5c1ee74a6c66581b25a3f32725ad3322429305a69a5fb2459d6218cfbf",
+      "bytes": 3277
+    },
+    "examples/lifecycle-d1/test_retention_renewal.py": {
+      "sha256": "a97ca1703896b93f4d99d6bfa41b5e9c2b2dfe18fa92b70040834623a3a4d709",
+      "bytes": 3138
+    },
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": {
+      "sha256": "76e726e59ef38bfd5359e7f09e6d3e22117fda1eda12e4e520750bd5473ffd76",
+      "bytes": 27712
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "d7d0ce17b73dd3476e57347c5448608c497305b6f556236f0c9d0f9dcac866fc",
+      "bytes": 18204
+    },
+    "examples/lifecycle-d1/test_verify_six_native.py": {
+      "sha256": "bab3957e1b683b090f399268abff07d5a64b73d9c4df63733445fc42a54a2199",
+      "bytes": 9822
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "7c8c632ad89a0053ffd8719424bfaaca19e2431f0e45618c0a91140b06e6bf4a",
+      "bytes": 17429
+    }
+  },
+  "authority": "PREPARATION_ONLY_NO_NATIVE_WRITES_NO_EXECUTION_BINDING"
+}

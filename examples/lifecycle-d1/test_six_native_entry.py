@@ -17,6 +17,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
+from protection_test_fixtures import receipt as protection_receipt
 
 spec = importlib.util.spec_from_file_location('six_entry_integration',
                                             Path(__file__).with_name('verify-six-native.py'))
@@ -172,6 +173,9 @@ class SixNativeEntryTests(unittest.TestCase):
                         r.save(folder / 'readonly-start-request.json', {'id': 'request', 'method': 'GET'})
                         r.save(folder / 'readonly-observation-request.json', {'id': 'request',
                             'status': 200, 'transport_error': False})
+                        protection=protection_receipt(g['Group'],r.now(),p.W['RecoveryEnd'])
+                        if fault=='mixed-protection-expired' and g['Group']=='mixed':protection['verification']['copies'][0]['RetainUntil']='2026-10-23T06:33:33Z'
+                        r.save(folder / 'six-native-verification.json',protection)
                 return b''
 
             def process(args, **kw):
@@ -219,7 +223,7 @@ class SixNativeEntryTests(unittest.TestCase):
             else:
                 v.main()
             self.assertFalse(any(x['State']['Running'] for x in states.values()))
-            if expect_failure and fault != 'second-group-checker':
+            if expect_failure and fault not in ('second-group-checker','mixed-protection-expired'):
                 self.assertFalse(any(x[0] in ('start', 'create') for x in calls))
                 if fault != 'sealed-gate':
                     self.assertNotIn(('sealed-gate',), calls)
@@ -235,6 +239,11 @@ class SixNativeEntryTests(unittest.TestCase):
                 self.assertEqual((output / 'late-hold/checker-stderr.txt').read_bytes(), b'checker-failure')
                 self.assertTrue(r.load(output / 'business-races/closure.json')['all_closed'])
                 self.assertIsNotNone(r.load(output / 'late-hold/closure.json')['failure'])
+            elif fault == 'mixed-protection-expired':
+                self.assertFalse((output/'complete.json').exists())
+                self.assertTrue(r.load(output/'mixed/closure.json')['all_closed'])
+                self.assertIn('GOVERNANCE_RETENTION_EXPIRED',r.load(output/'mixed/closure.json')['failure']['message'])
+                self.assertEqual(len(owners),3)
             elif audit_only:
                 self.assertEqual(calls, [])
                 self.assertEqual(json.loads(printer.call_args.args[0])['native_preflight'], 'NOT_RUN')
@@ -290,6 +299,9 @@ class SixNativeEntryTests(unittest.TestCase):
 
     def test_main_second_group_failure_closes_and_does_not_collect_third(self):
         self.composition(fault='second-group-checker')
+
+    def test_main_complete_entry_rejects_actual_mixed_expiry_and_closes(self):
+        self.composition(fault='mixed-protection-expired')
 
 
 if __name__ == '__main__':

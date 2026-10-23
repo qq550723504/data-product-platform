@@ -23,6 +23,7 @@ spec=importlib.util.spec_from_file_location('six_constructor',Path(__file__).wit
 p=importlib.util.module_from_spec(spec);spec.loader.exec_module(p)
 ROOT,CONTROL,PUBLIC=p.ROOT,p.CONTROL,p.PUBLIC
 import evidence_indexes
+import native_protection
 need,load,sha,save=p.need,p.load,p.sha,p.save
 docker,inspect,closed=p.docker,p.inspect,p.closed
 ZERO=p.ZERO
@@ -465,6 +466,10 @@ def immutable_rows(core):
 def trial(g):
     folder=Path(g['private']);group=g['group'];target=PUBLIC/group/'rehearsal'
     target.mkdir()
+    # This is a fresh actual RESTORE SDK receipt, collected before enabling the
+    # restored inspector. A source snapshot or expired equal value is not proof.
+    protection=native_protection.validate_group(group,load(PUBLIC/group/'maintenance-restore/files/six-native-verification.json'),now(),p.W['RecoveryEnd'])
+    save(target/'native-protection-precondition.json',protection)
     before=immutable_rows(g['rehearsal_core']);save(target/'immutable-before.json',before)
     # On the restored native only, enable the separately generated sole-policy
     # inspector. There is no DELETE credential in any rehearsal worker mount.
@@ -519,6 +524,15 @@ def run_non_delete():
             # changing those heads. Their current full Core baseline is above.
             maintenance(g,'PROVISION')
             source_result=maintenance(g,'SOURCE')
+            read_after=p.native.fingerprints(g['source']['Core']);save(target/'source-Core-after-read.json',read_after)
+            need(before==read_after,'source Core changed during source native read')
+            protection=native_protection.validate_group(group,load(target/'maintenance-source/files/six-native-verification.json'),now(),p.W['RecoveryEnd'])
+            save(target/'native-protection-precondition.json',protection)
+        # Validate all three sources before doing any backup/restore/business
+        # rehearsal. Failure in mixed must not arrive after earlier rehearsals.
+        for g in a['groups']:
+            group=g['group'];folder=Path(g['private']);target=PUBLIC/group
+            before=load(target/'source-Core-before.json');source_result=load(target/'maintenance-source/result.json')
             backup=folder/'checkpoint'
             docker('exec',g['source']['Core'],'pg_dump','-U','fixture','-d','lifecycle307','--format=custom','--create',output=backup/'core.dump')
             docker('exec',g['source']['Core'],'pg_dumpall','-U','fixture','--globals-only',output=backup/'globals.sql')
@@ -538,8 +552,8 @@ def run_non_delete():
             need((target/'native-file-compare/stdout.txt').stat().st_size>0,'native archive full-file manifest empty')
             p.p1.close_known(g['source']['Core'])
             docker('start',g['restore_native']);time.sleep(3)
-            trial(g)
             restore_result=maintenance(g,'RESTORE')
+            trial(g)
             clean=p.native.fingerprints(g['restore_core']);need(clean==before,'clean checkpoint changed during separate business trial')
             save(target/'clean-Core-after-trial.json',clean)
             checkpoint={'source_core':g['source']['Core'],'source_native':g['source']['Native'],'restored_core':g['restore_core'],'restored_native':g['restore_native'],'rehearsal_core':g['rehearsal_core'],

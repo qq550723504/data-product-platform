@@ -1,0 +1,3 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	2.717s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	(cached)
