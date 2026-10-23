@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "candidate_sha256": "d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db",
+  "indexes": [
+    {
+      "id": "source-review",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-source-review02/evidence-index.json",
+      "sha256": "140fe7b899649b352cd641ecdb4bf7a064b5ff816a65e75225a54764755dccb4",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/candidate22-source-review02",
+      "expected_count": 15,
+      "expected_status": "C22_SOURCE_REVIEW_EVIDENCE_INDEX"
+    },
+    {
+      "id": "nondelete-preparation",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/non-delete-evidence-index.json",
+      "sha256": "3cd68924ece0e48221ec8b18e6c67ccebcf62be9585f3c22f4ba19d3fd82a12b",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01",
+      "expected_count": 1496,
+      "expected_status": "SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX"
+    },
+    {
+      "id": "source-review-report-binding",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate22/source-review-binding-index.json",
+      "sha256": "292034d5a467e11b5a7120fe8bd085cdc794a9664da29b3f9920715c035e2e10",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 2,
+      "expected_status": "SIX_SOURCE_REVIEW_BINDING_INDEX"
+    },
+    {
+      "id": "source-reviewed-external-artifacts",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-source-review02/reviewed-artifacts01.json",
+      "sha256": "43e570295477a0a4c42cb2d15e6e469cdd72442dbfa621b11fc3dc289cb83d19",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 2299,
+      "expected_status": "C22_SOURCE_REVIEWED_ARTIFACTS"
+    },
+    {
+      "id": "frozen-host-bindings",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-planning01/candidate22-host-bindings01.json",
+      "sha256": "db966de2a58a81a230ebbf91a099b2f07398039b819ca2044db97ea5d4b42370",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 75,
+      "expected_status": "FROZEN_V32_HOST_AND_PREPARATION_BINDINGS"
+    },
+    {
+      "id": "packet-independent-review",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/evidence-index.json",
+      "sha256": "72fe68c21fc2ba525b65d3cc4cf708c382c2dae0d720ae4f1d41f444ebd3a288",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01",
+      "expected_count": 19,
+      "expected_status": "C22_INDEPENDENT_ARTIFACT_REVIEW_EVIDENCE_INDEX"
+    },
+    {
+      "id": "independent-reviewed-external-artifacts",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/reviewed-artifacts01.json",
+      "sha256": "0a757134d0d03a47c7ee878a8b7404004dc6bae2f1fa52b99c7e7a6da702f514",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 4931,
+      "expected_status": "C22_INDEPENDENT_REVIEWED_ARTIFACTS_INDEX"
+    },
+    {
+      "id": "final-static-references",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-planning01/final-static-reference-index01.json",
+      "sha256": "8e21fa149a0d48e71c58fc9a49b62f8de48127041a2f5904fe1e33e67c845861",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 1101,
+      "expected_status": "C22_FINAL_STATIC_PREPARATION_REFERENCE_INDEX"
+    }
+  ]
+}

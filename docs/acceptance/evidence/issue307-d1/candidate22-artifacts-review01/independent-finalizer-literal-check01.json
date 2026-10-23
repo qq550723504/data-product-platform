@@ -1,0 +1,9 @@
+{
+  "status": "REVIEWER_LITERAL_ASSERTION_CORRECTED_NO_PACKET_FAILURE",
+  "at": "2026-10-23T06:10:33.271028+00:00",
+  "failed_helper": "finalize-independent-review01.py",
+  "exit": 1,
+  "observation": "The file-only finalizer used the literal final HEAD CI without the PR token; the actual runbook states exact HEAD PR CI. All preceding typed source/preparation/host index audits passed. No final report or indexes were created by the failed helper; original helper bytes are retained.",
+  "error": "ValueError: future bounded sequence missing: 最终HEAD CI",
+  "correction": "Use actual existing literal 精确HEAD PR CI. No source, frozen packet or historical check output is changed."
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "docker",
+    "ps",
+    "-aq",
+    "--no-trunc",
+    "--filter",
+    "volume=dpp-lifecycle307-dfda43b4-candidate21-recovery-redis"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:32:11.231720+00:00",
+  "stdout_sha256": "c0abb21aeceacf6409e7eecee3ddcc93804c5c0bf3d4bc53baa80d16ed3f043c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

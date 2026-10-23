@@ -1,0 +1,34 @@
+{
+  "status": "C22_READONLY_CI_AND_SUBNET_REVIEW_EVIDENCE_INDEX",
+  "count": 7,
+  "files": {
+    "hop-ci-failure-classification01.json": {
+      "sha256": "90313644602f76200697a29e17a464e628471c0bcb43843506b63809e900d4da",
+      "bytes": 3465
+    },
+    "input-sha256.json": {
+      "sha256": "2623cd028b624a79c23655ad4d69b664e350c0bc483220c0da3439122e45dc9c",
+      "bytes": 3958
+    },
+    "prepare-remaining-runner.py.excerpt.txt": {
+      "sha256": "6c500f8e9e09b8b3cba4d9e989ff8f4ae2d7d53cb3a976fefb1e553b1048bbfd",
+      "bytes": 555
+    },
+    "prepare-six-candidate.py.excerpt.txt": {
+      "sha256": "975c5cd39506eb4aa2eaaff2a5b7d2219e84cc7e2eedae8a4d3c639e23ff82fe",
+      "bytes": 3113
+    },
+    "prior-green-native-hop-summary.json": {
+      "sha256": "afaed95dac1d08eb4786567520bf956a15b979595c6a18e9071a3b1f11f935ce",
+      "bytes": 637
+    },
+    "subnet-blocker-confirmation01.json": {
+      "sha256": "c5388da176e121ed14baecaff2e8a2194afe967397f2dcaf156149c4e09155cc",
+      "bytes": 2449
+    },
+    "workflow-only-delta.diff": {
+      "sha256": "6f2929e9e6b1e2b6cd37dd2f4249c7a6ae94dfab317130d94c4683f3a5eb3100",
+      "bytes": 716
+    }
+  }
+}

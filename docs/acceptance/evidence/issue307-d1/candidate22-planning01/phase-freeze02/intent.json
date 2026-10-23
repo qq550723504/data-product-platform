@@ -1,0 +1,13 @@
+{
+  "source": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "phase": "freeze",
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/freeze-six-candidate.py"
+  ],
+  "at": "2026-10-23T05:45:14.612319+00:00",
+  "delete_authority": false
+}

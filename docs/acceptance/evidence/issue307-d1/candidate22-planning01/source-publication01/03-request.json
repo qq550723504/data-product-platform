@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "ls-files",
+    "--others",
+    "--exclude-standard",
+    "--",
+    "apps/platform",
+    "examples/lifecycle-d1",
+    "migrations",
+    ".github/workflows/ci.yml"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:38:58.384842+00:00"
+}

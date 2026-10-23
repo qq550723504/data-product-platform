@@ -1,0 +1,28 @@
+{
+  "status": "PASS_BOUNDED_RECEIPT_RAW_RESTORATION_GATE_ONLY_NOT_NATIVE",
+  "at": "2026-10-23T05:29:10.418640+00:00",
+  "source_head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "remaining_blockers": [],
+  "verified_current_receipts": 124,
+  "verified_restorations": 5,
+  "historical_index_sha256": "5c5c9ef750d90d1a70597797b71fea6b02c3f3a2a17695556bf852e173ec708d",
+  "historical_index_and_issued_originals": "UNCHANGED_EXACT_SHA_AND_BYTES",
+  "prior_bad_bytes": "All five backup members match the old a50 Git blobs and recorded pre-restoration SHA. Each differs from issued original by exactly one terminal CR before LF; LF equality is explanatory only, not an accepted raw-byte waiver.",
+  "current_attributes": "All five paths have text unset; Git filtered and --no-filters hash-object agree, so the existing broad raw-byte rule preserves the restored bytes in the later artifact commit.",
+  "host_source": "Strict host_snapshot is identical to approved source-review02 snapshot: a50 and 2249 raw/LF members. Five receipt changes lie outside HOST_PATHS.",
+  "historical_failures": "phase-allocate01 and bounded-preparation-run01 remain failed evidence. Saved trace reaches retained_v29 raw receipt rejection during historical_gate before CONTROL/PUBLIC/build/Allocation. This report does not rewrite or convert that attempt to PASS.",
+  "scope": "Only the 124-member receipt subgate is independently confirmed. Docker/current retained environment, IAM, budgets, provider/native acceptance, new allocation and all remaining historical gates have not been run by this reviewer.",
+  "later_commit": "a50 Git blobs intentionally remain the five pre-restoration LF bytes. Restored original bytes must be carried by the later final artifact commit; no ref or index was changed by reviewer.",
+  "authority": "No deletion or scheduling authority inferred; old authority is not reusable.",
+  "side_effects": {
+    "source_edits": 0,
+    "historical_edits": 0,
+    "index_edits": 0,
+    "Git_ref_mutations": 0,
+    "Docker_provider_calls": 0,
+    "native_delete": 0,
+    "actual_preparation_entry_runs": 0
+  },
+  "source_host_snapshot_members": 2249
+}

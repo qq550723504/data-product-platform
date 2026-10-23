@@ -1,0 +1,1 @@
+{"exit": 0, "at": "2026-10-23T05:50:43.456535+00:00", "mode": "native", "stdout_bytes": 221, "stderr_bytes": 0, "native_delete": 0, "delete_authority": false}

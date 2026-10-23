@@ -1,0 +1,24 @@
+{
+  "status": "PASS_CURRENT_PLAN_REPLACES_RETAINED_C21_SUBNETS_AND_INPUTS_STABLE",
+  "source_head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "proposed": [
+    "10.246.225.0/28",
+    "10.246.226.0/28",
+    "10.246.227.0/28"
+  ],
+  "retained_C21": [
+    "10.246.221.0/28",
+    "10.246.222.0/28",
+    "10.246.223.0/28"
+  ],
+  "overlaps": [],
+  "full_allocate_conflict_counterexamples": "All three slots reject before history, CONTROL/PUBLIC, build or Allocation.",
+  "full_allocate_unknown_read_counterexamples": "Independent real checker double raises OSError at each slot; every slot rejects before history, CONTROL/PUBLIC, build or Allocation.",
+  "fresh_environment_conflict_read": "Author saved subnet-preparation01.json is bound and reviewed; reviewer did not call Docker.",
+  "precheck_TOCTOU": "Not eliminated. Per-group check immediately before network creation and native Docker IPAM atomic overlap refusal remain.",
+  "host_source_members_rechecked": 2249,
+  "selected_raw_inputs_rechecked": 14,
+  "old_source_report01_unchanged": true,
+  "at": "2026-10-23T05:04:01.333058+00:00",
+  "reviewer_Docker_provider_io": 0
+}

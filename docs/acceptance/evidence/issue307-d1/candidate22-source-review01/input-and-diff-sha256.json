@@ -1,0 +1,252 @@
+{
+  "at": "2026-10-23T04:39:38.992022+00:00",
+  "source_head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "source_base": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "runtime_parent": "514843da1a143fba537c1668483fe95800ddd992",
+  "host_source_diff_sha256": "768c98307acbc0dc13b8f84a214605fa92b34faf5973c2e0037619c39e8a6799",
+  "runtime_source_diff_sha256": "1b110687f2a84bcfc8862a7d647af205565276013479fca1dbdabcc527be11c3",
+  "full_diff_sha256": "105acad0d7b15f631b6420c8327d2646a7ac228fbc98d26f07f1229ff4981a1b",
+  "full_diff_bytes": 6899981,
+  "all_change_name_status_sha256": "8c9182a8d3008d6852f440e9b4cd2b3230647796a225affe42815202461b31e3",
+  "files": {
+    ".gitattributes": {
+      "commit_sha256": "cfd5d4b09c71e7bc300f45ed031d28ba14d240571ffcede76b62e8522ac38147",
+      "working_raw_sha256": "351a663766ef04db6a402bc4dc9fea22fce46f53354d6cdde8b825fa14eb5f64",
+      "working_lf_sha256": "cfd5d4b09c71e7bc300f45ed031d28ba14d240571ffcede76b62e8522ac38147",
+      "bytes": 25376,
+      "working_lf_matches_commit": true
+    },
+    ".github/workflows/ci.yml": {
+      "commit_sha256": "e1afc03edd50c3445400f6d8175dead50127d24f7a064bde74957477781d2189",
+      "working_raw_sha256": "127bce7652e9810b4c23d780de650b0faa52bcfb8df92073afeb6dedf089221d",
+      "working_lf_sha256": "e1afc03edd50c3445400f6d8175dead50127d24f7a064bde74957477781d2189",
+      "bytes": 33813,
+      "working_lf_matches_commit": true
+    },
+    "AGENTS.md": {
+      "commit_sha256": "aa6f2bae5d755a582d124d02fe1d4f0776cf93f4bf693a6194d06d7d9bbd4f4f",
+      "working_raw_sha256": "f39b6f980c3f30302c982dfb41bcc0f2e7977f8b5a39270b5df986f07de05481",
+      "working_lf_sha256": "aa6f2bae5d755a582d124d02fe1d4f0776cf93f4bf693a6194d06d7d9bbd4f4f",
+      "bytes": 37852,
+      "working_lf_matches_commit": true
+    },
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": {
+      "commit_sha256": "4480f2d42b9347c90f1b0e91777390b7b3da1833cdec242271fd06289bfe7657",
+      "working_raw_sha256": "4480f2d42b9347c90f1b0e91777390b7b3da1833cdec242271fd06289bfe7657",
+      "working_lf_sha256": "4480f2d42b9347c90f1b0e91777390b7b3da1833cdec242271fd06289bfe7657",
+      "bytes": 9996,
+      "working_lf_matches_commit": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go": {
+      "commit_sha256": "4174d10811a6fc453c56b39306ed399e451d79e3a3916e628905c3eac8c7feb9",
+      "working_raw_sha256": "4174d10811a6fc453c56b39306ed399e451d79e3a3916e628905c3eac8c7feb9",
+      "working_lf_sha256": "4174d10811a6fc453c56b39306ed399e451d79e3a3916e628905c3eac8c7feb9",
+      "bytes": 2881,
+      "working_lf_matches_commit": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "commit_sha256": "e602e6e36a96a1341dfa940880aabc4cc3b54cff6beb7f148f6f06bbfb87fb3a",
+      "working_raw_sha256": "e602e6e36a96a1341dfa940880aabc4cc3b54cff6beb7f148f6f06bbfb87fb3a",
+      "working_lf_sha256": "e602e6e36a96a1341dfa940880aabc4cc3b54cff6beb7f148f6f06bbfb87fb3a",
+      "bytes": 7050,
+      "working_lf_matches_commit": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go": {
+      "commit_sha256": "82be11729aef2c39fcdf29cb7e9455180fc499476ac2da3d50bfc545f7488dec",
+      "working_raw_sha256": "82be11729aef2c39fcdf29cb7e9455180fc499476ac2da3d50bfc545f7488dec",
+      "working_lf_sha256": "82be11729aef2c39fcdf29cb7e9455180fc499476ac2da3d50bfc545f7488dec",
+      "bytes": 2676,
+      "working_lf_matches_commit": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "commit_sha256": "75cb2a9e0198490072e32818e2295541f0c2328105284370d69c00033ddf4600",
+      "working_raw_sha256": "75cb2a9e0198490072e32818e2295541f0c2328105284370d69c00033ddf4600",
+      "working_lf_sha256": "75cb2a9e0198490072e32818e2295541f0c2328105284370d69c00033ddf4600",
+      "bytes": 2366,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-candidate21-final-confirmation01.md": {
+      "commit_sha256": "f51754642b34f738cf6313f520432baaf4d43e71005c78c6f147943dad71b9ea",
+      "working_raw_sha256": "f51754642b34f738cf6313f520432baaf4d43e71005c78c6f147943dad71b9ea",
+      "working_lf_sha256": "f51754642b34f738cf6313f520432baaf4d43e71005c78c6f147943dad71b9ea",
+      "bytes": 57455,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-candidate21-final-confirmation02.md": {
+      "commit_sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989",
+      "working_raw_sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989",
+      "working_lf_sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989",
+      "bytes": 57842,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-execution-freeze-boundary.md": {
+      "commit_sha256": "38e60b673359ecca231ef01850543e7cd51cc0475661afa373162b4561d25f67",
+      "working_raw_sha256": "46553c27ace594b0da683e36cb8f93bb75e2a0cb43dcec846520e8a5fdd54a8c",
+      "working_lf_sha256": "38e60b673359ecca231ef01850543e7cd51cc0475661afa373162b4561d25f67",
+      "bytes": 7947,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-v31-postlock-matrix01.md": {
+      "commit_sha256": "8c7adc901482a21f6e0302e01117c64a60db9c7ff9395c2fed503abf3afbd7f2",
+      "working_raw_sha256": "8c7adc901482a21f6e0302e01117c64a60db9c7ff9395c2fed503abf3afbd7f2",
+      "working_lf_sha256": "8c7adc901482a21f6e0302e01117c64a60db9c7ff9395c2fed503abf3afbd7f2",
+      "bytes": 1252,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-v31-postlock-matrix02.md": {
+      "commit_sha256": "37df8a49fb56b526516732e5c3d6420d0bbd1c437df1af1deddf4bed339b6467",
+      "working_raw_sha256": "37df8a49fb56b526516732e5c3d6420d0bbd1c437df1af1deddf4bed339b6467",
+      "working_lf_sha256": "37df8a49fb56b526516732e5c3d6420d0bbd1c437df1af1deddf4bed339b6467",
+      "bytes": 1512,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-v32-preparation-contract.md": {
+      "commit_sha256": "127dd47f9ad7e9d6f31e32ae642be48a166613b798591ed7f6f1812f28c09582",
+      "working_raw_sha256": "127dd47f9ad7e9d6f31e32ae642be48a166613b798591ed7f6f1812f28c09582",
+      "working_lf_sha256": "127dd47f9ad7e9d6f31e32ae642be48a166613b798591ed7f6f1812f28c09582",
+      "bytes": 3705,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-v32-preparation-contract02.md": {
+      "commit_sha256": "598f407a2a3f0600e74331b7ebdb6a015bbccbd73fcd9efe60a10c5aad63143c",
+      "working_raw_sha256": "598f407a2a3f0600e74331b7ebdb6a015bbccbd73fcd9efe60a10c5aad63143c",
+      "working_lf_sha256": "598f407a2a3f0600e74331b7ebdb6a015bbccbd73fcd9efe60a10c5aad63143c",
+      "bytes": 4977,
+      "working_lf_matches_commit": true
+    },
+    "docs/acceptance/issue307-d1-v32-preparation-matrix01.md": {
+      "commit_sha256": "52ec0d60a4dd33d54f30b0071fe5a5d5c5e416ffa717f9996475c4ab8b3abdec",
+      "working_raw_sha256": "52ec0d60a4dd33d54f30b0071fe5a5d5c5e416ffa717f9996475c4ab8b3abdec",
+      "working_lf_sha256": "52ec0d60a4dd33d54f30b0071fe5a5d5c5e416ffa717f9996475c4ab8b3abdec",
+      "bytes": 2504,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "commit_sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "working_raw_sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "working_lf_sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "bytes": 8053,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": {
+      "commit_sha256": "df8889b9b81f90d5285c02e881e1b737373684e9a6517387645b3da6fd02310a",
+      "working_raw_sha256": "df8889b9b81f90d5285c02e881e1b737373684e9a6517387645b3da6fd02310a",
+      "working_lf_sha256": "df8889b9b81f90d5285c02e881e1b737373684e9a6517387645b3da6fd02310a",
+      "bytes": 106150,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/fixture_artifacts.py": {
+      "commit_sha256": "7d336faf856d99b1e0719cf04b07c69e0e92c65b1828a64d8e0638cf925b5419",
+      "working_raw_sha256": "9aba4c12091efd729696e1ca7d7981c786462dd29da783ebf4a2092cddade7f4",
+      "working_lf_sha256": "7d336faf856d99b1e0719cf04b07c69e0e92c65b1828a64d8e0638cf925b5419",
+      "bytes": 8579,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "commit_sha256": "e45b6bd7cdade3587a020ed6e9d7fcef926ab27887af43090769fb40925a22d9",
+      "working_raw_sha256": "e45b6bd7cdade3587a020ed6e9d7fcef926ab27887af43090769fb40925a22d9",
+      "working_lf_sha256": "e45b6bd7cdade3587a020ed6e9d7fcef926ab27887af43090769fb40925a22d9",
+      "bytes": 23824,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "commit_sha256": "d8c422814af7db4508d0e7d895b00128b6ccce11e823ffd367c9a2cf2857c72a",
+      "working_raw_sha256": "d8c422814af7db4508d0e7d895b00128b6ccce11e823ffd367c9a2cf2857c72a",
+      "working_lf_sha256": "d8c422814af7db4508d0e7d895b00128b6ccce11e823ffd367c9a2cf2857c72a",
+      "bytes": 39741,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/remaining_six_window.py": {
+      "commit_sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "working_raw_sha256": "8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494",
+      "working_lf_sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "bytes": 1978,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/remaining_window.py": {
+      "commit_sha256": "e2dd0f4efcf84cc26e7a5977c4a336051849926949eaf373a13e4253262b6cc0",
+      "working_raw_sha256": "c856e3b8224fdfb2b17a9340c8577fbb3ef619e5c12be236152502fd5ab9790a",
+      "working_lf_sha256": "e2dd0f4efcf84cc26e7a5977c4a336051849926949eaf373a13e4253262b6cc0",
+      "bytes": 6565,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/retained_v30.py": {
+      "commit_sha256": "7009af1a57081aaf7e8543ad23fdd57f084db8b62a6f8780e698dad3ef38008e",
+      "working_raw_sha256": "ce4f43439db266ba73962a693e012adaca8607633916f3684b3474c6c422443a",
+      "working_lf_sha256": "7009af1a57081aaf7e8543ad23fdd57f084db8b62a6f8780e698dad3ef38008e",
+      "bytes": 12235,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/retained_v31.py": {
+      "commit_sha256": "fc41bd21b2cc5663d419d7ee5bf9e7a6fcc95305a747652d21367366e621dd15",
+      "working_raw_sha256": "fc41bd21b2cc5663d419d7ee5bf9e7a6fcc95305a747652d21367366e621dd15",
+      "working_lf_sha256": "fc41bd21b2cc5663d419d7ee5bf9e7a6fcc95305a747652d21367366e621dd15",
+      "bytes": 7148,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "commit_sha256": "15ba1a0b21c06dacc07308b04189012fc58dc8c449ce5825a025df1bf034c329",
+      "working_raw_sha256": "15ba1a0b21c06dacc07308b04189012fc58dc8c449ce5825a025df1bf034c329",
+      "working_lf_sha256": "15ba1a0b21c06dacc07308b04189012fc58dc8c449ce5825a025df1bf034c329",
+      "bytes": 43631,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "commit_sha256": "79403aa67b44ccfe7746c0bf78f4fe1ee5a254809a89078f7386186f82fe1b99",
+      "working_raw_sha256": "79403aa67b44ccfe7746c0bf78f4fe1ee5a254809a89078f7386186f82fe1b99",
+      "working_lf_sha256": "79403aa67b44ccfe7746c0bf78f4fe1ee5a254809a89078f7386186f82fe1b99",
+      "bytes": 7603,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/test_preallocation_ci.py": {
+      "commit_sha256": "83d3333906dbd04b99b5cdf06f7d5dbcb2cfa9d0f59bd65cd0ffb7ae80da7dcd",
+      "working_raw_sha256": "06615885a5203a41b69d2f999f0445a59fc1b5423eaf259a07dc7605058f55e1",
+      "working_lf_sha256": "83d3333906dbd04b99b5cdf06f7d5dbcb2cfa9d0f59bd65cd0ffb7ae80da7dcd",
+      "bytes": 6583,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/test_receipt_bytes.py": {
+      "commit_sha256": "67c35169e1024212c2a28e87be23df400260c6f6e3155205245de4f9c5f6289e",
+      "working_raw_sha256": "f15e823c785ae8593df1ec52f2da63435e1bb023d2e0a48f4074d128509f4482",
+      "working_lf_sha256": "67c35169e1024212c2a28e87be23df400260c6f6e3155205245de4f9c5f6289e",
+      "bytes": 4227,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/test_retained_v26.py": {
+      "commit_sha256": "fa97c0da3be771eb8039da21a2399428ddd25917c411e8bda3101e2dd447573c",
+      "working_raw_sha256": "fa97c0da3be771eb8039da21a2399428ddd25917c411e8bda3101e2dd447573c",
+      "working_lf_sha256": "fa97c0da3be771eb8039da21a2399428ddd25917c411e8bda3101e2dd447573c",
+      "bytes": 6646,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/test_retained_v27.py": {
+      "commit_sha256": "3e0baf10017a7d548b6f9fe361071c4e48e6f5beb38ceb7d8be79d0722ecc99c",
+      "working_raw_sha256": "3e0baf10017a7d548b6f9fe361071c4e48e6f5beb38ceb7d8be79d0722ecc99c",
+      "working_lf_sha256": "3e0baf10017a7d548b6f9fe361071c4e48e6f5beb38ceb7d8be79d0722ecc99c",
+      "bytes": 4706,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/test_retained_v31.py": {
+      "commit_sha256": "c89e199294b78cda6baf2a75f5ec06f3f7720d60ea3a85ecce7702b88e457dbc",
+      "working_raw_sha256": "c89e199294b78cda6baf2a75f5ec06f3f7720d60ea3a85ecce7702b88e457dbc",
+      "working_lf_sha256": "c89e199294b78cda6baf2a75f5ec06f3f7720d60ea3a85ecce7702b88e457dbc",
+      "bytes": 10664,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "commit_sha256": "936ed8961992555e7db9a6039e993ec3c72dba1eceaecb770a78aafcaa5870f7",
+      "working_raw_sha256": "936ed8961992555e7db9a6039e993ec3c72dba1eceaecb770a78aafcaa5870f7",
+      "working_lf_sha256": "936ed8961992555e7db9a6039e993ec3c72dba1eceaecb770a78aafcaa5870f7",
+      "bytes": 17193,
+      "working_lf_matches_commit": true
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "commit_sha256": "a7c4e50de04414c81e0dba72eccc08cadbeed43a2b4d311abe88da2334066b15",
+      "working_raw_sha256": "a7c4e50de04414c81e0dba72eccc08cadbeed43a2b4d311abe88da2334066b15",
+      "working_lf_sha256": "a7c4e50de04414c81e0dba72eccc08cadbeed43a2b4d311abe88da2334066b15",
+      "bytes": 12988,
+      "working_lf_matches_commit": true
+    }
+  }
+}

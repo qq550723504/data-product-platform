@@ -1,0 +1,33 @@
+337:def allocate():
+338:    window.policy_checkpoint()
+339:    need(PROFILE=='candidate22/v32' and EXECUTION=='0e5cb8f3-46a9-4339-88e4-7154d6ebe13f','only the new proposed execution is supported')
+340:    need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
+341:    source_ci=preallocation_ci()
+342:    # Verify retained history before allocating any owner or volume.
+343:    retained=historical_gate()
+344:    CONTROL.mkdir();PUBLIC.mkdir();save(PUBLIC/'retained-before.json',retained)
+345:    a=Allocation();failure=None
+346:    try:
+347:        artifact=build();source=artifact['source']
+348:        need(artifact['host']['source']==source_ci['head'],'built host P lacks the exact successful source CI')
+349:        # Historical readback and compilation can take minutes. Revalidate the
+350:        # captured actual host bytes before creating any network/volume/owner.
+351:        fixture_artifacts.verify_host(ROOT,artifact['host'])
+352:        old=load(p1.PACKET/'candidate.json');scopes=load(ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
+353:        state={'status':'STOPPED_ALLOCATION_NOT_NATIVE_ACCEPTANCE','source':source,'profile':PROFILE,'execution':EXECUTION,'allocation_nonce':a.nonce,
+354:               'window':W,'policy_checkpoint_sha256':window.POLICY_CHECKPOINT_SHA256,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'build_files':{name:sha(CONTROL/name) for name in ('reader','operator','owner','readonly-check.exe',*[binary+'-build.'+channel for binary in ('reader','operator','owner','checker') for channel in ('stdout','stderr')])},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
+355:        state.update(artifact)
+356:        state['source_ci']=source_ci
+357:        mapping={'Execution':EXECUTION,'Profile':PROFILE,'Groups':[]}
+358:        for n,scope in enumerate(scopes):
+359:            group=scope['Group'];g=next(x for x in old['Groups'] if x['Group']==group)
+360:            folder=CONTROL/group;folder.mkdir();outputs=folder/'outputs';outputs.mkdir();backup=folder/'checkpoint';backup.mkdir()
+361:            project='dpp-lifecycle307-'+scope['Run'][:8];prefix=project+'-'+GENERATION
+362:            config=load(p1.PRIVATE/project/'config.json')
+363:            need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
+364:            pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
+365:            subnet='10.246.'+str(221+n)+'.0/28'
+366:            # Reuse the existing subnet overlap check; never attach to another run.
+367:            runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
+368:            network=a.network(prefix+'-restore',subnet)
+369:            vols={kind:a.volume(prefix+'-'+kind) for kind in ('checkpoint-core','rehearsal-core','objects','recovery-redis','budget')}

@@ -1,0 +1,22 @@
+{
+  "status": "C22_STATIC_PLANNING_PRECHECK_EVIDENCE_INDEX",
+  "count": 4,
+  "files": {
+    "file-only-composer-simulation.json": {
+      "sha256": "dae2da8604154101666cf78f676c1be02b97e2b2f5184ba8587e382f31aab79c",
+      "bytes": 903
+    },
+    "file_only_composer_simulation.py": {
+      "sha256": "34cedb7eed5aeda9aa4be7ce2ccb3e5680c6ffc4461a44c85ed98153155c6211",
+      "bytes": 6926
+    },
+    "independent-planning-precheck01.json": {
+      "sha256": "a5f7ed2688531abbcbd35c7b7babfd5cd8dab49162d5277c6503e888251dc77d",
+      "bytes": 4943
+    },
+    "input-script-index.json": {
+      "sha256": "3e841df2b43b49f47ee48bed7bd4b2d085fdca62da3085a5ea9851affed7fa03",
+      "bytes": 2727
+    }
+  }
+}

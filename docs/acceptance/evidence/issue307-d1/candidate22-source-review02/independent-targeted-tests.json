@@ -1,0 +1,32 @@
+{
+  "status": "PASS_LOCAL_FILE_ONLY_NOT_NATIVE",
+  "runs": [
+    {
+      "mode": "normal",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-source-review02\\independent_targeted_runner.py"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T05:01:54.283847+00:00"
+    },
+    {
+      "mode": "optimized",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-O",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-source-review02\\independent_targeted_runner.py"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T05:02:07.357167+00:00"
+    }
+  ],
+  "local_Docker_provider_io": 0,
+  "native_delete": 0
+}

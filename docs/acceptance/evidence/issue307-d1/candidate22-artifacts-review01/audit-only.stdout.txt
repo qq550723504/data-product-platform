@@ -1,0 +1,1 @@
+{"status": "PASS_SAVED_EVIDENCE_AUDIT_ONLY", "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f", "output": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-artifacts-review01\\canonical-audit-only01", "native_preflight": "NOT_RUN", "execution_authority": false, "native_delete": 0}

@@ -1,0 +1,58 @@
+{
+  "status": "RESTORED_EXACT_V29_ISSUED_BYTES_IN_C22_CHECKOUT_ONLY",
+  "at": "2026-10-23T05:26:35.787978+00:00",
+  "repairs": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate19-crosscheck02/fixed-saved-audit01-stdout.txt",
+      "prior_git_blob_sha256": "332124eac9b63e7bf6335b00d797ba62ab14fd414c94636fb85305864459597a",
+      "prior_checkout_sha256": "332124eac9b63e7bf6335b00d797ba62ab14fd414c94636fb85305864459597a",
+      "approved_original_sha256": "914780eddbe6a90d70c8bb3ebcf1b03ddb799786ff26ba6ad1581759e31ec42b",
+      "bytes": 348,
+      "lf_equivalent": true,
+      "original_modified": false
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/authorized-static-audit01.stdout.json",
+      "prior_git_blob_sha256": "f84513c37209065bb6ec616a67af983f9364292cf28818f9489bdbaaaf67bf1e",
+      "prior_checkout_sha256": "f84513c37209065bb6ec616a67af983f9364292cf28818f9489bdbaaaf67bf1e",
+      "approved_original_sha256": "3e8107385b2288ebb846b2597463ba6312a37ba14d68cac6ee153e19d36edb1a",
+      "bytes": 362,
+      "lf_equivalent": true,
+      "original_modified": false
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/host-check01.stdout.json",
+      "prior_git_blob_sha256": "a63df768b23e11e6a96b27f4e88285cbe027111ee43928c5cea81e6832ffc6d5",
+      "prior_checkout_sha256": "a63df768b23e11e6a96b27f4e88285cbe027111ee43928c5cea81e6832ffc6d5",
+      "approved_original_sha256": "3c5192fcce66c0473f3ae0f65986c4ff1fe06d5f89971cde9e10a718c792d29e",
+      "bytes": 452,
+      "lf_equivalent": true,
+      "original_modified": false
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/scheduled-static-audit01.stdout.json",
+      "prior_git_blob_sha256": "e0ed4d5e9a28fedc6e7d2d5018ccdb1661ed1c590fb36c99ae9c39ebbc381d1a",
+      "prior_checkout_sha256": "e0ed4d5e9a28fedc6e7d2d5018ccdb1661ed1c590fb36c99ae9c39ebbc381d1a",
+      "approved_original_sha256": "59033b9b22481db89dd8e578e22c3c61029a82369916a585eaf1f0df02752632",
+      "bytes": 361,
+      "lf_equivalent": true,
+      "original_modified": false
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/failure-seal01.stdout.json",
+      "prior_git_blob_sha256": "71e399c316cff9fc94514979326cefa7ffed6181dbe08300806eae8717b9a944",
+      "prior_checkout_sha256": "71e399c316cff9fc94514979326cefa7ffed6181dbe08300806eae8717b9a944",
+      "approved_original_sha256": "715356c3d18050e9c50ed767e623c987d8fd02d6e884e597a2cadeb0b2f24b38",
+      "bytes": 23770,
+      "lf_equivalent": true,
+      "original_modified": false
+    }
+  ],
+  "source_host_changed": false,
+  "source_runtime_changed": false,
+  "prior_bad_bytes_retained_private": "C:\\Users\\Henry\\.codex\\fixture-private\\candidate22-bootstrap01\\checkout-raw-restoration02",
+  "historical_index_modified": false,
+  "native_delete": 0,
+  "resources_allocated": 0,
+  "note": "Existing broad -text rule preserves the restored raw bytes in the later final artifact commit; strict SHA gate remains unchanged."
+}

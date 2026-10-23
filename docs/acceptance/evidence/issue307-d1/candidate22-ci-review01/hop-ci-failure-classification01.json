@@ -1,0 +1,60 @@
+{
+  "status": "CI_FAILURE_REMAINS_GATE_BLOCKING_ROOT_CAUSE_UNKNOWN_SINGLE_FULL_RERUN_REASONABLE",
+  "head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "run": 39901487931,
+  "run_attempt": 1,
+  "job": 120243918908,
+  "observed_failure": {
+    "file": "apps/platform/internal/ingestion/pilot/live_test.go",
+    "line": 1164,
+    "test": "TestLiveCoreBatch/failed-hop-explicit-new-attempt",
+    "message": "Hop did not reach observed terminal outcome",
+    "duration_seconds": 64.72,
+    "finish_lines": "149-174",
+    "semantics": "finish polls recover every500ms until60sec; 200 replaces operation,503 reads current operation; only SUCCEEDED or FAILED return. Timeout does not reveal final remote status."
+  },
+  "fault_contract": {
+    "test_lines": "1156-1179",
+    "fault_control": "b2_smoke.py:59-67",
+    "proxy_hook": "smoke.py:121-123",
+    "effect": "fail-start installs a one-use before-start revoke SELECT hook; test restores SELECT after1200ms; expected first FAILED then a new distinct retry attempt. Timeout occurs before explicit retry is reached."
+  },
+  "transport_observation": {
+    "raw_log_lines": "704-748",
+    "exception": "RemoteDisconnected while proxy GET forwards to native upstream",
+    "logged_at": "2026-10-23T04:43:45Z",
+    "causal_attribution": "UNPROVEN",
+    "reason": "b2_smoke.py131-141 captures Go output and prints tail only after completion. Last passing hop-restart-id-loss test lasts9.65s and explicitly restarts Hop atlive_test.go1185. Proxy exception shortly before04:43:49 end is compatible with that later deliberate restart. No per-request ID/URL or native Hop server log ties it to failed subtest."
+  },
+  "change_scope": {
+    "ingestion_and_PG_Hop_code_delta_f4f27c_to_bee86b": "NONE",
+    "same_related_code_from_prior_cef8a7f_native_green": "NONE",
+    "workflow_change": "Only2 new retained_v31 Python normal/optimized steps in Go job; .github/workflows/ci.yml is a Hop change-detection input,so fresh Hop smoke execution is expected.",
+    "ci_checkout": "Saved log shows GitHub merge reffacffe18fdae0e6ee0f8452dc79bc249e48f6728,merge bee86b into f7a90022aad5da4d67ea594ccb86f8b9925a3840. Merge object not local; no claim all current runner/merged dependency inputs equal prior run."
+  },
+  "prior_green": {
+    "run": 39766229920,
+    "head": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+    "job": 119782859086,
+    "actual_B2_step": "SUCCESS,not skipped"
+  },
+  "recommendation": {
+    "source_change_for_Hop_now": "NOT_JUSTIFIED_BY_CURRENT_EVIDENCE",
+    "single_full_same_head_rerun": "REASONABLE_AS_TRANSIENT_DIAGNOSTIC_ONLY;all13requiredjobs must be same completed attempt",
+    "known_subnet_source_fix": "Requires new P head regardless; then exact new-head full CI rather than old CI reuse",
+    "repeat_failure": "Retain full failed attempt and inspect B2 report plus available native status/log/attempt facts before choosing a source change;do not extend timeout or fake terminal facts based only on this log"
+  },
+  "unknowns": [
+    "Native Hop server logs are not in supplied log",
+    "Actual per-poll operation/remote status and identity are absent",
+    "No confirmation of resource exhaustion,slow scheduling,provider crash,or parser defect",
+    "Transport exception causal link to failed subtest is not established"
+  ],
+  "side_effects": {
+    "local_Hop_Docker_provider": 0,
+    "source_edits": 0,
+    "refs_mutations": 0,
+    "CI_rerun_by_reviewer": 0
+  },
+  "CI_pass_claimed": false
+}

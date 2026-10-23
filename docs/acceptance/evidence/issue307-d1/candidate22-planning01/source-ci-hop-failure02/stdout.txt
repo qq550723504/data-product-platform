@@ -1,0 +1,878 @@
+﻿2026-10-23T04:39:53.0913034Z Current runner version: '2.338.0'
+2026-10-23T04:39:53.0934264Z ##[group]Runner Image Provisioner
+2026-10-23T04:39:53.0934980Z Hosted Compute Agent
+2026-10-23T04:39:53.0935537Z Version: 20261012.601
+2026-10-23T04:39:53.0936082Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-23T04:39:53.0936713Z Build Date: 2026-10-12T17:48:21Z
+2026-10-23T04:39:53.0937373Z Worker ID: {b484f76b-00cc-40c9-a61b-5c3fc5cadee9}
+2026-10-23T04:39:53.0937970Z Region: westus3
+2026-10-23T04:39:53.0938463Z Cloud: Azure
+2026-10-23T04:39:53.0938937Z ##[endgroup]
+2026-10-23T04:39:53.0940553Z ##[group]Operating System
+2026-10-23T04:39:53.0941192Z Ubuntu
+2026-10-23T04:39:53.0941635Z 24.04.5
+2026-10-23T04:39:53.0942057Z LTS
+2026-10-23T04:39:53.0942555Z ##[endgroup]
+2026-10-23T04:39:53.0943058Z ##[group]Runner Image
+2026-10-23T04:39:53.0943643Z Image: ubuntu-24.04
+2026-10-23T04:39:53.0944117Z Version: 20261012.334.1
+2026-10-23T04:39:53.0945253Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-23T04:39:53.0946517Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-23T04:39:53.0947394Z ##[endgroup]
+2026-10-23T04:39:53.0948279Z ##[group]GITHUB_TOKEN Permissions
+2026-10-23T04:39:53.0949919Z Contents: read
+2026-10-23T04:39:53.0950550Z Metadata: read
+2026-10-23T04:39:53.0951030Z ##[endgroup]
+2026-10-23T04:39:53.0952783Z Secret source: Actions
+2026-10-23T04:39:53.0953578Z Cache mode: write
+2026-10-23T04:39:53.0954232Z Prepare workflow directory
+2026-10-23T04:39:53.1776735Z Prepare all required actions
+2026-10-23T04:39:53.1816475Z Getting action download info
+2026-10-23T04:39:53.4754897Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-23T04:39:53.7580008Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-23T04:39:53.9284887Z Download action repository 'actions/setup-go@v5' (SHA:40f1582b2485089dde7abd97c1529aa768e1baff)
+2026-10-23T04:39:54.8118198Z Complete job name: hop-smoke
+2026-10-23T04:39:54.8780156Z ##[group]Run actions/checkout@v4
+2026-10-23T04:39:54.8780901Z with:
+2026-10-23T04:39:54.8781264Z   fetch-depth: 0
+2026-10-23T04:39:54.8781705Z   repository: qq550723504/data-product-platform
+2026-10-23T04:39:54.8784971Z   token: ***
+2026-10-23T04:39:54.8785356Z   ssh-strict: true
+2026-10-23T04:39:54.8785749Z   ssh-user: git
+2026-10-23T04:39:54.8786137Z   persist-credentials: true
+2026-10-23T04:39:54.8786558Z   clean: true
+2026-10-23T04:39:54.8786978Z   sparse-checkout-cone-mode: true
+2026-10-23T04:39:54.8787429Z   fetch-tags: false
+2026-10-23T04:39:54.8787824Z   show-progress: true
+2026-10-23T04:39:54.8788220Z   lfs: false
+2026-10-23T04:39:54.8788582Z   submodules: false
+2026-10-23T04:39:54.8788985Z   set-safe-directory: true
+2026-10-23T04:39:54.8789425Z   allow-unsafe-pr-checkout: false
+2026-10-23T04:39:54.8790182Z ##[endgroup]
+2026-10-23T04:39:54.9601152Z Syncing repository: qq550723504/data-product-platform
+2026-10-23T04:39:54.9603581Z ##[group]Getting Git version info
+2026-10-23T04:39:54.9604836Z Working directory is '/home/runner/work/data-product-platform/data-product-platform'
+2026-10-23T04:39:54.9606460Z [command]/usr/bin/git version
+2026-10-23T04:39:54.9643162Z git version 2.55.0
+2026-10-23T04:39:54.9660360Z ##[endgroup]
+2026-10-23T04:39:54.9672447Z Temporarily overriding HOME='/home/runner/work/_temp/8c37ef1c-bc73-421d-8301-2a3f767e70c5' before making global git config changes
+2026-10-23T04:39:54.9674098Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T04:39:54.9677083Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/data-product-platform/data-product-platform
+2026-10-23T04:39:54.9741399Z Deleting the contents of '/home/runner/work/data-product-platform/data-product-platform'
+2026-10-23T04:39:54.9743829Z ##[group]Initializing the repository
+2026-10-23T04:39:54.9745256Z [command]/usr/bin/git init /home/runner/work/data-product-platform/data-product-platform
+2026-10-23T04:39:54.9828078Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-23T04:39:54.9829067Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-23T04:39:54.9830200Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-23T04:39:54.9902486Z hint: call:
+2026-10-23T04:39:54.9903501Z hint:
+2026-10-23T04:39:54.9904102Z hint: 	git config --global init.defaultBranch <name>
+2026-10-23T04:39:54.9904642Z hint:
+2026-10-23T04:39:54.9905165Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-23T04:39:54.9906266Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-23T04:39:54.9907093Z hint:
+2026-10-23T04:39:54.9907446Z hint: 	git branch -m <name>
+2026-10-23T04:39:54.9907848Z hint:
+2026-10-23T04:39:54.9908385Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-23T04:39:54.9909477Z Initialized empty Git repository in /home/runner/work/data-product-platform/data-product-platform/.git/
+2026-10-23T04:39:54.9911637Z [command]/usr/bin/git remote add origin https://github.com/qq550723504/data-product-platform
+2026-10-23T04:39:54.9931820Z ##[endgroup]
+2026-10-23T04:39:54.9932485Z ##[group]Disabling automatic garbage collection
+2026-10-23T04:39:54.9936502Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-23T04:39:54.9965413Z ##[endgroup]
+2026-10-23T04:39:54.9966071Z ##[group]Setting up auth
+2026-10-23T04:39:54.9979268Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T04:39:55.0007426Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-23T04:39:55.0343094Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T04:39:55.0375646Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-23T04:39:55.0566494Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:39:55.0598287Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-23T04:39:55.0802341Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-23T04:39:55.0837524Z ##[endgroup]
+2026-10-23T04:39:55.0838696Z ##[group]Fetching the repository
+2026-10-23T04:39:55.0847123Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +facffe18fdae0e6ee0f8452dc79bc249e48f6728:refs/remotes/pull/332/merge
+2026-10-23T04:39:57.4171422Z From https://github.com/qq550723504/data-product-platform
+2026-10-23T04:39:57.4173152Z  * [new branch]        chore/ci-hardening                       -> origin/chore/ci-hardening
+2026-10-23T04:39:57.4174461Z  * [new branch]        cleanup/evidence-v2-only-159             -> origin/cleanup/evidence-v2-only-159
+2026-10-23T04:39:57.4176610Z  * [new branch]        cleanup/remove-entity-legacy-provenance-159 -> origin/cleanup/remove-entity-legacy-provenance-159
+2026-10-23T04:39:57.4179326Z  * [new branch]        cleanup/remove-legacy-execution-reconcile-159 -> origin/cleanup/remove-legacy-execution-reconcile-159
+2026-10-23T04:39:57.4182369Z  * [new branch]        cleanup/remove-preprod-compat-159        -> origin/cleanup/remove-preprod-compat-159
+2026-10-23T04:39:57.4185304Z  * [new branch]        cleanup/remove-stale-compat-wording-159  -> origin/cleanup/remove-stale-compat-wording-159
+2026-10-23T04:39:57.4188328Z  * [new branch]        cleanup/strict-dataset-output-key-159    -> origin/cleanup/strict-dataset-output-key-159
+2026-10-23T04:39:57.4191647Z  * [new branch]        cleanup/strict-outbox-obligations-159    -> origin/cleanup/strict-outbox-obligations-159
+2026-10-23T04:39:57.4195126Z  * [new branch]        cleanup/strict-rights-scope-159          -> origin/cleanup/strict-rights-scope-159
+2026-10-23T04:39:57.4197691Z  * [new branch]        codex/T3-B2                              -> origin/codex/T3-B2
+2026-10-23T04:39:57.4199692Z  * [new branch]        codex/c1-execution-idempotency-outbox    -> origin/codex/c1-execution-idempotency-outbox
+2026-10-23T04:39:57.4202420Z  * [new branch]        codex/c1-unified-outbox-dispatcher       -> origin/codex/c1-unified-outbox-dispatcher
+2026-10-23T04:39:57.4204716Z  * [new branch]        codex/csv-ingestion-review-ui            -> origin/codex/csv-ingestion-review-ui
+2026-10-23T04:39:57.4207065Z  * [new branch]        codex/csv-workspace-integration          -> origin/codex/csv-workspace-integration
+2026-10-23T04:39:57.4209685Z  * [new branch]        codex/docker-temporary-container-cleanup -> origin/codex/docker-temporary-container-cleanup
+2026-10-23T04:39:57.4212406Z  * [new branch]        codex/follow-up-pr150-pr151-review       -> origin/codex/follow-up-pr150-pr151-review
+2026-10-23T04:39:57.4214505Z  * [new branch]        codex/fork-host-raw-live                 -> origin/codex/fork-host-raw-live
+2026-10-23T04:39:57.4216643Z  * [new branch]        codex/fork-submission-contract-docs      -> origin/codex/fork-submission-contract-docs
+2026-10-23T04:39:57.4218935Z  * [new branch]        codex/host-fork-approved-admission       -> origin/codex/host-fork-approved-admission
+2026-10-23T04:39:57.4221283Z  * [new branch]        codex/issue-131-cost-allocation          -> origin/codex/issue-131-cost-allocation
+2026-10-23T04:39:57.4223552Z  * [new branch]        codex/issue-131-quality-assessment       -> origin/codex/issue-131-quality-assessment
+2026-10-23T04:39:57.4226468Z  * [new branch]        codex/issue-132-quality-engine           -> origin/codex/issue-132-quality-engine
+2026-10-23T04:39:57.4228964Z  * [new branch]        codex/issue-133-quality-report           -> origin/codex/issue-133-quality-report
+2026-10-23T04:39:57.4231567Z  * [new branch]        codex/issue-134-dataset-certification    -> origin/codex/issue-134-dataset-certification
+2026-10-23T04:39:57.4234275Z  * [new branch]        codex/issue-135-certified-dataset-ui     -> origin/codex/issue-135-certified-dataset-ui
+2026-10-23T04:39:57.4236652Z  * [new branch]        codex/issue-137-data-rights              -> origin/codex/issue-137-data-rights
+2026-10-23T04:39:57.4239287Z  * [new branch]        codex/issue-75-entity-review-actions     -> origin/codex/issue-75-entity-review-actions
+2026-10-23T04:39:57.4242071Z  * [new branch]        codex/issue-85-browser-readiness-hardening -> origin/codex/issue-85-browser-readiness-hardening
+2026-10-23T04:39:57.4244767Z  * [new branch]        codex/issue294-source-integrity          -> origin/codex/issue294-source-integrity
+2026-10-23T04:39:57.4247043Z  * [new branch]        codex/issue298-b1                        -> origin/codex/issue298-b1
+2026-10-23T04:39:57.4249064Z  * [new branch]        codex/issue298-closure                   -> origin/codex/issue298-closure
+2026-10-23T04:39:57.4251509Z  * [new branch]        codex/issue298-invocation-recovery       -> origin/codex/issue298-invocation-recovery
+2026-10-23T04:39:57.4253813Z  * [new branch]        codex/issue298-pgi09                     -> origin/codex/issue298-pgi09
+2026-10-23T04:39:57.4255789Z  * [new branch]        codex/issue299-c1                        -> origin/codex/issue299-c1
+2026-10-23T04:39:57.4257687Z  * [new branch]        codex/issue299-c2                        -> origin/codex/issue299-c2
+2026-10-23T04:39:57.4259602Z  * [new branch]        codex/issue299-c3                        -> origin/codex/issue299-c3
+2026-10-23T04:39:57.4261954Z  * [new branch]        codex/issue299-independent-20261014      -> origin/codex/issue299-independent-20261014
+2026-10-23T04:39:57.4264498Z  * [new branch]        codex/issue299-pr318-handoff             -> origin/codex/issue299-pr318-handoff
+2026-10-23T04:39:57.4267171Z  * [new branch]        codex/issue300-lifecycle-design          -> origin/codex/issue300-lifecycle-design
+2026-10-23T04:39:57.4269734Z  * [new branch]        codex/issue307-c20-fixture-runtime       -> origin/codex/issue307-c20-fixture-runtime
+2026-10-23T04:39:57.4272819Z  * [new branch]        codex/issue307-c20-fixture-runtime-reviewed -> origin/codex/issue307-c20-fixture-runtime-reviewed
+2026-10-23T04:39:57.4275667Z  * [new branch]        codex/issue307-c21-fixture-runtime       -> origin/codex/issue307-c21-fixture-runtime
+2026-10-23T04:39:57.4278490Z  * [new branch]        codex/issue307-candidate22-runtime       -> origin/codex/issue307-candidate22-runtime
+2026-10-23T04:39:57.4280976Z  * [new branch]        codex/issue307-d1-acceptance             -> origin/codex/issue307-d1-acceptance
+2026-10-23T04:39:57.4283599Z  * [new branch]        codex/issue307-d1-remaining-preparation  -> origin/codex/issue307-d1-remaining-preparation
+2026-10-23T04:39:57.4286322Z  * [new branch]        codex/issue307-freeze-rehearsal-4047394d6311 -> origin/codex/issue307-freeze-rehearsal-4047394d6311
+2026-10-23T04:39:57.4288821Z  * [new branch]        codex/issue307-lifecycle-d1              -> origin/codex/issue307-lifecycle-d1
+2026-10-23T04:39:57.4291373Z  * [new branch]        codex/issue307-post-v22-dispatch-closure -> origin/codex/issue307-post-v22-dispatch-closure
+2026-10-23T04:39:57.4294024Z  * [new branch]        codex/issue307-reference-demand-lc11-lc12 -> origin/codex/issue307-reference-demand-lc11-lc12
+2026-10-23T04:39:57.4296592Z  * [new branch]        codex/issue320-trial-image-lifecycle     -> origin/codex/issue320-trial-image-lifecycle
+2026-10-23T04:39:57.4299093Z  * [new branch]        codex/issue325-bootstrap-recovery        -> origin/codex/issue325-bootstrap-recovery
+2026-10-23T04:39:57.4301700Z  * [new branch]        codex/issue325-business-prerequisites    -> origin/codex/issue325-business-prerequisites
+2026-10-23T04:39:57.4304578Z  * [new branch]        codex/issue325-business-rights-renewal   -> origin/codex/issue325-business-rights-renewal
+2026-10-23T04:39:57.4307577Z  * [new branch]        codex/issue325-business-upgrade          -> origin/codex/issue325-business-upgrade
+2026-10-23T04:39:57.4309944Z  * [new branch]        codex/issue325-explicit-activation       -> origin/codex/issue325-explicit-activation
+2026-10-23T04:39:57.4312567Z  * [new branch]        codex/issue325-ledger-bootstrap          -> origin/codex/issue325-ledger-bootstrap
+2026-10-23T04:39:57.4314889Z  * [new branch]        codex/issue325-operator-custody          -> origin/codex/issue325-operator-custody
+2026-10-23T04:39:57.4317208Z  * [new branch]        codex/issue325-protected-resume          -> origin/codex/issue325-protected-resume
+2026-10-23T04:39:57.4319451Z  * [new branch]        codex/issue325-readonly-plan             -> origin/codex/issue325-readonly-plan
+2026-10-23T04:39:57.4322496Z  * [new branch]        codex/issue325-recovery-source-admission -> origin/codex/issue325-recovery-source-admission
+2026-10-23T04:39:57.4325060Z  * [new branch]        codex/issue325-stop-manifest-recovery    -> origin/codex/issue325-stop-manifest-recovery
+2026-10-23T04:39:57.4327473Z  * [new branch]        codex/issue325-stopped-owner-main        -> origin/codex/issue325-stopped-owner-main
+2026-10-23T04:39:57.4329683Z  * [new branch]        codex/issue325-trial-stage1              -> origin/codex/issue325-trial-stage1
+2026-10-23T04:39:57.4331997Z  * [new branch]        codex/issue325-trial-stage2              -> origin/codex/issue325-trial-stage2
+2026-10-23T04:39:57.4334390Z  * [new branch]        codex/issue325-windows-exited-process    -> origin/codex/issue325-windows-exited-process
+2026-10-23T04:39:57.4336849Z  * [new branch]        codex/issue330-workspace-storage         -> origin/codex/issue330-workspace-storage
+2026-10-23T04:39:57.4339130Z  * [new branch]        codex/issue343-quality-attention         -> origin/codex/issue343-quality-attention
+2026-10-23T04:39:57.4341563Z  * [new branch]        codex/issue346-schema-attention          -> origin/codex/issue346-schema-attention
+2026-10-23T04:39:57.4344115Z  * [new branch]        codex/issue349-schema-exception-history  -> origin/codex/issue349-schema-exception-history
+2026-10-23T04:39:57.4346537Z  * [new branch]        codex/issue352-schema-unobserved         -> origin/codex/issue352-schema-unobserved
+2026-10-23T04:39:57.4348834Z  * [new branch]        codex/issue353-bundle-preflight          -> origin/codex/issue353-bundle-preflight
+2026-10-23T04:39:57.4351233Z  * [new branch]        codex/issue356-workbench-isolation       -> origin/codex/issue356-workbench-isolation
+2026-10-23T04:39:57.4353719Z  * [new branch]        codex/issue359-schema-unobserved-attempts -> origin/codex/issue359-schema-unobserved-attempts
+2026-10-23T04:39:57.4356088Z  * [new branch]        codex/issue361-quality-trust             -> origin/codex/issue361-quality-trust
+2026-10-23T04:39:57.4358178Z  * [new branch]        codex/issue84-external-core              -> origin/codex/issue84-external-core
+2026-10-23T04:39:57.4360323Z  * [new branch]        codex/issue86-execution                  -> origin/codex/issue86-execution
+2026-10-23T04:39:57.4362269Z  * [new branch]        codex/issue87-usage                      -> origin/codex/issue87-usage
+2026-10-23T04:39:57.4364407Z  * [new branch]        codex/live-core-browser-acceptance       -> origin/codex/live-core-browser-acceptance
+2026-10-23T04:39:57.4366749Z  * [new branch]        codex/poc-consolidated-local-demo        -> origin/codex/poc-consolidated-local-demo
+2026-10-23T04:39:57.4368978Z  * [new branch]        compliance/attempt-recovery              -> origin/compliance/attempt-recovery
+2026-10-23T04:39:57.4371474Z  * [new branch]        delivery/direct-data-recovery-readmodel  -> origin/delivery/direct-data-recovery-readmodel
+2026-10-23T04:39:57.4373834Z  * [new branch]        docs/208-gold-pilot-acceptance           -> origin/docs/208-gold-pilot-acceptance
+2026-10-23T04:39:57.4376112Z  * [new branch]        docs/209-gold-architecture-baseline      -> origin/docs/209-gold-architecture-baseline
+2026-10-23T04:39:57.4378472Z  * [new branch]        docs/216-product-boundaries              -> origin/docs/216-product-boundaries
+2026-10-23T04:39:57.4380659Z  * [new branch]        docs/217-sync-gold-stage                 -> origin/docs/217-sync-gold-stage
+2026-10-23T04:39:57.4382722Z  * [new branch]        docs/certified-dataset-baseline          -> origin/docs/certified-dataset-baseline
+2026-10-23T04:39:57.4385052Z  * [new branch]        docs/certified-dataset-pilot-acceptance  -> origin/docs/certified-dataset-pilot-acceptance
+2026-10-23T04:39:57.4387338Z  * [new branch]        docs/data-ingestion-capability           -> origin/docs/data-ingestion-capability
+2026-10-23T04:39:57.4389662Z  * [new branch]        docs/full-lifecycle-governance-v2-20261010 -> origin/docs/full-lifecycle-governance-v2-20261010
+2026-10-23T04:39:57.4392174Z  * [new branch]        docs/issue298-b0-postgres-ingestion      -> origin/docs/issue298-b0-postgres-ingestion
+2026-10-23T04:39:57.4394276Z  * [new branch]        docs/mark-hqd4-complete                  -> origin/docs/mark-hqd4-complete
+2026-10-23T04:39:57.4396276Z  * [new branch]        docs/ndi-integration-boundary            -> origin/docs/ndi-integration-boundary
+2026-10-23T04:39:57.4398363Z  * [new branch]        docs/no-reinvent-wheel-policy            -> origin/docs/no-reinvent-wheel-policy
+2026-10-23T04:39:57.4400607Z  * [new branch]        docs/readme-acceptance-issue-refs        -> origin/docs/readme-acceptance-issue-refs
+2026-10-23T04:39:57.4403026Z  * [new branch]        docs/readme-lifecycle-current-main-20261013 -> origin/docs/readme-lifecycle-current-main-20261013
+2026-10-23T04:39:57.4405317Z  * [new branch]        docs/readme-status-20260922              -> origin/docs/readme-status-20260922
+2026-10-23T04:39:57.4407538Z  * [new branch]        docs/reconcile-certified-dataset-status  -> origin/docs/reconcile-certified-dataset-status
+2026-10-23T04:39:57.4410104Z  * [new branch]        docs/reference-capability-roadmap-20261020 -> origin/docs/reference-capability-roadmap-20261020
+2026-10-23T04:39:57.4412666Z  * [new branch]        docs/start-certified-dataset-pilot       -> origin/docs/start-certified-dataset-pilot
+2026-10-23T04:39:57.4414797Z  * [new branch]        docs/sync-gold-current-state             -> origin/docs/sync-gold-current-state
+2026-10-23T04:39:57.4416838Z  * [new branch]        docs/translate-docs-to-chinese           -> origin/docs/translate-docs-to-chinese
+2026-10-23T04:39:57.4418890Z  * [new branch]        feat/172-direct-data-delivery            -> origin/feat/172-direct-data-delivery
+2026-10-23T04:39:57.4421041Z  * [new branch]        feat/204-annotation-domain               -> origin/feat/204-annotation-domain
+2026-10-23T04:39:57.4423203Z  * [new branch]        feat/205-annotation-engine-labelstudio   -> origin/feat/205-annotation-engine-labelstudio
+2026-10-23T04:39:57.4425526Z  * [new branch]        feat/206-annotation-human-review-http    -> origin/feat/206-annotation-human-review-http
+2026-10-23T04:39:57.4427916Z  * [new branch]        feat/206-annotation-human-review-http-main -> origin/feat/206-annotation-human-review-http-main
+2026-10-23T04:39:57.4430287Z  * [new branch]        feat/206-gold-quality-preflight          -> origin/feat/206-gold-quality-preflight
+2026-10-23T04:39:57.4432362Z  * [new branch]        feat/207-gold-candidate-builder          -> origin/feat/207-gold-candidate-builder
+2026-10-23T04:39:57.4434364Z  * [new branch]        feat/207-gold-certification              -> origin/feat/207-gold-certification
+2026-10-23T04:39:57.4436294Z  * [new branch]        feat/207-gold-delivery-gate              -> origin/feat/207-gold-delivery-gate
+2026-10-23T04:39:57.4438260Z  * [new branch]        feat/207-gold-formal-quality             -> origin/feat/207-gold-formal-quality
+2026-10-23T04:39:57.4440358Z  * [new branch]        feat/207-gold-required-resources         -> origin/feat/207-gold-required-resources
+2026-10-23T04:39:57.4442517Z  * [new branch]        feat/208-gold-dataset-explainability     -> origin/feat/208-gold-dataset-explainability
+2026-10-23T04:39:57.4444888Z  * [new branch]        feat/208-gold-explanation-readmodel      -> origin/feat/208-gold-explanation-readmodel
+2026-10-23T04:39:57.4446943Z  * [new branch]        feat/208-gold-trace-summary              -> origin/feat/208-gold-trace-summary
+2026-10-23T04:39:57.4448938Z  * [new branch]        feat/208-live-gold-build-quality         -> origin/feat/208-live-gold-build-quality
+2026-10-23T04:39:57.4451093Z  * [new branch]        feat/208-live-gold-delivery              -> origin/feat/208-live-gold-delivery
+2026-10-23T04:39:57.4453181Z  * [new branch]        feat/208-live-labelstudio-core-result    -> origin/feat/208-live-labelstudio-core-result
+2026-10-23T04:39:57.4455433Z  * [new branch]        feat/208-live-labelstudio-core-results   -> origin/feat/208-live-labelstudio-core-results
+2026-10-23T04:39:57.4457610Z  * [new branch]        feat/208-live-labelstudio-runtime        -> origin/feat/208-live-labelstudio-runtime
+2026-10-23T04:39:57.4459760Z  * [new branch]        feat/214-request-principal-boundary      -> origin/feat/214-request-principal-boundary
+2026-10-23T04:39:57.4461977Z  * [new branch]        feat/222-gx-reference-adapter            -> origin/feat/222-gx-reference-adapter
+2026-10-23T04:39:57.4463929Z  * [new branch]        feat/222-quality-engine-port             -> origin/feat/222-quality-engine-port
+2026-10-23T04:39:57.4465913Z  * [new branch]        feat/poc-full-path-acceptance            -> origin/feat/poc-full-path-acceptance
+2026-10-23T04:39:57.4467884Z  * [new branch]        feat/poc-product-release-ui              -> origin/feat/poc-product-release-ui
+2026-10-23T04:39:57.4469773Z  * [new branch]        feat/poc-release-trace-ui                -> origin/feat/poc-release-trace-ui
+2026-10-23T04:39:57.4471816Z  * [new branch]        feat/poc-ui-actions-traceability         -> origin/feat/poc-ui-actions-traceability
+2026-10-23T04:39:57.4473752Z  * [new branch]        feat/poc-ui-read-models                  -> origin/feat/poc-ui-read-models
+2026-10-23T04:39:57.4475675Z  * [new branch]        feat/poc-web-console                     -> origin/feat/poc-web-console
+2026-10-23T04:39:57.4477457Z  * [new branch]        feat/sprint-0-foundation                 -> origin/feat/sprint-0-foundation
+2026-10-23T04:39:57.4479258Z  * [new branch]        feat/sprint-1-dataset                    -> origin/feat/sprint-1-dataset
+2026-10-23T04:39:57.4481074Z  * [new branch]        feat/sprint-1-entity                     -> origin/feat/sprint-1-entity
+2026-10-23T04:39:57.4482877Z  * [new branch]        feat/sprint-2-native-worker              -> origin/feat/sprint-2-native-worker
+2026-10-23T04:39:57.4484760Z  * [new branch]        feat/sprint-2-product-core               -> origin/feat/sprint-2-product-core
+2026-10-23T04:39:57.4486742Z  * [new branch]        feat/sprint-2-traceability-query         -> origin/feat/sprint-2-traceability-query
+2026-10-23T04:39:57.4488705Z  * [new branch]        feat/sprint-2-workflow-core              -> origin/feat/sprint-2-workflow-core
+2026-10-23T04:39:57.4490864Z  * [new branch]        feat/sprint-3-product-release-publish    -> origin/feat/sprint-3-product-release-publish
+2026-10-23T04:39:57.4493019Z  * [new branch]        feat/sprint-3-quality-compliance         -> origin/feat/sprint-3-quality-compliance
+2026-10-23T04:39:57.4495065Z  * [new branch]        feat/sprint-3-release-readiness          -> origin/feat/sprint-3-release-readiness
+2026-10-23T04:39:57.4497141Z  * [new branch]        feat/sprint-3-release-traceability       -> origin/feat/sprint-3-release-traceability
+2026-10-23T04:39:57.4499176Z  * [new branch]        feat/sprint-3-rights-contract            -> origin/feat/sprint-3-rights-contract
+2026-10-23T04:39:57.4501422Z  * [new branch]        feat/sprint-3-rights-lineage-coverage    -> origin/feat/sprint-3-rights-lineage-coverage
+2026-10-23T04:39:57.4503575Z  * [new branch]        feat/sprint-4-openmetadata-adapter       -> origin/feat/sprint-4-openmetadata-adapter
+2026-10-23T04:39:57.4505879Z  * [new branch]        feat/sprint-4-openmetadata-projection    -> origin/feat/sprint-4-openmetadata-projection
+2026-10-23T04:39:57.4507919Z  * [new branch]        feat/sprint-5-hop-reconcile              -> origin/feat/sprint-5-hop-reconcile
+2026-10-23T04:39:57.4509784Z  * [new branch]        feat/sprint-5-hop-transport              -> origin/feat/sprint-5-hop-transport
+2026-10-23T04:39:57.4511811Z  * [new branch]        feat/sprint-6-entity-evaluation          -> origin/feat/sprint-6-entity-evaluation
+2026-10-23T04:39:57.4513837Z  * [new branch]        feat/sprint-6-entity-resolution-spi      -> origin/feat/sprint-6-entity-resolution-spi
+2026-10-23T04:39:57.4515844Z  * [new branch]        feat/sprint-6-splink-adapter             -> origin/feat/sprint-6-splink-adapter
+2026-10-23T04:39:57.4517821Z  * [new branch]        fix/100-hop-submit-outcome-unknown       -> origin/fix/100-hop-submit-outcome-unknown
+2026-10-23T04:39:57.4519846Z  * [new branch]        fix/100-metadata-projection-cas          -> origin/fix/100-metadata-projection-cas
+2026-10-23T04:39:57.4522070Z  * [new branch]        fix/102-release-production-provenance    -> origin/fix/102-release-production-provenance
+2026-10-23T04:39:57.4524115Z  * [new branch]        fix/104-hop-adapter-boundary             -> origin/fix/104-hop-adapter-boundary
+2026-10-23T04:39:57.4526004Z  * [new branch]        fix/104-openmetadata-boundary            -> origin/fix/104-openmetadata-boundary
+2026-10-23T04:39:57.4527947Z  * [new branch]        fix/104-park-indicator-boundary          -> origin/fix/104-park-indicator-boundary
+2026-10-23T04:39:57.4529914Z  * [new branch]        fix/104-v1-contract-company-name         -> origin/fix/104-v1-contract-company-name
+2026-10-23T04:39:57.4531976Z  * [new branch]        fix/104-v1-output-contract               -> origin/fix/104-v1-output-contract
+2026-10-23T04:39:57.4533776Z  * [new branch]        fix/105-pagination-scope                 -> origin/fix/105-pagination-scope
+2026-10-23T04:39:57.4535579Z  * [new branch]        fix/107-eval-ground-truth                -> origin/fix/107-eval-ground-truth
+2026-10-23T04:39:57.4537633Z  * [new branch]        fix/111-explicit-entity-selection        -> origin/fix/111-explicit-entity-selection
+2026-10-23T04:39:57.4539780Z  * [new branch]        fix/161-certification-history-pagination -> origin/fix/161-certification-history-pagination
+2026-10-23T04:39:57.4542053Z  * [new branch]        fix/173-retry-profile-context            -> origin/fix/173-retry-profile-context
+2026-10-23T04:39:57.4543942Z  * [new branch]        fix/204-post-merge-blockers              -> origin/fix/204-post-merge-blockers
+2026-10-23T04:39:57.4545782Z  * [new branch]        fix/205-post-merge-closure               -> origin/fix/205-post-merge-closure
+2026-10-23T04:39:57.4547864Z  * [new branch]        fix/99-entity-mapping-decision-protection -> origin/fix/99-entity-mapping-decision-protection
+2026-10-23T04:39:57.4550185Z  * [new branch]        fix/99-freeze-dataset-version-lineage    -> origin/fix/99-freeze-dataset-version-lineage
+2026-10-23T04:39:57.4552424Z  * [new branch]        fix/99-freeze-product-release-membership -> origin/fix/99-freeze-product-release-membership
+2026-10-23T04:39:57.4554634Z  * [new branch]        fix/99-freeze-product-version-assets     -> origin/fix/99-freeze-product-version-assets
+2026-10-23T04:39:57.4556937Z  * [new branch]        fix/99-prove-rights-snapshot-release-binding -> origin/fix/99-prove-rights-snapshot-release-binding
+2026-10-23T04:39:57.4559514Z  * [new branch]        fix/99-remove-datasetversion-quality-projections -> origin/fix/99-remove-datasetversion-quality-projections
+2026-10-23T04:39:57.4561855Z  * [new branch]        fix/ambiguous-entity-match               -> origin/fix/ambiguous-entity-match
+2026-10-23T04:39:57.4563758Z  * [new branch]        fix/authorization-status-cas             -> origin/fix/authorization-status-cas
+2026-10-23T04:39:57.4565852Z  * [new branch]        fix/certified-dataset-pilot-p1-followup  -> origin/fix/certified-dataset-pilot-p1-followup
+2026-10-23T04:39:57.4568067Z  * [new branch]        fix/dataset-supersede-events             -> origin/fix/dataset-supersede-events
+2026-10-23T04:39:57.4570248Z  * [new branch]        fix/enterprise-activity-contract-output  -> origin/fix/enterprise-activity-contract-output
+2026-10-23T04:39:57.4572422Z  * [new branch]        fix/entity-match-failed-authority        -> origin/fix/entity-match-failed-authority
+2026-10-23T04:39:57.4574541Z  * [new branch]        fix/entity-match-finalize-idempotency    -> origin/fix/entity-match-finalize-idempotency
+2026-10-23T04:39:57.4576774Z  * [new branch]        fix/evidence-snapshot-membership-freeze  -> origin/fix/evidence-snapshot-membership-freeze
+2026-10-23T04:39:57.4578902Z  * [new branch]        fix/gold-preflight-ci-isolation          -> origin/fix/gold-preflight-ci-isolation
+2026-10-23T04:39:57.4581102Z  * [new branch]        fix/hqd-quality-acceptance-closeout      -> origin/fix/hqd-quality-acceptance-closeout
+2026-10-23T04:39:57.4583121Z  * [new branch]        fix/manual-upload-idempotency            -> origin/fix/manual-upload-idempotency
+2026-10-23T04:39:57.4585064Z  * [new branch]        fix/minio-public-registry-pin            -> origin/fix/minio-public-registry-pin
+2026-10-23T04:39:57.4587000Z  * [new branch]        fix/native-execution-recovery            -> origin/fix/native-execution-recovery
+2026-10-23T04:39:57.4588921Z  * [new branch]        fix/non-finite-numeric-guards            -> origin/fix/non-finite-numeric-guards
+2026-10-23T04:39:57.4590940Z  * [new branch]        fix/pilot-cost-audit-evidence            -> origin/fix/pilot-cost-audit-evidence
+2026-10-23T04:39:57.4592847Z  * [new branch]        fix/pilot-cost-traceability              -> origin/fix/pilot-cost-traceability
+2026-10-23T04:39:57.4594808Z  * [new branch]        fix/poc-release-readiness-browser        -> origin/fix/poc-release-readiness-browser
+2026-10-23T04:39:57.4596800Z  * [new branch]        fix/quarantine-replay-identity           -> origin/fix/quarantine-replay-identity
+2026-10-23T04:39:57.4598828Z  * [new branch]        fix/release-dataset-workspace-scope      -> origin/fix/release-dataset-workspace-scope
+2026-10-23T04:39:57.4601062Z  * [new branch]        fix/web-console-runtime-config           -> origin/fix/web-console-runtime-config
+2026-10-23T04:39:57.4603049Z  * [new branch]        fix/workspace-tenant-boundaries          -> origin/fix/workspace-tenant-boundaries
+2026-10-23T04:39:57.4604982Z  * [new branch]        infra/281-stage-contract-fks             -> origin/infra/281-stage-contract-fks
+2026-10-23T04:39:57.4607014Z  * [new branch]        infra/283-recheck-migration-after-lock   -> origin/infra/283-recheck-migration-after-lock
+2026-10-23T04:39:57.4608977Z  * [new branch]        infra/285-api-readiness                  -> origin/infra/285-api-readiness
+2026-10-23T04:39:57.4610938Z  * [new branch]        infra/287-exact-cost-amount              -> origin/infra/287-exact-cost-amount
+2026-10-23T04:39:57.4612757Z  * [new branch]        infra/289-push-range-smoke               -> origin/infra/289-push-range-smoke
+2026-10-23T04:39:57.4614585Z  * [new branch]        infra/291-exact-cost-write               -> origin/infra/291-exact-cost-write
+2026-10-23T04:39:57.4616138Z  * [new branch]        main                                     -> origin/main
+2026-10-23T04:39:57.4617811Z  * [new branch]        quality/attempt-status-readmodel         -> origin/quality/attempt-status-readmodel
+2026-10-23T04:39:57.4619930Z  * [new branch]        reliability/215-outbox-dead-letter-replay -> origin/reliability/215-outbox-dead-letter-replay
+2026-10-23T04:39:57.4622282Z  * [new branch]        test/172-direct-data-live-acceptance     -> origin/test/172-direct-data-live-acceptance
+2026-10-23T04:39:57.4624260Z  * [new branch]        test/208-live-gold-ui-browser            -> origin/test/208-live-gold-ui-browser
+2026-10-23T04:39:57.4626143Z  * [new branch]        test/208-shared-facts-live-gold          -> origin/test/208-shared-facts-live-gold
+2026-10-23T04:39:57.4628611Z  * [new branch]        test/certified-dataset-pilot-certification-failures -> origin/test/certified-dataset-pilot-certification-failures
+2026-10-23T04:39:57.4631247Z  * [new branch]        test/certified-dataset-pilot-current-facts -> origin/test/certified-dataset-pilot-current-facts
+2026-10-23T04:39:57.4633801Z  * [new branch]        test/certified-dataset-pilot-current-facts-complete -> origin/test/certified-dataset-pilot-current-facts-complete
+2026-10-23T04:39:57.4636329Z  * [new branch]        test/certified-dataset-pilot-happy-path  -> origin/test/certified-dataset-pilot-happy-path
+2026-10-23T04:39:57.4638599Z  * [new branch]        test/certified-dataset-pilot-success-path -> origin/test/certified-dataset-pilot-success-path
+2026-10-23T04:39:57.4640899Z  * [new branch]        test/pilot-browser-certified-dataset     -> origin/test/pilot-browser-certified-dataset
+2026-10-23T04:39:57.4642982Z  * [new branch]        test/pilot-certification-failures        -> origin/test/pilot-certification-failures
+2026-10-23T04:39:57.4644934Z  * [new branch]        test/pilot-certified-browser             -> origin/test/pilot-certified-browser
+2026-10-23T04:39:57.4646830Z  * [new branch]        test/pilot-context-mismatch              -> origin/test/pilot-context-mismatch
+2026-10-23T04:39:57.4648886Z  * [new branch]        test/pilot-delivery-fence-linearization  -> origin/test/pilot-delivery-fence-linearization
+2026-10-23T04:39:57.4651202Z  * [new branch]        test/pilot-direct-data-response-boundary -> origin/test/pilot-direct-data-response-boundary
+2026-10-23T04:39:57.4653334Z  * [new branch]        test/pilot-entity-quality-report         -> origin/test/pilot-entity-quality-report
+2026-10-23T04:39:57.4655237Z  * [new branch]        test/pilot-frozen-history                -> origin/test/pilot-frozen-history
+2026-10-23T04:39:57.4657172Z  * [new branch]        test/pilot-frozen-snapshot-tamper        -> origin/test/pilot-frozen-snapshot-tamper
+2026-10-23T04:39:57.4659160Z  * [new branch]        test/pilot-trusted-caller-http           -> origin/test/pilot-trusted-caller-http
+2026-10-23T04:39:57.4661617Z  * [new branch]        test/pilot-trusted-principal-http        -> origin/test/pilot-trusted-principal-http
+2026-10-23T04:39:57.4663794Z  * [new branch]        tmp/208-shared-facts-rebase              -> origin/tmp/208-shared-facts-rebase
+2026-10-23T04:39:57.4665706Z  * [new branch]        ui/attention-center                      -> origin/ui/attention-center
+2026-10-23T04:39:57.4667690Z  * [new branch]        ui/compliance-check-action               -> origin/ui/compliance-check-action
+2026-10-23T04:39:57.4669686Z  * [new branch]        ui/create-release-action                 -> origin/ui/create-release-action
+2026-10-23T04:39:57.4671972Z  * [new branch]        ui/dataset-core-links                    -> origin/ui/dataset-core-links
+2026-10-23T04:39:57.4674197Z  * [new branch]        ui/dataset-version-detail-tabs           -> origin/ui/dataset-version-detail-tabs
+2026-10-23T04:39:57.4677177Z  * [new branch]        ui/dataset-version-invalidate-action     -> origin/ui/dataset-version-invalidate-action
+2026-10-23T04:39:57.4679940Z  * [new branch]        ui/dataset-version-resource-links        -> origin/ui/dataset-version-resource-links
+2026-10-23T04:39:57.4682562Z  * [new branch]        ui/direct-data-delivery                  -> origin/ui/direct-data-delivery
+2026-10-23T04:39:57.4684779Z  * [new branch]        ui/evidence-workspace-release-readmodel  -> origin/ui/evidence-workspace-release-readmodel
+2026-10-23T04:39:57.4687195Z  * [new branch]        ui/execution-detail-core-alignment       -> origin/ui/execution-detail-core-alignment
+2026-10-23T04:39:57.4689389Z  * [new branch]        ui/execution-retry-action                -> origin/ui/execution-retry-action
+2026-10-23T04:39:57.4691680Z  * [new branch]        ui/product-release-pagination            -> origin/ui/product-release-pagination
+2026-10-23T04:39:57.4693745Z  * [new branch]        ui/quality-check-action                  -> origin/ui/quality-check-action
+2026-10-23T04:39:57.4695780Z  * [new branch]        ui/release-entity-version-links          -> origin/ui/release-entity-version-links
+2026-10-23T04:39:57.4698182Z  * [new branch]        ui/release-readiness-checklist           -> origin/ui/release-readiness-checklist
+2026-10-23T04:39:57.4701275Z  * [new branch]        ui/release-readiness-checklist-v2        -> origin/ui/release-readiness-checklist-v2
+2026-10-23T04:39:57.4703603Z  * [new branch]        ui/release-target-evidence-link          -> origin/ui/release-target-evidence-link
+2026-10-23T04:39:57.4705702Z  * [new branch]        ui/workbench-needs-attention             -> origin/ui/workbench-needs-attention
+2026-10-23T04:39:57.4707923Z  * [new tag]           evidence/issue307-pr323-reviewed-8b96cf35 -> evidence/issue307-pr323-reviewed-8b96cf35
+2026-10-23T04:39:57.4709909Z  * [new ref]           facffe18fdae0e6ee0f8452dc79bc249e48f6728 -> pull/332/merge
+2026-10-23T04:39:57.4713581Z ##[endgroup]
+2026-10-23T04:39:57.4714968Z ##[group]Determining the checkout info
+2026-10-23T04:39:57.4716446Z ##[endgroup]
+2026-10-23T04:39:57.4717341Z [command]/usr/bin/git sparse-checkout disable
+2026-10-23T04:39:57.4719891Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-23T04:39:57.4722837Z ##[group]Checking out the ref
+2026-10-23T04:39:57.4724094Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/332/merge
+2026-10-23T04:39:58.4584601Z Updating files:  77% (24597/31599)
+2026-10-23T04:39:58.4700958Z Updating files:  78% (24648/31599)
+2026-10-23T04:39:58.4799520Z Updating files:  79% (24964/31599)
+2026-10-23T04:39:58.4922981Z Updating files:  80% (25280/31599)
+2026-10-23T04:39:58.5032130Z Updating files:  81% (25596/31599)
+2026-10-23T04:39:58.5141930Z Updating files:  82% (25912/31599)
+2026-10-23T04:39:58.5249903Z Updating files:  83% (26228/31599)
+2026-10-23T04:39:58.5353389Z Updating files:  84% (26544/31599)
+2026-10-23T04:39:58.5500781Z Updating files:  85% (26860/31599)
+2026-10-23T04:39:58.5714327Z Updating files:  86% (27176/31599)
+2026-10-23T04:39:58.5815563Z Updating files:  87% (27492/31599)
+2026-10-23T04:39:58.5973110Z Updating files:  88% (27808/31599)
+2026-10-23T04:39:58.6069608Z Updating files:  89% (28124/31599)
+2026-10-23T04:39:58.6183233Z Updating files:  90% (28440/31599)
+2026-10-23T04:39:58.6284714Z Updating files:  91% (28756/31599)
+2026-10-23T04:39:58.6386797Z Updating files:  92% (29072/31599)
+2026-10-23T04:39:58.6593821Z Updating files:  93% (29388/31599)
+2026-10-23T04:39:58.6903253Z Updating files:  94% (29704/31599)
+2026-10-23T04:39:58.7022795Z Updating files:  95% (30020/31599)
+2026-10-23T04:39:58.7131526Z Updating files:  96% (30336/31599)
+2026-10-23T04:39:58.7244129Z Updating files:  97% (30652/31599)
+2026-10-23T04:39:58.7358656Z Updating files:  98% (30968/31599)
+2026-10-23T04:39:58.7530316Z Updating files:  99% (31284/31599)
+2026-10-23T04:39:58.7822195Z Updating files: 100% (31599/31599)
+2026-10-23T04:39:58.7822618Z Updating files: 100% (31599/31599), done.
+2026-10-23T04:39:58.7822894Z Note: switching to 'refs/remotes/pull/332/merge'.
+2026-10-23T04:39:58.7823082Z 
+2026-10-23T04:39:58.7823276Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-23T04:39:58.7823644Z changes and commit them, and you can discard any commits you make in this
+2026-10-23T04:39:58.7824116Z state without impacting any branches by switching back to a branch.
+2026-10-23T04:39:58.7824329Z 
+2026-10-23T04:39:58.7824474Z If you want to create a new branch to retain commits you create, you may
+2026-10-23T04:39:58.7824814Z do so (now or later) by using -c with the switch command. Example:
+2026-10-23T04:39:58.7825007Z 
+2026-10-23T04:39:58.7825099Z   git switch -c <new-branch-name>
+2026-10-23T04:39:58.7825236Z 
+2026-10-23T04:39:58.7825327Z Or undo this operation with:
+2026-10-23T04:39:58.7825462Z 
+2026-10-23T04:39:58.7825533Z   git switch -
+2026-10-23T04:39:58.7825637Z 
+2026-10-23T04:39:58.7825798Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-23T04:39:58.7826034Z 
+2026-10-23T04:39:58.7826300Z HEAD is now at facffe18 Merge bee86b7961ee77eaa611f9ef8b8540362e8f6038 into f7a90022aad5da4d67ea594ccb86f8b9925a3840
+2026-10-23T04:39:58.7866084Z ##[endgroup]
+2026-10-23T04:39:58.7906312Z [command]/usr/bin/git log -1 --format=%H
+2026-10-23T04:39:58.7929326Z facffe18fdae0e6ee0f8452dc79bc249e48f6728
+2026-10-23T04:39:58.8126265Z ##[group]Run if [ "pull_request" = "workflow_dispatch" ]; then
+2026-10-23T04:39:58.8126707Z [36;1mif [ "pull_request" = "workflow_dispatch" ]; then[0m
+2026-10-23T04:39:58.8127000Z [36;1m  echo "run_hop=true" >> "$GITHUB_OUTPUT"[0m
+2026-10-23T04:39:58.8127246Z [36;1m  exit 0[0m
+2026-10-23T04:39:58.8127408Z [36;1mfi[0m
+2026-10-23T04:39:58.8127562Z [36;1m[0m
+2026-10-23T04:39:58.8127749Z [36;1mif [ "pull_request" = "pull_request" ]; then[0m
+2026-10-23T04:39:58.8128029Z [36;1m  git fetch --no-tags --depth=1 origin "main"[0m
+2026-10-23T04:39:58.8128269Z [36;1m  BASE="origin/main"[0m
+2026-10-23T04:39:58.8128481Z [36;1melif [ "pull_request" = "push" ]; then[0m
+2026-10-23T04:39:58.8128756Z [36;1m  BASE="f4f27c789f53b6c45910f55f83bee6cabfdee4f6"[0m
+2026-10-23T04:39:58.8129100Z [36;1m  if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then[0m
+2026-10-23T04:39:58.8129446Z [36;1m    # New branch: conservatively execute this smoke job.[0m
+2026-10-23T04:39:58.8129764Z [36;1m    echo "run_hop=true" >> "$GITHUB_OUTPUT"[0m
+2026-10-23T04:39:58.8129994Z [36;1m    exit 0[0m
+2026-10-23T04:39:58.8130391Z [36;1m  fi[0m
+2026-10-23T04:39:58.8130546Z [36;1melse[0m
+2026-10-23T04:39:58.8130712Z [36;1m  echo "Unsupported event" >&2[0m
+2026-10-23T04:39:58.8130925Z [36;1m  exit 1[0m
+2026-10-23T04:39:58.8131082Z [36;1mfi[0m
+2026-10-23T04:39:58.8131232Z [36;1m[0m
+2026-10-23T04:39:58.8131530Z [36;1mCHANGED="$(git diff --name-only "$BASE" "facffe18fdae0e6ee0f8452dc79bc249e48f6728" -- \[0m
+2026-10-23T04:39:58.8131888Z [36;1m  '.github/workflows/ci.yml' \[0m
+2026-10-23T04:39:58.8132168Z [36;1m  'examples/enterprise-activity/postgres-ingestion/**' \[0m
+2026-10-23T04:39:58.8132466Z [36;1m  'examples/enterprise-activity/data/**' \[0m
+2026-10-23T04:39:58.8132918Z [36;1m  'apps/platform/internal/platform/storage/**' \[0m
+2026-10-23T04:39:58.8133199Z [36;1m  'apps/platform/internal/ingestion/**' \[0m
+2026-10-23T04:39:58.8133469Z [36;1m  'apps/platform/cmd/ingestion-pilot/**' \[0m
+2026-10-23T04:39:58.8133733Z [36;1m  'apps/platform/internal/platform/routing/**' \[0m
+2026-10-23T04:39:58.8133996Z [36;1m  'apps/platform/go.mod' \[0m
+2026-10-23T04:39:58.8134201Z [36;1m  'apps/platform/go.sum' \[0m
+2026-10-23T04:39:58.8134398Z [36;1m  'migrations/**' \[0m
+2026-10-23T04:39:58.8134609Z [36;1m  'examples/enterprise-activity/hop/**' \[0m
+2026-10-23T04:39:58.8134944Z [36;1m  'examples/enterprise-activity/workflow/energy-monthly-hop-v1.yaml' \[0m
+2026-10-23T04:39:58.8135292Z [36;1m  'apps/platform/internal/workflow/hop/**' \[0m
+2026-10-23T04:39:58.8135619Z [36;1m  'apps/platform/internal/workflow/application/managed_execution.go' \[0m
+2026-10-23T04:39:58.8135996Z [36;1m  'apps/platform/internal/workflow/transport/queue/handler.go')"[0m
+2026-10-23T04:39:58.8136297Z [36;1mif [ -n "$CHANGED" ]; then[0m
+2026-10-23T04:39:58.8136502Z [36;1m  echo "$CHANGED"[0m
+2026-10-23T04:39:58.8136713Z [36;1m  echo "run_hop=true" >> "$GITHUB_OUTPUT"[0m
+2026-10-23T04:39:58.8136931Z [36;1melse[0m
+2026-10-23T04:39:58.8137113Z [36;1m  echo "run_hop=false" >> "$GITHUB_OUTPUT"[0m
+2026-10-23T04:39:58.8137328Z [36;1mfi[0m
+2026-10-23T04:39:58.8367912Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-23T04:39:58.8368202Z ##[endgroup]
+2026-10-23T04:39:59.3278137Z From https://github.com/qq550723504/data-product-platform
+2026-10-23T04:39:59.3278734Z  * branch              main       -> FETCH_HEAD
+2026-10-23T04:39:59.3309047Z .github/workflows/ci.yml
+2026-10-23T04:39:59.3309387Z apps/platform/internal/platform/storage/lifecycle_delete.go
+2026-10-23T04:39:59.3309767Z apps/platform/internal/platform/storage/lifecycle_delete_response.go
+2026-10-23T04:39:59.3310259Z apps/platform/internal/platform/storage/lifecycle_delete_response_test.go
+2026-10-23T04:39:59.3372201Z ##[group]Run python3 examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py
+2026-10-23T04:39:59.3372759Z [36;1mpython3 examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py[0m
+2026-10-23T04:39:59.3373246Z [36;1mpython3 examples/enterprise-activity/postgres-ingestion/trial_images_test.py[0m
+2026-10-23T04:39:59.3373711Z [36;1mpython3 examples/enterprise-activity/postgres-ingestion/cleanup_receipts_test.py[0m
+2026-10-23T04:39:59.3428708Z shell: /usr/bin/bash -e {0}
+2026-10-23T04:39:59.3428927Z ##[endgroup]
+2026-10-23T04:39:59.5661895Z .....
+2026-10-23T04:39:59.5662277Z ----------------------------------------------------------------------
+2026-10-23T04:39:59.5662707Z Ran 5 tests in 0.008s
+2026-10-23T04:39:59.5662876Z 
+2026-10-23T04:39:59.5662960Z OK
+2026-10-23T04:39:59.8866585Z ..............
+2026-10-23T04:39:59.8866978Z ----------------------------------------------------------------------
+2026-10-23T04:39:59.8867384Z Ran 14 tests in 0.237s
+2026-10-23T04:39:59.8867510Z 
+2026-10-23T04:39:59.8867589Z OK
+2026-10-23T04:39:59.9882633Z ....
+2026-10-23T04:39:59.9882910Z ----------------------------------------------------------------------
+2026-10-23T04:39:59.9883206Z Ran 4 tests in 0.013s
+2026-10-23T04:39:59.9883326Z 
+2026-10-23T04:39:59.9883390Z OK
+2026-10-23T04:40:00.0097687Z ##[group]Run set -euo pipefail
+2026-10-23T04:40:00.0097969Z [36;1mset -euo pipefail[0m
+2026-10-23T04:40:00.0098190Z [36;1mFIXTURE_DIR="$RUNNER_TEMP/hop-smoke"[0m
+2026-10-23T04:40:00.0098430Z [36;1mrm -rf "$FIXTURE_DIR"[0m
+2026-10-23T04:40:00.0098637Z [36;1mmkdir -p "$FIXTURE_DIR"[0m
+2026-10-23T04:40:00.0098979Z [36;1mcp examples/enterprise-activity/hop/aggregate-energy-monthly.hpl "$FIXTURE_DIR/"[0m
+2026-10-23T04:40:00.0099460Z [36;1mcp examples/enterprise-activity/hop/energy-standardized-input.csv "$FIXTURE_DIR/"[0m
+2026-10-23T04:40:00.0099929Z [36;1mcp examples/enterprise-activity/hop/energy-monthly-expected.csv "$FIXTURE_DIR/"[0m
+2026-10-23T04:40:00.0100578Z [36;1mchmod -R a+rwX "$FIXTURE_DIR"[0m
+2026-10-23T04:40:00.0100784Z [36;1m[0m
+2026-10-23T04:40:00.0100950Z [36;1mdocker pull apache/hop:2.19.0[0m
+2026-10-23T04:40:00.0101170Z [36;1mdocker run --rm \[0m
+2026-10-23T04:40:00.0101372Z [36;1m  -v "$FIXTURE_DIR:/files" \[0m
+2026-10-23T04:40:00.0101648Z [36;1m  --entrypoint /opt/hop/hop-run.sh \[0m
+2026-10-23T04:40:00.0101888Z [36;1m  apache/hop:2.19.0 \[0m
+2026-10-23T04:40:00.0102123Z [36;1m  -f /files/aggregate-energy-monthly.hpl \[0m
+2026-10-23T04:40:00.0102364Z [36;1m  -r local \[0m
+2026-10-23T04:40:00.0102860Z [36;1m  -p 'INPUT_ENERGY_STANDARDIZED_URI=/files/energy-standardized-input.csv,OUTPUT_BASE_URI=/files/ci-output,CORE_EXECUTION_ID=ci-smoke,TARGET_PERIOD=2025-02'[0m
+2026-10-23T04:40:00.0103369Z [36;1m[0m
+2026-10-23T04:40:00.0103541Z [36;1mtest -s "$FIXTURE_DIR/ci-output.csv"[0m
+2026-10-23T04:40:00.0103766Z [36;1m[0m
+2026-10-23T04:40:00.0104076Z [36;1mpython3 - "$FIXTURE_DIR/ci-output.csv" "$FIXTURE_DIR/energy-monthly-expected.csv" <<'PY'[0m
+2026-10-23T04:40:00.0104421Z [36;1mimport csv[0m
+2026-10-23T04:40:00.0104589Z [36;1mimport sys[0m
+2026-10-23T04:40:00.0104748Z [36;1m[0m
+2026-10-23T04:40:00.0104900Z [36;1mdef normalize(path):[0m
+2026-10-23T04:40:00.0105167Z [36;1m    with open(path, newline='', encoding='utf-8-sig') as handle:[0m
+2026-10-23T04:40:00.0105467Z [36;1m        rows = list(csv.DictReader(handle))[0m
+2026-10-23T04:40:00.0105697Z [36;1m    return sorted([0m
+2026-10-23T04:40:00.0105886Z [36;1m        ([0m
+2026-10-23T04:40:00.0106081Z [36;1m            row['canonical_company_id'].strip(),[0m
+2026-10-23T04:40:00.0106328Z [36;1m            row['year_month'].strip(),[0m
+2026-10-23T04:40:00.0106562Z [36;1m            round(float(row['energy_kwh']), 12),[0m
+2026-10-23T04:40:00.0106777Z [36;1m        )[0m
+2026-10-23T04:40:00.0106941Z [36;1m        for row in rows[0m
+2026-10-23T04:40:00.0107128Z [36;1m    )[0m
+2026-10-23T04:40:00.0107284Z [36;1m[0m
+2026-10-23T04:40:00.0107456Z [36;1mactual = normalize(sys.argv[1])[0m
+2026-10-23T04:40:00.0107687Z [36;1mexpected = normalize(sys.argv[2])[0m
+2026-10-23T04:40:00.0107907Z [36;1mif actual != expected:[0m
+2026-10-23T04:40:00.0108230Z [36;1m    raise SystemExit(f"Hop output mismatch\nexpected={expected!r}\nactual={actual!r}")[0m
+2026-10-23T04:40:00.0108634Z [36;1mprint(f"validated {len(actual)} Apache Hop aggregate rows")[0m
+2026-10-23T04:40:00.0108901Z [36;1mPY[0m
+2026-10-23T04:40:00.0163943Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-23T04:40:00.0164220Z ##[endgroup]
+2026-10-23T04:40:00.8992239Z 2.19.0: Pulling from apache/hop
+2026-10-23T04:40:01.1301203Z 55afa1ecc21d: Already exists
+2026-10-23T04:40:01.1326781Z 7a18029d56cf: Pulling fs layer
+2026-10-23T04:40:01.1327456Z d393e322d7f9: Pulling fs layer
+2026-10-23T04:40:01.1327704Z c2d75a1a78d7: Pulling fs layer
+2026-10-23T04:40:01.1327923Z 7cf73ed08765: Pulling fs layer
+2026-10-23T04:40:01.1328197Z 4f4fb700ef54: Pulling fs layer
+2026-10-23T04:40:01.1328495Z 7cf73ed08765: Waiting
+2026-10-23T04:40:01.1328789Z 4f4fb700ef54: Waiting
+2026-10-23T04:40:01.3362728Z c2d75a1a78d7: Verifying Checksum
+2026-10-23T04:40:01.3363290Z c2d75a1a78d7: Download complete
+2026-10-23T04:40:01.5058029Z 7cf73ed08765: Verifying Checksum
+2026-10-23T04:40:01.5058737Z 7cf73ed08765: Download complete
+2026-10-23T04:40:01.5416395Z 7a18029d56cf: Verifying Checksum
+2026-10-23T04:40:01.5416680Z 7a18029d56cf: Download complete
+2026-10-23T04:40:01.6727329Z 4f4fb700ef54: Verifying Checksum
+2026-10-23T04:40:01.6728018Z 4f4fb700ef54: Download complete
+2026-10-23T04:40:04.8193970Z d393e322d7f9: Verifying Checksum
+2026-10-23T04:40:04.8194359Z d393e322d7f9: Download complete
+2026-10-23T04:40:16.6530010Z 7a18029d56cf: Pull complete
+2026-10-23T04:40:28.0297634Z d393e322d7f9: Pull complete
+2026-10-23T04:40:28.0376783Z c2d75a1a78d7: Pull complete
+2026-10-23T04:40:28.0441811Z 7cf73ed08765: Pull complete
+2026-10-23T04:40:28.0502785Z 4f4fb700ef54: Pull complete
+2026-10-23T04:40:28.0536316Z Digest: sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d
+2026-10-23T04:40:28.0547226Z Status: Downloaded newer image for apache/hop:2.19.0
+2026-10-23T04:40:28.0686749Z docker.io/apache/hop:2.19.0
+2026-10-23T04:40:31.3661837Z 2026/10/23 04:40:31 - HopRun - Enabling project 'default'
+2026-10-23T04:40:31.3662518Z 2026/10/23 04:40:31 - HopRun - Two-way password encoder initialized with plugin ID 'Hop' for project 'default'
+2026-10-23T04:40:31.4515510Z 2026/10/23 04:40:31 - HopRun - Starting pipeline: /files/aggregate-energy-monthly.hpl
+2026-10-23T04:40:31.4526287Z 2026/10/23 04:40:31 - enterprise-activity-energy-monthly-hop - Executing this pipeline using the Local Pipeline Engine with run configuration 'local'
+2026-10-23T04:40:31.4601161Z 2026/10/23 04:40:31 - enterprise-activity-energy-monthly-hop - Execution started for pipeline [enterprise-activity-energy-monthly-hop]
+2026-10-23T04:40:31.7482180Z 2026/10/23 04:40:31 - Read standardized energy.0 - Header row skipped in file '/files/energy-standardized-input.csv'
+2026-10-23T04:40:31.7518975Z 2026/10/23 04:40:31 - Read standardized energy.0 - Finished processing (I=7, O=0, R=0, W=6, U=0, E=0)
+2026-10-23T04:40:31.7572037Z 2026/10/23 04:40:31 - Aggregate monthly energy.0 - Finished processing (I=0, O=0, R=6, W=4, U=0, E=0)
+2026-10-23T04:40:31.7629986Z 2026/10/23 04:40:31 - Write monthly energy.0 - Finished processing (I=0, O=5, R=4, W=4, U=0, E=0)
+2026-10-23T04:40:31.7653313Z 2026/10/23 04:40:31 - enterprise-activity-energy-monthly-hop - Pipeline duration : 0.312 seconds [  0.312" ]
+2026-10-23T04:40:31.8053591Z HopRun exit.
+2026-10-23T04:40:31.8057434Z 2026/10/23 04:40:31 - enterprise-activity-energy-monthly-hop - Execution finished on a local pipeline engine with run configuration 'local'
+2026-10-23T04:40:31.9264408Z validated 4 Apache Hop aggregate rows
+2026-10-23T04:40:31.9325071Z ##[group]Run python3 examples/enterprise-activity/postgres-ingestion/smoke.py --output "$RUNNER_TEMP/postgres-ingestion-b1"
+2026-10-23T04:40:31.9325768Z [36;1mpython3 examples/enterprise-activity/postgres-ingestion/smoke.py --output "$RUNNER_TEMP/postgres-ingestion-b1"[0m
+2026-10-23T04:40:31.9380526Z shell: /usr/bin/bash -e {0}
+2026-10-23T04:40:31.9380741Z ##[endgroup]
+2026-10-23T04:40:45.5206398Z PASS source-read-only
+2026-10-23T04:40:48.3335056Z PASS PGI-01
+2026-10-23T04:40:50.1705536Z PASS PGI-02
+2026-10-23T04:41:15.3563928Z PASS PGI-04
+2026-10-23T04:41:15.4197592Z PASS PGI-03
+2026-10-23T04:41:16.2102858Z B1 PASS; evidence: /home/runner/work/_temp/postgres-ingestion-b1/report.json
+2026-10-23T04:41:16.2262421Z ##[group]Run actions/upload-artifact@v4
+2026-10-23T04:41:16.2262660Z with:
+2026-10-23T04:41:16.2262841Z   name: postgres-ingestion-b1-1
+2026-10-23T04:41:16.2263042Z   retention-days: 7
+2026-10-23T04:41:16.2263218Z   if-no-files-found: error
+2026-10-23T04:41:16.2263795Z   path: /home/runner/work/_temp/postgres-ingestion-b1/report.json
+/home/runner/work/_temp/postgres-ingestion-b1/*-manifest.json
+/home/runner/work/_temp/postgres-ingestion-b1/requests.json
+
+2026-10-23T04:41:16.2264438Z   compression-level: 6
+2026-10-23T04:41:16.2264622Z   overwrite: false
+2026-10-23T04:41:16.2264801Z   include-hidden-files: false
+2026-10-23T04:41:16.2264997Z ##[endgroup]
+2026-10-23T04:41:16.3550310Z (node:7013) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-23T04:41:16.3551000Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-23T04:41:16.3606908Z With the provided path, there will be 8 files uploaded
+2026-10-23T04:41:16.3611872Z Artifact name is valid!
+2026-10-23T04:41:16.3612200Z Root directory input is valid!
+2026-10-23T04:41:16.6822643Z Beginning upload of artifact content to blob storage
+2026-10-23T04:41:16.7069023Z (node:7013) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-23T04:41:16.9530800Z Uploaded bytes 13215
+2026-10-23T04:41:17.0218115Z Finished uploading artifact content to blob storage!
+2026-10-23T04:41:17.0218934Z SHA256 digest of uploaded artifact zip is cea20255a90194bee47557cfe0fe59df4f9ca7e629ccba278584c0323962b35e
+2026-10-23T04:41:17.0220345Z Finalizing artifact upload
+2026-10-23T04:41:17.4836865Z Artifact postgres-ingestion-b1-1.zip successfully finalized. Artifact ID 12479215775
+2026-10-23T04:41:17.4837731Z Artifact postgres-ingestion-b1-1 has been successfully uploaded! Final size is 13215 bytes. Artifact ID is 12479215775
+2026-10-23T04:41:17.4843214Z Artifact download URL: https://github.com/qq550723504/data-product-platform/actions/runs/39901487931/artifacts/12479215775
+2026-10-23T04:41:17.5001602Z ##[group]Run actions/setup-go@v5
+2026-10-23T04:41:17.5001826Z with:
+2026-10-23T04:41:17.5001988Z   go-version: 1.24.8
+2026-10-23T04:41:17.5002203Z   cache-dependency-path: apps/platform/go.sum
+2026-10-23T04:41:17.5002443Z   check-latest: false
+2026-10-23T04:41:17.5004234Z   token: ***
+2026-10-23T04:41:17.5004412Z   cache: true
+2026-10-23T04:41:17.5004576Z ##[endgroup]
+2026-10-23T04:41:17.6057553Z Setup go version spec 1.24.8
+2026-10-23T04:41:17.6064889Z Attempting to download 1.24.8...
+2026-10-23T04:41:17.6149820Z (node:7025) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-23T04:41:17.6150695Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-23T04:41:18.5379055Z matching 1.24.8...
+2026-10-23T04:41:18.5432295Z Acquiring 1.24.8 from https://github.com/actions/go-versions/releases/download/1.24.8-18331018734/go-1.24.8-linux-x64.tar.gz
+2026-10-23T04:41:19.1309818Z Extracting Go...
+2026-10-23T04:41:19.1420647Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/ef871737-1d77-4201-93d0-75406505e87f -f /home/runner/work/_temp/4ac496b5-26fa-4631-9c7e-7680c8a900b4
+2026-10-23T04:41:20.6612481Z Successfully extracted go to /home/runner/work/_temp/ef871737-1d77-4201-93d0-75406505e87f
+2026-10-23T04:41:20.6613080Z Adding to the cache ...
+2026-10-23T04:41:24.7664987Z Successfully cached go to /opt/hostedtoolcache/go/1.24.8/x64
+2026-10-23T04:41:24.7667305Z Added go to the path
+2026-10-23T04:41:24.7669820Z Successfully set up Go version 1.24.8
+2026-10-23T04:41:24.7853375Z [command]/opt/hostedtoolcache/go/1.24.8/x64/bin/go env GOMODCACHE
+2026-10-23T04:41:24.7888645Z [command]/opt/hostedtoolcache/go/1.24.8/x64/bin/go env GOCACHE
+2026-10-23T04:41:24.7920019Z /home/runner/go/pkg/mod
+2026-10-23T04:41:24.7931074Z /home/runner/.cache/go-build
+2026-10-23T04:41:24.9918086Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.24.8-676de26508dd11eaa3c5d197dd2384ffc75a9326a283f988eb229f0b52b23d55
+2026-10-23T04:41:24.9999889Z (node:7025) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-23T04:41:26.2221817Z Received 37748736 of 755899239 (5.0%), 36.0 MBs/sec
+2026-10-23T04:41:27.2223039Z Received 205520896 of 755899239 (27.2%), 97.9 MBs/sec
+2026-10-23T04:41:28.2228917Z Received 398458880 of 755899239 (52.7%), 126.6 MBs/sec
+2026-10-23T04:41:29.2227177Z Received 574619648 of 755899239 (76.0%), 136.9 MBs/sec
+2026-10-23T04:41:30.0423769Z Received 755899239 of 755899239 (100.0%), 149.5 MBs/sec
+2026-10-23T04:41:30.0425037Z Cache Size: ~721 MB (755899239 B)
+2026-10-23T04:41:30.0522834Z [command]/usr/bin/tar -xf /home/runner/work/_temp/d508ab0d-cd84-413b-aa1a-c6bd29c8444a/cache.tzst -P -C /home/runner/work/data-product-platform/data-product-platform --use-compress-program unzstd
+2026-10-23T04:41:38.6584175Z Cache restored successfully
+2026-10-23T04:41:38.6893449Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.24.8-676de26508dd11eaa3c5d197dd2384ffc75a9326a283f988eb229f0b52b23d55
+2026-10-23T04:41:38.6937871Z go version go1.24.8 linux/amd64
+2026-10-23T04:41:38.6938120Z 
+2026-10-23T04:41:38.6938471Z ##[group]go env
+2026-10-23T04:41:38.7052221Z AR='ar'
+2026-10-23T04:41:38.7052510Z CC='gcc'
+2026-10-23T04:41:38.7052770Z CGO_CFLAGS='-O2 -g'
+2026-10-23T04:41:38.7053066Z CGO_CPPFLAGS=''
+2026-10-23T04:41:38.7053348Z CGO_CXXFLAGS='-O2 -g'
+2026-10-23T04:41:38.7053541Z CGO_ENABLED='1'
+2026-10-23T04:41:38.7053727Z CGO_FFLAGS='-O2 -g'
+2026-10-23T04:41:38.7053918Z CGO_LDFLAGS='-O2 -g'
+2026-10-23T04:41:38.7054102Z CXX='g++'
+2026-10-23T04:41:38.7054278Z GCCGO='gccgo'
+2026-10-23T04:41:38.7054451Z GO111MODULE=''
+2026-10-23T04:41:38.7054629Z GOAMD64='v1'
+2026-10-23T04:41:38.7054795Z GOARCH='amd64'
+2026-10-23T04:41:38.7054958Z GOAUTH='netrc'
+2026-10-23T04:41:38.7055127Z GOBIN=''
+2026-10-23T04:41:38.7055585Z GOCACHE='/home/runner/.cache/go-build'
+2026-10-23T04:41:38.7055825Z GOCACHEPROG=''
+2026-10-23T04:41:38.7056001Z GODEBUG=''
+2026-10-23T04:41:38.7056189Z GOENV='/home/runner/.config/go/env'
+2026-10-23T04:41:38.7056407Z GOEXE=''
+2026-10-23T04:41:38.7056568Z GOEXPERIMENT=''
+2026-10-23T04:41:38.7056744Z GOFIPS140='off'
+2026-10-23T04:41:38.7056924Z GOFLAGS=''
+2026-10-23T04:41:38.7057485Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build1621366697=/tmp/go-build -gno-record-gcc-switches'
+2026-10-23T04:41:38.7057994Z GOHOSTARCH='amd64'
+2026-10-23T04:41:38.7058184Z GOHOSTOS='linux'
+2026-10-23T04:41:38.7058361Z GOINSECURE=''
+2026-10-23T04:41:38.7058539Z GOMOD='/dev/null'
+2026-10-23T04:41:38.7058738Z GOMODCACHE='/home/runner/go/pkg/mod'
+2026-10-23T04:41:38.7058958Z GONOPROXY=''
+2026-10-23T04:41:38.7059136Z GONOSUMDB=''
+2026-10-23T04:41:38.7059292Z GOOS='linux'
+2026-10-23T04:41:38.7059464Z GOPATH='/home/runner/go'
+2026-10-23T04:41:38.7059678Z GOPRIVATE=''
+2026-10-23T04:41:38.7059910Z GOPROXY='https://proxy.golang.org,direct'
+2026-10-23T04:41:38.7060415Z GOROOT='/opt/hostedtoolcache/go/1.24.8/x64'
+2026-10-23T04:41:38.7060667Z GOSUMDB='sum.golang.org'
+2026-10-23T04:41:38.7060876Z GOTELEMETRY='local'
+2026-10-23T04:41:38.7061111Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+2026-10-23T04:41:38.7061354Z GOTMPDIR=''
+2026-10-23T04:41:38.7061529Z GOTOOLCHAIN='auto'
+2026-10-23T04:41:38.7061794Z GOTOOLDIR='/opt/hostedtoolcache/go/1.24.8/x64/pkg/tool/linux_amd64'
+2026-10-23T04:41:38.7062144Z GOVCS=''
+2026-10-23T04:41:38.7062399Z GOVERSION='go1.24.8'
+2026-10-23T04:41:38.7062670Z GOWORK=''
+2026-10-23T04:41:38.7062924Z PKG_CONFIG='pkg-config'
+2026-10-23T04:41:38.7063114Z 
+2026-10-23T04:41:38.7063501Z ##[endgroup]
+2026-10-23T04:41:38.7268590Z ##[group]Run python3 examples/enterprise-activity/postgres-ingestion/storage_smoke.py --output "$RUNNER_TEMP/postgres-ingestion-storage"
+2026-10-23T04:41:38.7269369Z [36;1mpython3 examples/enterprise-activity/postgres-ingestion/storage_smoke.py --output "$RUNNER_TEMP/postgres-ingestion-storage"[0m
+2026-10-23T04:41:38.7334009Z shell: /usr/bin/bash -e {0}
+2026-10-23T04:41:38.7334240Z ##[endgroup]
+2026-10-23T04:42:08.9062706Z B2 storage gate PASS; Core admission and user flow NOT_RUN
+2026-10-23T04:42:08.9208075Z ##[group]Run actions/upload-artifact@v4
+2026-10-23T04:42:08.9208322Z with:
+2026-10-23T04:42:08.9208531Z   name: postgres-ingestion-storage-1
+2026-10-23T04:42:08.9208761Z   retention-days: 7
+2026-10-23T04:42:08.9208953Z   if-no-files-found: error
+2026-10-23T04:42:08.9209259Z   path: /home/runner/work/_temp/postgres-ingestion-storage/storage-report.json
+2026-10-23T04:42:08.9209587Z   compression-level: 6
+2026-10-23T04:42:08.9209774Z   overwrite: false
+2026-10-23T04:42:08.9209953Z   include-hidden-files: false
+2026-10-23T04:42:08.9210361Z ##[endgroup]
+2026-10-23T04:42:09.0565905Z (node:8216) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-23T04:42:09.0566853Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-23T04:42:09.0603894Z With the provided path, there will be 1 file uploaded
+2026-10-23T04:42:09.0611375Z Artifact name is valid!
+2026-10-23T04:42:09.0612259Z Root directory input is valid!
+2026-10-23T04:42:09.3763707Z Beginning upload of artifact content to blob storage
+2026-10-23T04:42:09.3901095Z (node:8216) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-23T04:42:09.6289007Z Uploaded bytes 1686
+2026-10-23T04:42:09.6976104Z Finished uploading artifact content to blob storage!
+2026-10-23T04:42:09.6976757Z SHA256 digest of uploaded artifact zip is 452a3006d22abeb80453a7cb66df9b4d4f43767f8f55cc57ac7552e3d0709d8d
+2026-10-23T04:42:09.6978228Z Finalizing artifact upload
+2026-10-23T04:42:10.1731683Z Artifact postgres-ingestion-storage-1.zip successfully finalized. Artifact ID 12479640125
+2026-10-23T04:42:10.1732510Z Artifact postgres-ingestion-storage-1 has been successfully uploaded! Final size is 1686 bytes. Artifact ID is 12479640125
+2026-10-23T04:42:10.1736342Z Artifact download URL: https://github.com/qq550723504/data-product-platform/actions/runs/39901487931/artifacts/12479640125
+2026-10-23T04:42:10.1848995Z ##[group]Run python3 examples/enterprise-activity/postgres-ingestion/b2_smoke.py --output "$RUNNER_TEMP/postgres-ingestion-b2"
+2026-10-23T04:42:10.1849728Z [36;1mpython3 examples/enterprise-activity/postgres-ingestion/b2_smoke.py --output "$RUNNER_TEMP/postgres-ingestion-b2"[0m
+2026-10-23T04:42:10.1904657Z shell: /usr/bin/bash -e {0}
+2026-10-23T04:42:10.1904880Z ##[endgroup]
+2026-10-23T04:42:10.2519435Z B2: preparing pinned runtimes
+2026-10-23T04:42:21.4124193Z B2: running authenticated Commands and independent Core assertions
+2026-10-23T04:43:44.9822349Z ----------------------------------------
+2026-10-23T04:43:44.9823450Z Exception occurred during processing of request from ('127.0.0.1', 58082)
+2026-10-23T04:43:45.0011559Z Traceback (most recent call last):
+2026-10-23T04:43:45.0038726Z   File "/usr/lib/python3.12/socketserver.py", line 692, in process_request_thread
+2026-10-23T04:43:45.0039437Z     self.finish_request(request, client_address)
+2026-10-23T04:43:45.0040650Z   File "/usr/lib/python3.12/socketserver.py", line 362, in finish_request
+2026-10-23T04:43:45.0041290Z     self.RequestHandlerClass(request, client_address, self)
+2026-10-23T04:43:45.0041903Z   File "/usr/lib/python3.12/socketserver.py", line 761, in __init__
+2026-10-23T04:43:45.0042376Z     self.handle()
+2026-10-23T04:43:45.0042808Z   File "/usr/lib/python3.12/http/server.py", line 436, in handle
+2026-10-23T04:43:45.0043114Z     self.handle_one_request()
+2026-10-23T04:43:45.0043560Z   File "/usr/lib/python3.12/http/server.py", line 424, in handle_one_request
+2026-10-23T04:43:45.0043871Z     method()
+2026-10-23T04:43:45.0044564Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/enterprise-activity/postgres-ingestion/smoke.py", line 108, in do_GET
+2026-10-23T04:43:45.0045305Z     self.forward()
+2026-10-23T04:43:45.0045952Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/enterprise-activity/postgres-ingestion/smoke.py", line 129, in forward
+2026-10-23T04:43:45.0046687Z     with urllib.request.urlopen(req, timeout=25) as response:
+2026-10-23T04:43:45.0047061Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-23T04:43:45.0047492Z   File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+2026-10-23T04:43:45.0047830Z     return opener.open(url, data, timeout)
+2026-10-23T04:43:45.0048226Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-23T04:43:45.0048532Z   File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+2026-10-23T04:43:45.0048921Z     response = self._open(req, data)
+2026-10-23T04:43:45.0049220Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-10-23T04:43:45.0049525Z   File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+2026-10-23T04:43:45.0050015Z     result = self._call_chain(self.handle_open, protocol, protocol +
+2026-10-23T04:43:45.0050638Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-23T04:43:45.0051065Z   File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+2026-10-23T04:43:45.0051384Z     result = func(*args)
+2026-10-23T04:43:45.0051998Z              ^^^^^^^^^^^
+2026-10-23T04:43:45.0052298Z   File "/usr/lib/python3.12/urllib/request.py", line 1373, in http_open
+2026-10-23T04:43:45.0052776Z     return self.do_open(http.client.HTTPConnection, req)
+2026-10-23T04:43:45.0053152Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-23T04:43:45.0053577Z   File "/usr/lib/python3.12/urllib/request.py", line 1348, in do_open
+2026-10-23T04:43:45.0053882Z     r = h.getresponse()
+2026-10-23T04:43:45.0054134Z         ^^^^^^^^^^^^^^^
+2026-10-23T04:43:45.0054477Z   File "/usr/lib/python3.12/http/client.py", line 1457, in getresponse
+2026-10-23T04:43:45.0054784Z     response.begin()
+2026-10-23T04:43:45.0055142Z   File "/usr/lib/python3.12/http/client.py", line 336, in begin
+2026-10-23T04:43:45.0055490Z     version, status, reason = self._read_status()
+2026-10-23T04:43:45.0056004Z                               ^^^^^^^^^^^^^^^^^^^
+2026-10-23T04:43:45.0056529Z   File "/usr/lib/python3.12/http/client.py", line 305, in _read_status
+2026-10-23T04:43:45.0057003Z     raise RemoteDisconnected("Remote end closed connection without"
+2026-10-23T04:43:45.0057409Z http.client.RemoteDisconnected: Remote end closed connection without response
+2026-10-23T04:43:45.0057858Z ----------------------------------------
+2026-10-23T04:43:49.4566216Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/config
+2026-10-23T04:43:49.4566877Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/engine-version
+2026-10-23T04:43:49.4567513Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/workspace
+2026-10-23T04:43:49.4568079Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/template
+2026-10-23T04:43:49.4568633Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/dataset
+2026-10-23T04:43:49.4569180Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/columns
+2026-10-23T04:43:49.4569706Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/rows
+2026-10-23T04:43:49.4570421Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/duplicate
+2026-10-23T04:43:49.4570975Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/source
+2026-10-23T04:43:49.4571517Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/batch
+2026-10-23T04:43:49.4572059Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/engine-id
+2026-10-23T04:43:49.4572623Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/traversal
+2026-10-23T04:43:49.4573162Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/schema
+2026-10-23T04:43:49.4573699Z === RUN   TestLiveCoreBatch/manifest-negative-matrix/request
+2026-10-23T04:43:49.4574230Z === RUN   TestLiveCoreBatch/concurrent-prepare-and-admit
+2026-10-23T04:43:49.4574833Z === RUN   TestLiveCoreBatch/native-attempt-publisher-isolation
+2026-10-23T04:43:49.4575470Z === RUN   TestLiveCoreBatch/commit-reply-loss-recovers-same-receipt
+2026-10-23T04:43:49.4576169Z === RUN   TestLiveCoreBatch/revocation-between-object-write-and-core-commit
+2026-10-23T04:43:49.4576836Z === RUN   TestLiveCoreBatch/third-object-failure-and-recovery
+2026-10-23T04:43:49.4577380Z === RUN   TestLiveCoreBatch/lost-object-put-response
+2026-10-23T04:43:49.4577936Z === RUN   TestLiveCoreBatch/database-rollback-and-recovery
+2026-10-23T04:43:49.4578577Z === RUN   TestLiveCoreBatch/current-authority-and-source-revocation
+2026-10-23T04:43:49.4579196Z === RUN   TestLiveCoreBatch/unknown-register-never-restarted
+2026-10-23T04:43:49.4579731Z === RUN   TestLiveCoreBatch/lost-start-status-recovery
+2026-10-23T04:43:49.4581458Z === RUN   TestLiveCoreBatch/unknown-status-retains-attempt
+2026-10-23T04:43:49.4582046Z === RUN   TestLiveCoreBatch/status-reply-must-confirm-exact-identity
+2026-10-23T04:43:49.4582703Z === RUN   TestLiveCoreBatch/failed-hop-explicit-new-attempt
+2026-10-23T04:43:49.4585111Z     live_test.go:1164: Hop did not reach observed terminal outcome
+2026-10-23T04:43:49.4585692Z === RUN   TestLiveCoreBatch/hop-restart-id-loss-fails-closed
+2026-10-23T04:43:49.4586140Z --- FAIL: TestLiveCoreBatch (86.62s)
+2026-10-23T04:43:49.4586875Z     --- PASS: TestLiveCoreBatch/metadata-endpoint-must-match-probe (0.01s)
+2026-10-23T04:43:49.4600959Z     --- PASS: TestLiveCoreBatch/runtime-change-requires-restart (0.01s)
+2026-10-23T04:43:49.4601837Z     --- PASS: TestLiveCoreBatch/https-hop-is-rejected-before-dispatch (0.00s)
+2026-10-23T04:43:49.4602685Z     --- PASS: TestLiveCoreBatch/claim-before-dispatch-is-not-actual-cost (0.10s)
+2026-10-23T04:43:49.4603554Z     --- PASS: TestLiveCoreBatch/registered-reply-survives-projection-failure (1.15s)
+2026-10-23T04:43:49.4604441Z     --- PASS: TestLiveCoreBatch/dispatch-lock-does-not-lose-register-reply (2.40s)
+2026-10-23T04:43:49.4605285Z     --- PASS: TestLiveCoreBatch/definite-preflight-failure-can-retry (0.43s)
+2026-10-23T04:43:49.4606122Z     --- PASS: TestLiveCoreBatch/buffered-register-write-stays-unconfirmed (0.12s)
+2026-10-23T04:43:49.4606927Z     --- PASS: TestLiveCoreBatch/dispatch-cost-survives-result-loss (0.13s)
+2026-10-23T04:43:49.4608016Z     --- PASS: TestLiveCoreBatch/definite-start-preflight-failure-can-retry (0.47s)
+2026-10-23T04:43:49.4608913Z     --- PASS: TestLiveCoreBatch/unsent-status-does-not-fail-live-pipeline (0.39s)
+2026-10-23T04:43:49.4609635Z     --- PASS: TestLiveCoreBatch/server-owned-targets (0.07s)
+2026-10-23T04:43:49.4610394Z     --- PASS: TestLiveCoreBatch/manifest-negative-matrix (0.42s)
+2026-10-23T04:43:49.4611237Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/attempt (0.00s)
+2026-10-23T04:43:49.4612046Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/path (0.00s)
+2026-10-23T04:43:49.4612865Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/missing (0.00s)
+2026-10-23T04:43:49.4613664Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/extra (0.00s)
+2026-10-23T04:43:49.4614488Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/instance (0.00s)
+2026-10-23T04:43:49.4615310Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/config (0.00s)
+2026-10-23T04:43:49.4616218Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/engine-version (0.00s)
+2026-10-23T04:43:49.4617089Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/workspace (0.00s)
+2026-10-23T04:43:49.4617941Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/template (0.00s)
+2026-10-23T04:43:49.4618771Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/dataset (0.00s)
+2026-10-23T04:43:49.4619588Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/columns (0.00s)
+2026-10-23T04:43:49.4620595Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/rows (0.00s)
+2026-10-23T04:43:49.4621427Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/duplicate (0.00s)
+2026-10-23T04:43:49.4622260Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/source (0.00s)
+2026-10-23T04:43:49.4623039Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/batch (0.00s)
+2026-10-23T04:43:49.4623911Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/engine-id (0.00s)
+2026-10-23T04:43:49.4624752Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/traversal (0.00s)
+2026-10-23T04:43:49.4625599Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/schema (0.00s)
+2026-10-23T04:43:49.4626431Z         --- PASS: TestLiveCoreBatch/manifest-negative-matrix/request (0.00s)
+2026-10-23T04:43:49.4627159Z     --- PASS: TestLiveCoreBatch/concurrent-prepare-and-admit (0.84s)
+2026-10-23T04:43:49.4627912Z     --- PASS: TestLiveCoreBatch/native-attempt-publisher-isolation (0.41s)
+2026-10-23T04:43:49.4628714Z     --- PASS: TestLiveCoreBatch/commit-reply-loss-recovers-same-receipt (0.45s)
+2026-10-23T04:43:49.4629606Z     --- PASS: TestLiveCoreBatch/revocation-between-object-write-and-core-commit (0.42s)
+2026-10-23T04:43:49.4630619Z     --- PASS: TestLiveCoreBatch/third-object-failure-and-recovery (0.39s)
+2026-10-23T04:43:49.4631326Z     --- PASS: TestLiveCoreBatch/lost-object-put-response (0.40s)
+2026-10-23T04:43:49.4632011Z     --- PASS: TestLiveCoreBatch/database-rollback-and-recovery (0.44s)
+2026-10-23T04:43:49.4632807Z     --- PASS: TestLiveCoreBatch/current-authority-and-source-revocation (0.53s)
+2026-10-23T04:43:49.4633807Z     --- PASS: TestLiveCoreBatch/unknown-register-never-restarted (0.13s)
+2026-10-23T04:43:49.4634528Z     --- PASS: TestLiveCoreBatch/lost-start-status-recovery (0.36s)
+2026-10-23T04:43:49.4635232Z     --- PASS: TestLiveCoreBatch/unknown-status-retains-attempt (0.39s)
+2026-10-23T04:43:49.4636015Z     --- PASS: TestLiveCoreBatch/status-reply-must-confirm-exact-identity (0.39s)
+2026-10-23T04:43:49.4636805Z     --- FAIL: TestLiveCoreBatch/failed-hop-explicit-new-attempt (64.72s)
+2026-10-23T04:43:49.4637546Z     --- PASS: TestLiveCoreBatch/hop-restart-id-loss-fails-closed (9.65s)
+2026-10-23T04:43:49.4638028Z FAIL
+2026-10-23T04:43:49.4638597Z FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot	86.624s
+2026-10-23T04:43:49.4639621Z ?   	github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/transport/http	[no test files]
+2026-10-23T04:43:49.4640519Z FAIL
+2026-10-23T04:43:51.3230655Z Traceback (most recent call last):
+2026-10-23T04:43:51.3231826Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/enterprise-activity/postgres-ingestion/b2_smoke.py", line 200, in <module>
+2026-10-23T04:43:51.3232969Z     args=parser.parse_args();run(args.output.resolve(),args.cache.resolve())
+2026-10-23T04:43:51.3233962Z                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-23T04:43:51.3234922Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/enterprise-activity/postgres-ingestion/b2_smoke.py", line 142, in run
+2026-10-23T04:43:51.3236030Z     require(result.returncode==0,"Core batch tests failed; see sanitized b2-tests.log")
+2026-10-23T04:43:51.3241229Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/enterprise-activity/postgres-ingestion/smoke.py", line 49, in require
+2026-10-23T04:43:51.3271072Z     raise AssertionError(message)
+2026-10-23T04:43:51.3271610Z AssertionError: Core batch tests failed; see sanitized b2-tests.log
+2026-10-23T04:43:51.3396958Z ##[error]Process completed with exit code 1.
+2026-10-23T04:43:51.3456483Z ##[group]Run actions/upload-artifact@v4
+2026-10-23T04:43:51.3456731Z with:
+2026-10-23T04:43:51.3456913Z   name: postgres-ingestion-b2-1
+2026-10-23T04:43:51.3457129Z   retention-days: 7
+2026-10-23T04:43:51.3457311Z   if-no-files-found: error
+2026-10-23T04:43:51.3457598Z   path: /home/runner/work/_temp/postgres-ingestion-b2/b2-report.json
+2026-10-23T04:43:51.3457901Z   compression-level: 6
+2026-10-23T04:43:51.3458109Z   overwrite: false
+2026-10-23T04:43:51.3458298Z   include-hidden-files: false
+2026-10-23T04:43:51.3458509Z ##[endgroup]
+2026-10-23T04:43:51.4736211Z (node:11181) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-23T04:43:51.4736904Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-23T04:43:51.4777810Z With the provided path, there will be 1 file uploaded
+2026-10-23T04:43:51.4782113Z Artifact name is valid!
+2026-10-23T04:43:51.4782951Z Root directory input is valid!
+2026-10-23T04:43:51.8021616Z Beginning upload of artifact content to blob storage
+2026-10-23T04:43:51.8159534Z (node:11181) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-23T04:43:52.0391163Z Uploaded bytes 3493
+2026-10-23T04:43:52.1064169Z Finished uploading artifact content to blob storage!
+2026-10-23T04:43:52.1064803Z SHA256 digest of uploaded artifact zip is 2b78b3e94c89241f7736c944bfb517d88ec6372a3b694ef90b79e8cdbbe976af
+2026-10-23T04:43:52.1065868Z Finalizing artifact upload
+2026-10-23T04:43:52.5303771Z Artifact postgres-ingestion-b2-1.zip successfully finalized. Artifact ID 12478599820
+2026-10-23T04:43:52.5304607Z Artifact postgres-ingestion-b2-1 has been successfully uploaded! Final size is 3493 bytes. Artifact ID is 12478599820
+2026-10-23T04:43:52.5309538Z Artifact download URL: https://github.com/qq550723504/data-product-platform/actions/runs/39901487931/artifacts/12478599820
+2026-10-23T04:43:52.5484097Z Post job cleanup.
+2026-10-23T04:43:52.6147630Z [command]/usr/bin/git version
+2026-10-23T04:43:52.6181456Z git version 2.55.0
+2026-10-23T04:43:52.6208521Z Temporarily overriding HOME='/home/runner/work/_temp/e22841e8-162c-4027-85da-eea0a6260737' before making global git config changes
+2026-10-23T04:43:52.6209630Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T04:43:52.6212691Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/data-product-platform/data-product-platform
+2026-10-23T04:43:52.6243380Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T04:43:52.6272392Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-23T04:43:52.6507164Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T04:43:52.6530014Z http.https://github.com/.extraheader
+2026-10-23T04:43:52.6539106Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-23T04:43:52.6569944Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-23T04:43:52.6804335Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T04:43:52.6838007Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-23T04:43:52.7194777Z Cleaning up orphan processes
+2026-10-23T04:43:52.7540598Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
