@@ -584,9 +584,16 @@ func TestBrowserLiveGoldExistingCore(t *testing.T) {
 
 	// This phase is read-only. The IDs satisfy the standalone console's existing
 	// trusted-action configuration contract but no review/release action is invoked.
-	manifest["reviewerId"] = uuid.New().String()
+	goldReaderID := uuid.New().String()
+	manifest["reviewerId"] = goldReaderID
 	manifest["publisherId"] = uuid.New().String()
+	// A token alone does not configure trusted authority. Scope this readonly
+	// fixture principal to the actual Gold workspace, as the first live phase does.
+	t.Setenv("HUMAN_DECISION_API_ENABLED", "true")
 	t.Setenv("HUMAN_DECISION_API_TOKEN", "live-review-secret")
+	t.Setenv("HUMAN_DECISION_API_SUBJECT", "live-gold-readonly")
+	t.Setenv("HUMAN_DECISION_API_ACTOR_ID", goldReaderID)
+	t.Setenv("HUMAN_DECISION_API_WORKSPACE_IDS", workspaceID.String())
 
 	listener, err := net.Listen("tcp", "127.0.0.1:18080")
 	liveOK(t, err, "Gold UI API port must be unused")

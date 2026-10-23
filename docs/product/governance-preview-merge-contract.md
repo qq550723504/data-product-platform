@@ -68,3 +68,6 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 
 
 协调入口对 `56ca8e11855bf69d22fedeecc30272e4d1a96d7d` 增量独立核验了收据/刷新 P2 的修复与 15 项离线用例、worker consumer profile 与既有 frozen-obligation claim 路径、严格 schema73，确认这些已核范围 PASS；不是整个 166 文件 PR 的独立批准。该提交来源接纳、trial 契约和整套 Go CI 已通过；live-Core 的 review/publish 已推进到新 Trace 断言，但 publish 阶段 fixture 尚未提供 decisionId，Playwright 对 undefined locator 报 TypeError。补齐实际已审核不可变 decision ID 的前置见证，不跳过该断言、不伪造发布数据，旧失败运行保留。其余浏览器/最终候选 CI 尚需按新 HEAD 验证。
+
+
+`b992606c` 的 Go/Web、来源接纳和 107 项浏览器契约通过，真实 Core 的 review/publish/certified/history 也全部通过并生成 LIVE_CORE_BROWSER_VERIFIED。后续 Gold 阶段失败截图明确显示 Quality HTTP 401：它只设置 token，没有像第一阶段配置启用的可信 actor/subject/workspace，强化后的读取正确拒绝。仅补齐该隔离 fixture 的明确身份，不放宽接口校验，保留 Gold 的全部事实断言。本机仍不运行该 fixture。trial 契约首个本 HEAD run 终态 cancelled（所有步骤为 success 也不能算通过），已对该精确 HEAD 的 cancelled job 请求一次完整有效重跑；旧取消记录保留。
