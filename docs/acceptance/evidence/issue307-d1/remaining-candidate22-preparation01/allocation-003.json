@@ -1,0 +1,18 @@
+{
+  "role": "rehearsal-core",
+  "group": "business-races",
+  "cid": "0435f55cdc1ccd30e80aadd9808a21e749ebfb8c94bf5efba06b9c3f3b40a4ee",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate22-rehearsal",
+    "--network",
+    "ea6d5538c2e14a07078257ebc43df773e745850f7b6750d3cf61f028d65e0590",
+    "--env-file",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\business-races\\checkpoint\\postgres.env",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-candidate22-rehearsal-core,target=/var/lib/postgresql/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\business-races\\checkpoint,target=/run/backup,readonly",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+  ]
+}
