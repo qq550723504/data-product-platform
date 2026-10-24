@@ -1,6 +1,8 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-当前文档增量：用户授权细化验收草稿和业务签收的可信多方身份、责任校验、写入准入、状态/接口及异常恢复，**先设计不开发**。权威细化为 [第一切片设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，与总契约/接入计划同步；本次不实施 IAM、DDL、API、页面或配置，不改原库/独立库、运行进程或 Agent API。业务写入口保持关闭，模型和真实执行不接入，保持 Draft、不 merge/deploy。OIDC 候选复用、事务权威 Port 和未来启用条件是依赖设计，不是运行授权；现有只读 CI/现场 PASS 不能延伸为新写入设计的验收。
+当前文档增量：用户授权细化验收草稿和业务签收的可信多方身份、责任校验、写入准入、状态/接口及异常恢复，**先设计不开发**。权威细化为 [第一切片设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，与总契约/接入计划同步；本次不实施 IAM、DDL、API、页面或运行配置，不改原库/独立库、运行进程或 Agent API。业务写入口保持关闭，模型和真实执行不接入，保持 Draft、不 merge/deploy。OIDC 候选复用、事务权威 Port 和未来启用条件是依赖设计，不是运行授权；现有只读 CI/现场 PASS 不能延伸为新写入设计的验收。
+
+设计复审增量：按用户授权检查最新 CI 和契约一致性；修正文档中的标准业务编码/来源字段及历史回执的鉴权分支，明确复用既有绑定判定。CI 的 trial-contracts 因两轮顺序测试共用 5 分钟 job 预算被截断，将预算调整为 10 分钟；测试命令、数量、job 名称与权限不变。这是唯一 CI 工作流改动，不改变运行配置或业务实现。完整有界复核见 [设计复审记录](governance-acceptance-design-review-20261024.md)；精确新 HEAD 的 CI 必须重新完成，不继承旧结果。
 
 上一已实施增量：责任绑定和标准适用关系的契约、持久化只读查询、新版页面与独立库接口/浏览器验收。主要契约归 [责任与适用关系](../architecture/acceptance-binding-read-contract-v1.md)，前置第 0 切片记录保留为历史。此前允许 migration 74 在独立验收库新增四类最小业务事实与 SELECT 权限，不修改原库；这替代前置增量“不新增 migration”的范围限制。必须保证可信身份/workspace、精确成果、完整来源与原确认责任、有效期/处置、职责分离、多绑定 fail closed、历史不可变及 Agent API 保留。业务写接口、IAM、模型和真实执行仍为非目标。绑定有效不等于签收、验收通过或交付授权。
 

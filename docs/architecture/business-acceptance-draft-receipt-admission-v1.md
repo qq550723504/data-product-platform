@@ -67,6 +67,8 @@
 
 后续动作只重新校验该动作的依赖闭包，不能因为标准待修复就抹掉已经发生的收件声明。例如标准失效时，有效 RECEIVER 仍可登记 MISSING/DISPUTED；准备齐全投影则继续阻断。六类责任出现变更、缺失、多绑定或冲突时，不自动改本单的冻结责任。新建关联单可以引用 previousCaseId，但不会取消旧单；取消/代办须待第二切片的显式流程，第一切片没有“超级管理员改历史”恢复入口。
 
+当前绑定判定复用 `contract/domain.EvaluateAcceptanceBindings`，输入是完整成果范围事实与本次数据库判定时间，不重建另一套“选有效人员”的算法。按现有语义，先计入责任事实自身处于 ACTIVE 的候选，再检查代表依赖；多个候选即 AMBIGUOUS，不能先过滤无效代表后挑剩余一人。写入仅再叠加本单固定 binding ID、可信身份来源及动作准入，分页或 isCurrentCaller 不能缩小候选集合。
+
 业务代表关系撤销会阻断该角色的新业务动作；只要该冻结参与人仍有当前 READ/workspace 授权，可继续查看旧事实和自己的已提交命令回执。actor、身份映射或 workspace 读取权限撤销，则停止读取并清理页面缓存。替任人不自动获得旧单参与人读取资格；额外历史审计授权属于后续明确范围。
 
 本切片仅允许真实人员自己办理，不接受机器 client、管理员 token 或任意 on-behalf-of consumer 代替人员。后续若支持代办，须独立定义服务端 delegation，不复用页面角色切换。
@@ -85,7 +87,7 @@ previousCaseId 若提供，必须是调用者可读取、同 workspace/接收主
 | BusinessReceipt（待实现） | 明确 case/交付/版本/接收主体、outcome、原因、证据成员、接收责任/代表 ID、replacesReceiptId | 原事实追加保留；当前指针不能按 createdAt 猜测 |
 | CommandReceipt（待实现） | 命令、可信主体、幂等键、请求指纹、原结果 ID/revision、办理依据 | 技术处理回执；与“收到成果”的 BusinessReceipt 分开 |
 
-Create 原子产生 Case、DraftRevision #1、当前指针和 CommandReceipt，revision=1。首次草稿由服务器完整复制选定来源标准。Revise 可替换来源版本及适用关系，但成果与六类责任固定；新的适用确认必须仍绑定本单原 BASIS_CONFIRMER。提供方只能修改标题、逐项 providerNote 和证据引用；来源 criterionId、description、required、method、evidenceCategory、条款定位由服务端重建，不能自由改写来源含义。完整 criterionId 集合必须精确相等，包括非必需项；至少一项 required。
+Create 原子产生 Case、DraftRevision #1、当前指针和 CommandReceipt，revision=1。首次草稿由服务器完整复制选定来源标准。Revise 可替换来源版本及适用关系，但成果与六类责任固定；新的适用确认必须仍绑定本单原 BASIS_CONFIRMER。提供方只能修改标题、逐项 providerNote 和证据引用；来源 `id,clause,text,required,method,evidenceCategory` 从现有 AcceptanceSource 完整重建，不新增 description 来源字段或改写原格式。请求的 criteria[].criterionId 精确引用来源 criteria[].id；集合必须相等，包括非必需项，且至少一项 required。
 
 draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/接收主体/六类责任引用、title、来源版本/适用 ID/sourceSha256/criteriaSetHash、全部标准/注记/证据成员；标准和成员按稳定 ID 排序，UUID 规范化，不把前端传入 hash 当权威。固定格式为 SHA256（UTF-8 前缀 `business-acceptance-draft.v1` + 一个 LF + JCS 完整 payload）的 64 位小写十六进制值。JCS 使用 [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785.html) 的既有实现：Go 已引入 github.com/cyberphone/json-canonicalization；Web 采用同协议成熟实现并验证跨端固定向量，不自造 JSON 排序/转义。该新 schema 不改变现有 sourceSha256/criteriaSetHash。每次保存生成新 Revision；旧确认只从当前投影退出，不 UPDATE 原确认事实。
 
@@ -117,6 +119,8 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 
 事务按 READ COMMITTED 读写；取得 fence 后才读取当前本地权限、责任和依赖，不能复用入口快照。第一次查同主体幂等回执在新业务 revision/状态校验之前：已提交请求走历史重放读取；新请求才取得 case/current revision 并完整准入。创建时先用幂等锁串行化，没有 case 行也不能双建。
 
+HTTP 入口先以本模块 READ 解析可信人员，不在查回执前要求 DRAFT/BASIS_CONFIRM/RECEIPT_RECORD。持 IAM fence 后重读当前 READ；仅本人、同空间、命令/target/key/指纹匹配且结果可读的 COMMITTED 请求可直接返回原回执。没有匹配回执的新请求，再在相同事务锁内要求动作能力、当前责任和所有业务依赖。读权限丧失时所有分支拒绝；写权限丧失时，已提交请求仍可恢复，未提交请求不能借原键获得新写权限。同键异内容仍为冲突，不把旧成功结果套给新 body。
+
 所有新写在持锁后、追加事实前执行最后一次权威决策，使用**新的数据库 clock_timestamp** 重查有效期及已生效 disposition，并核对固定依赖和 revision；禁止用事务开始时间、浏览器 asOf 或预检 evaluatedAt。最后受锁决策是本地时间资格的判定点；不声称真实时钟到期与物理 commit 无时间间隔。本地撤销/事实变更则由同 fence 排序：撤销先提交就拒绝，业务先提交则保留其当时依据。锁等待超时、死锁或连接中断没有授权兜底或自动 Command 重试。
 
 业务事实、当前指针、revision、不可变办理依据、Domain Event、AuditEvent、Evidence、CommandReceipt 同事务提交；当前无外部副作用。办理依据以强类型关系保存 actor/issuer binding、workspace grant revision、capability、责任/代表/适用 IDs、标准/hash、evaluatedAt 及最早有限期限，禁止只写普通日志或 token 原文。历史依据证明当时判断，不能作为下一次授权 lease。
@@ -146,7 +150,9 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 | POST B/business-acceptances/{caseId}/receipts | expectedRevision、replacesReceiptId、outcome、reason、evidenceIds | replacesReceiptId 必传，首次为 null；补正为精确当前 ID |
 | GET B/business-acceptance-command-receipts | commandKind、targetId、requestKey、requestFingerprint | 仅当前主体，CREATE 无 targetId；精确查找，不接收 subject 参数 |
 
-所有 POST 带 UUID `Idempotency-Key`；除 CREATE 外 expectedRevision 为 1 至 2^53−1 的整数。ID 为 UUID，title 1–200 Unicode code point，原因 1–2000 code point；criteria 沿用来源 1–100 项限额，每条 providerNote ≤2000 code point，单次 Evidence 引用总数 ≤100、去重；JSON body 最大 64 KiB。不接收 actor、consumer、status、时间或自定结果 ID；未知/重复字段、重复标准 ID、重复角色、无效 Unicode 拒绝。JSON 超限为 413，过期/错误会话不能降级共享凭据。上述限额为待实现的严格当前 contract，无双读兼容分支。
+所有业务 Command POST 带 UUID `Idempotency-Key`；除 CREATE 外 expectedRevision 为 1 至 2^53−1 的整数。workspace、actor、case、delivery、DatasetVersion、ContractVersion、责任/代表/适用 binding、草稿、确认、签收及 Evidence 等平台对象 ID 使用非 nil UUID；**criterionId 不是 UUID**，沿用来源 id 的业务编码规则 `^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$`，大小写敏感且必须精确匹配完整来源集合，不创建编码别名。role/outcome 为受支持枚举，canonicalSubject 与 partyRef 保持权威源中的主体字符串语义。
+
+title 1–200 Unicode code point，原因 1–2000 code point；criteria 沿用来源 1–100 项限额，每条 providerNote ≤2000 code point，单次 Evidence 引用总数 ≤100、去重；JSON body 最大 64 KiB。来源 clause/text 的现有 UTF-8 字节限额、required、method 和 evidenceCategory 验证保持不变，不能套用新增注记的字符限额弱化来源规则。不接收 actor、consumer、status、时间或自定结果 ID；未知/重复字段、重复标准 ID、重复角色、无效 Unicode 拒绝。JSON 超限为 413，过期/错误会话不能降级共享凭据。上述限额为待实现的严格当前 contract，无双读兼容分支。
 
 commandKind 仅接受本切片四个 Command 的全名：CreateBusinessAcceptance、ReviseAcceptanceDraft、ConfirmAcceptanceBasis、RecordBusinessReceipt；文中 CREATE 只是创建的简称。requestFingerprint 为 SHA256（UTF-8 前缀 `business-acceptance-request.v1` + 一个 LF + JCS `{workspaceId,actorId,canonicalSubject,commandKind,targetId,body}`）的 64 位小写十六进制值，CREATE 的 targetId=null。外层身份/路径 UUID 来自可信上下文且规范化；body 保留已验证原 JSON 值、显式 null 和数组顺序，不静默 trim、填默认值或 Unicode normalization。服务端独立计算，不能以客户端值替代；Web/Go 使用同协议和固定向量。
 
@@ -226,9 +232,9 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 | 层次 | 必须覆盖 |
 |---|---|
 | Domain | 当前/过期/未来处置，唯一与多绑定，actor/subject 职责分离；完整标准集、草稿换版确认失配；四类签收与证据条件；只有 DRAFT 可写 |
-| Adapter/应用 | 企业人、机器、管理 client 的 audience/scope/profile 分离；issuer/sub 到 canonical actor；无缓存成功授权、外部不可用拒绝；原读取 token 不可写；对应有限 capability+精确角色 |
+| Adapter/应用 | 企业人、机器、管理 client 的 audience/scope/profile 分离；issuer/sub 到 canonical actor；无缓存成功授权、外部不可用拒绝；原读取 token 不可写；新写要求对应有限 capability+精确角色；仅失去写权限时原 COMMITTED 回执可恢复、无原回执则拒绝新写，失去 READ 时两者均拒绝 |
 | 真实 PostgreSQL | IAM 撤销与 Command 双事务顺序；责任新增/处置竞争、未来失效、锁等待后重新取时；双创建、双补正、修订/确认竞争；历史 header/成员及 hash 不变；幂等回执同事务及失败全回滚 |
-| HTTP | 401/403/404/409/413/422/503、严格字段、同键异 body、丢响应后原回执；不同主体/空间/单据不可读写或恢复；旧确认、新责任和 Synthetic 来源拒绝 |
+| HTTP | 401/403/404/409/413/422/503、严格字段、非 UUID 标准编码及大小写/完整集合、现有 id/clause/text 来源格式、同键异 body、丢响应后原回执；不同主体/空间/单据不可读写或恢复；旧确认、新责任和 Synthetic 来源拒绝 |
 | Browser | 至少提供方、接收代表、标准确认人三个独立真实会话；创建→修订→确认→签收→只读刷新及历史回跳；MISSING/DISPUTED 阻断、撤权/换空间/旧窗口冲突、UNKNOWN 只读恢复与明确同键恢复，无自动 POST |
 | 边界保留 | Agent API 回归；原库无迁移/业务变化；默认写关闭；无模型、provider、执行/发布/交付副作用；后续通过与归档接口仍不存在 |
 

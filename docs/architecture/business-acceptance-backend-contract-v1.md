@@ -109,7 +109,7 @@ V1 作废在事务提交时生效，不接受追溯或未来 effectiveAt。并�
 | POST B/business-acceptances/{caseId}/decisions/{decisionId}/invalidate | InvalidateBusinessAcceptanceDecision：reason |
 | GET B/business-acceptance-command-receipts | 用原 commandKind、targetId、requestKey、requestFingerprint 精确恢复当前调用主体的处理回执；CREATE 无 targetId |
 
-所有 POST 使用 `Idempotency-Key`，除创建外必传 `expectedRevision`；服务端生成事实 ID、序号和时间。写返回 commandReceiptId、commandKind、caseId、相关事实 ID、resultingRevision，前端先确认回执与原请求绑定，再分别读取当前状态。查询可以返回当前 revision，不能把它覆盖到历史命令回执中。
+所有业务 Command POST 使用 `Idempotency-Key`，除创建外必传 `expectedRevision`；服务端生成事实 ID、序号和时间。写返回 commandReceiptId、commandKind、caseId、相关事实 ID、resultingRevision，前端先确认回执与原请求绑定，再分别读取当前状态。查询可以返回当前 revision，不能把它覆盖到历史命令回执中。来源条目继续使用既有 id/clause/text 等字段；criterionId 引用来源业务编码，不按平台对象 UUID 校验。
 
 错误区分：400 输入错误；401 未认证；403 无工作空间/动作权限；404 授权空间内对象不存在或关系不匹配；409 REVISION_CONFLICT、STATE_CONFLICT、IDEMPOTENCY_CONFLICT、BASIS_CHANGED；422 REQUIRED_CONDITIONS_NOT_MET/UNSUPPORTED_CRITERION。错误只提供安全字段和明确 blockers，不泄漏另一空间对象是否存在。服务不可用、超时或不完整响应在页面显示 UNKNOWN，不当成空列表或成功。
 
@@ -125,7 +125,7 @@ V1 作废在事务提交时生效，不接受追溯或未来 effectiveAt。并�
 
 重复归档必须绑定同一明确 submission/decision。相同幂等键返回原回执；不同键但完全相同的既有归档请求，在校验当前权限及引用后返回原 archiveId，不新增档案、归档事件或成本。引用不同提交/决定则冲突。决定已作废时，已有档案通过 GET 查看，不用再次归档来读取历史。
 
-幂等范围为 `(workspace, canonicalActorId, canonicalSubject, commandKind, targetId/null, requestKey)`，绑定规范化完整请求指纹。同键同内容在重新验证调用者及结果读取权限后返回原回执，同键不同内容返回 409。恢复原回执先于新 revision 校验，不重复写入；当前事实由独立 GET 展示。CREATE 没有 case row 时，复用已有事务级 advisory lock 与唯一键模式串行化请求。UNKNOWN 先只读恢复；404 仅为 NOT_OBSERVED，不能据此换键补建。未来明确恢复原请求只允许同人、同空间、原键及完全相同 body，不自动 POST；受保护服务端意图记录和异常规则归详细设计。复用 Agent 的处理模式，**不复用 Agent receipt 表或 Agent 状态机**。
+幂等范围为 `(workspace, canonicalActorId, canonicalSubject, commandKind, targetId/null, requestKey)`，绑定规范化完整请求指纹。同键同内容在重新验证调用者及结果读取权限后返回原回执，同键不同内容返回 409。入口及受锁权威重读先要求当前 READ；恢复原回执先于新动作权限、状态及 revision 校验，不重复写入。新请求才在锁内校验对应动作能力与责任；没有原回执时，原键不豁免新写权限。当前事实由独立 GET 展示。CREATE 没有 case row 时，复用已有事务级 advisory lock 与唯一键模式串行化请求。UNKNOWN 先只读恢复；404 仅为 NOT_OBSERVED，不能据此换键补建。未来明确恢复原请求只允许同人、同空间、原键及完全相同 body，不自动 POST；受保护服务端意图记录和异常规则归详细设计。复用 Agent 的处理模式，**不复用 Agent receipt 表或 Agent 状态机**。
 
 签收补正与通过并发时，先提交补正则通过因 BASIS_CHANGED/revision 冲突失败；先提交通过则补正因终态被拒绝。标准修订与提交、撤回与通过、取消与提交也须用真实 PostgreSQL 双事务证明仅一个合法顺序生效。
 
