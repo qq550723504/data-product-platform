@@ -11,7 +11,7 @@ export function BusinessAcceptancePages({page,navigate}){
  const c=s.cases.find(x=>x.id===s.selectedId)||s.cases[0],receipt=currentReceipt(s,c),sub=currentSubmission(s,c),archive=s.archives.find(x=>x.id===c.archiveId),decision=s.decisions.find(x=>x.id===c.decisionId);
  const isReceipt=page==='business-receipts',isArchive=page==='business-archives';
  const act=(type,extra={})=>{try{const next=businessCommand(s,{type,caseId:c.id,actor:s.actor,expectedRevision:c.revision,note,...extra});setS(next);setMessage('演示记录已保存：'+({RECEIPT:'签收登记',SAVE:'草稿',SUBMIT:'本次提交已冻结',RETURN:'已退回，原提交保留',APPROVE:'业务验收通过',ARCHIVE:'验收档案已冻结',WITHDRAW:'已撤回，原提交保留',INVALIDATE:'决定已追加作废处置',CANCEL:'已取消',CREATE:'新建草稿'}[type]||type));setNote('');setEdit(null);if(type==='CREATE'){setCreating(false);setTrace({receiptId:null,submissionId:null});}if(type==='SUBMIT'||type==='RETURN'||type==='WITHDRAW')setResults({});return true}catch(e){setMessage(e.message);return false}};
- const select=id=>{setTrace({receiptId:null,submissionId:null});setS({...s,selectedId:id});setDetail(true);setMessage('');setNote('');setEdit(null);setResults({})};
+ const select=id=>{setTrace({receiptId:null,submissionId:null});setS({...s,selectedId:id});setDetail(true);setMessage('');setNote('');setEvidence('');setOutcome('RECEIVED');setEdit(null);setResults({})};
  const openPage=key=>{setDetail(true);navigate(key)};
  const filtered=s.cases.filter(x=>s.filter==='ALL'||s.filter==='ARCHIVED'&&!!x.archiveId||x.status===s.filter);
  const selectedChanged=event=>{setTrace({receiptId:null,submissionId:null});select(event.target.value)};

@@ -40,3 +40,30 @@ test('withdrawal identifies only its exact submission across resubmission and ca
  assert.equal(submissionOutcome(s,s.cases[0],first),'已撤回');assert.equal(submissionOutcome(s,s.cases[0],s.submissions[1]),'待验收');
  const withdrawal=s.events.find(x=>x.type==='WITHDRAW');assert.equal(withdrawal.submissionId,first.id);s=run(s,'WITHDRAW','provider');s=run(s,'CANCEL','provider');assert.equal(s.submissions.length,2);assert.equal(s.decisions.length,0);assert.equal(s.archives.length,0);assert.equal(submissionOutcome(s,s.cases[0],s.submissions[1]),'已撤回');
 });
+
+test('editing standard text cannot weaken mandatory checks or replace the verification method',()=>{
+ const s=receipt(seedBusinessAcceptance()),before=structuredClone(s);
+ for(const change of [{required:false},{required:undefined},{method:'跳过核验'}]){
+  const criteria=s.cases[0].criteria.map(x=>({...x,...change}));
+  assert.throws(()=>run(s,'SAVE','provider',{title:'修订说明',criteria}),/必需性与核验方式/);
+  assert.deepEqual(s,before);
+ }
+ const next=run(s,'SAVE','provider',{title:'修订说明',criteria:s.cases[0].criteria.map(x=>({...x,description:'  新标准 '+x.id+'  ',source:'  新约定 v2  '}))});
+ assert.equal(next.cases[0].criteria[0].description,'新标准 C1');assert.equal(next.cases[0].criteria[0].source,'新约定 v2');
+ let pending=run(next,'SUBMIT','provider');assert.throws(()=>run(pending,'APPROVE','reviewer',{results:{}}),/逐项/);
+ pending=run(pending,'APPROVE','reviewer',{results});assert.equal(pending.decisions[0].outcome,'ACCEPTED');assert.deepEqual(s,before);
+});
+
+test('terminal cases reject every reopening command without changing frozen historical facts',()=>{
+ const accepted=run(run(receipt(seedBusinessAcceptance()),'SUBMIT','provider'),'APPROVE','reviewer',{results});
+ const archived=run(accepted,'ARCHIVE','archivist'),invalid=run(archived,'INVALIDATE','reviewer');
+ const cancelled=run(seedBusinessAcceptance(),'CANCEL','provider');
+ const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value)}return value};
+ for(const state of [accepted,archived,invalid,cancelled]){
+  const before=structuredClone(state);freeze(state);
+  for(const [type,actor,extra] of [['SAVE','provider',{title:'不能复活',criteria:state.cases[0].criteria}],['RECEIPT','receiver',{outcome:'RECEIVED',evidence:'不能补签'}],['SUBMIT','provider',{}],['WITHDRAW','provider',{}],['RETURN','reviewer',{results:{C1:'FAIL'}}],['APPROVE','reviewer',{results}],['CANCEL','provider',{}]]){
+   assert.throws(()=>run(state,type,actor,extra));assert.deepEqual(state,before);
+  }
+ }
+ assert.deepEqual(invalid.archives,archived.archives);assert.deepEqual(invalid.decisions,archived.decisions);assert.deepEqual(invalid.submissions,archived.submissions);assert.deepEqual(invalid.receipts,archived.receipts);
+});
