@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {seedBusinessAcceptance,businessCommand,approvalBlockers,decisionInvalid} from '../../components/governance-demo/business-acceptance-model.mjs';
+import {seedBusinessAcceptance,businessCommand,approvalBlockers,decisionInvalid,submissionOutcome} from '../../components/governance-demo/business-acceptance-model.mjs';
 const caseId='DEMO-ACC-1';
 const run=(s,type,actor,extra={})=>businessCommand(s,{type,actor,caseId,expectedRevision:s.cases[0].revision,note:'核对说明',...extra},'2026-10-24T06:00:00Z');
 const receipt=s=>run(s,'RECEIPT','receiver',{outcome:'RECEIVED',evidence:'演示收件核对记录'});
@@ -29,4 +29,14 @@ test('archive is separate, repeat is idempotent and later invalidation preserves
 });
 test('withdraw preserves a frozen submission; cancel is explicit and terminal',()=>{
  let s=run(receipt(seedBusinessAcceptance()),'SUBMIT','provider');s=run(s,'WITHDRAW','provider');assert.equal(s.submissions.length,1);s=run(s,'CANCEL','provider');assert.equal(s.cases[0].status,'CANCELLED');assert.throws(()=>run(s,'SUBMIT','provider'),/不可提交/);
+});
+test('changed receipt can be returned without inventing a failed criterion',()=>{
+ let s=run(receipt(seedBusinessAcceptance()),'SUBMIT','provider');const frozen=structuredClone(s.submissions[0]);s=receipt(s);
+ s=run(s,'RETURN','reviewer',{results,note:'签收依据变化，重新冻结'});assert.deepEqual(s.decisions[0].results,results);assert.equal(s.decisions[0].outcome,'RETURNED');assert.deepEqual(s.submissions[0],frozen);
+ s=run(s,'SUBMIT','provider');assert.notEqual(s.submissions[1].receipt.id,frozen.receipt.id);s=run(s,'APPROVE','reviewer',{results});assert.equal(s.cases[0].status,'ACCEPTED');
+});
+test('withdrawal identifies only its exact submission across resubmission and cancellation',()=>{
+ let s=run(receipt(seedBusinessAcceptance()),'SUBMIT','provider');const first=s.submissions[0];s=run(s,'WITHDRAW','provider');s=run(s,'SUBMIT','provider');
+ assert.equal(submissionOutcome(s,s.cases[0],first),'已撤回');assert.equal(submissionOutcome(s,s.cases[0],s.submissions[1]),'待验收');
+ const withdrawal=s.events.find(x=>x.type==='WITHDRAW');assert.equal(withdrawal.submissionId,first.id);s=run(s,'WITHDRAW','provider');s=run(s,'CANCEL','provider');assert.equal(s.submissions.length,2);assert.equal(s.decisions.length,0);assert.equal(s.archives.length,0);assert.equal(submissionOutcome(s,s.cases[0],s.submissions[1]),'已撤回');
 });
