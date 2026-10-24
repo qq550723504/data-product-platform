@@ -4,7 +4,7 @@ const p=JSON.parse(readFileSync(resolve(run,'profile.json'),'utf8'));assert.equa
 const {Pool}=createRequire(resolve(root,'apps/web/package.json'))('pg');
 const options={host:'127.0.0.1',port:25495,database:p.database,ssl:{ca:readFileSync(resolve(run,'ca.crt'),'utf8'),rejectUnauthorized:true}};
 const admin=new Pool({...options,user:'postgres',password:p.pgPassword});const results=[];
-try{for(const [role,password,allowed] of [['acceptance_1a_api',p.apiPassword,['platform_actor_state','platform_subject_binding','platform_workspace_grant','dataset','dataset_version','delivery_operation','data_contract','contract_version','acceptance_party_representation','acceptance_responsibility_binding','acceptance_standard_applicability','acceptance_binding_disposition']],['acceptance_1a_rp',p.rpPassword,['platform_browser_transaction','platform_browser_session']]]){
+try{for(const [role,password,allowed] of [['acceptance_1a_api',p.apiPassword,['platform_actor_state','platform_subject_binding','platform_workspace_grant','dataset','dataset_version','delivery_operation','data_contract','contract_version','acceptance_party_representation','acceptance_responsibility_binding','acceptance_standard_applicability','acceptance_binding_disposition','evidence','evidence_relation']],['acceptance_1a_rp',p.rpPassword,['platform_browser_transaction','platform_browser_session']]]){
  const pool=new Pool({...options,user:role,password});try{
   const tables=(await admin.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.map(v=>v.tablename);
   for(const table of tables)for(const privilege of ['SELECT','INSERT','UPDATE','DELETE','TRUNCATE','REFERENCES','TRIGGER']){

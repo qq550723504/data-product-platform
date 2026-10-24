@@ -51,11 +51,11 @@
 
 外部 introspection 在进入持锁业务事务前完成，事务中不持锁等待外部 IdP 网络调用；本地权威的最后重读及外部检查点限制见第 4 节。
 
-建议新增的有限能力为 `BUSINESS_ACCEPTANCE_READ`、`BUSINESS_ACCEPTANCE_DRAFT`、`BUSINESS_ACCEPTANCE_BASIS_CONFIRM`、`BUSINESS_RECEIPT_RECORD`。这些名字**尚未进入 IAM 固定能力契约**；未来须由 IAM owner 扩展受控 profile/映射及契约测试，不提供任意字符串权限编辑器。能力只决定模块准入，还必须满足下表的精确责任。
+建议新增的有限能力为 `BUSINESS_ACCEPTANCE_READ`、`BUSINESS_ACCEPTANCE_DRAFT`、`BUSINESS_ACCEPTANCE_BASIS_CONFIRM`、`BUSINESS_RECEIPT_RECORD`。这些名字已进入独立1A验收profile的有限能力契约；企业IAM映射尚未接入，正式启用仍须由 IAM owner 核对受控 profile/映射及契约测试，不提供任意字符串权限编辑器。能力只决定模块准入，还必须满足下表的精确责任。
 
 所有新写同时要求 READ 与对应动作能力，保证办理后的读取/恢复通道有明确准入；只有 READ 不能写。下表 DRAFT/BASIS_CONFIRM/RECEIPT_RECORD 为上述能力的简称，不是 Case 状态或 IdP 任意角色名。
 
-当前标准/context 读取使用已有 HUMAN_DECISION 准入，不能假定新增 READ 会自动通过。未来须由这些 Query 的 owner 明确扩展验收 profile 的路由策略：仅允许本切片所需 acceptance-context、合约版本安全投影及收件证据选择查询；未建单目标还须匹配调用者的有效成果责任，本单则核验冻结参与人。复用现有 scoped repository，不用共享 token 代理，也不将 READ 扩散到 Agent/其他 Core 读写路径。该改造未完成前，即使登录成功也保持业务入口阻断。
+默认 Core profile 保留已有 HUMAN_DECISION 读取准入；独立1A验收profile已使用 BUSINESS_ACCEPTANCE_READ 允许 acceptance-context、合约版本安全投影。1B前置再增加业务依据与材料安全引用，未建单目标必须匹配本人当前有效成果责任。后续 Case 仍须核验冻结参与人；可信收件材料接纳与业务写入尚未实现。所有读取复用 scoped repository，不用共享 token 代理，不将 READ 扩散到 Agent/其他 Core 读写路径。登录成功仍不构成业务写入准入。
 
 | 动作 | 当前能力及本单角色 | 当前依赖校验 |
 |---|---|---|
@@ -95,7 +95,7 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 
 签收结果为 RECEIVED/PARTIAL/MISSING/DISPUTED，全部要求非空原因。RECEIVED 另须至少一条已持久化、同 workspace、通过安全读取权限和明确成果关系校验的业务收到依据 Evidence；仅有质量报告、认证、ISSUED 或 EvidenceSnapshot 不足以自动证明收到。复用 Evidence/evidence_relation，Receipt 与 Evidence 之间新增强类型同空间成员约束；不靠 metadata 文本、StorageURI 或自填“材料编号”充当依据。PARTIAL/MISSING/DISPUTED 可无附件依据，但须明确说明，均阻断后续提交。附件上传、电子签章及自动验真不在本切片。
 
-当前没有已验证的业务收件材料接纳入口，Evidence owner 还须明确可选择的材料类别及受控来源，并提供能核对接收主体、交付/版本、原记录人和材料内容 hash 的安全投影/关系。缺少该路径时返回 422 REQUIRED_CONDITIONS_NOT_MET，blocker 为 `RECEIPT_EVIDENCE_UNAVAILABLE`，不开放 RECEIVED 正式登记；Command 自己新建的审计 Evidence 不能反过来充当其收到依据。独立测试可用明确合成材料验证，企业材料接纳仍是准入缺口，不以放宽 Evidence 条件填平。
+当前没有已验证的业务收件材料接纳入口；[1B前置只读核对](acceptance-business-basis-read-v1.md)仅提供安全引用、记录完整性和未配置缺口，不改变本条准入。Evidence owner 还须明确可选择的材料类别及受控来源，并提供能核对接收主体、交付/版本、原记录人和材料内容 hash 的安全投影/关系。缺少该路径时返回 422 REQUIRED_CONDITIONS_NOT_MET，blocker 为 `RECEIPT_EVIDENCE_UNAVAILABLE`，不开放 RECEIVED 正式登记；Command 自己新建的审计 Evidence 不能反过来充当其收到依据。独立测试可用明确合成材料验证，企业材料接纳仍是准入缺口，不以放宽 Evidence 条件填平。
 
 首次签收显式传 `replacesReceiptId=null`；补正必须等于当前 receiptId，并提供 expectedRevision。并发补正最多一个成功。RECEIVED 改为 DISPUTED 合法，旧收到声明仍保留，准备齐全投影随之阻断。仅签收变化不改草稿 hash 或原标准确认；未来冻结提交仍精确引用当时 receiptId。
 

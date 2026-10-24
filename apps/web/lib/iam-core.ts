@@ -452,7 +452,7 @@ export class BrowserIAM {
       const url=new URL(typeof input==="string"?input:input instanceof URL?input.href:input.url);
       const method=init.method??"GET", h=new Headers(init.headers);
       const prefix=`/api/v1/workspaces/${this.config.workspaceId}/`;
-      const allowed=url.pathname===prefix+"acceptance-context" || url.pathname===prefix+"contract-versions" || url.pathname===prefix+"acceptance-targets" || /^\/api\/v1\/contract-versions\/[0-9a-f-]{36}$/.test(url.pathname) && url.searchParams.get("workspaceId")===this.config.workspaceId;
+      const allowed=url.pathname===prefix+"acceptance-context" || url.pathname===prefix+"contract-versions" || url.pathname===prefix+"acceptance-targets" || url.pathname===prefix+"acceptance-basis" || new RegExp("^"+prefix+"acceptance-materials/[0-9a-f-]{36}$").test(url.pathname) || /^\/api\/v1\/contract-versions\/[0-9a-f-]{36}$/.test(url.pathname) && url.searchParams.get("workspaceId")===this.config.workspaceId;
       if(url.origin!==apiBaseUrl || url.username || url.password || url.hash || method!=="GET" || init.body!==undefined || [...h.keys()].length || !allowed) throw new IAMError();
       const {session}=await this.authorizedSession(key);
       h.set("Authorization",`Bearer ${session.accessToken}`);

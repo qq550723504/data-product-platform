@@ -13,7 +13,9 @@ const origin=new URL(process.env.BROWSER_IAM_ORIGIN??'');
 if(origin.origin!=='https://localhost:4290'||process.env.BROWSER_IAM_PROFILE!=='business-acceptance')throw new Error('Explicit isolated identity origin required');
 // Bind Next's canonical hostname/port to the actual TLS listener. A proxy with
 // a different internal port changes NextRequest.url and correctly fails CSRF.
-process.env.NEXT_DIST_DIR='.next-acceptance-identity-1a';
+const dist=process.env.ACCEPTANCE_IDENTITY_WEB_DIST??'.next-acceptance-identity-1a';
+if(!/^\.next-acceptance-identity-(1a|1b(?:-[a-z0-9-]{1,40})?)$/.test(dist))throw new Error('Explicit independent build required');
+process.env.NEXT_DIST_DIR=dist;
 const app=next({dev:false,dir:resolve(root,'apps/web'),hostname:'localhost',port:4290});
 await app.prepare();const handle=app.getRequestHandler();
 const server=https.createServer({cert:readFileSync(process.env.ACCEPTANCE_WEB_CERT),key:readFileSync(process.env.ACCEPTANCE_WEB_KEY),minVersion:'TLSv1.2'},(request,response)=>{

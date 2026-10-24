@@ -2,7 +2,7 @@
 import json,os,subprocess,urllib.parse
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];RUN=ROOT/'.data/acceptance-identity-1a'
-TABLES=['platform_actor_state','platform_subject_binding','platform_workspace_grant','dataset','dataset_version','delivery_operation','data_contract','contract_version','acceptance_party_representation','acceptance_responsibility_binding','acceptance_standard_applicability','acceptance_binding_disposition']
+TABLES=['platform_actor_state','platform_subject_binding','platform_workspace_grant','dataset','dataset_version','delivery_operation','data_contract','contract_version','acceptance_party_representation','acceptance_responsibility_binding','acceptance_standard_applicability','acceptance_binding_disposition','evidence','evidence_relation']
 def main():
  if os.environ.get('ACCEPTANCE_IDENTITY_ACK')!='ISOLATED_READONLY_1A':raise RuntimeError('explicit isolated configuration required')
  p=json.loads((RUN/'profile.json').read_text(encoding='utf-8'));resources=json.loads((RUN/'resources.json').read_text(encoding='utf-8'))

@@ -57,5 +57,6 @@ def main():
  step('iam-pg',['cmd','/c','npm','run','test:iam'] if os.name=='nt' else ['npm','run','test:iam'],web,iamenv)
  step('authority-pg',['go','test','./internal/platform/principal/bindings','-count=1','-v'],ROOT/'apps/platform',{'TEST_POSTGRES_DSN':pgdsn})
  step('responsibility-pg',['go','test','./internal/contract/infrastructure','-run','TestResponsibility','-count=1','-v'],ROOT/'apps/platform',{'ACCEPTANCE_IDENTITY_TEST_DSN':pgdsn})
+ step('basis-pg',['go','test','./internal/contract/infrastructure','-run','TestBusinessBasis','-count=1','-v'],ROOT/'apps/platform',{'ACCEPTANCE_IDENTITY_TEST_DSN':pgdsn})
  print('Fresh 1A fixture ready. No enterprise IdP, model, business write route or real execution enabled.')
 if __name__=='__main__':main()

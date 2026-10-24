@@ -76,7 +76,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(targets)
 	})
-	(contracthttp.ReadOnlyHandler{Reader: contractinfra.AcceptanceIdentityReader{Repository: contractinfra.NewPostgresRepository(db), Authority: store}, Principal: resolver, ReadCapability: principal.CapabilityAcceptanceRead}).Register(mux)
+	(contracthttp.ReadOnlyHandler{Reader: reader, Basis: reader, Principal: resolver, ReadCapability: principal.CapabilityAcceptanceRead}).Register(mux)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]any{"profile": "business-acceptance.v1", "writeEnabled": false, "dispatchEnabled": false})

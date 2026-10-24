@@ -1,5 +1,5 @@
 """Start a previously built 1A web profile; never stops or resets anything."""
-import json,os,subprocess,shutil,socket,time,ssl,urllib.request
+import json,os,subprocess,shutil,socket,time,ssl,urllib.request,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 RUN=ROOT/'.data/acceptance-identity-1a'
@@ -9,7 +9,10 @@ def main():
  for port in [4290,4291]:
   with socket.socket() as probe:
    if probe.connect_ex(('127.0.0.1',port))==0:raise RuntimeError('identity port already owned; no process stopped')
- web=ROOT/'apps/web';dist=web/'.next-acceptance-identity-1a';server=dist/'standalone/server.js'
+ web=ROOT/'apps/web';name=os.environ.get('ACCEPTANCE_IDENTITY_WEB_DIST','.next-acceptance-identity-1a')
+ if not re.fullmatch(r'\.next-acceptance-identity-(1a|1b(?:-[a-z0-9-]{1,40})?)',name):raise RuntimeError('explicit independent build required')
+ dist=web/name;server=dist/'standalone/server.js'
+ if dist.resolve().parent!=web.resolve():raise RuntimeError('build escaped independent workspace')
  if not server.is_file():raise RuntimeError('isolated standalone build required')
  # Copies stay under this new build; the retained .next build is untouched.
  shutil.copytree(dist/'static',server.parent/dist.name/'static',dirs_exist_ok=True)

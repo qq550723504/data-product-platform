@@ -1,12 +1,14 @@
 # 业务签收验收与归档接入计划
 
-状态更新：独立 1A 身份/责任准入已实施，当前范围归 [1A 实施记录](acceptance-identity-1a-implementation.md)；业务写入仍关闭。以下设计轮及前置只读记录保留其原时间边界。
+状态更新：1B前置[业务依据只读核对](acceptance-business-basis-read-implementation.md)已实施；用户确认企业来源暂未确定，只有安全引用和来源缺口，不启用Case/签收写入。
+
+1A状态更新：独立 1A 身份/责任准入已实施，当前范围归 [1A 实施记录](acceptance-identity-1a-implementation.md)；业务写入仍关闭。以下设计轮及前置只读记录保留其原时间边界。
 
 原状态：第 0 切片及责任/标准适用的持久化只读查询已实施，当前行为归 [责任与适用关系契约](../architecture/acceptance-binding-read-contract-v1.md) 和 [绑定只读验收](governance-acceptance-bindings-readonly-20261024.md)。2026-10-24 对 `1141b72c` 细化 [第一切片写入准入设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，本轮仅文档。下表按当前代码更新，不再将已补齐的读取身份/标准格式列为未实现。其余业务写入仍为目标设计；保留原库、预览运行状态和 Agent API，业务写入口继续关闭，不接模型或真实执行，PR #363 保持 Draft、不合并。
 
 ## 当前能力与缺口
 
-新版业务签收、验收、归档页面的正常与异常办理交互仍运行在 DemoProvider/sessionStorage 中；独立 `/core/acceptance-context` 已读取持久化责任与标准适用事实。`internal/acceptance` 是现有端到端测试包，不是这三类业务事实的服务实现。正式写入的根本缺口是可信多人身份的实际接入、事务内责任准入、Case/Receipt 和冻结提交/验收决定，不能只把演示按钮改成 POST。
+新版业务签收、验收、归档页面的正常与异常办理交互仍运行在 DemoProvider/sessionStorage 中；独立 `/core/acceptance-context` 已读取持久化责任与标准适用事实。`internal/acceptance` 是现有端到端测试包，不是这三类业务事实的服务实现。1A已实现独立逐用户身份及本地事务责任校验；正式写入仍缺企业身份/业务依据的可信接纳、Case/Receipt和冻结提交/验收决定，不能只把演示按钮改成POST。
 
 优先级含义：P0 是正式业务写入前必须解决的基础边界；P1 是首个真实闭环；P2 是首版以后的便利和扩展能力。现有 API 的注册能力与当前预览是否启用应分别核对，下表不将仓库中的所有路由视为已部署。
 

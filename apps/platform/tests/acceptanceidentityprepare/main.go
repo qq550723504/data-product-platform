@@ -13,6 +13,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
+	"github.com/qq550723504/data-product-platform/apps/platform/tests/acceptancefixture"
 	"log"
 	"os"
 	"path/filepath"
@@ -121,6 +122,7 @@ func main() {
 		_, e = tx.Exec(ctx, `INSERT INTO acceptance_standard_applicability(id,workspace_id,delivery_operation_id,dataset_version_id,contract_version_id,source_sha256,criteria_set_hash,confirmer_binding_id,basis_evidence_id,valid_from,valid_to,origin,recorded_by)VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,now()-interval '1 hour',now()+interval '1 day','SYNTHETIC_FIXTURE',$10)`, id(base+50), ws, delivery, version, standard, sourceHash, criteria.SetHash, id(base+42), basis.ID, config.People["confirmer"].Actor)
 		must(e)
 	}
+	must(acceptancefixture.AppendBasisMaterials(ctx, tx))
 	must(tx.Commit(ctx))
 	fmt.Println("Schema76 and six synthetic directory people/two workspaces prepared. No business Command/provider/execution invoked.")
 }

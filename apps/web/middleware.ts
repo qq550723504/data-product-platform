@@ -11,6 +11,6 @@ export function middleware(r:NextRequest){
  if(path==='/'&&r.method==='GET')return NextResponse.redirect(new URL('/identity',r.url));
  if((r.method==='GET'||r.method==='HEAD')&&(path.startsWith('/_next/static/')||path==='/favicon.ico'))return NextResponse.next();
  const auth=['/auth/login','/auth/callback','/auth/logout','/auth/logged-out'];
- if(auth.includes(path)||r.method==='GET'&&(path==='/identity'||path==='/core/acceptance-context'))return NextResponse.next();
+ if(auth.includes(path)||r.method==='GET'&&(path==='/identity'||path==='/core/acceptance-context'||path==='/core/acceptance-basis'))return NextResponse.next();
  return new NextResponse('This identity profile provides acceptance reads only',{status:403,headers:{'Cache-Control':'no-store'}});
 }

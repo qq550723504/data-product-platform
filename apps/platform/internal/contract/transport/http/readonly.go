@@ -7,6 +7,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"net/http"
+	"net/url"
 	"strconv"
 )
 
@@ -14,16 +15,25 @@ type ReadOnlyHandler struct {
 	Reader         q.Reader
 	Principal      principal.Resolver
 	ReadCapability string
+	Basis          q.BasisReader
 }
 
 func (h ReadOnlyHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/contract-versions/{versionId}", func(w http.ResponseWriter, r *http.Request) { h.read(w, r, "version") })
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/contract-versions", func(w http.ResponseWriter, r *http.Request) { h.read(w, r, "list") })
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/acceptance-context", func(w http.ResponseWriter, r *http.Request) { h.read(w, r, "context") })
+	if h.Basis != nil && h.ReadCapability == principal.CapabilityAcceptanceRead {
+		mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/acceptance-basis", func(w http.ResponseWriter, r *http.Request) { h.read(w, r, "basis") })
+		mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/acceptance-materials/{materialId}", func(w http.ResponseWriter, r *http.Request) { h.read(w, r, "material") })
+	}
 }
 func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind string) {
 	w.Header().Set("Cache-Control", "private, no-store")
-	params := r.URL.Query()
+	params, parseErr := url.ParseQuery(r.URL.RawQuery)
+	if parseErr != nil {
+		httpserver.WriteError(w, r, 400, "INVALID_QUERY", "invalid query encoding", nil)
+		return
+	}
 	wsValue := r.PathValue("workspaceId")
 	if kind == "version" {
 		wsValue = params.Get("workspaceId")
@@ -65,6 +75,13 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 		allowed["bindingOffset"] = true
 		allowed["bindingId"] = true
 	}
+	if kind == "basis" || kind == "material" {
+		allowed = map[string]bool{"deliveryOperationId": true, "datasetVersionId": true}
+		if kind == "basis" {
+			allowed["contractVersionId"] = true
+			allowed["materialOffset"] = true
+		}
+	}
 	for key, values := range params {
 		if !allowed[key] || len(values) != 1 {
 			httpserver.WriteError(w, r, 400, "INVALID_QUERY", "unsupported or repeated query", nil)
@@ -94,7 +111,7 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 			return
 		}
 	}
-	if kind == "context" {
+	if kind == "context" || kind == "basis" || kind == "material" {
 		var ok bool
 		query.DeliveryID, ok = parse(params.Get("deliveryOperationId"))
 		if !ok {
@@ -121,6 +138,46 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 				return
 			}
 		}
+	}
+	if kind == "basis" || kind == "material" {
+		bq := q.BasisQuery{Query: query}
+		if raw, ok := params["materialOffset"]; ok {
+			n, e := strconv.Atoi(raw[0])
+			if e != nil || n < 0 || n > 2147483647 {
+				httpserver.WriteError(w, r, 400, "INVALID_PAGE", "invalid material offset", nil)
+				return
+			}
+			bq.MaterialOffset = n
+		}
+		if kind == "material" {
+			var ok bool
+			bq.MaterialID, ok = parse(r.PathValue("materialId"))
+			if !ok {
+				httpserver.WriteError(w, r, 400, "INVALID_REFERENCE", "explicit material UUID required", nil)
+				return
+			}
+		}
+		var value any
+		var e error
+		if kind == "basis" {
+			value, e = h.Basis.ReadBusinessBasis(r.Context(), bq)
+		} else {
+			value, e = h.Basis.ReadReceiptMaterial(r.Context(), bq)
+		}
+		if errors.Is(e, principal.ErrUnauthenticated) || errors.Is(e, principal.ErrWorkspaceDenied) || errors.Is(e, principal.ErrCapabilityDenied) {
+			httpserver.WriteError(w, r, 403, "WORKSPACE_AUTHORITY_DENIED", "current read authority denied", nil)
+			return
+		}
+		if errors.Is(e, q.ErrNotFound) {
+			httpserver.WriteError(w, r, 404, "ACCEPTANCE_SOURCE_NOT_FOUND", "scoped source not found", nil)
+			return
+		}
+		if e != nil {
+			httpserver.WriteError(w, r, 503, "ACCEPTANCE_BASIS_UNAVAILABLE", "basis read unavailable", nil)
+			return
+		}
+		writeJSON(w, 200, value)
+		return
 	}
 	p, c, err := (q.Service{Reader: h.Reader}).Read(r.Context(), query)
 	if errors.Is(err, principal.ErrAuthorityUnavailable) {

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {basisHref} from '@/lib/acceptance-basis';
 import {iamEnabled} from '@/lib/iam-mode';
 import {currentAcceptanceClient} from '@/lib/iam-server';
 import {validIdentityContext, type IdentityContext} from '@/lib/acceptance-identity';
@@ -39,7 +40,7 @@ export default async function CoreAcceptanceContext({searchParams}:{searchParams
  ]);
  return <><PageHeader title="标准与验收责任" description="核对明确成果的代表资格、办理责任和标准适用依据"/>
  <p>工作空间：<code>{ws||'未配置'}</code></p><div className="callout">只读准备阶段。绑定有效不代表已签收或验收通过。合成验收夹具用于验证流程，不代表企业真实人员授权。</div>
- {client?<p><Link href="/identity">返回身份与工作空间</Link></p>:<p><a href="/core/deliveries">返回交付记录</a> · <Link href="/#business-acceptances">查看业务验收演示</Link></p>}
+ {client?<p><Link href="/identity">返回身份与工作空间</Link> · <Link href={basisHref({...s,materialOffset:s.basisMaterialOffset??0,materialId:s.basisMaterialId},s.basisMaterialId?'material-detail':undefined)}>核对业务依据与收件材料</Link></p>:<p><a href="/core/deliveries">返回交付记录</a> · <Link href="/#business-acceptances">查看业务验收演示</Link></p>}
  {client&&context&&<AdmissionPanel value={(context as IdentityContext).admission}/>}
  <section className="card"><h2>核对明确成果</h2><form method="get" action="/core/acceptance-context" className="agent-lookup"><label htmlFor="acceptance-delivery">交付操作 UUID</label><input id="acceptance-delivery" name="deliveryOperationId" required defaultValue={s.deliveryOperationId}/><label htmlFor="acceptance-version">成果版本 UUID</label><input id="acceptance-version" name="datasetVersionId" required defaultValue={s.datasetVersionId}/>{s.contractVersionId&&<input type="hidden" name="contractVersionId" value={s.contractVersionId}/>}<button className="button">查询验收准备</button></form></section>
  <section className="card"><h2>责任与办理条件</h2>{!s.deliveryOperationId?<p>从交付记录选择明确成果，或填写交付和版本 UUID 后查询。未选择成果时不推断责任人。</p>:!context?<UnknownHistory>指定成果的责任上下文读取失败，未推断接收方或责任人。交付：{s.deliveryOperationId}；版本：{s.datasetVersionId}。{s.bindingId&&<>明确绑定：{s.bindingId}，没有改查最新记录。</>}</UnknownHistory>:<>

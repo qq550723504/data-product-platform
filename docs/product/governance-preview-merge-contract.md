@@ -1,6 +1,8 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-当前实施增量：用户已授权 1A 可信多人身份与责任准入。复用 OIDC/RP 候选、migrations 75/76、独立 TLS PG/Keycloak 验收、事务内权威/责任 fence、新版只读页面及多人/跨空间浏览器验收；细节与证据归 [1A 实施记录](acceptance-identity-1a-implementation.md)。业务 Case/签收/确认写入口仍关闭，原库及 Agent API 保留，不接模型/真实执行，Draft 不合并。构建依赖安全修复和 required 身份验收组属于本次范围；不得把 1A 本地事实校验当未来写入准入或企业现场 PASS。
+当前实施增量：1B前置业务依据只读核对。用户确认企业来源暂未确定；复用1A会话/事务fence、责任/标准和Evidence，补齐两个GET、新版核对页、安全材料投影、只读权限及独立环境PG/浏览器验收，无新业务表/DDL/写入。权威契约为[业务依据只读契约](../architecture/acceptance-business-basis-read-v1.md)，范围及证据见[实施记录](acceptance-business-basis-read-implementation.md)。真实来源、内容与收到均不推断，原库/Agent保留、业务写关闭、模型/派发关闭、Draft不合并。
+
+上一实施增量：用户已授权 1A 可信多人身份与责任准入。复用 OIDC/RP 候选、migrations 75/76、独立 TLS PG/Keycloak 验收、事务内权威/责任 fence、新版只读页面及多人/跨空间浏览器验收；细节与证据归 [1A 实施记录](acceptance-identity-1a-implementation.md)。业务 Case/签收/确认写入口仍关闭，原库及 Agent API 保留，不接模型/真实执行，Draft 不合并。构建依赖安全修复和 required 身份验收组属于本次范围；不得把 1A 本地事实校验当未来写入准入或企业现场 PASS。
 
 上一文档增量：用户授权细化验收草稿和业务签收的可信多方身份、责任校验、写入准入、状态/接口及异常恢复，**先设计不开发**。权威细化为 [第一切片设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，与总契约/接入计划同步；本次不实施 IAM、DDL、API、页面或运行配置，不改原库/独立库、运行进程或 Agent API。业务写入口保持关闭，模型和真实执行不接入，保持 Draft、不 merge/deploy。OIDC 候选复用、事务权威 Port 和未来启用条件是依赖设计，不是运行授权；现有只读 CI/现场 PASS 不能延伸为新写入设计的验收。
 

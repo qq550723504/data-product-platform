@@ -98,6 +98,12 @@ func (s Service) Read(ctx context.Context, q Query) (Page, *Context, error) {
 	if err != nil {
 		return Page{}, nil, err
 	}
+	return Project(q, stored)
+}
+
+// Project shares the existing complete binding evaluation with caller-owned
+// transactional reads; it performs no database or network work.
+func Project(q Query, stored Snapshot) (Page, *Context, error) {
 	p := Page{WorkspaceID: q.WorkspaceID, Items: []Version{}}
 	p.Page.Limit = q.Limit
 	p.Page.Offset = q.Offset
