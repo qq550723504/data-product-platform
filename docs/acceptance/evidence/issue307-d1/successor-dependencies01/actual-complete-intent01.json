@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/verify-successor-history.py",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-successor-dependencies\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\successor-dependencies01\\actual-complete01"
+  ],
+  "started_at": "2026-10-24T05:15:40.900438+00:00",
+  "input_sha256": "9e733ea03f3e4a53927c6c09900c972ef8b9684357174fe72ba3a14371ff281e",
+  "source_started": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

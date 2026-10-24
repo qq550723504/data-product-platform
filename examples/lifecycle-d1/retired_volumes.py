@@ -48,10 +48,9 @@ def checked(path,digest,parent,parent_digest):
         else:raise ValueError('resource retirement: unknown volume decision')
     return plan
 
-def receipts(plan,digest,directory,docker):
+def receipt_facts(plan,digest,directory):
+    """Immutable exact outcomes only; current presence is checked separately."""
     removed=set()
-    names=docker.raw('volume','ls','-q').decode('utf8','strict').split()
-    r.need(len(names)==len(set(names)),'duplicate current volume inventory')
     for folder in Path(directory).iterdir():
         r.need(folder.is_dir() and not folder.is_symlink() and not folder.is_junction(),'invalid volume receipt path')
         intent=r.read(folder/'intent.json');outcome=r.read(folder/'result.json')
@@ -63,6 +62,13 @@ def receipts(plan,digest,directory,docker):
                and outcome['stdout'].split()==[name] and outcome['confirmed_absent'] is True,
                'unconfirmed or unbound volume removal')
         removed.add(name)
+    return removed
+
+
+def receipts(plan,digest,directory,docker):
+    removed=receipt_facts(plan,digest,directory)
+    names=docker.raw('volume','ls','-q').decode('utf8','strict').split()
+    r.need(len(names)==len(set(names)),'duplicate current volume inventory')
     r.need(not removed&set(names),'retired volume still present')
     r.need((set(plan['remove'])-removed|set(plan['preserve']))<=set(names),'missing volume has no fixed receipt')
     return removed

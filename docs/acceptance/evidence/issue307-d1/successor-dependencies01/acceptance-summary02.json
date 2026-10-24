@@ -1,0 +1,20 @@
+{
+  "status": "PASS_BOUNDED_SUCCESSOR_DEPENDENCY_SPLIT_NONDELETE_ACCEPTANCE",
+  "remaining_blockers": [],
+  "observed_at": "2026-10-24T05:26:04.438682+00:00",
+  "implementation_summary_sha256": "3cb74069f413264dac1315d3507601dd4e0710aca717625e41339aa27b5e748b",
+  "implementation_index_sha256": "18bc74d3d2d9393aa2af498eaedf16e05177f4f4eb3ef4ab2d6ec08f4c0d17cc",
+  "implementation_members": 68,
+  "ci_sha256": "8e39a55499a9fa816797fb2e4c0a2567e352e063ea70f545e8a881d18722aede",
+  "CI_increment_review": "PASS_BOUNDED_INDEPENDENT_CI_WIRING_REVIEW",
+  "local_exact_CI_recipe": "PASS_LOCAL_EXACT_CI_RECIPE",
+  "local_CI_methods_per_mode": 43,
+  "implementation_unchanged_since_actual_complete": true,
+  "remote_new_source_CI": "NOT_RUN",
+  "main_CI": "NOT_RUN",
+  "push": 0,
+  "merge": 0,
+  "source_started": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

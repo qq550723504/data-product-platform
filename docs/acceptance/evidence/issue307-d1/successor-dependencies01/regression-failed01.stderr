@@ -1,0 +1,534 @@
+test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) ... 
+  test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=0, type='bytes') ... ERROR
+  test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=0, type='bytes') ... ERROR
+  test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=0, type='str') ... ERROR
+  test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=1, type='bytes') ... ERROR
+test_complete_cli_success_preserves_used_budget_pins_and_original_failure (test_successor_dependencies.SuccessorCompositionTests.test_complete_cli_success_preserves_used_budget_pins_and_original_failure) ... ERROR
+test_docker_read_error_or_str_inventory_is_never_success (test_successor_dependencies.SuccessorCompositionTests.test_docker_read_error_or_str_inventory_is_never_success) ... ERROR
+test_missing_exact_receipt_and_changed_executed_source_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_exact_receipt_and_changed_executed_source_reject) ... ERROR
+test_missing_source_custodian_and_forward_parent_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_source_custodian_and_forward_parent_reject) ... 
+  test_missing_source_custodian_and_forward_parent_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_source_custodian_and_forward_parent_reject) (cid='000000000000000000000000000000000000000000000000000000000000000a') ... ERROR
+  test_missing_source_custodian_and_forward_parent_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_source_custodian_and_forward_parent_reject) (cid='0000000000000000000000000000000000000000000000000000000000000015') ... ERROR
+  test_missing_source_custodian_and_forward_parent_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_source_custodian_and_forward_parent_reject) (cid='0000000000000000000000000000000000000000000000000000000000000016') ... ERROR
+test_old_budget_tar_and_pins_cannot_be_rewritten (test_successor_dependencies.SuccessorCompositionTests.test_old_budget_tar_and_pins_cannot_be_rewritten) ... 
+  test_old_budget_tar_and_pins_cannot_be_rewritten (test_successor_dependencies.SuccessorCompositionTests.test_old_budget_tar_and_pins_cannot_be_rewritten) (path='budget.tar') ... ERROR
+  test_old_budget_tar_and_pins_cannot_be_rewritten (test_successor_dependencies.SuccessorCompositionTests.test_old_budget_tar_and_pins_cannot_be_rewritten) (path='pins-and-failed-attempt.txt') ... ERROR
+test_output_is_exclusive_and_no_old_allocation_schema_replay (test_successor_dependencies.SuccessorCompositionTests.test_output_is_exclusive_and_no_old_allocation_schema_replay) ... ERROR
+test_required_closed_epoch_changes_accepted_but_maintenance_comparison_stays_strict (test_successor_dependencies.SuccessorCompositionTests.test_required_closed_epoch_changes_accepted_but_maintenance_comparison_stays_strict) ... ERROR
+test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) ... 
+  test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='running') ... ERROR
+  test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='image') ... ERROR
+  test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='privilege') ... ERROR
+  test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='netns') ... ERROR
+test_required_source_omission_and_bad_fixed_snapshot_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_source_omission_and_bad_fixed_snapshot_reject) ... ERROR
+test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart (test_successor_dependencies.SuccessorCompositionTests.test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart) ... 
+  test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart (test_successor_dependencies.SuccessorCompositionTests.test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart) (fault='missing') ... ERROR
+  test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart (test_successor_dependencies.SuccessorCompositionTests.test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart) (fault='owner') ... ERROR
+  test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart (test_successor_dependencies.SuccessorCompositionTests.test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart) (fault='mount') ... ERROR
+test_retired_cid_or_volume_reappearing_reject (test_successor_dependencies.SuccessorCompositionTests.test_retired_cid_or_volume_reappearing_reject) ... ERROR
+test_unrelated_stop_restart_new_session_and_broken_foreign_netns_do_not_change_contract (test_successor_dependencies.SuccessorCompositionTests.test_unrelated_stop_restart_new_session_and_broken_foreign_netns_do_not_change_contract) ... ERROR
+
+======================================================================
+ERROR: test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=0, type='bytes')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 230, in test_budget_reset_changed_content_type_and_read_failure_reject
+    with self.subTest(code=code,type=type(raw).__name__),self.assertRaises(ValueError):self.full()
+                                                                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpaafbg091\\repo\\evidence1'
+
+======================================================================
+ERROR: test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=0, type='bytes')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 230, in test_budget_reset_changed_content_type_and_read_failure_reject
+    with self.subTest(code=code,type=type(raw).__name__),self.assertRaises(ValueError):self.full()
+                                                                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpaafbg091\\repo\\evidence2'
+
+======================================================================
+ERROR: test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=0, type='str')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 230, in test_budget_reset_changed_content_type_and_read_failure_reject
+    with self.subTest(code=code,type=type(raw).__name__),self.assertRaises(ValueError):self.full()
+                                                                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpaafbg091\\repo\\evidence3'
+
+======================================================================
+ERROR: test_budget_reset_changed_content_type_and_read_failure_reject (test_successor_dependencies.SuccessorCompositionTests.test_budget_reset_changed_content_type_and_read_failure_reject) (code=1, type='bytes')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 230, in test_budget_reset_changed_content_type_and_read_failure_reject
+    with self.subTest(code=code,type=type(raw).__name__),self.assertRaises(ValueError):self.full()
+                                                                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpaafbg091\\repo\\evidence4'
+
+======================================================================
+ERROR: test_complete_cli_success_preserves_used_budget_pins_and_original_failure (test_successor_dependencies.SuccessorCompositionTests.test_complete_cli_success_preserves_used_budget_pins_and_original_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 179, in test_complete_cli_success_preserves_used_budget_pins_and_original_failure
+    result=self.full()
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpnvm0j8zl\\repo\\evidence1'
+
+======================================================================
+ERROR: test_docker_read_error_or_str_inventory_is_never_success (test_successor_dependencies.SuccessorCompositionTests.test_docker_read_error_or_str_inventory_is_never_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 254, in test_docker_read_error_or_str_inventory_is_never_success
+    with self.assertRaises(TimeoutError):self.full()
+                                         ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp1128o71t\\repo\\evidence1'
+
+======================================================================
+ERROR: test_missing_exact_receipt_and_changed_executed_source_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_exact_receipt_and_changed_executed_source_reject)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 250, in test_missing_exact_receipt_and_changed_executed_source_reject
+    with self.assertRaises(ValueError):self.full()
+                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpcwsx7iup\\repo\\evidence2'
+
+======================================================================
+ERROR: test_missing_source_custodian_and_forward_parent_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_source_custodian_and_forward_parent_reject) (cid='000000000000000000000000000000000000000000000000000000000000000a')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 204, in test_missing_source_custodian_and_forward_parent_reject
+    with self.subTest(cid=cid),self.assertRaisesRegex(ValueError,'dependency missing'):self.full()
+                                                                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmplg8d99zx\\repo\\evidence1'
+
+======================================================================
+ERROR: test_missing_source_custodian_and_forward_parent_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_source_custodian_and_forward_parent_reject) (cid='0000000000000000000000000000000000000000000000000000000000000015')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 204, in test_missing_source_custodian_and_forward_parent_reject
+    with self.subTest(cid=cid),self.assertRaisesRegex(ValueError,'dependency missing'):self.full()
+                                                                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmplg8d99zx\\repo\\evidence2'
+
+======================================================================
+ERROR: test_missing_source_custodian_and_forward_parent_reject (test_successor_dependencies.SuccessorCompositionTests.test_missing_source_custodian_and_forward_parent_reject) (cid='0000000000000000000000000000000000000000000000000000000000000016')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 204, in test_missing_source_custodian_and_forward_parent_reject
+    with self.subTest(cid=cid),self.assertRaisesRegex(ValueError,'dependency missing'):self.full()
+                                                                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmplg8d99zx\\repo\\evidence3'
+
+======================================================================
+ERROR: test_old_budget_tar_and_pins_cannot_be_rewritten (test_successor_dependencies.SuccessorCompositionTests.test_old_budget_tar_and_pins_cannot_be_rewritten) (path='budget.tar')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 235, in test_old_budget_tar_and_pins_cannot_be_rewritten
+    with self.subTest(path=path.name),self.assertRaises(ValueError):self.full()
+                                                                    ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpkupvq8ms\\repo\\evidence1'
+
+======================================================================
+ERROR: test_old_budget_tar_and_pins_cannot_be_rewritten (test_successor_dependencies.SuccessorCompositionTests.test_old_budget_tar_and_pins_cannot_be_rewritten) (path='pins-and-failed-attempt.txt')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 235, in test_old_budget_tar_and_pins_cannot_be_rewritten
+    with self.subTest(path=path.name),self.assertRaises(ValueError):self.full()
+                                                                    ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpkupvq8ms\\repo\\evidence2'
+
+======================================================================
+ERROR: test_output_is_exclusive_and_no_old_allocation_schema_replay (test_successor_dependencies.SuccessorCompositionTests.test_output_is_exclusive_and_no_old_allocation_schema_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 268, in test_output_is_exclusive_and_no_old_allocation_schema_replay
+    result=self.full()
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpf_dw66m6\\repo\\evidence1'
+
+======================================================================
+ERROR: test_required_closed_epoch_changes_accepted_but_maintenance_comparison_stays_strict (test_successor_dependencies.SuccessorCompositionTests.test_required_closed_epoch_changes_accepted_but_maintenance_comparison_stays_strict)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 195, in test_required_closed_epoch_changes_accepted_but_maintenance_comparison_stays_strict
+    baseline=self.full()
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp52_84l59\\repo\\evidence1'
+
+======================================================================
+ERROR: test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='running')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 214, in test_required_running_descriptor_privilege_and_netns_drift_reject
+    with self.subTest(fault=fault),self.assertRaisesRegex(ValueError,'descriptor/topology'):self.full()
+                                                                                            ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpuysybfw3\\repo\\evidence1'
+
+======================================================================
+ERROR: test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='image')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 214, in test_required_running_descriptor_privilege_and_netns_drift_reject
+    with self.subTest(fault=fault),self.assertRaisesRegex(ValueError,'descriptor/topology'):self.full()
+                                                                                            ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpuysybfw3\\repo\\evidence2'
+
+======================================================================
+ERROR: test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='privilege')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 214, in test_required_running_descriptor_privilege_and_netns_drift_reject
+    with self.subTest(fault=fault),self.assertRaisesRegex(ValueError,'descriptor/topology'):self.full()
+                                                                                            ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpuysybfw3\\repo\\evidence3'
+
+======================================================================
+ERROR: test_required_running_descriptor_privilege_and_netns_drift_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_running_descriptor_privilege_and_netns_drift_reject) (fault='netns')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 214, in test_required_running_descriptor_privilege_and_netns_drift_reject
+    with self.subTest(fault=fault),self.assertRaisesRegex(ValueError,'descriptor/topology'):self.full()
+                                                                                            ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpuysybfw3\\repo\\evidence4'
+
+======================================================================
+ERROR: test_required_source_omission_and_bad_fixed_snapshot_reject (test_successor_dependencies.SuccessorCompositionTests.test_required_source_omission_and_bad_fixed_snapshot_reject)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 265, in test_required_source_omission_and_bad_fixed_snapshot_reject
+    with self.assertRaises(ValueError):self.full()
+                                       ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpubjhh51l\\repo\\evidence1'
+
+======================================================================
+ERROR: test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart (test_successor_dependencies.SuccessorCompositionTests.test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart) (fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 224, in test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart
+    with self.subTest(fault=fault),self.assertRaises(ValueError):self.full()
+                                                                 ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmphsiaqlv3\\repo\\evidence1'
+
+======================================================================
+ERROR: test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart (test_successor_dependencies.SuccessorCompositionTests.test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart) (fault='owner')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 224, in test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart
+    with self.subTest(fault=fault),self.assertRaises(ValueError):self.full()
+                                                                 ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmphsiaqlv3\\repo\\evidence2'
+
+======================================================================
+ERROR: test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart (test_successor_dependencies.SuccessorCompositionTests.test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart) (fault='mount')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 224, in test_retained_volume_missing_owner_and_full_mount_expansion_reject_even_with_unrelated_restart
+    with self.subTest(fault=fault),self.assertRaises(ValueError):self.full()
+                                                                 ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmphsiaqlv3\\repo\\evidence3'
+
+======================================================================
+ERROR: test_retired_cid_or_volume_reappearing_reject (test_successor_dependencies.SuccessorCompositionTests.test_retired_cid_or_volume_reappearing_reject)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 240, in test_retired_cid_or_volume_reappearing_reject
+    with self.assertRaisesRegex(ValueError,'retired CID'):self.full()
+                                                          ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpuu0rtc8w\\repo\\evidence1'
+
+======================================================================
+ERROR: test_unrelated_stop_restart_new_session_and_broken_foreign_netns_do_not_change_contract (test_successor_dependencies.SuccessorCompositionTests.test_unrelated_stop_restart_new_session_and_broken_foreign_netns_do_not_change_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 186, in test_unrelated_stop_restart_new_session_and_broken_foreign_netns_do_not_change_contract
+    original=self.full()
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\test_successor_dependencies.py", line 174, in full
+    return self.entry.main(['--output', str(output)])
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\verify-successor-history.py", line 14, in main
+    output = r.audit.unlinked_absolute(args.output)
+  File "C:\Users\Henry\.codex\worktrees\d1-successor-dependencies\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 69, in unlinked_absolute
+    return original.resolve(strict=True)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 938, in resolve
+    return self.with_segments(os.path.realpath(self, strict=strict))
+                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen ntpath>", line 696, in realpath
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp7g9xlbcm\\repo\\evidence1'
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.689s
+
+FAILED (errors=24)

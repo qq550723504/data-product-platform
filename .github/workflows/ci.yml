@@ -98,6 +98,14 @@ jobs:
           python -O -B examples/lifecycle-d1/test_evidence_indexes.py
           python -B examples/lifecycle-d1/test_six_native_entry.py
           python -O -B examples/lifecycle-d1/test_six_native_entry.py
+          python -B examples/lifecycle-d1/test_retired_resources.py
+          python -O -B examples/lifecycle-d1/test_retired_resources.py
+          python -B examples/lifecycle-d1/test_retired_volumes.py
+          python -O -B examples/lifecycle-d1/test_retired_volumes.py
+          python -B examples/lifecycle-d1/test_retired_budget_bytes.py
+          python -O -B examples/lifecycle-d1/test_retired_budget_bytes.py
+          python -B examples/lifecycle-d1/test_successor_dependencies.py
+          python -O -B examples/lifecycle-d1/test_successor_dependencies.py
           python -B examples/lifecycle-d1/test_retained_v26.py
           python -O -B examples/lifecycle-d1/test_retained_v26.py
           python -B examples/lifecycle-d1/test_retained_v29.py
