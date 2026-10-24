@@ -169,6 +169,15 @@ func read(path string, v any) error {
 	}
 	return strict(b, v)
 }
+func readPermission(path string, out *permission) error {
+	raw, err := os.ReadFile(path)
+	var fields map[string]json.RawMessage
+	if err != nil || len(raw) > 1<<20 || strict(raw, out) != nil || json.Unmarshal(raw, &fields) != nil || len(fields) != 2 ||
+		(string(fields["Enabled"]) != "false" && string(fields["Enabled"]) != "true") || len(fields["BindingsSHA256"]) == 0 {
+		return denied
+	}
+	return nil
+}
 func checkedBindings(b bindings) error {
 	end, _ := time.Parse(time.RFC3339, deadline)
 	if b.Kind != kind || b.MaintenanceID == uuid.Nil || b.MaintenanceID.String() == pilot.RemainingExecution || b.NotBefore.IsZero() || !b.NotBefore.Before(b.NotAfter) || b.NotAfter.Sub(b.NotBefore) > 40*time.Minute || b.NotAfter.After(end) || b.PlanSHA256 != approvedPlanSHA256 || !hash(b.BinarySHA256) || !hash(b.HostPublicSHA256) || !hash(b.BudgetID) || len(b.Owners) != 2 {
@@ -247,7 +256,7 @@ func (r *engine) authorize() error {
 	if e != nil || len(human) == 0 || g.Kind != kind || g.MaintenanceID != r.b.MaintenanceID || g.BindingsSHA256 != r.bindingSHA || !hash(g.HumanMessageSHA256) || digest(human) != g.HumanMessageSHA256 || !g.NotBefore.Equal(r.b.NotBefore) || !g.NotAfter.Equal(r.b.NotAfter) || g.ConfirmedAt.IsZero() || at.Before(g.ConfirmedAt) || g.MaxPerTarget != 1 || g.MaxTotal != 2 || g.OldAuthorizationReused {
 		return denied
 	}
-	if read(filepath.Join(r.private, "permission.json"), &p) != nil || !p.Enabled || p.BindingsSHA256 != r.bindingSHA {
+	if readPermission(filepath.Join(r.private, "permission.json"), &p) != nil || !p.Enabled || p.BindingsSHA256 != r.bindingSHA {
 		return denied
 	}
 	if read(filepath.Join(r.private, "topology.json"), &s) != nil || !ed25519.Verify(r.public, s.Body, s.Signature) || strict(s.Body, &h) != nil || h.Kind != kind || h.MaintenanceID != r.b.MaintenanceID || h.BindingsSHA256 != r.bindingSHA || h.Group != r.group || h.Owner != r.selected.CID || h.Native != r.selected.Native || h.DescriptorSHA256 != r.selected.DescriptorSHA256 || h.ConfigSHA256 != r.selected.ConfigSHA256 || h.BudgetID != r.b.BudgetID || at.Before(h.At) || at.Sub(h.At) > time.Minute {
@@ -515,7 +524,7 @@ func waitPermission(ctx context.Context, private string, original []byte, now fu
 		raw, err := os.ReadFile(filepath.Join(private, "bindings.json"))
 		var p permission
 		if err != nil || !bytes.Equal(raw, original) || at.Before(b.NotBefore) || !at.Before(b.NotAfter) ||
-			read(filepath.Join(private, "permission.json"), &p) != nil || p.BindingsSHA256 != digest(original) {
+			readPermission(filepath.Join(private, "permission.json"), &p) != nil || p.BindingsSHA256 != digest(original) {
 			return denied
 		}
 		if p.Enabled {

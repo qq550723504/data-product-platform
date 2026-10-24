@@ -37,7 +37,7 @@ func TestRetentionWaitFalseToTrueThenFreshAuthorization(t *testing.T) {
 }
 
 func TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation(t *testing.T) {
-	for _, fault := range []string{"pre-enabled", "binding", "permission-hash", "duplicate", "expired", "early", "cancelled"} {
+	for _, fault := range []string{"pre-enabled", "binding", "permission-hash", "duplicate", "missing-false", "null-false", "expired", "early", "cancelled"} {
 		t.Run(fault, func(t *testing.T) {
 			f := testFixture(t)
 			dir := f.dirs["business-races"]
@@ -59,6 +59,12 @@ func TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation(t *testing.T) {
 			writeJSON(t, filepath.Join(dir, "permission.json"), p)
 			if fault == "binding" {
 				os.WriteFile(filepath.Join(dir, "bindings.json"), append(raw, ' '), 0600)
+			}
+			if fault == "missing-false" {
+				os.WriteFile(filepath.Join(dir, "permission.json"), []byte(`{"BindingsSHA256":"`+digest(raw)+`"}`), 0600)
+			}
+			if fault == "null-false" {
+				os.WriteFile(filepath.Join(dir, "permission.json"), []byte(`{"Enabled":null,"BindingsSHA256":"`+digest(raw)+`"}`), 0600)
 			}
 			if fault == "duplicate" {
 				os.WriteFile(filepath.Join(dir, "permission.json"), []byte(`{"Enabled":false,"Enabled":true}`), 0600)
