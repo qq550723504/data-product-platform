@@ -10,10 +10,14 @@ $standalone=Join-Path $webRoot '.next-agent-q2/standalone'
 if (-not (Test-Path (Join-Path $standalone 'server.js'))) { throw 'Build the isolated web first.' }
 Copy-Item -LiteralPath (Join-Path $webRoot '.next-agent-q2/static') -Destination (Join-Path $standalone '.next-agent-q2') -Recurse -Force
 if (Test-Path (Join-Path $webRoot 'public')) { Copy-Item -LiteralPath (Join-Path $webRoot 'public') -Destination $standalone -Recurse -Force }
+$profilePath=Join-Path $runRoot 'readonly-profile.json'
+if(-not(Test-Path -LiteralPath $profilePath)){throw 'Prepare the independent readonly database profile first.'}
+$profile=Get-Content -LiteralPath $profilePath -Raw|ConvertFrom-Json
+if($profile.database -notlike 'agent_q2_acceptance_*'){throw 'Independent acceptance database required.'}
 $settings=@{
  AGENT_Q2_PREVIEW_ACK='ISOLATED_PLAN_ONLY';PLATFORM_API_BASE_URL='http://127.0.0.1:18497'
  POC_WORKSPACE_ID='11111111-1111-4111-8111-111111111111'; HUMAN_DECISION_API_TOKEN='agent-q2-core-only'
- AGENT_TASKS_UI_WRITE_ENABLED='true';HOSTNAME='127.0.0.1';PORT='4188';NEXT_TELEMETRY_DISABLED='1'
+ AGENT_Q2_PREVIEW_DSN=$profile.dsn;AGENT_TASKS_WRITE_ENABLED='false';AGENT_TASKS_UI_WRITE_ENABLED='false';HOSTNAME='127.0.0.1';PORT='4188';NEXT_TELEMETRY_DISABLED='1'
  POC_ENABLE_REVIEW_ACTIONS='false';POC_ENABLE_RELEASE_ACTIONS='false';POC_ENABLE_EXECUTION_ACTIONS='false';POC_ENABLE_DATASET_ACTIONS='false'
  POC_ENABLE_QUALITY_ACTIONS='false';POC_ENABLE_COMPLIANCE_ACTIONS='false';POC_ENABLE_DELIVERY_ACTIONS='false';POC_ENABLE_INGEST_ACTIONS='false';POC_ENABLE_INGESTION_ACTIONS='false'
 }

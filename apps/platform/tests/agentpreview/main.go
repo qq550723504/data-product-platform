@@ -4,7 +4,7 @@ package main
 
 import (
 	"context"
-	"flag"
+	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality"
 	agentqualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality/infrastructure"
@@ -18,7 +18,6 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
@@ -35,35 +34,23 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 func main() {
-	bootstrap := flag.Bool("bootstrap", false, "migrate isolated acceptance database and seed synthetic source")
-	flag.Parse()
 	if os.Getenv("AGENT_Q2_PREVIEW_ACK") != "ISOLATED_PLAN_ONLY" {
 		log.Fatal("explicit isolated preview acknowledgement required")
 	}
 	root, err := os.Getwd()
 	must(err)
 	ctx := context.Background()
-	dsn := "postgres://agent_q2_planner:agent-q2-planner-only@127.0.0.1:25494/agent_q2_test?sslmode=disable"
-	if *bootstrap {
-		dsn = "postgres://postgres:agent-q2-test-only@127.0.0.1:25494/agent_q2_test?sslmode=disable"
-	}
-	db, err := pgxpool.New(ctx, dsn)
+	cfg, writeEnabled, err := previewConfig(os.Getenv("AGENT_Q2_PREVIEW_DSN"), os.Getenv("AGENT_TASKS_WRITE_ENABLED"))
+	must(err)
+	db, err := pgxpool.NewWithConfig(ctx, cfg)
 	must(err)
 	defer db.Close()
 	must(db.Ping(ctx))
-	if *bootstrap {
-		must(migration.NewRunner(db, filepath.Join(root, "migrations")).Up(ctx))
-		for _, file := range []string{"seed.sql", "repair-locks.sql"} {
-			sql, err := os.ReadFile(filepath.Join(root, "tests/agent-task-preview", file))
-			must(err)
-			_, err = db.Exec(ctx, string(sql))
-			must(err)
-		}
-		return
-	}
 	resolver, err := principal.NewStaticResolver(true, "agent-q2-core-only", "agent-q2-operator", "22222222-2222-4222-8222-222222222222", []string{"11111111-1111-4111-8111-111111111111"}, []string{principal.CapabilityHumanDecision})
 	must(err)
 	template, err := remediation.LoadPlan(filepath.Join(root, "industry-packs"), "park/remediation/energy-quarantine-v1.yaml")
@@ -71,7 +58,7 @@ func main() {
 	router, err := routing.NewRouter(false)
 	must(err)
 	outbox.ConfigureAppendObligation(router)
-	handler := agenthttp.Handler{Principal: resolver, WriteEnabled: true, Service: &application.Service{Tx: transaction.NewManager(db), Repo: &infrastructure.Repository{Pool: db}, Remediation: &remediation.Service{Plan: template, Repo: remediationinfra.NewRepository(db)}}}
+	handler := agenthttp.Handler{Principal: resolver, WriteEnabled: writeEnabled, Service: &application.Service{Tx: transaction.NewManager(db), Repo: &infrastructure.Repository{Pool: db}, Remediation: &remediation.Service{Plan: template, Repo: remediationinfra.NewRepository(db)}}}
 	mux := http.NewServeMux()
 	handler.Register(mux)
 	contextTemplate := agentquality.Template{Configured: true, Name: template.Metadata.Name, Version: template.Metadata.Version, Hash: template.Hash, WorkflowHash: template.WorkflowHash, Inputs: []agentquality.Input{}}
@@ -101,4 +88,28 @@ func must(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func previewConfig(dsn, writeValue string) (*pgxpool.Config, bool, error) {
+	if dsn == "" {
+		return nil, false, fmt.Errorf("explicit independent database DSN required")
+	}
+	cfg, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		return nil, false, fmt.Errorf("invalid preview database configuration")
+	}
+	if !strings.HasPrefix(cfg.ConnConfig.Database, "agent_q2_acceptance_") {
+		return nil, false, fmt.Errorf("dedicated acceptance database required")
+	}
+	enabled := false
+	if writeValue != "" {
+		enabled, err = strconv.ParseBool(writeValue)
+		if err != nil {
+			return nil, false, fmt.Errorf("invalid preview write setting")
+		}
+	}
+	if !enabled {
+		cfg.ConnConfig.RuntimeParams["default_transaction_read_only"] = "on"
+	}
+	return cfg, enabled, nil
 }

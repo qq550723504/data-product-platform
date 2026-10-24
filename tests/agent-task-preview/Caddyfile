@@ -6,6 +6,8 @@
  basic_auth {
   operator $2a$14$HgbxFdKrokP3rwc6P845Y.88obUm6rMz3fyxUr5JUNx66KAII4t3q
  }
+ @write not method GET HEAD
+ respond @write "Read-only acceptance preview" 405
  reverse_proxy host.docker.internal:4188 {
   header_up Authorization "Bearer agent-q2-core-only"
   header_up Host {http.request.hostport}

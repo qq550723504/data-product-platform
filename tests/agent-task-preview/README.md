@@ -1,79 +1,43 @@
-# Q2 计划持久化隔离验收
+# 默认只读的独立验收预览
 
-入口：<http://127.0.0.1:4189/agent/tasks>。合成登录 `operator` / `agent-q2-preview`，登录后使用不含凭据的普通 URL。直连 <http://127.0.0.1:4188/agent/tasks> 只能查询，匿名写入返回 401。
+当前入口：<http://127.0.0.1:4188/core/releases>（本机只读页面）及网关 <http://127.0.0.1:4189/>。网关继续使用原有本机合成认证，凭据不在文档或验收日志中展示。生产 Agent API 不变；专用预览保留 Agent 路由，但默认在 Service/事务之前拒绝命令。
 
-这是本机、合成数据、仅计划记录的验收环境。专用 Go host 复用产品 Application、HTTP、principal、transaction、Audit/Evidence/Outbox；只注册 Agent 路由，无模型、业务引擎、worker、Redis 或对象存储。主 API 的 `AGENT_TASKS_WRITE_ENABLED` 和 Next 的 `AGENT_TASKS_UI_WRITE_ENABLED` 默认均关闭。单独启用页面开关不授予身份权限。
+## 隔离与只读边界
 
-## 首次准备
+- 保留原 `agent_q2_test`，不迁移、不授予权限、不重跑 seed，不停止承载 tmpfs 的 PostgreSQL。
+- 显式使用新库 `agent_q2_acceptance_20261024` 和新角色 `agent_q2_reader_20261024`。准备程序拒绝覆盖已存在的库/角色。
+- 复用当前 Migration Runner 和 Evidence Snapshot 实现；准备阶段仅插入标识为 syntheticAcceptance 的历史夹具，不调用发布/认证/质量执行命令、模型、引擎、worker 或交付。
+- 运行角色只对读取端点所需的显式表清单授 SELECT，无表/列 DML、DDL、sequence、TEMP 或 public 函数执行权限，角色及连接默认 READ ONLY。不授 Q2 planner 的协调锁写权限。
+- 启动脚本强制关闭 UI/BFF 与 API 写开关；host 本身默认关闭 `AGENT_TASKS_WRITE_ENABLED`，无隐式 DSN、无启动迁移/seed，且拒绝原库。Caddy 拒绝非 GET/HEAD。仅开启 UI 不会授予身份或后端权限。
+- 每次命令 HTTP 探测都只验证拒绝，不调用业务 Service；GET/API/浏览器窗口前后对独立库及原库做内容计数/摘要对比。
 
-在隔离 checkout 根目录使用 PowerShell。先核实以下容器名称、端口未被其他会话占用；不停止或替换其他实例。
+## 一次性准备（仅明确授权后）
+
+现有容器必须存活，归属标签和 loopback25494 必须吻合。先构建两个独立工具，再运行准备脚本：
 
 ```powershell
-docker run -d --name dpp-agent-q2-test-postgres-20261023 --label codex.scope=agent-q2-test --network bridge -p 127.0.0.1:25494:5432 --tmpfs /var/lib/postgresql/data -e POSTGRES_PASSWORD=agent-q2-test-only -e POSTGRES_DB=agent_q2_test postgres:16-alpine
-New-Item -ItemType Directory -Force .data/agent-q2-preview
 Push-Location apps/platform
 go build -o ../../.data/agent-q2-preview/agent-preview.exe ./tests/agentpreview
+go build -o ../../.data/agent-q2-preview/readonly-prepare.exe ./tests/readonlypreview
 Pop-Location
-$env:AGENT_Q2_PREVIEW_ACK='ISOLATED_PLAN_ONLY'
-& ./.data/agent-q2-preview/agent-preview.exe -bootstrap
+python tests/agent-task-preview/prepare-readonly.py
 & ./tests/agent-task-preview/build-web.ps1
 & ./tests/agent-task-preview/start.ps1
 ```
 
-bootstrap 只针对固定的 `agent_q2_test`，使用 migration Runner 应用当前迁移并插入合成 RAW READY 版本及受限角色。seed 不是可重复执行的业务命令；已存在时直接使用，不重置数据。数据库为 tmpfs，容器停止后数据不保证保留。普通 Core/Next 重启不会停止数据库。
+准备时使用既有容器的管理员身份，仅针对新库安装当前 DDL、合成夹具和最小角色。生成的随机角色口令仅存于被 gitignore 的 `.data/agent-q2-preview/readonly-profile.json`，Windows ACL 限当前用户和 SYSTEM；不输出 DSN/口令。失败状态保留，不自动删除/重置/重试准备。库已准备后只重用 profile，不再次运行 prepare。
 
-Caddy 使用已有 `caddy:2.11.7-alpine` 的标准 basic_auth/reverse_proxy。认证后替换 Core Bearer；Core 凭据不会返回给浏览器。所有端口仅绑定 loopback，属于本地试点身份，不是多人 SSO。不要复用这些合成凭据到真实环境。
+## 验收与停止
 
-## 验收
+- `go test ./tests/agentpreview ./internal/traceability`：默认关闭、拒绝原库、HTTP 命令在 nil Service 前拒绝、空映射历史 JSON 为数组及 immutable decision 去重。
+- `readonly-acceptance.test.mjs`：使用调用者显式提供的本机验收凭据环境变量；检查 Agent/context/quality/history GET、精确发布快照、安全投影、401/403/404/400，以及 API/BFF/gateway 拒绝 POST。
+- Edge 通过发布历史筛选→精确 Trace→展开快照/数据版本→质量与认证→历史回跳/刷新，另核 Agent 保存按钮禁用和缺失引用 UNKNOWN。浏览器仅操作 GET 表单与导航。
+- 准备阶段与读取阶段分开记录。合成 PUBLISHED 行不是平台完成真实业务发布；Execution、provider、dispatch 始终未运行。
 
-诊断来源版本：`bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb`。依次新建、确认、修订、再次确认、保存意图、暂停/恢复、停止。历史计划只读；原确认不能用于新计划；保存意图不会调用 Detect。修复绑定入口为详情的“配置修复计划”，复用 revisions / approvals / actions API；填写 case、工作流版本、输出数据集、YYYY-MM 与全部输入绑定。修复确认独立于诊断；当前仅能保存 ASSIGN_SELF 意图。
-
-```powershell
-node --test tests/agent-task-preview/api.test.mjs
-Push-Location apps/platform
-$env:TEST_POSTGRES_DSN='postgres://postgres:agent-q2-test-only@127.0.0.1:25494/agent_q2_test?sslmode=disable'
-go test ./internal/platform/migration -run TestAgent -v
-go test ./internal/agenttask/... ./internal/platform/config ./internal/platform/routing
-Pop-Location
-```
-
-迁移测试创建并清理随机 scratch databases，不操作 Q1 保留库。Remediation 的真实 PostgreSQL 回归也可用该测试 DSN 执行，内部使用随机工作空间、内存对象存储和受控 fake engine；其合成 Execution/Quality 数据不代表 Agent 派发。
-
-浏览器验收只能使用 browser/CUA 工具。断网模拟后必须恢复网络。待核实请求刷新后保留原键，不自动新建或派发。API 验收会追加合成 Agent 记录并以 STOPPED/CANCELLED 结束，保留历史。
-
-## 停止与恢复
-
-`stop.ps1` 先核对记录中的 checkout、进程名称、创建时间、监听端口，以及 Caddy 容器 label 和配置挂载，再停止本轮 Core/Next/Caddy。数据库与记录保留。随后 `start.ps1` 可恢复同一预览；不会自动重建数据库或重置历史。
+停止只操作本轮记录的 API/Next/gateway，保留两个数据库及全部历史：
 
 ```powershell
 & ./tests/agent-task-preview/stop.ps1
-& ./tests/agent-task-preview/start.ps1
 ```
 
-前端使用独立 `.next-agent-q2`，构建恢复原 `next-env.d.ts`，不覆盖 Q1 `.next` / `.next-agent-q1-live`。
-
-## 修复夹具与验收
-
-新版连接预览入口为 http://127.0.0.1:4189/agent，任务详情 /agent/tasks?taskId=明确委托ID，修复绑定 /agent/tasks/repair。工作台、详情与绑定采用已确认的暖白/翡翠绿设计；4178 是独立设计原型，不能作为 Core 保存结果的验收入口。其他业务中心尚未整体迁移。
-
-新库 bootstrap 同时安装 repair-locks.sql：仅供预览的列级锁权限与 owner mutation deny trigger。已存在旧库时，只对本任务拥有的独立验收库执行一次此文件；不得重跑 seed 或重置库。
-
-修复夹具使用既有 Remediation 测试工厂，内存对象存储、受控 fake ingestion/quality 与本地实体测试数据，不接真实外部引擎；不调用任何实际修复 Execution。它会创建合成 Quality/成本记录作为浏览器前置事实，不能将其说成 Agent 执行产物。仅首次准备且确认目标库后运行：
-
-```powershell
-Push-Location apps/platform
-$env:TEST_POSTGRES_DSN='postgres://postgres:agent-q2-test-only@127.0.0.1:25494/agent_q2_test?sslmode=disable'
-$env:AGENT_REPAIR_FIXTURE_ACK='ISOLATED_SYNTHETIC_ONLY'
-go test ./internal/quality/remediation/application -run '^TestAgentRepairBrowserFixture$' -count=1 -v
-Remove-Item Env:AGENT_REPAIR_FIXTURE_ACK
-Pop-Location
-node --test tests/agent-task-preview/api.test.mjs tests/agent-task-preview/repair-api.test.mjs
-```
-
-.data/agent-q2-preview/repair-fixture.json 保存明确依赖 ID，存在时保留并跳过生成。库若丢失，不得使用旧 manifest 当有效事实，应先验证库与事实，单独准备新夹具。验收前后固定空间 Quality=1、Cost=7、Execution=0、修复 case assignment=0；成本与 Quality 均为夹具准备产生，Agent 办理未增加。
-
-## 全站新版入口（2026-10-23）
-
-当前浏览器入口统一为 http://127.0.0.1:4189/。ConsoleShell 使用同一新版 App，Agent 保留既有 Core API，其他模块只使用本地合成状态，不运行旧业务页面 loader。演示数据在当前标签页 sessionStorage 恢复，可通过“重置演示”清空；Agent 待核实请求与服务端记录不在重置范围内。
-
-导航、迁移边界及验收证据以 docs/product/governance-modern-ui-acceptance.md 为准。非 Agent 已覆盖业务中心、系统设置、空间、来源、批次与实体审核演示。不要把演示空间 ID/版本 ID 提交给 Core；Agent 页面明确显示独立试点范围。
+旧 Q2 可写验收记录见 `docs/product/agent-quality-q2-implementation.md`，不代表当前预览仍开放写入。当前事实以本 README、代码开关和精确验收记录为准。

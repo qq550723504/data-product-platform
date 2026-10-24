@@ -517,7 +517,7 @@ func appendUniqueEntityMappings(existing, additions []EntityMappingTrace) []Enti
 	for _, item := range existing {
 		seen[item.DecisionID] = struct{}{}
 	}
-	result := append([]EntityMappingTrace(nil), existing...)
+	result := append(make([]EntityMappingTrace, 0, len(existing)+len(additions)), existing...)
 	for _, item := range additions {
 		if _, ok := seen[item.DecisionID]; ok {
 			continue
