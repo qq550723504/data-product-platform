@@ -134,7 +134,7 @@ test("workbench enters follow-up view and recheck evidence opens its output vers
       && [...url.searchParams.keys()].every(key => key === "qualityView" || key === "_rsc")
       && request.headers()["next-router-prefetch"]) speculativeReads.push(request.url());
   });
-  await page.goto("/");
+  await page.goto("/core/workbench");
   const compact = page.getByTestId("quality-attention");
   await expect(compact).toContainText("需跟进 104 条");
   await compact.getByRole("link", { name: "查看质量异常" }).click();
@@ -158,7 +158,7 @@ test("workbench enters follow-up view and recheck evidence opens its output vers
 
 test("failed quality read stays UNKNOWN while existing attention remains visible", async ({ page, request }) => {
   await reset(request, "quality-attention-unavailable");
-  for (const path of ["/", "/attention"]) {
+  for (const path of ["/core/workbench", "/attention"]) {
     await page.goto(path);
     await expect(page.getByTestId("quality-attention-unavailable")).toContainText("UNKNOWN");
     await expect(page.getByText("Release 待发布", { exact: true })).toBeVisible();

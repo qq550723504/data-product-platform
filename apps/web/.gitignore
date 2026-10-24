@@ -11,3 +11,8 @@
 .dataset-version-tests/
 .execution-tests/
 .quality-tests/
+.agent-tests/
+.next-agent-q1-live*
+.next-agent-q2*
+
+.history-tests/

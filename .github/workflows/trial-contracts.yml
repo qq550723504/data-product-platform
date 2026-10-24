@@ -8,7 +8,9 @@ permissions:
 jobs:
   ownership:
     runs-on: windows-latest
-    timeout-minutes: 5
+    # Both complete suites run sequentially. The normal 135-test run alone
+    # takes about 146s on Windows; include setup and the full -O run budget.
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

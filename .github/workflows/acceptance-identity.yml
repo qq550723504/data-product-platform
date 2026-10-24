@@ -1,0 +1,45 @@
+name: acceptance-identity
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  identity-1a:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.10'
+          cache-dependency-path: apps/platform/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked web and pinned browser dependencies
+        run: |
+          npm ci --ignore-scripts --prefix apps/web
+          npm install --ignore-scripts --prefix tests/browser
+          cd tests/browser && npx playwright install --with-deps chromium
+      - name: Prepare NEW independent TLS IdP and readonly 1A fixture
+        env:
+          ACCEPTANCE_IDENTITY_PREPARE_ACK: NEW_ISOLATED_1A_ONLY
+        run: python3 tests/acceptance-identity/bootstrap.py
+      - name: Verify minimal privileges and independent people/workspaces in browser
+        env:
+          ACCEPTANCE_BROWSER_CHANNEL: chromium
+        run: |
+          node tests/acceptance-identity/privileges.mjs
+          node tests/acceptance-identity/browser.mjs
+      - name: Preserve non-secret acceptance results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-identity-1a-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/acceptance-identity-1a/browser-results.json
+            .data/acceptance-identity-1a/privilege-results.json
+            .data/acceptance-identity-1a/screenshots/

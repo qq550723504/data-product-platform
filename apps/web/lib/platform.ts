@@ -648,7 +648,7 @@ export const platform = {
     if (asOf) query.set("asOf", asOf);
     if (anchorRevision !== undefined) query.set("anchorRevision", String(anchorRevision));
     if (profileId) query.set("profileId", profileId);
-    return apiGet<CertificationHistory>(
+    return qualityRead<CertificationHistory>(
       workspacePath(
         `/dataset-versions/${encodeURIComponent(versionId)}/certifications?${query.toString()}`,
       ),
@@ -701,7 +701,7 @@ export const platform = {
   workspaceReleases: (status = "", limit = 20, offset = 0) => {
     const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
     if (status) query.set("status", status);
-    return apiGet<PageResult<ProductRelease>>(
+    return qualityRead<PageResult<ProductRelease>>(
       workspacePath(`/product-releases?${query.toString()}`),
     );
   },

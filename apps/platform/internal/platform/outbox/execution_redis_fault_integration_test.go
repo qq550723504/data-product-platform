@@ -173,7 +173,7 @@ func TestExecutionQueueRedeliveryAfterLostConfirmationUsesProductionHandler(t *t
 	secondHandler := func(ctx context.Context, event platformoutbox.PublishedEvent) error {
 		return client.EnqueueExecution(ctx, event.AggregateID)
 	}
-	router, err := routing.NewRouter(false)
+	router, err := routing.NewWorkerRouter(false)
 	if err != nil {
 		t.Fatalf("create routing table: %v", err)
 	}
@@ -358,7 +358,7 @@ func newExecutionFaultFixture(t *testing.T) *executionFaultFixture {
 
 func newExecutionDispatcher(t *testing.T, pool *pgxpool.Pool, enqueuer workflowqueue.ExecutionEnqueuer, consumer string) *platformoutbox.Dispatcher {
 	t.Helper()
-	router, err := routing.NewRouter(false)
+	router, err := routing.NewWorkerRouter(false)
 	if err != nil {
 		t.Fatalf("create routing table: %v", err)
 	}

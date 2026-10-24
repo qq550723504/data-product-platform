@@ -265,7 +265,7 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	`, workspaceID, releaseID, executionID, matchJobID)
 
 	repo := traceability.NewRepository(pool)
-	trace, err := repo.ProductRelease(ctx, releaseID)
+	trace, err := repo.ProductReleaseInWorkspace(ctx, workspaceID, releaseID)
 	if err != nil {
 		t.Fatalf("query ProductRelease traceability: %v", err)
 	}
@@ -297,6 +297,9 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 		t.Fatalf("AuditEvent trace size = %d, want at least 3", len(trace.AuditEvents))
 	}
 
+	if _, err := repo.ProductReleaseInWorkspace(ctx, uuid.New(), releaseID); err == nil {
+		t.Fatal("foreign root must be denied")
+	}
 	integrityByID := map[uuid.UUID]bool{}
 	for _, item := range trace.Evidence {
 		integrityByID[item.ID] = item.IntegrityValid
@@ -327,8 +330,15 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	defer singlePool.Close()
 	traceCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
-	if _, err := traceability.NewRepository(singlePool).ProductRelease(traceCtx, releaseID); err != nil {
+	if _, err := traceability.NewRepository(singlePool).ProductReleaseInWorkspace(traceCtx, workspaceID, releaseID); err != nil {
 		t.Fatalf("ProductRelease trace with one pool connection: %v", err)
+	}
+	// A cross-workspace audit edge must fail the complete response, not be filtered away.
+	if _, err := pool.Exec(ctx, `INSERT INTO audit_event(workspace_id,actor_type,action,object_type,object_id) VALUES($1,'SYSTEM','TRACE_TEST','PRODUCT_RELEASE',$2)`, uuid.New(), releaseID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := repo.ProductReleaseInWorkspace(ctx, workspaceID, releaseID); err == nil {
+		t.Fatal("foreign child must fail closed")
 	}
 }
 

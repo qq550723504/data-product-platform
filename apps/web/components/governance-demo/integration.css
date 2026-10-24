@@ -1,0 +1,12 @@
+.governance-demo{font-family:Inter,"Microsoft YaHei","PingFang SC",sans-serif;color:#202a2b;background:#fafbf9;min-height:100vh;--green:#178467;--ink:#152126;--muted:#7d858b;--line:#e5e8e7;--serif:"Songti SC","SimSun",serif}
+.governance-demo button{box-shadow:none;text-transform:none;letter-spacing:normal}
+.governance-demo input,.governance-demo textarea,.governance-demo select{color:#24372f;background:#fff;font-weight:400;max-width:100%}
+.governance-demo .integration-boundary{display:flex;gap:20px;align-items:center;justify-content:space-between;margin:0 0 26px;font-size:12px;color:#6d7e73;line-height:1.7;border-bottom:1px solid #e5e8e7;padding-bottom:15px}
+.governance-demo main.integrated-agent{max-width:none;background:transparent}
+.governance-demo .integrated-agent .agent-page{max-width:none}
+.governance-demo .integrated-agent .button{min-height:38px}
+.governance-demo .section-sidebar button{justify-content:flex-start}
+.governance-demo .centers button,.governance-demo .brand{border:0;background:transparent;color:inherit}
+.governance-demo .centers button.active{color:#178467}
+.demo-loading{padding:60px;color:#178467}
+@media(max-width:900px){.governance-demo .integration-boundary{align-items:flex-start;flex-direction:column;gap:8px}.governance-demo .environment{flex-wrap:wrap;white-space:normal}}

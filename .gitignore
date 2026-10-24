@@ -22,6 +22,10 @@ coverage.out
 # Node
 node_modules/
 .schema-tests/
+.iam-tests/
+.next-acceptance-identity*/
+.tsconfig.acceptance-identity-1a.json
+.tsconfig.acceptance-identity-1b.json
 .next/
 out/
 .turbo/

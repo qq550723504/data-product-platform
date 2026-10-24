@@ -151,7 +151,11 @@ func renewalFixture(t *testing.T, expire bool) (*pgxpool.Pool, config, registry,
 	t.Helper()
 	pool, c, r, s := businessFixture(t)
 	s.ValidFrom = time.Now().UTC().Add(-10 * time.Minute).Truncate(time.Microsecond)
-	s.ValidTo = time.Now().UTC().Add(5 * time.Second).Truncate(time.Microsecond)
+	window := time.Hour // Future-admission assertions must remain future under a full concurrent suite.
+	if expire {
+		window = 5 * time.Second
+	} // Only expiry-specific cases need a short real deadline.
+	s.ValidTo = time.Now().UTC().Add(window).Truncate(time.Microsecond)
 	base, err := makePlan(context.Background(), pool, c, r, s)
 	if err != nil {
 		t.Fatal(err)

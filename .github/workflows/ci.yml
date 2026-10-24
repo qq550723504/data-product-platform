@@ -141,7 +141,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Verify dependency lock is tidy
@@ -390,7 +390,7 @@ jobs:
         if: steps.changes.outputs.run_hop == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.8'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Run real isolated B2 object storage gate
@@ -600,7 +600,7 @@ jobs:
         if: steps.changes.outputs.run_gx == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Install pinned GX runtime
@@ -713,7 +713,7 @@ jobs:
         if: steps.changes.outputs.run_label_studio == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Start pinned Label Studio reference runtime
@@ -777,10 +777,15 @@ jobs:
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
     uses: ./.github/workflows/demo-lifecycle.yml
 
+  acceptance-identity:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    uses: ./.github/workflows/acceptance-identity.yml
+
   required:
     name: required
     if: ${{ always() }}
-    needs: [changes, temporary-container-contracts, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo]
+    needs: [changes, temporary-container-contracts, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo, acceptance-identity]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

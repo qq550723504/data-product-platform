@@ -11,10 +11,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 )
 
 type Repository struct {
 	pool         *pgxpool.Pool
+	query        database.Queryer
 	evidenceRepo *evidence.QueryRepository
 	costRepo     *cost.QueryRepository
 }
@@ -22,6 +24,7 @@ type Repository struct {
 func NewRepository(pool *pgxpool.Pool) *Repository {
 	return &Repository{
 		pool:         pool,
+		query:        pool,
 		evidenceRepo: evidence.NewQueryRepository(pool),
 		costRepo:     cost.NewQueryRepository(pool),
 	}
@@ -158,7 +161,7 @@ type AuditEventTrace struct {
 func (r *Repository) ProductRelease(ctx context.Context, releaseID uuid.UUID) (ReleaseTrace, error) {
 	var trace ReleaseTrace
 	var snapshotID *uuid.UUID
-	err := r.pool.QueryRow(ctx, `
+	err := r.query.QueryRow(ctx, `
 		SELECT id, release_no, status, product_id, product_version_id, evidence_snapshot_id
 		FROM product_release
 		WHERE id=$1
@@ -220,7 +223,7 @@ func (r *Repository) ProductRelease(ctx context.Context, releaseID uuid.UUID) (R
 }
 
 func (r *Repository) releaseDatasetLineage(ctx context.Context, releaseID uuid.UUID) ([]DatasetVersionTrace, error) {
-	rows, err := r.pool.Query(ctx, `
+	rows, err := r.query.Query(ctx, `
 		WITH RECURSIVE lineage(version_id) AS (
 			SELECT dataset_version_id
 			FROM product_release_dataset
@@ -282,7 +285,7 @@ func (r *Repository) executionsForDatasets(ctx context.Context, datasets []Datas
 	if len(ids) == 0 {
 		return []ExecutionTrace{}, nil
 	}
-	rows, err := r.pool.Query(ctx, `
+	rows, err := r.query.Query(ctx, `
 		SELECT e.id, e.workflow_version_id, wv.version, wv.definition_sha256,
 		       e.status, e.attempt, e.engine_type, COALESCE(e.engine_execution_id,''),
 		       e.target_period, e.output_dataset_version_id, e.metrics
@@ -332,7 +335,7 @@ func (r *Repository) executionsForDatasets(ctx context.Context, datasets []Datas
 func (r *Repository) executionDependencyTrace(ctx context.Context, executionID uuid.UUID) (string, []ExecutionDependencyTrace, []ExecutionMappingUsageTrace, error) {
 	status := "NOT_AVAILABLE"
 	var prepared bool
-	if err := r.pool.QueryRow(ctx, `
+	if err := r.query.QueryRow(ctx, `
 		SELECT EXISTS(SELECT 1 FROM execution_dependency_preparation WHERE execution_id=$1)
 	`, executionID).Scan(&prepared); err != nil {
 		return "", nil, nil, fmt.Errorf("query execution dependency preparation: %w", err)
@@ -340,7 +343,7 @@ func (r *Repository) executionDependencyTrace(ctx context.Context, executionID u
 	if prepared {
 		status = "PREPARED"
 	}
-	dependencies, err := r.pool.Query(ctx, `
+	dependencies, err := r.query.Query(ctx, `
 		SELECT dependency_name, dataset_version_id, reference, version, content_sha256
 		FROM execution_dependency_binding
 		WHERE execution_id=$1
@@ -361,7 +364,7 @@ func (r *Repository) executionDependencyTrace(ctx context.Context, executionID u
 	if err := dependencies.Err(); err != nil {
 		return "", nil, nil, fmt.Errorf("iterate execution dependency bindings: %w", err)
 	}
-	usages, err := r.pool.Query(ctx, `
+	usages, err := r.query.Query(ctx, `
 		SELECT id, input_name, input_dataset_version_id, resolution_dataset_version_id,
 		       decision_id, entity_id, source_type, source_ref, source_key
 		FROM execution_mapping_usage
@@ -395,7 +398,7 @@ func (r *Repository) entityMatchJobsForDatasets(ctx context.Context, datasets []
 	if len(ids) == 0 {
 		return []EntityMatchJobTrace{}, nil
 	}
-	rows, err := r.pool.Query(ctx, `
+	rows, err := r.query.Query(ctx, `
 		SELECT id, workspace_id, entity_type_id, input_dataset_version_id, output_dataset_version_id,
 		       source_type, source_ref, policy_ref, policy_version, status
 		FROM entity_match_job
@@ -435,7 +438,7 @@ func (r *Repository) entityMappingsForJobs(ctx context.Context, jobs []EntityMat
 	if len(ids) == 0 {
 		return []EntityMappingTrace{}, nil
 	}
-	rows, err := r.pool.Query(ctx, `
+	rows, err := r.query.Query(ctx, `
 		SELECT d.id, d.mapping_id, d.entity_id, d.source_type, d.source_ref, d.source_key, COALESCE(d.source_name,''),
 		       d.match_method, COALESCE(d.match_rule_id,''), d.match_policy_version, COALESCE(d.confidence,0),
 		       d.status, d.reviewed_by, d.reviewed_at, COALESCE(d.reviewer_reason,''), d.evidence_id,
@@ -475,7 +478,7 @@ func (r *Repository) entityMappingsForExecutionUsages(ctx context.Context, execu
 	if len(ids) == 0 {
 		return []EntityMappingTrace{}, nil
 	}
-	rows, err := r.pool.Query(ctx, `
+	rows, err := r.query.Query(ctx, `
 		SELECT d.id, d.mapping_id, d.entity_id, d.source_type, d.source_ref, d.source_key, COALESCE(d.source_name,''),
 		       d.match_method, COALESCE(d.match_rule_id,''), d.match_policy_version, COALESCE(d.confidence,0),
 		       d.status, d.reviewed_by, d.reviewed_at, COALESCE(d.reviewer_reason,''), d.evidence_id,
@@ -514,7 +517,7 @@ func appendUniqueEntityMappings(existing, additions []EntityMappingTrace) []Enti
 	for _, item := range existing {
 		seen[item.DecisionID] = struct{}{}
 	}
-	result := append([]EntityMappingTrace(nil), existing...)
+	result := append(make([]EntityMappingTrace, 0, len(existing)+len(additions)), existing...)
 	for _, item := range additions {
 		if _, ok := seen[item.DecisionID]; ok {
 			continue
@@ -613,7 +616,7 @@ func (r *Repository) collectAudit(ctx context.Context, trace ReleaseTrace) ([]Au
 	for _, mapping := range trace.EntityMappings {
 		objectIDs = append(objectIDs, mapping.DecisionID)
 	}
-	rows, err := r.pool.Query(ctx, `
+	rows, err := r.query.Query(ctx, `
 		SELECT id, action, object_type, object_id, actor_type, actor_id,
 		       COALESCE(reason,''), metadata, occurred_at
 		FROM audit_event

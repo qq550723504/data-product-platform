@@ -58,6 +58,7 @@ function badgeTone(value: string): "neutral" | "good" | "warn" | "bad" | "info" 
     case "NOT_CERTIFIED":
       return "warn";
     case "FAILED":
+    case "FAIL":
     case "REJECTED":
     case "INVALIDATED":
     case "CONFLICT":

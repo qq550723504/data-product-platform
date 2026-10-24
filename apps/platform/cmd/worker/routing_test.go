@@ -42,8 +42,8 @@ func TestNewOutboxDispatcherWithoutGovernanceProvider(t *testing.T) {
 	if err != nil {
 		t.Fatalf("newOutboxDispatcher: %v", err)
 	}
-	if dispatcher.RouterVersion() != routing.Version {
-		t.Fatalf("router version = %q, want %q", dispatcher.RouterVersion(), routing.Version)
+	if dispatcher.RouterVersion() != routing.WorkerVersionFor(false) {
+		t.Fatalf("router version = %q, want %q", dispatcher.RouterVersion(), routing.WorkerVersionFor(false))
 	}
 	if names := dispatcher.HandlerNames(); len(names) != 3 || names[0] != routing.HandlerExecutionQueue || names[1] != routing.HandlerExternalPublicationQueue || names[2] != routing.HandlerLifecycleRecoveryQueue {
 		t.Fatalf("handler names = %v, want [%s]", names, routing.HandlerExecutionQueue)
@@ -55,8 +55,8 @@ func TestNewOutboxDispatcherWithGovernanceProvider(t *testing.T) {
 	if err != nil {
 		t.Fatalf("newOutboxDispatcher: %v", err)
 	}
-	if dispatcher.RouterVersion() != routing.VersionFor(true) {
-		t.Fatalf("router version = %q, want %q", dispatcher.RouterVersion(), routing.VersionFor(true))
+	if dispatcher.RouterVersion() != routing.WorkerVersionFor(true) {
+		t.Fatalf("router version = %q, want %q", dispatcher.RouterVersion(), routing.WorkerVersionFor(true))
 	}
 	if names := dispatcher.HandlerNames(); len(names) != 5 || names[0] != routing.HandlerExecutionQueue || names[1] != routing.HandlerExternalPublicationQueue || names[2] != routing.HandlerLifecycleRecoveryQueue || names[3] != routing.HandlerMetadataProjection || names[4] != routing.HandlerSourceSchemaObservation {
 		t.Fatalf("handler names = %v, want [%s %s]", names, routing.HandlerExecutionQueue, routing.HandlerMetadataProjection)

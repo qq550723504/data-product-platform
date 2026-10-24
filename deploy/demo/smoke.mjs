@@ -88,8 +88,10 @@ try {
   page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(published.traceURL);
-  await expect(page.getByRole("heading", { name: "ProductRelease 证据链", exact: true })).toBeVisible();
-  await expect(page.getByText(reason, { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "发布证据链", exact: true })).toBeVisible();
+  await expect(page.getByText(reason, { exact: true })).toHaveCount(0); // Public Trace excludes free-form review text.
+  await expect(page.getByText(verified.snapshotId, { exact: true })).toBeVisible();
+  await expect(page.getByText("INTEGRITY_OK", { exact: true })).toBeVisible();
   await expect(page.getByText(verified.rootHash, { exact: true }).first()).toBeVisible();
   await page.screenshot({ path: `${artifacts}/03-restarted-trace.png`, fullPage: true });
   await context.tracing.stop({ path: `${artifacts}/restart-trace.zip` });

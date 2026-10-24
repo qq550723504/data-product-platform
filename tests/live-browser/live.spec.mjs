@@ -54,9 +54,11 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await clickAction(page, card.getByRole("button", { name: "发布 Release", exact: true }), productPath);
     await expect(card.getByRole("button", { name: "已发布", exact: true })).toBeDisabled();
     await card.getByRole("link", { name: /查看 Release/ }).click();
-    await expect(page).toHaveURL(new RegExp(`${tracePath}$`));
-    await expect(page.getByRole("heading", { name: "ProductRelease 证据链", exact: true })).toBeVisible();
-    await expect(page.getByText(data.reason, { exact: true }).first()).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/core/release-trace\\?productId=${data.productId}&releaseId=${data.releaseId}$`));
+    await expect(page.getByRole("heading", { name: "发布证据链", exact: true })).toBeVisible();
+    for(const detail of await page.locator("details").all())await detail.locator("summary").click();
+    await expect(page.getByText(data.reason, { exact: true })).toHaveCount(0);
+    await expect(page.getByText(data.decisionId, { exact: true })).toBeVisible();
     await expect(page.getByText("PRODUCT_RELEASE_PUBLISHED", { exact: true })).toBeVisible();
   } else if (phase === "certified") {
     await page.goto(certifiedPath);
@@ -160,10 +162,11 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page.getByText(data.snapshotId, { exact: true })).toBeVisible();
     await expect(page.getByText(data.rootHash, { exact: true })).toBeVisible();
     await expect(page.getByText("INTEGRITY_OK", { exact: true })).toBeVisible();
-    for (const name of ["DatasetVersion Lineage", "Entity Resolution", "Evidence Records", "Cost Ledger", "Audit Trail"]) {
-      await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+    for (const name of ["数据版本与血缘", "实际使用的映射决策", "证据", "成本事实", "审计事件"]) {
+      await expect(page.getByRole("heading", { name: new RegExp("^"+name+" ·") })).toBeVisible();
     }
-    await expect(page.getByText(data.reason, { exact: true }).first()).toBeVisible();
+    for(const detail of await page.locator("details").all())await detail.locator("summary").click();
+    await expect(page.getByText(data.reason, { exact: true })).toHaveCount(0); // Free-form reasons are not in the public Trace projection.
     // The Release must show the immutable decision that produced it...
     await expect(page.getByText(data.decisionId, { exact: true })).toBeVisible();
     // ...not the post-release correction that only moved the current mapping.

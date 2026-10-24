@@ -75,10 +75,18 @@ func TestNativeSchemaCostsStartupBeforeMarker(t *testing.T) {
 	for _, failure := range []string{"exit", "hang", "malformed"} {
 		t.Run(failure, func(t *testing.T) {
 			t.Setenv("C2_SCHEMA_PREMARKER", failure)
-			ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			costs, gates := 0, 0
-			_, err := observer.Scan(ctx, uuid.New(), runtime, func() error { costs++; return nil }, func(run func() error) error { gates++; return run() })
+			_, err := observer.Scan(ctx, uuid.New(), runtime, func() error {
+				costs++
+				// Cancel the hanging marker only AFTER the startup witness. A
+				// deadline covering subprocess startup races a loaded CI host.
+				if failure == "hang" {
+					cancel()
+				}
+				return nil
+			}, func(run func() error) error { gates++; return run() })
 			if err == nil || costs != 1 || gates != 0 {
 				t.Fatalf("startup cost/source gate wrong: %s costs=%d gates=%d err=%v", failure, costs, gates, err)
 			}
