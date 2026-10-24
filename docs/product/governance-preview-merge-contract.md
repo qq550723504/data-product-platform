@@ -79,3 +79,8 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 协调审查逐模块展开后确认三个当前合同内 BLOCKER：B01 Agent/Core 读取校验遗漏直接渲染字段（configured template name/version、history.ruleSetRef、report.ruleSetVersion、finding.reason/severity，及时间字段类型），可能让畸形响应突破区域 UNKNOWN 并导致 React 页面错误；B02 UNKNOWN 原请求在后续身份/写开关拒绝时被误作确定未提交，清掉原幂等键；B03 Trace 使用大小写敏感 UUID 字符串比较，拒绝 Go 已接受的大写配置。
 
 B01 补齐所有该组件直接渲染字段与所选上下文形状校验；实际 CoreQualityView 离线 render 负例保留明确版本与成功兄弟区域，不发 latest/fallback 读取。B02 在发送前持久化 unresolved 标记，刷新恢复一律保持未决；仅首次明确拒绝可清理，曾未决请求的4xx不终结其历史结果。协议序列与实际 workbench hook/存储/按钮回归验证原键原body保留、新CREATE被禁、恢复后匹配收据才清理；不自动增加POST。B03 统一 UUID identity 比较、规范化重复检测和冻结成员展示；保留真实越界/非法/重复负例。同根因同时补齐认证/发布历史直接展示的可选依据UUID引用校验，保留缺失/null；实际历史页render负例保持明确版本并局部UNKNOWN。Agent离线回归20项、历史回归11项通过，B01原始负例已在修复前复现。新提交必须重新完整CI并由独立审查入口复核，作者修复不构成独立签核。现场API/浏览器/DDL继续NOT_RUN，无本机启动或迁移。
+
+
+## 用户新授权后的独立库验收（2026-10-24）
+
+用户已明确批准默认只读改造、独立验收库准备与现场API/浏览器验收，先前夜间运行限制不再阻止这一明确范围。原库仍不修改。当前范围与实际结果以docs/product/governance-readonly-live-acceptance-20261024.md为准：新库完整DDL/SELECT角色、API四组与Edge读取闭环、双库216表读取窗口无写入证据已完成；保留原Agent API、模型/worker/执行关闭。现场发现Trace空映射null响应已根因修复。旧NOT_RUN条目是当时的检查点，不冒称原保留库已升级或原可写预览已验收。新增提交仍需独立增量审查与精确HEAD完整CI，不因旧546f39bc绿灯合并。
