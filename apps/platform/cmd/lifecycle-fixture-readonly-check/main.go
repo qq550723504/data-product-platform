@@ -188,6 +188,7 @@ func main() {
 	baseline := flag.String("baseline", "", "frozen readonly receipt directory")
 	fresh := flag.String("fresh", "", "new readonly receipt directory")
 	group := flag.String("group", "", "finite group")
+	maintenance := flag.Bool("retention-maintenance", false, "exact-two maintenance before/after read-only contract")
 	postV22 := flag.Bool("post-v22", false, "explicit post-v22 17-version contract")
 	six := flag.Bool("six", false, "explicit six-target current source/restore contract")
 	exportSix := flag.Bool("six-expectation", false, "file-only new expectation, never native observation")
@@ -202,7 +203,13 @@ func main() {
 	}
 	var out result
 	var e error
-	if *exportSix && !*six && !*postV22 && *mapping == "" && *expectation == "" && *frozen != "" {
+	if *maintenance {
+		if *exportSix || *six || *postV22 || *mapping != "" || *frozen != "" {
+			e = errors.New("one maintenance contract required")
+		} else {
+			out, e = checkRetentionMaintenance(*baseline, *fresh, *group, *expectation, *inventory)
+		}
+	} else if *exportSix && !*six && !*postV22 && *mapping == "" && *expectation == "" && *frozen != "" {
 		e = exportSixExpected(*baseline, *fresh, *group, *inventory, *frozen)
 		out.Status = "SIX_EXPECTATION_EXPORTED_NOT_OBSERVATION"
 		out.Group = *group

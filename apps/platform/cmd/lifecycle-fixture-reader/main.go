@@ -566,6 +566,16 @@ func main() {
 		fmt.Println("New identities created disabled; DELETE=0")
 		return
 	}
+	if *mode == "retention-maintenance-verify-native" {
+		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
+		defer cancel()
+		if err := retentionVerifyNative(ctx); err != nil {
+			fmt.Println("Retention maintenance readonly verification failed; preserve evidence; DELETE=0")
+			os.Exit(1)
+		}
+		fmt.Println("Retention maintenance readonly verification complete; DELETE=0")
+		return
+	}
 	if *mode == "six-verify-native" {
 		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
 		defer cancel()

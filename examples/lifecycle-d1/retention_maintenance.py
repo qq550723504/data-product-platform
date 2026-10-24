@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import subprocess
 import uuid
+import retention_staging as staging
 from evidence_indexes import unlinked_absolute
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -42,7 +43,7 @@ def fixed_bindings(b,host):
     need(b['PlanSHA256']=='ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f','MAINTENANCE_EXACT_PLAN')
     for value in (b['BinarySHA256'],b['HostPublicSHA256'],b['BudgetID']):need(type(value) is str and len(value)==64 and all(c in '0123456789abcdef' for c in value),'MAINTENANCE_SHA256')
     need(b['Kind']==KIND and len(b['Owners'])==2 and {x['Group'] for x in b['Owners']}==set(proposal.TARGETS),'MAINTENANCE_TARGET_GROUPS')
-    need(set(host)=={'bindings_sha256','owners','closed_cids','budget_name','binary','_bindings_raw'},'MAINTENANCE_HOST_FIELDS')
+    need(set(host)=={'bindings_sha256','owners','closed_cids','budget_name','binary','volume_metadata','_bindings_raw'},'MAINTENANCE_HOST_FIELDS')
     need(host['bindings_sha256']==sha(host['_bindings_raw']),'MAINTENANCE_HOST_BINDING')
     need(set(host['owners'])==set(proposal.TARGETS) and len(set(x['CID'] for x in b['Owners']))==2,'MAINTENANCE_OWNER_SET')
     need(type(host['closed_cids']) is list and len(set(host['closed_cids']))==len(host['closed_cids']),'MAINTENANCE_CLOSED_SET')
@@ -80,21 +81,18 @@ def topology(b,host,group,get=inspect,list_items=None):
     need(actual['State']['Running'] and actual['State']['Pid']>0 and native['State']['Running'] and native['State']['Pid']>0,'MAINTENANCE_OWNER_NOT_RUNNING')
     need(sha(canonical(descriptor(actual)))==selected['DescriptorSHA256'],'MAINTENANCE_DESCRIPTOR_DRIFT')
     hc=actual['HostConfig'];cfg=actual['Config']
-    need(not actual['NetworkSettings']['Ports'] and hc['RestartPolicy']['Name']=='no' and not hc['Privileged'] and hc['ReadonlyRootfs'] and
+    need(actual['Path']=='/runtime/retention' and actual['Args']==['-wait'] and not actual['NetworkSettings']['Ports'] and hc['RestartPolicy']['Name']=='no' and not hc['Privileged'] and hc['ReadonlyRootfs'] and
          hc['NetworkMode']=='container:'+selected['Native'] and cfg['User']=='10001:10001' and set(hc['CapDrop'])=={'ALL'} and
          set(hc['SecurityOpt'])=={'no-new-privileges:true'} and hc['Tmpfs']=={'/tmp':'rw,noexec,nosuid,size=16m'},'MAINTENANCE_SANDBOX')
-    expected={'/run/private':(str(unlinked_absolute(item['private'])),False,'bind'),
-              '/run/output':(str(unlinked_absolute(item['output'])),True,'bind'),
+    expected={'/run/private':(item['private_volume'],False,'volume'),
+              '/run/output':(item['output_volume'],True,'volume'),
               '/run/budget':(host['budget_name'],True,'volume'),
               '/runtime/retention':(str(unlinked_absolute(host['binary'])),False,'bind')}
     mounts={x['Destination']:x for x in actual['Mounts']}
     need(len(mounts)==len(actual['Mounts']) and set(mounts)==set(expected),'MAINTENANCE_MOUNT_SET')
     for dest,(source,rw,kind) in expected.items():
         m=mounts[dest];need(m['Type']==kind and m['RW'] is rw,'MAINTENANCE_MOUNT_DRIFT')
-        # Compare the same existing filesystem identity on both sides. Check
-        # links before resolving short/long Windows spellings, as the complete
-        # native entry already does. The signed raw descriptor remains exact.
-        need(m['Name']==source if kind=='volume' else unlinked_absolute(m['Source'])==unlinked_absolute(source),'MAINTENANCE_MOUNT_DRIFT')
+        need((m['Name']==source and m['Source']==host['volume_metadata'][source]['Mountpoint']) if kind=='volume' else unlinked_absolute(m['Source'])==unlinked_absolute(source),'MAINTENANCE_MOUNT_DRIFT')
     for owner in b['Owners']:
         if owner['Group']!=group:
             previous=get(owner['CID']);need(closed(previous),'MAINTENANCE_OTHER_OWNER_ACTIVE')
@@ -112,14 +110,32 @@ def topology(b,host,group,get=inspect,list_items=None):
         for path in folder.iterdir():
             clean=unlinked_absolute(path)
             need(clean.is_file() and clean.stat().st_nlink==1,'MAINTENANCE_PRIVATE_FILE_LINK')
+    private_files={'bindings.json','root.json','approved-proposal.json','host-public.key','authorization.json','user-message-verbatim.txt','permission.json','topology.json'}
+    expected_mounts={host['budget_name']:{x['CID'] for x in b['Owners']}}
+    for mounted in host['owners'].values():
+        for role in ('private','output'):
+            volume=mounted[role+'_volume']
+            need(volume not in expected_mounts,'MAINTENANCE_VOLUME_ALIAS')
+            expected_mounts[volume]={mounted['cid']}
+            pinned=host['volume_metadata'][volume]
+            current=json.loads(docker('volume','inspect',volume).decode('utf-8','strict'))
+            need(len(current)==1 and current[0]==pinned,'MAINTENANCE_VOLUME_METADATA_DRIFT')
+            staging.paths(pinned)
+            staging.validate_directory(pinned,mounted[role],files=private_files if role=='private' else None)
+    need(set(host['volume_metadata'])==set(expected_mounts),'MAINTENANCE_VOLUME_SET')
+    budget=host['budget_name'];current=json.loads(docker('volume','inspect',budget).decode('utf-8','strict'))
+    need(len(current)==1 and current[0]==host['volume_metadata'][budget],'MAINTENANCE_BUDGET_METADATA_DRIFT')
+    _,budget_path=staging.paths(current[0])
+    staging.validate_directory(current[0],budget_path)
     expected_budget={x['CID'] for x in b['Owners']}
     # Inventory is the complete host Docker inventory, not a provided subset.
     if list_items is None:
         ids=docker('ps','-aq','--no-trunc').decode('utf-8','strict').splitlines()
         all_items=[get(ident) for ident in ids]
     else:all_items=list_items()
-    mounted={x['Id'] for x in all_items if any(m.get('Type')=='volume' and m.get('Name')==host['budget_name'] for m in x['Mounts'])}
-    need(mounted==expected_budget,'MAINTENANCE_BUDGET_MOUNT_SET')
+    for name,wanted in expected_mounts.items():
+        mounted={x['Id'] for x in all_items if any(m.get('Type')=='volume' and m.get('Name')==name for m in x['Mounts'])}
+        need(mounted==wanted,'MAINTENANCE_VOLUME_MOUNT_SET')
     return selected
 
 def attest(b,host,group,key_path,at,get=inspect,list_items=None):

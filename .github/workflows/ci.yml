@@ -130,6 +130,8 @@ jobs:
           python -O -B examples/lifecycle-d1/test_retention_renewal.py
           python -B examples/lifecycle-d1/test_retention_maintenance.py
           python -O -B examples/lifecycle-d1/test_retention_maintenance.py
+          python -B examples/lifecycle-d1/test_retention_staging.py
+          python -O -B examples/lifecycle-d1/test_retention_staging.py
           python -B examples/lifecycle-d1/test_execution_freeze.py
           python -O -B examples/lifecycle-d1/test_execution_freeze.py
           python -B examples/lifecycle-d1/test_freeze_six_candidate.py

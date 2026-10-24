@@ -14,32 +14,46 @@ from unittest.mock import patch
 import retention_maintenance as m
 
 class HostTests(unittest.TestCase):
+    def setUp(self):
+        self.metadata={}
+        self.enterContext(patch.object(m.staging,'validate_directory',return_value={}))
+        def docker(*args):
+            self.assertEqual(args[:2],('volume','inspect'))
+            return json.dumps([self.metadata[args[2]]]).encode()
+        self.enterContext(patch.object(m,'docker',side_effect=docker))
+
     def fixture(self,folder):
         at=dt.datetime(2026,10,23,14,tzinfo=dt.timezone.utc)
         binary=folder/'retention';binary.write_bytes(b'fake bound binary')
         b={'Kind':m.KIND,'MaintenanceID':str(uuid.uuid4()),'NotBefore':'2026-10-23T13:59:00Z','NotAfter':'2026-10-23T14:30:00Z',
            'PlanSHA256':'ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f','BinarySHA256':m.sha(binary.read_bytes()),'HostPublicSHA256':'a'*64,'BudgetID':'b'*64,'Owners':[]}
-        host={'bindings_sha256':'','owners':{},'closed_cids':['7'*64],'budget_name':'new-maintenance-budget-only','binary':str(binary)}
+        host={'bindings_sha256':'','owners':{},'closed_cids':['7'*64],'budget_name':'d1-retention-budget-test','binary':str(binary),'volume_metadata':self.metadata}
         items={}
+        self.metadata[host['budget_name']]=self.volume(host['budget_name'])
         for i,group in enumerate(m.proposal.TARGETS,1):
             private=folder/group;private.mkdir();output=folder/(group+'-output');output.mkdir();(private/'root.json').write_bytes(b'{"mock":"private"}')
             (private/'permission.json').write_text('{"Enabled":true}',encoding='utf-8')
             for name in ['bindings.json','approved-proposal.json','host-public.key','authorization.json','user-message-verbatim.txt','topology.json']:
                 (private/name).write_bytes(b'fixture placeholder')
             native=m.proposal.TARGETS[group][2];ident=str(i)*64
-            mounts=[{'Destination':dest,'Type':kind,'RW':rw,**({'Name':source} if kind=='volume' else {'Source':source})} for dest,source,rw,kind in [
-                ('/run/private',str(private),False,'bind'),('/run/output',str(output),True,'bind'),('/run/budget',host['budget_name'],True,'volume'),('/runtime/retention',str(binary),False,'bind')]]
-            item={'Id':ident,'Image':'sha256:'+'c'*64,'Path':'/runtime/retention','Args':[],
+            pv='d1-retention-private-'+group;ov='d1-retention-output-'+group
+            self.metadata[pv]=self.volume(pv);self.metadata[ov]=self.volume(ov)
+            mounts=[{'Destination':dest,'Type':kind,'RW':rw,**({'Name':source,'Source':self.metadata[source]['Mountpoint']} if kind=='volume' else {'Source':source})} for dest,source,rw,kind in [
+                ('/run/private',pv,False,'volume'),('/run/output',ov,True,'volume'),('/run/budget',host['budget_name'],True,'volume'),('/runtime/retention',str(binary),False,'bind')]]
+            item={'Id':ident,'Image':'sha256:'+'c'*64,'Path':'/runtime/retention','Args':['-wait'],
                   'Config':{'User':'10001:10001','Env':[]},'HostConfig':{'RestartPolicy':{'Name':'no'},'Privileged':False,'ReadonlyRootfs':True,'NetworkMode':'container:'+native,
                     'CapDrop':['ALL'],'SecurityOpt':['no-new-privileges:true'],'Tmpfs':{'/tmp':'rw,noexec,nosuid,size=16m'}},'Mounts':mounts,'State':{'Running':True,'Pid':100+i},'NetworkSettings':{'Ports':{}}}
             desc=m.sha(m.canonical(m.descriptor(item)))
             b['Owners'].append({'Group':group,'CID':ident,'Native':native,'DescriptorSHA256':desc,'ConfigSHA256':m.sha((private/'root.json').read_bytes())})
-            host['owners'][group]={'cid':ident,'private':str(private),'output':str(output),'descriptor_sha256':desc}
+            host['owners'][group]={'cid':ident,'private':str(private),'output':str(output),'descriptor_sha256':desc,'private_volume':pv,'output_volume':ov}
             items[ident]=item;items[native]={'Id':native,'HostConfig':{'RestartPolicy':{'Name':'no'}},'State':{'Running':True,'Pid':500+i},'NetworkSettings':{'Ports':{}},'Mounts':[]}
         items['2'*64]['State']={'Running':False,'Pid':0}
         items['7'*64]={'Id':'7'*64,'HostConfig':{'RestartPolicy':{'Name':'no'}},'State':{'Running':False,'Pid':0},'NetworkSettings':{'Ports':{}},'Mounts':[]}
         self.bind(b,host)
         return b,host,items,at
+
+    def volume(self,name):
+        return {'Name':name,'Driver':'local','Scope':'local','Options':None,'Labels':{'dpp.retention-maintenance':'preparation-only'},'Mountpoint':'/var/lib/docker/volumes/'+name+'/_data'}
 
     def bind(self,b,host):
         raw=m.canonical(b);host['_bindings_raw']=raw;host['bindings_sha256']=m.sha(raw)
@@ -63,10 +77,11 @@ class HostTests(unittest.TestCase):
             self.assertTrue(all(m.load(Path(x['private'])/'permission.json')['Enabled'] is False for x in host['owners'].values()))
 
     def test_topology_counterexamples_never_sign(self):
-        for fault in ['extra-mount','root','ports','restart','extra-budget-owner','other-owner-active','old-owner-active','config','native','inventory-injection','extra-private-file','private-hardlink']:
+        for fault in ['extra-mount','root','ports','restart','extra-budget-owner','other-owner-active','old-owner-active','config','native','inventory-injection','extra-private-file','private-hardlink','volume-alias','extra-output-owner','metadata-drift','not-waiting']:
             with self.subTest(fault=fault),tempfile.TemporaryDirectory() as d:
                 b,host,items,_=self.fixture(Path(d));owner=items['1'*64]
-                if fault=='extra-mount':owner['Mounts'].append({'Destination':'/socket','Type':'bind','Source':'/var/run/docker.sock','RW':True})
+                if fault=='not-waiting':owner['Args']=[]
+                elif fault=='extra-mount':owner['Mounts'].append({'Destination':'/socket','Type':'bind','Source':'/var/run/docker.sock','RW':True})
                 elif fault=='root':owner['Config']['User']='0'
                 elif fault=='ports':owner['NetworkSettings']['Ports']={'9000/tcp':[{}]}
                 elif fault=='restart':owner['HostConfig']['RestartPolicy']['Name']='always'
@@ -77,6 +92,9 @@ class HostTests(unittest.TestCase):
                 elif fault=='native':items[b['Owners'][0]['Native']]['State']={'Running':False,'Pid':0}
                 elif fault=='extra-private-file':(Path(host['owners']['business-races']['private'])/'host.secret').write_bytes(b'forbidden')
                 elif fault=='private-hardlink':os.link(Path(host['owners']['business-races']['private'])/'root.json',Path(d)/'root-alias')
+                elif fault=='volume-alias':host['owners']['mixed']['output_volume']=host['owners']['business-races']['output_volume']
+                elif fault=='extra-output-owner':extra=copy.deepcopy(owner);extra['Id']='8'*64;extra['Mounts']=[owner['Mounts'][1]];items[extra['Id']]=extra
+                elif fault=='metadata-drift':host['volume_metadata'][host['owners']['mixed']['output_volume']]['Options']={'device':'/retained'}
                 else:host['_all_items']=[]
                 with self.assertRaises((ValueError,KeyError)):m.topology(b,host,'business-races',items.__getitem__,lambda:list(items.values()))
 
@@ -95,7 +113,7 @@ class HostTests(unittest.TestCase):
                 else:
                     with self.assertRaises((ValueError,FileNotFoundError)):m.topology(b,host,'mixed',items.__getitem__,lambda:list(items.values()))
 
-    def test_real_directory_aliases_share_one_mount_identity(self):
+    def test_real_binary_directory_aliases_share_one_mount_identity(self):
         modes=['canonical','upper-case','short-name'] if os.name=='nt' else ['canonical']
         for mode in modes:
             with self.subTest(mode=mode),tempfile.TemporaryDirectory(prefix='retention-path-alias-') as directory:
@@ -111,7 +129,7 @@ class HostTests(unittest.TestCase):
                 b,host,items,_=self.fixture(folder)
                 m.topology(b,host,'business-races',items.__getitem__,lambda:list(items.values()))
 
-    def test_rehashed_wrong_and_linked_mount_paths_still_rejected(self):
+    def test_rehashed_wrong_and_linked_binary_mount_paths_still_rejected(self):
         for fault in ['wrong-directory','linked-alias']:
             with self.subTest(fault=fault),tempfile.TemporaryDirectory() as directory:
                 folder=Path(directory).resolve();b,host,items,_=self.fixture(folder)
@@ -129,7 +147,7 @@ class HostTests(unittest.TestCase):
                         self.assertEqual(result.returncode,0,result.stderr.decode('utf-8','replace'))
                     self.assertTrue(other.is_symlink() or other.is_junction())
                 try:
-                    items['1'*64]['Mounts'][0]['Source']=str(other)
+                    items['1'*64]['Mounts'][3]['Source']=str(other)
                     # Even a matching newly supplied descriptor cannot approve
                     # another directory or hide a link into the expected one.
                     digest=m.sha(m.canonical(m.descriptor(items['1'*64])))
