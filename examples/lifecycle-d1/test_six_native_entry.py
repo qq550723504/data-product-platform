@@ -33,6 +33,11 @@ class SixNativeEntryTests(unittest.TestCase):
         fixture = r.ROOT / 'docs/acceptance/evidence/issue307-d1/remaining-candidate16/candidate.json'
         groups = copy.deepcopy(v.load(fixture)['Groups'])
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
+            # Saved candidate windows belong to their recorded test instant.
+            # The real expiry guard remains active, including the mixed-expiry
+            # counterexample; wall-clock passage must not expire offline doubles.
+            instant = v.dt.datetime.fromisoformat(p.W['NotBefore'].replace('Z', '+00:00'))
+            stack.enter_context(patch.object(r, 'now', return_value=instant))
             root = Path(tmp)
             packet, control = root / 'packet', root / 'control'
             packet.mkdir(); control.mkdir()

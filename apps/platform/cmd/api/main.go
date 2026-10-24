@@ -283,6 +283,7 @@ func main() {
 		)
 	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
+	qualityHandler.Principal = humanDecisionResolver
 	remediationRepo := remediationinfra.NewRepository(db)
 	var remediationService *remediationapp.Service
 	if ref := os.Getenv("QUALITY_REMEDIATION_PLAN_REF"); ref != "" {
@@ -361,6 +362,11 @@ func main() {
 		cost.NewQueryRepository(db),
 		traceability.NewRepository(db),
 	)
+	registerSourceAdmission, sourceAdmissionErr := sourceAdmissionRoutes(db)
+	if sourceAdmissionErr != nil {
+		logger.Error("configure fork-approved source admission")
+		os.Exit(1)
+	}
 	externalHandler, err := externalpilot.Build(db)
 	if err != nil {
 		logger.Error("configure external integration principal boundary", "error", err)
@@ -389,6 +395,7 @@ func main() {
 			complianceHandler.Register,
 			metadataHandler.Register,
 			registerIngestion,
+			registerSourceAdmission,
 			traceabilityHandler.Register,
 			externalHandler.Register,
 		),

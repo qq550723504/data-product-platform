@@ -1,0 +1,39 @@
+{
+  "status": "FAILED_EXACT_P_PR_CI_BRANCH_REMAINS_LOCKED",
+  "observed_at": "2026-10-24T11:52:58.128022+00:00",
+  "P": "1d3e417bd059aaaee099161cf6e12b4c43fed81c",
+  "CI": {
+    "at": "2026-10-24T11:52:58.127437+00:00",
+    "id": 40090889280,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "jobs": 13,
+    "succeeded": 9,
+    "pending": [],
+    "failed": [
+      {
+        "name": "temporary-container-contracts (windows-latest)",
+        "conclusion": "cancelled"
+      },
+      {
+        "name": "temporary-container-contracts (ubuntu-latest)",
+        "conclusion": "failure"
+      },
+      {
+        "name": "browser-contracts / web-browser-contracts",
+        "conclusion": "failure"
+      },
+      {
+        "name": "required",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "source_starts": 0,
+  "business_delete": 0,
+  "business_protection_write": 0,
+  "workflow_reruns": 0,
+  "new_pushes": 0,
+  "original_operation_status": "PUSHED_EXACT_P_AND_RELOCKED_PENDING_PR_CI"
+}

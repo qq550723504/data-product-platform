@@ -1,0 +1,17 @@
+{
+  "started_at": "2026-10-24T12:35:48.304714+00:00",
+  "finished_at": "2026-10-24T12:36:19.553507+00:00",
+  "command": [
+    "docker",
+    "build",
+    "--pull=false",
+    "-t",
+    "dpp307-ci-python:portability01",
+    "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/python-image"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

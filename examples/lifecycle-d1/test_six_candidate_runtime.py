@@ -24,6 +24,12 @@ RECORDED=r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate13-prep
 
 
 class SixHostTests(unittest.TestCase):
+    def setUp(self):
+        # Keep saved candidate/receipt doubles at their recorded UTC instant;
+        # real production expiry and the expired-retention counterexamples run.
+        instant = r.dt.datetime.fromisoformat(r.p.W['NotBefore'].replace('Z', '+00:00'))
+        self.enterContext(patch.object(r, 'now', return_value=instant))
+
     def test_terminal_preparation_refuses_before_allocation_history_or_docker(self):
         with tempfile.TemporaryDirectory() as tmp,patch.object(r,'CONTROL',Path(tmp)),\
              patch.object(r,'load',side_effect=AssertionError('allocation read before terminal')):

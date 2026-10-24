@@ -1,0 +1,45 @@
+
+Running 1 test using 1 worker
+
+  x  1 schema-attempts.spec.mjs:90:1 › page switch commits its query and UNKNOWN while the new attempt read stays held (10.7s)
+
+
+  1) schema-attempts.spec.mjs:90:1 › page switch commits its query and UNKNOWN while the new attempt read stays held 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /schemaAttemptOffset=25#schema-unobserved-attempts$/
+    Received string:  "http://127.0.0.1:3100/attention#schema-unobserved-attempts"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 10000ms
+        23 × locator resolved to <html lang="zh-CN">…</html>
+           - unexpected value "http://127.0.0.1:3100/attention#schema-unobserved-attempts"
+
+
+      94 |   try{
+      95 |     await panel.getByRole("link",{name:"下一页",exact:true}).click();
+    > 96 |     await expect(page).toHaveURL(/schemaAttemptOffset=25#schema-unobserved-attempts$/);
+         |                        ^
+      97 |     await expect(page.getByTestId("schema-attempts-pending")).toContainText("UNKNOWN");
+      98 |     await expect(panel).toHaveCount(0);await others(page,"/attention");
+      99 |     const state=await(await request.get(control+"/state",{headers})).json();expect(state.heldReadCount).toBe(1);
+        at C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\tests\browser\schema-attempts.spec.mjs:96:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\fixture-private\ci-portability-fix01\query-context-counterexample01\test-results\schema-attempts-page-switc-95565-new-attempt-read-stays-held\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\fixture-private\ci-portability-fix01\query-context-counterexample01\test-results\schema-attempts-page-switc-95565-new-attempt-read-stays-held\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\fixture-private\ci-portability-fix01\query-context-counterexample01\test-results\schema-attempts-page-switc-95565-new-attempt-read-stays-held\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\..\..\..\fixture-private\ci-portability-fix01\query-context-counterexample01\test-results\schema-attempts-page-switc-95565-new-attempt-read-stays-held\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    schema-attempts.spec.mjs:90:1 › page switch commits its query and UNKNOWN while the new attempt read stays held 

@@ -1,6 +1,6 @@
 import test, { before, after, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { createFixtureServer, ids, fixtureToken } from "./fixture-server.mjs";
+import { createFixtureServer, ids, fixtureToken, exceptionObservationId, exceptionRequestId, unobservedRequestId, requestAttemptId, requestObservationId, observedRequestId, observedAttemptId, observedObservationId } from "./fixture-server.mjs";
 let server, base;
 const controlHeaders = { "x-fixture-token": fixtureToken, "Content-Type": "application/json" };
 before(async () => {
@@ -10,8 +10,81 @@ before(async () => {
 });
 after(async () => { await new Promise((resolve) => server.close(resolve)); });
 beforeEach(async () => { await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: "{}" }); });
+
+test("Quality fault injection rejects one exact read and preserves the other authenticated report", async () => {
+  const response = await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: JSON.stringify({ scenario: "quality-attention", readFaults: { "quality-original-report": "notfound" } }) });
+  assert.equal(response.status, 200);
+  const headers = { Authorization: "Bearer review-secret" };
+  const exact = `${base}/api/v1/quality-assessments/${ids.goldAssessment}/report?workspaceId=${ids.workspace}`;
+  const latest = `${base}/api/v1/quality-assessments/${ids.qualityAssessment}/report?workspaceId=${ids.workspace}`;
+  assert.equal((await fetch(exact, { headers })).status, 404);
+  assert.equal((await fetch(latest, { headers })).status, 200);
+  assert.equal((await fetch(latest)).status, 401);
+});
 async function state() { return (await fetch(`${base}/__control/state`, { headers: controlHeaders })).json(); }
+
+test("observed request fixture counts attempts once and keeps selected identity after its observation arrives",async()=>{
+  const headers={Authorization:"Bearer rights-fixture-secret"};
+  await fetch(`${base}/__control/reset`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-attempts"})});
+  const list=`${base}/api/v1/workspaces/${ids.workspace}/source-schema-requests/observed/unobserved-attempts?limit=25&offset=100`;
+  assert.equal((await fetch(list)).status,403);
+  const page=await(await fetch(list,{headers})).json();assert.equal(page.page.total,105);assert.equal(page.items.length,5);
+  assert.equal(new Set(page.items.map(a=>a.attemptId)).size,5);assert.ok(page.items.every(a=>a.requestId===observedRequestId&&a.requestObservationCount===31));
+  const exact=`${base}/api/v1/data-resources/${ids.sourceResource}/schema-requests/${observedRequestId}?workspaceId=${ids.workspace}&attemptId=${observedAttemptId(1)}&attemptOffset=25`;
+  const before=await(await fetch(exact,{headers})).json();assert.equal(before.selectedAttempt.observationId,null);assert.ok(!before.attempts.items.some(a=>a.id===observedAttemptId(1)));
+  await fetch(`${base}/__control/scenario`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-attempts-arrived"})});
+  const after=await(await fetch(exact,{headers})).json();assert.equal(after.selectedAttempt.id,observedAttemptId(1));assert.equal(after.selectedAttempt.observationId,observedObservationId(1));
+  const remaining=await(await fetch(list,{headers})).json();assert.equal(remaining.page.total,104);assert.ok(remaining.items.every(a=>a.attemptId!==observedAttemptId(1)));
+});
+
+test("unobserved request fixture separates registered facts and retains exact identity after arrival",async()=>{
+  const headers={Authorization:"Bearer rights-fixture-secret"};
+  await fetch(`${base}/__control/reset`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-requests"})});
+  const list=`${base}/api/v1/workspaces/${ids.workspace}/source-schema-requests/unobserved?limit=25&offset=100`;
+  assert.equal((await fetch(list)).status,403);
+  const page=await(await fetch(list,{headers})).json();assert.equal(page.page.total,105);assert.equal(page.items.length,5);assert.deepEqual(page.summary,{noAttemptCount:52,attemptRecordedCount:53});
+  const exact=`${base}/api/v1/data-resources/${ids.sourceResource}/schema-requests/${unobservedRequestId(105)}?workspaceId=${ids.workspace}&attemptId=${requestAttemptId(105)}`;
+  assert.equal((await fetch(exact.replace(requestAttemptId(105),requestAttemptId(104)),{headers})).status,404);
+  const prior=await(await fetch(exact,{headers})).json();assert.equal(prior.selectedAttempt.observationId,null);assert.equal(prior.observations.page.total,0);
+  await fetch(`${base}/__control/scenario`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-requests-arrived"})});
+  const after=await(await fetch(exact,{headers})).json();assert.equal(after.selectedAttempt.id,prior.selectedAttempt.id);assert.equal(after.selectedAttempt.observationId,requestObservationId(105));assert.equal(after.observations.items[0].requestId,prior.requestId);
+  assert.equal((await(await fetch(list,{headers})).json()).page.total,104);
+});
+
+test("exception history fixture preserves classification counts and exact nullable evidence", async () => {
+  await fetch(`${base}/__control/reset`, {method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-exceptions"})});
+  const list=`${base}/api/v1/workspaces/${ids.workspace}/source-schema-observations/exceptions`;
+  assert.equal((await fetch(list)).status,403);
+  const headers={Authorization:"Bearer rights-fixture-secret"};
+  const all=await (await fetch(`${list}?status=ALL&limit=25&offset=100`,{headers})).json();
+  assert.equal(all.page.total,105);
+  assert.equal(all.items.length,5);
+  assert.deepEqual(all.summary,{unavailableCount:35,deniedCount:35,interruptedCount:35});
+  const denied=await (await fetch(`${list}?status=DENIED&limit=25&offset=25`,{headers})).json();
+  assert.equal(denied.page.total,35);
+  assert.equal(denied.items.length,10);
+  assert.ok(denied.items.every(o=>o.status==="DENIED"));
+  const exact=await (await fetch(`${base}/api/v1/data-resources/${ids.sourceResource}/schema-observations/${exceptionObservationId(104)}`,{headers})).json();
+  assert.equal(exact.requestId,exceptionRequestId(104));
+  assert.equal(exact.attemptId,null);
+  assert.equal(exact.completedAt,null);
+  assert.deepEqual(exact.columns,[]);
+  assert.deepEqual(exact.handling,[]);
+});
 test("control routes require a token", async () => assert.equal((await fetch(`${base}/__control/state`)).status, 403));
+
+test("read faults are explicit token-controlled fixed routes and leave independent data readable", async () => {
+  const options = { method: "POST", headers: controlHeaders, body: JSON.stringify({ scenario: "schema-requests", readFaults: { summary: "fail", products: "invalid" } }) };
+  assert.equal((await fetch(`${base}/__control/reset`, { ...options, headers: {} })).status, 403);
+  assert.equal((await fetch(`${base}/__control/reset`, options)).status, 200);
+  const workspace = `${base}/api/v1/workspaces/${ids.workspace}`;
+  assert.equal((await fetch(`${workspace}/workbench`)).status, 503);
+  assert.deepEqual(await (await fetch(`${workspace}/data-products`)).json(), {});
+  const r = await fetch(`${workspace}/source-schema-requests/unobserved`, { headers: { Authorization: "Bearer rights-fixture-secret" } });
+  assert.equal((await r.json()).page.total, 105);
+  assert.equal((await fetch(`${base}/__control/reset`, { ...options, body: JSON.stringify({ readFaults: { arbitrary: "fail" } }) })).status, 400);
+  assert.equal((await fetch(`${base}/__control/reset`, { ...options, body: JSON.stringify({ readFaults: { summary: "typo" } }) })).status, 400);
+});
 test("unknown scenario is rejected rather than silently returning ready", async () => {
   assert.equal((await fetch(`${base}/__control/scenario`, { method: "POST", headers: controlHeaders, body: '{"scenario":"typo"}' })).status, 400);
 });

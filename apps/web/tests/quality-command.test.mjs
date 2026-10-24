@@ -18,7 +18,7 @@ const ids = {
 const config = {
   enabled: true,
   workspaceId: ids.workspace,
-  actorId: ids.actor,
+  token: "quality-secret",
   apiBaseUrl: "http://core.test",
 };
 
@@ -59,9 +59,12 @@ test("new attempt posts exactly once with stable attempt id and server actor", a
   assert.equal(result.attemptId, ids.attempt);
   assert.equal(transport.calls.length, 3);
   const write = transport.calls[2];
+  assert.equal(transport.calls[0].init.headers.Authorization, undefined);
+  assert.equal(transport.calls[1].init.headers.Authorization, "Bearer quality-secret");
   assert.equal(write.url, `http://core.test/api/v1/dataset-versions/${ids.version}/quality-checks`);
   assert.equal(write.init.method, "POST");
-  assert.equal(write.init.headers["X-Actor-ID"], ids.actor);
+  assert.equal(write.init.headers.Authorization, "Bearer quality-secret");
+  assert.equal(write.init.headers["X-Actor-ID"], undefined);
   assert.deepEqual(JSON.parse(write.init.body), {
     workspaceId: ids.workspace,
     ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",

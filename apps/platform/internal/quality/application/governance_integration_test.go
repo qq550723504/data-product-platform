@@ -3,11 +3,15 @@ package application_test
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"testing"
 
@@ -23,11 +27,13 @@ import (
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	qualitynative "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native"
+	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
@@ -89,20 +95,59 @@ func TestNativeQualityAndComplianceGates(t *testing.T) {
 COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 
-	qualityResult, err := qualityService.Run(ctx, qualityapp.RunCommand{
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: passVersion.ID,
-		RuleSetRef:       "park/quality/enterprise-activity-quality-v1.yaml",
-		TraceID:          "governance-e2e",
-		Now:              passVersion.ReadyAt.Add(30 * 60 * 1e9),
-	})
+	trustedActor, attemptID := uuid.New(), uuid.New()
+	resolver, err := principal.NewStaticResolver(true, "standard-quality-secret", "quality-test", trustedActor.String(), []string{workspaceID.String()}, []string{principal.CapabilityHumanDecision})
 	if err != nil {
-		t.Fatalf("run quality gate: %v", err)
+		t.Fatal(err)
+	}
+	handler := qualityhttp.NewHandler(qualityService, qualityRepo)
+	handler.Principal = resolver
+	mux := http.NewServeMux()
+	handler.Register(mux)
+	var qualityResult qualitydomain.Assessment
+	for replay := 0; replay < 2; replay++ {
+		if replay > 0 {
+			handler.Principal, err = principal.NewStaticResolver(true, "standard-quality-secret", "another-quality-service", uuid.NewString(), []string{workspaceID.String()}, []string{principal.CapabilityHumanDecision})
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+		req := httptest.NewRequest("POST", "/api/v1/dataset-versions/"+passVersion.ID.String()+"/quality-checks", strings.NewReader(`{"workspaceId":"`+workspaceID.String()+`","assessmentAttemptId":"`+attemptID.String()+`"}`))
+		req.Header.Set("Authorization", "Bearer standard-quality-secret")
+		req.Header.Set("X-Actor-ID", uuid.NewString())
+		res := httptest.NewRecorder()
+		mux.ServeHTTP(res, req)
+		if res.Code != http.StatusCreated {
+			t.Fatalf("standard Quality HTTP: %d %s", res.Code, res.Body)
+		}
+		var response struct {
+			ID uuid.UUID `json:"id"`
+		}
+		if err := json.Unmarshal(res.Body.Bytes(), &response); err != nil {
+			t.Fatal(err)
+		}
+		if replay > 0 && response.ID != qualityResult.ID {
+			t.Fatal("same attempt returned another Assessment")
+		}
+		qualityResult, err = qualityRepo.GetAssessment(ctx, response.ID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if qualityResult.CreatedBy == nil || *qualityResult.CreatedBy != trustedActor {
+			t.Fatal("untrusted actor reached Quality fact")
+		}
 	}
 	if qualityResult.GateDecision != qualitydomain.GatePass {
 		t.Fatalf("quality gate = %s, want PASS; findings=%+v", qualityResult.GateDecision, qualityResult.Findings)
 	}
 	policyPath := filepath.Join(industryPackRoot, "park/quality/enterprise-activity-quality-v1.yaml")
+	attemptRequest := httptest.NewRequest("GET", "/api/v1/quality-assessment-attempts/"+attemptID.String()+"?workspaceId="+workspaceID.String(), nil)
+	attemptRequest.Header.Set("Authorization", "Bearer standard-quality-secret")
+	attemptResponse := httptest.NewRecorder()
+	mux.ServeHTTP(attemptResponse, attemptRequest)
+	if attemptResponse.Code != 200 || !strings.Contains(attemptResponse.Body.String(), qualityResult.ID.String()) {
+		t.Fatalf("exact completed attempt binding: %d %s", attemptResponse.Code, attemptResponse.Body)
+	}
 	policy, err := qualitynative.LoadPolicy(policyPath)
 	if err != nil {
 		t.Fatalf("load quality policy snapshot expectation: %v", err)
@@ -125,6 +170,15 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	}
 	costRepo := cost.NewQueryRepository(pool)
 	qualityCosts, err := costRepo.ListByQualityAssessment(ctx, qualityResult.ID)
+	for _, scope := range []struct {
+		workspace uuid.UUID
+		count     int
+	}{{workspaceID, 1}, {uuid.New(), 0}} {
+		items, scopedErr := costRepo.ListByQualityAssessmentInWorkspace(ctx, qualityResult.ID, scope.workspace)
+		if scopedErr != nil || len(items) != scope.count {
+			t.Fatalf("scoped Quality costs: %d err=%v want=%d", len(items), scopedErr, scope.count)
+		}
+	}
 	if err != nil {
 		t.Fatalf("query assessment costs: %v", err)
 	}
@@ -164,7 +218,7 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	if err != nil || len(evidenceItems) != 1 {
 		t.Fatalf("assessment evidence = %d, err=%v; want one", len(evidenceItems), err)
 	}
-	auditEvents, err := qualityRepo.ListAuditEvents(ctx, qualityResult.ID)
+	auditEvents, err := qualityRepo.ListAuditEvents(ctx, qualityResult.ID, workspaceID)
 	if err != nil || len(auditEvents) != 1 {
 		t.Fatalf("assessment audit events = %d, err=%v; want one", len(auditEvents), err)
 	}

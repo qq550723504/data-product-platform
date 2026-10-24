@@ -1,0 +1,14 @@
+{
+  "started_at": "2026-10-24T12:44:33.228279+00:00",
+  "finished_at": "2026-10-24T12:44:42.561602+00:00",
+  "command": [
+    "python",
+    "-B",
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/read_publication_boundary01.py"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

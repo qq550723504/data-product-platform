@@ -1,0 +1,225 @@
+{
+  "Id": "db155065f2ab3165bc21b0860bd15bd199150a86e68e449bb9828674594bddd9",
+  "Created": "2026-10-24T12:56:02.737667552Z",
+  "Path": "sh",
+  "Args": [
+    "-ec",
+    "node --version; npm --version; npm --prefix tests/browser run test:fixture; node --test apps/web/tests/release-readiness.test.mjs; cd tests/browser; node node_modules/playwright/cli.js test --retries=0 --output=/out/test-results"
+  ],
+  "State": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-24T12:56:03.486208446Z",
+    "FinishedAt": "2026-10-24T12:58:06.327592991Z"
+  },
+  "Image": "sha256:7dc52fa50b10eefa6f613535d2c8cbb072a4a86736eb66ca09f12ba8c142688f",
+  "ResolvConfPath": "/var/lib/docker/containers/db155065f2ab3165bc21b0860bd15bd199150a86e68e449bb9828674594bddd9/resolv.conf",
+  "HostnamePath": "/var/lib/docker/containers/db155065f2ab3165bc21b0860bd15bd199150a86e68e449bb9828674594bddd9/hostname",
+  "HostsPath": "/var/lib/docker/containers/db155065f2ab3165bc21b0860bd15bd199150a86e68e449bb9828674594bddd9/hosts",
+  "LogPath": "",
+  "Name": "/dpp307-ci-browser-portability03",
+  "RestartCount": 0,
+  "Driver": "overlayfs",
+  "Platform": "linux",
+  "MountLabel": "",
+  "ProcessLabel": "",
+  "AppArmorProfile": "",
+  "ExecIDs": null,
+  "HostConfig": {
+    "Binds": null,
+    "ContainerIDFile": "",
+    "LogConfig": {
+      "Type": "local",
+      "Config": {}
+    },
+    "NetworkMode": "none",
+    "PortBindings": {},
+    "RestartPolicy": {
+      "Name": "no",
+      "MaximumRetryCount": 0
+    },
+    "AutoRemove": false,
+    "VolumeDriver": "",
+    "VolumesFrom": null,
+    "ConsoleSize": [
+      0,
+      0
+    ],
+    "CapAdd": null,
+    "CapDrop": [
+      "ALL"
+    ],
+    "CgroupnsMode": "private",
+    "Dns": null,
+    "DnsOptions": [],
+    "DnsSearch": [],
+    "ExtraHosts": null,
+    "GroupAdd": null,
+    "IpcMode": "private",
+    "Cgroup": "",
+    "Links": null,
+    "OomScoreAdj": 0,
+    "PidMode": "",
+    "Privileged": false,
+    "PublishAllPorts": false,
+    "ReadonlyRootfs": false,
+    "SecurityOpt": [
+      "no-new-privileges"
+    ],
+    "UTSMode": "",
+    "UsernsMode": "",
+    "ShmSize": 1073741824,
+    "Runtime": "runc",
+    "Isolation": "",
+    "CpuShares": 0,
+    "Memory": 0,
+    "NanoCpus": 0,
+    "CgroupParent": "",
+    "BlkioWeight": 0,
+    "BlkioWeightDevice": [],
+    "BlkioDeviceReadBps": [],
+    "BlkioDeviceWriteBps": [],
+    "BlkioDeviceReadIOps": [],
+    "BlkioDeviceWriteIOps": [],
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "CpuRealtimePeriod": 0,
+    "CpuRealtimeRuntime": 0,
+    "CpusetCpus": "",
+    "CpusetMems": "",
+    "Devices": [],
+    "DeviceCgroupRules": null,
+    "DeviceRequests": null,
+    "MemoryReservation": 0,
+    "MemorySwap": 0,
+    "MemorySwappiness": null,
+    "OomKillDisable": null,
+    "PidsLimit": null,
+    "Ulimits": null,
+    "CpuCount": 0,
+    "CpuPercent": 0,
+    "IOMaximumIOps": 0,
+    "IOMaximumBandwidth": 0,
+    "Mounts": [
+      {
+        "Type": "bind",
+        "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\ci-portability-fix01\\linux-browser-full03",
+        "Target": "/out"
+      }
+    ],
+    "MaskedPaths": [
+      "/proc/acpi",
+      "/proc/asound",
+      "/proc/interrupts",
+      "/proc/kcore",
+      "/proc/keys",
+      "/proc/latency_stats",
+      "/proc/sched_debug",
+      "/proc/scsi",
+      "/proc/timer_list",
+      "/proc/timer_stats",
+      "/sys/devices/virtual/powercap",
+      "/sys/firmware"
+    ],
+    "ReadonlyPaths": [
+      "/proc/bus",
+      "/proc/fs",
+      "/proc/irq",
+      "/proc/sys",
+      "/proc/sysrq-trigger"
+    ]
+  },
+  "Storage": {
+    "RootFS": {
+      "Snapshot": {
+        "Name": "overlayfs"
+      }
+    }
+  },
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\ci-portability-fix01\\linux-browser-full03",
+      "Destination": "/out",
+      "Mode": "",
+      "RW": true,
+      "Propagation": "rprivate"
+    }
+  ],
+  "Config": {
+    "Hostname": "db155065f2ab",
+    "Domainname": "",
+    "User": "10001:10001",
+    "AttachStdin": false,
+    "AttachStdout": true,
+    "AttachStderr": true,
+    "Tty": false,
+    "OpenStdin": false,
+    "StdinOnce": false,
+    "Env": [
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "LANG=C.UTF-8",
+      "LC_ALL=C.UTF-8",
+      "PLAYWRIGHT_BROWSERS_PATH=/ms-playwright",
+      "CI=true",
+      "NEXT_TELEMETRY_DISABLED=1",
+      "POC_WORKSPACE_ID=",
+      "POC_ENABLE_REVIEW_ACTIONS=false",
+      "POC_ENABLE_RELEASE_ACTIONS=false",
+      "HOME=/tmp",
+      "PLAYWRIGHT_HTML_OUTPUT_DIR=/out/report"
+    ],
+    "Cmd": [
+      "sh",
+      "-ec",
+      "node --version; npm --version; npm --prefix tests/browser run test:fixture; node --test apps/web/tests/release-readiness.test.mjs; cd tests/browser; node node_modules/playwright/cli.js test --retries=0 --output=/out/test-results"
+    ],
+    "Image": "sha256:7dc52fa50b10eefa6f613535d2c8cbb072a4a86736eb66ca09f12ba8c142688f",
+    "Volumes": null,
+    "WorkingDir": "/work",
+    "Entrypoint": null,
+    "Labels": {
+      "org.opencontainers.image.version": "24.04"
+    }
+  },
+  "NetworkSettings": {
+    "SandboxID": "",
+    "SandboxKey": "",
+    "Ports": {},
+    "Networks": {
+      "none": {
+        "IPAMConfig": null,
+        "Links": null,
+        "Aliases": null,
+        "DriverOpts": null,
+        "GwPriority": 0,
+        "NetworkID": "9041ed4da560100f15a43e800aff28d0fdd9f64fb6073312342fbe0f524a89b7",
+        "EndpointID": "",
+        "Gateway": "",
+        "IPAddress": "",
+        "MacAddress": "",
+        "IPPrefixLen": 0,
+        "IPv6Gateway": "",
+        "GlobalIPv6Address": "",
+        "GlobalIPv6PrefixLen": 0,
+        "DNSNames": null
+      }
+    }
+  },
+  "ImageManifestDescriptor": {
+    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+    "digest": "sha256:0576afece7676f0316637bc2641b1472c73e7ac2e0e5677ff5600c2492da943b",
+    "size": 2598,
+    "platform": {
+      "architecture": "amd64",
+      "os": "linux"
+    }
+  }
+}

@@ -3,12 +3,14 @@ module github.com/qq550723504/data-product-platform/apps/platform
 go 1.24.0
 
 require (
+	github.com/cyberphone/json-canonicalization v0.0.0-20261011152517-32a48195b9b2
 	github.com/google/uuid v1.6.0
 	github.com/hibiken/asynq v0.25.1
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/minio/madmin-go/v3 v3.0.94
 	github.com/minio/minio-go/v7 v7.0.88
 	github.com/minio/pkg/v3 v3.1.3
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
 	golang.org/x/sys v0.31.0
 	gopkg.in/yaml.v3 v3.0.1
 )

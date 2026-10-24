@@ -1,0 +1,1 @@
+{"at": "2026-10-24T12:35:48.314039+00:00", "command": ["node", "node_modules/playwright/cli.js", "test", "--retries=0", "--output=C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/windows-browser-full01/test-results"], "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform\\tests\\browser", "retained_source_start": 0}

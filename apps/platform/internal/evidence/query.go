@@ -52,15 +52,23 @@ func NewQueryRepository(pool *pgxpool.Pool) *QueryRepository {
 }
 
 func (r *QueryRepository) ListForObject(ctx context.Context, objectType string, objectID uuid.UUID) ([]Item, error) {
+	return r.listForObject(ctx, objectType, objectID, nil)
+}
+
+func (r *QueryRepository) ListForObjectInWorkspace(ctx context.Context, objectType string, objectID, workspaceID uuid.UUID) ([]Item, error) {
+	return r.listForObject(ctx, objectType, objectID, &workspaceID)
+}
+
+func (r *QueryRepository) listForObject(ctx context.Context, objectType string, objectID uuid.UUID, workspaceID *uuid.UUID) ([]Item, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT e.id, e.workspace_id, e.evidence_type, COALESCE(e.title,''), COALESCE(e.source_type,''), e.source_id,
 		       COALESCE(e.storage_uri,''), COALESCE(e.hash_algorithm,''), COALESCE(e.hash_value,''),
 		       e.metadata, er.relation_type, e.created_at, e.created_by
 		FROM evidence_relation er
 		JOIN evidence e ON e.id = er.evidence_id
-		WHERE er.object_type = $1 AND er.object_id = $2
+		WHERE er.object_type = $1 AND er.object_id = $2 AND ($3::uuid IS NULL OR e.workspace_id=$3)
 		ORDER BY e.created_at, e.id
-	`, objectType, objectID)
+	`, objectType, objectID, workspaceID)
 	if err != nil {
 		return nil, fmt.Errorf("query evidence for %s %s: %w", objectType, objectID, err)
 	}

@@ -1,0 +1,66 @@
+name: Fork-approved source admission
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-source-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: hfa-ci-synthetic-only
+          POSTGRES_DB: hfa_ci
+        ports: ['25480:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      TEST_POSTGRES_DSN: postgres://postgres:hfa-ci-synthetic-only@127.0.0.1:25480/hfa_ci?sslmode=disable
+      POSTGRES_DSN: postgres://postgres:hfa-ci-synthetic-only@127.0.0.1:25480/hfa_ci?sslmode=disable
+      SOURCE_ADMISSION_ACCEPTANCE: '1'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set isolated evidence directory
+        run: echo "SOURCE_ADMISSION_E2E_DIR=$RUNNER_TEMP/hfa-acceptance" >> "$GITHUB_ENV"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: apps/platform/go.mod
+          cache-dependency-path: apps/platform/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify private live-trial preparation boundaries without Docker
+        run: node --test tests/fork-host-live/prepare-isolation.test.mjs
+      - name: Migrate dedicated synthetic database and verify PostgreSQL contract
+        working-directory: apps/platform
+        run: |
+          go run ./cmd/migrate -direction up -dir ../../migrations
+          go test ./internal/sourceadmission ./internal/platform/routing -count=1 -timeout 180s
+      - name: Build existing Host frontend
+        working-directory: apps/web
+        run: |
+          npm install --ignore-scripts --no-package-lock --no-audit --no-fund
+          npm run build
+      - name: Install browser test runner
+        working-directory: tests/source-admission
+        run: |
+          npm install --ignore-scripts --no-package-lock --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Run bilingual browser journeys against synthetic Ports and real PostgreSQL
+        run: node tests/source-admission/run.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-admission-browser-evidence
+          path: |
+            ${{ runner.temp }}/hfa-acceptance/browser-results.json
+            ${{ runner.temp }}/hfa-acceptance/*-accepted-source.png
+            ${{ runner.temp }}/hfa-acceptance/*-stale-access.png
+            ${{ runner.temp }}/hfa-acceptance/*-budget-original-key.png

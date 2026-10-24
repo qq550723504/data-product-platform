@@ -1,0 +1,10 @@
+
+Running 5 tests using 1 worker
+
+  ok 1 schema-requests.spec.mjs:25:1 › unobserved pagination and exact attempt remain readable after observation arrives (1.8s)
+  ok 2 schema-requests.spec.mjs:47:1 › independent counts and filters survive other queue navigation (1.7s)
+  ok 3 schema-requests.spec.mjs:54:1 › delayed filter response cannot make an old 25-row page navigation-ready (1.2s)
+  ok 4 schema-requests.spec.mjs:81:1 › request detail pages all attempts and observations without replacing selected attempt (422ms)
+  ok 5 schema-requests.spec.mjs:86:1 › unavailable, foreign and mismatched request data fail locally without fallback (1.3s)
+
+  5 passed (15.9s)

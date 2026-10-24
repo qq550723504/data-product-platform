@@ -1,0 +1,1632 @@
+d identities never become navigation targets
+2026-10-24T11:41:49.7686210Z ok 3 - bad identities never become navigation targets
+2026-10-24T11:41:49.7687065Z   ---
+2026-10-24T11:41:49.7687655Z   duration_ms: 0.484848
+2026-10-24T11:41:49.7688293Z   type: 'test'
+2026-10-24T11:41:49.7688878Z   ...
+2026-10-24T11:41:49.7690005Z # Subtest: quality view pagination preserves other queues and resets only its own offset
+2026-10-24T11:41:49.7691578Z ok 4 - quality view pagination preserves other queues and resets only its own offset
+2026-10-24T11:41:49.7692639Z   ---
+2026-10-24T11:41:49.7693531Z   duration_ms: 0.749204
+2026-10-24T11:41:49.7694172Z   type: 'test'
+2026-10-24T11:41:49.7694789Z   ...
+2026-10-24T11:41:49.7718896Z # Subtest: malformed query values cannot produce unsafe page offsets
+2026-10-24T11:41:49.7720197Z ok 5 - malformed query values cannot produce unsafe page offsets
+2026-10-24T11:41:49.7721157Z   ---
+2026-10-24T11:41:49.7722268Z   duration_ms: 0.280716
+2026-10-24T11:41:49.7722946Z   type: 'test'
+2026-10-24T11:41:49.7723812Z   ...
+2026-10-24T11:41:49.7903499Z # Subtest: new attempt posts exactly once with stable attempt id and server actor
+2026-10-24T11:41:49.7934440Z ok 6 - new attempt posts exactly once with stable attempt id and server actor
+2026-10-24T11:41:49.7941775Z   ---
+2026-10-24T11:41:49.7942399Z   duration_ms: 32.924607
+2026-10-24T11:41:49.7943478Z   type: 'test'
+2026-10-24T11:41:49.7944116Z   ...
+2026-10-24T11:41:49.7945003Z # Subtest: succeeded attempt recovers assessment without POST
+2026-10-24T11:41:49.7946135Z ok 7 - succeeded attempt recovers assessment without POST
+2026-10-24T11:41:49.7946967Z   ---
+2026-10-24T11:41:49.7947556Z   duration_ms: 1.011415
+2026-10-24T11:41:49.7948198Z   type: 'test'
+2026-10-24T11:41:49.7948781Z   ...
+2026-10-24T11:41:49.7949460Z # Subtest: active attempt never posts
+2026-10-24T11:41:49.7950296Z ok 8 - active attempt never posts
+2026-10-24T11:41:49.7951034Z   ---
+2026-10-24T11:41:49.7951734Z   duration_ms: 1.041
+2026-10-24T11:41:49.7952355Z   type: 'test'
+2026-10-24T11:41:49.7952917Z   ...
+2026-10-24T11:41:49.7953972Z # Subtest: failed attempt is terminal and never posts
+2026-10-24T11:41:49.7955058Z ok 9 - failed attempt is terminal and never posts
+2026-10-24T11:41:49.7955842Z   ---
+2026-10-24T11:41:49.7956411Z   duration_ms: 1.767099
+2026-10-24T11:41:49.7957049Z   type: 'test'
+2026-10-24T11:41:49.7957626Z   ...
+2026-10-24T11:41:49.7982619Z # Subtest: foreign attempt is blocked before write
+2026-10-24T11:41:49.7984313Z ok 10 - foreign attempt is blocked before write
+2026-10-24T11:41:49.7985104Z   ---
+2026-10-24T11:41:49.7985712Z   duration_ms: 1.785725
+2026-10-24T11:41:49.7986371Z   type: 'test'
+2026-10-24T11:41:49.7986950Z   ...
+2026-10-24T11:41:49.7990374Z # Subtest: non-usable DatasetVersion never looks up or posts attempt
+2026-10-24T11:41:49.7994210Z ok 11 - non-usable DatasetVersion never looks up or posts attempt
+2026-10-24T11:41:49.7995055Z   ---
+2026-10-24T11:41:49.7995580Z   duration_ms: 0.645058
+2026-10-24T11:41:49.7996156Z   type: 'test'
+2026-10-24T11:41:49.7996695Z   ...
+2026-10-24T11:41:49.7997621Z # Subtest: timeout after POST preserves attempt identity and never retries
+2026-10-24T11:41:49.7998858Z ok 12 - timeout after POST preserves attempt identity and never retries
+2026-10-24T11:41:49.7999748Z   ---
+2026-10-24T11:41:49.8000332Z   duration_ms: 0.82768
+2026-10-24T11:41:49.8000903Z   type: 'test'
+2026-10-24T11:41:49.8001398Z   ...
+2026-10-24T11:41:49.8002163Z # Subtest: disabled configuration fails before any Core request
+2026-10-24T11:41:49.8003455Z ok 13 - disabled configuration fails before any Core request
+2026-10-24T11:41:49.8004210Z   ---
+2026-10-24T11:41:49.8004705Z   duration_ms: 0.270427
+2026-10-24T11:41:49.8005254Z   type: 'test'
+2026-10-24T11:41:49.8005743Z   ...
+2026-10-24T11:41:51.2589232Z # Subtest: independent history failure retains the exact successful historical report
+2026-10-24T11:41:51.2590618Z ok 14 - independent history failure retains the exact successful historical report
+2026-10-24T11:41:51.2591625Z   ---
+2026-10-24T11:41:51.2592030Z   duration_ms: 216.38302
+2026-10-24T11:41:51.2592483Z   type: 'test'
+2026-10-24T11:41:51.2592863Z   ...
+2026-10-24T11:41:51.2614748Z # Subtest: independent summary failure retains the exact successful historical report
+2026-10-24T11:41:51.2616070Z ok 15 - independent summary failure retains the exact successful historical report
+2026-10-24T11:41:51.2616823Z   ---
+2026-10-24T11:41:51.2617190Z   duration_ms: 154.555344
+2026-10-24T11:41:51.2617637Z   type: 'test'
+2026-10-24T11:41:51.2618002Z   ...
+2026-10-24T11:41:51.2618825Z # Subtest: independent attempt failure retains the exact successful historical report
+2026-10-24T11:41:51.2620048Z ok 16 - independent attempt failure retains the exact successful historical report
+2026-10-24T11:41:51.2620788Z   ---
+2026-10-24T11:41:51.2621149Z   duration_ms: 93.452671
+2026-10-24T11:41:51.2621587Z   type: 'test'
+2026-10-24T11:41:51.2621945Z   ...
+2026-10-24T11:41:51.2622838Z # Subtest: independent foreign-attempt failure retains the exact successful historical report
+2026-10-24T11:41:51.2624784Z ok 17 - independent foreign-attempt failure retains the exact successful historical report
+2026-10-24T11:41:51.2625603Z   ---
+2026-10-24T11:41:51.2625965Z   duration_ms: 78.23611
+2026-10-24T11:41:51.2626387Z   type: 'test'
+2026-10-24T11:41:51.2626735Z   ...
+2026-10-24T11:41:51.2627798Z # Subtest: independent 44444444-4444-4444-8444-444444444444 failure retains the exact successful historical report
+2026-10-24T11:41:51.2644432Z ok 18 - independent 44444444-4444-4444-8444-444444444444 failure retains the exact successful historical report
+2026-10-24T11:41:51.2645349Z   ---
+2026-10-24T11:41:51.2645740Z   duration_ms: 75.980452
+2026-10-24T11:41:51.2646159Z   type: 'test'
+2026-10-24T11:41:51.2646497Z   ...
+2026-10-24T11:41:51.2647242Z # Subtest: historical 401 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2648328Z ok 19 - historical 401 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2648856Z   ---
+2026-10-24T11:41:51.2649086Z   duration_ms: 65.838997
+2026-10-24T11:41:51.2649347Z   type: 'test'
+2026-10-24T11:41:51.2649653Z   ...
+2026-10-24T11:41:51.2650409Z # Subtest: historical 403 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2651461Z ok 20 - historical 403 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2652145Z   ---
+2026-10-24T11:41:51.2652495Z   duration_ms: 58.664627
+2026-10-24T11:41:51.2652894Z   type: 'test'
+2026-10-24T11:41:51.2653421Z   ...
+2026-10-24T11:41:51.2653924Z # Subtest: historical 404 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2654769Z ok 21 - historical 404 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2655468Z   ---
+2026-10-24T11:41:51.2655813Z   duration_ms: 62.935493
+2026-10-24T11:41:51.2656266Z   type: 'test'
+2026-10-24T11:41:51.2656590Z   ...
+2026-10-24T11:41:51.2657260Z # Subtest: historical 503 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2658144Z ok 22 - historical 503 stays UNKNOWN without loading latest as a substitute
+2026-10-24T11:41:51.2658509Z   ---
+2026-10-24T11:41:51.2658703Z   duration_ms: 53.90544
+2026-10-24T11:41:51.2658918Z   type: 'test'
+2026-10-24T11:41:51.2659204Z   ...
+2026-10-24T11:41:51.2660048Z # Subtest: first history page failure does not erase the independently successful latest summary
+2026-10-24T11:41:51.2660910Z ok 23 - first history page failure does not erase the independently successful latest summary
+2026-10-24T11:41:51.2661346Z   ---
+2026-10-24T11:41:51.2661541Z   duration_ms: 65.091392
+2026-10-24T11:41:51.2661763Z   type: 'test'
+2026-10-24T11:41:51.2661951Z   ...
+2026-10-24T11:41:51.2662362Z # Subtest: latest report failure is local when no explicit assessment is selected
+2026-10-24T11:41:51.2674312Z ok 24 - latest report failure is local when no explicit assessment is selected
+2026-10-24T11:41:51.2675402Z   ---
+2026-10-24T11:41:51.2676052Z   duration_ms: 51.754588
+2026-10-24T11:41:51.2676592Z   type: 'test'
+2026-10-24T11:41:51.2677074Z   ...
+2026-10-24T11:41:51.2678419Z # Subtest: provenance quality failure remains UNKNOWN and does not invent empty evidence
+2026-10-24T11:41:51.2679734Z ok 25 - provenance quality failure remains UNKNOWN and does not invent empty evidence
+2026-10-24T11:41:51.2680537Z   ---
+2026-10-24T11:41:51.2680906Z   duration_ms: 51.309168
+2026-10-24T11:41:51.2681329Z   type: 'test'
+2026-10-24T11:41:51.2681698Z   ...
+2026-10-24T11:41:51.2877528Z # Subtest: missing Quality credential never makes an anonymous read
+2026-10-24T11:41:51.2878591Z ok 26 - missing Quality credential never makes an anonymous read
+2026-10-24T11:41:51.2879242Z   ---
+2026-10-24T11:41:51.2879619Z   duration_ms: 2.99524
+2026-10-24T11:41:51.2880036Z   type: 'test'
+2026-10-24T11:41:51.2880401Z   ...
+2026-10-24T11:41:51.2881249Z # Subtest: Quality 401 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2882513Z ok 27 - Quality 401 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2892301Z   ---
+2026-10-24T11:41:51.2892678Z   duration_ms: 26.366104
+2026-10-24T11:41:51.2893327Z   type: 'test'
+2026-10-24T11:41:51.2893735Z   ...
+2026-10-24T11:41:51.2894595Z # Subtest: Quality 403 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2895870Z ok 28 - Quality 403 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2896617Z   ---
+2026-10-24T11:41:51.2896979Z   duration_ms: 0.307557
+2026-10-24T11:41:51.2897382Z   type: 'test'
+2026-10-24T11:41:51.2897726Z   ...
+2026-10-24T11:41:51.2898555Z # Subtest: Quality 404 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2899797Z ok 29 - Quality 404 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2900553Z   ---
+2026-10-24T11:41:51.2900915Z   duration_ms: 0.319979
+2026-10-24T11:41:51.2901355Z   type: 'test'
+2026-10-24T11:41:51.2901699Z   ...
+2026-10-24T11:41:51.2902518Z # Subtest: Quality 503 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2904322Z ok 30 - Quality 503 preserves exact URL and never falls back or reveals upstream body
+2026-10-24T11:41:51.2905093Z   ---
+2026-10-24T11:41:51.2905453Z   duration_ms: 0.238306
+2026-10-24T11:41:51.2905860Z   type: 'test'
+2026-10-24T11:41:51.2906201Z   ...
+2026-10-24T11:41:51.2906871Z # Subtest: missing command credential blocks before all Core requests
+2026-10-24T11:41:51.2907858Z ok 31 - missing command credential blocks before all Core requests
+2026-10-24T11:41:51.2908514Z   ---
+2026-10-24T11:41:51.2908863Z   duration_ms: 0.606446
+2026-10-24T11:41:51.2909229Z   type: 'test'
+2026-10-24T11:41:51.2909535Z   ...
+2026-10-24T11:41:51.2909812Z 1..31
+2026-10-24T11:41:51.2910071Z # tests 31
+2026-10-24T11:41:51.2910345Z # suites 0
+2026-10-24T11:41:51.2910717Z # pass 31
+2026-10-24T11:41:51.2911003Z # fail 0
+2026-10-24T11:41:51.2911312Z # cancelled 0
+2026-10-24T11:41:51.2911624Z # skipped 0
+2026-10-24T11:41:51.2911929Z # todo 0
+2026-10-24T11:41:51.2912260Z # duration_ms 1596.814435
+2026-10-24T11:41:51.3959735Z 
+2026-10-24T11:41:51.3960481Z > data-product-platform-web@0.1.0 test:compliance
+2026-10-24T11:41:51.3961931Z > tsc lib/compliance-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .compliance-tests && node --test tests/compliance-command.test.mjs
+2026-10-24T11:41:51.3962791Z 
+2026-10-24T11:41:52.4811659Z TAP version 13
+2026-10-24T11:41:52.5469596Z # Subtest: new attempt posts exactly once with stable attempt id and server actor
+2026-10-24T11:41:52.5475583Z ok 1 - new attempt posts exactly once with stable attempt id and server actor
+2026-10-24T11:41:52.5476469Z   ---
+2026-10-24T11:41:52.5476880Z   duration_ms: 24.555579
+2026-10-24T11:41:52.5477360Z   type: 'test'
+2026-10-24T11:41:52.5477736Z   ...
+2026-10-24T11:41:52.5489453Z # Subtest: existing attempt recovers result without POST
+2026-10-24T11:41:52.5490316Z ok 2 - existing attempt recovers result without POST
+2026-10-24T11:41:52.5490945Z   ---
+2026-10-24T11:41:52.5491317Z   duration_ms: 0.802337
+2026-10-24T11:41:52.5491729Z   type: 'test'
+2026-10-24T11:41:52.5492087Z   ...
+2026-10-24T11:41:52.5493597Z # Subtest: attempt request identity mismatch is blocked
+2026-10-24T11:41:52.5494472Z ok 3 - attempt request identity mismatch is blocked
+2026-10-24T11:41:52.5495071Z   ---
+2026-10-24T11:41:52.5495437Z   duration_ms: 0.894869
+2026-10-24T11:41:52.5495854Z   type: 'test'
+2026-10-24T11:41:52.5496213Z   ...
+2026-10-24T11:41:52.5496920Z # Subtest: foreign attempt is blocked before write
+2026-10-24T11:41:52.5543816Z ok 4 - foreign attempt is blocked before write
+2026-10-24T11:41:52.5556293Z   ---
+2026-10-24T11:41:52.5564046Z   duration_ms: 1.061981
+2026-10-24T11:41:52.5564609Z   type: 'test'
+2026-10-24T11:41:52.5565205Z   ...
+2026-10-24T11:41:52.5566056Z # Subtest: non-usable DatasetVersion never looks up or posts attempt
+2026-10-24T11:41:52.5567173Z ok 5 - non-usable DatasetVersion never looks up or posts attempt
+2026-10-24T11:41:52.5568217Z   ---
+2026-10-24T11:41:52.5568713Z   duration_ms: 0.805442
+2026-10-24T11:41:52.5569264Z   type: 'test'
+2026-10-24T11:41:52.5569770Z   ...
+2026-10-24T11:41:52.5570631Z # Subtest: timeout after POST preserves attempt identity and never retries
+2026-10-24T11:41:52.5571801Z ok 6 - timeout after POST preserves attempt identity and never retries
+2026-10-24T11:41:52.5572607Z   ---
+2026-10-24T11:41:52.5573298Z   duration_ms: 0.682994
+2026-10-24T11:41:52.5573874Z   type: 'test'
+2026-10-24T11:41:52.5574376Z   ...
+2026-10-24T11:41:52.5575139Z # Subtest: disabled configuration fails before any Core request
+2026-10-24T11:41:52.5576156Z ok 7 - disabled configuration fails before any Core request
+2026-10-24T11:41:52.5576871Z   ---
+2026-10-24T11:41:52.5577363Z   duration_ms: 0.215793
+2026-10-24T11:41:52.5577905Z   type: 'test'
+2026-10-24T11:41:52.5578419Z   ...
+2026-10-24T11:41:52.5621863Z 1..7
+2026-10-24T11:41:52.5622320Z # tests 7
+2026-10-24T11:41:52.5622825Z # suites 0
+2026-10-24T11:41:52.5623452Z # pass 7
+2026-10-24T11:41:52.5623807Z # fail 0
+2026-10-24T11:41:52.5624428Z # cancelled 0
+2026-10-24T11:41:52.5625077Z # skipped 0
+2026-10-24T11:41:52.5625604Z # todo 0
+2026-10-24T11:41:52.5626271Z # duration_ms 93.223703
+2026-10-24T11:41:52.6652720Z 
+2026-10-24T11:41:52.6653613Z > data-product-platform-web@0.1.0 test:trace
+2026-10-24T11:41:52.6655788Z > tsc lib/trace-scope.ts lib/traceability.ts lib/pagination.ts lib/scoped-lookup.ts lib/workbench-read.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .trace-tests && node --test tests/trace-scope.test.mjs tests/pagination.test.mjs tests/scoped-lookup.test.mjs tests/workbench-read.test.mjs
+2026-10-24T11:41:52.6657323Z 
+2026-10-24T11:41:53.9158936Z TAP version 13
+2026-10-24T11:41:53.9604016Z # Subtest: collectAllPages drains every page using returned item count
+2026-10-24T11:41:53.9634212Z ok 1 - collectAllPages drains every page using returned item count
+2026-10-24T11:41:53.9664207Z   ---
+2026-10-24T11:41:53.9665057Z   duration_ms: 1.85485
+2026-10-24T11:41:53.9683961Z   type: 'test'
+2026-10-24T11:41:53.9684582Z   ...
+2026-10-24T11:41:53.9685418Z # Subtest: collectAllPages accepts an empty collection
+2026-10-24T11:41:53.9686446Z ok 2 - collectAllPages accepts an empty collection
+2026-10-24T11:41:53.9687237Z   ---
+2026-10-24T11:41:53.9687788Z   duration_ms: 0.198881
+2026-10-24T11:41:53.9688424Z   type: 'test'
+2026-10-24T11:41:53.9688978Z   ...
+2026-10-24T11:41:53.9690004Z # Subtest: collectAllPages rejects an empty page before reported total
+2026-10-24T11:41:53.9691319Z ok 3 - collectAllPages rejects an empty page before reported total
+2026-10-24T11:41:53.9692222Z   ---
+2026-10-24T11:41:53.9692792Z   duration_ms: 0.55198
+2026-10-24T11:41:53.9693861Z   type: 'test'
+2026-10-24T11:41:53.9694453Z   ...
+2026-10-24T11:41:53.9695282Z # Subtest: collectAllPages rejects an unexpected offset
+2026-10-24T11:41:53.9696345Z ok 4 - collectAllPages rejects an unexpected offset
+2026-10-24T11:41:53.9697227Z   ---
+2026-10-24T11:41:53.9697810Z   duration_ms: 0.221754
+2026-10-24T11:41:53.9698425Z   type: 'test'
+2026-10-24T11:41:53.9698985Z   ...
+2026-10-24T11:41:53.9700312Z # Subtest: collectAllPages rejects invalid limits before calling Core
+2026-10-24T11:41:53.9701610Z ok 5 - collectAllPages rejects invalid limits before calling Core
+2026-10-24T11:41:53.9702498Z   ---
+2026-10-24T11:41:53.9703344Z   duration_ms: 0.309488
+2026-10-24T11:41:53.9704022Z   type: 'test'
+2026-10-24T11:41:53.9704590Z   ...
+2026-10-24T11:41:53.9705505Z # Subtest: parsePageOffset normalizes query values and rejects garbage
+2026-10-24T11:41:53.9706698Z ok 6 - parsePageOffset normalizes query values and rejects garbage
+2026-10-24T11:41:53.9707448Z   ---
+2026-10-24T11:41:53.9707926Z   duration_ms: 0.3167
+2026-10-24T11:41:53.9708501Z   type: 'test'
+2026-10-24T11:41:53.9709034Z   ...
+2026-10-24T11:41:53.9709846Z # Subtest: paginationWindow exposes explicit prev/next offsets
+2026-10-24T11:41:53.9710917Z ok 7 - paginationWindow exposes explicit prev/next offsets
+2026-10-24T11:41:53.9712014Z   ---
+2026-10-24T11:41:53.9712540Z   duration_ms: 0.272639
+2026-10-24T11:41:53.9713369Z   type: 'test'
+2026-10-24T11:41:53.9713960Z   ...
+2026-10-24T11:41:53.9715001Z # Subtest: paginationWindow advances by returned rows and never loops on an empty page
+2026-10-24T11:41:53.9716561Z ok 8 - paginationWindow advances by returned rows and never loops on an empty page
+2026-10-24T11:41:53.9717552Z   ---
+2026-10-24T11:41:53.9718114Z   duration_ms: 0.157835
+2026-10-24T11:41:53.9718723Z   type: 'test'
+2026-10-24T11:41:53.9719244Z   ...
+2026-10-24T11:41:53.9720155Z # Subtest: paginationWindow tolerates invalid metadata without throwing
+2026-10-24T11:41:53.9721318Z ok 9 - paginationWindow tolerates invalid metadata without throwing
+2026-10-24T11:41:53.9722251Z   ---
+2026-10-24T11:41:53.9722754Z   duration_ms: 0.357897
+2026-10-24T11:41:53.9723663Z   type: 'test'
+2026-10-24T11:41:53.9724066Z   ...
+2026-10-24T11:41:53.9844164Z # Subtest: findAcrossPages resolves a record beyond the first page
+2026-10-24T11:41:53.9845287Z ok 10 - findAcrossPages resolves a record beyond the first page
+2026-10-24T11:41:53.9852586Z   ---
+2026-10-24T11:41:53.9873845Z   duration_ms: 2.125794
+2026-10-24T11:41:53.9874426Z   type: 'test'
+2026-10-24T11:41:53.9874915Z   ...
+2026-10-24T11:41:53.9875919Z # Subtest: findAcrossPages returns undefined when the record is absent
+2026-10-24T11:41:53.9877487Z ok 11 - findAcrossPages returns undefined when the record is absent
+2026-10-24T11:41:53.9878257Z   ---
+2026-10-24T11:41:53.9878726Z   duration_ms: 0.385209
+2026-10-24T11:41:53.9879244Z   type: 'test'
+2026-10-24T11:41:53.9879709Z   ...
+2026-10-24T11:41:53.9880484Z # Subtest: findAcrossPages keeps product scoping for release lookups
+2026-10-24T11:41:53.9881681Z ok 12 - findAcrossPages keeps product scoping for release lookups
+2026-10-24T11:41:53.9882430Z   ---
+2026-10-24T11:41:53.9882944Z   duration_ms: 0.440111
+2026-10-24T11:41:53.9883810Z   type: 'test'
+2026-10-24T11:41:53.9884368Z   ...
+2026-10-24T11:41:53.9885283Z # Subtest: findAcrossPages keeps draining when Core clamps the page size
+2026-10-24T11:41:53.9900224Z ok 13 - findAcrossPages keeps draining when Core clamps the page size
+2026-10-24T11:41:53.9901022Z   ---
+2026-10-24T11:41:53.9901547Z   duration_ms: 0.451002
+2026-10-24T11:41:53.9902135Z   type: 'test'
+2026-10-24T11:41:53.9902470Z   ...
+2026-10-24T11:41:53.9904096Z # Subtest: findAcrossPages surfaces an empty premature page instead of truncating
+2026-10-24T11:41:53.9905230Z ok 14 - findAcrossPages surfaces an empty premature page instead of truncating
+2026-10-24T11:41:53.9905896Z   ---
+2026-10-24T11:41:53.9906216Z   duration_ms: 0.909657
+2026-10-24T11:41:53.9906477Z   type: 'test'
+2026-10-24T11:41:53.9906676Z   ...
+2026-10-24T11:41:53.9929865Z # Subtest: matching scoped release trace is accepted
+2026-10-24T11:41:53.9930982Z ok 15 - matching scoped release trace is accepted
+2026-10-24T11:41:53.9931983Z   ---
+2026-10-24T11:41:53.9932580Z   duration_ms: 3.226077
+2026-10-24T11:41:53.9933003Z   type: 'test'
+2026-10-24T11:41:53.9933648Z   ...
+2026-10-24T11:41:53.9934108Z # Subtest: release mismatch is rejected
+2026-10-24T11:41:53.9934816Z ok 16 - release mismatch is rejected
+2026-10-24T11:41:53.9935557Z   ---
+2026-10-24T11:41:53.9936567Z   duration_ms: 0.694726
+2026-10-24T11:41:53.9937288Z   type: 'test'
+2026-10-24T11:41:53.9937915Z   ...
+2026-10-24T11:41:53.9938658Z # Subtest: product mismatch is rejected
+2026-10-24T11:41:53.9939610Z ok 17 - product mismatch is rejected
+2026-10-24T11:41:53.9940344Z   ---
+2026-10-24T11:41:53.9940952Z   duration_ms: 0.208619
+2026-10-24T11:41:53.9941617Z   type: 'test'
+2026-10-24T11:41:53.9942208Z   ...
+2026-10-24T11:41:53.9942932Z # Subtest: foreign evidence is rejected
+2026-10-24T11:41:53.9944437Z ok 18 - foreign evidence is rejected
+2026-10-24T11:41:53.9953364Z   ---
+2026-10-24T11:41:53.9954027Z   duration_ms: 0.243344
+2026-10-24T11:41:53.9954709Z   type: 'test'
+2026-10-24T11:41:53.9955308Z   ...
+2026-10-24T11:41:53.9956047Z # Subtest: foreign cost is rejected
+2026-10-24T11:41:53.9956858Z ok 19 - foreign cost is rejected
+2026-10-24T11:41:53.9957815Z   ---
+2026-10-24T11:41:53.9958396Z   duration_ms: 0.323634
+2026-10-24T11:41:53.9958852Z   type: 'test'
+2026-10-24T11:41:53.9959208Z   ...
+2026-10-24T11:41:53.9959624Z # Subtest: foreign entity job is rejected
+2026-10-24T11:41:53.9960108Z ok 20 - foreign entity job is rejected
+2026-10-24T11:41:53.9960509Z   ---
+2026-10-24T11:41:53.9960839Z   duration_ms: 0.202047
+2026-10-24T11:41:53.9961195Z   type: 'test'
+2026-10-24T11:41:53.9961527Z   ...
+2026-10-24T11:41:53.9961953Z # Subtest: invalid context identifiers fail closed
+2026-10-24T11:41:53.9962503Z ok 21 - invalid context identifiers fail closed
+2026-10-24T11:41:53.9962967Z   ---
+2026-10-24T11:41:53.9963640Z   duration_ms: 0.330186
+2026-10-24T11:41:53.9964024Z   type: 'test'
+2026-10-24T11:41:53.9964476Z   ...
+2026-10-24T11:41:54.0293678Z # Subtest: local read failures, invalid responses and deadlines remain unknown without carrying raw errors
+2026-10-24T11:41:54.0295726Z ok 22 - local read failures, invalid responses and deadlines remain unknown without carrying raw errors
+2026-10-24T11:41:54.0296656Z   ---
+2026-10-24T11:41:54.0297024Z   duration_ms: 4.950303
+2026-10-24T11:41:54.0297440Z   type: 'test'
+2026-10-24T11:41:54.0297812Z   ...
+2026-10-24T11:41:54.0300100Z # Subtest: incomplete counts never imply zero or a complete total
+2026-10-24T11:41:54.0302693Z ok 23 - incomplete counts never imply zero or a complete total
+2026-10-24T11:41:54.0303823Z   ---
+2026-10-24T11:41:54.0304402Z   duration_ms: 0.338742
+2026-10-24T11:41:54.0305014Z   type: 'test'
+2026-10-24T11:41:54.0305555Z   ...
+2026-10-24T11:41:54.0307619Z # Subtest: the shared summary is usable only with its complete valid counters and workspace
+2026-10-24T11:41:54.0309752Z ok 24 - the shared summary is usable only with its complete valid counters and workspace
+2026-10-24T11:41:54.0310705Z   ---
+2026-10-24T11:41:54.0311100Z   duration_ms: 0.823807
+2026-10-24T11:41:54.0311519Z   type: 'test'
+2026-10-24T11:41:54.0311875Z   ...
+2026-10-24T11:41:54.0314279Z # Subtest: page membership, offsets and release classifications cannot turn invalid data into an empty result
+2026-10-24T11:41:54.0315885Z ok 25 - page membership, offsets and release classifications cannot turn invalid data into an empty result
+2026-10-24T11:41:54.0340786Z   ---
+2026-10-24T11:41:54.0341166Z   duration_ms: 0.405216
+2026-10-24T11:41:54.0341583Z   type: 'test'
+2026-10-24T11:41:54.0341916Z   ...
+2026-10-24T11:41:54.0342732Z # Subtest: only valid scoped primary identities can be retained when auxiliary labels fail
+2026-10-24T11:41:54.0343962Z ok 26 - only valid scoped primary identities can be retained when auxiliary labels fail
+2026-10-24T11:41:54.0344400Z   ---
+2026-10-24T11:41:54.0344605Z   duration_ms: 0.317913
+2026-10-24T11:41:54.0344842Z   type: 'test'
+2026-10-24T11:41:54.0345032Z   ...
+2026-10-24T11:41:54.0390441Z 1..26
+2026-10-24T11:41:54.0391175Z # tests 26
+2026-10-24T11:41:54.0391657Z # suites 0
+2026-10-24T11:41:54.0392005Z # pass 26
+2026-10-24T11:41:54.0392617Z # fail 0
+2026-10-24T11:41:54.0393338Z # cancelled 0
+2026-10-24T11:41:54.0394100Z # skipped 0
+2026-10-24T11:41:54.0394587Z # todo 0
+2026-10-24T11:41:54.0395189Z # duration_ms 142.983059
+2026-10-24T11:41:54.1402466Z 
+2026-10-24T11:41:54.1403596Z > data-product-platform-web@0.1.0 test:ingest
+2026-10-24T11:41:54.1405050Z > tsc lib/ingest-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .ingest-tests && node --test tests/csv-inspection.test.mjs tests/ingest-command.test.mjs
+2026-10-24T11:41:54.1405982Z 
+2026-10-24T11:41:55.3044690Z TAP version 13
+2026-10-24T11:41:55.3855402Z # Subtest: CSV "\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3883946Z ok 1 - CSV "\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3913632Z   ---
+2026-10-24T11:41:55.3914010Z   duration_ms: 2.94931
+2026-10-24T11:41:55.3914424Z   type: 'test'
+2026-10-24T11:41:55.3914791Z   ...
+2026-10-24T11:41:55.3915468Z # Subtest: CSV "\\r\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3916915Z ok 2 - CSV "\\r\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3917543Z   ---
+2026-10-24T11:41:55.3917894Z   duration_ms: 0.383545
+2026-10-24T11:41:55.3918317Z   type: 'test'
+2026-10-24T11:41:55.3918673Z   ...
+2026-10-24T11:41:55.3919670Z # Subtest: CSV "﻿\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3920788Z ok 3 - CSV "﻿\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3921422Z   ---
+2026-10-24T11:41:55.3921772Z   duration_ms: 0.33752
+2026-10-24T11:41:55.3922179Z   type: 'test'
+2026-10-24T11:41:55.3922535Z   ...
+2026-10-24T11:41:55.3923655Z # Subtest: CSV "﻿\\r\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3924820Z ok 4 - CSV "﻿\\r\\n" preserves byte inputs and previews quoted fields
+2026-10-24T11:41:55.3925452Z   ---
+2026-10-24T11:41:55.3925811Z   duration_ms: 0.229598
+2026-10-24T11:41:55.3926215Z   type: 'test'
+2026-10-24T11:41:55.3926564Z   ...
+2026-10-24T11:41:55.3926980Z # Subtest: empty is rejected
+2026-10-24T11:41:55.3953865Z ok 5 - empty is rejected
+2026-10-24T11:41:55.3983839Z   ---
+2026-10-24T11:41:55.3984610Z   duration_ms: 0.586394
+2026-10-24T11:41:55.3985066Z   type: 'test'
+2026-10-24T11:41:55.3985436Z   ...
+2026-10-24T11:41:55.3985897Z # Subtest: header only is rejected
+2026-10-24T11:41:55.3986462Z ok 6 - header only is rejected
+2026-10-24T11:41:55.3986931Z   ---
+2026-10-24T11:41:55.3987318Z   duration_ms: 0.261888
+2026-10-24T11:41:55.3987725Z   type: 'test'
+2026-10-24T11:41:55.3988081Z   ...
+2026-10-24T11:41:55.3988548Z # Subtest: missing field is rejected
+2026-10-24T11:41:55.3989203Z ok 7 - missing field is rejected
+2026-10-24T11:41:55.3989620Z   ---
+2026-10-24T11:41:55.3989971Z   duration_ms: 1.200258
+2026-10-24T11:41:55.3990367Z   type: 'test'
+2026-10-24T11:41:55.3990711Z   ...
+2026-10-24T11:41:55.3991249Z # Subtest: duplicate header is rejected
+2026-10-24T11:41:55.3991853Z ok 8 - duplicate header is rejected
+2026-10-24T11:41:55.3992295Z   ---
+2026-10-24T11:41:55.3992659Z   duration_ms: 0.194583
+2026-10-24T11:41:55.3993273Z   type: 'test'
+2026-10-24T11:41:55.3993646Z   ...
+2026-10-24T11:41:55.3994166Z # Subtest: empty header is rejected
+2026-10-24T11:41:55.4003900Z ok 9 - empty header is rejected
+2026-10-24T11:41:55.4004495Z   ---
+2026-10-24T11:41:55.4004986Z   duration_ms: 0.556147
+2026-10-24T11:41:55.4005381Z   type: 'test'
+2026-10-24T11:41:55.4005705Z   ...
+2026-10-24T11:41:55.4006117Z # Subtest: ragged row is rejected
+2026-10-24T11:41:55.4006639Z ok 10 - ragged row is rejected
+2026-10-24T11:41:55.4007032Z   ---
+2026-10-24T11:41:55.4007408Z   duration_ms: 0.561617
+2026-10-24T11:41:55.4007771Z   type: 'test'
+2026-10-24T11:41:55.4008118Z   ...
+2026-10-24T11:41:55.4008514Z # Subtest: blank key is rejected
+2026-10-24T11:41:55.4008975Z ok 11 - blank key is rejected
+2026-10-24T11:41:55.4009366Z   ---
+2026-10-24T11:41:55.4009679Z   duration_ms: 0.26247
+2026-10-24T11:41:55.4010042Z   type: 'test'
+2026-10-24T11:41:55.4010356Z   ...
+2026-10-24T11:41:55.4010759Z # Subtest: blank name is rejected
+2026-10-24T11:41:55.4011158Z ok 12 - blank name is rejected
+2026-10-24T11:41:55.4011397Z   ---
+2026-10-24T11:41:55.4011582Z   duration_ms: 0.167613
+2026-10-24T11:41:55.4012077Z   type: 'test'
+2026-10-24T11:41:55.4012333Z   ...
+2026-10-24T11:41:55.4012886Z # Subtest: duplicate key is rejected
+2026-10-24T11:41:55.4013851Z ok 13 - duplicate key is rejected
+2026-10-24T11:41:55.4024679Z   ---
+2026-10-24T11:41:55.4025123Z   duration_ms: 0.165448
+2026-10-24T11:41:55.4025567Z   type: 'test'
+2026-10-24T11:41:55.4025859Z   ...
+2026-10-24T11:41:55.4026224Z # Subtest: unclosed quote is rejected
+2026-10-24T11:41:55.4026748Z ok 14 - unclosed quote is rejected
+2026-10-24T11:41:55.4027126Z   ---
+2026-10-24T11:41:55.4027416Z   duration_ms: 0.149428
+2026-10-24T11:41:55.4027786Z   type: 'test'
+2026-10-24T11:41:55.4028083Z   ...
+2026-10-24T11:41:55.4028417Z # Subtest: bare quote is rejected
+2026-10-24T11:41:55.4028892Z ok 15 - bare quote is rejected
+2026-10-24T11:41:55.4029257Z   ---
+2026-10-24T11:41:55.4029785Z   duration_ms: 0.259234
+2026-10-24T11:41:55.4030111Z   type: 'test'
+2026-10-24T11:41:55.4030387Z   ...
+2026-10-24T11:41:55.4030778Z # Subtest: trailing quote text is rejected
+2026-10-24T11:41:55.4031321Z ok 16 - trailing quote text is rejected
+2026-10-24T11:41:55.4031781Z   ---
+2026-10-24T11:41:55.4032053Z   duration_ms: 0.161531
+2026-10-24T11:41:55.4032296Z   type: 'test'
+2026-10-24T11:41:55.4032491Z   ...
+2026-10-24T11:41:55.4032728Z # Subtest: bare CR is rejected
+2026-10-24T11:41:55.4032993Z ok 17 - bare CR is rejected
+2026-10-24T11:41:55.4033669Z   ---
+2026-10-24T11:41:55.4033877Z   duration_ms: 0.146704
+2026-10-24T11:41:55.4034102Z   type: 'test'
+2026-10-24T11:41:55.4034292Z   ...
+2026-10-24T11:41:55.4034536Z # Subtest: control byte is rejected
+2026-10-24T11:41:55.4034852Z ok 18 - control byte is rejected
+2026-10-24T11:41:55.4035097Z   ---
+2026-10-24T11:41:55.4035300Z   duration_ms: 0.136344
+2026-10-24T11:41:55.4035518Z   type: 'test'
+2026-10-24T11:41:55.4035705Z   ...
+2026-10-24T11:41:55.4035957Z # Subtest: oversized field is rejected
+2026-10-24T11:41:55.4036276Z ok 19 - oversized field is rejected
+2026-10-24T11:41:55.4036523Z   ---
+2026-10-24T11:41:55.4036718Z   duration_ms: 0.825118
+2026-10-24T11:41:55.4036948Z   type: 'test'
+2026-10-24T11:41:55.4037142Z   ...
+2026-10-24T11:41:55.4037402Z # Subtest: too many columns is rejected
+2026-10-24T11:41:55.4037737Z ok 20 - too many columns is rejected
+2026-10-24T11:41:55.4037985Z   ---
+2026-10-24T11:41:55.4038173Z   duration_ms: 0.202838
+2026-10-24T11:41:55.4038391Z   type: 'test'
+2026-10-24T11:41:55.4038576Z   ...
+2026-10-24T11:41:55.4038807Z # Subtest: too many rows is rejected
+2026-10-24T11:41:55.4039110Z ok 21 - too many rows is rejected
+2026-10-24T11:41:55.4039349Z   ---
+2026-10-24T11:41:55.4039533Z   duration_ms: 6.098885
+2026-10-24T11:41:55.4039743Z   type: 'test'
+2026-10-24T11:41:55.4039933Z   ...
+2026-10-24T11:41:55.4040300Z # Subtest: invalid UTF-8 is rejected, not replacement-decoded
+2026-10-24T11:41:55.4040778Z ok 22 - invalid UTF-8 is rejected, not replacement-decoded
+2026-10-24T11:41:55.4041104Z   ---
+2026-10-24T11:41:55.4041297Z   duration_ms: 0.242152
+2026-10-24T11:41:55.4041517Z   type: 'test'
+2026-10-24T11:41:55.4041713Z   ...
+2026-10-24T11:41:55.4042013Z # Subtest: oversized bytes are rejected before parsing
+2026-10-24T11:41:55.4042423Z ok 23 - oversized bytes are rejected before parsing
+2026-10-24T11:41:55.4042740Z   ---
+2026-10-24T11:41:55.4042922Z   duration_ms: 0.204241
+2026-10-24T11:41:55.4043412Z   type: 'test'
+2026-10-24T11:41:55.4043608Z   ...
+2026-10-24T11:41:55.4044000Z # Subtest: preview is bounded to five records while every record is validated
+2026-10-24T11:41:55.4044582Z ok 24 - preview is bounded to five records while every record is validated
+2026-10-24T11:41:55.4044950Z   ---
+2026-10-24T11:41:55.4045168Z   duration_ms: 0.231322
+2026-10-24T11:41:55.4045381Z   type: 'test'
+2026-10-24T11:41:55.4045574Z   ...
+2026-10-24T11:41:55.4045870Z # Subtest: blank physical lines match Go CSV behavior
+2026-10-24T11:41:55.4046272Z ok 25 - blank physical lines match Go CSV behavior
+2026-10-24T11:41:55.4046564Z   ---
+2026-10-24T11:41:55.4046748Z   duration_ms: 0.175377
+2026-10-24T11:41:55.4046958Z   type: 'test'
+2026-10-24T11:41:55.4047310Z   ...
+2026-10-24T11:41:55.4047712Z # Subtest: downloadable synthetic template satisfies the declared CSV format
+2026-10-24T11:41:55.4048285Z ok 26 - downloadable synthetic template satisfies the declared CSV format
+2026-10-24T11:41:55.4048651Z   ---
+2026-10-24T11:41:55.4048834Z   duration_ms: 0.770737
+2026-10-24T11:41:55.4049045Z   type: 'test'
+2026-10-24T11:41:55.4049231Z   ...
+2026-10-24T11:41:55.4090758Z # Subtest: upload preserves original bytes, scopes records and ignores browser actor/workspace
+2026-10-24T11:41:55.4092476Z ok 27 - upload preserves original bytes, scopes records and ignores browser actor/workspace
+2026-10-24T11:41:55.4093833Z   ---
+2026-10-24T11:41:55.4094444Z   duration_ms: 20.025931
+2026-10-24T11:41:55.4095104Z   type: 'test'
+2026-10-24T11:41:55.4095674Z   ...
+2026-10-24T11:41:55.4096748Z # Subtest: disabled prevents all network access
+2026-10-24T11:41:55.4097712Z ok 28 - disabled prevents all network access
+2026-10-24T11:41:55.4101120Z   ---
+2026-10-24T11:41:55.4101747Z   duration_ms: 1.237287
+2026-10-24T11:41:55.4102358Z   type: 'test'
+2026-10-24T11:41:55.4102864Z   ...
+2026-10-24T11:41:55.4103947Z # Subtest: actor missing prevents all network access
+2026-10-24T11:41:55.4104936Z ok 29 - actor missing prevents all network access
+2026-10-24T11:41:55.4105702Z   ---
+2026-10-24T11:41:55.4106294Z   duration_ms: 0.567758
+2026-10-24T11:41:55.4106927Z   type: 'test'
+2026-10-24T11:41:55.4107487Z   ...
+2026-10-24T11:41:55.4108263Z # Subtest: workspace missing prevents all network access
+2026-10-24T11:41:55.4109229Z ok 30 - workspace missing prevents all network access
+2026-10-24T11:41:55.4109990Z   ---
+2026-10-24T11:41:55.4110632Z   duration_ms: 0.454107
+2026-10-24T11:41:55.4111229Z   type: 'test'
+2026-10-24T11:41:55.4111753Z   ...
+2026-10-24T11:41:55.4112491Z # Subtest: actor invalid prevents all network access
+2026-10-24T11:41:55.4114167Z ok 31 - actor invalid prevents all network access
+2026-10-24T11:41:55.4114876Z   ---
+2026-10-24T11:41:55.4115370Z   duration_ms: 0.421346
+2026-10-24T11:41:55.4115933Z   type: 'test'
+2026-10-24T11:41:55.4116418Z   ...
+2026-10-24T11:41:55.4117096Z # Subtest: invalid form {"name":" "} never writes
+2026-10-24T11:41:55.4128505Z ok 32 - invalid form {"name":" "} never writes
+2026-10-24T11:41:55.4129290Z   ---
+2026-10-24T11:41:55.4129806Z   duration_ms: 0.492128
+2026-10-24T11:41:55.4130379Z   type: 'test'
+2026-10-24T11:41:55.4130891Z   ...
+2026-10-24T11:41:55.4131562Z # Subtest: invalid form {"source":""} never writes
+2026-10-24T11:41:55.4132506Z ok 33 - invalid form {"source":""} never writes
+2026-10-24T11:41:55.4133586Z   ---
+2026-10-24T11:41:55.4134105Z   duration_ms: 0.221573
+2026-10-24T11:41:55.4134687Z   type: 'test'
+2026-10-24T11:41:55.4135196Z   ...
+2026-10-24T11:41:55.4135928Z # Subtest: invalid form {"purpose":" "} never writes
+2026-10-24T11:41:55.4136838Z ok 34 - invalid form {"purpose":" "} never writes
+2026-10-24T11:41:55.4137580Z   ---
+2026-10-24T11:41:55.4138107Z   duration_ms: 0.317061
+2026-10-24T11:41:55.4138668Z   type: 'test'
+2026-10-24T11:41:55.4139173Z   ...
+2026-10-24T11:41:55.4139901Z # Subtest: invalid form {"acknowledged":"no"} never writes
+2026-10-24T11:41:55.4140920Z ok 35 - invalid form {"acknowledged":"no"} never writes
+2026-10-24T11:41:55.4141665Z   ---
+2026-10-24T11:41:55.4142160Z   duration_ms: 0.499909
+2026-10-24T11:41:55.4142716Z   type: 'test'
+2026-10-24T11:41:55.4143464Z   ...
+2026-10-24T11:41:55.4145493Z # Subtest: invalid form {"name":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"} never writes
+2026-10-24T11:41:55.4148776Z ok 36 - invalid form {"name":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"} never writes
+2026-10-24T11:41:55.4150534Z   ---
+2026-10-24T11:41:55.4151004Z   duration_ms: 0.441914
+2026-10-24T11:41:55.4151495Z   type: 'test'
+2026-10-24T11:41:55.4151937Z   ...
+2026-10-24T11:41:55.4172354Z # Subtest: extension blocked on server regardless of browser preview
+2026-10-24T11:41:55.4174022Z ok 37 - extension blocked on server regardless of browser preview
+2026-10-24T11:41:55.4174878Z   ---
+2026-10-24T11:41:55.4175441Z   duration_ms: 0.444819
+2026-10-24T11:41:55.4176036Z   type: 'test'
+2026-10-24T11:41:55.4176591Z   ...
+2026-10-24T11:41:55.4177328Z # Subtest: empty blocked on server regardless of browser preview
+2026-10-24T11:41:55.4178316Z ok 38 - empty blocked on server regardless of browser preview
+2026-10-24T11:41:55.4178999Z   ---
+2026-10-24T11:41:55.4179450Z   duration_ms: 0.228787
+2026-10-24T11:41:55.4179953Z   type: 'test'
+2026-10-24T11:41:55.4180401Z   ...
+2026-10-24T11:41:55.4181192Z # Subtest: invalid CSV blocked on server regardless of browser preview
+2026-10-24T11:41:55.4182262Z ok 39 - invalid CSV blocked on server regardless of browser preview
+2026-10-24T11:41:55.4183481Z   ---
+2026-10-24T11:41:55.4183941Z   duration_ms: 0.461782
+2026-10-24T11:41:55.4184450Z   type: 'test'
+2026-10-24T11:41:55.4184889Z   ...
+2026-10-24T11:41:55.4185608Z # Subtest: size blocked on server regardless of browser preview
+2026-10-24T11:41:55.4186591Z ok 40 - size blocked on server regardless of browser preview
+2026-10-24T11:41:55.4187277Z   ---
+2026-10-24T11:41:55.4187720Z   duration_ms: 0.623612
+2026-10-24T11:41:55.4188218Z   type: 'test'
+2026-10-24T11:41:55.4188650Z   ...
+2026-10-24T11:41:55.4189357Z # Subtest: same operation with existing RAW never writes again
+2026-10-24T11:41:55.4190335Z ok 41 - same operation with existing RAW never writes again
+2026-10-24T11:41:55.4191015Z   ---
+2026-10-24T11:41:55.4191468Z   duration_ms: 7.521238
+2026-10-24T11:41:55.4192022Z   type: 'test'
+2026-10-24T11:41:55.4192506Z   ...
+2026-10-24T11:41:55.4204180Z # Subtest: timeout: partial object identities survive, no blind retry
+2026-10-24T11:41:55.4210910Z ok 42 - timeout: partial object identities survive, no blind retry
+2026-10-24T11:41:55.4262865Z   ---
+2026-10-24T11:41:55.4263908Z   duration_ms: 3.149605
+2026-10-24T11:41:55.4270028Z   type: 'test'
+2026-10-24T11:41:55.4270398Z   ...
+2026-10-24T11:41:55.4271035Z # Subtest: HTTP: partial object identities survive, no blind retry
+2026-10-24T11:41:55.4271933Z ok 43 - HTTP: partial object identities survive, no blind retry
+2026-10-24T11:41:55.4272516Z   ---
+2026-10-24T11:41:55.4272832Z   duration_ms: 2.550006
+2026-10-24T11:41:55.4273403Z   type: 'test'
+2026-10-24T11:41:55.4273713Z   ...
+2026-10-24T11:41:55.4274199Z # Subtest: mismatched RAW checksum is not success
+2026-10-24T11:41:55.4274855Z ok 44 - mismatched RAW checksum is not success
+2026-10-24T11:41:55.4275325Z   ---
+2026-10-24T11:41:55.4275645Z   duration_ms: 1.947702
+2026-10-24T11:41:55.4276009Z   type: 'test'
+2026-10-24T11:41:55.4276319Z   ...
+2026-10-24T11:41:55.4364639Z # Subtest: foreign creation response stops the chain
+2026-10-24T11:41:55.4384043Z ok 45 - foreign creation response stops the chain
+2026-10-24T11:41:55.4413723Z   ---
+2026-10-24T11:41:55.4443882Z   duration_ms: 2.00015
+2026-10-24T11:41:55.4444546Z   type: 'test'
+2026-10-24T11:41:55.4444921Z   ...
+2026-10-24T11:41:55.4445697Z # Subtest: start verifies input scope and fixes policy/source role on server
+2026-10-24T11:41:55.4446362Z ok 46 - start verifies input scope and fixes policy/source role on server
+2026-10-24T11:41:55.4446746Z   ---
+2026-10-24T11:41:55.4446947Z   duration_ms: 1.473708
+2026-10-24T11:41:55.4447175Z   type: 'test'
+2026-10-24T11:41:55.4447366Z   ...
+2026-10-24T11:41:55.4447669Z # Subtest: foreign workspace never posts a parse job
+2026-10-24T11:41:55.4448095Z ok 47 - foreign workspace never posts a parse job
+2026-10-24T11:41:55.4448386Z   ---
+2026-10-24T11:41:55.4448574Z   duration_ms: 0.453867
+2026-10-24T11:41:55.4448789Z   type: 'test'
+2026-10-24T11:41:55.4448968Z   ...
+2026-10-24T11:41:55.4449276Z # Subtest: foreign version dataset never posts a parse job
+2026-10-24T11:41:55.4449726Z ok 48 - foreign version dataset never posts a parse job
+2026-10-24T11:41:55.4473570Z   ---
+2026-10-24T11:41:55.4473844Z   duration_ms: 0.650423
+2026-10-24T11:41:55.4474288Z   type: 'test'
+2026-10-24T11:41:55.4474657Z   ...
+2026-10-24T11:41:55.4475479Z # Subtest: non RAW never posts a parse job
+2026-10-24T11:41:55.4475921Z ok 49 - non RAW never posts a parse job
+2026-10-24T11:41:55.4476199Z   ---
+2026-10-24T11:41:55.4476397Z   duration_ms: 0.512336
+2026-10-24T11:41:55.4476615Z   type: 'test'
+2026-10-24T11:41:55.4476806Z   ...
+2026-10-24T11:41:55.4477115Z # Subtest: invalidated version never posts a parse job
+2026-10-24T11:41:55.4477540Z ok 50 - invalidated version never posts a parse job
+2026-10-24T11:41:55.4477837Z   ---
+2026-10-24T11:41:55.4478024Z   duration_ms: 1.962931
+2026-10-24T11:41:55.4478238Z   type: 'test'
+2026-10-24T11:41:55.4478420Z   ...
+2026-10-24T11:41:55.4478690Z # Subtest: wrong source never posts a parse job
+2026-10-24T11:41:55.4479085Z ok 51 - wrong source never posts a parse job
+2026-10-24T11:41:55.4479374Z   ---
+2026-10-24T11:41:55.4479709Z   duration_ms: 0.572959
+2026-10-24T11:41:55.4479931Z   type: 'test'
+2026-10-24T11:41:55.4480119Z   ...
+2026-10-24T11:41:55.4480442Z # Subtest: wrong version identity never posts a parse job
+2026-10-24T11:41:55.4480887Z ok 52 - wrong version identity never posts a parse job
+2026-10-24T11:41:55.4481189Z   ---
+2026-10-24T11:41:55.4481376Z   duration_ms: 0.481638
+2026-10-24T11:41:55.4481589Z   type: 'test'
+2026-10-24T11:41:55.4481778Z   ...
+2026-10-24T11:41:55.4482089Z # Subtest: reserved output prevents repeating job creation
+2026-10-24T11:41:55.4482526Z ok 53 - reserved output prevents repeating job creation
+2026-10-24T11:41:55.4482827Z   ---
+2026-10-24T11:41:55.4483013Z   duration_ms: 0.592184
+2026-10-24T11:41:55.4483515Z   type: 'test'
+2026-10-24T11:41:55.4483828Z   ...
+2026-10-24T11:41:55.4484467Z # Subtest: job POST timeout keeps output identity and locks, not retry
+2026-10-24T11:41:55.4485429Z ok 54 - job POST timeout keeps output identity and locks, not retry
+2026-10-24T11:41:55.4486079Z   ---
+2026-10-24T11:41:55.4486462Z   duration_ms: 0.679438
+2026-10-24T11:41:55.4486693Z   type: 'test'
+2026-10-24T11:41:55.4486884Z   ...
+2026-10-24T11:41:55.4487180Z # Subtest: wrong job scope is not reported as success
+2026-10-24T11:41:55.4487622Z ok 55 - wrong job scope is not reported as success
+2026-10-24T11:41:55.4487904Z   ---
+2026-10-24T11:41:55.4488092Z   duration_ms: 0.849945
+2026-10-24T11:41:55.4488304Z   type: 'test'
+2026-10-24T11:41:55.4488485Z   ...
+2026-10-24T11:41:55.4488801Z # Subtest: input enumeration drains more than the first page
+2026-10-24T11:41:55.4489247Z ok 56 - input enumeration drains more than the first page
+2026-10-24T11:41:55.4489549Z   ---
+2026-10-24T11:41:55.4489739Z   duration_ms: 1.142371
+2026-10-24T11:41:55.4489948Z   type: 'test'
+2026-10-24T11:41:55.4490132Z   ...
+2026-10-24T11:41:55.4490421Z # Subtest: empty incomplete page never reaches a write
+2026-10-24T11:41:55.4490819Z ok 57 - empty incomplete page never reaches a write
+2026-10-24T11:41:55.4491105Z   ---
+2026-10-24T11:41:55.4491291Z   duration_ms: 0.478402
+2026-10-24T11:41:55.4491506Z   type: 'test'
+2026-10-24T11:41:55.4491683Z   ...
+2026-10-24T11:41:55.4582816Z 1..57
+2026-10-24T11:41:55.4583764Z # tests 57
+2026-10-24T11:41:55.4584192Z # suites 0
+2026-10-24T11:41:55.4584668Z # pass 57
+2026-10-24T11:41:55.4585383Z # fail 0
+2026-10-24T11:41:55.4586024Z # cancelled 0
+2026-10-24T11:41:55.4586688Z # skipped 0
+2026-10-24T11:41:55.4587304Z # todo 0
+2026-10-24T11:41:55.4588026Z # duration_ms 168.977909
+2026-10-24T11:41:55.5627439Z 
+2026-10-24T11:41:55.5628182Z > data-product-platform-web@0.1.0 test:schema
+2026-10-24T11:41:55.5631313Z > tsc lib/schema-observation.ts lib/schema-exceptions.ts lib/schema-requests.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .schema-tests && node --test tests/schema-observation.test.mjs tests/schema-exceptions.test.mjs tests/schema-requests.test.mjs tests/schema-attempts.test.mjs
+2026-10-24T11:41:55.5633833Z 
+2026-10-24T11:41:56.7621137Z TAP version 13
+2026-10-24T11:41:56.8221263Z # Subtest: attempt collection validates scope, history, attempt identity and complete page counts
+2026-10-24T11:41:56.8244797Z ok 1 - attempt collection validates scope, history, attempt identity and complete page counts
+2026-10-24T11:41:56.8252673Z   ---
+2026-10-24T11:41:56.8253620Z   duration_ms: 2.25239
+2026-10-24T11:41:56.8254217Z   type: 'test'
+2026-10-24T11:41:56.8254726Z   ...
+2026-10-24T11:41:56.8255564Z # Subtest: bounded attempt offsets survive all existing section navigation
+2026-10-24T11:41:56.8256729Z ok 2 - bounded attempt offsets survive all existing section navigation
+2026-10-24T11:41:56.8257565Z   ---
+2026-10-24T11:41:56.8258117Z   duration_ms: 1.392878
+2026-10-24T11:41:56.8258724Z   type: 'test'
+2026-10-24T11:41:56.8259267Z   ...
+2026-10-24T11:41:56.8260383Z # Subtest: typed evidence origin preserves selected attempt separately from observation identity
+2026-10-24T11:41:56.8261923Z ok 3 - typed evidence origin preserves selected attempt separately from observation identity
+2026-10-24T11:41:56.8263392Z   ---
+2026-10-24T11:41:56.8263934Z   duration_ms: 1.573475
+2026-10-24T11:41:56.8264531Z   type: 'test'
+2026-10-24T11:41:56.8265056Z   ...
+2026-10-24T11:41:56.8354221Z # Subtest: exception history accepts DENIED with and without an attempt and nullable scan times
+2026-10-24T11:41:56.8355735Z ok 4 - exception history accepts DENIED with and without an attempt and nullable scan times
+2026-10-24T11:41:56.8356570Z   ---
+2026-10-24T11:41:56.8356940Z   duration_ms: 1.354707
+2026-10-24T11:41:56.8357323Z   type: 'test'
+2026-10-24T11:41:56.8357637Z   ...
+2026-10-24T11:41:56.8358946Z # Subtest: foreign, duplicate, wrong status/filter/count/page and malformed attempt fail closed
+2026-10-24T11:41:56.8360049Z ok 5 - foreign, duplicate, wrong status/filter/count/page and malformed attempt fail closed
+2026-10-24T11:41:56.8360818Z   ---
+2026-10-24T11:41:56.8361163Z   duration_ms: 0.930816
+2026-10-24T11:41:56.8361527Z   type: 'test'
+2026-10-24T11:41:56.8361839Z   ...
+2026-10-24T11:41:56.8362664Z # Subtest: empty page keeps global historical classification counts without inventing resolution
+2026-10-24T11:41:56.8364228Z ok 6 - empty page keeps global historical classification counts without inventing resolution
+2026-10-24T11:41:56.8364956Z   ---
+2026-10-24T11:41:56.8365152Z   duration_ms: 0.185626
+2026-10-24T11:41:56.8365453Z   type: 'test'
+2026-10-24T11:41:56.8365778Z   ...
+2026-10-24T11:41:56.8366645Z # Subtest: exact evidence and return links preserve the history filter/page and existing queue state
+2026-10-24T11:41:56.8367943Z ok 7 - exact evidence and return links preserve the history filter/page and existing queue state
+2026-10-24T11:41:56.8368510Z   ---
+2026-10-24T11:41:56.8368698Z   duration_ms: 0.917281
+2026-10-24T11:41:56.8368911Z   type: 'test'
+2026-10-24T11:41:56.8369095Z   ...
+2026-10-24T11:41:56.8386168Z # Subtest: exact history links bind resource, request and observation; unsafe identities never navigate
+2026-10-24T11:41:56.8387558Z ok 8 - exact history links bind resource, request and observation; unsafe identities never navigate
+2026-10-24T11:41:56.8388167Z   ---
+2026-10-24T11:41:56.8388499Z   duration_ms: 3.171525
+2026-10-24T11:41:56.8388872Z   type: 'test'
+2026-10-24T11:41:56.8389194Z   ...
+2026-10-24T11:41:56.8389703Z # Subtest: exact evidence rejects substitutions of every scope dimension and handling membership
+2026-10-24T11:41:56.8390839Z ok 9 - exact evidence rejects substitutions of every scope dimension and handling membership
+2026-10-24T11:41:56.8391600Z   ---
+2026-10-24T11:41:56.8391904Z   duration_ms: 0.615377
+2026-10-24T11:41:56.8392129Z   type: 'test'
+2026-10-24T11:41:56.8392412Z   ...
+2026-10-24T11:41:56.8393487Z # Subtest: summary validates workspace, DRIFT-only scope, counts and nonduplicated observations
+2026-10-24T11:41:56.8395347Z ok 10 - summary validates workspace, DRIFT-only scope, counts and nonduplicated observations
+2026-10-24T11:41:56.8396093Z   ---
+2026-10-24T11:41:56.8396408Z   duration_ms: 0.837683
+2026-10-24T11:41:56.8396647Z   type: 'test'
+2026-10-24T11:41:56.8396916Z   ...
+2026-10-24T11:41:56.8397719Z # Subtest: schema and quality pagination preserve each other's selections and other queues
+2026-10-24T11:41:56.8399164Z ok 11 - schema and quality pagination preserve each other's selections and other queues
+2026-10-24T11:41:56.8399834Z   ---
+2026-10-24T11:41:56.8400025Z   duration_ms: 0.902723
+2026-10-24T11:41:56.8400240Z   type: 'test'
+2026-10-24T11:41:56.8400432Z   ...
+2026-10-24T11:41:56.8715702Z # Subtest: unobserved filters preserve independent queues and reject scope/count substitution
+2026-10-24T11:41:56.8717305Z ok 12 - unobserved filters preserve independent queues and reject scope/count substitution
+2026-10-24T11:41:56.8718068Z   ---
+2026-10-24T11:41:56.8718399Z   duration_ms: 2.064952
+2026-10-24T11:41:56.8718747Z   type: 'test'
+2026-10-24T11:41:56.8718966Z   ...
+2026-10-24T11:41:56.8725042Z # Subtest: explicit attempt survives pagination and post-observation detail; never pick latest
+2026-10-24T11:41:56.8728174Z ok 13 - explicit attempt survives pagination and post-observation detail; never pick latest
+2026-10-24T11:41:56.8729381Z   ---
+2026-10-24T11:41:56.8729623Z   duration_ms: 1.298392
+2026-10-24T11:41:56.8729890Z   type: 'test'
+2026-10-24T11:41:56.8730128Z   ...
+2026-10-24T11:41:56.8811055Z 1..13
+2026-10-24T11:41:56.8811350Z # tests 13
+2026-10-24T11:41:56.8811845Z # suites 0
+2026-10-24T11:41:56.8812515Z # pass 13
+2026-10-24T11:41:56.8812883Z # fail 0
+2026-10-24T11:41:56.8813749Z # cancelled 0
+2026-10-24T11:41:56.8814254Z # skipped 0
+2026-10-24T11:41:56.8814729Z # todo 0
+2026-10-24T11:41:56.8815231Z # duration_ms 139.03896
+2026-10-24T11:41:57.4005634Z ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+2026-10-24T11:41:57.4975801Z    ▲ Next.js 15.5.24
+2026-10-24T11:41:57.4976268Z 
+2026-10-24T11:41:57.5258415Z    Creating an optimized production build ...
+2026-10-24T11:42:08.1389029Z  ✓ Compiled successfully in 8.3s
+2026-10-24T11:42:08.1409670Z    Linting and checking validity of types ...
+2026-10-24T11:42:14.9189767Z    Collecting page data ...
+2026-10-24T11:42:16.8452269Z    Generating static pages (0/3) ...
+2026-10-24T11:42:17.2676275Z  ✓ Generating static pages (3/3)
+2026-10-24T11:42:17.9943969Z    Finalizing page optimization ...
+2026-10-24T11:42:17.9944686Z    Collecting build traces ...
+2026-10-24T11:42:34.1142598Z 
+2026-10-24T11:42:34.1176725Z Route (app)                                             Size  First Load JS
+2026-10-24T11:42:34.1178032Z ┌ ƒ /                                                  184 B         106 kB
+2026-10-24T11:42:34.1179062Z ├ ƒ /_not-found                                        994 B         104 kB
+2026-10-24T11:42:34.1180089Z ├ ƒ /api/direct-data-deliveries                        127 B         103 kB
+2026-10-24T11:42:34.1181202Z ├ ƒ /api/source-admissions                             127 B         103 kB
+2026-10-24T11:42:34.1182304Z ├ ƒ /attention                                         184 B         106 kB
+2026-10-24T11:42:34.1183646Z ├ ƒ /batches                                         1.03 kB         107 kB
+2026-10-24T11:42:34.1184728Z ├ ƒ /batches/[id]                                    1.03 kB         107 kB
+2026-10-24T11:42:34.1185814Z ├ ƒ /datasets                                          184 B         106 kB
+2026-10-24T11:42:34.1186921Z ├ ƒ /datasets/[id]                                     184 B         106 kB
+2026-10-24T11:42:34.1187959Z ├ ƒ /datasets/[id]/versions/[versionId]              6.24 kB         112 kB
+2026-10-24T11:42:34.1189166Z ├ ƒ /datasets/[id]/versions/[versionId]/remediation  1.29 kB         107 kB
+2026-10-24T11:42:34.1190270Z ├ ƒ /evidence                                          184 B         106 kB
+2026-10-24T11:42:34.1191164Z ├ ƒ /ingest                                          4.49 kB         110 kB
+2026-10-24T11:42:34.1192330Z ├ ƒ /production                                        184 B         106 kB
+2026-10-24T11:42:34.1193884Z ├ ƒ /production/[id]                                  1.3 kB         107 kB
+2026-10-24T11:42:34.1194846Z ├ ƒ /products                                          184 B         106 kB
+2026-10-24T11:42:34.1195719Z ├ ƒ /products/[id]                                   5.42 kB         111 kB
+2026-10-24T11:42:34.1196892Z ├ ƒ /products/[id]/releases/[releaseId]                184 B         106 kB
+2026-10-24T11:42:34.1197834Z ├ ƒ /resources                                         184 B         106 kB
+2026-10-24T11:42:34.1198706Z ├ ƒ /resources/[id]                                   1.4 kB         107 kB
+2026-10-24T11:42:34.1199563Z ├ ƒ /reviews                                         3.44 kB         109 kB
+2026-10-24T11:42:34.1200439Z └ ƒ /source-admissions                               3.05 kB         109 kB
+2026-10-24T11:42:34.1201214Z + First Load JS shared by all                         103 kB
+2026-10-24T11:42:34.1201969Z   ├ chunks/255-c5a697ddbf82d774.js                   46.4 kB
+2026-10-24T11:42:34.1202711Z   ├ chunks/4bd1b696-c023c6e3521b1417.js              54.2 kB
+2026-10-24T11:42:34.1203755Z   └ other shared chunks (total)                      1.95 kB
+2026-10-24T11:42:34.1204349Z 
+2026-10-24T11:42:34.1204365Z 
+2026-10-24T11:42:34.1204667Z ƒ  (Dynamic)  server-rendered on demand
+2026-10-24T11:42:34.1204980Z 
+2026-10-24T11:42:34.1829368Z ##[group]Run node --test apps/web/tests/release-readiness.test.mjs
+2026-10-24T11:42:34.1829898Z [36;1mnode --test apps/web/tests/release-readiness.test.mjs[0m
+2026-10-24T11:42:34.1894385Z shell: /usr/bin/bash -e {0}
+2026-10-24T11:42:34.1894640Z env:
+2026-10-24T11:42:34.1894826Z   CI: true
+2026-10-24T11:42:34.1895023Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-24T11:42:34.1895274Z   POC_WORKSPACE_ID: 
+2026-10-24T11:42:34.1895507Z   POC_ENABLE_REVIEW_ACTIONS: false
+2026-10-24T11:42:34.1895797Z   POC_ENABLE_RELEASE_ACTIONS: false
+2026-10-24T11:42:34.1896056Z ##[endgroup]
+2026-10-24T11:42:34.2383675Z TAP version 13
+2026-10-24T11:42:34.3412761Z # Subtest: empty checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3436071Z ok 1 - empty checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3447920Z   ---
+2026-10-24T11:42:34.3454155Z   duration_ms: 27.786092
+2026-10-24T11:42:34.3454628Z   type: 'test'
+2026-10-24T11:42:34.3454997Z   ...
+2026-10-24T11:42:34.3455864Z # Subtest: missing checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3456987Z ok 2 - missing checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3457676Z   ---
+2026-10-24T11:42:34.3458109Z   duration_ms: 1.411312
+2026-10-24T11:42:34.3458525Z   type: 'test'
+2026-10-24T11:42:34.3458896Z   ...
+2026-10-24T11:42:34.3459615Z # Subtest: null checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3460870Z ok 3 - null checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3461677Z   ---
+2026-10-24T11:42:34.3462198Z   duration_ms: 1.899893
+2026-10-24T11:42:34.3462758Z   type: 'test'
+2026-10-24T11:42:34.3463445Z   ...
+2026-10-24T11:42:34.3464315Z # Subtest: array checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3465527Z ok 4 - array checks: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3466357Z   ---
+2026-10-24T11:42:34.3466848Z   duration_ms: 0.83649
+2026-10-24T11:42:34.3467394Z   type: 'test'
+2026-10-24T11:42:34.3467865Z   ...
+2026-10-24T11:42:34.3468744Z # Subtest: missing blockers: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3469899Z ok 5 - missing blockers: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3476898Z   ---
+2026-10-24T11:42:34.3477685Z   duration_ms: 0.943309
+2026-10-24T11:42:34.3478532Z   type: 'test'
+2026-10-24T11:42:34.3479156Z   ...
+2026-10-24T11:42:34.3480210Z # Subtest: null blockers: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3481606Z ok 6 - null blockers: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3520222Z   ---
+2026-10-24T11:42:34.3521011Z   duration_ms: 0.709624
+2026-10-24T11:42:34.3521712Z   type: 'test'
+2026-10-24T11:42:34.3522738Z   ...
+2026-10-24T11:42:34.3524001Z # Subtest: string blockers: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3525683Z ok 7 - string blockers: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3527019Z   ---
+2026-10-24T11:42:34.3527851Z   duration_ms: 0.786237
+2026-10-24T11:42:34.3528726Z   type: 'test'
+2026-10-24T11:42:34.3529518Z   ...
+2026-10-24T11:42:34.3530712Z # Subtest: invalid blocker: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3532467Z ok 8 - invalid blocker: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3533705Z   ---
+2026-10-24T11:42:34.3534591Z   duration_ms: 1.571451
+2026-10-24T11:42:34.3535293Z   type: 'test'
+2026-10-24T11:42:34.3535983Z   ...
+2026-10-24T11:42:34.3553764Z # Subtest: remaining blocker: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3555571Z ok 9 - remaining blocker: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3557706Z   ---
+2026-10-24T11:42:34.3558675Z   duration_ms: 0.886363
+2026-10-24T11:42:34.3559370Z   type: 'test'
+2026-10-24T11:42:34.3560358Z   ...
+2026-10-24T11:42:34.3562494Z # Subtest: blank blocker: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3564387Z ok 10 - blank blocker: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3565728Z   ---
+2026-10-24T11:42:34.3566712Z   duration_ms: 0.930586
+2026-10-24T11:42:34.3567698Z   type: 'test'
+2026-10-24T11:42:34.3568655Z   ...
+2026-10-24T11:42:34.3570166Z # Subtest: unknown gate pending: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3571966Z ok 11 - unknown gate pending: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3573634Z   ---
+2026-10-24T11:42:34.3574327Z   duration_ms: 0.700277
+2026-10-24T11:42:34.3575435Z   type: 'test'
+2026-10-24T11:42:34.3576367Z   ...
+2026-10-24T11:42:34.3577709Z # Subtest: extra gate FAIL: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3579412Z ok 12 - extra gate FAIL: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3580720Z   ---
+2026-10-24T11:42:34.3581716Z   duration_ms: 0.614346
+2026-10-24T11:42:34.3582660Z   type: 'test'
+2026-10-24T11:42:34.3583278Z   ...
+2026-10-24T11:42:34.3584933Z # Subtest: extra gate REVIEW: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3586621Z ok 13 - extra gate REVIEW: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3587879Z   ---
+2026-10-24T11:42:34.3588753Z   duration_ms: 0.660863
+2026-10-24T11:42:34.3589789Z   type: 'test'
+2026-10-24T11:42:34.3590443Z   ...
+2026-10-24T11:42:34.3591759Z # Subtest: extra gate null: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3593804Z ok 14 - extra gate null: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3595069Z   ---
+2026-10-24T11:42:34.3595973Z   duration_ms: 0.672995
+2026-10-24T11:42:34.3596707Z   type: 'test'
+2026-10-24T11:42:34.3597660Z   ...
+2026-10-24T11:42:34.3599020Z # Subtest: extra gate true: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3601062Z ok 15 - extra gate true: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3602297Z   ---
+2026-10-24T11:42:34.3603200Z   duration_ms: 0.606141
+2026-10-24T11:42:34.3604282Z   type: 'test'
+2026-10-24T11:42:34.3605015Z   ...
+2026-10-24T11:42:34.3606476Z # Subtest: missing production: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3608339Z ok 16 - missing production: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3609657Z   ---
+2026-10-24T11:42:34.3610394Z   duration_ms: 0.690768
+2026-10-24T11:42:34.3611101Z   type: 'test'
+2026-10-24T11:42:34.3611682Z   ...
+2026-10-24T11:42:34.3613004Z # Subtest: failed production: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3614612Z ok 17 - failed production: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3617229Z   ---
+2026-10-24T11:42:34.3617763Z   duration_ms: 0.802316
+2026-10-24T11:42:34.3618334Z   type: 'test'
+2026-10-24T11:42:34.3619095Z   ...
+2026-10-24T11:42:34.3620169Z # Subtest: missing dataset: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3621550Z ok 18 - missing dataset: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3622545Z   ---
+2026-10-24T11:42:34.3623373Z   duration_ms: 0.553943
+2026-10-24T11:42:34.3624118Z   type: 'test'
+2026-10-24T11:42:34.3624812Z   ...
+2026-10-24T11:42:34.3625826Z # Subtest: failed dataset: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3627213Z ok 19 - failed dataset: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3628186Z   ---
+2026-10-24T11:42:34.3628796Z   duration_ms: 0.625387
+2026-10-24T11:42:34.3629447Z   type: 'test'
+2026-10-24T11:42:34.3630038Z   ...
+2026-10-24T11:42:34.3631073Z # Subtest: missing rights: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3632775Z ok 20 - missing rights: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3633989Z   ---
+2026-10-24T11:42:34.3634639Z   duration_ms: 1.32467
+2026-10-24T11:42:34.3635558Z   type: 'test'
+2026-10-24T11:42:34.3636202Z   ...
+2026-10-24T11:42:34.3637189Z # Subtest: failed rights: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3638556Z ok 21 - failed rights: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3639511Z   ---
+2026-10-24T11:42:34.3640108Z   duration_ms: 0.554855
+2026-10-24T11:42:34.3640732Z   type: 'test'
+2026-10-24T11:42:34.3641274Z   ...
+2026-10-24T11:42:34.3642155Z # Subtest: missing quality: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3657385Z ok 22 - missing quality: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3658307Z   ---
+2026-10-24T11:42:34.3658922Z   duration_ms: 0.452084
+2026-10-24T11:42:34.3659570Z   type: 'test'
+2026-10-24T11:42:34.3660159Z   ...
+2026-10-24T11:42:34.3674177Z # Subtest: failed quality: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3675248Z ok 23 - failed quality: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3675897Z   ---
+2026-10-24T11:42:34.3676210Z   duration_ms: 0.757012
+2026-10-24T11:42:34.3676573Z   type: 'test'
+2026-10-24T11:42:34.3676931Z   ...
+2026-10-24T11:42:34.3677656Z # Subtest: missing compliance: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3678747Z ok 24 - missing compliance: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3679457Z   ---
+2026-10-24T11:42:34.3679799Z   duration_ms: 0.765358
+2026-10-24T11:42:34.3680162Z   type: 'test'
+2026-10-24T11:42:34.3680473Z   ...
+2026-10-24T11:42:34.3681180Z # Subtest: failed compliance: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3682252Z ok 25 - failed compliance: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3682916Z   ---
+2026-10-24T11:42:34.3683396Z   duration_ms: 0.713351
+2026-10-24T11:42:34.3683751Z   type: 'test'
+2026-10-24T11:42:34.3684057Z   ...
+2026-10-24T11:42:34.3684757Z # Subtest: missing contract: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3685792Z ok 26 - missing contract: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3686426Z   ---
+2026-10-24T11:42:34.3686720Z   duration_ms: 0.664078
+2026-10-24T11:42:34.3687064Z   type: 'test'
+2026-10-24T11:42:34.3687362Z   ...
+2026-10-24T11:42:34.3688024Z # Subtest: failed contract: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3689020Z ok 27 - failed contract: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3689644Z   ---
+2026-10-24T11:42:34.3689940Z   duration_ms: 0.69738
+2026-10-24T11:42:34.3690280Z   type: 'test'
+2026-10-24T11:42:34.3690581Z   ...
+2026-10-24T11:42:34.3691249Z # Subtest: missing evidence: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3692263Z ok 28 - missing evidence: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3692885Z   ---
+2026-10-24T11:42:34.3693369Z   duration_ms: 0.728509
+2026-10-24T11:42:34.3693732Z   type: 'test'
+2026-10-24T11:42:34.3694032Z   ...
+2026-10-24T11:42:34.3694686Z # Subtest: failed evidence: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3695668Z ok 29 - failed evidence: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3696279Z   ---
+2026-10-24T11:42:34.3696571Z   duration_ms: 0.735932
+2026-10-24T11:42:34.3696908Z   type: 'test'
+2026-10-24T11:42:34.3697199Z   ...
+2026-10-24T11:42:34.3697861Z # Subtest: missing delivery: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3698886Z ok 30 - missing delivery: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3699506Z   ---
+2026-10-24T11:42:34.3699793Z   duration_ms: 0.650623
+2026-10-24T11:42:34.3700159Z   type: 'test'
+2026-10-24T11:42:34.3700720Z   ...
+2026-10-24T11:42:34.3701371Z # Subtest: failed delivery: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3702514Z ok 31 - failed delivery: shared guard and Server Action boundary fail closed
+2026-10-24T11:42:34.3703505Z   ---
+2026-10-24T11:42:34.3703801Z   duration_ms: 0.603645
+2026-10-24T11:42:34.3704143Z   type: 'test'
+2026-10-24T11:42:34.3704438Z   ...
+2026-10-24T11:42:34.3704875Z # Subtest: complete READY response is accepted
+2026-10-24T11:42:34.3705473Z ok 32 - complete READY response is accepted
+2026-10-24T11:42:34.3705916Z   ---
+2026-10-24T11:42:34.3706207Z   duration_ms: 0.095649
+2026-10-24T11:42:34.3706546Z   type: 'test'
+2026-10-24T11:42:34.3706835Z   ...
+2026-10-24T11:42:34.3707278Z # Subtest: new passing Core gate is not rejected
+2026-10-24T11:42:34.3707888Z ok 33 - new passing Core gate is not rejected
+2026-10-24T11:42:34.3708334Z   ---
+2026-10-24T11:42:34.3708628Z   duration_ms: 0.083767
+2026-10-24T11:42:34.3708965Z   type: 'test'
+2026-10-24T11:42:34.3709267Z   ...
+2026-10-24T11:42:34.3709768Z # Subtest: inherited gates cannot satisfy required fields
+2026-10-24T11:42:34.3710488Z ok 34 - inherited gates cannot satisfy required fields
+2026-10-24T11:42:34.3710985Z   ---
+2026-10-24T11:42:34.3711284Z   duration_ms: 0.081893
+2026-10-24T11:42:34.3711623Z   type: 'test'
+2026-10-24T11:42:34.3711918Z   ...
+2026-10-24T11:42:34.3712330Z # Subtest: invalid/not-ready response null
+2026-10-24T11:42:34.3712886Z ok 35 - invalid/not-ready response null
+2026-10-24T11:42:34.3713458Z   ---
+2026-10-24T11:42:34.3713757Z   duration_ms: 0.137726
+2026-10-24T11:42:34.3714578Z   type: 'test'
+2026-10-24T11:42:34.3714896Z   ...
+2026-10-24T11:42:34.3715348Z # Subtest: invalid/not-ready response undefined
+2026-10-24T11:42:34.3715966Z ok 36 - invalid/not-ready response undefined
+2026-10-24T11:42:34.3716406Z   ---
+2026-10-24T11:42:34.3716701Z   duration_ms: 0.065232
+2026-10-24T11:42:34.3717048Z   type: 'test'
+2026-10-24T11:42:34.3717339Z   ...
+2026-10-24T11:42:34.3717742Z # Subtest: invalid/not-ready response []
+2026-10-24T11:42:34.3718289Z ok 37 - invalid/not-ready response []
+2026-10-24T11:42:34.3718700Z   ---
+2026-10-24T11:42:34.3718993Z   duration_ms: 0.043581
+2026-10-24T11:42:34.3719343Z   type: 'test'
+2026-10-24T11:42:34.3719637Z   ...
+2026-10-24T11:42:34.3720061Z # Subtest: invalid/not-ready response "READY"
+2026-10-24T11:42:34.3720646Z ok 38 - invalid/not-ready response "READY"
+2026-10-24T11:42:34.3721074Z   ---
+2026-10-24T11:42:34.3721366Z   duration_ms: 0.039084
+2026-10-24T11:42:34.3721711Z   type: 'test'
+2026-10-24T11:42:34.3722000Z   ...
+2026-10-24T11:42:34.3723958Z # Subtest: invalid/not-ready response {"overall":"NOT_READY","checks":{"production":"PASS","dataset":"PASS","rights":"PASS","quality":"PASS","compliance":"PASS","contract":"PASS","evidence":"PASS","delivery":"PASS"},"blockers":[]}
+2026-10-24T11:42:34.3726878Z ok 39 - invalid/not-ready response {"overall":"NOT_READY","checks":{"production":"PASS","dataset":"PASS","rights":"PASS","quality":"PASS","compliance":"PASS","contract":"PASS","evidence":"PASS","delivery":"PASS"},"blockers":[]}
+2026-10-24T11:42:34.3728402Z   ---
+2026-10-24T11:42:34.3728733Z   duration_ms: 0.037029
+2026-10-24T11:42:34.3729134Z   type: 'test'
+2026-10-24T11:42:34.3729468Z   ...
+2026-10-24T11:42:34.3729784Z 1..39
+2026-10-24T11:42:34.3730085Z # tests 39
+2026-10-24T11:42:34.3730399Z # suites 0
+2026-10-24T11:42:34.3730793Z # pass 39
+2026-10-24T11:42:34.3731101Z # fail 0
+2026-10-24T11:42:34.3731409Z # cancelled 0
+2026-10-24T11:42:34.3731740Z # skipped 0
+2026-10-24T11:42:34.3732057Z # todo 0
+2026-10-24T11:42:34.3732406Z # duration_ms 144.987895
+2026-10-24T11:42:34.3811763Z ##[group]Run npx playwright install --with-deps chromium
+2026-10-24T11:42:34.3812492Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-10-24T11:42:34.3890092Z shell: /usr/bin/bash -e {0}
+2026-10-24T11:42:34.3890362Z env:
+2026-10-24T11:42:34.3890558Z   CI: true
+2026-10-24T11:42:34.3890763Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-24T11:42:34.3891020Z   POC_WORKSPACE_ID: 
+2026-10-24T11:42:34.3891456Z   POC_ENABLE_REVIEW_ACTIONS: false
+2026-10-24T11:42:34.3891735Z   POC_ENABLE_RELEASE_ACTIONS: false
+2026-10-24T11:42:34.3891989Z ##[endgroup]
+2026-10-24T11:42:35.2037429Z Installing dependencies...
+2026-10-24T11:42:35.2101451Z Switching to root user to install dependencies...
+2026-10-24T11:42:35.3138385Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-24T11:42:35.3305201Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-24T11:42:35.3509159Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-24T11:42:35.3522499Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-24T11:42:35.3575054Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-24T11:42:35.3600188Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-24T11:42:35.4222574Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [589 kB]
+2026-10-24T11:42:35.4408917Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [652 kB]
+2026-10-24T11:42:35.4543399Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.4 kB]
+2026-10-24T11:42:35.5317014Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1400 kB]
+2026-10-24T11:42:35.5394451Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [310 kB]
+2026-10-24T11:42:35.5420919Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1706 kB]
+2026-10-24T11:42:35.5509641Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+2026-10-24T11:42:35.5530697Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1805 kB]
+2026-10-24T11:42:35.5620671Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [411 kB]
+2026-10-24T11:42:35.6463898Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1146 kB]
+2026-10-24T11:42:35.6522160Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [231 kB]
+2026-10-24T11:42:35.6542895Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1222 kB]
+2026-10-24T11:42:35.6600303Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [246 kB]
+2026-10-24T11:42:35.7057519Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1713 kB]
+2026-10-24T11:42:35.7146876Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [392 kB]
+2026-10-24T11:42:38.6907605Z Fetched 12.6 MB in 1s (9843 kB/s)
+2026-10-24T11:42:39.6284859Z Reading package lists...
+2026-10-24T11:42:39.6520229Z Reading package lists...
+2026-10-24T11:42:39.8476173Z Building dependency tree...
+2026-10-24T11:42:39.8483706Z Reading state information...
+2026-10-24T11:42:39.9843879Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-24T11:42:39.9844630Z libasound2t64 set to manually installed.
+2026-10-24T11:42:39.9845317Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-24T11:42:39.9846006Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-24T11:42:39.9846659Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-24T11:42:39.9847260Z libatk1.0-0t64 set to manually installed.
+2026-10-24T11:42:39.9848039Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-24T11:42:39.9849231Z libatspi2.0-0t64 set to manually installed.
+2026-10-24T11:42:39.9850217Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-24T11:42:39.9850674Z libcairo2 set to manually installed.
+2026-10-24T11:42:39.9851171Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-24T11:42:39.9851657Z libcups2t64 set to manually installed.
+2026-10-24T11:42:39.9852151Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-24T11:42:39.9852887Z libdbus-1-3 set to manually installed.
+2026-10-24T11:42:39.9853547Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-24T11:42:39.9854028Z libdrm2 set to manually installed.
+2026-10-24T11:42:39.9854789Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-10-24T11:42:39.9855354Z libgbm1 set to manually installed.
+2026-10-24T11:42:39.9855834Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-24T11:42:39.9856293Z libnspr4 set to manually installed.
+2026-10-24T11:42:39.9856807Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-24T11:42:39.9857317Z libpango-1.0-0 set to manually installed.
+2026-10-24T11:42:39.9857813Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-10-24T11:42:39.9858268Z libx11-6 set to manually installed.
+2026-10-24T11:42:39.9858703Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-24T11:42:39.9859138Z libxcb1 set to manually installed.
+2026-10-24T11:42:39.9859616Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-24T11:42:39.9860046Z libxcomposite1 set to manually installed.
+2026-10-24T11:42:39.9860460Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-24T11:42:39.9860844Z libxdamage1 set to manually installed.
+2026-10-24T11:42:39.9861238Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-24T11:42:39.9861606Z libxext6 set to manually installed.
+2026-10-24T11:42:39.9861986Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-24T11:42:39.9862367Z libxfixes3 set to manually installed.
+2026-10-24T11:42:39.9862763Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-24T11:42:39.9863285Z libxkbcommon0 set to manually installed.
+2026-10-24T11:42:39.9863685Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-24T11:42:39.9864058Z libxrandr2 set to manually installed.
+2026-10-24T11:42:39.9864532Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-24T11:42:39.9865092Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-24T11:42:39.9865499Z libfontconfig1 set to manually installed.
+2026-10-24T11:42:39.9865941Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-10-24T11:42:39.9866376Z libfreetype6 set to manually installed.
+2026-10-24T11:42:39.9866789Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-24T11:42:39.9867192Z fonts-liberation set to manually installed.
+2026-10-24T11:42:39.9867584Z The following additional packages will be installed:
+2026-10-24T11:42:39.9868011Z   gir1.2-glib-2.0 libglib2.0-bin libglib2.0-data libnss3-tools
+2026-10-24T11:42:39.9868414Z   xfonts-encodings xfonts-utils xserver-common
+2026-10-24T11:42:39.9868722Z Suggested packages:
+2026-10-24T11:42:39.9868947Z   low-memory-monitor
+2026-10-24T11:42:39.9869177Z Recommended packages:
+2026-10-24T11:42:39.9869466Z   fonts-ipafont-mincho fonts-tlwg-loma xfonts-base
+2026-10-24T11:42:40.0101274Z The following NEW packages will be installed:
+2026-10-24T11:42:40.0102262Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-24T11:42:40.0107677Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-24T11:42:40.0108381Z   xfonts-utils
+2026-10-24T11:42:40.0111316Z The following packages will be upgraded:
+2026-10-24T11:42:40.0113352Z   gir1.2-glib-2.0 libglib2.0-0t64 libglib2.0-bin libglib2.0-data libnss3
+2026-10-24T11:42:40.0116993Z   libnss3-tools xserver-common xvfb
+2026-10-24T11:42:40.0277862Z 8 upgraded, 9 newly installed, 0 to remove and 91 not upgraded.
+2026-10-24T11:42:40.0278346Z Need to get 25.9 MB of archives.
+2026-10-24T11:42:40.0278791Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-24T11:42:40.0279287Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-24T11:42:40.0708073Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-24T11:42:40.1523654Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglib2.0-data all 2.80.0-6ubuntu3.10 [50.2 kB]
+2026-10-24T11:42:40.2159386Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglib2.0-bin amd64 2.80.0-6ubuntu3.10 [97.9 kB]
+2026-10-24T11:42:40.2652060Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 gir1.2-glib-2.0 amd64 2.80.0-6ubuntu3.10 [183 kB]
+2026-10-24T11:42:40.3130001Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglib2.0-0t64 amd64 2.80.0-6ubuntu3.10 [1548 kB]
+2026-10-24T11:42:40.3918238Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-24T11:42:40.4687945Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-24T11:42:40.4914393Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-24T11:42:40.5354481Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-24T11:42:40.6324937Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libnss3 amd64 2:3.98-1ubuntu0.3 [1445 kB]
+2026-10-24T11:42:40.6695163Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libnss3-tools amd64 2:3.98-1ubuntu0.3 [615 kB]
+2026-10-24T11:42:40.6951950Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-24T11:42:40.7216394Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-24T11:42:40.7441568Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-24T11:42:40.7690697Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-24T11:42:40.7930944Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 xserver-common all 2:21.1.12-1ubuntu1.9 [35.0 kB]
+2026-10-24T11:42:40.8151464Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 xvfb amd64 2:21.1.12-1ubuntu1.9 [877 kB]
+2026-10-24T11:42:41.0717085Z Fetched 25.9 MB in 1s (32.2 MB/s)
+2026-10-24T11:42:41.0979138Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-24T11:42:41.1320190Z (Reading database ... 
+2026-10-24T11:42:41.1321009Z (Reading database ... 5%
+2026-10-24T11:42:41.1321795Z (Reading database ... 10%
+2026-10-24T11:42:41.1322560Z (Reading database ... 15%
+2026-10-24T11:42:41.1323846Z (Reading database ... 20%
+2026-10-24T11:42:41.1324477Z (Reading database ... 25%
+2026-10-24T11:42:41.1325060Z (Reading database ... 30%
+2026-10-24T11:42:41.1325611Z (Reading database ... 35%
+2026-10-24T11:42:41.1325990Z (Reading database ... 40%
+2026-10-24T11:42:41.1326370Z (Reading database ... 45%
+2026-10-24T11:42:41.1326747Z (Reading database ... 50%
+2026-10-24T11:42:41.1369717Z (Reading database ... 55%
+2026-10-24T11:42:41.2569892Z (Reading database ... 60%
+2026-10-24T11:42:41.4479484Z (Reading database ... 65%
+2026-10-24T11:42:41.6517808Z (Reading database ... 70%
+2026-10-24T11:42:41.8494765Z (Reading database ... 75%
+2026-10-24T11:42:41.9972172Z (Reading database ... 80%
+2026-10-24T11:42:42.2064008Z (Reading database ... 85%
+2026-10-24T11:42:42.3740695Z (Reading database ... 90%
+2026-10-24T11:42:42.5600313Z (Reading database ... 95%
+2026-10-24T11:42:42.5600977Z (Reading database ... 100%
+2026-10-24T11:42:42.5601965Z (Reading database ... 203540 files and directories currently installed.)
+2026-10-24T11:42:42.5644770Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-24T11:42:42.5735169Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-24T11:42:42.8175614Z Preparing to unpack .../01-libglib2.0-data_2.80.0-6ubuntu3.10_all.deb ...
+2026-10-24T11:42:42.8193685Z Unpacking libglib2.0-data (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+2026-10-24T11:42:42.8524826Z Preparing to unpack .../02-libglib2.0-bin_2.80.0-6ubuntu3.10_amd64.deb ...
+2026-10-24T11:42:42.8543357Z Unpacking libglib2.0-bin (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+2026-10-24T11:42:42.9104544Z Preparing to unpack .../03-gir1.2-glib-2.0_2.80.0-6ubuntu3.10_amd64.deb ...
+2026-10-24T11:42:42.9121658Z Unpacking gir1.2-glib-2.0:amd64 (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+2026-10-24T11:42:42.9503518Z Preparing to unpack .../04-libglib2.0-0t64_2.80.0-6ubuntu3.10_amd64.deb ...
+2026-10-24T11:42:42.9566428Z Unpacking libglib2.0-0t64:amd64 (2.80.0-6ubuntu3.10) over (2.80.0-6ubuntu3.9) ...
+2026-10-24T11:42:42.9960788Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-24T11:42:43.0090142Z Preparing to unpack .../05-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-24T11:42:43.0096407Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-24T11:42:43.0843375Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-24T11:42:43.0970366Z Preparing to unpack .../06-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-24T11:42:43.0976877Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-24T11:42:43.1169498Z Selecting previously unselected package fonts-unifont.
+2026-10-24T11:42:43.1294600Z Preparing to unpack .../07-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-24T11:42:43.1300824Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-24T11:42:43.2308439Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-24T11:42:43.2432542Z Preparing to unpack .../08-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-24T11:42:43.2528692Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-24T11:42:43.7301079Z Preparing to unpack .../09-libnss3_2%3a3.98-1ubuntu0.3_amd64.deb ...
+2026-10-24T11:42:43.7323887Z Unpacking libnss3:amd64 (2:3.98-1ubuntu0.3) over (2:3.98-1ubuntu0.2) ...
+2026-10-24T11:42:43.7801874Z Preparing to unpack .../10-libnss3-tools_2%3a3.98-1ubuntu0.3_amd64.deb ...
+2026-10-24T11:42:43.7819672Z Unpacking libnss3-tools (2:3.98-1ubuntu0.3) over (2:3.98-1ubuntu0.2) ...
+2026-10-24T11:42:43.8222434Z Selecting previously unselected package xfonts-encodings.
+2026-10-24T11:42:43.8349980Z Preparing to unpack .../11-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-24T11:42:43.8357105Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-24T11:42:43.8648180Z Selecting previously unselected package xfonts-utils.
+2026-10-24T11:42:43.8774889Z Preparing to unpack .../12-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-24T11:42:43.8782243Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-24T11:42:43.9089339Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-24T11:42:43.9214806Z Preparing to unpack .../13-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-24T11:42:43.9221779Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-24T11:42:43.9543648Z Selecting previously unselected package xfonts-scalable.
+2026-10-24T11:42:43.9668487Z Preparing to unpack .../14-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-24T11:42:43.9679282Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-24T11:42:44.0020136Z Preparing to unpack .../15-xserver-common_2%3a21.1.12-1ubuntu1.9_all.deb ...
+2026-10-24T11:42:44.0038651Z Unpacking xserver-common (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+2026-10-24T11:42:44.0362657Z Preparing to unpack .../16-xvfb_2%3a21.1.12-1ubuntu1.9_amd64.deb ...
+2026-10-24T11:42:44.0380957Z Unpacking xvfb (2:21.1.12-1ubuntu1.9) over (2:21.1.12-1ubuntu1.8) ...
+2026-10-24T11:42:44.0896803Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-24T11:42:44.1012883Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-24T11:42:44.1031675Z Setting up libnss3:amd64 (2:3.98-1ubuntu0.3) ...
+2026-10-24T11:42:44.1050898Z Setting up libglib2.0-0t64:amd64 (2.80.0-6ubuntu3.10) ...
+2026-10-24T11:42:44.1160556Z Setting up libglib2.0-data (2.80.0-6ubuntu3.10) ...
+2026-10-24T11:42:44.1178199Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-24T11:42:44.1196444Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-24T11:42:44.1213312Z Setting up gir1.2-glib-2.0:amd64 (2.80.0-6ubuntu3.10) ...
+2026-10-24T11:42:44.1232277Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-24T11:42:44.1296990Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-24T11:42:44.1311830Z Setting up xserver-common (2:21.1.12-1ubuntu1.9) ...
+2026-10-24T11:42:44.1329885Z Setting up libnss3-tools (2:3.98-1ubuntu0.3) ...
+2026-10-24T11:42:44.1348767Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-24T11:42:44.1365719Z Setting up xvfb (2:21.1.12-1ubuntu1.9) ...
+2026-10-24T11:42:44.1384467Z Setting up libglib2.0-bin (2.80.0-6ubuntu3.10) ...
+2026-10-24T11:42:44.1403001Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-24T11:42:44.1441802Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-24T11:42:44.1732643Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-24T11:42:44.2004368Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-24T11:42:44.2351675Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-24T11:42:44.2373750Z Not building database; man-db/auto-update is not 'true'.
+2026-10-24T11:42:44.2385136Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-24T11:42:44.8997503Z 
+2026-10-24T11:42:44.8998343Z Running kernel seems to be up-to-date.
+2026-10-24T11:42:44.8998761Z 
+2026-10-24T11:42:44.8998956Z Restarting services...
+2026-10-24T11:42:44.9461559Z  systemctl restart packagekit.service php8.3-fpm.service polkit.service udisks2.service
+2026-10-24T11:42:45.0731218Z 
+2026-10-24T11:42:45.0732110Z Service restarts being deferred:
+2026-10-24T11:42:45.0733262Z  systemctl restart ModemManager.service
+2026-10-24T11:42:45.0734164Z  systemctl restart networkd-dispatcher.service
+2026-10-24T11:42:45.0734759Z 
+2026-10-24T11:42:45.0735210Z No containers need to be restarted.
+2026-10-24T11:42:45.0735724Z 
+2026-10-24T11:42:45.0736212Z No user sessions are running outdated binaries.
+2026-10-24T11:42:45.0736778Z 
+2026-10-24T11:42:45.0737468Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-24T11:42:45.9431680Z Downloading Chrome for Testing 153.0.8010.12 (playwright chromium v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-linux64.zip
+2026-10-24T11:42:46.3417447Z |                                                                                |   0% of 186.8 MiB
+2026-10-24T11:42:46.5153279Z |■■■■■■■■                                                                        |  10% of 186.8 MiB
+2026-10-24T11:42:46.6195755Z |■■■■■■■■■■■■■■■■                                                                |  20% of 186.8 MiB
+2026-10-24T11:42:46.7038734Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 186.8 MiB
+2026-10-24T11:42:46.7886281Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 186.8 MiB
+2026-10-24T11:42:46.8716015Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 186.8 MiB
+2026-10-24T11:42:46.9609486Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 186.8 MiB
+2026-10-24T11:42:47.0448986Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 186.8 MiB
+2026-10-24T11:42:47.1347806Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 186.8 MiB
+2026-10-24T11:42:47.2214393Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 186.8 MiB
+2026-10-24T11:42:47.3076815Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 186.8 MiB
+2026-10-24T11:42:50.0686265Z Chrome for Testing 153.0.8010.12 (playwright chromium v1243) downloaded to /home/runner/.cache/ms-playwright/chromium-1243
+2026-10-24T11:42:50.0690029Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-24T11:42:50.4365092Z |                                                                                |   0% of 2.3 MiB
+2026-10-24T11:42:50.4416708Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-24T11:42:50.4446942Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-24T11:42:50.4480016Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-24T11:42:50.4512175Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-24T11:42:50.4692406Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-24T11:42:50.4772875Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-24T11:42:50.4802213Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-24T11:42:50.4818401Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-24T11:42:50.4834950Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-24T11:42:50.4851954Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-24T11:42:50.5465917Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-24T11:42:50.5469568Z Downloading Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-headless-shell-linux64.zip
+2026-10-24T11:42:50.9583696Z |                                                                                |   0% of 114.3 MiB
+2026-10-24T11:42:51.0725098Z |■■■■■■■■                                                                        |  10% of 114.3 MiB
+2026-10-24T11:42:51.1259951Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.3 MiB
+2026-10-24T11:42:51.1738525Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.3 MiB
+2026-10-24T11:42:51.2240697Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.3 MiB
+2026-10-24T11:42:51.2670717Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.3 MiB
+2026-10-24T11:42:51.3145906Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.3 MiB
+2026-10-24T11:42:51.3642704Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.3 MiB
+2026-10-24T11:42:51.4133603Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.3 MiB
+2026-10-24T11:42:51.4623443Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.3 MiB
+2026-10-24T11:42:51.5188571Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.3 MiB
+2026-10-24T11:42:53.4694764Z Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1243
+2026-10-24T11:42:53.4991202Z ##[group]Run npm --prefix tests/browser test
+2026-10-24T11:42:53.4991851Z [36;1mnpm --prefix tests/browser test[0m
+2026-10-24T11:42:53.5059745Z shell: /usr/bin/bash -e {0}
+2026-10-24T11:42:53.5060006Z env:
+2026-10-24T11:42:53.5060187Z   CI: true
+2026-10-24T11:42:53.5060384Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-24T11:42:53.5060624Z   POC_WORKSPACE_ID: 
+2026-10-24T11:42:53.5060863Z   POC_ENABLE_REVIEW_ACTIONS: false
+2026-10-24T11:42:53.5061132Z   POC_ENABLE_RELEASE_ACTIONS: false
+2026-10-24T11:42:53.5061386Z ##[endgroup]
+2026-10-24T11:42:53.6201266Z 
+2026-10-24T11:42:53.6202165Z > test
+2026-10-24T11:42:53.6202527Z > playwright test
+2026-10-24T11:42:53.6202717Z 
+2026-10-24T11:42:56.8451426Z [WebServer]  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2026-10-24T11:42:57.5522189Z [WebServer]  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2026-10-24T11:42:58.2495573Z [WebServer]  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2026-10-24T11:42:58.8492226Z 
+2026-10-24T11:42:58.8492935Z Running 103 tests using 1 worker
+2026-10-24T11:42:58.8493563Z 
+2026-10-24T11:43:00.1804953Z   ✓    1 actions.spec.mjs:19:1 › Registered batch resumes the same operation after a pre-start crash (651ms)
+2026-10-24T11:43:00.8039859Z   ✓    2 actions.spec.mjs:31:1 › Registering batch can query its uncertain outcome without a second start (610ms)
+2026-10-24T11:43:01.5108232Z   ✓    3 actions.spec.mjs:43:1 › Certification profile selection reloads that profile's evidence before prepare and evaluate (694ms)
+2026-10-24T11:43:02.3049934Z   ✓    4 actions.spec.mjs:64:1 › workbench surfaces actionable review and release items (779ms)
+2026-10-24T11:43:03.0855065Z   ✓    5 actions.spec.mjs:81:1 › attention center lists current actionable work (765ms)
+2026-10-24T11:43:03.6605179Z   ✓    6 actions.spec.mjs:99:1 › Product detail creates a DRAFT Release from explicit DatasetVersion bindings (560ms)
+2026-10-24T11:43:04.2174347Z   ✓    7 actions.spec.mjs:123:1 › readonly runtime never enables review or publishing (538ms)
+2026-10-24T11:43:04.7321228Z   ✓    8 actions.spec.mjs:140:3 › review confirm: mandatory reason, server actor and refreshed queue (502ms)
+2026-10-24T11:43:05.2215092Z   ✓    9 actions.spec.mjs:140:3 › review reject: mandatory reason, server actor and refreshed queue (472ms)
+2026-10-24T11:43:05.7012967Z   ✓   10 actions.spec.mjs:163:1 › ambiguous entity review requires explicit frozen alternative selection (464ms)
+2026-10-24T11:43:06.0563519Z   ✓   11 actions.spec.mjs:188:1 › Dataset detail links Core source resource and current version facts (342ms)
+2026-10-24T11:43:06.4427809Z   ✓   12 actions.spec.mjs:201:1 › execution detail exposes navigable frozen lineage and retry semantics (371ms)
+2026-10-24T11:43:06.9236446Z   ✓   13 actions.spec.mjs:213:1 › failed Execution retry creates and opens a new immutable Execution (466ms)
+2026-10-24T11:43:07.2750317Z   ✓   14 actions.spec.mjs:228:1 › readonly runtime does not enable Execution retry (338ms)
+2026-10-24T11:43:07.6020802Z   ✓   15 actions.spec.mjs:234:1 › Evidence Center uses workspace release read model without per-product release fan-out (315ms)
+2026-10-24T11:43:08.4477798Z   ✓   16 actions.spec.mjs:249:1 › Quality Check preserves attempt identity across refresh and does not duplicate execution (834ms)
+2026-10-24T11:43:09.1938358Z   ✓   17 actions.spec.mjs:296:1 › Compliance Check preserves attempt identity across refresh and does not duplicate result (726ms)
+2026-10-24T11:43:09.7991455Z   ✓   18 actions.spec.mjs:339:1 › Compliance Check preserves a custom policy with the recoverable attempt (591ms)
+2026-10-24T11:43:10.1515964Z   ✓   19 actions.spec.mjs:366:1 › readonly runtime never enables Compliance Check (335ms)
+2026-10-24T11:43:10.5006748Z   ✓   20 actions.spec.mjs:376:1 › readonly runtime never enables Quality Check (335ms)
+2026-10-24T11:43:11.4641821Z   ✓   21 actions.spec.mjs:386:1 › Direct Data delivery freezes identity, recovers after refresh, and creates a linked retry (950ms)
+2026-10-24T11:43:11.5038645Z   ✓   22 actions.spec.mjs:455:1 › Direct Data proxy rejects callers outside the trusted web gateway (25ms)
+2026-10-24T11:43:12.0795107Z   ✓   23 actions.spec.mjs:464:1 › Direct Data recovery accepts Core-normalized purpose and action (557ms)
+2026-10-24T11:43:12.4541298Z   ✓   24 actions.spec.mjs:485:1 › Direct Data delivery stays disabled for Core-unsupported explicit scopes (360ms)
+2026-10-24T11:43:12.8558506Z   ✓   25 actions.spec.mjs:497:1 › readonly runtime never enables Direct Data delivery (387ms)
+2026-10-24T11:43:13.3661717Z   ✓   26 actions.spec.mjs:507:1 › READY DatasetVersion can be invalidated through the Core command (496ms)
+2026-10-24T11:43:13.7167030Z   ✓   27 actions.spec.mjs:528:1 › readonly runtime never enables DatasetVersion invalidation (336ms)
+2026-10-24T11:43:14.5852040Z   ✓   28 actions.spec.mjs:536:1 › Gold DatasetVersion explains frozen production proof and current delivery (856ms)
+2026-10-24T11:43:15.2103510Z   ✓   29 actions.spec.mjs:608:1 › populated eight-gate readiness publishes once with a server idempotency key (611ms)
+2026-10-24T11:43:15.5850309Z   ✓   30 actions.spec.mjs:627:3 › empty-checks: no false success banner or enabled publish button (362ms)
+2026-10-24T11:43:15.9575392Z   ✓   31 actions.spec.mjs:627:3 › missing-evidence: no false success banner or enabled publish button (359ms)
+2026-10-24T11:43:16.3537467Z   ✓   32 actions.spec.mjs:627:3 › null-checks: no false success banner or enabled publish button (381ms)
+2026-10-24T11:43:16.7321659Z   ✓   33 actions.spec.mjs:627:3 › blocker: no false success banner or enabled publish button (367ms)
+2026-10-24T11:43:17.1037706Z   ✓   34 actions.spec.mjs:627:3 › future-gate: no false success banner or enabled publish button (357ms)
+2026-10-24T11:43:17.4811437Z   ✓   35 actions.spec.mjs:627:3 › failed-rights: no false success banner or enabled publish button (365ms)
+2026-10-24T11:43:17.8991049Z   ✓   36 actions.spec.mjs:641:1 › pending readiness gates ask for validation before remediation (404ms)
+2026-10-24T11:43:18.3518132Z   ✓   37 actions.spec.mjs:653:1 › readiness changes after render: Server Action rechecks and never posts publish (441ms)
+2026-10-24T11:43:18.7841001Z   ✓   38 actions.spec.mjs:664:3 › review-conflict: one attempt and explicit refresh, without automatic retry (419ms)
+2026-10-24T11:43:19.2309941Z   ✓   39 actions.spec.mjs:664:3 › publish-conflict: one attempt and explicit refresh, without automatic retry (433ms)
+2026-10-24T11:43:20.2285901Z   ✓   40 actions.spec.mjs:675:1 › product detail paginates release history before loading readiness (984ms)
+2026-10-24T11:43:20.8386592Z   ✓   41 actions.spec.mjs:700:1 › list pages paginate on the server with explicit controls (597ms)
+2026-10-24T11:43:21.2646081Z   ✓   42 ingest-readonly.spec.mjs:4:1 › CSV ingestion is read-only by default even after local preview (410ms)
+2026-10-24T11:43:21.6445304Z   ✓   43 ingest-readonly.spec.mjs:22:1 › readonly ingest downloads the shipped template and previews it without a Core write (363ms)
+2026-10-24T11:43:22.0255710Z   ✓   44 quality-attention.spec.mjs:18:3 › quality-history failure preserves successful exact historical evidence (362ms)
+2026-10-24T11:43:22.3888349Z   ✓   45 quality-attention.spec.mjs:18:3 › quality-latest-summary failure preserves successful exact historical evidence (350ms)
+2026-10-24T11:43:22.7888634Z   ✓   46 quality-attention.spec.mjs:18:3 › quality-attempt failure preserves successful exact historical evidence (384ms)
+2026-10-24T11:43:23.1512494Z   ✓   47 quality-attention.spec.mjs:18:3 › quality-latest-report failure preserves successful exact historical evidence (350ms)
+2026-10-24T11:43:23.6385017Z   ✓   48 quality-attention.spec.mjs:44:3 › selected historical report fail stays UNKNOWN without a latest substitute (472ms)
+2026-10-24T11:43:24.1202112Z   ✓   49 quality-attention.spec.mjs:44:3 › selected historical report denied stays UNKNOWN without a latest substitute (468ms)
+2026-10-24T11:43:24.6135256Z   ✓   50 quality-attention.spec.mjs:44:3 › selected historical report notfound stays UNKNOWN without a latest substitute (477ms)
+2026-10-24T11:43:25.1116174Z   ✓   51 quality-attention.spec.mjs:44:3 › selected historical report invalid stays UNKNOWN without a latest substitute (484ms)
+2026-10-24T11:43:25.4643559Z   ✓   52 quality-attention.spec.mjs:60:1 › default latest report failure preserves the known latest summary and history (338ms)
+2026-10-24T11:43:25.9495434Z   ✓   53 quality-attention.spec.mjs:70:1 › Quality credentials stay server-side and denied evidence remains local UNKNOWN with the exact historical link (474ms)
+2026-10-24T11:43:26.9530650Z   ✓   54 quality-attention.spec.mjs:88:1 › quality attention pages past 100 without fetching case details, then focuses one case read-only (991ms)
+2026-10-24T11:43:27.6328120Z   ✓   55 quality-attention.spec.mjs:117:1 › original evidence opens the exact historical assessment and preserves latest quality (664ms)
+2026-10-24T11:43:30.0985295Z   ✓   56 quality-attention.spec.mjs:129:1 › workbench enters follow-up view and recheck evidence opens its output version (2.5s)
+2026-10-24T11:43:31.0418477Z   ✓   57 quality-attention.spec.mjs:159:1 › failed quality read stays UNKNOWN while existing attention remains visible (931ms)
+2026-10-24T11:43:31.5131830Z   ✓   58 quality-attention.spec.mjs:170:1 › foreign case or assessment scope fails without a latest-result fallback (457ms)
+2026-10-24T11:43:33.3487951Z   ✓   59 schema-attempts.spec.mjs:19:1 › observed-request attempts page independently and retain exact selected identity after observation arrival (1.8s)
+2026-10-24T11:43:34.9666916Z   ✓   60 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.6s)
+2026-10-24T11:43:38.1881611Z   ✓   61 schema-attempts.spec.mjs:62:1 › attempt failures and invalid scope stay local on both pages (3.2s)
+2026-10-24T11:43:38.8162137Z   ✓   62 schema-attempts.spec.mjs:70:38 › / streams independent facts while attempt GET stays held (598ms)
+2026-10-24T11:43:39.6696474Z   ✓   63 schema-attempts.spec.mjs:70:38 › /attention streams independent facts while attempt GET stays held (841ms)
+2026-10-24T11:43:40.2339744Z   ✓   64 schema-attempts.spec.mjs:83:1 › successful empty attempt collection differs from unavailable and recovers on refresh (551ms)
+2026-10-24T11:43:40.7104191Z   ✓   65 schema-attempts.spec.mjs:91:1 › wrong selected identities and unlisted evidence origins fail without provider fallback (463ms)
+2026-10-24T11:43:41.9132193Z   ✓   66 schema-attention.spec.mjs:13:1 › schema attention paginates past 100 without detail fanout then opens exact historical evidence (1.2s)
+2026-10-24T11:43:42.8697804Z   ✓   67 schema-attention.spec.mjs:44:1 › workbench enters unhandled observations and filters preserve quality queue selection (942ms)
+2026-10-24T11:43:43.8174974Z   ✓   68 schema-attention.spec.mjs:56:1 › schema unavailability and foreign summary stay UNKNOWN while original queues remain visible (934ms)
+2026-10-24T11:43:44.1752331Z   ✓   69 schema-attention.spec.mjs:66:1 › exact mode rejects request mismatch and incomplete IDs without falling back to live resource (345ms)
+2026-10-24T11:43:45.5055829Z   ✓   70 schema-exceptions.spec.mjs:12:1 › exception history paginates past 100 and binds exact nullable historical evidence (1.3s)
+2026-10-24T11:43:47.2662623Z   ✓   71 schema-exceptions.spec.mjs:45:1 › workbench keeps history separate from current queues and filters survive other queue navigation (1.7s)
+2026-10-24T11:43:48.3609586Z   ✓   72 schema-exceptions.spec.mjs:67:1 › history failures, foreign data and successful empty reads never assert current health (1.1s)
+2026-10-24T11:43:48.6602450Z   ✓   73 schema-exceptions.spec.mjs:82:1 › exception exact mode rejects a wrong request without live fallback (284ms)
+2026-10-24T11:43:50.2375680Z   ✓   74 schema-requests.spec.mjs:8:1 › unobserved pagination and exact attempt remain readable after observation arrives (1.6s)
+2026-10-24T11:44:01.7946628Z   ✘   75 schema-requests.spec.mjs:30:1 › independent counts and filters survive other queue navigation (11.4s)
+2026-10-24T11:44:02.8696412Z   ✓   76 schema-requests.spec.mjs:37:1 › request detail pages all attempts and observations without replacing selected attempt (472ms)
+2026-10-24T11:44:04.0586223Z   ✓   77 schema-requests.spec.mjs:42:1 › unavailable, foreign and mismatched request data fail locally without fallback (1.2s)
+2026-10-24T11:44:04.4592200Z   ✓   78 workbench-isolation.spec.mjs:24:3 › workbench isolates summary failure without hiding independent evidence (369ms)
+2026-10-24T11:44:05.0559196Z   ✓   79 workbench-isolation.spec.mjs:24:3 › workbench isolates executions failure without hiding independent evidence (581ms)
+2026-10-24T11:44:05.6361536Z   ✓   80 workbench-isolation.spec.mjs:24:3 › workbench isolates failures failure without hiding independent evidence (565ms)
+2026-10-24T11:44:06.1898372Z   ✓   81 workbench-isolation.spec.mjs:24:3 › workbench isolates products failure without hiding independent evidence (541ms)
+2026-10-24T11:44:06.5543997Z   ✓   82 workbench-isolation.spec.mjs:24:3 › workbench isolates releases failure without hiding independent evidence (350ms)
+2026-10-24T11:44:07.1143538Z   ✓   83 workbench-isolation.spec.mjs:37:3 › attention isolates reviews failure and keeps usable queues (545ms)
+2026-10-24T11:44:07.6987436Z   ✓   84 workbench-isolation.spec.mjs:37:3 › attention isolates failures failure and keeps usable queues (568ms)
+2026-10-24T11:44:08.2695897Z   ✓   85 workbench-isolation.spec.mjs:37:3 › attention isolates products failure and keeps usable queues (559ms)
+2026-10-24T11:44:08.8645783Z   ✓   86 workbench-isolation.spec.mjs:37:3 › attention isolates releases failure and keeps usable queues (582ms)
+2026-10-24T11:44:10.4640345Z   ✓   87 workbench-isolation.spec.mjs:47:1 › denied and malformed host reads fail closed locally on both pages (1.6s)
+2026-10-24T11:44:13.5303410Z   ✓   88 workbench-isolation.spec.mjs:57:1 › each governance failure remains local while original queues stay readable (3.0s)
+2026-10-24T11:44:14.3191603Z   ✓   89 workbench-isolation.spec.mjs:70:1 › all read failures preserve page identity without invented clear results (774ms)
+2026-10-24T11:44:14.9888165Z   ✓   90 workbench-isolation.spec.mjs:82:1 › successful empty reads remain distinct from unavailable totals and recover on reload (656ms)
+2026-10-24T11:44:15.4627076Z   ✓   91 workbench-isolation.spec.mjs:94:1 › a failed selected release page retains snapshot count and bounded return navigation (458ms)
+2026-10-24T11:44:15.8219669Z   ✓   92 workbench-isolation.spec.mjs:105:1 › selected release pages remain independent of a failed shared snapshot (346ms)
+2026-10-24T11:44:16.1822970Z   ✓   93 workbench-isolation.spec.mjs:114:1 › readiness failure keeps the known release and its exact navigation (347ms)
+2026-10-24T11:44:17.7483786Z   ✓   94 workbench-isolation.spec.mjs:122:1 › pending product labels do not block independent facts or evidence (1.6s)
+2026-10-24T11:44:18.6028710Z   ✓   95 workbench-isolation.spec.mjs:147:5 › / isolates pending quality governance GET before it resolves (842ms)
+2026-10-24T11:44:19.1897149Z   ✓   96 workbench-isolation.spec.mjs:147:5 › / isolates pending schema governance GET before it resolves (574ms)
+2026-10-24T11:44:19.7656525Z   ✓   97 workbench-isolation.spec.mjs:147:5 › / isolates pending exceptions governance GET before it resolves (562ms)
+2026-10-24T11:44:20.6250025Z   ✓   98 workbench-isolation.spec.mjs:147:5 › / isolates pending requests governance GET before it resolves (847ms)
+2026-10-24T11:44:21.4483352Z   ✓   99 workbench-isolation.spec.mjs:147:5 › /attention isolates pending quality governance GET before it resolves (810ms)
+2026-10-24T11:44:22.2520653Z   ✓  100 workbench-isolation.spec.mjs:147:5 › /attention isolates pending schema governance GET before it resolves (789ms)
+2026-10-24T11:44:22.9054710Z   ✓  101 workbench-isolation.spec.mjs:147:5 › /attention isolates pending exceptions governance GET before it resolves (640ms)
+2026-10-24T11:44:23.7558056Z   ✓  102 workbench-isolation.spec.mjs:147:5 › /attention isolates pending requests governance GET before it resolves (838ms)
+2026-10-24T11:44:25.3670357Z   ✓  103 workbench-isolation.spec.mjs:180:1 › precise attempt and arriving observation round trip survives an unrelated release failure (1.6s)
+2026-10-24T11:44:25.4578354Z 
+2026-10-24T11:44:25.4584600Z 
+2026-10-24T11:44:25.4594935Z   1) schema-requests.spec.mjs:30:1 › independent counts and filters survive other queue navigation ─
+2026-10-24T11:44:25.4595761Z 
+2026-10-24T11:44:25.4596099Z     Error: expect(page).toHaveURL(expected) failed
+2026-10-24T11:44:25.4596494Z 
+2026-10-24T11:44:25.4596983Z     Expected pattern: /schemaRequestView=NO_ATTEMPT&schemaRequestOffset=25/
+2026-10-24T11:44:25.4598557Z     Received string:  "http://127.0.0.1:3100/attention?schemaRequestView=ALL&schemaRequestOffset=25&schemaExceptionStatus=DENIED#schema-exception-history"
+2026-10-24T11:44:25.4599708Z     Timeout: 10000ms
+2026-10-24T11:44:25.4599947Z 
+2026-10-24T11:44:25.4600083Z     Call log:
+2026-10-24T11:44:25.4600545Z       - Expect "toHaveURL" with timeout 10000ms
+2026-10-24T11:44:25.4601380Z         23 × locator resolved to <html lang="zh-CN">…</html>
+2026-10-24T11:44:25.4602888Z            - unexpected value "http://127.0.0.1:3100/attention?schemaRequestView=ALL&schemaRequestOffset=25&schemaExceptionStatus=DENIED#schema-exception-history"
+2026-10-24T11:44:25.4605530Z 
+2026-10-24T11:44:25.4605541Z 
+2026-10-24T11:44:25.4607034Z       33 |   const panel=page.getByTestId("schema-requests");await expect(panel.locator("tbody tr")).toHaveCount(25);await panel.getByRole("link",{name:"下一页",exact:true}).click();
+2026-10-24T11:44:25.4609615Z       34 |   await expect(panel.locator("tbody tr")).toHaveCount(25);await page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true}).click();
+2026-10-24T11:44:25.4612244Z     > 35 |   await expect(page).toHaveURL(/schemaRequestView=NO_ATTEMPT&schemaRequestOffset=25/);await expect(panel.locator("tbody tr")).toHaveCount(25);pure(await calls(request));
+2026-10-24T11:44:25.4613966Z          |                      ^
+2026-10-24T11:44:25.4614426Z       36 | });
+2026-10-24T11:44:25.4615427Z       37 | test("request detail pages all attempts and observations without replacing selected attempt",async({page,request})=>{
+2026-10-24T11:44:25.4617631Z       38 |   await page.goto(`/resources/${ids.sourceResource}?view=source-schema-request&requestId=${unobservedRequestId(106)}&attemptId=${requestAttemptId(106000)}&attemptOffset=25&observationOffset=25`);
+2026-10-24T11:44:25.4619837Z         at /home/runner/work/data-product-platform/data-product-platform/tests/browser/schema-requests.spec.mjs:35:22
+2026-10-24T11:44:25.4620690Z 
+2026-10-24T11:44:25.4621544Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-24T11:44:25.4622875Z     test-results/schema-requests-independen-d4fe3-vive-other-queue-navigation/test-failed-1.png
+2026-10-24T11:44:25.4624636Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-24T11:44:25.4625203Z 
+2026-10-24T11:44:25.4625998Z     Error Context: test-results/schema-requests-independen-d4fe3-vive-other-queue-navigation/error-context.md
+2026-10-24T11:44:25.4626848Z 
+2026-10-24T11:44:25.4627645Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-10-24T11:44:25.4628866Z     test-results/schema-requests-independen-d4fe3-vive-other-queue-navigation/trace.zip
+2026-10-24T11:44:25.4629686Z     Usage:
+2026-10-24T11:44:25.4629885Z 
+2026-10-24T11:44:25.4630689Z         npx playwright show-trace test-results/schema-requests-independen-d4fe3-vive-other-queue-navigation/trace.zip
+2026-10-24T11:44:25.4631571Z 
+2026-10-24T11:44:25.4632256Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-24T11:44:25.4632765Z 
+2026-10-24T11:44:25.4632920Z   1 failed
+2026-10-24T11:44:25.4634427Z     schema-requests.spec.mjs:30:1 › independent counts and filters survive other queue navigation ──
+2026-10-24T11:44:25.4635306Z   102 passed (1.5m)
+2026-10-24T11:44:25.5784892Z ##[error]Process completed with exit code 1.
+2026-10-24T11:44:25.5891054Z ##[group]Run actions/upload-artifact@v4
+2026-10-24T11:44:25.5891352Z with:
+2026-10-24T11:44:25.5891552Z   name: browser-contracts-1
+2026-10-24T11:44:25.5891786Z   retention-days: 7
+2026-10-24T11:44:25.5892216Z   path: tests/browser/playwright-report/
+tests/browser/test-results/
+tests/browser/package-lock.json
+
+2026-10-24T11:44:25.5892714Z   if-no-files-found: warn
+2026-10-24T11:44:25.5892940Z   compression-level: 6
+2026-10-24T11:44:25.5893489Z   overwrite: false
+2026-10-24T11:44:25.5893709Z   include-hidden-files: false
+2026-10-24T11:44:25.5893963Z env:
+2026-10-24T11:44:25.5894131Z   CI: true
+2026-10-24T11:44:25.5894321Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-24T11:44:25.5894548Z   POC_WORKSPACE_ID: 
+2026-10-24T11:44:25.5894778Z   POC_ENABLE_REVIEW_ACTIONS: false
+2026-10-24T11:44:25.5895039Z   POC_ENABLE_RELEASE_ACTIONS: false
+2026-10-24T11:44:25.5895281Z ##[endgroup]
+2026-10-24T11:44:25.7497803Z (node:5185) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-24T11:44:25.7498650Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-24T11:44:25.7671778Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-24T11:44:25.7675428Z The least common ancestor is /home/runner/work/data-product-platform/data-product-platform/tests/browser. This will be the root directory of the artifact
+2026-10-24T11:44:25.7676960Z With the provided path, there will be 39 files uploaded
+2026-10-24T11:44:25.7680721Z Artifact name is valid!
+2026-10-24T11:44:25.7681718Z Root directory input is valid!
+2026-10-24T11:44:26.0114894Z Beginning upload of artifact content to blob storage
+2026-10-24T11:44:26.3815928Z (node:5185) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-24T11:44:26.8644496Z Uploaded bytes 8388608
+2026-10-24T11:44:26.9085655Z Uploaded bytes 8735067
+2026-10-24T11:44:26.9410531Z Finished uploading artifact content to blob storage!
+2026-10-24T11:44:26.9411909Z SHA256 digest of uploaded artifact zip is 0fdfcc01fe0aa065fbdc402561aeb4c7777f6cd070ee89839e6095f590281914
+2026-10-24T11:44:26.9413558Z Finalizing artifact upload
+2026-10-24T11:44:27.3432393Z Artifact browser-contracts-1.zip successfully finalized. Artifact ID 12558932998
+2026-10-24T11:44:27.3433964Z Artifact browser-contracts-1 has been successfully uploaded! Final size is 8735067 bytes. Artifact ID is 12558932998
+2026-10-24T11:44:27.3439262Z Artifact download URL: https://github.com/qq550723504/data-product-platform/actions/runs/40090889280/artifacts/12558932998
+2026-10-24T11:44:27.3657885Z Post job cleanup.
+2026-10-24T11:44:27.4476514Z [command]/usr/bin/git version
+2026-10-24T11:44:27.4517636Z git version 2.55.0
+2026-10-24T11:44:27.4557073Z Temporarily overriding HOME='/home/runner/work/_temp/fea28281-a34b-421b-86f4-aae246b90dc0' before making global git config changes
+2026-10-24T11:44:27.4558883Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-24T11:44:27.4562634Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/data-product-platform/data-product-platform
+2026-10-24T11:44:27.4600811Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-24T11:44:27.4636260Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-24T11:44:27.4912741Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-24T11:44:27.4940327Z http.https://github.com/.extraheader
+2026-10-24T11:44:27.4949950Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-24T11:44:27.4986844Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-24T11:44:27.5291544Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-24T11:44:27.5334099Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-24T11:44:27.5756470Z Cleaning up orphan processes
+2026-10-24T11:44:27.6195871Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

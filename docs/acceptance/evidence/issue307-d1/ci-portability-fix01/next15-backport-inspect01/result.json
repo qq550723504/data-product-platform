@@ -1,0 +1,17 @@
+{
+  "started_at": "2026-10-24T13:03:41.906221+00:00",
+  "finished_at": "2026-10-24T13:03:45.143448+00:00",
+  "command": [
+    "npm.cmd",
+    "pack",
+    "next@15.5.28",
+    "--pack-destination",
+    "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/upstream-packs01",
+    "--silent"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

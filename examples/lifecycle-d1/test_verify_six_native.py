@@ -23,6 +23,12 @@ r,p=v.r,v.p
 
 
 class SixCompleteTests(unittest.TestCase):
+    def setUp(self):
+        # The receipt/candidate doubles describe this UTC test instant, not the
+        # host wall clock. Expiry validation itself is deliberately unpatched.
+        instant = dt.datetime.fromisoformat(p.W['NotBefore'].replace('Z', '+00:00'))
+        self.enterContext(patch.object(r, 'now', return_value=instant))
+
     def composition(self,group='business-races',fault=None,post_closure=False,maintenance_phase=None):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             root=Path(tmp);control=root/'control';packet=root/'packet';control.mkdir();packet.mkdir()

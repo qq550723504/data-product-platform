@@ -1,0 +1,12 @@
+{
+  "status": "FAILED_LOCAL_EVIDENCE_PACKAGING_IGNORED_ARTIFACTS",
+  "unpublished_commit": "7ca23d91e5447578d9de270a63c85a83519fedbf",
+  "preserved_ref": "codex/issue307-ci-portability-pre-readback",
+  "missing_members": [
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-browser-job-full.log",
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-publication-failure01/browser-job120863177328-bounded.log",
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-publication-failure01/ubuntu-job120863177170-bounded.log"
+  ],
+  "repair": "Force-stage only the explicitly indexed owned evidence paths; retain original bytes and source review",
+  "push": 0
+}

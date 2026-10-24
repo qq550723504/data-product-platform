@@ -33,10 +33,80 @@ export const ids = {
   complianceResult: "48484848-4848-4848-8848-484848484848",
   deliveryOperation: "49494949-4949-4949-8949-494949494949",
   deliveryRetryOperation: "50505050-5050-4050-8050-505050505050",
+  qualityOutputVersion: "53535353-5353-4353-8353-535353535353",
+  recheckAssessment: "54545454-5454-4454-8454-545454545454",
 };
 export const fixtureToken = "local-browser-test-only";
+export const unobservedRequestId = n => `${String(n).padStart(8,"0")}-3521-4352-8352-${String(n).padStart(12,"0")}`;
+export const requestAttemptId = n => `${String(n).padStart(8,"0")}-3522-4352-8352-${String(n).padStart(12,"0")}`;
+export const requestObservationId = n => `${String(n).padStart(8,"0")}-3523-4352-8352-${String(n).padStart(12,"0")}`;
+export const observedRequestId = unobservedRequestId(107);
+export const observedAttemptId = n => requestAttemptId(1070030+n);
+export const observedObservationId = n => requestObservationId(1070030+n);
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering", "quality-attention", "quality-attention-unavailable", "quality-evidence-denied", "quality-attention-foreign", "schema-attention", "schema-attention-unavailable", "schema-attention-foreign", "schema-attention-mismatch"]);
+scenarios.add("isolation-empty");
+scenarios.add("isolation-validating");
+const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt"]);
+const readFaultModes = new Set(["fail", "denied", "notfound", "invalid", "hold"]);
+for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
+for (const scenario of ["schema-attempts", "schema-attempts-arrived", "schema-attempts-empty", "schema-attempts-foreign", "schema-attempts-mismatch"]) scenarios.add(scenario);
+function requestItem(n) {
+  return {workspaceId:ids.workspace,resourceId:ids.sourceResource,resourceCode:"REQUEST_FIXTURE",resourceName:"无观察请求导航验收",requestId:unobservedRequestId(n),responsibleActorId:ids.actor,
+    externalFqn:"historical.request-energy",ruleRef:"fixture/schema-request",ruleVersion:"1",ruleHash:"a".repeat(64),planHash:"b".repeat(64),requestedAt:stamp,attemptCount:n===107?136:n===106?31:n%2};
+}
+function requestAttempts(n) {
+  if(n===107)return Array.from({length:136},(_,i)=>({id:requestAttemptId(1070000+i),requestId:observedRequestId,workspaceId:ids.workspace,registeredAt:stamp,observationId:i<31?requestObservationId(1070000+i):null})).reverse();
+  return Array.from({length:requestItem(n).attemptCount},(_,i)=>({id:requestAttemptId(n===106?106000+i:n),requestId:unobservedRequestId(n),workspaceId:ids.workspace,registeredAt:stamp,observationId:n===106?requestObservationId(106000+i):null}));
+}
+function requestObservations(scenario) {
+  const numbers=Array.from({length:31},(_,i)=>106000+i);
+  if(scenario==="schema-requests-arrived")numbers.push(105);
+  if(scenario.startsWith("schema-attempts"))numbers.push(...Array.from({length:31},(_,i)=>1070000+i));
+  if(scenario==="schema-attempts-arrived")numbers.push(1070031);
+  return numbers.map(n=>({...requestItem(n>=1070000?107:n===105?105:106),observationId:requestObservationId(n),attemptId:requestAttemptId(n),status:"UNAVAILABLE",reason:`RECORDED_UNAVAILABLE ${n}`,schemaHash:"",startedAt:null,completedAt:null,recordedAt:stamp,handlingCount:0}));
+}
+export const schemaObservationId = n => `${String(n).padStart(8,"0")}-3460-4346-8346-${String(n).padStart(12,"0")}`;
+export const schemaRequestId = n => `${String(n).padStart(8,"0")}-3461-4346-8346-${String(n).padStart(12,"0")}`;
+function schemaItems() {
+  return Array.from({length:105},(_,index)=>{
+    const n=index+1;
+    return {workspaceId:ids.workspace,resourceId:ids.sourceResource,resourceCode:"SCHEMA_FIXTURE",resourceName:"schema 漂移导航验收",
+      requestId:schemaRequestId(n),observationId:schemaObservationId(n),attemptId:ids.job,responsibleActorId:ids.actor,
+      externalFqn:"historical.energy",ruleRef:"fixture/schema",ruleVersion:"1",ruleHash:"a".repeat(64),planHash:"b".repeat(64),
+      status:"DRIFT",reason:`SOURCE_SCHEMA_CHANGED ${n}`,schemaHash:"c".repeat(64),requestedAt:stamp,completedAt:stamp,recordedAt:stamp,handlingCount:n===105?3:0};
+  });
+}
+for (const scenario of ["schema-exceptions", "schema-exceptions-unavailable", "schema-exceptions-foreign", "schema-exceptions-mismatch", "schema-exceptions-empty"]) scenarios.add(scenario);
+export const exceptionObservationId = n => `${String(n).padStart(8,"0")}-3490-4349-8349-${String(n).padStart(12,"0")}`;
+export const exceptionRequestId = n => `${String(n <= 3 ? 1 : n).padStart(8,"0")}-3491-4349-8349-${String(n <= 3 ? 1 : n).padStart(12,"0")}`;
+function exceptionItems() {
+  return Array.from({length:105},(_,index)=>{
+    const n=index+1, status=["UNAVAILABLE","DENIED","INTERRUPTED"][index%3];
+    return {workspaceId:ids.workspace,resourceId:ids.sourceResource,resourceCode:"EXCEPTION_FIXTURE",resourceName:"扫描异常历史导航验收",
+      requestId:exceptionRequestId(n),observationId:exceptionObservationId(n),attemptId:status==="DENIED"&&n%2===0?null:`${String(n).padStart(8,"0")}-3492-4349-8349-${String(n).padStart(12,"0")}`,responsibleActorId:ids.actor,
+      externalFqn:"historical.energy",ruleRef:"fixture/schema",ruleVersion:"1",ruleHash:"a".repeat(64),planHash:"b".repeat(64),
+      status,reason:`HISTORICAL_${status} ${n}`,schemaHash:"",requestedAt:stamp,startedAt:null,completedAt:null,recordedAt:stamp};
+  });
+}
+export const attentionCaseId = n => `${String(n).padStart(8, "0")}-3430-4343-8343-${String(n).padStart(12, "0")}`;
+function attentionItems() {
+  return Array.from({ length: 105 }, (_, index) => {
+    const n = index + 1;
+    return {
+      id: attentionCaseId(n), workspaceId: ids.workspace, datasetId: ids.goldDataset,
+      datasetCode: "QUALITY_FIXTURE", datasetName: "质量异常导航验收", versionId: ids.goldVersion, versionNo: 1,
+      resourceId: null, assessmentId: ids.goldAssessment, findingId: ids.goldBinding,
+      ruleId: "negative-energy", message: `负数用电异常 ${n}`, actorId: null,
+      executionId: n === 101 ? ids.job : null, executionStatus: n === 101 ? "FAILED" : null, outputDatasetId: null, outputVersionId: null,
+      recheckId: [102, 105].includes(n) ? ids.ingestion : null, recheckOutcome: n === 105 ? "ASSESSED" : n === 102 ? "FAILED" : null,
+      recheckAssessmentId: n === 105 ? ids.recheckAssessment : null, recheckGateDecision: n === 105 ? "PASS" : null,
+      recheckDatasetId: n === 105 ? ids.goldDataset : null, recheckVersionId: n === 105 ? ids.qualityOutputVersion : null,
+      pendingRecheck: n === 105, activeExecution: false, manuallyClosed: n >= 104,
+      needsFollowUp: n !== 104, createdAt: stamp,
+    };
+  });
+}
 const pass = { production: "PASS", dataset: "PASS", rights: "PASS", quality: "PASS", compliance: "PASS", contract: "PASS", evidence: "PASS", delivery: "PASS" };
 function fixtureResources(count) {
   return Array.from({ length: count }, (_, index) => {
@@ -92,8 +162,11 @@ async function bodyOf(req) {
 
 export function createFixtureServer() {
   let state;
+  const heldReads = new Set();
+  const releaseReads = () => { for (const resolve of heldReads) resolve(); heldReads.clear(); };
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [] };
+    releaseReads();
+    state = { scenario, candidateStatus: scenario === "isolation-empty" ? "REJECTED" : "PENDING", releaseStatus: scenario === "isolation-empty" ? "PUBLISHED" : scenario === "isolation-validating" ? "VALIDATING" : "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: scenario.startsWith("quality-attention"), complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [], readFaults: {} };
   };
   reset();
   return createServer(async (req, res) => {
@@ -110,11 +183,14 @@ export function createFixtureServer() {
       if (url.pathname === "/__health" && req.method === "GET") return send(200, { fixture: true });
       if (url.pathname.startsWith("/__control/")) {
         if (req.headers["x-fixture-token"] !== fixtureToken) return send(403, { error: "fixture control token required" });
-        if (url.pathname === "/__control/state" && req.method === "GET") return send(200, state);
+        if (url.pathname === "/__control/state" && req.method === "GET") return send(200, { ...state, heldReadCount: heldReads.size });
+        if (url.pathname === "/__control/release-reads" && req.method === "POST") { releaseReads(); return send(200, { released: true }); }
         if (req.method === "POST" && ["/__control/reset", "/__control/scenario"].includes(url.pathname)) {
-          const { scenario = "ready" } = await bodyOf(req);
+          const { scenario = "ready", readFaults = {} } = await bodyOf(req);
           if (!scenarios.has(scenario)) return send(400, { error: "unknown fixture scenario" });
+          if (!readFaults || Array.isArray(readFaults) || typeof readFaults !== "object" || Object.entries(readFaults).some(([key, value]) => !readFaultKeys.has(key) || !readFaultModes.has(value))) return send(400, { error: "invalid read fault" });
           if (url.pathname.endsWith("/reset")) reset(scenario); else state.scenario = scenario;
+          state.readFaults = readFaults;
           return send(200, { scenario });
         }
         return send(404, { error: "unknown control route" });
@@ -122,7 +198,33 @@ export function createFixtureServer() {
       const body = req.method === "POST" ? await bodyOf(req) : undefined;
       state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"], gateway: req.headers["x-delivery-web-gateway"], authenticatedPrincipal: req.headers["x-authenticated-principal"] });
       const workspace = `/api/v1/workspaces/${ids.workspace}`;
+      const qualityRoute = /^\/api\/v1\/(?:quality-(?:results|assessments|assessment-attempts)\/|dataset-versions\/[^/]+\/(?:quality-assessments|quality-checks|gold-quality-checks)(?:\/|$))/.test(url.pathname);
+      if (qualityRoute) {
+        if (req.headers.authorization !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
+        if ((req.method === "GET" ? url.searchParams.get("workspaceId") : body?.workspaceId) !== ids.workspace) return send(403, { error: { code: "QUALITY_AUTHORITY_DENIED" } });
+        if (req.method === "GET" && state.scenario === "quality-evidence-denied") return send(403, { error: { code: "QUALITY_AUTHORITY_DENIED" } });
+      }
       const releasePath = `/api/v1/product-releases/${ids.release}`;
+      // Token-controlled fault injection applies only to fixed read routes.
+      const faultRoutes = {
+        [`${workspace}/workbench`]: "summary", [`${workspace}/entity-match-reviews`]: "reviews",
+        [`${workspace}/executions`]: "executions", [`${workspace}/attention/failed-executions`]: "failures",
+        [`${workspace}/data-products`]: "products", [`${workspace}/attention/releases`]: "releases",
+        [`${releasePath}/readiness`]: "readiness", [`${workspace}/quality-remediations/attention`]: "quality",
+        [`${workspace}/source-schema-observations/attention`]: "schema", [`${workspace}/source-schema-observations/exceptions`]: "exceptions",
+        [`${workspace}/source-schema-requests/unobserved`]: "requests",
+        [`${workspace}/source-schema-requests/observed/unobserved-attempts`]: "attempts",
+        [`/api/v1/quality-assessments/${ids.goldAssessment}/report`]: "quality-original-report",
+        [`/api/v1/quality-assessments/${ids.qualityAssessment}/report`]: "quality-latest-report",
+      };
+      const pageFault = url.pathname === `${workspace}/product-releases` ? { FAILED: "failed-page", VALIDATING: "validating-page", READY: "ready-page" }[url.searchParams.get("status")] : undefined;
+      const qualityFault = url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments`
+        ? (url.searchParams.get("limit") === "1" ? "quality-latest-summary" : "quality-history")
+        : /^\/api\/v1\/quality-assessment-attempts\//.test(url.pathname) ? "quality-attempt" : undefined;
+      const fault = req.method === "GET" ? state.readFaults[qualityFault ?? pageFault ?? faultRoutes[url.pathname]] : undefined;
+      if (fault === "fail" || fault === "denied" || fault === "notfound") return send(fault === "denied" ? 403 : fault === "notfound" ? 404 : 503, { code: "FIXTURE_READ_UNAVAILABLE", message: "private-upstream-sentinel" });
+      if (fault === "invalid") return send(200, {});
+      if (fault === "hold") await new Promise(resolve => heldReads.add(resolve));
       const product = {
         id: ids.product, workspaceId: ids.workspace, code: "BROWSER_FIXTURE", name: "浏览器验收产品",
         description: "Synthetic fixture — not production data", domainCode: "TEST", lifecycleStatus: "ACTIVE", healthStatus: "HEALTHY",
@@ -322,6 +424,89 @@ export function createFixtureServer() {
         return { items: items.slice(offset, offset + limit), page: { total: items.length, limit, offset } };
       }
       if (req.method === "GET") {
+        if (url.pathname === `${workspace}/source-schema-requests/observed/unobserved-attempts`) {
+          if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
+          const all=state.scenario.startsWith("schema-attempts")&&state.scenario!=="schema-attempts-empty"?Array.from({length:105},(_,i)=>({...requestItem(107),attemptId:observedAttemptId(i+1),registeredAt:stamp,requestObservationCount:state.scenario==="schema-attempts-arrived"?32:31})).reverse().filter(a=>state.scenario!=="schema-attempts-arrived"||a.attemptId!==observedAttemptId(1)):[];
+          if(state.scenario==="schema-attempts-foreign")all[0].workspaceId=ids.goldDataset;
+          return send(200,{...page(all),readAt:stamp});
+        }
+        if (url.pathname === `${workspace}/source-schema-requests/unobserved`) {
+          if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
+          if(state.scenario==="schema-requests-unavailable")return send(503,{code:"SCHEMA_REQUESTS_UNAVAILABLE"});
+          const all=state.scenario.startsWith("schema-requests")&&state.scenario!=="schema-requests-empty"?Array.from({length:105},(_,i)=>requestItem(i+1)).filter(r=>state.scenario!=="schema-requests-arrived"||r.requestId!==unobservedRequestId(105)):[];
+          if(state.scenario==="schema-requests-foreign")all[0].workspaceId=ids.goldDataset;
+          const view=url.searchParams.get("view")??"ALL";
+          if(!["ALL","NO_ATTEMPT","ATTEMPT_RECORDED"].includes(view))return send(400,{});
+          return send(200,{...page(all.filter(r=>view==="ALL"||(view==="NO_ATTEMPT"?r.attemptCount===0:r.attemptCount>0))),summary:{noAttemptCount:all.filter(r=>!r.attemptCount).length,attemptRecordedCount:all.filter(r=>r.attemptCount).length},readAt:stamp});
+        }
+        if (url.pathname.startsWith(`/api/v1/data-resources/${ids.sourceResource}/schema-requests/`)) {
+          if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
+          if(url.searchParams.get("workspaceId")!==ids.workspace)return send(404,{});
+          const n=Array.from({length:107},(_,i)=>i+1).find(n=>url.pathname.endsWith(`/${unobservedRequestId(n)}`));
+          if(!n)return send(404,{});
+          const attempts=requestAttempts(n);
+          if(n===105&&state.scenario==="schema-requests-arrived")attempts[0].observationId=requestObservationId(105);
+          if(n===107&&state.scenario==="schema-attempts-arrived")attempts.find(a=>a.id===observedAttemptId(1)).observationId=observedObservationId(1);
+          const selected=url.searchParams.get("attemptId"),chosen=attempts.find(a=>a.id===selected);
+          if(chosen&&state.scenario==="schema-attempts-mismatch")chosen.requestId=unobservedRequestId(1);
+          if(selected&&!chosen)return send(404,{});
+          const observations=requestObservations(state.scenario).filter(o=>o.requestId===unobservedRequestId(n)).map(o=>({id:o.observationId,requestId:o.requestId,attemptId:o.attemptId,status:o.status,reason:o.reason,recordedAt:o.recordedAt}));
+          const detailPage=(items,key)=>{const limit=Number(url.searchParams.get("limit")??25),offset=Number(url.searchParams.get(key)??0);return{items:items.slice(offset,offset+limit),page:{limit,offset,total:items.length}};};
+          return send(200,{...requestItem(n),requestId:state.scenario==="schema-requests-mismatch"?unobservedRequestId(1):unobservedRequestId(n),bindingId:ids.goldBinding,externalId:"historical-request-provider-id",connectorHash:"d".repeat(64),baseline:[{name:"energy_kwh",type:"TEXT",constraint:"NOT_NULL"}],selectedAttempt:chosen??null,attempts:detailPage(attempts,"attemptOffset"),observations:detailPage(observations,"observationOffset"),readAt:stamp});
+        }
+        if (url.pathname === `${workspace}/source-schema-observations/exceptions`) {
+          if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(403, {});
+          if (state.scenario === "schema-exceptions-unavailable") return send(503,{code:"SCHEMA_EXCEPTIONS_UNAVAILABLE"});
+          const all=state.scenario.startsWith("schema-exceptions")&&state.scenario!=="schema-exceptions-empty"?exceptionItems():[];
+          if(state.scenario==="schema-exceptions-foreign")all[0].workspaceId=ids.goldDataset;
+          const status=url.searchParams.get("status")??"ALL";
+          if(!["ALL","UNAVAILABLE","DENIED","INTERRUPTED"].includes(status))return send(400,{code:"INVALID_SCHEMA_EXCEPTION_STATUS"});
+          const items=all.filter(o=>status==="ALL"||o.status===status);
+          return send(200,{...page(items),summary:{unavailableCount:all.filter(o=>o.status==="UNAVAILABLE").length,deniedCount:all.filter(o=>o.status==="DENIED").length,interruptedCount:all.filter(o=>o.status==="INTERRUPTED").length},readAt:stamp});
+        }
+        if (url.pathname === `${workspace}/source-schema-observations/attention`) {
+          if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(403, {});
+          if (state.scenario === "schema-attention-unavailable") return send(503,{code:"SCHEMA_ATTENTION_UNAVAILABLE"});
+          const all=state.scenario.startsWith("schema-attention")?schemaItems():[];
+          if(state.scenario==="schema-attention-foreign")all[0].workspaceId=ids.goldDataset;
+          const items=all.filter(o=>url.searchParams.get("view")==="ALL"||o.handlingCount===0);
+          return send(200,{...page(items),summary:{unhandledCount:all.filter(o=>!o.handlingCount).length,handledCount:all.filter(o=>o.handlingCount>0).length},readAt:stamp});
+        }
+        if (url.pathname.startsWith(`/api/v1/data-resources/${ids.sourceResource}/schema-observations/`)) {
+          if(req.headers.authorization!=="Bearer rights-fixture-secret")return send(403,{});
+          const item=[...schemaItems(),...exceptionItems(),...requestObservations(state.scenario)].find(o=>url.pathname.endsWith(`/${o.observationId}`));
+          if(!item)return send(404,{});
+          const exception=item.status!=="DRIFT";
+          return send(200,{...item,requestId:state.scenario==="schema-attention-mismatch"?schemaRequestId(1):state.scenario==="schema-exceptions-mismatch"?exceptionRequestId(1):item.requestId,
+            bindingId:ids.goldBinding,externalId:item.ruleRef==="fixture/schema-request"?"historical-request-provider-id":"historical-provider-id",connectorHash:"d".repeat(64),startedAt:exception?null:stamp,
+            baseline:[{name:"energy_kwh",type:"TEXT",constraint:"NOT_NULL"}],columns:exception?[]:[{name:"energy_kwh",type:"BIGINT",constraint:"NULL"},{name:"new_optional",type:"TEXT",constraint:"NULL"}],handlingCount:item.handlingCount??0,
+            handling:Array.from({length:item.handlingCount??0},(_,i)=>({id:schemaObservationId(201+i),observationId:item.observationId,actorId:ids.actor,reason:`历史处理 ${i+1}`,createdAt:stamp}))});
+        }
+        if (url.pathname === `${workspace}/quality-remediations/attention`) {
+          if (req.headers.authorization !== "Bearer review-secret") return send(403, {});
+          if (state.scenario === "quality-attention-unavailable") return send(503, { code: "QUALITY_ATTENTION_UNAVAILABLE" });
+          const all = state.scenario.startsWith("quality-attention") ? attentionItems() : [];
+          const view = url.searchParams.get("view") ?? "FOLLOW_UP";
+          const items = all.filter(i => view === "ALL" || (view === "CLOSED" ? i.manuallyClosed : i.needsFollowUp));
+          return send(200, { ...page(items), summary: { followUpCount: all.filter(i => i.needsFollowUp).length, closedCount: all.filter(i => i.manuallyClosed).length }, readAt: stamp });
+        }
+        if (url.pathname.startsWith(`${workspace}/quality-remediations/`)) {
+          if (req.headers.authorization !== "Bearer review-secret") return send(403, {});
+          const item = attentionItems().find(i => url.pathname.endsWith(`/${i.id}`));
+          if (!item) return send(404, {});
+          return send(200, {
+            case: { id: item.id, workspace_id: ids.workspace, version_id: state.scenario === "quality-attention-foreign" ? ids.version : ids.goldVersion, assessment_id: ids.goldAssessment, finding_id: ids.goldBinding, detection_rule_id: "negative-energy", plan_ref: "fixture", plan_version: "1", workflow_hash: "a".repeat(64) },
+            finding: { message: item.message, observed: { affectedCount: 1, total: 10 } },
+            assignments: [], attempts: [], rechecks: [], closure: item.manuallyClosed ? { reason: "fixture closure" } : null,
+          });
+        }
+        if (url.pathname === `/api/v1/dataset-versions/${ids.qualityOutputVersion}`) return send(200, { ...goldVersion, id: ids.qualityOutputVersion, versionNo: 2 });
+        if (url.pathname === `/api/v1/dataset-versions/${ids.qualityOutputVersion}/quality-assessments`) return send(200, { datasetVersionId: ids.qualityOutputVersion, ...page([{ ...goldAssessment, id: ids.recheckAssessment, datasetVersionId: ids.qualityOutputVersion }]) });
+        if (url.pathname === `${workspace}/dataset-versions/${ids.qualityOutputVersion}/certifications`) return send(200, { workspaceId: ids.workspace, datasetVersionId: ids.qualityOutputVersion, asOf: stamp, ...page([]), profiles: [] });
+        if (url.pathname === `/api/v1/quality-assessments/${ids.recheckAssessment}/report`) return send(200, {
+          ...goldAssessment, id: ids.recheckAssessment, datasetVersionId: ids.qualityOutputVersion,
+          findings: { ...page([]) }, evidence: [], auditEvents: [],
+        });
         if (url.pathname === `/api/v1/ingestions/${ids.ingestion}`) {
           if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(401, {});
           return send(200, {id:ids.ingestion,state:state.batchDispatched?"RUNNING":state.scenario==="batch-registered"?"REGISTERED":"REGISTERING",attemptId:ids.job,remoteId:state.scenario==="batch-registered"?"known-remote-run":"",request:{workspaceId:ids.workspace,batchKey:"Recoverable batch",connectionRef:"fixture-source",instanceRef:"fixture-instance",templateHash:"a".repeat(64),schemaHash:"b".repeat(64),slots:[]}});
@@ -398,7 +583,7 @@ export function createFixtureServer() {
             createdAt: "2026-09-29T08:00:00Z",
           };
           const items = state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
-          return send(200, { datasetVersionId: ids.goldVersion, items, page: { total: items.length, limit: 25, offset: 0 } });
+          return send(200, { datasetVersionId: ids.goldVersion, ...page(items) });
         }
         const qualityAttemptMatch = url.pathname.match(/^\/api\/v1\/quality-assessment-attempts\/([0-9a-f-]+)$/);
         if (qualityAttemptMatch) {
@@ -450,6 +635,7 @@ export function createFixtureServer() {
         if (url.pathname === `/api/v1/quality-assessments/${ids.goldAssessment}/report`) {
           return send(200, {
             ...goldAssessment,
+            ...(state.scenario === "quality-attention-foreign" ? { datasetVersionId: ids.version } : {}),
             findings: { items: [], page: { total: 0, limit: 50, offset: 0 } },
             evidence: [{ id: "78787878-7878-4878-8878-787878787878", workspaceId: ids.workspace, evidenceType: "GOLD_QUALITY_ASSESSMENT", relationType: "ASSESSMENT_EVIDENCE", sourceType: "QUALITY_ASSESSMENT", sourceId: ids.goldAssessment, hashAlgorithm: "SHA256", hashValue: "a".repeat(64), createdAt: stamp }],
             auditEvents: [],
@@ -576,7 +762,7 @@ export function createFixtureServer() {
           return send(200, { ...job, status: "SUCCEEDED" });
         }
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`) {
-          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (req.headers.authorization !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
           if (body.workspaceId !== ids.workspace) return send(400, { error: { code: "DATASET_WORKSPACE_MISMATCH" } });
           if (typeof body.assessmentAttemptId !== "string" || !body.assessmentAttemptId) return send(400, { error: { code: "MISSING_ASSESSMENT_ATTEMPT_ID" } });
           if (body.ruleSetRef !== "park/quality/enterprise-activity-quality-v1.yaml") return send(400, { error: { code: "INVALID_RULE_SET" } });

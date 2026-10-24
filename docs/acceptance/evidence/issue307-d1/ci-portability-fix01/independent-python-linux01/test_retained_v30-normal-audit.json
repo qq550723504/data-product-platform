@@ -1,0 +1,15 @@
+{
+  "test": "test_retained_v30.py",
+  "root": "/work",
+  "reads": [
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/remaining_sequence.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/retained_v30.cpython-313.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/remaining_sequence.py",
+    "examples/lifecycle-d1/retained_v30.py",
+    "examples/lifecycle-d1/test_retained_v30.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

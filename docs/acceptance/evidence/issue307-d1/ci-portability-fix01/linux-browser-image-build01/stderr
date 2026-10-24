@@ -1,0 +1,1756 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 986B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+#2 ...
+
+#3 [internal] load metadata for mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#3 DONE 0.2s
+
+#2 [internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+#2 DONE 0.2s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [node22 1/1] FROM docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+#6 resolve docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d 0.1s done
+#6 DONE 0.1s
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 resolve mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 ...
+
+#6 [node22 1/1] FROM docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+#6 CACHED
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 resolve mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27 0.1s done
+#7 ...
+
+#5 [internal] load build context
+#5 transferring context: 1.00MB 0.3s done
+#5 DONE 0.7s
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 DONE 1.1s
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 extracting sha256:0926a8eb0e608a5c6888d1cd5594184bdf3ed3aa311dba5b42a547caefdc6f2e
+#7 extracting sha256:0926a8eb0e608a5c6888d1cd5594184bdf3ed3aa311dba5b42a547caefdc6f2e 0.7s done
+#7 DONE 1.8s
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 extracting sha256:e2bfec3c80171904b0984d23d5813617b535505d15ca9791ba0df4c6c766123c
+#7 extracting sha256:e2bfec3c80171904b0984d23d5813617b535505d15ca9791ba0df4c6c766123c 3.7s done
+#7 DONE 5.5s
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 extracting sha256:74c72610aa2da2063dd4db4d29d7e44e1a143c37518751473ae9567773462b97 0.1s done
+#7 extracting sha256:d8cf7dc1ff62ce7aadea24e1cfe97ee6d3e4a4654c22f2fd5e58d85f6ec02226
+#7 extracting sha256:d8cf7dc1ff62ce7aadea24e1cfe97ee6d3e4a4654c22f2fd5e58d85f6ec02226 5.8s done
+#7 extracting sha256:b4dfe9b5d6219474f2da2f3d2771260276bad24c26570654d3836e01ac74c516
+#7 extracting sha256:b4dfe9b5d6219474f2da2f3d2771260276bad24c26570654d3836e01ac74c516 3.7s done
+#7 DONE 15.1s
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 extracting sha256:a2ac83a9a562ddf791c297a62e2fcc2c5d5c655f882a590a5e8bfca87d789379
+#7 extracting sha256:a2ac83a9a562ddf791c297a62e2fcc2c5d5c655f882a590a5e8bfca87d789379 1.6s done
+#7 DONE 16.6s
+
+#7 [stage-1 1/5] FROM mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+#7 extracting sha256:1b189482e65c68c496123723f1afe2a8ba010018cad8549e4dbdb99230111863
+#7 extracting sha256:1b189482e65c68c496123723f1afe2a8ba010018cad8549e4dbdb99230111863 1.5s done
+#7 DONE 18.1s
+
+#8 [stage-1 2/5] COPY --from=node22 /usr/local/bin/node /usr/local/bin/node
+#8 DONE 5.2s
+
+#9 [stage-1 3/5] WORKDIR /work
+#9 DONE 0.1s
+
+#10 [stage-1 4/5] COPY . /work
+#10 DONE 0.2s
+
+#11 [stage-1 5/5] RUN npm --prefix apps/web ci --no-audit --no-fund && npm --prefix tests/browser install --no-audit --no-fund && npm --prefix apps/web run build && mkdir /work/.data && chown -R 10001:10001 /work
+#11 3.606 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 5.593 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#11 5.788 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#11 8.133 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#11 8.180 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#11 11.59 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#11 19.15 
+#11 19.15 added 312 packages in 18s
+#11 19.15 npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+#11 19.15 npm warn install-scripts   unrs-resolver@1.12.2 (postinstall: node postinstall.js)
+#11 19.15 npm warn install-scripts
+#11 19.15 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+#11 24.16 
+#11 24.16 added 3 packages in 5s
+#11 24.25 
+#11 24.25 > data-product-platform-web@0.1.0 build
+#11 24.25 > npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && npm run test:schema && next build
+#11 24.25 
+#11 24.34 
+#11 24.34 > data-product-platform-web@0.1.0 test:reviews
+#11 24.34 > tsc lib/review-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .review-tests && node --test tests/review-command.test.mjs
+#11 24.34 
+#11 25.40 TAP version 13
+#11 25.49 # Subtest: confirm: scope checked, server credential and trimmed reason forwarded once
+#11 25.49 ok 1 - confirm: scope checked, server credential and trimmed reason forwarded once
+#11 25.49   ---
+#11 25.49   duration_ms: 30.569237
+#11 25.49   type: 'test'
+#11 25.49   ...
+#11 25.49 # Subtest: reject: scope checked, server credential and trimmed reason forwarded once
+#11 25.49 ok 2 - reject: scope checked, server credential and trimmed reason forwarded once
+#11 25.49   ---
+#11 25.49   duration_ms: 1.472434
+#11 25.49   type: 'test'
+#11 25.49   ...
+#11 25.49 # Subtest: disabled: no upstream request
+#11 25.50 ok 3 - disabled: no upstream request
+#11 25.50   ---
+#11 25.50   duration_ms: 0.300203
+#11 25.50   type: 'test'
+#11 25.50   ...
+#11 25.50 # Subtest: missing credential: no upstream request
+#11 25.50 ok 4 - missing credential: no upstream request
+#11 25.50   ---
+#11 25.50   duration_ms: 0.197745
+#11 25.50   type: 'test'
+#11 25.50   ...
+#11 25.50 # Subtest: blank credential: no upstream request
+#11 25.50 ok 5 - blank credential: no upstream request
+#11 25.50   ---
+#11 25.50   duration_ms: 0.175129
+#11 25.50   type: 'test'
+#11 25.50   ...
+#11 25.50 # Subtest: missing workspace: no upstream request
+#11 25.50 ok 6 - missing workspace: no upstream request
+#11 25.50   ---
+#11 25.50   duration_ms: 0.118092
+#11 25.50   type: 'test'
+#11 25.50   ...
+#11 25.50 # Subtest: blank reason: no upstream request
+#11 25.50 ok 7 - blank reason: no upstream request
+#11 25.50   ---
+#11 25.50   duration_ms: 0.190036
+#11 25.50   type: 'test'
+#11 25.50   ...
+#11 25.50 # Subtest: long reason: no upstream request
+#11 25.50 ok 8 - long reason: no upstream request
+#11 25.50   ---
+#11 25.50   duration_ms: 0.184718
+#11 25.50   type: 'test'
+#11 25.50   ...
+#11 25.50 # Subtest: path injection: no upstream request
+#11 25.50 ok 9 - path injection: no upstream request
+#11 25.50   ---
+#11 25.50   duration_ms: 0.648726
+#11 25.50   type: 'test'
+#11 25.50   ...
+#11 25.51 # Subtest: invalid job: no upstream request
+#11 25.51 ok 10 - invalid job: no upstream request
+#11 25.51   ---
+#11 25.51   duration_ms: 0.43284
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: unknown decision: no upstream request
+#11 25.51 ok 11 - unknown decision: no upstream request
+#11 25.51   ---
+#11 25.51   duration_ms: 0.177729
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: foreign workspace blocks even a valid candidate UUID
+#11 25.51 ok 12 - foreign workspace blocks even a valid candidate UUID
+#11 25.51   ---
+#11 25.51   duration_ms: 1.156549
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: foreign candidate: never posts
+#11 25.51 ok 13 - foreign candidate: never posts
+#11 25.51   ---
+#11 25.51   duration_ms: 2.104509
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: foreign candidate job: never posts
+#11 25.51 ok 14 - foreign candidate job: never posts
+#11 25.51   ---
+#11 25.51   duration_ms: 0.951309
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: already reviewed: never posts
+#11 25.51 ok 15 - already reviewed: never posts
+#11 25.51   ---
+#11 25.51   duration_ms: 0.550536
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: missing entity: never posts
+#11 25.51 ok 16 - missing entity: never posts
+#11 25.51   ---
+#11 25.51   duration_ms: 0.738697
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: a pending candidate without an entity may be rejected, not confirmed
+#11 25.51 ok 17 - a pending candidate without an entity may be rejected, not confirmed
+#11 25.51   ---
+#11 25.51   duration_ms: 0.783438
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: ambiguous candidate requires an explicit frozen alternative and forwards it
+#11 25.51 ok 18 - ambiguous candidate requires an explicit frozen alternative and forwards it
+#11 25.51   ---
+#11 25.51   duration_ms: 1.432249
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: selection outside the frozen alternatives never posts
+#11 25.51 ok 19 - selection outside the frozen alternatives never posts
+#11 25.51   ---
+#11 25.51   duration_ms: 0.621944
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: invalid candidate response blocks the command
+#11 25.51 ok 20 - invalid candidate response blocks the command
+#11 25.51   ---
+#11 25.51   duration_ms: 0.587487
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: candidate lookup is targeted, never the whole job queue
+#11 25.51 ok 21 - candidate lookup is targeted, never the whole job queue
+#11 25.51   ---
+#11 25.51   duration_ms: 2.123829
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: nested Core errors surface a safe code, not SQL or internal messages
+#11 25.51 ok 22 - nested Core errors surface a safe code, not SQL or internal messages
+#11 25.51   ---
+#11 25.51   duration_ms: 0.953222
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: an observed current decision is forwarded as an optimistic-concurrency token
+#11 25.51 ok 23 - an observed current decision is forwarded as an optimistic-concurrency token
+#11 25.51   ---
+#11 25.51   duration_ms: 0.669325
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: no observed mapping keeps the request backwards compatible
+#11 25.51 ok 24 - no observed mapping keeps the request backwards compatible
+#11 25.51   ---
+#11 25.51   duration_ms: 0.443937
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: placeholder token: rejected before any upstream request
+#11 25.51 ok 25 - placeholder token: rejected before any upstream request
+#11 25.51   ---
+#11 25.51   duration_ms: 0.184847
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: nil token: rejected before any upstream request
+#11 25.51 ok 26 - nil token: rejected before any upstream request
+#11 25.51   ---
+#11 25.51   duration_ms: 0.104056
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: concurrent review conflict requires refresh and never retries
+#11 25.51 ok 27 - concurrent review conflict requires refresh and never retries
+#11 25.51   ---
+#11 25.51   duration_ms: 0.983952
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: timeout after POST is ambiguous, not claimed as a failed write or retried
+#11 25.51 ok 28 - timeout after POST is ambiguous, not claimed as a failed write or retried
+#11 25.51   ---
+#11 25.51   duration_ms: 0.43789
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: mismatched command result is not reported as success
+#11 25.51 ok 29 - mismatched command result is not reported as success
+#11 25.51   ---
+#11 25.51   duration_ms: 0.596129
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.51 # Subtest: read failure cannot trigger a write
+#11 25.51 ok 30 - read failure cannot trigger a write
+#11 25.51   ---
+#11 25.51   duration_ms: 0.218851
+#11 25.51   type: 'test'
+#11 25.51   ...
+#11 25.52 1..30
+#11 25.52 # tests 30
+#11 25.52 # suites 0
+#11 25.52 # pass 30
+#11 25.52 # fail 0
+#11 25.52 # cancelled 0
+#11 25.52 # skipped 0
+#11 25.52 # todo 0
+#11 25.52 # duration_ms 139.519943
+#11 25.65 
+#11 25.65 > data-product-platform-web@0.1.0 test:releases
+#11 25.65 > tsc lib/release-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .release-tests && node --test tests/release-command.test.mjs tests/release-readiness.test.mjs
+#11 25.65 
+#11 27.21 TAP version 13
+#11 27.30 # Subtest: publish: scope/readiness checked and server actor/idempotency forwarded once
+#11 27.30 ok 1 - publish: scope/readiness checked and server actor/idempotency forwarded once
+#11 27.30   ---
+#11 27.30   duration_ms: 25.672616
+#11 27.30   type: 'test'
+#11 27.30   ...
+#11 27.30 # Subtest: disabled: no upstream request
+#11 27.30 ok 2 - disabled: no upstream request
+#11 27.30   ---
+#11 27.30   duration_ms: 0.249621
+#11 27.30   type: 'test'
+#11 27.30   ...
+#11 27.30 # Subtest: missing actor: no upstream request
+#11 27.30 ok 3 - missing actor: no upstream request
+#11 27.30   ---
+#11 27.30   duration_ms: 0.102133
+#11 27.30   type: 'test'
+#11 27.30   ...
+#11 27.30 # Subtest: invalid actor: no upstream request
+#11 27.31 ok 4 - invalid actor: no upstream request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.144531
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: nil actor: no upstream request
+#11 27.31 ok 5 - nil actor: no upstream request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.182235
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: missing workspace: no upstream request
+#11 27.31 ok 6 - missing workspace: no upstream request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.081255
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: invalid product: no upstream request
+#11 27.31 ok 7 - invalid product: no upstream request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.11002
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: path injection release: no upstream request
+#11 27.31 ok 8 - path injection release: no upstream request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.12364
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: nil release: no upstream request
+#11 27.31 ok 9 - nil release: no upstream request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.424427
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: blank idempotency: no upstream request
+#11 27.31 ok 10 - blank idempotency: no upstream request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.297076
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: foreign workspace product blocks before release lookup
+#11 27.31 ok 11 - foreign workspace product blocks before release lookup
+#11 27.31   ---
+#11 27.31   duration_ms: 0.453648
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: missing product in workspace blocks before release lookup
+#11 27.31 ok 12 - missing product in workspace blocks before release lookup
+#11 27.31   ---
+#11 27.31   duration_ms: 0.540123
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: release not in scoped product history blocks before global release read
+#11 27.31 ok 13 - release not in scoped product history blocks before global release read
+#11 27.31   ---
+#11 27.31   duration_ms: 1.321146
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: release scoped to another product is blocked
+#11 27.31 ok 14 - release scoped to another product is blocked
+#11 27.31   ---
+#11 27.31   duration_ms: 0.610057
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: global release response mismatch blocks readiness and write
+#11 27.31 ok 15 - global release response mismatch blocks readiness and write
+#11 27.31   ---
+#11 27.31   duration_ms: 0.470377
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: readiness response mismatch blocks write
+#11 27.31 ok 16 - readiness response mismatch blocks write
+#11 27.31   ---
+#11 27.31   duration_ms: 0.427681
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: release is DRAFT: never posts
+#11 27.31 ok 17 - release is DRAFT: never posts
+#11 27.31   ---
+#11 27.31   duration_ms: 0.637572
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: overall is NOT_READY: never posts
+#11 27.31 ok 18 - overall is NOT_READY: never posts
+#11 27.31   ---
+#11 27.31   duration_ms: 1.364058
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: rights gate failed: never posts
+#11 27.31 ok 19 - rights gate failed: never posts
+#11 27.31   ---
+#11 27.31   duration_ms: 0.472696
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: evidence gate pending: never posts
+#11 27.31 ok 20 - evidence gate pending: never posts
+#11 27.31   ---
+#11 27.31   duration_ms: 0.362927
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: 409 after publish requires refresh and never retries
+#11 27.31 ok 21 - 409 after publish requires refresh and never retries
+#11 27.31   ---
+#11 27.31   duration_ms: 0.608599
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: timeout after POST is an unknown outcome and is never retried
+#11 27.31 ok 22 - timeout after POST is an unknown outcome and is never retried
+#11 27.31   ---
+#11 27.31   duration_ms: 0.626569
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: invalid JSON after POST is an unknown outcome
+#11 27.31 ok 23 - invalid JSON after POST is an unknown outcome
+#11 27.31   ---
+#11 27.31   duration_ms: 0.602559
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: mismatched published release is not reported as success
+#11 27.31 ok 24 - mismatched published release is not reported as success
+#11 27.31   ---
+#11 27.31   duration_ms: 0.56332
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: read failure cannot trigger a write
+#11 27.31 ok 25 - read failure cannot trigger a write
+#11 27.31   ---
+#11 27.31   duration_ms: 0.144693
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: create release: preflights frozen facts and posts explicit bindings once
+#11 27.31 ok 26 - create release: preflights frozen facts and posts explicit bindings once
+#11 27.31   ---
+#11 27.31   duration_ms: 2.826221
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: create release: same releaseNo with identical frozen facts recovers without POST
+#11 27.31 ok 27 - create release: same releaseNo with identical frozen facts recovers without POST
+#11 27.31   ---
+#11 27.31   duration_ms: 1.096247
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: create release: same releaseNo with different notes is a frozen-content conflict
+#11 27.31 ok 28 - create release: same releaseNo with different notes is a frozen-content conflict
+#11 27.31   ---
+#11 27.31   duration_ms: 0.770367
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: create release: stale ProductVersion stops before binding reads
+#11 27.31 ok 29 - create release: stale ProductVersion stops before binding reads
+#11 27.31   ---
+#11 27.31   duration_ms: 0.411664
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: create release: DatasetVersion outside ProductVersion assets is blocked
+#11 27.31 ok 30 - create release: DatasetVersion outside ProductVersion assets is blocked
+#11 27.31   ---
+#11 27.31   duration_ms: 0.627111
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: create release: exactly one PRIMARY or OUTPUT is required before any Core request
+#11 27.31 ok 31 - create release: exactly one PRIMARY or OUTPUT is required before any Core request
+#11 27.31   ---
+#11 27.31   duration_ms: 0.135156
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.31 # Subtest: create release: timeout after POST is ambiguous and never retried
+#11 27.31 ok 32 - create release: timeout after POST is ambiguous and never retried
+#11 27.31   ---
+#11 27.31   duration_ms: 1.577588
+#11 27.31   type: 'test'
+#11 27.31   ...
+#11 27.32 # Subtest: empty checks: shared guard and Server Action boundary fail closed
+#11 27.32 ok 33 - empty checks: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 25.254497
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: missing checks: shared guard and Server Action boundary fail closed
+#11 27.32 ok 34 - missing checks: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 1.207539
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: null checks: shared guard and Server Action boundary fail closed
+#11 27.32 ok 35 - null checks: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 1.518288
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: array checks: shared guard and Server Action boundary fail closed
+#11 27.32 ok 36 - array checks: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.545762
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: missing blockers: shared guard and Server Action boundary fail closed
+#11 27.32 ok 37 - missing blockers: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.550453
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: null blockers: shared guard and Server Action boundary fail closed
+#11 27.32 ok 38 - null blockers: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.440379
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: string blockers: shared guard and Server Action boundary fail closed
+#11 27.32 ok 39 - string blockers: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.681458
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: invalid blocker: shared guard and Server Action boundary fail closed
+#11 27.32 ok 40 - invalid blocker: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 1.330322
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: remaining blocker: shared guard and Server Action boundary fail closed
+#11 27.32 ok 41 - remaining blocker: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.641607
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: blank blocker: shared guard and Server Action boundary fail closed
+#11 27.32 ok 42 - blank blocker: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.693404
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: unknown gate pending: shared guard and Server Action boundary fail closed
+#11 27.32 ok 43 - unknown gate pending: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.489136
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: extra gate FAIL: shared guard and Server Action boundary fail closed
+#11 27.32 ok 44 - extra gate FAIL: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.336061
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: extra gate REVIEW: shared guard and Server Action boundary fail closed
+#11 27.32 ok 45 - extra gate REVIEW: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.382569
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: extra gate null: shared guard and Server Action boundary fail closed
+#11 27.32 ok 46 - extra gate null: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.392248
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: extra gate true: shared guard and Server Action boundary fail closed
+#11 27.32 ok 47 - extra gate true: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.348672
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: missing production: shared guard and Server Action boundary fail closed
+#11 27.32 ok 48 - missing production: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.51263
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: failed production: shared guard and Server Action boundary fail closed
+#11 27.32 ok 49 - failed production: shared guard and Server Action boundary fail closed
+#11 27.32   ---
+#11 27.32   duration_ms: 0.734298
+#11 27.32   type: 'test'
+#11 27.32   ...
+#11 27.32 # Subtest: missing dataset: shared guard and Server Action boundary fail closed
+#11 27.33 ok 50 - missing dataset: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.412806
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: failed dataset: shared guard and Server Action boundary fail closed
+#11 27.33 ok 51 - failed dataset: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.553497
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: missing rights: shared guard and Server Action boundary fail closed
+#11 27.33 ok 52 - missing rights: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.362941
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: failed rights: shared guard and Server Action boundary fail closed
+#11 27.33 ok 53 - failed rights: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 1.336278
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: missing quality: shared guard and Server Action boundary fail closed
+#11 27.33 ok 54 - missing quality: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.310291
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: failed quality: shared guard and Server Action boundary fail closed
+#11 27.33 ok 55 - failed quality: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.480901
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: missing compliance: shared guard and Server Action boundary fail closed
+#11 27.33 ok 56 - missing compliance: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.577691
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: failed compliance: shared guard and Server Action boundary fail closed
+#11 27.33 ok 57 - failed compliance: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.294742
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: missing contract: shared guard and Server Action boundary fail closed
+#11 27.33 ok 58 - missing contract: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.324358
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: failed contract: shared guard and Server Action boundary fail closed
+#11 27.33 ok 59 - failed contract: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.380444
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: missing evidence: shared guard and Server Action boundary fail closed
+#11 27.33 ok 60 - missing evidence: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.681024
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: failed evidence: shared guard and Server Action boundary fail closed
+#11 27.33 ok 61 - failed evidence: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.454441
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: missing delivery: shared guard and Server Action boundary fail closed
+#11 27.33 ok 62 - missing delivery: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.565202
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: failed delivery: shared guard and Server Action boundary fail closed
+#11 27.33 ok 63 - failed delivery: shared guard and Server Action boundary fail closed
+#11 27.33   ---
+#11 27.33   duration_ms: 0.781637
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: complete READY response is accepted
+#11 27.33 ok 64 - complete READY response is accepted
+#11 27.33   ---
+#11 27.33   duration_ms: 0.142192
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: new passing Core gate is not rejected
+#11 27.33 ok 65 - new passing Core gate is not rejected
+#11 27.33   ---
+#11 27.33   duration_ms: 0.088066
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: inherited gates cannot satisfy required fields
+#11 27.33 ok 66 - inherited gates cannot satisfy required fields
+#11 27.33   ---
+#11 27.33   duration_ms: 0.0655
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: invalid/not-ready response null
+#11 27.33 ok 67 - invalid/not-ready response null
+#11 27.33   ---
+#11 27.33   duration_ms: 0.144759
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: invalid/not-ready response undefined
+#11 27.33 ok 68 - invalid/not-ready response undefined
+#11 27.33   ---
+#11 27.33   duration_ms: 0.056505
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: invalid/not-ready response []
+#11 27.33 ok 69 - invalid/not-ready response []
+#11 27.33   ---
+#11 27.33   duration_ms: 0.033028
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: invalid/not-ready response "READY"
+#11 27.33 ok 70 - invalid/not-ready response "READY"
+#11 27.33   ---
+#11 27.33   duration_ms: 0.355818
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.33 # Subtest: invalid/not-ready response {"overall":"NOT_READY","checks":{"production":"PASS","dataset":"PASS","rights":"PASS","quality":"PASS","compliance":"PASS","contract":"PASS","evidence":"PASS","delivery":"PASS"},"blockers":[]}
+#11 27.33 ok 71 - invalid/not-ready response {"overall":"NOT_READY","checks":{"production":"PASS","dataset":"PASS","rights":"PASS","quality":"PASS","compliance":"PASS","contract":"PASS","evidence":"PASS","delivery":"PASS"},"blockers":[]}
+#11 27.33   ---
+#11 27.33   duration_ms: 0.066889
+#11 27.33   type: 'test'
+#11 27.33   ...
+#11 27.34 1..71
+#11 27.34 # tests 71
+#11 27.34 # suites 0
+#11 27.34 # pass 71
+#11 27.34 # fail 0
+#11 27.34 # cancelled 0
+#11 27.34 # skipped 0
+#11 27.34 # todo 0
+#11 27.34 # duration_ms 143.947397
+#11 27.42 
+#11 27.42 > data-product-platform-web@0.1.0 test:executions
+#11 27.42 > tsc lib/execution-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .execution-tests && node --test tests/execution-command.test.mjs
+#11 27.42 
+#11 28.25 TAP version 13
+#11 28.33 # Subtest: retry preflights source and posts once with server actor/idempotency
+#11 28.33 ok 1 - retry preflights source and posts once with server actor/idempotency
+#11 28.33   ---
+#11 28.33   duration_ms: 26.97848
+#11 28.33   type: 'test'
+#11 28.33   ...
+#11 28.33 # Subtest: non-retryable source never posts
+#11 28.33 ok 2 - non-retryable source never posts
+#11 28.33   ---
+#11 28.33   duration_ms: 0.809283
+#11 28.33   type: 'test'
+#11 28.33   ...
+#11 28.33 # Subtest: idempotent recovery accepts the same child after lifecycle advances
+#11 28.33 ok 3 - idempotent recovery accepts the same child after lifecycle advances
+#11 28.33   ---
+#11 28.33   duration_ms: 1.183983
+#11 28.33   type: 'test'
+#11 28.33   ...
+#11 28.33 # Subtest: mismatched child fails closed after write and requires refresh
+#11 28.33 ok 4 - mismatched child fails closed after write and requires refresh
+#11 28.33   ---
+#11 28.33   duration_ms: 1.178967
+#11 28.33   type: 'test'
+#11 28.33   ...
+#11 28.33 # Subtest: disabled configuration performs no request
+#11 28.33 ok 5 - disabled configuration performs no request
+#11 28.33   ---
+#11 28.33   duration_ms: 0.29843
+#11 28.33   type: 'test'
+#11 28.33   ...
+#11 28.34 1..5
+#11 28.34 # tests 5
+#11 28.34 # suites 0
+#11 28.34 # pass 5
+#11 28.34 # fail 0
+#11 28.34 # cancelled 0
+#11 28.34 # skipped 0
+#11 28.34 # todo 0
+#11 28.34 # duration_ms 100.81386
+#11 28.44 
+#11 28.44 > data-product-platform-web@0.1.0 test:dataset-versions
+#11 28.44 > tsc lib/dataset-version-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .dataset-version-tests && node --test tests/dataset-version-command.test.mjs
+#11 28.44 
+#11 29.38 TAP version 13
+#11 29.46 # Subtest: invalidate preflights scope/status and posts trimmed reason with server actor
+#11 29.46 ok 1 - invalidate preflights scope/status and posts trimmed reason with server actor
+#11 29.46   ---
+#11 29.46   duration_ms: 40.281987
+#11 29.46   type: 'test'
+#11 29.46   ...
+#11 29.46 # Subtest: non-READY version never posts
+#11 29.46 ok 2 - non-READY version never posts
+#11 29.46   ---
+#11 29.46   duration_ms: 0.723179
+#11 29.46   type: 'test'
+#11 29.46   ...
+#11 29.46 # Subtest: blank reason fails before any Core request
+#11 29.46 ok 3 - blank reason fails before any Core request
+#11 29.46   ---
+#11 29.46   duration_ms: 0.294527
+#11 29.46   type: 'test'
+#11 29.46   ...
+#11 29.46 # Subtest: mismatched invalidate response fails closed after write
+#11 29.46 ok 4 - mismatched invalidate response fails closed after write
+#11 29.46   ---
+#11 29.46   duration_ms: 0.777233
+#11 29.46   type: 'test'
+#11 29.46   ...
+#11 29.46 # Subtest: disabled configuration fails closed
+#11 29.46 ok 5 - disabled configuration fails closed
+#11 29.46   ---
+#11 29.46   duration_ms: 0.225093
+#11 29.46   type: 'test'
+#11 29.46   ...
+#11 29.47 1..5
+#11 29.47 # tests 5
+#11 29.47 # suites 0
+#11 29.47 # pass 5
+#11 29.47 # fail 0
+#11 29.47 # cancelled 0
+#11 29.47 # skipped 0
+#11 29.47 # todo 0
+#11 29.47 # duration_ms 105.318299
+#11 29.59 
+#11 29.59 > data-product-platform-web@0.1.0 test:quality
+#11 29.59 > tsc lib/quality-command.ts lib/quality-attention.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .quality-tests && node --test tests/quality-command.test.mjs tests/quality-attention.test.mjs tests/quality-transport.test.mjs tests/quality-evidence-page.test.mjs
+#11 29.59 
+#11 31.28 TAP version 13
+#11 31.32 # Subtest: report navigation carries an exact assessment, independently of current/latest
+#11 31.33 ok 1 - report navigation carries an exact assessment, independently of current/latest
+#11 31.33   ---
+#11 31.33   duration_ms: 1.482968
+#11 31.33   type: 'test'
+#11 31.33   ...
+#11 31.33 # Subtest: case focus uses direct identity and rejects workspace/version/identity substitutions
+#11 31.33 ok 2 - case focus uses direct identity and rejects workspace/version/identity substitutions
+#11 31.33   ---
+#11 31.33   duration_ms: 1.46758
+#11 31.33   type: 'test'
+#11 31.33   ...
+#11 31.33 # Subtest: bad identities never become navigation targets
+#11 31.33 ok 3 - bad identities never become navigation targets
+#11 31.33   ---
+#11 31.33   duration_ms: 0.361401
+#11 31.33   type: 'test'
+#11 31.33   ...
+#11 31.33 # Subtest: quality view pagination preserves other queues and resets only its own offset
+#11 31.34 ok 4 - quality view pagination preserves other queues and resets only its own offset
+#11 31.34   ---
+#11 31.34   duration_ms: 0.634944
+#11 31.34   type: 'test'
+#11 31.34   ...
+#11 31.34 # Subtest: malformed query values cannot produce unsafe page offsets
+#11 31.34 ok 5 - malformed query values cannot produce unsafe page offsets
+#11 31.34   ---
+#11 31.34   duration_ms: 0.257756
+#11 31.34   type: 'test'
+#11 31.34   ...
+#11 31.37 # Subtest: new attempt posts exactly once with stable attempt id and server actor
+#11 31.37 ok 6 - new attempt posts exactly once with stable attempt id and server actor
+#11 31.37   ---
+#11 31.37   duration_ms: 42.720725
+#11 31.37   type: 'test'
+#11 31.37   ...
+#11 31.37 # Subtest: succeeded attempt recovers assessment without POST
+#11 31.37 ok 7 - succeeded attempt recovers assessment without POST
+#11 31.37   ---
+#11 31.37   duration_ms: 2.750343
+#11 31.37   type: 'test'
+#11 31.37   ...
+#11 31.38 # Subtest: active attempt never posts
+#11 31.38 ok 8 - active attempt never posts
+#11 31.38   ---
+#11 31.38   duration_ms: 3.662283
+#11 31.38   type: 'test'
+#11 31.38   ...
+#11 31.38 # Subtest: failed attempt is terminal and never posts
+#11 31.38 ok 9 - failed attempt is terminal and never posts
+#11 31.38   ---
+#11 31.38   duration_ms: 1.377182
+#11 31.38   type: 'test'
+#11 31.38   ...
+#11 31.38 # Subtest: foreign attempt is blocked before write
+#11 31.38 ok 10 - foreign attempt is blocked before write
+#11 31.38   ---
+#11 31.38   duration_ms: 1.109221
+#11 31.38   type: 'test'
+#11 31.38   ...
+#11 31.38 # Subtest: non-usable DatasetVersion never looks up or posts attempt
+#11 31.38 ok 11 - non-usable DatasetVersion never looks up or posts attempt
+#11 31.38   ---
+#11 31.38   duration_ms: 0.375896
+#11 31.38   type: 'test'
+#11 31.38   ...
+#11 31.38 # Subtest: timeout after POST preserves attempt identity and never retries
+#11 31.38 ok 12 - timeout after POST preserves attempt identity and never retries
+#11 31.38   ---
+#11 31.38   duration_ms: 0.623493
+#11 31.38   type: 'test'
+#11 31.38   ...
+#11 31.38 # Subtest: disabled configuration fails before any Core request
+#11 31.38 ok 13 - disabled configuration fails before any Core request
+#11 31.38   ---
+#11 31.38   duration_ms: 0.198648
+#11 31.38   type: 'test'
+#11 31.38   ...
+#11 32.60 # Subtest: independent history failure retains the exact successful historical report
+#11 32.60 ok 14 - independent history failure retains the exact successful historical report
+#11 32.60   ---
+#11 32.60   duration_ms: 129.295092
+#11 32.60   type: 'test'
+#11 32.60   ...
+#11 32.60 # Subtest: independent summary failure retains the exact successful historical report
+#11 32.60 ok 15 - independent summary failure retains the exact successful historical report
+#11 32.60   ---
+#11 32.60   duration_ms: 104.521464
+#11 32.60   type: 'test'
+#11 32.60   ...
+#11 32.60 # Subtest: independent attempt failure retains the exact successful historical report
+#11 32.60 ok 16 - independent attempt failure retains the exact successful historical report
+#11 32.60   ---
+#11 32.60   duration_ms: 81.943728
+#11 32.60   type: 'test'
+#11 32.60   ...
+#11 32.60 # Subtest: independent foreign-attempt failure retains the exact successful historical report
+#11 32.60 ok 17 - independent foreign-attempt failure retains the exact successful historical report
+#11 32.60   ---
+#11 32.60   duration_ms: 73.511964
+#11 32.60   type: 'test'
+#11 32.60   ...
+#11 32.61 # Subtest: independent 44444444-4444-4444-8444-444444444444 failure retains the exact successful historical report
+#11 32.61 ok 18 - independent 44444444-4444-4444-8444-444444444444 failure retains the exact successful historical report
+#11 32.61   ---
+#11 32.61   duration_ms: 74.66142
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.61 # Subtest: historical 401 stays UNKNOWN without loading latest as a substitute
+#11 32.61 ok 19 - historical 401 stays UNKNOWN without loading latest as a substitute
+#11 32.61   ---
+#11 32.61   duration_ms: 70.753027
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.61 # Subtest: historical 403 stays UNKNOWN without loading latest as a substitute
+#11 32.61 ok 20 - historical 403 stays UNKNOWN without loading latest as a substitute
+#11 32.61   ---
+#11 32.61   duration_ms: 58.483145
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.61 # Subtest: historical 404 stays UNKNOWN without loading latest as a substitute
+#11 32.61 ok 21 - historical 404 stays UNKNOWN without loading latest as a substitute
+#11 32.61   ---
+#11 32.61   duration_ms: 55.206258
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.61 # Subtest: historical 503 stays UNKNOWN without loading latest as a substitute
+#11 32.61 ok 22 - historical 503 stays UNKNOWN without loading latest as a substitute
+#11 32.61   ---
+#11 32.61   duration_ms: 62.446094
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.61 # Subtest: first history page failure does not erase the independently successful latest summary
+#11 32.61 ok 23 - first history page failure does not erase the independently successful latest summary
+#11 32.61   ---
+#11 32.61   duration_ms: 53.319256
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.61 # Subtest: latest report failure is local when no explicit assessment is selected
+#11 32.61 ok 24 - latest report failure is local when no explicit assessment is selected
+#11 32.61   ---
+#11 32.61   duration_ms: 51.590663
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.61 # Subtest: provenance quality failure remains UNKNOWN and does not invent empty evidence
+#11 32.61 ok 25 - provenance quality failure remains UNKNOWN and does not invent empty evidence
+#11 32.61   ---
+#11 32.61   duration_ms: 51.872507
+#11 32.61   type: 'test'
+#11 32.61   ...
+#11 32.63 # Subtest: missing Quality credential never makes an anonymous read
+#11 32.63 ok 26 - missing Quality credential never makes an anonymous read
+#11 32.63   ---
+#11 32.63   duration_ms: 4.947011
+#11 32.63   type: 'test'
+#11 32.63   ...
+#11 32.63 # Subtest: Quality 401 preserves exact URL and never falls back or reveals upstream body
+#11 32.63 ok 27 - Quality 401 preserves exact URL and never falls back or reveals upstream body
+#11 32.63   ---
+#11 32.63   duration_ms: 33.452168
+#11 32.63   type: 'test'
+#11 32.63   ...
+#11 32.63 # Subtest: Quality 403 preserves exact URL and never falls back or reveals upstream body
+#11 32.63 ok 28 - Quality 403 preserves exact URL and never falls back or reveals upstream body
+#11 32.63   ---
+#11 32.63   duration_ms: 2.271792
+#11 32.63   type: 'test'
+#11 32.63   ...
+#11 32.63 # Subtest: Quality 404 preserves exact URL and never falls back or reveals upstream body
+#11 32.63 ok 29 - Quality 404 preserves exact URL and never falls back or reveals upstream body
+#11 32.63   ---
+#11 32.63   duration_ms: 0.588185
+#11 32.63   type: 'test'
+#11 32.63   ...
+#11 32.63 # Subtest: Quality 503 preserves exact URL and never falls back or reveals upstream body
+#11 32.63 ok 30 - Quality 503 preserves exact URL and never falls back or reveals upstream body
+#11 32.63   ---
+#11 32.63   duration_ms: 0.439285
+#11 32.63   type: 'test'
+#11 32.63   ...
+#11 32.63 # Subtest: missing command credential blocks before all Core requests
+#11 32.63 ok 31 - missing command credential blocks before all Core requests
+#11 32.63   ---
+#11 32.63   duration_ms: 0.708042
+#11 32.63   type: 'test'
+#11 32.63   ...
+#11 32.63 1..31
+#11 32.63 # tests 31
+#11 32.63 # suites 0
+#11 32.63 # pass 31
+#11 32.63 # fail 0
+#11 32.63 # cancelled 0
+#11 32.63 # skipped 0
+#11 32.63 # todo 0
+#11 32.63 # duration_ms 1364.309834
+#11 32.74 
+#11 32.74 > data-product-platform-web@0.1.0 test:compliance
+#11 32.74 > tsc lib/compliance-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .compliance-tests && node --test tests/compliance-command.test.mjs
+#11 32.74 
+#11 33.63 TAP version 13
+#11 33.69 # Subtest: new attempt posts exactly once with stable attempt id and server actor
+#11 33.69 ok 1 - new attempt posts exactly once with stable attempt id and server actor
+#11 33.69   ---
+#11 33.69   duration_ms: 25.517759
+#11 33.69   type: 'test'
+#11 33.69   ...
+#11 33.69 # Subtest: existing attempt recovers result without POST
+#11 33.69 ok 2 - existing attempt recovers result without POST
+#11 33.69   ---
+#11 33.69   duration_ms: 0.71374
+#11 33.69   type: 'test'
+#11 33.69   ...
+#11 33.69 # Subtest: attempt request identity mismatch is blocked
+#11 33.69 ok 3 - attempt request identity mismatch is blocked
+#11 33.69   ---
+#11 33.69   duration_ms: 0.720829
+#11 33.69   type: 'test'
+#11 33.69   ...
+#11 33.69 # Subtest: foreign attempt is blocked before write
+#11 33.69 ok 4 - foreign attempt is blocked before write
+#11 33.69   ---
+#11 33.69   duration_ms: 0.922969
+#11 33.69   type: 'test'
+#11 33.69   ...
+#11 33.69 # Subtest: non-usable DatasetVersion never looks up or posts attempt
+#11 33.69 ok 5 - non-usable DatasetVersion never looks up or posts attempt
+#11 33.70   ---
+#11 33.70   duration_ms: 0.741992
+#11 33.70   type: 'test'
+#11 33.70   ...
+#11 33.70 # Subtest: timeout after POST preserves attempt identity and never retries
+#11 33.70 ok 6 - timeout after POST preserves attempt identity and never retries
+#11 33.70   ---
+#11 33.70   duration_ms: 0.540519
+#11 33.70   type: 'test'
+#11 33.70   ...
+#11 33.70 # Subtest: disabled configuration fails before any Core request
+#11 33.70 ok 7 - disabled configuration fails before any Core request
+#11 33.70   ---
+#11 33.70   duration_ms: 0.198142
+#11 33.70   type: 'test'
+#11 33.70   ...
+#11 33.71 1..7
+#11 33.71 # tests 7
+#11 33.71 # suites 0
+#11 33.71 # pass 7
+#11 33.71 # fail 0
+#11 33.71 # cancelled 0
+#11 33.71 # skipped 0
+#11 33.71 # todo 0
+#11 33.71 # duration_ms 88.154092
+#11 33.80 
+#11 33.80 > data-product-platform-web@0.1.0 test:trace
+#11 33.80 > tsc lib/trace-scope.ts lib/traceability.ts lib/pagination.ts lib/scoped-lookup.ts lib/workbench-read.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .trace-tests && node --test tests/trace-scope.test.mjs tests/pagination.test.mjs tests/scoped-lookup.test.mjs tests/workbench-read.test.mjs
+#11 33.80 
+#11 34.78 TAP version 13
+#11 34.83 # Subtest: collectAllPages drains every page using returned item count
+#11 34.83 ok 1 - collectAllPages drains every page using returned item count
+#11 34.83   ---
+#11 34.83   duration_ms: 1.920075
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: collectAllPages accepts an empty collection
+#11 34.83 ok 2 - collectAllPages accepts an empty collection
+#11 34.83   ---
+#11 34.83   duration_ms: 0.205899
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: collectAllPages rejects an empty page before reported total
+#11 34.83 ok 3 - collectAllPages rejects an empty page before reported total
+#11 34.83   ---
+#11 34.83   duration_ms: 0.47675
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: collectAllPages rejects an unexpected offset
+#11 34.83 ok 4 - collectAllPages rejects an unexpected offset
+#11 34.83   ---
+#11 34.83   duration_ms: 0.2427
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: collectAllPages rejects invalid limits before calling Core
+#11 34.83 ok 5 - collectAllPages rejects invalid limits before calling Core
+#11 34.83   ---
+#11 34.83   duration_ms: 0.230029
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: parsePageOffset normalizes query values and rejects garbage
+#11 34.83 ok 6 - parsePageOffset normalizes query values and rejects garbage
+#11 34.83   ---
+#11 34.83   duration_ms: 0.24518
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: paginationWindow exposes explicit prev/next offsets
+#11 34.83 ok 7 - paginationWindow exposes explicit prev/next offsets
+#11 34.83   ---
+#11 34.83   duration_ms: 0.244262
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: paginationWindow advances by returned rows and never loops on an empty page
+#11 34.83 ok 8 - paginationWindow advances by returned rows and never loops on an empty page
+#11 34.83   ---
+#11 34.83   duration_ms: 0.194561
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.83 # Subtest: paginationWindow tolerates invalid metadata without throwing
+#11 34.83 ok 9 - paginationWindow tolerates invalid metadata without throwing
+#11 34.83   ---
+#11 34.83   duration_ms: 0.495271
+#11 34.83   type: 'test'
+#11 34.83   ...
+#11 34.84 # Subtest: findAcrossPages resolves a record beyond the first page
+#11 34.84 ok 10 - findAcrossPages resolves a record beyond the first page
+#11 34.84   ---
+#11 34.84   duration_ms: 2.025169
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: findAcrossPages returns undefined when the record is absent
+#11 34.84 ok 11 - findAcrossPages returns undefined when the record is absent
+#11 34.84   ---
+#11 34.84   duration_ms: 0.206599
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: findAcrossPages keeps product scoping for release lookups
+#11 34.84 ok 12 - findAcrossPages keeps product scoping for release lookups
+#11 34.84   ---
+#11 34.84   duration_ms: 0.215591
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: findAcrossPages keeps draining when Core clamps the page size
+#11 34.84 ok 13 - findAcrossPages keeps draining when Core clamps the page size
+#11 34.84   ---
+#11 34.84   duration_ms: 0.233842
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: findAcrossPages surfaces an empty premature page instead of truncating
+#11 34.84 ok 14 - findAcrossPages surfaces an empty premature page instead of truncating
+#11 34.84   ---
+#11 34.84   duration_ms: 0.44735
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: matching scoped release trace is accepted
+#11 34.84 ok 15 - matching scoped release trace is accepted
+#11 34.84   ---
+#11 34.84   duration_ms: 1.772826
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: release mismatch is rejected
+#11 34.84 ok 16 - release mismatch is rejected
+#11 34.84   ---
+#11 34.84   duration_ms: 0.367976
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: product mismatch is rejected
+#11 34.84 ok 17 - product mismatch is rejected
+#11 34.84   ---
+#11 34.84   duration_ms: 0.095532
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: foreign evidence is rejected
+#11 34.84 ok 18 - foreign evidence is rejected
+#11 34.84   ---
+#11 34.84   duration_ms: 0.080436
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: foreign cost is rejected
+#11 34.84 ok 19 - foreign cost is rejected
+#11 34.84   ---
+#11 34.84   duration_ms: 0.119858
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: foreign entity job is rejected
+#11 34.84 ok 20 - foreign entity job is rejected
+#11 34.84   ---
+#11 34.84   duration_ms: 0.066071
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: invalid context identifiers fail closed
+#11 34.84 ok 21 - invalid context identifiers fail closed
+#11 34.84   ---
+#11 34.84   duration_ms: 0.104136
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: local read failures, invalid responses and deadlines remain unknown without carrying raw errors
+#11 34.84 ok 22 - local read failures, invalid responses and deadlines remain unknown without carrying raw errors
+#11 34.84   ---
+#11 34.84   duration_ms: 3.911095
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: incomplete counts never imply zero or a complete total
+#11 34.84 ok 23 - incomplete counts never imply zero or a complete total
+#11 34.84   ---
+#11 34.84   duration_ms: 0.267703
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: the shared summary is usable only with its complete valid counters and workspace
+#11 34.84 ok 24 - the shared summary is usable only with its complete valid counters and workspace
+#11 34.84   ---
+#11 34.84   duration_ms: 0.610527
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: page membership, offsets and release classifications cannot turn invalid data into an empty result
+#11 34.84 ok 25 - page membership, offsets and release classifications cannot turn invalid data into an empty result
+#11 34.84   ---
+#11 34.84   duration_ms: 0.321575
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 # Subtest: only valid scoped primary identities can be retained when auxiliary labels fail
+#11 34.84 ok 26 - only valid scoped primary identities can be retained when auxiliary labels fail
+#11 34.84   ---
+#11 34.84   duration_ms: 0.165308
+#11 34.84   type: 'test'
+#11 34.84   ...
+#11 34.84 1..26
+#11 34.84 # tests 26
+#11 34.84 # suites 0
+#11 34.84 # pass 26
+#11 34.84 # fail 0
+#11 34.84 # cancelled 0
+#11 34.84 # skipped 0
+#11 34.84 # todo 0
+#11 34.84 # duration_ms 72.543315
+#11 34.94 
+#11 34.94 > data-product-platform-web@0.1.0 test:ingest
+#11 34.94 > tsc lib/ingest-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .ingest-tests && node --test tests/csv-inspection.test.mjs tests/ingest-command.test.mjs
+#11 34.94 
+#11 35.83 TAP version 13
+#11 35.88 # Subtest: CSV "\\n" preserves byte inputs and previews quoted fields
+#11 35.88 ok 1 - CSV "\\n" preserves byte inputs and previews quoted fields
+#11 35.88   ---
+#11 35.88   duration_ms: 2.20504
+#11 35.88   type: 'test'
+#11 35.88   ...
+#11 35.88 # Subtest: CSV "\\r\\n" preserves byte inputs and previews quoted fields
+#11 35.88 ok 2 - CSV "\\r\\n" preserves byte inputs and previews quoted fields
+#11 35.88   ---
+#11 35.88   duration_ms: 0.309539
+#11 35.88   type: 'test'
+#11 35.88   ...
+#11 35.88 # Subtest: CSV "﻿\\n" preserves byte inputs and previews quoted fields
+#11 35.88 ok 3 - CSV "﻿\\n" preserves byte inputs and previews quoted fields
+#11 35.88   ---
+#11 35.88   duration_ms: 0.282835
+#11 35.88   type: 'test'
+#11 35.88   ...
+#11 35.88 # Subtest: CSV "﻿\\r\\n" preserves byte inputs and previews quoted fields
+#11 35.88 ok 4 - CSV "﻿\\r\\n" preserves byte inputs and previews quoted fields
+#11 35.88   ---
+#11 35.88   duration_ms: 0.160249
+#11 35.88   type: 'test'
+#11 35.88   ...
+#11 35.89 # Subtest: empty is rejected
+#11 35.89 ok 5 - empty is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.49945
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: header only is rejected
+#11 35.89 ok 6 - header only is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 1.007917
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: missing field is rejected
+#11 35.89 ok 7 - missing field is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.186112
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: duplicate header is rejected
+#11 35.89 ok 8 - duplicate header is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.097813
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: empty header is rejected
+#11 35.89 ok 9 - empty header is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.230461
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: ragged row is rejected
+#11 35.89 ok 10 - ragged row is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.25758
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: blank key is rejected
+#11 35.89 ok 11 - blank key is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.115421
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: blank name is rejected
+#11 35.89 ok 12 - blank name is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.059471
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: duplicate key is rejected
+#11 35.89 ok 13 - duplicate key is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.051212
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: unclosed quote is rejected
+#11 35.89 ok 14 - unclosed quote is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.0576
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: bare quote is rejected
+#11 35.89 ok 15 - bare quote is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.0879
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: trailing quote text is rejected
+#11 35.89 ok 16 - trailing quote text is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.052565
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: bare CR is rejected
+#11 35.89 ok 17 - bare CR is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.040959
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: control byte is rejected
+#11 35.89 ok 18 - control byte is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.034794
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: oversized field is rejected
+#11 35.89 ok 19 - oversized field is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.328113
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: too many columns is rejected
+#11 35.89 ok 20 - too many columns is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 0.072389
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: too many rows is rejected
+#11 35.89 ok 21 - too many rows is rejected
+#11 35.89   ---
+#11 35.89   duration_ms: 2.047283
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: invalid UTF-8 is rejected, not replacement-decoded
+#11 35.89 ok 22 - invalid UTF-8 is rejected, not replacement-decoded
+#11 35.89   ---
+#11 35.89   duration_ms: 0.272982
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: oversized bytes are rejected before parsing
+#11 35.89 ok 23 - oversized bytes are rejected before parsing
+#11 35.89   ---
+#11 35.89   duration_ms: 0.174762
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: preview is bounded to five records while every record is validated
+#11 35.89 ok 24 - preview is bounded to five records while every record is validated
+#11 35.89   ---
+#11 35.89   duration_ms: 0.198698
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.89 # Subtest: blank physical lines match Go CSV behavior
+#11 35.89 ok 25 - blank physical lines match Go CSV behavior
+#11 35.89   ---
+#11 35.89   duration_ms: 0.139432
+#11 35.89   type: 'test'
+#11 35.89   ...
+#11 35.90 # Subtest: downloadable synthetic template satisfies the declared CSV format
+#11 35.90 ok 26 - downloadable synthetic template satisfies the declared CSV format
+#11 35.90   ---
+#11 35.90   duration_ms: 1.321606
+#11 35.90   type: 'test'
+#11 35.90   ...
+#11 35.93 # Subtest: upload preserves original bytes, scopes records and ignores browser actor/workspace
+#11 35.93 ok 27 - upload preserves original bytes, scopes records and ignores browser actor/workspace
+#11 35.93   ---
+#11 35.93   duration_ms: 15.753128
+#11 35.93   type: 'test'
+#11 35.93   ...
+#11 35.93 # Subtest: disabled prevents all network access
+#11 35.93 ok 28 - disabled prevents all network access
+#11 35.93   ---
+#11 35.93   duration_ms: 0.745126
+#11 35.93   type: 'test'
+#11 35.93   ...
+#11 35.93 # Subtest: actor missing prevents all network access
+#11 35.93 ok 29 - actor missing prevents all network access
+#11 35.93   ---
+#11 35.93   duration_ms: 0.412498
+#11 35.93   type: 'test'
+#11 35.93   ...
+#11 35.93 # Subtest: workspace missing prevents all network access
+#11 35.93 ok 30 - workspace missing prevents all network access
+#11 35.93   ---
+#11 35.93   duration_ms: 0.230979
+#11 35.93   type: 'test'
+#11 35.93   ...
+#11 35.93 # Subtest: actor invalid prevents all network access
+#11 35.93 ok 31 - actor invalid prevents all network access
+#11 35.93   ---
+#11 35.93   duration_ms: 0.320161
+#11 35.93   type: 'test'
+#11 35.93   ...
+#11 35.93 # Subtest: invalid form {"name":" "} never writes
+#11 35.93 ok 32 - invalid form {"name":" "} never writes
+#11 35.93   ---
+#11 35.93   duration_ms: 0.482183
+#11 35.93   type: 'test'
+#11 35.93   ...
+#11 35.94 # Subtest: invalid form {"source":""} never writes
+#11 35.94 ok 33 - invalid form {"source":""} never writes
+#11 35.94   ---
+#11 35.94   duration_ms: 0.309574
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: invalid form {"purpose":" "} never writes
+#11 35.94 ok 34 - invalid form {"purpose":" "} never writes
+#11 35.94   ---
+#11 35.94   duration_ms: 0.319433
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: invalid form {"acknowledged":"no"} never writes
+#11 35.94 ok 35 - invalid form {"acknowledged":"no"} never writes
+#11 35.94   ---
+#11 35.94   duration_ms: 0.417299
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: invalid form {"name":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"} never writes
+#11 35.94 ok 36 - invalid form {"name":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"} never writes
+#11 35.94   ---
+#11 35.94   duration_ms: 0.420997
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: extension blocked on server regardless of browser preview
+#11 35.94 ok 37 - extension blocked on server regardless of browser preview
+#11 35.94   ---
+#11 35.94   duration_ms: 0.379377
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: empty blocked on server regardless of browser preview
+#11 35.94 ok 38 - empty blocked on server regardless of browser preview
+#11 35.94   ---
+#11 35.94   duration_ms: 0.180291
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: invalid CSV blocked on server regardless of browser preview
+#11 35.94 ok 39 - invalid CSV blocked on server regardless of browser preview
+#11 35.94   ---
+#11 35.94   duration_ms: 0.337052
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: size blocked on server regardless of browser preview
+#11 35.94 ok 40 - size blocked on server regardless of browser preview
+#11 35.94   ---
+#11 35.94   duration_ms: 0.464612
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.94 # Subtest: same operation with existing RAW never writes again
+#11 35.94 ok 41 - same operation with existing RAW never writes again
+#11 35.94   ---
+#11 35.94   duration_ms: 12.248086
+#11 35.94   type: 'test'
+#11 35.94   ...
+#11 35.95 # Subtest: timeout: partial object identities survive, no blind retry
+#11 35.95 ok 42 - timeout: partial object identities survive, no blind retry
+#11 35.95   ---
+#11 35.95   duration_ms: 4.681231
+#11 35.95   type: 'test'
+#11 35.95   ...
+#11 35.95 # Subtest: HTTP: partial object identities survive, no blind retry
+#11 35.95 ok 43 - HTTP: partial object identities survive, no blind retry
+#11 35.95   ---
+#11 35.95   duration_ms: 3.051717
+#11 35.95   type: 'test'
+#11 35.95   ...
+#11 35.95 # Subtest: mismatched RAW checksum is not success
+#11 35.95 ok 44 - mismatched RAW checksum is not success
+#11 35.95   ---
+#11 35.95   duration_ms: 2.121655
+#11 35.95   type: 'test'
+#11 35.95   ...
+#11 35.96 # Subtest: foreign creation response stops the chain
+#11 35.96 ok 45 - foreign creation response stops the chain
+#11 35.96   ---
+#11 35.96   duration_ms: 1.811826
+#11 35.96   type: 'test'
+#11 35.96   ...
+#11 35.96 # Subtest: start verifies input scope and fixes policy/source role on server
+#11 35.97 ok 46 - start verifies input scope and fixes policy/source role on server
+#11 35.97   ---
+#11 35.97   duration_ms: 2.046976
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: foreign workspace never posts a parse job
+#11 35.97 ok 47 - foreign workspace never posts a parse job
+#11 35.97   ---
+#11 35.97   duration_ms: 0.664517
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: foreign version dataset never posts a parse job
+#11 35.97 ok 48 - foreign version dataset never posts a parse job
+#11 35.97   ---
+#11 35.97   duration_ms: 0.842745
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: non RAW never posts a parse job
+#11 35.97 ok 49 - non RAW never posts a parse job
+#11 35.97   ---
+#11 35.97   duration_ms: 0.581562
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: invalidated version never posts a parse job
+#11 35.97 ok 50 - invalidated version never posts a parse job
+#11 35.97   ---
+#11 35.97   duration_ms: 1.725606
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: wrong source never posts a parse job
+#11 35.97 ok 51 - wrong source never posts a parse job
+#11 35.97   ---
+#11 35.97   duration_ms: 0.396944
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: wrong version identity never posts a parse job
+#11 35.97 ok 52 - wrong version identity never posts a parse job
+#11 35.97   ---
+#11 35.97   duration_ms: 0.250557
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: reserved output prevents repeating job creation
+#11 35.97 ok 53 - reserved output prevents repeating job creation
+#11 35.97   ---
+#11 35.97   duration_ms: 0.389082
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: job POST timeout keeps output identity and locks, not retry
+#11 35.97 ok 54 - job POST timeout keeps output identity and locks, not retry
+#11 35.97   ---
+#11 35.97   duration_ms: 0.42938
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: wrong job scope is not reported as success
+#11 35.97 ok 55 - wrong job scope is not reported as success
+#11 35.97   ---
+#11 35.97   duration_ms: 0.674537
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: input enumeration drains more than the first page
+#11 35.97 ok 56 - input enumeration drains more than the first page
+#11 35.97   ---
+#11 35.97   duration_ms: 1.062207
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.97 # Subtest: empty incomplete page never reaches a write
+#11 35.97 ok 57 - empty incomplete page never reaches a write
+#11 35.97   ---
+#11 35.97   duration_ms: 0.339754
+#11 35.97   type: 'test'
+#11 35.97   ...
+#11 35.98 1..57
+#11 35.98 # tests 57
+#11 35.98 # suites 0
+#11 35.98 # pass 57
+#11 35.98 # fail 0
+#11 35.98 # cancelled 0
+#11 35.98 # skipped 0
+#11 35.98 # todo 0
+#11 35.98 # duration_ms 164.320757
+#11 36.11 
+#11 36.11 > data-product-platform-web@0.1.0 test:schema
+#11 36.11 > tsc lib/schema-observation.ts lib/schema-exceptions.ts lib/schema-requests.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .schema-tests && node --test tests/schema-observation.test.mjs tests/schema-exceptions.test.mjs tests/schema-requests.test.mjs tests/schema-attempts.test.mjs
+#11 36.11 
+#11 37.54 TAP version 13
+#11 37.59 # Subtest: attempt collection validates scope, history, attempt identity and complete page counts
+#11 37.59 ok 1 - attempt collection validates scope, history, attempt identity and complete page counts
+#11 37.59   ---
+#11 37.59   duration_ms: 1.546324
+#11 37.59   type: 'test'
+#11 37.59   ...
+#11 37.59 # Subtest: bounded attempt offsets survive all existing section navigation
+#11 37.59 ok 2 - bounded attempt offsets survive all existing section navigation
+#11 37.59   ---
+#11 37.59   duration_ms: 2.240398
+#11 37.59   type: 'test'
+#11 37.59   ...
+#11 37.59 # Subtest: typed evidence origin preserves selected attempt separately from observation identity
+#11 37.60 ok 3 - typed evidence origin preserves selected attempt separately from observation identity
+#11 37.60   ---
+#11 37.60   duration_ms: 1.952904
+#11 37.60   type: 'test'
+#11 37.60   ...
+#11 37.61 # Subtest: exception history accepts DENIED with and without an attempt and nullable scan times
+#11 37.61 ok 4 - exception history accepts DENIED with and without an attempt and nullable scan times
+#11 37.61   ---
+#11 37.61   duration_ms: 2.547243
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: foreign, duplicate, wrong status/filter/count/page and malformed attempt fail closed
+#11 37.61 ok 5 - foreign, duplicate, wrong status/filter/count/page and malformed attempt fail closed
+#11 37.61   ---
+#11 37.61   duration_ms: 0.990286
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: empty page keeps global historical classification counts without inventing resolution
+#11 37.61 ok 6 - empty page keeps global historical classification counts without inventing resolution
+#11 37.61   ---
+#11 37.61   duration_ms: 0.235225
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: exact evidence and return links preserve the history filter/page and existing queue state
+#11 37.61 ok 7 - exact evidence and return links preserve the history filter/page and existing queue state
+#11 37.61   ---
+#11 37.61   duration_ms: 0.949843
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: exact history links bind resource, request and observation; unsafe identities never navigate
+#11 37.61 ok 8 - exact history links bind resource, request and observation; unsafe identities never navigate
+#11 37.61   ---
+#11 37.61   duration_ms: 2.48773
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: exact evidence rejects substitutions of every scope dimension and handling membership
+#11 37.61 ok 9 - exact evidence rejects substitutions of every scope dimension and handling membership
+#11 37.61   ---
+#11 37.61   duration_ms: 0.949904
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: summary validates workspace, DRIFT-only scope, counts and nonduplicated observations
+#11 37.61 ok 10 - summary validates workspace, DRIFT-only scope, counts and nonduplicated observations
+#11 37.61   ---
+#11 37.61   duration_ms: 0.770124
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: schema and quality pagination preserve each other's selections and other queues
+#11 37.61 ok 11 - schema and quality pagination preserve each other's selections and other queues
+#11 37.61   ---
+#11 37.61   duration_ms: 0.657333
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: unobserved filters preserve independent queues and reject scope/count substitution
+#11 37.61 ok 12 - unobserved filters preserve independent queues and reject scope/count substitution
+#11 37.61   ---
+#11 37.61   duration_ms: 2.389022
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 # Subtest: explicit attempt survives pagination and post-observation detail; never pick latest
+#11 37.61 ok 13 - explicit attempt survives pagination and post-observation detail; never pick latest
+#11 37.61   ---
+#11 37.61   duration_ms: 7.572261
+#11 37.61   type: 'test'
+#11 37.61   ...
+#11 37.61 1..13
+#11 37.61 # tests 13
+#11 37.61 # suites 0
+#11 37.61 # pass 13
+#11 37.61 # fail 0
+#11 37.61 # cancelled 0
+#11 37.61 # skipped 0
+#11 37.61 # todo 0
+#11 37.61 # duration_ms 82.190441
+#11 38.07 ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+#11 38.13    ▲ Next.js 15.5.24
+#11 38.13 
+#11 38.16    Creating an optimized production build ...
+#11 51.19  ✓ Compiled successfully in 10.7s
+#11 51.20    Linting and checking validity of types ...
+#11 61.66    Collecting page data ...
+#11 63.43    Generating static pages (0/3) ...
+#11 63.82  ✓ Generating static pages (3/3)
+#11 64.53    Finalizing page optimization ...
+#11 64.53    Collecting build traces ...
+#11 84.84 
+#11 84.84 Route (app)                                             Size  First Load JS
+#11 84.84 ┌ ƒ /                                                  185 B         106 kB
+#11 84.84 ├ ƒ /_not-found                                        993 B         104 kB
+#11 84.84 ├ ƒ /api/direct-data-deliveries                        127 B         103 kB
+#11 84.84 ├ ƒ /api/source-admissions                             127 B         103 kB
+#11 84.84 ├ ƒ /attention                                         185 B         106 kB
+#11 84.84 ├ ƒ /batches                                         1.03 kB         107 kB
+#11 84.84 ├ ƒ /batches/[id]                                    1.03 kB         107 kB
+#11 84.84 ├ ƒ /datasets                                          185 B         106 kB
+#11 84.84 ├ ƒ /datasets/[id]                                     185 B         106 kB
+#11 84.84 ├ ƒ /datasets/[id]/versions/[versionId]              6.22 kB         112 kB
+#11 84.84 ├ ƒ /datasets/[id]/versions/[versionId]/remediation  1.28 kB         107 kB
+#11 84.84 ├ ƒ /evidence                                          185 B         106 kB
+#11 84.84 ├ ƒ /ingest                                           4.5 kB         110 kB
+#11 84.84 ├ ƒ /production                                        185 B         106 kB
+#11 84.84 ├ ƒ /production/[id]                                  1.3 kB         107 kB
+#11 84.84 ├ ƒ /products                                          185 B         106 kB
+#11 84.84 ├ ƒ /products/[id]                                    5.4 kB         111 kB
+#11 84.84 ├ ƒ /products/[id]/releases/[releaseId]                185 B         106 kB
+#11 84.84 ├ ƒ /resources                                         185 B         106 kB
+#11 84.84 ├ ƒ /resources/[id]                                   1.4 kB         107 kB
+#11 84.84 ├ ƒ /reviews                                         3.44 kB         109 kB
+#11 84.84 └ ƒ /source-admissions                               3.05 kB         109 kB
+#11 84.84 + First Load JS shared by all                         103 kB
+#11 84.84   ├ chunks/255-c5a697ddbf82d774.js                   46.4 kB
+#11 84.84   ├ chunks/4bd1b696-c023c6e3521b1417.js              54.2 kB
+#11 84.84   └ other shared chunks (total)                      1.95 kB
+#11 84.84 
+#11 84.84 
+#11 84.84 ƒ  (Dynamic)  server-rendered on demand
+#11 84.84 
+#11 DONE 86.6s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 29.6s done
+#12 exporting manifest sha256:171fcbd8ab982e37b51d80b9cf19f251212dfa95fd4e7f803add9a408cdff880 0.0s done
+#12 exporting config sha256:445a735b4b0fbfdedebdc4c5a9b2d508d9e0a6d14730e22be232595f63757ccb 0.0s done
+#12 exporting attestation manifest sha256:4f2fff68aef659f7244e11894cd16ebcb8222031e8bd815e33ce44c2f3b82ef9
+#12 exporting attestation manifest sha256:4f2fff68aef659f7244e11894cd16ebcb8222031e8bd815e33ce44c2f3b82ef9 0.1s done
+#12 exporting manifest list sha256:6174f5085fee2e7297b1cb9dc08140e6fb2808e7a0e5a7462b3e3c2b86e8c662 0.0s done
+#12 naming to docker.io/library/dpp307-ci-browser:portability01
+#12 naming to docker.io/library/dpp307-ci-browser:portability01 done
+#12 unpacking to docker.io/library/dpp307-ci-browser:portability01
+#12 unpacking to docker.io/library/dpp307-ci-browser:portability01 7.6s done
+#12 DONE 37.5s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/tysk2jl8kykd1od8wpayfxrw6

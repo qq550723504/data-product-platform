@@ -17,6 +17,10 @@ from cryptography.hazmat.primitives.serialization import Encoding,PublicFormat,P
 import retention_composition as c
 import test_retention_maintenance as host_tests
 
+# Offline tests consume the committed immutable fixture, never the retained
+# host checkout. Keep the production hash/identity reader exercised unchanged.
+SOURCE_FIXTURE=Path(__file__).resolve().parents[2]/'docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+
 
 class FakeOperations:
     def __init__(self,test,b,h,items,at,fault=None):
@@ -94,6 +98,7 @@ class CompositionTests(unittest.TestCase):
 
     def setUp(self):
         self.metadata={}
+        self.enterContext(patch.object(c.history,'SOURCE_PACKET',SOURCE_FIXTURE))
         self.enterContext(patch.object(c.host.staging,'validate_directory',return_value={}))
         def docker(*args):
             self.assertEqual(args[:2],('volume','inspect'))
@@ -250,6 +255,18 @@ class CompositionTests(unittest.TestCase):
             result=c.contain(entry.anchor,ops,entry.control)
             self.assertEqual(result['status'],'PASS_MAINTENANCE_PHYSICAL_CLOSURE')
             self.assertFalse(any(row[0]=='start' for row in ops.calls))
+
+    def test_portable_source_fixture_keeps_missing_and_drifted_live_gate_closed(self):
+        original=SOURCE_FIXTURE.read_bytes()
+        self.assertEqual(c.host.sha(original),c.history.SOURCE_PACKET_SHA256)
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'immutable-source.json';path.write_bytes(original)
+            with patch.object(c.history,'SOURCE_PACKET',path):
+                self.assertEqual(list(c.known_sources()),list(c.GROUPS))
+                path.write_bytes(original+b'\n')
+                with self.assertRaises(ValueError):c.known_sources()
+                path.unlink()
+                with self.assertRaises(FileNotFoundError):c.known_sources()
 
 
 if __name__=='__main__':unittest.main()

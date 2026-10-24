@@ -1,0 +1,28 @@
+{
+  "started_at": "2026-10-24T13:06:49.029500+00:00",
+  "finished_at": "2026-10-24T13:07:14.196101+00:00",
+  "command": [
+    "docker",
+    "run",
+    "--name",
+    "dpp307-client-diagnostic01",
+    "--network",
+    "none",
+    "--user",
+    "10001:10001",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--shm-size",
+    "1g",
+    "--mount",
+    "type=bind,source=C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/client-diagnostic-output01,target=/out",
+    "dpp307-client-diagnostic:01"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

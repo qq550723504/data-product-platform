@@ -28,13 +28,17 @@ def controller_only(path):
     return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/", "apps/platform/cmd/trial-activate/", "apps/platform/cmd/trial-business/"))
 
 
+def check_controller_delta(baseline, current):
+    changed = sorted(p for p in set(current) | set(baseline) if current.get(p) != baseline.get(p))
+    r.need(all(controller_only(p) for p in changed), "Business source drift; this resume only reuses original business artifacts")
+    return changed
+
+
 def check_sources(s, current):
     baseline = s["sources"]
     if "businessBinding" in s:
         baseline = r.active_business(s)["sources"]
-    changed = sorted(p for p in set(current) | set(baseline) if current.get(p) != baseline.get(p))
-    r.need(all(controller_only(p) for p in changed), "Business source drift; this resume only reuses original business artifacts")
-    return changed
+    return check_controller_delta(baseline, current)
 
 
 def verify_origin(s):
@@ -67,6 +71,7 @@ def verify_binding(s):
 
 def precheck(s):
     r.need(s["phase"] == "STOPPED", f"Run {s['runId']} is {s['phase']}; resume requires known STOPPED, never reseeds")
+    from stop_receipts import read as stop_facts
     # Verify actual retained artifacts before accepting any controller update.
     r.verify(s, source=False, running=False)
     if "originSnapshot" in s:
@@ -91,7 +96,7 @@ def precheck(s):
             except OSError: raise r.Refused("Original trial port unavailable; no replacement port or environment") from None
     finally:
         for sock in sockets: sock.close()
-    baseline = r.read(r.STATE / "before-stop-facts.json")
+    baseline = stop_facts(s)
     r.need(baseline["workspaceId"] == s["workspaceId"], "Same-workspace stopped facts required")
     from protected_resume import active, validate, expected
     if active(s):

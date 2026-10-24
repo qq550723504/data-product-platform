@@ -1,0 +1,15 @@
+{
+  "started_at": "2026-10-24T12:45:24.748158+00:00",
+  "finished_at": "2026-10-24T12:47:40.597938+00:00",
+  "command": [
+    "docker",
+    "start",
+    "-a",
+    "2d7b994c4d744e3d52f26b6f62b04dac7d1efbc26b1cb95521d88ddaac083966"
+  ],
+  "returncode": 1,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}
