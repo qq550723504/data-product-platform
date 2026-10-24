@@ -1,0 +1,18 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+const token=process.env.READONLY_API_TOKEN;if(!token)throw Error('explicit isolated preview credential required');
+const base='http://127.0.0.1:18497',ws='11111111-1111-4111-8111-111111111111',version='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',standard='82828282-8282-4282-8282-828282828282',unsupported='83838383-8383-4383-8383-838383838383',missing='91919191-9191-4191-8191-919191919191';const root=`/api/v1/workspaces/${ws}`;
+async function read(path,status=200,auth=token){const r=await fetch(base+path,{headers:auth?{Authorization:'Bearer '+auth}:{},redirect:'error'});assert.equal(r.status,status,path);assert.equal(r.headers.get('cache-control'),'private, no-store');return r;}
+test('exact standard is scoped, safe and structurally supported; generic prose is unsupported',async()=>{
+ const page=await(await read(root+'/contract-versions?limit=25&offset=0')).json();assert.equal(page.workspaceId,ws);assert.equal(page.items.length,2);
+ const r=await read(`/api/v1/contract-versions/${standard}?workspaceId=${ws}`);const body=await r.text(),v=JSON.parse(body);assert.equal(v.id,standard);assert.equal(v.acceptanceSource.status,'SUPPORTED');assert.equal(v.acceptanceSource.criteria[0].required,true);assert.match(v.acceptanceSource.setHash,/^[a-f0-9]{64}$/);for(const key of ['document','sourceRef','createdBy','publishedBy','storageUri','provider_request_key'])assert.ok(!Object.hasOwn(v,key),key);
+ assert.equal((await(await read(`/api/v1/contract-versions/${unsupported}?workspaceId=${ws}`)).json()).acceptanceSource.status,'UNSUPPORTED_SOURCE');
+ await read(root+'/contract-versions',401,'');await read(root+'/contract-versions',401,'wrong');await read(`/api/v1/contract-versions/${standard}?workspaceId=${missing}`,403);await read(`/api/v1/contract-versions/${missing}?workspaceId=${ws}`,404);await read(`/api/v1/contract-versions/${standard}?workspaceId=${ws}&workspaceId=${ws}`,400);await read(root+'/contract-versions?actorId='+missing,400);await read(root+'/contract-versions?offset=-1',400);
+});
+test('explicit delivery cannot infer receipt, actor assignments or current acceptance permission',async()=>{
+ const h=await(await fetch(base+root+'/delivery-history?limit=25&offset=0',{headers:{Authorization:'Bearer '+token}})).json();const delivery=h.items[0];assert.equal(delivery.status,'BLOCKED');
+ const path=root+`/acceptance-context?deliveryOperationId=${delivery.id}&datasetVersionId=${version}&contractVersionId=${standard}`;
+ const c=await(await read(path)).json();assert.equal(c.delivery.id,delivery.id);assert.equal(c.delivery.datasetVersionId,version);assert.equal(c.writeEnabled,false);assert.equal(c.receivingPartyStatus,'UNVERIFIED');assert.equal(c.responsibilities.length,6);assert.ok(c.responsibilities.every(r=>r.status==='UNASSIGNED'));assert.ok(c.blockers.includes('DELIVERY_NOT_ISSUED'));assert.ok(c.blockers.includes('RESPONSIBILITIES_NOT_CONFIGURED'));
+ await read(path,401,'');await read(root+`/acceptance-context?deliveryOperationId=${delivery.id}&datasetVersionId=${missing}`,404);await read(path+'&consumer=forged',400);
+ const a=await(await fetch(base+root+'/agent-task-authority',{headers:{Authorization:'Bearer '+token}})).json();assert.equal(a.writeEnabled,false);assert.equal(a.dispatchEnabled,false);
+ for(const path of [root+'/acceptance-context',root+'/contract-versions',`/api/v1/contract-versions/${standard}/publish`]){const r=await fetch(base+path,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:'{}'});assert.ok([404,405].includes(r.status),path);}
+});

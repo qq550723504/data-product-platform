@@ -88,4 +88,8 @@
 2026-10-24 发布 Trace 更新：身份/工作空间与同一只读快照边界、新版发布证据链页面已实现，自动化回归通过。浏览器与重启后接口验收 NOT_RUN，不能视为本轮已完成接入验收。详见 [发布证据链只读接入](governance-release-trace-readonly-20261024.md)。
 
 
-2026-10-24 交付/归档更新：`/core/deliveries` 已接现有 DeliveryOperation 历史及 gate/transition 只读投影；`/core/archives` 已接 EvidenceSnapshot 冻结档案。业务签收/验收通过仍缺少独立 authoritative contract，不能用归档证据替代。独立库 API 与 Edge 验收、指纹无写入验证 PASS，见 [本轮交付与证据归档验收](governance-delivery-history-readonly-20261024.md)。前述 Trace 浏览器 NOT_RUN 是历史快照，已由上一轮独立只读验收文档及本轮实际路径覆盖。
+2026-10-24 交付/归档更新：`/core/deliveries` 已接现有 DeliveryOperation 历史及 gate/transition 只读投影；`/core/archives` 已接 EvidenceSnapshot 冻结档案。业务签收/验收通过尚无正式后端实现，不能用归档证据替代。独立库 API 与 Edge 验收、指纹无写入验证 PASS，见 [本轮交付与证据归档验收](governance-delivery-history-readonly-20261024.md)。前述 Trace 浏览器 NOT_RUN 是历史快照，已由上一轮独立只读验收文档及本轮实际路径覆盖。
+
+2026-10-24 业务接入设计更新：[后端契约草案](../architecture/business-acceptance-backend-contract-v1.md) 定义责任、标准来源、签收、冻结提交、验收决定、归档和作废的目标边界；[页面与切片计划](governance-business-backend-plan-20261024.md) 给出现有 API、缺口及优先级。两份均为设计，拟议 API/表尚未实现，不改变本预览只读范围或 PR #363 的演示合约。
+
+2026-10-24 第 0 切片更新：[标准与责任只读接入](governance-acceptance-s0-readonly-20261024.md) 已补合约版本 GET 的可信身份/workspace、结构化标准校验、安全列表/上下文及新版 `/core/acceptance-context`。责任源未接入时明确返回未配置和阻断，不用演示角色替代。正式签收、标准确认、验收决定和归档写接口仍未实施。

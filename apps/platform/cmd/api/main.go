@@ -291,6 +291,7 @@ func main() {
 	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
 	qualityHandler.Principal = humanDecisionResolver
+	contractHandler.Principal = humanDecisionResolver
 	readModelHandler.Principal = humanDecisionResolver
 	remediationRepo := remediationinfra.NewRepository(db)
 	var remediationService *remediationapp.Service

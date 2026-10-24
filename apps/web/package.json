@@ -19,7 +19,7 @@
     "test:quality": "tsc lib/quality-command.ts lib/quality-attention.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .quality-tests && node --test tests/quality-command.test.mjs tests/quality-attention.test.mjs tests/quality-transport.test.mjs tests/quality-evidence-page.test.mjs",
     "test:compliance": "tsc lib/compliance-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .compliance-tests && node --test tests/compliance-command.test.mjs",
     "test:demo": "node --test tests/governance-demo/*.test.mjs",
-    "test:history": "tsc lib/delivery-history.ts lib/core-history.ts lib/quality-cost.ts lib/release-trace.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .history-tests && node --test tests/core-history.test.mjs tests/delivery-history.test.mjs"
+    "test:history": "tsc lib/acceptance-context.ts lib/delivery-history.ts lib/core-history.ts lib/quality-cost.ts lib/release-trace.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .history-tests && node --test tests/core-history.test.mjs tests/delivery-history.test.mjs tests/acceptance-context.test.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",

@@ -15,6 +15,8 @@ import (
 	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
 	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 	certificationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/transport/http"
+	contractinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure"
+	contracthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
@@ -78,6 +80,7 @@ func main() {
 	releaseHandler.Principal = resolver
 	releaseHandler.RegisterReleaseHistoryReadOnly(mux)
 	releaseHandler.RegisterDeliveryHistoryReadOnly(mux)
+	(contracthttp.ReadOnlyHandler{Reader: contractinfra.NewPostgresRepository(db), Principal: resolver}).Register(mux)
 	traceHandler := traceabilityhttp.NewHandler(traceability.NewRepository(db))
 	traceHandler.Principal = resolver
 	traceHandler.Register(mux)

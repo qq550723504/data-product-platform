@@ -49,6 +49,7 @@ scenarios.add("isolation-empty");
 scenarios.add("isolation-validating");
 scenarios.add("agent-quality-pages");
 scenarios.add("modern-trace");scenarios.add("modern-trace-foreign");scenarios.add("modern-trace-extra");
+for(const s of ['acceptance-sources','acceptance-source-invalid','acceptance-source-foreign','acceptance-context-denied','acceptance-list-denied','acceptance-source-extra'])scenarios.add(s);
 const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt", "agent-context"]);
 const readFaultModes = new Set(["fail", "denied", "notfound", "invalid", "hold"]);
 for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
@@ -201,6 +202,17 @@ export function createFixtureServer() {
       const body = req.method === "POST" ? await bodyOf(req) : undefined;
       state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"], gateway: req.headers["x-delivery-web-gateway"], authenticatedPrincipal: req.headers["x-authenticated-principal"] });
       const workspace = `/api/v1/workspaces/${ids.workspace}`;
+      if(state.scenario.startsWith('acceptance-') && req.method==='GET' && (url.pathname===`${workspace}/contract-versions` || url.pathname===`${workspace}/acceptance-context` || url.pathname.startsWith('/api/v1/contract-versions/'))){
+        if(req.headers.authorization!=='Bearer review-secret')return send(401,{code:'AUTHENTICATION_REQUIRED'});
+        const standard=n=>({id:n===0?ids.version:`${String(n).padStart(8,'0')}-8100-4100-8100-${String(n).padStart(12,'0')}`,workspaceId:ids.workspace,contractId:ids.product,name:'合成验收标准 '+n,version:`1.0.${n}`,status:'PUBLISHED',sourceSha256:'a'.repeat(64),createdAt:stamp,publishedAt:stamp,acceptanceSource:{status:'SUPPORTED',schemaVersion:'1',setHash:'b'.repeat(64),criteria:[{id:'C1',clause:'3.1',text:'核对明确成果范围',required:true,method:'MANUAL_CHECK',evidenceCategory:'RECEIPT'}]},...(state.scenario==='acceptance-source-extra'?{document:{secret:'private-acceptance-source-sentinel'},sourceRef:'private-acceptance-location'}:{})});
+        const standards=Array.from({length:26},(_,n)=>standard(n));
+        if(url.pathname===`${workspace}/contract-versions`){if(state.scenario==='acceptance-list-denied')return send(403,{code:'WORKSPACE_AUTHORITY_DENIED'});const offset=Number(url.searchParams.get('offset')||0);return send(200,{workspaceId:ids.workspace,items:standards.slice(offset,offset+25),page:{limit:25,offset,total:26}});}
+        if(url.pathname.startsWith('/api/v1/contract-versions/')){if(url.searchParams.get('workspaceId')!==ids.workspace)return send(403,{});const v=standards.find(v=>url.pathname.endsWith('/'+v.id));if(!v)return send(404,{});if(state.scenario==='acceptance-source-foreign')return send(200,{...v,workspaceId:ids.product});if(state.scenario==='acceptance-source-invalid')return send(200,{...v,acceptanceSource:{status:'UNSUPPORTED_SOURCE',schemaVersion:'',setHash:'',criteria:[]}});return send(200,v);}
+        if(state.scenario==='acceptance-context-denied')return send(403,{});
+        if(url.searchParams.get('deliveryOperationId')!==ids.deliveryOperation||url.searchParams.get('datasetVersionId')!==ids.goldVersion)return send(404,{});
+        const selected=url.searchParams.get('contractVersionId');const items=selected?standards.filter(v=>v.id===selected):standards.slice(0,25);if(selected&&!items.length)return send(404,{});
+        return send(200,{workspaceId:ids.workspace,delivery:{id:ids.deliveryOperation,datasetVersionId:ids.goldVersion,status:'BLOCKED'},standards:{workspaceId:ids.workspace,items,page:{limit:25,offset:0,total:selected?1:26}},responsibilities:['PROVIDER','RECEIVER','BASIS_CONFIRMER','REVIEWER','ARCHIVIST','DISPOSER'].map(role=>({role,status:'UNASSIGNED'})),receivingPartyStatus:'UNVERIFIED',writeEnabled:false,blockers:['RESPONSIBILITIES_NOT_CONFIGURED','RECEIVING_PARTY_UNVERIFIED','ACCEPTANCE_WRITES_DISABLED','DELIVERY_NOT_ISSUED',...(!selected?['EXPLICIT_STANDARD_REQUIRED']:[])]});
+      }
       const qualityRoute = /^\/api\/v1\/(?:quality-(?:results|assessments|assessment-attempts)\/|dataset-versions\/[^/]+\/(?:quality-assessments|quality-checks|gold-quality-checks)(?:\/|$))/.test(url.pathname);
       if (qualityRoute) {
         if (req.headers.authorization !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
