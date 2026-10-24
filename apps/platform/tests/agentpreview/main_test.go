@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	agenthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"net/http"
@@ -34,6 +35,31 @@ func TestReadonlyPreviewRejectsAuthenticatedCommandBeforeService(t *testing.T) {
 	h := agenthttp.Handler{Principal: resolver, WriteEnabled: false}
 	mux := http.NewServeMux()
 	h.Register(mux)
+	read := httptest.NewRequest("GET", "/api/v1/workspaces/"+ws+"/agent-task-authority", nil)
+	read.Header.Set("Authorization", "Bearer unit-only")
+	rw := httptest.NewRecorder()
+	mux.ServeHTTP(rw, read)
+	var authority struct {
+		WriteEnabled    bool   `json:"writeEnabled"`
+		DispatchEnabled bool   `json:"dispatchEnabled"`
+		WorkspaceID     string `json:"workspaceId"`
+	}
+	if rw.Code != 200 {
+		t.Fatalf("readonly authority GET denied: %d", rw.Code)
+	}
+	if err := json.Unmarshal(rw.Body.Bytes(), &authority); err != nil {
+		t.Fatal(err)
+	}
+	if authority.WriteEnabled || authority.DispatchEnabled || authority.WorkspaceID != ws {
+		t.Fatal("readonly authority changed")
+	}
+	foreign := httptest.NewRequest("GET", "/api/v1/workspaces/33333333-3333-4333-8333-333333333333/agent-task-authority", nil)
+	foreign.Header.Set("Authorization", "Bearer unit-only")
+	fw := httptest.NewRecorder()
+	mux.ServeHTTP(fw, foreign)
+	if fw.Code != 403 {
+		t.Fatalf("foreign workspace authority leaked: %d", fw.Code)
+	}
 	r := httptest.NewRequest("POST", "/api/v1/workspaces/"+ws+"/agent-tasks", strings.NewReader(`{}`))
 	r.Header.Set("Authorization", "Bearer unit-only")
 	w := httptest.NewRecorder()
