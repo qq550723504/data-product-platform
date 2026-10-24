@@ -1,0 +1,11 @@
+{
+  "status": "PASS_WITH_ONE_EXISTING_CONDITIONAL_SKIP_PER_MODE",
+  "methods_per_mode": 177,
+  "passed_per_mode": 176,
+  "skipped_per_mode": 1,
+  "reason": "test_evidence_indexes ordinary symlink privilege unavailable; actual junction rejection in retention tests passed",
+  "modes": [
+    "normal",
+    "optimized"
+  ]
+}

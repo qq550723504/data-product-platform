@@ -1,0 +1,12 @@
+{
+  "status": "PASS_EXACT_EVIDENCE_INDEX_PUBLICATION_REMAINS_BLOCKED",
+  "index_sha256": "45b85c712ee4f83558e717a27bb0722e8cf05e305b19c30ca69ff55c81e44cf0",
+  "members_verified": 54,
+  "exclusions": [
+    "evidence-index01.json",
+    "evidence-index-audit01.json"
+  ],
+  "reason": "exclude index and its audit to avoid circular hashes",
+  "source_anchor_unchanged": true,
+  "tracked_changes": []
+}

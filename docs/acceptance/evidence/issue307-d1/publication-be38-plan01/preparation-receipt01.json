@@ -1,0 +1,94 @@
+{
+  "status": "PREPARED_BLOCKED_NO_PUBLICATION_AUTHORITY_REQUEST",
+  "observed_at": "2026-10-24T05:49:44.227474+00:00",
+  "source_anchor": "be38a68ded0bd4267a2c7711b5c4bc8bd1012e60",
+  "tracked_changes": [],
+  "proposal_sha256": "cce2ace00cc671b93e6fb7f6f1a0e00156cba24cd8123a031c35504613d4aa45",
+  "human_proposal_sha256": "93f1687475ad60e3ff2270be515d069391ddb37a44b8ad3598189dc2eaf28fe1",
+  "publish_head": null,
+  "integration_commit": "NOT_CREATED",
+  "independent_integration_review": "NOT_RUN",
+  "integrated_exact_head_PR_CI": "NOT_RUN",
+  "source_acceptance_index_members_verified": 91,
+  "api_intents": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/001-intent.json",
+      "method": "GET",
+      "endpoint": "repos/qq550723504/data-product-platform/branches/codex%2Fissue307-post-v22-dispatch-closure",
+      "sha256": "7daad562bfc398e23866604bf7cd05b7c871c9b937500bb8348ac9f0c1b2eb7c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/002-intent.json",
+      "method": "GET",
+      "endpoint": "repos/qq550723504/data-product-platform/branches/codex%2Fissue307-post-v22-dispatch-closure/protection",
+      "sha256": "e444f947f23444d312fb7d64f713db44dff477dc81dac80855fbb4a10ee39b6b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/003-intent.json",
+      "method": "POST",
+      "endpoint": "graphql",
+      "sha256": "52091fecd0b386668eebd92eafcaffa1b2bfba4b14ffdbde02c39ef48d88d83c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/004-intent.json",
+      "method": "GET",
+      "endpoint": "repos/qq550723504/data-product-platform/pulls/332",
+      "sha256": "039432e8f489af1e58640da1a5cea2fd24fdcec7d6340fa6737933aec8d27f87"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/005-intent.json",
+      "method": "GET",
+      "endpoint": "repos/qq550723504/data-product-platform/issues/307",
+      "sha256": "9de4042936daed21c65199c07d505e18f3016c09a098a434c058217e768125b4"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/006-intent.json",
+      "method": "GET",
+      "endpoint": "repos/qq550723504/data-product-platform/commits/e54967e822847e97316e703ee413ffc1298cb627/check-runs?per_page=100",
+      "sha256": "b6a2e2d863b57d209b5dbd7464d9ae703abdf3428d3d783369c2383fb61d6167"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/007-intent.json",
+      "method": "GET",
+      "endpoint": "repos/qq550723504/data-product-platform/actions/runs?head_sha=e54967e822847e97316e703ee413ffc1298cb627&event=pull_request&per_page=100",
+      "sha256": "9584e685adbdadb9b36c648a9598b12ea054d907586f7160c92c98c6e467f107"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/008-intent.json",
+      "method": "GET",
+      "endpoint": "repos/qq550723504/data-product-platform/actions/runs/39983308178/attempts/1/jobs?per_page=100",
+      "sha256": "bf5e9c4a162c83f5636dbbe6c792a63d603f6d9b53fc3add8424682fcf513b35"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/github-read01/009-intent.json",
+      "method": "POST",
+      "endpoint": "graphql",
+      "sha256": "91ffd9a441152b272ca052d9a9fcaf923ae5bfdddf3a21270df1ee2c7d8f3bdf"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/publication-be38-plan01/schema-read01/001-intent.json",
+      "method": "POST",
+      "endpoint": "graphql",
+      "sha256": "b097f2b5f1d436c5686af2458005a4c584ea6bdb1a8ec33bafb1ac99cc16aae7"
+    }
+  ],
+  "api_read_requests": 10,
+  "mutations": 0,
+  "pushes": 0,
+  "unlocks": 0,
+  "source_starts": 0,
+  "business_object_delete": 0,
+  "protection_state_writes": 0,
+  "old_authorization_reused": false,
+  "authorization_received": false,
+  "preserved": [
+    "data",
+    "all budgets",
+    "pins",
+    "failure evidence",
+    "published runtime specification"
+  ],
+  "review_scope": "root proposal consistency only; no new independent integration review",
+  "PR332": "OPEN_DRAFT_UNMERGED",
+  "Issue307": "OPEN"
+}

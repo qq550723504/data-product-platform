@@ -1,0 +1,53 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_INTEGRATION_REVIEW",
+  "reviewed_HEAD": "b2ea34cfab49d445b27d239278cb5a4f9fbc053a",
+  "reviewer": "/root/retirement_source_review",
+  "parents": [
+    "e54967e822847e97316e703ee413ffc1298cb627",
+    "be38a68ded0bd4267a2c7711b5c4bc8bd1012e60"
+  ],
+  "remaining_blockers": [],
+  "findings": [
+    "相对e549，仅CI和prepare两个既有文件修改；其他已发布源码、retention修复及证据均保留。",
+    "prepare当前historical_gate唯一调用新catalog；将新增钩子及历史函数重命名反向归一化后，整份AST与e549一致，无C23/profile/窗口/网络代际回退。",
+    "新AST组合分别验证真实prepare钩子的成功结果和预算失败原样传播，没有历史fallback。",
+    "退役及successor核心六文件与be38 Git字节一致，但本报告结论来自当前整合HEAD独立检查与回归。",
+    "CI保留两父全部既有helper命令及原retention步骤，增加successor普通/-O测试。",
+    "fixture-runtime-artifact完整Git对象保持e549；R仍为ecf40e6c7a9b3aa11166e6a56a5163a29a15691d。"
+  ],
+  "runtime_artifact_Git_blob": "aa009fbd15440e5e00769995d093088f0edd9022",
+  "independent_regression": {
+    "normal": {
+      "integration_and_successor_methods": 16,
+      "adjacent_retirement_preparation_and_retention_methods": 84,
+      "total": 100,
+      "result": "PASS"
+    },
+    "optimized": {
+      "methods": 100,
+      "seconds": 9.415,
+      "result": "PASS"
+    },
+    "diff_check": "PASS",
+    "final_HEAD_recheck": "UNCHANGED"
+  },
+  "critical_raw_sha256": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "f85a21ee0224c4d3336710e436648b5fce35ee661e83e7a9ab091f959277aca5",
+    ".github/workflows/ci.yml": "43a758f165561c25ed1f6e9aec3567d0fad29eef1356c2fde9c7e7551e8fae5b",
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": "5c30a932879323566958edbb90f0fa478e1fcba85e8fd1706d85de9d4481f46d",
+    "examples/lifecycle-d1/test_successor_dependencies.py": "a1976ac84d0e655cd8112a8fc9e1e9ab014573d7637d2dd6bd5d8f1388a54cd5",
+    "docs/acceptance/issue307-d1-integrated-publication-contract.md": "3f57dcdb4d9ae48be1091bfa268ccdc55c2fc7fa65e8740caa902541841c6a27"
+  },
+  "limitations": [
+    "本轮测试采用temp/mock，无Docker/WSL真进程或54310原件扫描。",
+    "未声称远端当前HEAD CI、源环境17版本业务核验或新候选执行已完成。",
+    "独立评审通过不构成发布、解锁、保护写入或业务删除授权。"
+  ],
+  "side_effects": {
+    "repository_or_archive_writes": 0,
+    "docker_or_wsl_process_calls": 0,
+    "source_starts": 0,
+    "provider_or_protection_calls": 0,
+    "git_or_github_mutations": 0
+  }
+}

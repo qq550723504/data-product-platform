@@ -1,0 +1,11 @@
+{
+  "status": "PASS_EXACT_INTEGRATION_ACCEPTANCE_INDEX",
+  "index_sha256": "4bebd8daa147bd064f8799b050d95e5be3c2972a0b711cb93beeebba8197b89a",
+  "members_verified": 153,
+  "excluded": [
+    "evidence-index01.json",
+    "evidence-index-audit01.json"
+  ],
+  "source_reviewed_HEAD": "b2ea34cfab49d445b27d239278cb5a4f9fbc053a",
+  "source_unchanged": true
+}

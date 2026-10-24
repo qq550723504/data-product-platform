@@ -1,0 +1,24 @@
+{
+  "status": "PASS_MERGE_ANCESTRY_AND_PUBLISHED_HISTORY_PRESERVATION",
+  "HEAD": "b2ea34cfab49d445b27d239278cb5a4f9fbc053a",
+  "parents": [
+    "e54967e822847e97316e703ee413ffc1298cb627",
+    "be38a68ded0bd4267a2c7711b5c4bc8bd1012e60"
+  ],
+  "tree": "1bd0a4588dce6658b03c9eef43b4c885a8cbccd9",
+  "published_paths": 37151,
+  "published_issue307_evidence_objects_unchanged": 34090,
+  "published_paths_deleted": [],
+  "published_existing_paths_changed": [
+    ".github/workflows/ci.yml",
+    "examples/lifecycle-d1/prepare-six-candidate.py"
+  ],
+  "runtime_spec_blob": "100644 blob aa009fbd15440e5e00769995d093088f0edd9022",
+  "source_paths_added": 323,
+  "source_test_delta": "two additional actual preparation-hook regressions",
+  "conflict_resolution": "e549 AST plus unique successor gate; old C23 gate retained under before_retirement name",
+  "remote_operations": 0,
+  "source_started": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}
