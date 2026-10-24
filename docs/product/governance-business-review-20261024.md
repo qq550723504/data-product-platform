@@ -36,3 +36,11 @@ DemoProvider 按 `dataKey(workspace.id, key)` 保存业务及详情/追溯上下
 - 本机浏览器预检发现 `tests/browser/node_modules/@playwright/test/cli.js` 不存在，在启动任何 fixture/Next/browser 进程前停止；本地新增浏览器为 NOT_RUN，实际运行交由既有 PR CI，不能用静态审查或语法检查代替浏览器通过。
 
 本轮没有操作保留的数据库、API、网关或原 UI 进程，没有接后端业务写接口、模型、provider 或派发真实执行。保留原库和 Agent API；PR 保持 Draft，不 merge/deploy。此为作者的有界增量审查与修复，不声称整个 PR 新增独立审查批准。
+
+## 新提交 CI 中发现的历史分页问题
+
+`195710c6` 的 browser-contracts job `120793303846` 实际完成两条新增隔离用例，均 PASS；整组113 PASS / 1 FAIL。失败在既有 `schema-exceptions.spec.mjs:45` 的当次拒绝分页，预期末页10条，页面仍为第一页25条。
+
+保留 artifact `12549622523`（SHA256 `1dac4b8a5a7a63424a6199da4ee168c2f258b54c342ccaacf0540a07d51830fc`）。实际截图是 `1–25 / 35`；trace 记录正确的 DENIED/offset25 链接和请求，但客户端停在不含 offset 的 DENIED URL，未提交后续页面。此处不是用行数冒充完成，也没有证据支持改动 API 或 URL builder。
+
+修复复用 `QualityAttention` 已有的文档导航边界：扫描异常历史入口、筛选及分页改用普通 anchor，仍由原 `schemaExceptionsHref` 保留精确筛选/其他队列上下文。具体观察链接维持原行为。原浏览器用例增加目标 href、真实文档导航和精确 URL 的验证，保留10条末页、历史回跳及0业务写入断言，不加 sleep/retry，不将失败重跑成成功。后续新 HEAD 需重新完成 CI；`195710c6` 的局部通过不是最终候选全绿。

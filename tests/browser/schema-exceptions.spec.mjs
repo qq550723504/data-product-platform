@@ -52,7 +52,13 @@ test("workbench keeps history separate from current queues and filters survive o
   const panel=page.getByTestId("schema-exceptions");
   await expect(panel.locator("tbody tr")).toHaveCount(25);
   await expect(panel.locator("tbody tr")).toContainText(Array(25).fill("DENIED"));
-  await panel.getByRole("link",{name:"下一页",exact:true}).click();
+  const next=panel.getByRole("link",{name:"下一页",exact:true});
+  await expect(next).toHaveAttribute("href",/schemaExceptionStatus=DENIED&schemaExceptionOffset=25/);
+  await Promise.all([
+    page.waitForResponse(response=>response.request().isNavigationRequest()&&/schemaExceptionStatus=DENIED&schemaExceptionOffset=25/.test(response.url())),
+    next.click(),
+  ]);
+  await expect(page).toHaveURL(/schemaExceptionStatus=DENIED&schemaExceptionOffset=25#schema-exception-history$/);
   await expect(panel.locator("tbody tr")).toHaveCount(10);
   const row=panel.locator("tbody tr").filter({hasText:"HISTORICAL_DENIED 104"});
   await row.getByRole("link",{name:"查看精确观察"}).click();
