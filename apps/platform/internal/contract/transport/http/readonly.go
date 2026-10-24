@@ -11,8 +11,9 @@ import (
 )
 
 type ReadOnlyHandler struct {
-	Reader    q.Reader
-	Principal principal.Resolver
+	Reader         q.Reader
+	Principal      principal.Resolver
+	ReadCapability string
 }
 
 func (h ReadOnlyHandler) Register(mux *http.ServeMux) {
@@ -36,12 +37,20 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted workspace principal required", nil)
 		return
 	}
-	actor, err := h.Principal.Resolve(r, ws, principal.CapabilityHumanDecision)
+	capability := h.ReadCapability
+	if capability == "" {
+		capability = principal.CapabilityHumanDecision
+	}
+	actor, err := h.Principal.Resolve(r, ws, capability)
+	if errors.Is(err, principal.ErrAuthorityUnavailable) {
+		httpserver.WriteError(w, r, 503, "AUTHORITY_UNAVAILABLE", "identity authority unavailable", nil)
+		return
+	}
 	if errors.Is(err, principal.ErrUnauthenticated) || errors.Is(err, principal.ErrNotConfigured) {
 		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted workspace principal required", nil)
 		return
 	}
-	if err != nil || actor.ActorID == uuid.Nil || actor.Subject == "" || actor.WorkspaceID != ws || !actor.HasCapability(principal.CapabilityHumanDecision) {
+	if err != nil || actor.ActorID == uuid.Nil || actor.Subject == "" || actor.WorkspaceID != ws || !actor.HasCapability(capability) {
 		httpserver.WriteError(w, r, 403, "WORKSPACE_AUTHORITY_DENIED", "workspace read authority denied", nil)
 		return
 	}
@@ -62,7 +71,7 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 			return
 		}
 	}
-	query := q.Query{WorkspaceID: ws, Limit: 25, ActorID: actor.ActorID, Subject: actor.Subject}
+	query := q.Query{WorkspaceID: ws, Limit: 25, ActorID: actor.ActorID, Subject: actor.Subject, Principal: &actor}
 	for key, target := range map[string]*int{"limit": &query.Limit, "offset": &query.Offset, "bindingOffset": &query.BindingOffset} {
 		if raw, ok := params[key]; ok {
 			n, e := strconv.Atoi(raw[0])
@@ -114,6 +123,14 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 		}
 	}
 	p, c, err := (q.Service{Reader: h.Reader}).Read(r.Context(), query)
+	if errors.Is(err, principal.ErrAuthorityUnavailable) {
+		httpserver.WriteError(w, r, 503, "AUTHORITY_UNAVAILABLE", "identity authority unavailable", nil)
+		return
+	}
+	if errors.Is(err, principal.ErrUnauthenticated) || errors.Is(err, principal.ErrWorkspaceDenied) || errors.Is(err, principal.ErrCapabilityDenied) {
+		httpserver.WriteError(w, r, 403, "WORKSPACE_AUTHORITY_DENIED", "current read authority denied", nil)
+		return
+	}
 	if errors.Is(err, q.ErrNotFound) {
 		httpserver.WriteError(w, r, 404, "ACCEPTANCE_SOURCE_NOT_FOUND", "scoped source not found", nil)
 		return

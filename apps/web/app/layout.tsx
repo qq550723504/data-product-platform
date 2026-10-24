@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ConsoleShell } from "@/components/shell";
+import {AcceptanceIdentityShell} from '@/components/acceptance-identity-shell';
+import './identity.css';
 import "./globals.css";
 import "@/components/governance-demo/styles.css";
 import "@/components/governance-demo/agent.css";
@@ -18,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN">
       <body>
-        <ConsoleShell>{children}</ConsoleShell>
+        {process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='business-acceptance'?<AcceptanceIdentityShell>{children}</AcceptanceIdentityShell>:<ConsoleShell>{children}</ConsoleShell>}
       </body>
     </html>
   );

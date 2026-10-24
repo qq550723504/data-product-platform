@@ -1,6 +1,8 @@
 # 业务签收验收与归档接入计划
 
-状态：第 0 切片及责任/标准适用的持久化只读查询已实施，当前行为归 [责任与适用关系契约](../architecture/acceptance-binding-read-contract-v1.md) 和 [绑定只读验收](governance-acceptance-bindings-readonly-20261024.md)。2026-10-24 对 `1141b72c` 细化 [第一切片写入准入设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，本轮仅文档。下表按当前代码更新，不再将已补齐的读取身份/标准格式列为未实现。其余业务写入仍为目标设计；保留原库、预览运行状态和 Agent API，业务写入口继续关闭，不接模型或真实执行，PR #363 保持 Draft、不合并。
+状态更新：独立 1A 身份/责任准入已实施，当前范围归 [1A 实施记录](acceptance-identity-1a-implementation.md)；业务写入仍关闭。以下设计轮及前置只读记录保留其原时间边界。
+
+原状态：第 0 切片及责任/标准适用的持久化只读查询已实施，当前行为归 [责任与适用关系契约](../architecture/acceptance-binding-read-contract-v1.md) 和 [绑定只读验收](governance-acceptance-bindings-readonly-20261024.md)。2026-10-24 对 `1141b72c` 细化 [第一切片写入准入设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，本轮仅文档。下表按当前代码更新，不再将已补齐的读取身份/标准格式列为未实现。其余业务写入仍为目标设计；保留原库、预览运行状态和 Agent API，业务写入口继续关闭，不接模型或真实执行，PR #363 保持 Draft、不合并。
 
 ## 当前能力与缺口
 
@@ -53,7 +55,7 @@
 | 顺序 | 交付范围 | 完成条件 |
 |---|---|---|
 | 0 标准和责任只读 | 已有安全 acceptance-context、合约版本/完整格式/标准适用、六类责任及处置历史 | 只读范围已验收；合成来源显式展示，writeEnabled=false，不代表企业身份或真实收到 |
-| 1A 身份与责任准入依赖 | 复用独立 OIDC/RP 候选，解决迁移/模块冲突、有限业务能力和 Tx-scoped Authority Port；补齐收件材料来源 | 当前未实施；先证明多人隔离、外部撤销检查点及本地撤销 fence，不能直接将共享读取 token 用于写入 |
+| 1A 身份与责任准入依赖 | 复用独立 OIDC/RP 候选，解决迁移/模块冲突、有限业务能力和 Tx-scoped Authority Port；补齐收件材料来源 | 独立 1A 已补齐多人会话、当前身份/责任与本地撤销 fence，见实施记录；企业目录、收到材料和正式业务写入仍未接入 |
 | 1B 草稿与签收 | Case、DraftRevision、BasisConfirmation、BusinessReceipt 及本领域 CommandReceipt；四类显式 Command 和精确查询 | 只处理 DRAFT；角色/来源当前有效；签收有可核对材料；补正追加不覆盖；原键恢复、PG 并发与页面见证 |
 | 2 冻结与流程控制 | Submission、withdraw/cancel transition、冻结成员；扩展已有本领域命令回执与可办理状态 | 不完整材料无法提交；补正与提交竞争安全；撤回与取消不删除旧提交；刷新能恢复精确材料 |
 | 3 业务决定 | RETURNED/ACCEPTED、完整逐项判断、ReviewActivity 和强类型成本关联 | 非指定验收人/自审被拒；签收变更阻断通过；撤回与通过只能一个成功；退回重提保留所有历史 |

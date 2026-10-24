@@ -1,0 +1,140 @@
+// Actual Edge, isolated contexts, synthetic credentials never logged/exported.
+import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import {resolve,dirname} from 'node:path';
+import assert from 'node:assert/strict';
+import {createHash,randomUUID} from 'node:crypto';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+const require=createRequire(resolve(root,'tests/browser/package.json'));
+const {chromium}=require('playwright');
+const run=resolve(root,'.data/acceptance-identity-1a');
+const profile=JSON.parse(readFileSync(resolve(run,'profile.json'),'utf8'));
+assert.equal(profile.database,'acceptance_1a_20261024');assert.equal(profile.origin,'https://localhost:4290');
+const {Pool}=createRequire(resolve(root,'apps/web/package.json'))('pg');
+const db=new Pool({host:'127.0.0.1',port:25495,user:'postgres',password:profile.pgPassword,database:profile.database,ssl:{ca:readFileSync(resolve(run,'ca.crt'),'utf8'),rejectUnauthorized:true}});
+const origin=profile.origin, a='11111111-1111-4111-8111-111111111111', b='12121212-1212-4212-8212-121212121212';
+const results=[];mkdirSync(resolve(run,'screenshots'),{recursive:true});
+const channel=process.env.ACCEPTANCE_BROWSER_CHANNEL??'msedge';
+if(!['msedge','chromium'].includes(channel))throw new Error('Explicit Edge or CI Chromium required');
+const browser=await chromium.launch({...(channel==='msedge'?{channel}:{}),headless:true});
+const contexts=[];
+const people=new Map();
+async function protectedFacts(){return (await db.query(`SELECT md5(string_agg(v,'|' ORDER BY v)) AS hash FROM (
+ SELECT 'delivery:'||row_to_json(t)::text AS v FROM delivery_operation t UNION ALL
+ SELECT 'standard:'||row_to_json(t)::text FROM contract_version t UNION ALL
+ SELECT 'representation:'||row_to_json(t)::text FROM acceptance_party_representation t UNION ALL
+ SELECT 'role:'||row_to_json(t)::text FROM acceptance_responsibility_binding t UNION ALL
+ SELECT 'applicability:'||row_to_json(t)::text FROM acceptance_standard_applicability t UNION ALL
+ SELECT 'disposition:'||row_to_json(t)::text FROM acceptance_binding_disposition t UNION ALL
+ SELECT 'evidence:'||row_to_json(t)::text FROM evidence t) f`)).rows[0].hash;}
+async function noExecution(){for(const table of ['execution','agent_task','agent_action_request','delivery_provider_attempt','outbox_event']){
+ const exists=(await db.query('SELECT to_regclass($1) AS name',[table])).rows[0].name;if(!exists)continue;
+ assert.equal(Number((await db.query('SELECT count(*) AS n FROM '+table)).rows[0].n),0,table+' must remain empty');
+}}
+async function person(name,workspace=a){
+ const context=await browser.newContext({ignoreHTTPSErrors:true,serviceWorkers:'block',viewport:{width:1440,height:1000}});contexts.push(context);
+ await context.route('**/*',route=>{const u=new URL(route.request().url());return ['localhost','127.0.0.1'].includes(u.hostname)?route.continue():route.abort();});
+ const page=await context.newPage();
+ await page.goto(origin+'/auth/login?workspaceId='+workspace);
+ await page.getByRole('button',{name:'使用统一身份登录'}).click();
+ await page.waitForURL('https://localhost:19120/**');
+ await page.locator('#username').fill(profile.people[name].username);
+ await page.locator('#password').fill(profile.people[name].password);
+ await page.locator('#kc-login').click();
+ await page.waitForURL(origin+'/**',{timeout:30000});
+ return {context,page,name};
+}
+async function pass(name,fn){await fn();results.push({name,status:'PASS'});console.log('PASS '+name);}
+try{
+ const before=await protectedFacts();await noExecution();
+ for(const name of ['provider','receiver','confirmer']){
+  const p=await person(name);people.set(name,p);
+  await pass(name+' separate OIDC session and canonical mapping',async()=>{
+   assert.equal(await p.page.getByTestId('current-principal').textContent(),profile.people[name].actor);
+   assert.equal(await p.page.getByTestId('current-workspace').textContent(),a);
+   const cookies=await p.context.cookies(origin);const session=cookies.find(c=>c.name==='__Host-dpp-session');
+   assert.ok(session?.secure&&session.httpOnly&&session.sameSite==='Lax');
+  });
+  const target=p.page.locator('a[href*="deliveryOperationId=74000000-0000-4000-8000-000000001002"]');
+  await pass(name+' current target responsibility and writes disabled',async()=>{
+   assert.equal(await target.count(),1);await target.click();
+   await p.page.getByRole('heading',{name:'本人责任与办理准入'}).waitFor();
+   const panel=p.page.getByRole('region',{name:'事务内身份与责任预检'});
+   assert.ok((await panel.textContent()).includes('本人责任已匹配'));
+   assert.equal(await panel.getByText('业务写入口保持关闭',{exact:true}).count(),4);
+   assert.ok((await panel.textContent()).includes('合成夹具'));
+   await p.page.reload();await p.page.getByRole('heading',{name:'本人责任与办理准入'}).waitFor();
+   await p.page.getByRole('link',{name:'查看标准 · 1.0.0',exact:true}).click();
+   await p.page.getByText('标准适用关系已核验',{exact:true}).waitFor();
+   await p.page.getByRole('link',{name:'追溯标准确认人',exact:true}).click();
+   await p.page.getByRole('heading',{name:'绑定事实详情',exact:true}).waitFor();
+   await p.page.reload();await p.page.getByRole('heading',{name:'绑定事实详情',exact:true}).waitFor();
+  });
+  await p.page.screenshot({path:resolve(run,'screenshots',name+'-admission.png'),fullPage:true});
+  await pass(name+' business API / legacy bypass denied',async()=>{
+   for(const path of ['/api/v1/business-acceptances','/api/agent/tasks','/demo','/_next/data/test/identity.json']){
+    const r=await p.context.request.post(origin+path,{data:{workspaceId:a}});assert.equal(r.status(),403);
+   }
+  });
+ }
+ const foreign=await person('provider',b);
+ await pass('provider has no grant in workspace B even with responsibility facts',async()=>{
+  assert.equal(await foreign.page.getByTestId('current-principal').count(),0);
+  assert.ok((await foreign.page.textContent('body')).includes('登录未完成'));
+ });
+ const receiver=await person('receiver',b);
+ await pass('receiver independently authorized in workspace B',async()=>{
+  assert.equal(await receiver.page.getByTestId('current-workspace').textContent(),b);
+  await receiver.page.locator('a[href*="deliveryOperationId=74000000-0000-4000-8000-000000002002"]').click();
+  await receiver.page.getByRole('heading',{name:'本人责任与办理准入'}).waitFor();
+ });
+ await pass('foreign target URL never returns workspace A data',async()=>{
+  await receiver.page.goto(origin+'/core/acceptance-context?deliveryOperationId=74000000-0000-4000-8000-000000001002&datasetVersionId=74000000-0000-4000-8000-000000001001');
+  assert.equal(await receiver.page.getByRole('heading',{name:'本人责任与办理准入'}).count(),0);
+ });
+ const narrow=await person('confirmer');await narrow.page.setViewportSize({width:390,height:844});
+ await narrow.page.screenshot({path:resolve(run,'screenshots','identity-narrow.png'),fullPage:true});
+ await pass('narrow identity page has no horizontal overflow',async()=>assert.ok(await narrow.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)));
+ for(const name of ['reviewer','archivist','disposer']){
+  const p=await person(name);await pass(name+' has own read identity without future write capabilities',async()=>{
+   assert.equal(await p.page.getByTestId('current-principal').textContent(),profile.people[name].actor);
+   assert.equal(await p.page.getByText('查看验收责任与标准',{exact:true}).count(),1);
+   assert.equal(await p.page.getByText('提供方草稿资格',{exact:true}).count(),0);
+  });
+ }
+ await pass('all browser reads preserve immutable business facts and dispatch stays empty',async()=>{assert.equal(await protectedFacts(),before);await noExecution()});
+ await pass('actor revocation rejects open session; reenabling never revives its revision',async()=>{
+  const actor=profile.people.provider.actor,p=people.get('provider');
+  try{
+   await db.query('UPDATE platform_actor_state SET enabled=false,revision=revision+1 WHERE actor_id=$1',[actor]);await p.page.goto(origin+'/identity');
+   assert.equal(await p.page.getByTestId('current-principal').count(),0);
+  }finally{await db.query('UPDATE platform_actor_state SET enabled=true,revision=revision+1 WHERE actor_id=$1 AND NOT enabled',[actor])}
+  await p.page.reload();assert.equal(await p.page.getByTestId('current-principal').count(),0);
+  const fresh=await person('provider');assert.equal(await fresh.page.getByTestId('current-principal').textContent(),actor);
+ });
+ await pass('revoking only workspace B rejects B session while A remains available',async()=>{
+  const actor=profile.people.receiver.actor;
+  try{
+   await db.query('UPDATE platform_workspace_grant SET enabled=false,revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2',[actor,b]);
+   await receiver.page.goto(origin+'/identity');assert.equal(await receiver.page.getByTestId('current-principal').count(),0);
+   await people.get('receiver').page.goto(origin+'/identity');assert.equal(await people.get('receiver').page.getByTestId('current-workspace').textContent(),a);
+  }finally{await db.query('UPDATE platform_workspace_grant SET enabled=true,revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2 AND NOT enabled',[actor,b])}
+  await receiver.page.reload();assert.equal(await receiver.page.getByTestId('current-principal').count(),0);
+ });
+ await pass('database-expired browser session fails closed without static fallback',async()=>{
+  const p=people.get('confirmer'),key=(await p.context.cookies(origin)).find(v=>v.name==='__Host-dpp-session').value;
+  await db.query('UPDATE platform_browser_session SET expires_at=clock_timestamp()-interval \'1 second\' WHERE key_hash=$1',[createHash('sha256').update(key).digest()]);
+  await p.page.goto(origin+'/identity');assert.equal(await p.page.getByTestId('current-principal').count(),0);
+ });
+ await pass('stored business history rejects update and delete',async()=>{
+  for(const sql of ["UPDATE acceptance_responsibility_binding SET role='PROVIDER' WHERE id='74000000-0000-4000-8000-000000001041'","DELETE FROM acceptance_responsibility_binding WHERE id='74000000-0000-4000-8000-000000001041'"]){
+   await assert.rejects(db.query(sql),e=>e.code==='23514');
+  }assert.equal(await protectedFacts(),before);
+ });
+ await noExecution();
+}catch(e){results.push({name:'browser acceptance stopped on first failure',status:'FAIL',kind:e?.name??'Error'});process.exitCode=1;console.error('Browser acceptance FAIL; no credential-bearing exception exported.');}
+finally{
+ writeFileSync(resolve(run,'browser-results.json'),JSON.stringify({browser:channel==='msedge'?'Edge':'CI Chromium',results},null,2));
+ for(const context of contexts)await context.close();await browser.close();await db.end();
+}

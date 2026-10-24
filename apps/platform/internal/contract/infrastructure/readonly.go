@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/contract/domain"
 	q "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/readmodel"
+	"time"
 )
 
 func (r *PostgresRepository) ReadAcceptanceSources(ctx context.Context, query q.Query) (q.Snapshot, error) {
@@ -19,6 +20,18 @@ func (r *PostgresRepository) ReadAcceptanceSources(ctx context.Context, query q.
 	if err = tx.QueryRow(ctx, `SELECT transaction_timestamp()`).Scan(&result.EvaluatedAt); err != nil {
 		return result, err
 	}
+	result, err = r.ReadAcceptanceSourcesInTx(ctx, tx, query, result.EvaluatedAt)
+	if err != nil {
+		return result, err
+	}
+	return result, tx.Commit(ctx)
+}
+
+// ReadAcceptanceSourcesInTx reuses the scoped projection on the caller's
+// existing transaction. It never opens a pool connection or commits it.
+func (r *PostgresRepository) ReadAcceptanceSourcesInTx(ctx context.Context, tx pgx.Tx, query q.Query, at time.Time) (q.Snapshot, error) {
+	result := q.Snapshot{Versions: []q.StoredVersion{}, EvaluatedAt: at}
+	var err error
 	if query.DeliveryID != nil {
 		d := &q.Delivery{}
 		err = tx.QueryRow(ctx, `SELECT o.id,o.dataset_version_id,o.status,o.effective_consumer_ref FROM delivery_operation o JOIN dataset_version v ON v.id=o.dataset_version_id JOIN dataset d ON d.id=v.dataset_id WHERE o.workspace_id=$1 AND d.workspace_id=$1 AND o.id=$2 AND o.dataset_version_id=$3`, query.WorkspaceID, query.DeliveryID, query.DatasetVersionID).Scan(&d.ID, &d.DatasetVersionID, &d.Status, &d.ConsumerRef)
@@ -34,36 +47,29 @@ func (r *PostgresRepository) ReadAcceptanceSources(ctx context.Context, query q.
 			return result, err
 		}
 	}
-	const from = ` FROM contract_version v JOIN data_contract c ON c.id=v.contract_id WHERE c.workspace_id=$1 AND ($2::uuid IS NULL OR v.id=$2)`
-	if err = tx.QueryRow(ctx, `SELECT count(*)`+from, query.WorkspaceID, query.VersionID).Scan(&result.Total); err != nil {
+	// Count and page share one statement snapshot, also under READ COMMITTED
+	// after authority fence waits. Empty pages still retain the exact total.
+	var payload []byte
+	err = tx.QueryRow(ctx, `WITH scoped AS MATERIALIZED (
+ SELECT c.workspace_id,c.name,v.* FROM contract_version v JOIN data_contract c ON c.id=v.contract_id
+ WHERE c.workspace_id=$1 AND ($2::uuid IS NULL OR v.id=$2)
+ ), page AS (SELECT * FROM scoped ORDER BY created_at DESC,id LIMIT $3 OFFSET $4)
+ SELECT (SELECT count(*) FROM scoped),COALESCE(jsonb_agg(jsonb_build_object(
+ 'WorkspaceID',workspace_id,'Name',name,'Version',jsonb_build_object('ID',id,'ContractID',contract_id,
+ 'MajorVersion',major_version,'MinorVersion',minor_version,'PatchVersion',patch_version,'Status',status,
+ 'SourceSHA256',source_sha256,'Document',document,'CreatedAt',created_at,'PublishedAt',published_at)) ORDER BY created_at DESC,id),'[]'::jsonb)
+ FROM page`, query.WorkspaceID, query.VersionID, query.Limit, query.Offset).Scan(&result.Total, &payload)
+	if err != nil {
 		return result, err
 	}
 	if query.VersionID != nil && result.Total == 0 {
 		return result, q.ErrNotFound
 	}
-	rows, err := tx.Query(ctx, `SELECT c.workspace_id,c.name,v.id,v.contract_id,v.major_version,v.minor_version,v.patch_version,v.status,v.source_sha256,v.document,v.created_at,v.published_at`+from+` ORDER BY v.created_at DESC,v.id LIMIT $3 OFFSET $4`, query.WorkspaceID, query.VersionID, query.Limit, query.Offset)
-	if err != nil {
+	if err = json.Unmarshal(payload, &result.Versions); err != nil {
 		return result, err
 	}
-	for rows.Next() {
-		var v q.StoredVersion
-		var document []byte
-		if err = rows.Scan(&v.WorkspaceID, &v.Name, &v.Version.ID, &v.Version.ContractID, &v.Version.MajorVersion, &v.Version.MinorVersion, &v.Version.PatchVersion, &v.Version.Status, &v.Version.SourceSHA256, &document, &v.Version.CreatedAt, &v.Version.PublishedAt); err != nil {
-			rows.Close()
-			return result, err
-		}
-		if err = json.Unmarshal(document, &v.Version.Document); err != nil {
-			rows.Close()
-			return result, err
-		}
-		result.Versions = append(result.Versions, v)
-	}
-	err = rows.Err()
-	rows.Close()
-	if err != nil {
-		return result, err
-	}
-	return result, tx.Commit(ctx)
+
+	return result, nil
 }
 
 // Dependencies and dispositions are selected from the same repeatable-read

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "start": "next start",
-    "build": "npm run test:demo && npm run test:history && npm run test:agent && npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && npm run test:schema && next build",
+    "build": "npm run test:iam && npm run test:demo && npm run test:history && npm run test:agent && npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && npm run test:schema && next build",
     "test:agent": "tsc lib/agent-quality.ts lib/agent-command-receipt.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .agent-tests && node --test tests/agent-quality.test.mjs tests/agent-command-receipt.test.mjs",
     "test:schema": "tsc lib/schema-observation.ts lib/schema-exceptions.ts lib/schema-requests.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .schema-tests && node --test tests/schema-observation.test.mjs tests/schema-exceptions.test.mjs tests/schema-requests.test.mjs tests/schema-attempts.test.mjs",
     "lint": "eslint . --max-warnings=0",
@@ -19,20 +19,29 @@
     "test:quality": "tsc lib/quality-command.ts lib/quality-attention.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .quality-tests && node --test tests/quality-command.test.mjs tests/quality-attention.test.mjs tests/quality-transport.test.mjs tests/quality-evidence-page.test.mjs",
     "test:compliance": "tsc lib/compliance-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .compliance-tests && node --test tests/compliance-command.test.mjs",
     "test:demo": "node --test tests/governance-demo/*.test.mjs",
-    "test:history": "tsc lib/acceptance-context.ts lib/delivery-history.ts lib/core-history.ts lib/quality-cost.ts lib/release-trace.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .history-tests && node --test tests/core-history.test.mjs tests/delivery-history.test.mjs tests/acceptance-context.test.mjs"
+    "test:history": "tsc lib/acceptance-context.ts lib/delivery-history.ts lib/core-history.ts lib/quality-cost.ts lib/release-trace.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .history-tests && node --test tests/core-history.test.mjs tests/delivery-history.test.mjs tests/acceptance-context.test.mjs",
+    "test:iam": "tsc lib/iam-core.ts lib/iam-store.ts lib/iam-workspace.ts lib/acceptance-identity.ts --target ES2022 --module commonjs --lib ES2022,DOM,DOM.Iterable --strict --esModuleInterop --skipLibCheck --outDir .iam-tests && node tests/run-iam-tests.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
-    "next": "15.5.24",
+    "jose": "6.2.12",
+    "next": "15.5.28",
+    "openid-client": "6.8.8",
+    "pg": "8.23.1",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "22.13.14",
+    "@types/pg": "8.20.0",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
     "eslint": "8.57.1",
-    "eslint-config-next": "15.5.24",
+    "eslint-config-next": "15.5.28",
     "typescript": "5.8.2"
+  },
+  "overrides": {
+    "postcss": "8.5.29"
   }
 }

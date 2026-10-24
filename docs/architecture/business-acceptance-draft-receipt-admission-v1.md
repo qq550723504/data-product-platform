@@ -1,8 +1,10 @@
 # 验收草稿与业务签收：可信身份及写入准入设计
 
+> 2026-10-24 范围更新：用户已授权实施独立验收环境 1A。逐用户身份、责任预检和事务内本地权威校验的已实现范围及证据归 [1A 实施记录](../product/acceptance-identity-1a-implementation.md)。下文 Case/Draft/Confirmation/Receipt、业务写入及恢复仍是目标设计，不因 1A 实施而启用。
+
 状态：**DESIGN ONLY，2026-10-24**。核对基线为 PR #363 的 `1141b72ce1af68194809f03997be3d94d7d4a287`。本次仅细化方案，不实施 IAM、DDL、API、页面或配置，不更新预览运行进程。保留原库和 Agent API，业务写入口继续关闭，不接模型、不派发真实执行，保持 Draft、不合并。
 
-本文是 [业务验收总契约](business-acceptance-backend-contract-v1.md) 中第一切片的详细约束，拥有本切片的身份、准入、请求字段与恢复规则；总契约继续拥有后续提交、撤回、审核、归档及作废流程。已实现的责任与标准适用查询仍以 [只读契约](acceptance-binding-read-contract-v1.md) 为准。下列新接口、能力名、事务 Port 和对象均是目标设计，不能据此声称已接入或启用。
+本文是 [业务验收总契约](business-acceptance-backend-contract-v1.md) 中第一切片的详细约束，拥有本切片的身份、准入、请求字段与恢复规则；总契约继续拥有后续提交、撤回、审核、归档及作废流程。已实现的责任与标准适用查询仍以 [只读契约](acceptance-binding-read-contract-v1.md) 为准。其中 1A 私有身份查询、有限 READ profile 和事务 Port 已在独立 host 实施；其余新业务接口与对象仍是目标设计，不能据此声称已接入或启用。
 
 ## 1. 交付范围与现状
 
@@ -12,13 +14,13 @@
 |---|---|---|
 | 当前 acceptance-context、ContractVersion 和 migration 74 | 精确成果、六类责任、代表关系、标准适用、完整标准来源与追加处置的只读事实 | 当前 SYNTHETIC_FIXTURE 不证明企业身份或真实签收；没有业务 Command/fence |
 | 当前 principal.Resolver、quality-server.ts | 服务端身份入口、已有只读预览 | StaticResolver 与共享 HUMAN_DECISION_API_TOKEN 不能区分实际办理的多个人 |
-| 独立 OIDC/RP 候选 | 外部 IAM Adapter、逐用户私有会话、当前身份映射、IAM 变更 fence 的路线 | 未进入本分支；既有浏览器 profile 只覆盖 reviewer/annotation-admin，不覆盖本切片 |
+| 独立 OIDC/RP 候选 | 外部 IAM Adapter、逐用户私有会话、当前身份映射、IAM 变更 fence 的路线 | 候选的身份/会话基础已由 1A 有界复用；新增独立 acceptance profile，其他候选模块未合并 |
 | transaction、Evidence/Audit/Outbox、Agent 回执/CAS 模式 | 同事务记录、明确请求恢复、历史保留的机制 | 新增本领域对象和约束；不复用 Agent receipt 表、API 或状态机 |
 | 新版业务演示页面 | 列表、草稿、签收及历史的页面职责和导航 | 演示角色与 sessionStorage 不是正式身份或业务事实，不迁移为 Core 数据 |
 
 复用评估：账号、密码、MFA、SSO 继续交给企业 OIDC；[能力地图](capability-map.md) 的 ZITADEL/Keycloak 方向适用，不新造登录系统。已有有限能力映射与精确业务责任校验足够时，不再引入 Casbin/OPA；需要通用策略引擎时再独立评估。短事务办理复用现有事务与 Outbox，无需 Temporal、第二套队列或通用审批平台。Case、签收和责任准入属于平台业务语义。
 
-候选代码的冻结检查依据是本机独立 checkout `C:/Users/Henry/.codex/worktrees/dpp-oidc-contract/data-product-platform`，提交 `fde81069d79c1189c9dae08515646eeac5e008d0`，主要文件为 `docs/architecture/identity-authentication-contract.md`、`browser-identity-candidate.md`、`entity-review-iam-contract.md` 及 `principal/oidc`、`principal/bindings`。它不是 #363 已集成或企业现场验证的证明。候选使用成熟 ZITADEL OIDC Go 库（Apache-2.0）与 openid-client/pg（MIT）的 Adapter 方案；版本、漏洞、维护状态及运维配置须在将来选定集成提交时重新核验，不将旧版本号当成当前推荐。
+候选代码的冻结检查依据是本机独立 checkout `C:/Users/Henry/.codex/worktrees/dpp-oidc-contract/data-product-platform`，提交 `fde81069d79c1189c9dae08515646eeac5e008d0`，主要文件为 `docs/architecture/identity-authentication-contract.md`、`browser-identity-candidate.md`、`entity-review-iam-contract.md` 及 `principal/oidc`、`principal/bindings`。原候选本身不是企业现场验证证明；本分支 1A 的有界复用以实施记录为准。候选使用成熟 ZITADEL OIDC Go 库（Apache-2.0）与 openid-client/pg（MIT）的 Adapter 方案；版本、漏洞、维护状态及运维配置须在将来选定集成提交时重新核验，不将旧版本号当成当前推荐。
 
 **集成冲突必须先解决**：候选曾占用 migration 51，而当前分支 51 已用于 ingestion_batch，当前验收绑定为 74；Go/pgx 依赖基线也不同。未来由 IAM 与仓库 owner 协调新的增量迁移和模块基线，验证组合后的干净安装；不得直接 cherry-pick 旧迁移、改写已应用编号或给原库补跑。本轮不分配迁移号、不操作其他 checkout。
 
@@ -37,7 +39,7 @@
 | 办理哪笔成果 | deliveryId + datasetVersionId + 精确 responsibility_binding | URL 选中空间、同组织、只具有 HUMAN_DECISION |
 | 本单责任 | 创建时冻结的六个责任 binding ID；动作所需绑定仍为当前唯一有效绑定 | 新任责任人自动接管旧单、按最新时间选人 |
 
-身份接入拟复用候选 current-principal 的固定 profile 模式，新增私有 `POST /internal/identity/business-acceptance-principal`（**NOT_REGISTERED**，只是当前资格查询，不保存业务事实）。只允许固定 TLS transport、该用户 Bearer 和 `{"workspace_id":"UUID"}`，body ≤4 KiB、拒绝未知/重复字段；不接收能力、actor、party 或 caller 指定的 profile。它要求本模块 READ，不复用 reviewer 的 HUMAN_DECISION 或 annotation-admin 能力。企业 access-token audience/client/scope 白名单仍由 IAM Adapter 契约固定。
+身份接入拟复用候选 current-principal 的固定 profile 模式，新增私有 `POST /internal/identity/business-acceptance-principal`（仅独立 1A host 已注册，只是当前资格查询，不保存业务事实）。只允许固定 TLS transport、该用户 Bearer 和 `{"workspace_id":"UUID"}`，body ≤4 KiB、拒绝未知/重复字段；不接收能力、actor、party 或 caller 指定的 profile。它要求本模块 READ，不复用 reviewer 的 HUMAN_DECISION 或 annotation-admin 能力。企业 access-token audience/client/scope 白名单仍由 IAM Adapter 契约固定。
 
 拟议成功投影固定为 `profileVersion=business-acceptance.v1, principalId, canonicalSubject, workspaceId, issuer, subject, authorityRevision, capabilities, expiresAt`。issuer/subject 指已验证的外部 OIDC 身份，canonicalSubject 才是平台业务 subject；不得把候选七字段审核投影中的 subject 原样写进业务代表表。BFF 比对登录时 issuer/sub、固定空间和 canonical principal，pin 当前 authorityRevision；不同 profile/schema 或 revision 变化拒绝旧会话。投影仅供私有 BFF，浏览器只展示本人最小信息。expiresAt 沿用候选的 token/本地资格期限上限，不能把该投影当可缓存的业务写入 lease。身份缺失 401、无本模块 READ 403、依赖不可用 503，无静态凭据回退；该 profile 的实现和版本须由 IAM owner 集成审核。
 
@@ -111,7 +113,7 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 
 ## 4. 写入的事务准入与并发保证
 
-**现有缺口**：OIDC 候选在请求入口查询当前身份；其 Entity Review 契约明确没有将 grant 撤销和已进入的业务事务串行化。当前绑定 GET 的 READ ONLY/REPEATABLE READ 时点也只是读取快照。二者均不能直接成为业务写入授权。
+**候选历史缺口（1A 本地 Port 已有界补齐，见实施记录）**：OIDC 候选在请求入口查询当前身份；其 Entity Review 契约明确没有将 grant 撤销和已进入的业务事务串行化。当前绑定 GET 的 READ ONLY/REPEATABLE READ 时点也只是读取快照。二者均不能直接成为业务写入授权。
 
 未来由 IAM owner 提供 **Tx-scoped Authority Port**：在验收事务的同一个 pgx.Tx/连接中取得既有 IAM mutation fence 的兼容锁，并重读 actor、issuer/sub binding、workspace grant、capability、revision/期限；不得复制私有 advisory key，或在另一条连接持锁就声称同事务。业务责任 owner 提供 workspace 级 binding fence，所有新增代表/责任/适用事实和 disposition 的受控写路径均须参与。存在可绕过 fence 的运行期写路径时不开放本切片。
 
@@ -197,7 +199,7 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 
 ## 7. 新版页面与人员办理顺序
 
-复用新版侧栏的“业务验收”“业务签收”“业务归档”和既有 Core 壳，不增加重复菜单。未来正式路由与 `/#business-*` 演示域分离；本次不实现页面。
+未来 Case 业务页面复用新版侧栏的“业务验收”“业务签收”“业务归档”和既有 Core 壳，不增加重复菜单。正式路由与 `/#business-*` 演示域分离；这些业务表单尚未实现。1A 仅实现身份/工作空间和责任预检页面，见实施记录。
 
 | 页面/顺序 | 主体与唯一主要动作 | 返回、刷新和阻断 |
 |---|---|---|
@@ -218,14 +220,14 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 
 | 门禁/责任 owner | 必须提供的证据 | 当前判定 |
 |---|---|---|
-| IAM / RP owner | 选定集成提交、迁移/模块冲突解决；本模块有限能力、逐用户 token、有效主体映射；外部撤销窗口契约 | IMPLEMENTATION_REQUIRED；真实企业多人登录 NOT_RUN |
-| IAM + 责任事实 owner | Tx-scoped Port、共享 fence 顺序；所有身份/绑定/处置写路径受控；到期和未来处置时点测试 | IMPLEMENTATION_REQUIRED；当前只读查询不能代替 |
+| IAM / RP owner | 选定集成提交、迁移/模块冲突解决；本模块有限能力、逐用户 token、有效主体映射；外部撤销窗口契约 | 1A 独立实现及合成多人验收见实施记录；真实企业多人登录 NOT_RUN |
+| IAM + 责任事实 owner | Tx-scoped Port、共享 fence 顺序；所有身份/绑定/处置写路径受控；到期和未来处置时点测试 | 1A 本地身份/责任 Port 及真实 PG fence 已实现；Case 写入及远端原子撤销不在其中 |
 | 业务/目录责任方 | 六类责任的可信来源、代表依据、人员可联系性和职责分离；真实标准适用确认 | 当前只有 SYNTHETIC_FIXTURE；不准正式写入 |
 | Acceptance owner | Case/Draft/Confirmation/Receipt 及强类型关联、完整 hash、显式 Command、独立回执与不可变历史 | DESIGN ONLY |
 | Evidence / Audit / Outbox owner | 可验证的收件材料接纳来源/类别、强类型证据关系、同事务事实/审计/事件；当前 retention-only 无通知消费者 | 复用点已确认；业务收件材料接纳及新关联/事件未实现 |
 | Web owner | 单用户 BFF、CSRF、恢复记录、明确页面职责和跨空间隔离；无共享凭据 fallback | DESIGN ONLY |
 | 验收 owner | 独立验收库的 PG/HTTP/browser 证据，标清合成正例与企业现场差别 | 新写入切片全部 NOT_RUN |
-| 运行边界 owner | 对哪套独立库、哪些有限 Command 开放的另行明确授权及默认关闭 profile | NOT_AUTHORIZED；当前保持只读，不改原库/Agent |
+| 运行边界 owner | 对哪套独立库、哪些有限 Command 开放的另行明确授权及默认关闭 profile | 1A 独立身份/预检已获授权；业务写入仍未授权，保持只读，不改原库/Agent |
 
 未来最小测试矩阵：
 
@@ -242,4 +244,4 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 
 合成正例只能由隔离测试 harness 的测试身份/来源 Port 接纳，绑定明确测试库与空间，不在正式运行构建/profile 提供放行 Synthetic 的开关；正式来源门禁的 Synthetic 拒绝须独立负测。浏览器中的独立会话可验证应用隔离，但企业 IdP 的真实多人登录仍需另列现场 NOT_RUN/PASS，不能用测试 Adapter 结果代替。
 
-本轮设计核对覆盖权威来源、状态、历史不可变、身份/工作空间、并发与恢复。实际变更仅 Markdown；没有进行本切片的接口、DDL、企业 IAM 或浏览器验收，也不把前一只读切片的 PASS 延伸到本设计。
+原设计轮（1A 实施前）的核对覆盖权威来源、状态、历史不可变、身份/工作空间、并发与恢复。实际变更仅 Markdown；没有进行本切片的接口、DDL、企业 IAM 或浏览器验收，也不把前一只读切片的 PASS 延伸到本设计。

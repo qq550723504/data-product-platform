@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/contract/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"sort"
 	"time"
 )
@@ -22,6 +23,7 @@ type Query struct {
 	BindingID        *uuid.UUID
 	ActorID          uuid.UUID
 	Subject          string
+	Principal        *principal.RequestPrincipal
 }
 type StoredVersion struct {
 	WorkspaceID uuid.UUID
@@ -40,6 +42,7 @@ type Snapshot struct {
 	Delivery    *Delivery
 	EvaluatedAt time.Time
 	Bindings    []domain.AcceptanceBindingFact
+	Authority   *principal.Authority
 }
 type Reader interface {
 	ReadAcceptanceSources(context.Context, Query) (Snapshot, error)
@@ -86,6 +89,7 @@ type Context struct {
 	ReceivingPartyStatus string                            `json:"receivingPartyStatus"`
 	Blockers             []string                          `json:"blockers"`
 	WriteEnabled         bool                              `json:"writeEnabled"`
+	Admission            *Admission                        `json:"admission,omitempty"`
 }
 type Service struct{ Reader Reader }
 
@@ -130,6 +134,9 @@ func (s Service) Read(ctx context.Context, q Query) (Page, *Context, error) {
 		}
 	}
 	c.Responsibilities, c.Applicability, c.BindingHistory.Items = domain.EvaluateAcceptanceBindings(bc, stored.Bindings)
+	if stored.Authority != nil {
+		c.Admission = admissionView(*stored.Authority, c)
+	}
 	for _, r := range c.Responsibilities {
 		if r.Status != "ASSIGNED" {
 			c.Blockers = append(c.Blockers, "ROLE_"+r.Role+"_"+r.Status)

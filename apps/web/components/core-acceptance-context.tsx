@@ -1,4 +1,8 @@
 import Link from 'next/link';
+import {iamEnabled} from '@/lib/iam-mode';
+import {currentAcceptanceClient} from '@/lib/iam-server';
+import {validIdentityContext, type IdentityContext} from '@/lib/acceptance-identity';
+import {AdmissionPanel} from './acceptance-admission-panel';
 import {PageHeader,EmptyState,Badge} from './ui';
 import {UnknownHistory} from './core-history-records';
 import {configuredWorkspaceId} from '@/lib/platform';
@@ -22,19 +26,24 @@ function FactDetails({fact:f}:{fact:BindingFact}){return <dl>
  <dt>查询时点状态</dt><dd>{states[f.state]}{f.reason&&f.kind!=='DISPOSITION'?' · '+(reasons[f.reason]??f.reason):''}</dd>
  </dl>;}
 export default async function CoreAcceptanceContext({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
- const ws=configuredWorkspaceId()??'';let s;try{s=acceptanceSelection(await searchParams)}catch{return <><PageHeader title="验收准备引用无效"/><UnknownHistory>请使用明确 UUID 和完整交付、版本配对，没有改查其他对象。</UnknownHistory><a href="/core/acceptance-context">返回标准列表</a></>}
+ let ws=configuredWorkspaceId()??'';
+ let client:Awaited<ReturnType<typeof currentAcceptanceClient>>|undefined;
+ if(iamEnabled()){try{client=await currentAcceptanceClient();ws=client.principal.workspace_id;}catch{return <><PageHeader title="当前身份不可用"/><p>请重新核验身份和空间资格，没有使用共享凭据读取。</p><Link href="/auth/login">统一身份登录</Link></>}}
+ const read=async<T,>(path:string):Promise<T>=>{if(!client)return qualityRead<T>(path);const response=await client.request(client.apiBaseUrl+path);if(!response.ok)throw new Error('scoped read unavailable');return response.json() as Promise<T>};
+ let s;try{s=acceptanceSelection(await searchParams)}catch{return <><PageHeader title="验收准备引用无效"/><UnknownHistory>请使用明确 UUID 和完整交付、版本配对，没有改查其他对象。</UnknownHistory><a href="/core/acceptance-context">返回标准列表</a></>}
  const root=`/api/v1/workspaces/${ws}`;
  const [list,standard,context]=await Promise.all([
-  readSection(()=>qualityRead<StandardPage>(`${root}/contract-versions?limit=25&offset=${s.offset}`),p=>validStandards(p,ws,s.offset)),
-  s.contractVersionId?readSection(()=>qualityRead<Standard>(`/api/v1/contract-versions/${s.contractVersionId}?workspaceId=${ws}`),p=>validStandard(p,ws,s.contractVersionId)):Promise.resolve(null),
-  s.deliveryOperationId?readSection(()=>qualityRead<AcceptanceContext>(`${root}/acceptance-context?`+new URLSearchParams({deliveryOperationId:s.deliveryOperationId!,datasetVersionId:s.datasetVersionId!,bindingOffset:String(s.bindingOffset),...(s.bindingId?{bindingId:s.bindingId}:{}),...(s.contractVersionId?{contractVersionId:s.contractVersionId}:{})})),p=>validAcceptanceContext(p,ws,s.deliveryOperationId!,s.datasetVersionId!,s.contractVersionId,s.bindingOffset,s.bindingId)):Promise.resolve(null)
+  readSection(()=>read<StandardPage>(`${root}/contract-versions?limit=25&offset=${s.offset}`),p=>validStandards(p,ws,s.offset)),
+  s.contractVersionId?readSection(()=>read<Standard>(`/api/v1/contract-versions/${s.contractVersionId}?workspaceId=${ws}`),p=>validStandard(p,ws,s.contractVersionId)):Promise.resolve(null),
+  s.deliveryOperationId?readSection(()=>read<AcceptanceContext>(`${root}/acceptance-context?`+new URLSearchParams({deliveryOperationId:s.deliveryOperationId!,datasetVersionId:s.datasetVersionId!,bindingOffset:String(s.bindingOffset),...(s.bindingId?{bindingId:s.bindingId}:{}),...(s.contractVersionId?{contractVersionId:s.contractVersionId}:{})})),p=>client?validIdentityContext(p,client.principal,s):validAcceptanceContext(p,ws,s.deliveryOperationId!,s.datasetVersionId!,s.contractVersionId,s.bindingOffset,s.bindingId)):Promise.resolve(null)
  ]);
  return <><PageHeader title="标准与验收责任" description="核对明确成果的代表资格、办理责任和标准适用依据"/>
  <p>工作空间：<code>{ws||'未配置'}</code></p><div className="callout">只读准备阶段。绑定有效不代表已签收或验收通过。合成验收夹具用于验证流程，不代表企业真实人员授权。</div>
- <p><a href="/core/deliveries">返回交付记录</a> · <Link href="/#business-acceptances">查看业务验收演示</Link></p>
+ {client?<p><Link href="/identity">返回身份与工作空间</Link></p>:<p><a href="/core/deliveries">返回交付记录</a> · <Link href="/#business-acceptances">查看业务验收演示</Link></p>}
+ {client&&context&&<AdmissionPanel value={(context as IdentityContext).admission}/>}
  <section className="card"><h2>核对明确成果</h2><form method="get" action="/core/acceptance-context" className="agent-lookup"><label htmlFor="acceptance-delivery">交付操作 UUID</label><input id="acceptance-delivery" name="deliveryOperationId" required defaultValue={s.deliveryOperationId}/><label htmlFor="acceptance-version">成果版本 UUID</label><input id="acceptance-version" name="datasetVersionId" required defaultValue={s.datasetVersionId}/>{s.contractVersionId&&<input type="hidden" name="contractVersionId" value={s.contractVersionId}/>}<button className="button">查询验收准备</button></form></section>
  <section className="card"><h2>责任与办理条件</h2>{!s.deliveryOperationId?<p>从交付记录选择明确成果，或填写交付和版本 UUID 后查询。未选择成果时不推断责任人。</p>:!context?<UnknownHistory>指定成果的责任上下文读取失败，未推断接收方或责任人。交付：{s.deliveryOperationId}；版本：{s.datasetVersionId}。{s.bindingId&&<>明确绑定：{s.bindingId}，没有改查最新记录。</>}</UnknownHistory>:<>
-  <p>明确交付：<a href={'/core/deliveries?id='+context.delivery.id}>{context.delivery.id}</a> · {context.delivery.status}</p><p>成果版本：<a href={'/core/assets?versionId='+context.delivery.datasetVersionId}>{context.delivery.datasetVersionId}</a></p><p>查询时点：{context.evaluatedAt}</p><p>接收方代表关系：{context.receivingPartyStatus==='VERIFIED'?'代表关系已核验':'未验证'}；现有读取身份不等于业务验收权限。</p>
+  <p>明确交付：{client?<code>{context.delivery.id}</code>:<a href={'/core/deliveries?id='+context.delivery.id}>{context.delivery.id}</a>} · {context.delivery.status}</p><p>成果版本：{client?<code>{context.delivery.datasetVersionId}</code>:<a href={'/core/assets?versionId='+context.delivery.datasetVersionId}>{context.delivery.datasetVersionId}</a>}</p><p>查询时点：{context.evaluatedAt}</p><p>接收方代表关系：{context.receivingPartyStatus==='VERIFIED'?'代表关系已核验':'未验证'}；现有读取身份不等于业务验收权限。</p>
   {context.responsibilities.every(r=>r.status==='UNASSIGNED')&&<p>业务责任关系尚未配置</p>}
   <table aria-label="业务责任绑定"><thead><tr><th>职责</th><th>状态与原因</th><th>代表身份与依据</th><th>有效期与追溯</th></tr></thead><tbody>{context.responsibilities.map(r=><tr key={r.role}><th scope="row">{roles[r.role]}</th><td><Badge value={states[r.status]} tone={r.status==='ASSIGNED'?'good':r.status==='UNASSIGNED'?'neutral':'warn'}/><p>{reasons[r.reason]??r.reason}</p>{r.isCurrentCaller&&<small>与当前读取身份相符，未授予办理权限</small>}</td><td>{r.representative?<><strong>{r.representative.partyRef}</strong><p>Actor：<code>{r.representative.actorId}</code><br/>Subject：{r.representative.subject}</p><p>代表资格依据：<code>{r.representative.basisEvidenceId}</code></p><p>代表资格有效期：{r.representative.validFrom} 至 {r.representative.validTo??'无预设截止时间'}</p><Origin fact={r.representative}/></>:<span>无唯一有效代表引用</span>}</td><td>{r.binding?<><p>{r.binding.validFrom} 至 {r.binding.validTo??'无预设截止时间'}</p><p>责任依据：<code>{r.binding.basisEvidenceId}</code></p><Origin fact={r.binding}/><p><a href={acceptanceHref({...s,bindingId:r.binding.id})}>追溯{roles[r.role]}</a></p></>:<>{r.candidateIds.length?<ul>{r.candidateIds.map(id=><li key={id}><a href={acceptanceHref({...s,bindingId:id})}>{id}</a></li>)}</ul>:'暂无绑定'}</>}</td></tr>)}</tbody></table>
   <h3>尚未满足</h3><ul>{context.blockers.map(code=><li key={code}>{blocker(code)}</li>)}</ul>
