@@ -9,11 +9,11 @@ ROLE='agent_q2_reader_20261024'
 RUN=ROOT/'.data/agent-q2-preview'
 def sql(database,query,user='postgres'):
  r=subprocess.run(['docker','exec','-i',CONTAINER,'psql','-X','-qAt','-v','ON_ERROR_STOP=1','-U',user,'-d',database],input=query,text=True,capture_output=True)
- if r.returncode: raise RuntimeError('database preparation/query failed: '+r.stderr[:500])
+ if r.returncode: raise RuntimeError('database preparation/query failed (details withheld to protect credentials)')
  return r.stdout.strip()
 def fingerprint(database):
  names=sql(database,"BEGIN READ ONLY; SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename; ROLLBACK;").splitlines()
- queries=["SELECT '"+n+"' AS name,count(*) AS count,md5(coalesce(string_agg(to_jsonb(t)::text,E'\\n' ORDER BY to_jsonb(t)::text),'')) AS hash FROM public.\""+n+"\" t" for n in names]
+ queries=["SELECT '"+n.replace("'","''")+"' AS name,count(*) AS count,md5(coalesce(string_agg(to_jsonb(t)::text,E'\\n' ORDER BY to_jsonb(t)::text),'')) AS hash FROM public.\""+n.replace('"','""')+"\" t" for n in names]
  return sorted(json.loads(sql(database,'BEGIN READ ONLY; SELECT json_agg(x) FROM ('+' UNION ALL '.join(queries)+') x; ROLLBACK;')),key=lambda row:row['name'])
 def main():
  meta=json.loads(subprocess.check_output(['docker','inspect',CONTAINER],text=True))[0]
@@ -27,7 +27,7 @@ def main():
  password=settings['POSTGRES_PASSWORD']
  env['READONLY_PREPARE_DSN']='postgres://postgres:'+urllib.parse.quote(password,safe='')+'@127.0.0.1:25494/'+DATABASE+'?sslmode=disable'
  r=subprocess.run([str(RUN/'readonly-prepare.exe')],cwd=ROOT,env=env,capture_output=True,text=True)
- if r.returncode:raise RuntimeError('fixture preparation failed: '+r.stderr[:800])
+ if r.returncode:raise RuntimeError('fixture preparation failed (details withheld to protect credentials)')
  reader_password=secrets.token_urlsafe(32)
  tables='dataset dataset_version data_resource quality_result quality_finding quality_assessment_attempt quality_assessment_attempt_outcome evidence evidence_relation evidence_snapshot evidence_snapshot_item audit_event cost_event cost_allocation data_product product_version product_release product_release_dataset dataset_version_lineage execution workflow workflow_version execution_dependency_preparation execution_dependency_binding execution_mapping_usage entity entity_type entity_match_job entity_mapping entity_mapping_decision agent_task agent_plan_revision agent_plan_input agent_plan_action agent_approval agent_action_request agent_action_disposition agent_command_receipt dataset_certification certification_disposition certification_profile delivery_authorization_fence'.split()
  profiles='purpose action consumer delivery quality_dimension critical_rule rights_purpose rights_action rights_consumer rights_scope'.split()
