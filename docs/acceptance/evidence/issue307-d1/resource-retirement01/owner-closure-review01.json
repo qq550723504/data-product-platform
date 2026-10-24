@@ -1,0 +1,27 @@
+{
+  "status": "PASS_BOUNDED_OWNER_RETIREMENT_CLOSURE_REVIEW",
+  "independent_agent_review": false,
+  "at": "2026-10-23T16:49:41.052383+00:00",
+  "remaining_blockers": [],
+  "regression_counts": {
+    "normal-test_preallocation_ci.stderr": 6,
+    "normal-test_retired_resources.stderr": 20,
+    "normal-test_retired_volumes.stderr": 6,
+    "normal-test_six_candidate_runtime.stderr": 14,
+    "normal-test_six_native_entry.stderr": 8,
+    "normal-test_verify_six_native.stderr": 3,
+    "optimized-test_preallocation_ci.stderr": 6,
+    "optimized-test_retired_resources.stderr": 20,
+    "optimized-test_retired_volumes.stderr": 6,
+    "optimized-test_six_candidate_runtime.stderr": 14,
+    "optimized-test_six_native_entry.stderr": 8,
+    "optimized-test_verify_six_native.stderr": 3
+  },
+  "scope": "Exact 986 archived stopped CID removals, then 106 separately proven unneeded test volumes. No source or provider actions.",
+  "budget_union": "58 exact volumes: 51 candidate07-23 plus 7 rehearsal; originals/current/successor grouped by explicit origin, no count-only gate",
+  "originals_scope": "54310 pinned D1 files; unrelated private sessions excluded",
+  "retained": "58 budget volumes and contents, current C22/C23 owners, 7 source/business services, 6 shared netns roots, 139 outside helpers, nonempty queues, unproven unique recovery copies, all backups/pins/failure evidence",
+  "plan_sha256": "3174aa70f3e461a14eefcd40adcd851f0136deb01467df91232f7062995dd1d6",
+  "volume_plan_sha256": "2be7fabc413fc8b8e339475cf619a6263ede31d08ca33fc95054801bd057b61f",
+  "human_authority_sha256": "dfb96ceb52d7470d9205fad3c2fccdb37d87a9555b7f468c307a95de8862236b"
+}

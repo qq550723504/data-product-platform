@@ -80,6 +80,14 @@ def project_owner(item):
             'mounts':[{k:m.get(k) for k in ('Type','Name','Source','Destination','RW','Propagation')} for m in item['Mounts']]}
 
 
+def historical_gate():
+    # Successor preparation uses immutable retirement facts plus current scoped
+    # dependencies and physical budgets. Frozen C22/C23 packets stay unchanged;
+    # their old allocations cannot satisfy this new contract.
+    import retirement_catalog
+    return retirement_catalog.verify_history()
+
+
 def historical_gate_before_c22():
     base=prior.retained()
     packet=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-seventeen01'
@@ -153,7 +161,8 @@ def historical_gate_before_c22():
     return {'c21':c21,'c20':c20,'c19':c19,'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_996_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
 
 
-def historical_gate():
+def historical_gate_before_retirement():
+    # Historical C23 recursion is preserved for explanation only, never fallback.
     import retained_v32
     base=historical_gate_before_c22()
     return retained_v32.verify(ROOT,inspect,closed,project_owner,docker,sequence,base,p1.PRIVATE,p1.hostpath)

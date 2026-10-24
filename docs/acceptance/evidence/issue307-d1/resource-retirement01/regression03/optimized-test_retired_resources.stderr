@@ -1,0 +1,24 @@
+test_archive_state_is_not_current_closure (test_retired_resources.RetirementTests.test_archive_state_is_not_current_closure) ... ok
+test_budget_union_includes_rehearsals_successors_and_equal_duplicates (test_retired_resources.RetirementTests.test_budget_union_includes_rehearsals_successors_and_equal_duplicates) ... ok
+test_budget_union_missing_extra_conflicting_and_owner_mount_drift_reject (test_retired_resources.RetirementTests.test_budget_union_missing_extra_conflicting_and_owner_mount_drift_reject) ... ok
+test_cid_scope_overlap_shortening_or_duplicates_reject (test_retired_resources.RetirementTests.test_cid_scope_overlap_shortening_or_duplicates_reject) ... ok
+test_dns_comparison_accepts_only_exact_full_config_with_null_empty_delta (test_retired_resources.RetirementTests.test_dns_comparison_accepts_only_exact_full_config_with_null_empty_delta) ... ok
+test_docker_error_is_not_absence (test_retired_resources.RetirementTests.test_docker_error_is_not_absence) ... ok
+test_forged_absence_receipt_does_not_hide_present_cid (test_retired_resources.RetirementTests.test_forged_absence_receipt_does_not_hide_present_cid) ... ok
+test_full_success_preserves_live_other_runtime_used_budget_and_failure (test_retired_resources.RetirementTests.test_full_success_preserves_live_other_runtime_used_budget_and_failure) ... ok
+test_missing_or_forged_archive_identity_blocks (test_retired_resources.RetirementTests.test_missing_or_forged_archive_identity_blocks) ... ok
+test_missing_outcome_after_intent_is_unconfirmed_and_not_resent (test_retired_resources.RetirementTests.test_missing_outcome_after_intent_is_unconfirmed_and_not_resent) ... ok
+test_native_wrapper_rejects_str_and_unapproved_verbs (test_retired_resources.RetirementTests.test_native_wrapper_rejects_str_and_unapproved_verbs) ... ok
+test_new_external_netns_dependent_blocks_before_rm (test_retired_resources.RetirementTests.test_new_external_netns_dependent_blocks_before_rm) ... ok
+test_new_volume_user_or_owner_change_blocks (test_retired_resources.RetirementTests.test_new_volume_user_or_owner_change_blocks) ... ok
+test_originals_logs_and_budget_bytes_are_immutable (test_retired_resources.RetirementTests.test_originals_logs_and_budget_bytes_are_immutable) ... ok
+test_partial_catalog_never_returns_completed_pass (test_retired_resources.RetirementTests.test_partial_catalog_never_returns_completed_pass) ... ok
+test_required_live_missing_or_other_session_pid_change_blocks (test_retired_resources.RetirementTests.test_required_live_missing_or_other_session_pid_change_blocks) ... ok
+test_root_cannot_be_removed_before_leaf (test_retired_resources.RetirementTests.test_root_cannot_be_removed_before_leaf) ... ok
+test_source_and_plan_drift_reject_before_mutation (test_retired_resources.RetirementTests.test_source_and_plan_drift_reject_before_mutation) ... ok
+test_unknown_missing_cid_is_not_retirement (test_retired_resources.RetirementTests.test_unknown_missing_cid_is_not_retirement) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 1.063s
+
+OK

@@ -1,0 +1,10 @@
+{
+  "status": "FAILED_DEPENDENCY_CLASSIFICATION_PROBE_NO_MUTATION",
+  "error_type": "ValueError",
+  "message": "resource retirement: required dependency is not retained in the fixed plan",
+  "cause": "17 real retained-volume readers were outside the original live/external/additional subsets. The pinned full final inspect already contains them. The new closure now derives all custody owners from the original volume graph and binds descriptors to the exact final inspect SHA, rather than silently omitting these readers or guessing their identity.",
+  "source_started": 0,
+  "provider_calls": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

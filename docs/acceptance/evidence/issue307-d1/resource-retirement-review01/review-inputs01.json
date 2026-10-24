@@ -1,0 +1,64 @@
+{
+  "status": "PASS_REVIEWED_SOURCE_UNCHANGED_FROM_81C8A113",
+  "reviewed_commit": "81c8a1130d83379c8614d3b3082b237fd2073f73",
+  "observed_at": "2026-10-24T03:35:36.783489+00:00",
+  "reviewers": {
+    "source": "/root/retirement_source_review",
+    "evidence": "/root/retirement_evidence_review"
+  },
+  "git_diff_exit": 0,
+  "source_files": {
+    "examples/lifecycle-d1/retired_resources.py": {
+      "bytes": 19297,
+      "raw_sha256": "c81206de9fa463662b5266183cbe5167b66c22c62c4be069f23826a13d02ae95",
+      "lf_sha256": "c81206de9fa463662b5266183cbe5167b66c22c62c4be069f23826a13d02ae95"
+    },
+    "examples/lifecycle-d1/retired_volumes.py": {
+      "bytes": 7863,
+      "raw_sha256": "fd926d44ca1aea50ee741eac70ea5aab3f6ccf802191d265c9c8e8dfeafaf6c2",
+      "lf_sha256": "fd926d44ca1aea50ee741eac70ea5aab3f6ccf802191d265c9c8e8dfeafaf6c2"
+    },
+    "examples/lifecycle-d1/retired_budget_bytes.py": {
+      "bytes": 2476,
+      "raw_sha256": "66125150c15bfcd28a9202494910714c08fa91cccafca50bd690a19fd630d497",
+      "lf_sha256": "66125150c15bfcd28a9202494910714c08fa91cccafca50bd690a19fd630d497"
+    },
+    "examples/lifecycle-d1/retirement_catalog.py": {
+      "bytes": 4370,
+      "raw_sha256": "3e3ab77ff07ff8bb29b7c24aea8a203c088853116cf0575af95ddccb46bce53f",
+      "lf_sha256": "3e3ab77ff07ff8bb29b7c24aea8a203c088853116cf0575af95ddccb46bce53f"
+    },
+    "examples/lifecycle-d1/retire-d1-resources.py": {
+      "bytes": 3600,
+      "raw_sha256": "f0dcf7b35ca546d533d50da41a661c23539e5752125fca3cd3bcf337efb789a5",
+      "lf_sha256": "f0dcf7b35ca546d533d50da41a661c23539e5752125fca3cd3bcf337efb789a5"
+    },
+    "examples/lifecycle-d1/prepare-resource-retirement.py": {
+      "bytes": 15447,
+      "raw_sha256": "54dcac453a1069aeb58070fb31bd015c3af0e3065fafac9ad81cee6c90f194a6",
+      "lf_sha256": "54dcac453a1069aeb58070fb31bd015c3af0e3065fafac9ad81cee6c90f194a6"
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "bytes": 40890,
+      "raw_sha256": "62adc783b5cbd2b7656fb8f4f048df9cce5cf77e1a5ac6d4653ff4b9d1f185a1",
+      "lf_sha256": "62adc783b5cbd2b7656fb8f4f048df9cce5cf77e1a5ac6d4653ff4b9d1f185a1"
+    },
+    "examples/lifecycle-d1/test_retired_resources.py": {
+      "bytes": 15573,
+      "raw_sha256": "44e550d5fede14bd7f6f7d731aad493dfb94ba5517aac776c44373d4a9abd0b4",
+      "lf_sha256": "44e550d5fede14bd7f6f7d731aad493dfb94ba5517aac776c44373d4a9abd0b4"
+    },
+    "examples/lifecycle-d1/test_retired_volumes.py": {
+      "bytes": 3632,
+      "raw_sha256": "d798225aa1b766ef11b650de390ced395a95575801b7c2c56ac871114ca30b03",
+      "lf_sha256": "d798225aa1b766ef11b650de390ced395a95575801b7c2c56ac871114ca30b03"
+    },
+    "examples/lifecycle-d1/test_retired_budget_bytes.py": {
+      "bytes": 1348,
+      "raw_sha256": "8532e3289ea4458fe42b8c1fc673aab45f065c3c4c12c6276a902b9c22071294",
+      "lf_sha256": "8532e3289ea4458fe42b8c1fc673aab45f065c3c4c12c6276a902b9c22071294"
+    }
+  },
+  "original_public_index_preserved": true,
+  "original_private_evidence_not_written": true
+}

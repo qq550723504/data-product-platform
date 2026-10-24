@@ -1,0 +1,27 @@
+{
+  "base_commit": "182946ca8a130e97da06418b50fbabef58ab90bb",
+  "source_files": {
+    "examples/lifecycle-d1/successor_dependencies.py": {
+      "sha256": "4c26b99a44785aaa0eba828b5626761f96579080a6a3c2cf9b6071c1c94f26a7",
+      "bytes": 5002
+    },
+    "examples/lifecycle-d1/retirement_catalog.py": {
+      "sha256": "f3109da30aa7530f55327fa4b5f483ad03741cae8415dd794b58a3dd72d95255",
+      "bytes": 9579
+    },
+    "examples/lifecycle-d1/retired_volumes.py": {
+      "sha256": "8ed6f6b323376ab1df3b21345b8526ca1d80933319f590fad582cc4f904b2018",
+      "bytes": 8169
+    },
+    "examples/lifecycle-d1/verify-successor-history.py": {
+      "sha256": "b3b81ce16c02bc92cc9c0422afb7e2020e37f376d0c8d7428cb813c2dcefac60",
+      "bytes": 1572
+    },
+    "examples/lifecycle-d1/test_successor_dependencies.py": {
+      "sha256": "ab92fc5bd0369d2a0e078718c39dbbdc726225daa8f341efcc00c983870012c5",
+      "bytes": 17522
+    }
+  },
+  "entry": "examples/lifecycle-d1/verify-successor-history.py",
+  "execution_authority": false
+}

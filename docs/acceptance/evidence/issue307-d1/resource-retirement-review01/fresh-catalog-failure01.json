@@ -1,0 +1,10 @@
+{
+  "started_at": "2026-10-24T03:30:33.041275+00:00",
+  "observed_at": "2026-10-24T03:30:33.041548+00:00",
+  "error_type": "ValueError",
+  "message": "evidence audit: index specification fields differ",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 10, in <module>\n  File \"C:\\Users\\Henry\\.codex\\worktrees\\d1-retirement\\data-product-platform\\examples\\lifecycle-d1\\evidence_indexes.py\", line 103, in audit_index\n    need(type(spec) is dict and set(spec) == {\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        'id', 'index', 'sha256', 'format', 'member_root', 'expected_count',\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        'expected_status'}, 'index specification fields differ')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Henry\\.codex\\worktrees\\d1-retirement\\data-product-platform\\examples\\lifecycle-d1\\evidence_indexes.py\", line 19, in need\n    raise ValueError('evidence audit: ' + message)\nValueError: evidence audit: index specification fields differ\n",
+  "source_started": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}
