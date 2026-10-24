@@ -128,17 +128,60 @@ test("mature RP rejects wrong issuer/audience/expired ID token and missing ID to
   assert.equal(f.state.principalCalls.length, 0);
 });
 test("absolute credential lifetime requires new login; no refresh or static-token fallback", async (t) => {
-  const f = await fixture(t, await pgStore(t)),
+  const store = await pgStore(t),
+    f = await fixture(t, store),
     started = await f.iam.start();
+  const issuedAt = Date.now();
+  t.mock.timers.enable({ apis: ["Date"], now: issuedAt });
   const session = await f.iam.callback(
     f.callback(started, "one", {
-      token: { expires_in: 1, refresh_token: "must-not-persist" },
+      token: { expires_in: 60, refresh_token: "must-not-persist" },
     }),
     started.key,
   );
-  await new Promise((resolve) => setTimeout(resolve, 1100));
+  assert.equal(session.expiresAt, issuedAt + 60000);
+  t.mock.timers.setTime(session.expiresAt - 1);
+  assert.equal(
+    (await f.iam.current(session.key)).principal.workspace_id,
+    f.cfg.workspaceId,
+  );
+
+  // A store may still return the row (e.g. its DB clock has not advanced).
+  // Prove the RP enforces the original deadline independently of store TTL.
+  const encrypted = await store.getSession(session.key);
+  assert.ok(Buffer.isBuffer(encrypted));
+  const staleRead = t.mock.method(store, "getSession", async () => encrypted);
+  t.mock.timers.setTime(session.expiresAt);
   await assert.rejects(f.iam.current(session.key));
-  assert.equal(f.state.principalCalls.length, 1);
+  t.mock.timers.setTime(session.expiresAt + 1);
+  await assert.rejects(f.iam.current(session.key));
+  assert.equal(staleRead.mock.callCount(), 2);
+  assert.equal(f.state.principalCalls.length, 2);
+  assert.equal(f.state.tokenCalls, 1);
+});
+test("mature RP rejects exhausted and rounded-to-zero access lifetimes before authority lookup", async (t) => {
+  const store = new MemoryStore(),
+    f = await fixture(t, store),
+    writes = t.mock.method(store, "put");
+  // The real SDK floors remaining seconds. A 1ms advance after its expiry
+  // timestamp is captured makes a nominal one-second lifetime become zero.
+  let clock = Date.now();
+  t.mock.method(Date, "now", () => ++clock);
+  for (const expires_in of [0, -1, 1]) {
+    const started = await f.iam.start();
+    await assert.rejects(
+      f.iam.callback(
+        f.callback(started, "one", { token: { expires_in } }),
+        started.key,
+      ),
+    );
+  }
+  assert.equal(f.state.tokenCalls, 3);
+  assert.equal(f.state.principalCalls.length, 0);
+  assert.equal(
+    writes.mock.calls.filter((call) => call.arguments[0] === "session").length,
+    0,
+  );
 });
 test("current workspace grant/actor/binding revision and provider errors deny old sessions; re-enable cannot revive", async (t) => {
   const f = await fixture(t),
