@@ -1,3 +1,4 @@
+import {BusinessAcceptancePages} from './BusinessAcceptancePages';
 import React,{useEffect,useState} from 'react';
 import {resetDemoSession} from './demo-session.mjs';
 import {useRouter,usePathname} from 'next/navigation';
@@ -29,8 +30,8 @@ function AppContent({workspace,liveAgent,liveCatalog=false,children}){
  useEffect(()=>{if(connected)return;const f=()=>{const p=location.hash.slice(1);if(routes.includes(p)){setPage(p);setContextOpen(false)}};window.addEventListener('hashchange',f);return()=>window.removeEventListener('hashchange',f)},[connected]);
  const center=liveCatalog?((pathname.startsWith('/core/release')||['/core/deliveries','/core/archives'].includes(pathname))?'数据开发中心':'数据管理中心'):liveAgent?'工作台':adminDefs[page]?'系统设置':sectionDefs[page]?.[0]||(page==='home'?'工作台':['develop','ingestion','processing','publish'].includes(page)?'数据开发中心':'数据管理中心');
  const currentKey=liveCatalog&&pathname==='/core/deliveries'?'core-deliveries':liveCatalog&&pathname==='/core/archives'?'core-archives':liveCatalog?((pathname.startsWith('/core/release')||['/core/deliveries','/core/archives'].includes(pathname))?'publish':'assets'):liveAgent?'agent-workbench':page==='asset'?'assets':page==='quality'?'quality-list':parentSection(page);
- const items=center==='系统设置'?adminMenus:[...menuGroups[center],...(liveCatalog&&center==='数据开发中心'?[['core-deliveries','交付记录'],['core-archives','验收归档']]:[])];const icons={'agent-workbench':Sparkle,home:House,develop:SquaresFour,manage:SquaresFour,ingestion:Database,processing:ArrowsLeftRight,publish:FileText,metadata:TreeStructure,security:ShieldCheck,standards:SlidersHorizontal,assets:Database,model:Stack};
- const title=liveCatalog?(pathname==='/core/workbench'?'Core 待办工作台':pathname==='/core/release-trace'?'发布证据链':pathname==='/core/deliveries'?'交付记录':pathname==='/core/archives'?'验收归档':pathname==='/core/releases'?'发布历史':pathname==='/core/certifications'?'认证历史':pathname==='/core/assets'?'Core 资产目录':'Core 业务页面'):liveAgent?'Agent 工作台':sectionDefs[page]?.[1]||adminDefs[page]?.[0]||items.find(([k])=>k===currentKey)?.[1]||'数据治理';
+ const items=center==='系统设置'?adminMenus:[...menuGroups[center],...(liveCatalog&&center==='数据开发中心'?[['core-deliveries','交付记录'],['core-archives','证据档案']]:[])];const icons={'agent-workbench':Sparkle,home:House,develop:SquaresFour,manage:SquaresFour,ingestion:Database,processing:ArrowsLeftRight,publish:FileText,metadata:TreeStructure,security:ShieldCheck,standards:SlidersHorizontal,assets:Database,model:Stack};
+ const title=liveCatalog?(pathname==='/core/workbench'?'Core 待办工作台':pathname==='/core/release-trace'?'发布证据链':pathname==='/core/deliveries'?'交付记录':pathname==='/core/archives'?'证据档案':pathname==='/core/releases'?'发布历史':pathname==='/core/certifications'?'认证历史':pathname==='/core/assets'?'Core 资产目录':'Core 业务页面'):liveAgent?'Agent 工作台':sectionDefs[page]?.[1]||adminDefs[page]?.[0]||items.find(([k])=>k===currentKey)?.[1]||'数据治理';
  useEffect(()=>{document.title=title+(connected?' · 数据治理':' · 数据治理演示')},[title,connected]);
  useEffect(()=>{if(!liveAgent&&['agent-workbench','agent-task'].includes(page))router.replace('/agent')},[page,liveAgent,router]);
  let content;
@@ -40,6 +41,7 @@ function AppContent({workspace,liveAgent,liveCatalog=false,children}){
  else if(['admin-workspaces','workspace-members'].includes(page))content=<WorkspaceManagement id={page} components={components} navigate={navigate}/>;
  else if(adminDefs[page])content=<AdminPage id={page} components={components} navigate={navigate}/>;
  else if(['develop','ingestion','processing','production-tasks'].includes(page))content=<ProductionWorkspace mode={page==='ingestion'?'汇聚':page==='processing'?'处理':page==='production-tasks'?'发布':'全部'} components={components} navigate={navigate}/>;
+ else if(['business-receipts','business-acceptances','business-archives'].includes(page))content=<BusinessAcceptancePages page={page} navigate={navigate}/>;
  else if(governanceRoutes.includes(page))content=<GovernanceWorkspace page={page} navigate={navigate}/>;
  else if(workspace.kind!=='enterprise'&&!['plan','ingestion-report','processing-report','publish-report','profile','framework','development-flow','improvement-flow'].includes(page))content=<ScopedWorkspaceBusiness page={page} currentKey={currentKey} components={components} navigate={navigate}/>;
  else content=<SectionPage id={page} components={components} navigate={navigate} onRules={()=>navigate('standards')} onRights={()=>navigate('security')} onAttention={()=>navigate('my-work')}/>;

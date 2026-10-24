@@ -23,7 +23,7 @@ test('every registered demo page renders a nonempty main and its heading or Core
   assert.match(html,route.startsWith('agent-')?/打开已连接 Core 的 Agent 工作台/:/<h1>/,route);
   assert.doesNotMatch(html,/原业务对象链接/,route);
  }
- assert.equal(routes.size,53);
+ assert.equal(routes.size,56);
 });
 test('every primary menu has a registered page',()=>{
  for(const [route] of Object.values(menuGroups).flat())assert.ok(routes.has(route),route);

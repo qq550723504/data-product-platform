@@ -5,7 +5,7 @@ import {ArrowRight,FileText,Clock,ShieldCheck} from '@phosphor-icons/react';
 
 export const menuGroups={
  '工作台':[['home','治理总览'],['agent-workbench','Agent 工作台'],['framework','架构搭建流程'],['development-flow','数据开发流程'],['improvement-flow','沉淀提升流程'],['my-work','我的工作']],
- '数据开发中心':[['develop','开发概览'],['plan','开发方案'],['ingestion','数据汇聚'],['processing','数据处理'],['publish','数据发布'],['toolbox','交付工具箱'],['support','技术支持']],
+ '数据开发中心':[['develop','开发概览'],['plan','开发方案'],['ingestion','数据汇聚'],['processing','数据处理'],['publish','数据发布'],['business-receipts','业务签收'],['business-acceptances','业务验收'],['business-archives','验收归档'],['toolbox','交付工具箱'],['support','技术支持']],
  '数据管理中心':[['manage','管理概览'],['research','调研规划'],['architecture','系统架构'],['model','数据模型'],['quality-list','数据质量'],['metadata','元数据管理'],['security','数据安全'],['assets','数据资产'],['standards','标准建设'],['knowledge','知识沉淀']]
 };
 const stages={
@@ -14,6 +14,9 @@ const stages={
  'improvement-flow':[['数据监测','跟踪质量问题与来源变化','quality-list','可交互演示'],['数据资产','查找资产及版本依据','assets','可交互演示'],['标准建设','统一数据元、编码与检验规则','standards','可交互演示'],['知识沉淀','归档治理案例与方法文档','knowledge','可交互演示']]
 };
 export const sectionDefs={
+ 'business-receipts':['数据开发中心','业务签收','登记收到情况及签收依据。'],
+ 'business-acceptances':['数据开发中心','业务验收','按冻结标准核对明确提交。'],
+ 'business-archives':['数据开发中心','验收归档','保留通过决定与完整演示档案。'],
  'entity-review':['数据管理中心','实体审核','逐项核对并保留人工决定。'],
  'source-admissions':['数据开发中心','来源登记','登记来源用途，不建立真实连接。'],
  batches:['数据开发中心','汇聚批次','追溯同一演示流水线的汇聚尝试。'],

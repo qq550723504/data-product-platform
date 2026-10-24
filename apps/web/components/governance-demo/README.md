@@ -12,3 +12,6 @@ The original prototype directory is unchanged. Future frontend work should edit 
 Core readonly integration: `/core/assets` renders the shared server-side `core-quality-view.tsx` through the same modern shell. Its authenticated workspace and UUID facts never enter demo contexts. Header entry distinguishes the connected surface from local demos; no demo reset is exposed in connected mode. See docs/product/governance-backend-integration-map.md.
 
 `/core/certifications` and `/core/releases` extend this connected surface with authenticated history queries. Certification queries require an explicit version and preserve asOf/revision across pages. Release lists are workspace-wide and do not infer dataset membership. Both paths expose no mutation controls.
+
+
+Business receipt/acceptance/archive routes (`#business-receipts`, `#business-acceptances`, `#business-archives`) use a separate workspace-scoped DemoProvider key. They never call Core write APIs. Receipt, frozen submission, review decision and archive are separate synthetic facts; return/resubmit and invalidation retain prior facts. The existing Core `/core/archives` is labeled 证据档案 and is not business acceptance. See `docs/product/governance-business-acceptance-demo-20261024.md`.
