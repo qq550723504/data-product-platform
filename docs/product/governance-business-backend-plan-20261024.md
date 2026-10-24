@@ -1,20 +1,20 @@
 # 业务签收验收与归档接入计划
 
-状态：第 0 切片只读查询已实施，[验收记录](governance-acceptance-s0-readonly-20261024.md) 定义当前范围；其余业务写入仍为设计草案。设计基于 `e448fa8fc98079b5d86d0fb9aeb4d71937cd9042`；下表保留设计基线，当前只读改造以验收记录为准。保留原库和 Agent API，不接后端写接口、模型或真实执行，PR #363 保持 Draft、不合并。
+状态：第 0 切片及责任/标准适用的持久化只读查询已实施，当前行为归 [责任与适用关系契约](../architecture/acceptance-binding-read-contract-v1.md) 和 [绑定只读验收](governance-acceptance-bindings-readonly-20261024.md)。2026-10-24 对 `1141b72c` 细化 [第一切片写入准入设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，本轮仅文档。下表按当前代码更新，不再将已补齐的读取身份/标准格式列为未实现。其余业务写入仍为目标设计；保留原库、预览运行状态和 Agent API，业务写入口继续关闭，不接模型或真实执行，PR #363 保持 Draft、不合并。
 
 ## 当前能力与缺口
 
-新版业务签收、验收、归档页面的正常与异常交互均运行在 DemoProvider/sessionStorage 中。`internal/acceptance` 是现有端到端测试包，不是这三类业务事实的服务实现。正式接入的根本缺口是服务端责任、标准、冻结提交和验收决定，不能只把演示按钮改成 POST。
+新版业务签收、验收、归档页面的正常与异常办理交互仍运行在 DemoProvider/sessionStorage 中；独立 `/core/acceptance-context` 已读取持久化责任与标准适用事实。`internal/acceptance` 是现有端到端测试包，不是这三类业务事实的服务实现。正式写入的根本缺口是可信多人身份的实际接入、事务内责任准入、Case/Receipt 和冻结提交/验收决定，不能只把演示按钮改成 POST。
 
 优先级含义：P0 是正式业务写入前必须解决的基础边界；P1 是首个真实闭环；P2 是首版以后的便利和扩展能力。现有 API 的注册能力与当前预览是否启用应分别核对，下表不将仓库中的所有路由视为已部署。
 
 | 页面或交互 | 已有能力 | 缺口或接入问题 | 优先级 |
 |---|---|---|---|
-| 新建验收单的成果选择 | `/core/deliveries` 对应 GET `/api/v1/workspaces/{workspaceId}/delivery-history`，含明确版本、gate 和 transition | 缺验收专用的交付/版本/接收主体安全投影与同单绑定；ISSUED 不证明已收到 | P0 |
-| 接收方和验收责任人 | 已有 trusted principal Resolver、workspace/capability 验证；页面有演示角色 | 单主体 StaticResolver 不等于多方身份；缺指定经办人/接收代表/验收人/归档人与业务作用域 | P0 |
-| 标准来源选择 | ContractVersion 已有版本、sourceSha256 和内容 immutable guard；有 GET `/api/v1/contract-versions/{versionId}` | 该 handler/repository 查询未按可信 principal/workspace 限定；通用 document 无业务验收标准模型，缺安全选择器和完整条款集合的接纳验证 | P0 |
-| 编辑标准和接收方确认 | 演示可编辑标准内容/来源，模型拒绝削弱 required/method | 缺接收方确认事实及绑定草稿 hash；正式版不能把任意文本来源当标准 | P0 |
-| 业务签收 `/#business-receipts` | 完整、部分、未收到、争议及补正演示 | 无 BusinessReceipt、真实代表关系、成果证据关联和服务器历史 | P1 第一切片 |
+| 新建验收单的成果选择 | delivery-history 与 acceptance-context 已按可信身份/明确成果展示交付、版本和接收主体 | 缺 Case 的强类型固定绑定与事务内重新准入；当前合成交付均 BLOCKED，不能正式建单；ISSUED 不证明已收到 | P0 → 第一切片 |
+| 接收方和验收责任人 | 已有六类责任、代表关系及追加处置、有效期/职责分离/多绑定判定和历史；独立 OIDC/RP 候选可复用 | 当前 StaticResolver/合成绑定不等于企业多人身份；候选未集成，缺本模块 profile 与身份/责任撤销同事务 fence | P0 |
+| 标准来源选择 | 合约版本列表/详情已具备 principal/workspace 限定，完整 acceptanceCriteria 格式/hash 校验及标准适用查询 | 缺草稿逐项冻结、接纳后写入验证；标准适用不等于接收方对本次草稿确认 | P0 → 第一切片 |
+| 编辑标准和接收方确认 | 标准原文和完整集合可读；演示拒绝削弱 required/method | 缺绑定精确 DraftRevision/hash 的 Confirmation；正式版仅编辑注记/证据，来源由服务端重建 | P1 第一切片 |
+| 业务签收 `/#business-receipts` | 完整、部分、未收到、争议及补正演示；已有代表关系只读模型 | 无 BusinessReceipt、可信收件材料接纳、强类型证据关联及服务器历史；不可用 Command 自己的审计 Evidence 充当收到依据 | P1 第一切片 |
 | 业务验收草稿 `/#business-acceptances` | 新建、筛选、详情、编辑演示 | 无 Case/DraftRevision、服务器 revision、受权持久化和明确目标 | P1 第一切片 |
 | 冻结提交和撤回 | 演示冻结标准、签收并保留旧材料；支持撤回 | 无 AcceptanceSubmission、标准确认、DB 冻结/成员 hash 与跨客户端竞争控制 | P1 第二切片 |
 | 退回和重提 | 演示有退回理由、签收变化阻断、重新提交 | 无指定验收人的服务器判断、互斥终结决定及命令回执 | P1 第三切片 |
@@ -44,15 +44,18 @@
 
 写入超时后保留原幂等键和完整 body，显示“结果未知”；只读查询原命令回执。收到与原请求绑定的确认后再读详情；详情 GET 失败保留“命令已确认、当前详情未知”，禁用会造成重复业务动作的入口。不自动重发，不给用户换键再点一次的错误引导。
 
+第一切片拟用受保护服务端意图记录保存原请求，浏览器仅保留不透明恢复引用。回执 404 仅表示 NOT_OBSERVED；未来用户明确选择恢复原请求时，也只能同一人/空间、原键及完全相同 body，由 Core 幂等锁处理在途竞争。恢复契约、身份撤销和记录丢失的边界归详细设计，当前不实现该入口。
+
 ## 分阶段实施
 
-唯一的后端业务不变量与拟议 API 归 [后端契约草案](../architecture/business-acceptance-backend-contract-v1.md)。本表只规定拆分、页面覆盖及每个切片的完成条件，避免再维护一套状态机。
+完整生命周期归 [后端契约草案](../architecture/business-acceptance-backend-contract-v1.md)，第一切片的更窄动作范围、字段和准入归 [详细设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)。本表只规定拆分、页面覆盖及每个切片的完成条件，不另维护状态机。
 
 | 顺序 | 交付范围 | 完成条件 |
 |---|---|---|
-| 0 标准和责任只读 | 安全 acceptance-context、合约版本读取、acceptanceCriteria 来源格式/验证、责任与接收方资格投影 | 未认证/越空间先拒绝；明确版本和 hash；缺结构化标准返回 UNSUPPORTED_SOURCE；无角色/无标准阻断 |
-| 1 草稿与签收 | Case、DraftRevision、BasisConfirmation、BusinessReceipt 及查询；新建/编辑/确认/签收的显式 Command | 接收方与提交方分工可信；完整签收有证据；补正追加不覆盖；同空间关联与 revision 实证 |
-| 2 冻结与流程控制 | Submission、withdraw/cancel transition、冻结成员及命令回执 | 不完整材料无法提交；补正与提交竞争安全；撤回与取消不删除旧提交；刷新能恢复精确材料 |
+| 0 标准和责任只读 | 已有安全 acceptance-context、合约版本/完整格式/标准适用、六类责任及处置历史 | 只读范围已验收；合成来源显式展示，writeEnabled=false，不代表企业身份或真实收到 |
+| 1A 身份与责任准入依赖 | 复用独立 OIDC/RP 候选，解决迁移/模块冲突、有限业务能力和 Tx-scoped Authority Port；补齐收件材料来源 | 当前未实施；先证明多人隔离、外部撤销检查点及本地撤销 fence，不能直接将共享读取 token 用于写入 |
+| 1B 草稿与签收 | Case、DraftRevision、BasisConfirmation、BusinessReceipt 及本领域 CommandReceipt；四类显式 Command 和精确查询 | 只处理 DRAFT；角色/来源当前有效；签收有可核对材料；补正追加不覆盖；原键恢复、PG 并发与页面见证 |
+| 2 冻结与流程控制 | Submission、withdraw/cancel transition、冻结成员；扩展已有本领域命令回执与可办理状态 | 不完整材料无法提交；补正与提交竞争安全；撤回与取消不删除旧提交；刷新能恢复精确材料 |
 | 3 业务决定 | RETURNED/ACCEPTED、完整逐项判断、ReviewActivity 和强类型成本关联 | 非指定验收人/自审被拒；签收变更阻断通过；撤回与通过只能一个成功；退回重提保留所有历史 |
 | 4 归档与处置 | Archive、EvidenceSnapshot 关联、INVALIDATED disposition、当前有效性投影 | 一单一档幂等；作废不改原事实；作废与归档竞争顺序明确；精确追溯及消息回跳完成 |
 
@@ -74,11 +77,11 @@
 | 幂等与 UNKNOWN | 同键同内容返回原回执，不同内容冲突；失败事务无部分写入 | 丢响应后只读恢复，无重复决定/档案/成本，无演示回退 |
 | 冻结竞争 | 真实 PostgreSQL 验证成员 late commit、补正/通过、归档/作废竞争 | 浏览器观察确定结果，不能用单客户端校验代替 DB 保证 |
 
-本轮验证仅检查设计与现有源码对应关系、文档链接和实现边界；正式接口、DDL 与上述后端/浏览器用例尚未实现或执行。既有 e448fa8f 的 CI 和本地预览验收属于现有代码，不能计入本草案的实施完成率。
+当前设计轮仅检查源码对应关系、权威文档一致性、链接和变更范围；新业务写入的接口、DDL 与上述后端/浏览器用例均 NOT_RUN。已实现只读切片的验收单独归属其精确提交，不能计入写入草案的实施完成率。
 
 ## 已有实现依据
 
 - 页面和本地模型：`apps/web/components/governance-demo/BusinessAcceptancePages.jsx`、`business-acceptance-model.mjs`；现有行为归 [演示说明](governance-business-acceptance-demo-20261024.md) 和 [增量审查](governance-business-review-20261024.md)。
 - 交付与证据查询：`apps/platform/internal/readmodel/transport/http/delivery_history.go`、`internal/readmodel/delivery_history.go`；范围归 [交付与证据只读验收](governance-delivery-history-readonly-20261024.md)。
-- 合约版本与缺口：`apps/platform/internal/contract/domain/contract.go`、`transport/http/handler.go`、`infrastructure/postgres_repository.go`、`migrations/000006_rights_contract.up.sql`。已有内容冻结不等于 HTTP 身份/workspace 校验已完成。
+- 合约/标准与当前边界：`apps/platform/internal/contract/domain/acceptance.go`、同目录 `acceptance_bindings.go`、`apps/platform/internal/contract/transport/http/readonly.go`、`apps/platform/internal/contract/infrastructure/readonly.go`、`migrations/000074_acceptance_bindings.up.sql`；已有读取安全不等于 Command 准入。
 - 复用基础设施：`apps/platform/internal/platform/principal/principal.go`、`platform/transaction/manager.go`、`platform/audit/store.go`、`platform/outbox/store.go`、`internal/evidence/snapshot.go`、`internal/agenttask/application/service.go`。

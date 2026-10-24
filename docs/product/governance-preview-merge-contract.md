@@ -1,6 +1,8 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-当前增量：用户进一步授权责任绑定和标准适用关系的契约、持久化只读查询、新版页面与独立库接口/浏览器验收。主要契约归 [责任与适用关系](../architecture/acceptance-binding-read-contract-v1.md)，前置第 0 切片记录保留为历史。允许 migration 74 在独立验收库新增四类最小业务事实与 SELECT 权限，不修改原库；这替代前置增量“不新增 migration”的范围限制。必须保证可信身份/workspace、精确成果、完整来源与原确认责任、有效期/处置、职责分离、多绑定 fail closed、历史不可变及 Agent API 保留。业务写接口、IAM、模型和真实执行仍为非目标。保持 Draft、不 merge/deploy；绑定有效不等于签收、验收通过或交付授权。
+当前文档增量：用户授权细化验收草稿和业务签收的可信多方身份、责任校验、写入准入、状态/接口及异常恢复，**先设计不开发**。权威细化为 [第一切片设计](../architecture/business-acceptance-draft-receipt-admission-v1.md)，与总契约/接入计划同步；本次不实施 IAM、DDL、API、页面或配置，不改原库/独立库、运行进程或 Agent API。业务写入口保持关闭，模型和真实执行不接入，保持 Draft、不 merge/deploy。OIDC 候选复用、事务权威 Port 和未来启用条件是依赖设计，不是运行授权；现有只读 CI/现场 PASS 不能延伸为新写入设计的验收。
+
+上一已实施增量：责任绑定和标准适用关系的契约、持久化只读查询、新版页面与独立库接口/浏览器验收。主要契约归 [责任与适用关系](../architecture/acceptance-binding-read-contract-v1.md)，前置第 0 切片记录保留为历史。此前允许 migration 74 在独立验收库新增四类最小业务事实与 SELECT 权限，不修改原库；这替代前置增量“不新增 migration”的范围限制。必须保证可信身份/workspace、精确成果、完整来源与原确认责任、有效期/处置、职责分离、多绑定 fail closed、历史不可变及 Agent API 保留。业务写接口、IAM、模型和真实执行仍为非目标。绑定有效不等于签收、验收通过或交付授权。
 
 日期：2026-10-24。分支 `codex/agent-quality-readonly`，独占 checkout `C:/Users/Henry/.codex/worktrees/aq1`。基础提交 `f7a90022aad5da4d67ea594ccb86f8b9925a3840`（#358）；准备时与 origin/main 一致。
 
@@ -22,6 +24,9 @@ Trace 页面依赖尚未入主线的新版壳、Core 历史页面和质量查询
 - `docs/product/agent-quality-q2-implementation.md`：Q2 实际实现、非目标和既有验收；migration 73 与 Agent domain/application 定义实际持久化规则。
 - `docs/product/governance-backend-integration-map.md`：演示与 Core 真实查询的边界。
 - `docs/product/governance-release-trace-readonly-20261024.md`：最新 Trace 实现与尚未完成的运行/浏览器验收。
+- `docs/architecture/acceptance-binding-read-contract-v1.md`：已实现的责任与标准适用事实/读取边界。
+- `docs/architecture/business-acceptance-backend-contract-v1.md`：后续业务签收/验收/归档的目标生命周期，业务写入仍未实现。
+- `docs/architecture/business-acceptance-draft-receipt-admission-v1.md`：第一写入切片的可信身份、精确 API、责任/事务准入、页面和恢复细化，仅设计。
 
 ## 必须保证
 
