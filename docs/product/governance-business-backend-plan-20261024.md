@@ -1,5 +1,21 @@
 # 业务签收验收与归档接入计划
 
+## 当前设计文档包（2026-10-24）
+
+本轮按用户授权，仅将签收可信依据和下一步准入整理成文档；核对实现基线 `73e6f3f1`。没有开发、改库或更新运行配置，真实来源保持 UNCONFIGURED，业务写入口关闭，原库及 Agent API 保留，模型/真实执行关闭，PR #363 继续 Draft、不合并。本段与下表按当前实现更新，历史切片的证据不延伸为新写入通过。
+
+| 交付物 | 权威范围 | 本轮结果 |
+|---|---|---|
+| [可信依据清单 T01–T12](../architecture/business-receipt-trusted-basis-v1.md) | 人员、责任、标准、材料出处/内容/接收主体和当前接纳条件 | 语义及 owner 清楚；真实系统、具体责任人、接纳事实与撤销窗口待定 |
+| [签收契约补充 §3.1](../architecture/business-acceptance-draft-receipt-admission-v1.md#31-签收契约补充可信依据与准备闭环) | RECEIVED/PARTIAL/MISSING/DISPUTED、材料、补正、当前准备及历史 | 沿用四个 Command、只写 DRAFT；没有实施 |
+| [页面流程稿](business-receipt-page-flow-20261024.md) | 只读准备态、将来登记/补正、角色入口、刷新/回跳/UNKNOWN | 复用现有完整核对流程；没有开发新控件或页面 |
+| [异常验收矩阵 R01–R44](business-receipt-exception-acceptance-matrix-20261024.md) | 来源、身份/空间、材料、历史、并发、恢复和页面的可观察结果 | 新写入和来源现场验证均 NOT_RUN |
+| [写入启用清单 G0–G8](business-receipt-write-enablement-checklist-20261024.md) | 来源选择→真实只读见证→另行实施/验收→明确运行授权 | 当前 DISABLED/BLOCKED；不因文档或 CI 自动启用 |
+
+下一步先由实际业务责任方选定一条来源链、明确材料接纳与撤销规则，再另行授权一空间/一笔既有交付的真实只读见证。真实来源未定期间维持本设计和缺口，不先造来源服务或开放无依据的签收。
+
+## 已实施切片与原接入计划
+
 状态更新：1B前置[业务依据只读核对](acceptance-business-basis-read-implementation.md)已实施；用户确认企业来源暂未确定，只有安全引用和来源缺口，不启用Case/签收写入。
 
 1A状态更新：独立 1A 身份/责任准入已实施，当前范围归 [1A 实施记录](acceptance-identity-1a-implementation.md)；业务写入仍关闭。以下设计轮及前置只读记录保留其原时间边界。
@@ -15,7 +31,7 @@
 | 页面或交互 | 已有能力 | 缺口或接入问题 | 优先级 |
 |---|---|---|---|
 | 新建验收单的成果选择 | delivery-history 与 acceptance-context 已按可信身份/明确成果展示交付、版本和接收主体 | 缺 Case 的强类型固定绑定与事务内重新准入；当前合成交付均 BLOCKED，不能正式建单；ISSUED 不证明已收到 | P0 → 第一切片 |
-| 接收方和验收责任人 | 已有六类责任、代表关系及追加处置、有效期/职责分离/多绑定判定和历史；独立 OIDC/RP 候选可复用 | 当前 StaticResolver/合成绑定不等于企业多人身份；候选未集成，缺本模块 profile 与身份/责任撤销同事务 fence | P0 |
+| 接收方和验收责任人 | 六类责任/代表/处置、完整判定和历史；1A 已有逐用户 OIDC/RP、有限 profile 与事务内身份/责任 fence | 企业人员映射与真实代表依据未配置；Case 冻结参与人及其写事务尚未实现，不能把合成多人验证当现场通过 | P0 |
 | 标准来源选择 | 合约版本列表/详情已具备 principal/workspace 限定，完整 acceptanceCriteria 格式/hash 校验及标准适用查询 | 缺草稿逐项冻结、接纳后写入验证；标准适用不等于接收方对本次草稿确认 | P0 → 第一切片 |
 | 编辑标准和接收方确认 | 标准原文和完整集合可读；演示拒绝削弱 required/method | 缺绑定精确 DraftRevision/hash 的 Confirmation；正式版仅编辑注记/证据，来源由服务端重建 | P1 第一切片 |
 | 业务签收 `/#business-receipts` | 完整、部分、未收到、争议及补正演示；已有代表关系只读模型 | 无 BusinessReceipt、可信收件材料接纳、强类型证据关联及服务器历史；不可用 Command 自己的审计 Evidence 充当收到依据 | P1 第一切片 |

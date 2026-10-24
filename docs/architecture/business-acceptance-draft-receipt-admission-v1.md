@@ -4,6 +4,8 @@
 
 状态：**DESIGN ONLY，2026-10-24**。核对基线为 PR #363 的 `1141b72ce1af68194809f03997be3d94d7d4a287`。本次仅细化方案，不实施 IAM、DDL、API、页面或配置，不更新预览运行进程。保留原库和 Agent API，业务写入口继续关闭，不接模型、不派发真实执行，保持 Draft、不合并。
 
+2026-10-24 后续设计补充基线 `73e6f3f1`：1A 与 1B 前置只读已经实施；企业来源仍未配置。本轮将可信依据、签收准备页面、异常验收和写入启用条件整理成文档，未开发或启用新能力。文档入口见[接入计划](../product/governance-business-backend-plan-20261024.md)；以下历史设计基线保留，不将旧缺口描述为当前已实现范围。
+
 本文是 [业务验收总契约](business-acceptance-backend-contract-v1.md) 中第一切片的详细约束，拥有本切片的身份、准入、请求字段与恢复规则；总契约继续拥有后续提交、撤回、审核、归档及作废流程。已实现的责任与标准适用查询仍以 [只读契约](acceptance-binding-read-contract-v1.md) 为准。其中 1A 私有身份查询、有限 READ profile 和事务 Port 已在独立 host 实施；其余新业务接口与对象仍是目标设计，不能据此声称已接入或启用。
 
 ## 1. 交付范围与现状
@@ -12,7 +14,7 @@
 
 | 已检查的能力 | 可以复用 | 仍缺的边界 |
 |---|---|---|
-| 当前 acceptance-context、ContractVersion 和 migration 74 | 精确成果、六类责任、代表关系、标准适用、完整标准来源与追加处置的只读事实 | 当前 SYNTHETIC_FIXTURE 不证明企业身份或真实签收；没有业务 Command/fence |
+| 当前 acceptance-context、ContractVersion 和 migration 74 | 精确成果、六类责任、代表关系、标准适用、完整标准来源与追加处置的只读事实 | SYNTHETIC_FIXTURE 不证明企业身份或真实签收；1A 读取 fence 已有，业务 Command 及其事务尚未实现 |
 | 当前 principal.Resolver、quality-server.ts | 服务端身份入口、已有只读预览 | StaticResolver 与共享 HUMAN_DECISION_API_TOKEN 不能区分实际办理的多个人 |
 | 独立 OIDC/RP 候选 | 外部 IAM Adapter、逐用户私有会话、当前身份映射、IAM 变更 fence 的路线 | 候选的身份/会话基础已由 1A 有界复用；新增独立 acceptance profile，其他候选模块未合并 |
 | transaction、Evidence/Audit/Outbox、Agent 回执/CAS 模式 | 同事务记录、明确请求恢复、历史保留的机制 | 新增本领域对象和约束；不复用 Agent receipt 表、API 或状态机 |
@@ -22,7 +24,7 @@
 
 候选代码的冻结检查依据是本机独立 checkout `C:/Users/Henry/.codex/worktrees/dpp-oidc-contract/data-product-platform`，提交 `fde81069d79c1189c9dae08515646eeac5e008d0`，主要文件为 `docs/architecture/identity-authentication-contract.md`、`browser-identity-candidate.md`、`entity-review-iam-contract.md` 及 `principal/oidc`、`principal/bindings`。原候选本身不是企业现场验证证明；本分支 1A 的有界复用以实施记录为准。候选使用成熟 ZITADEL OIDC Go 库（Apache-2.0）与 openid-client/pg（MIT）的 Adapter 方案；版本、漏洞、维护状态及运维配置须在将来选定集成提交时重新核验，不将旧版本号当成当前推荐。
 
-**集成冲突必须先解决**：候选曾占用 migration 51，而当前分支 51 已用于 ingestion_batch，当前验收绑定为 74；Go/pgx 依赖基线也不同。未来由 IAM 与仓库 owner 协调新的增量迁移和模块基线，验证组合后的干净安装；不得直接 cherry-pick 旧迁移、改写已应用编号或给原库补跑。本轮不分配迁移号、不操作其他 checkout。
+**历史集成冲突及当前边界**：候选曾占用 migration 51，而本分支 51 已用于 ingestion_batch；1A 已通过增量 migrations 75/76 和统一模块基线完成有界集成，见 [1A 实施记录](../product/acceptance-identity-1a-implementation.md)。不再将候选集成列为当前未完成项；企业身份映射、真实依据接纳和业务写入仍未接入。后续不得直接 cherry-pick 旧迁移、改写已应用编号或给原库补跑。本轮不分配迁移号、不操作其他 checkout。
 
 ## 2. 身份信任链与办理权限
 
@@ -97,6 +99,30 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 
 当前没有已验证的业务收件材料接纳入口；[1B前置只读核对](acceptance-business-basis-read-v1.md)仅提供安全引用、记录完整性和未配置缺口，不改变本条准入。Evidence owner 还须明确可选择的材料类别及受控来源，并提供能核对接收主体、交付/版本、原记录人和材料内容 hash 的安全投影/关系。缺少该路径时返回 422 REQUIRED_CONDITIONS_NOT_MET，blocker 为 `RECEIPT_EVIDENCE_UNAVAILABLE`，不开放 RECEIVED 正式登记；Command 自己新建的审计 Evidence 不能反过来充当其收到依据。独立测试可用明确合成材料验证，企业材料接纳仍是准入缺口，不以放宽 Evidence 条件填平。
 
+### 3.1 签收契约补充：可信依据与准备闭环
+
+可信依据的必需内容和来源职责统一归 [T01–T12 清单](business-receipt-trusted-basis-v1.md)，不在各页面或 Command 中各自实现一套“可信”算法。当前目录、代表责任、标准权威源及材料来源均 UNCONFIGURED；新写入口一律关闭，包括无附件的 MISSING/DISPUTED，不因其较易满足而提前开放。
+
+未来 `RecordBusinessReceipt` 仍只有第 5 节现有请求字段；客户端不能提交接收主体、可信来源、核验时点或验证结论。服务端依次核对当前本人/冻结接收责任、明确成果及当前原签收，再按 outcome 和引用用途，由 Evidence owner 的来源接纳 Port 核对精确 evidenceIds。收到证明须满足 T07–T10；背景或争议材料不自动升级为收到证明。提交的每个引用均须有权读取、目标匹配且满足其用途，不能丢弃无效引用后把剩余材料当整次成功。
+
+| outcome | 额外准入与准备投影 | 写入后含义 |
+|---|---|---|
+| RECEIVED | 非空原因、至少一条受控收到依据；材料出处、内容身份、接收主体和接纳当前有效性均明确可用 | 有权接收代表作出的收到声明；不自动验收通过或产生新的交付权利 |
+| PARTIAL | 非空原因，可无附件；有引用时仍逐一核验权限/范围/用途 | 部分收到，准备继续阻断 |
+| MISSING | 非空原因，可无附件；自身身份、代表/责任及目标仍有效 | 未收到声明，准备继续阻断 |
+| DISPUTED | 非空原因，可无附件；有引用时仍逐一核验权限/范围/用途 | 争议声明，准备继续阻断 |
+
+标准当前失效或本单确认待补时，不增加“先确认标准才能登记未收到”的硬依赖；未来已启用环境仍允许满足其自身依赖的 MISSING/DISPUTED。来源条件必须按本次动作和提交材料检查，不把所有上游来源全部可用变成所有动作的固定门禁；全局写入关闭与动作 eligibility 始终分开。
+
+历史记录、当前准备条件和来源配置分别处理：
+
+- 本单签收冻结明确材料/内容/接纳引用及办理依据；Receipt header 与全部材料成员同事务追加，创建后不可原地变更。底层具体强类型接纳事实由实际来源确定后定稿，不把 source URL/metadata 当关系模型。
+- 可信内容变化须新内容身份及新接纳依据；新收到声明通过补正追加。原签收与将来已有 submission/archive 的旧引用不变，不自动转换 outcome 或移动 current pointer。
+- 接纳被撤销、过期或当前不可核对时，准备情况阻断并显示具体缺口；保留当时签收依据。历史回执恢复仍按第 6 节的当前 READ 和同主体规则，不因来源变化重做已提交业务动作。
+- 当前 Evidence envelope hash 只校验平台记录；不能据此重建附件 hash、证明企业授权或自动填 RECEIVED。`CORE_CONFIRMED` 来源标记也不替代企业接纳。
+
+未来可变本地接纳有效性必须参与第 4 节最终重读及共享依赖 fence；来源检查只在别的连接做一次预检不足以授权写入。外部检查点与本地串行化的边界归可信依据清单，具体来源/处置路径或撤销窗口未定稿则不启用。本轮不新增锁服务、来源注册中心或接纳写接口。
+
 首次签收显式传 `replacesReceiptId=null`；补正必须等于当前 receiptId，并提供 expectedRevision。并发补正最多一个成功。RECEIVED 改为 DISPUTED 合法，旧收到声明仍保留，准备齐全投影随之阻断。仅签收变化不改草稿 hash 或原标准确认；未来冻结提交仍精确引用当时 receiptId。
 
 | 当前状态 | 本切片动作 | 状态结果 | 追加事实/版本 |
@@ -113,9 +139,9 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 
 ## 4. 写入的事务准入与并发保证
 
-**候选历史缺口（1A 本地 Port 已有界补齐，见实施记录）**：OIDC 候选在请求入口查询当前身份；其 Entity Review 契约明确没有将 grant 撤销和已进入的业务事务串行化。当前绑定 GET 的 READ ONLY/REPEATABLE READ 时点也只是读取快照。二者均不能直接成为业务写入授权。
+**候选历史缺口（1A 本地 Port 已有界补齐，见实施记录）**：原 OIDC 候选在请求入口查询当前身份；其 Entity Review 契约没有将 grant 撤销和已进入的业务事务串行化。原绑定 GET 的 READ ONLY/REPEATABLE READ 时点也只是读取快照。独立 1A/1B 读取已复用本地 fence 与 READ COMMITTED 重读；已有读取能力不直接成为业务写入授权。
 
-未来由 IAM owner 提供 **Tx-scoped Authority Port**：在验收事务的同一个 pgx.Tx/连接中取得既有 IAM mutation fence 的兼容锁，并重读 actor、issuer/sub binding、workspace grant、capability、revision/期限；不得复制私有 advisory key，或在另一条连接持锁就声称同事务。业务责任 owner 提供 workspace 级 binding fence，所有新增代表/责任/适用事实和 disposition 的受控写路径均须参与。存在可绕过 fence 的运行期写路径时不开放本切片。
+未来业务 Command 复用 1A 已有、由 IAM owner 维护的 **Tx-scoped Authority Port**：在验收事务的同一个 pgx.Tx/连接中取得既有 IAM mutation fence 的兼容锁，并重读 actor、issuer/sub binding、workspace grant、capability、revision/期限；不得复制私有 advisory key，或在另一条连接持锁就声称同事务。业务责任 owner 维护已有 workspace 级 binding fence，所有新增代表/责任/适用事实和 disposition 的受控写路径均须参与。存在可绕过 fence 的运行期写路径时不开放本切片；本轮不重新实现这些 Port。
 
 固定顺序为：**IAM authority fence → workspace acceptance-binding fence → scoped idempotency lock → case row → 本次来源 ContractVersion → 本领域从属成员**。验收命令对前两个 fence 持共享锁，IAM/绑定事实变更持各自排他锁；若一个变更同时需要二者，严格同序。复用现有事务/advisory lock 基础设施，不新增锁服务。后续 submission/decision/archive 仍在 case 之后 parent-first。ContractVersion 锁与其状态 UPDATE 互斥；证据接入不得反向取得另一 case lock。
 
@@ -170,6 +196,7 @@ factIds 逐命令固定：创建/修订为 `{draftRevisionId}`，确认是 `{con
 | 409 REVISION_CONFLICT/STATE_CONFLICT/BASIS_CHANGED/IDEMPOTENCY_CONFLICT | GET 当前事实并展示差异；不覆盖 CAS、不自动套入新 revision 重发 |
 | 422 REQUIRED_CONDITIONS_NOT_MET/UNSUPPORTED_CRITERION | 返回安全的逐项 blockers，无部分业务保存 |
 | 503 AUTHORITY_UNAVAILABLE | 无新的授权依据，不落业务事实；如以前已有未决请求，仍须恢复其原结果 |
+| 503 SOURCE_UNAVAILABLE（未来来源 Adapter） | 本动作必需的权威来源不可用，无法产生新的可用结论；当前请求不得写入；不能据此断言更早 UNKNOWN 请求未提交 |
 | 网络中断、无匹配回执、畸形响应或不确定 5xx | UNKNOWN；即使响应写“失败”也不能凭 HTTP 状态推断 DB 未提交 |
 
 ## 6. 幂等、断线与异常恢复
@@ -199,7 +226,7 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 
 ## 7. 新版页面与人员办理顺序
 
-未来 Case 业务页面复用新版侧栏的“业务验收”“业务签收”“业务归档”和既有 Core 壳，不增加重复菜单。正式路由与 `/#business-*` 演示域分离；这些业务表单尚未实现。1A 仅实现身份/工作空间和责任预检页面，见实施记录。
+未来 Case 业务页面复用新版侧栏的“业务验收”“业务签收”“业务归档”和既有 Core 壳，不增加重复菜单。正式路由与 `/#business-*` 演示域分离；这些业务表单尚未实现。1A 实现身份/工作空间和责任预检，1B 前置补齐业务依据/材料只读核对；新的[页面流程稿](../product/business-receipt-page-flow-20261024.md)复用这些完整流程，不改变现有 GET 或演示存储。
 
 | 页面/顺序 | 主体与唯一主要动作 | 返回、刷新和阻断 |
 |---|---|---|
@@ -217,6 +244,8 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 ## 8. 实施前门禁、责任归属与验证清单
 
 下表是未来准入工作，不是本次开发任务或启用授权。
+
+后续详细核对使用[异常验收矩阵 R01–R44](../product/business-receipt-exception-acceptance-matrix-20261024.md)和[写入启用清单 G0–G8](../product/business-receipt-write-enablement-checklist-20261024.md)。它们是本文的验证/启用视图，不另定义 Command 状态机；全部新写入与真实来源现场用例仍 NOT_RUN，业务写入仍 NOT_AUTHORIZED。
 
 | 门禁/责任 owner | 必须提供的证据 | 当前判定 |
 |---|---|---|

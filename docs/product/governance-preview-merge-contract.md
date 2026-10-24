@@ -1,6 +1,8 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-当前实施增量：1B前置业务依据只读核对。用户确认企业来源暂未确定；复用1A会话/事务fence、责任/标准和Evidence，补齐两个GET、新版核对页、安全材料投影、只读权限及独立环境PG/浏览器验收，无新业务表/DDL/写入。权威契约为[业务依据只读契约](../architecture/acceptance-business-basis-read-v1.md)，范围及证据见[实施记录](acceptance-business-basis-read-implementation.md)。真实来源、内容与收到均不推断，原库/Agent保留、业务写关闭、模型/派发关闭、Draft不合并。
+当前文档增量（核对 `73e6f3f1`）：用户要求先设计业务签收下一步，不开发。交付[可信依据清单](../architecture/business-receipt-trusted-basis-v1.md)、[第一切片签收补充](../architecture/business-acceptance-draft-receipt-admission-v1.md)、[页面流程稿](business-receipt-page-flow-20261024.md)、[异常验收矩阵](business-receipt-exception-acceptance-matrix-20261024.md)和[写入启用清单](business-receipt-write-enablement-checklist-20261024.md)，同步清理“1A候选未集成”的过时表述。业务/来源语义以对应文档各自范围为准，不在评审中扩展通用来源注册、上传、IAM或业务写实现。本轮仅 Markdown；来源 UNCONFIGURED、写入关闭，原库/独立预览/Agent保留，模型/派发关闭，Draft不合并、不部署。静态一致性与链接核对不冒充新接口、PG、浏览器或真实来源验收。
+
+上一实施增量：1B前置业务依据只读核对。用户确认企业来源暂未确定；复用1A会话/事务fence、责任/标准和Evidence，补齐两个GET、新版核对页、安全材料投影、只读权限及独立环境PG/浏览器验收，无新业务表/DDL/写入。权威契约为[业务依据只读契约](../architecture/acceptance-business-basis-read-v1.md)，范围及证据见[实施记录](acceptance-business-basis-read-implementation.md)。真实来源、内容与收到均不推断，原库/Agent保留、业务写关闭、模型/派发关闭、Draft不合并。
 
 上一实施增量：用户已授权 1A 可信多人身份与责任准入。复用 OIDC/RP 候选、migrations 75/76、独立 TLS PG/Keycloak 验收、事务内权威/责任 fence、新版只读页面及多人/跨空间浏览器验收；细节与证据归 [1A 实施记录](acceptance-identity-1a-implementation.md)。业务 Case/签收/确认写入口仍关闭，原库及 Agent API 保留，不接模型/真实执行，Draft 不合并。构建依赖安全修复和 required 身份验收组属于本次范围；不得把 1A 本地事实校验当未来写入准入或企业现场 PASS。
 
