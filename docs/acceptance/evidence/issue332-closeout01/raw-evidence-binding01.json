@@ -1,0 +1,10 @@
+{
+  "status": "PASS_PRIVATE_RAW_EVIDENCE_BYTES",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\merge-closeout01",
+  "members": 530,
+  "index_sha256": "c07f0f5fe4f9ba24e95fd906c35228e65df9ee1c8ba723b2323c6e19fe809e5b",
+  "source_start": 0,
+  "business_provider_calls": 0,
+  "protection_write": 0,
+  "business_delete": 0
+}

@@ -1,0 +1,585 @@
+{
+  "status": "PASS_REAL_PY31316_WINDOWS_LINUX_NONDELETE",
+  "platforms": {
+    "Windows": {
+      "status": "PASS",
+      "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:17:50) [MSC v.1944 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "modes": {
+        "normal": {
+          "commands": 26,
+          "methods": 192,
+          "skipped": 1,
+          "suites": [
+            {
+              "name": "test_evidence_indexes-normal",
+              "methods": 12,
+              "skipped": 1
+            },
+            {
+              "name": "test_six_native_entry-normal",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_resources-normal",
+              "methods": 20,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_volumes-normal",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_budget_bytes-normal",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_successor_dependencies-normal",
+              "methods": 23,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v26-normal",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v29-normal",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v30-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v31-normal",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v32-normal",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_receipt_bytes-normal",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_fixture_artifacts-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_preallocation_ci-normal",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_six_candidate_runtime-normal",
+              "methods": 16,
+              "skipped": 0
+            },
+            {
+              "name": "test_native_protection-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_renewal-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_maintenance-normal",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_composition-normal",
+              "methods": 12,
+              "skipped": 0
+            },
+            {
+              "name": "test_verify_six_native-normal",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_staging-normal",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_execution_freeze-normal",
+              "methods": 13,
+              "skipped": 0
+            },
+            {
+              "name": "test_freeze_six_candidate-normal",
+              "methods": 1,
+              "skipped": 0
+            },
+            {
+              "name": "test_window_six_support-normal",
+              "methods": 7,
+              "skipped": 0
+            },
+            {
+              "name": "test_attest_remaining_executable-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "temporary_containers_test-normal",
+              "methods": 9,
+              "skipped": 0
+            }
+          ]
+        },
+        "O": {
+          "commands": 26,
+          "methods": 192,
+          "skipped": 1,
+          "suites": [
+            {
+              "name": "test_evidence_indexes-O",
+              "methods": 12,
+              "skipped": 1
+            },
+            {
+              "name": "test_six_native_entry-O",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_resources-O",
+              "methods": 20,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_volumes-O",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_budget_bytes-O",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_successor_dependencies-O",
+              "methods": 23,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v26-O",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v29-O",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v30-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v31-O",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v32-O",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_receipt_bytes-O",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_fixture_artifacts-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_preallocation_ci-O",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_six_candidate_runtime-O",
+              "methods": 16,
+              "skipped": 0
+            },
+            {
+              "name": "test_native_protection-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_renewal-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_maintenance-O",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_composition-O",
+              "methods": 12,
+              "skipped": 0
+            },
+            {
+              "name": "test_verify_six_native-O",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_staging-O",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_execution_freeze-O",
+              "methods": 13,
+              "skipped": 0
+            },
+            {
+              "name": "test_freeze_six_candidate-O",
+              "methods": 1,
+              "skipped": 0
+            },
+            {
+              "name": "test_window_six_support-O",
+              "methods": 7,
+              "skipped": 0
+            },
+            {
+              "name": "test_attest_remaining_executable-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "temporary_containers_test-O",
+              "methods": 9,
+              "skipped": 0
+            }
+          ]
+        }
+      },
+      "commands": 52,
+      "denied_host_reads": 0
+    },
+    "Linux": {
+      "status": "PASS",
+      "python": "3.13.16 (main, Oct 21 2026, 01:08:44) [GCC 14.2.0]",
+      "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+      "modes": {
+        "normal": {
+          "commands": 26,
+          "methods": 192,
+          "skipped": 0,
+          "suites": [
+            {
+              "name": "test_evidence_indexes-normal",
+              "methods": 12,
+              "skipped": 0
+            },
+            {
+              "name": "test_six_native_entry-normal",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_resources-normal",
+              "methods": 20,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_volumes-normal",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_budget_bytes-normal",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_successor_dependencies-normal",
+              "methods": 23,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v26-normal",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v29-normal",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v30-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v31-normal",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v32-normal",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_receipt_bytes-normal",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_fixture_artifacts-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_preallocation_ci-normal",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_six_candidate_runtime-normal",
+              "methods": 16,
+              "skipped": 0
+            },
+            {
+              "name": "test_native_protection-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_renewal-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_maintenance-normal",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_composition-normal",
+              "methods": 12,
+              "skipped": 0
+            },
+            {
+              "name": "test_verify_six_native-normal",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_staging-normal",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_execution_freeze-normal",
+              "methods": 13,
+              "skipped": 0
+            },
+            {
+              "name": "test_freeze_six_candidate-normal",
+              "methods": 1,
+              "skipped": 0
+            },
+            {
+              "name": "test_window_six_support-normal",
+              "methods": 7,
+              "skipped": 0
+            },
+            {
+              "name": "test_attest_remaining_executable-normal",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "temporary_containers_test-normal",
+              "methods": 9,
+              "skipped": 0
+            }
+          ]
+        },
+        "O": {
+          "commands": 26,
+          "methods": 192,
+          "skipped": 0,
+          "suites": [
+            {
+              "name": "test_evidence_indexes-O",
+              "methods": 12,
+              "skipped": 0
+            },
+            {
+              "name": "test_six_native_entry-O",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_resources-O",
+              "methods": 20,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_volumes-O",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_retired_budget_bytes-O",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_successor_dependencies-O",
+              "methods": 23,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v26-O",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v29-O",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v30-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v31-O",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_retained_v32-O",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_receipt_bytes-O",
+              "methods": 3,
+              "skipped": 0
+            },
+            {
+              "name": "test_fixture_artifacts-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_preallocation_ci-O",
+              "methods": 6,
+              "skipped": 0
+            },
+            {
+              "name": "test_six_candidate_runtime-O",
+              "methods": 16,
+              "skipped": 0
+            },
+            {
+              "name": "test_native_protection-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_renewal-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_maintenance-O",
+              "methods": 9,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_composition-O",
+              "methods": 12,
+              "skipped": 0
+            },
+            {
+              "name": "test_verify_six_native-O",
+              "methods": 5,
+              "skipped": 0
+            },
+            {
+              "name": "test_retention_staging-O",
+              "methods": 2,
+              "skipped": 0
+            },
+            {
+              "name": "test_execution_freeze-O",
+              "methods": 13,
+              "skipped": 0
+            },
+            {
+              "name": "test_freeze_six_candidate-O",
+              "methods": 1,
+              "skipped": 0
+            },
+            {
+              "name": "test_window_six_support-O",
+              "methods": 7,
+              "skipped": 0
+            },
+            {
+              "name": "test_attest_remaining_executable-O",
+              "methods": 4,
+              "skipped": 0
+            },
+            {
+              "name": "temporary_containers_test-O",
+              "methods": 9,
+              "skipped": 0
+            }
+          ]
+        }
+      },
+      "commands": 52,
+      "denied_host_reads": 0
+    }
+  },
+  "linux_test_helper": {
+    "status": "REMOVED",
+    "id": "d281c75a34311d6ded488a4719a62cc877d55e12120df8453d6c33da605117b8",
+    "volumes_removed": 0,
+    "images_removed": 0,
+    "networks_removed": 0
+  },
+  "retained_source_start": 0,
+  "provider_calls": 0,
+  "protection_write": 0,
+  "business_delete": 0,
+  "no_new_business_candidate_execution_window": true,
+  "raw_logs_root": "C:\\Users\\Henry\\.codex\\fixture-private\\merge-closeout01",
+  "new_private_evidence_not_duplicated_into_PR": true
+}

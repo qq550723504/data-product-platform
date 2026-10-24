@@ -327,3 +327,7 @@ docs/acceptance/issue307-d1-integrated-publication-proposal01.md -text
 
 # This CI repair binds its local matrix/proposal bytes exactly.
 docs/acceptance/issue307-d1-reader-path*.md -text
+
+# Keep this finite closeout's indexed contract and acceptance bytes exact.
+docs/acceptance/issue332-*.md -text
+docs/acceptance/evidence/issue332-closeout01/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab

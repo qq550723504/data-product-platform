@@ -1,7 +1,8 @@
 """Cold successor dependencies; maintenance State snapshots are never runtime gates."""
 import retired_resources as r
 
-SCHEMA = 'd1-successor-cold-dependencies-v1'
+SCHEMA = 'd1-successor-cold-dependencies-v2'
+DESCRIPTOR_COMPARISON = 'RAW_AND_EMPTY_DNS_EQUIVALENCE_V1'
 SOURCE_KEYS = {group + ':' + role for group in ('business-races', 'late-hold', 'mixed')
                for role in ('Core', 'Native')} | {'business-races:Redis'}
 
@@ -15,6 +16,34 @@ def namespace_parent(item, rows):
                if target and (cid.startswith(target) or row['Name'].lstrip('/') == target)]
     r.need(len(matches) == 1, 'required netns parent absent or ambiguous')
     return matches[0]
+
+
+def empty_dns_descriptors(item):
+    """Two raw identities for one empty DNS field; never change the input.
+
+    Other Config/HostConfig/Mounts fields still participate in both hashes.
+    Missing/invalid fields are not an empty-list compatibility fallback.
+    A configured nonempty DNS list keeps its strict raw identity only.
+    """
+    host = item['HostConfig']
+    r.need(type(host) is dict and 'Dns' in host, 'required DNS descriptor field missing')
+    dns = host['Dns']
+    r.need(dns is None or (type(dns) is list and all(type(value) is str for value in dns)),
+           'required DNS descriptor type differs')
+    if dns is not None and len(dns) != 0:
+        return None
+    return tuple(r.descriptor({**item, 'HostConfig': {**host, 'Dns': value}})
+                 for value in (None, []))
+
+
+def descriptor_matches(item, expected):
+    variants = empty_dns_descriptors(item)
+    canonical = None if variants is None else variants[0]
+    # The added semantic hash cannot independently authorize a changed row.
+    # The immutable original raw hash must also match a single-field variant.
+    return (expected['empty_dns_descriptor'] == canonical
+            and (r.descriptor(item) == expected['descriptor']
+                 or (variants is not None and expected['descriptor'] in variants)))
 
 
 def build(plan, volume_plan, frozen_rows, sources):
@@ -47,17 +76,22 @@ def build(plan, volume_plan, frozen_rows, sources):
         if parent is not None and parent not in needed:
             needed.add(parent)
             pending.append(parent)
-    required = {cid: dict(descriptor=r.descriptor(frozen_rows[cid]),
-                         netns_parent=namespace_parent(frozen_rows[cid], frozen_rows))
-                for cid in sorted(needed)}
+    required = {}
+    for cid in sorted(needed):
+        variants = empty_dns_descriptors(frozen_rows[cid])
+        required[cid] = dict(descriptor=r.descriptor(frozen_rows[cid]),
+                             empty_dns_descriptor=None if variants is None else variants[0],
+                             netns_parent=namespace_parent(frozen_rows[cid], frozen_rows))
     # No State/PID/time fields or unrelated session membership enter this hash.
-    return dict(schema=SCHEMA, phase='COLD_PREPARATION', sources=sources,
+    return dict(schema=SCHEMA, descriptor_comparison=DESCRIPTOR_COMPARISON,
+                phase='COLD_PREPARATION', sources=sources,
                 required=required, volumes=volumes,
                 retired_cids=sorted(retired), retired_volumes=sorted(removed_volumes))
 
 
 def verify(contract, docker):
-    r.need(contract['schema'] == SCHEMA and contract['phase'] == 'COLD_PREPARATION',
+    r.need(contract['schema'] == SCHEMA and contract['phase'] == 'COLD_PREPARATION'
+           and contract['descriptor_comparison'] == DESCRIPTOR_COMPARISON,
            'unsupported successor dependency phase')
     ids = docker.inventory()  # Failure is not absence; unrelated State is ignored.
     required = set(contract['required'])
@@ -66,7 +100,7 @@ def verify(contract, docker):
     rows = docker.inspect(sorted(ids))
     for cid, expected in contract['required'].items():
         item = rows[cid]
-        r.need(r.closed(item) and r.descriptor(item) == expected['descriptor']
+        r.need(r.closed(item) and descriptor_matches(item, expected)
                and namespace_parent(item, rows) == expected['netns_parent'],
                'required dependency running or descriptor/topology drift')
     raw = docker.raw('volume', 'ls', '-q')

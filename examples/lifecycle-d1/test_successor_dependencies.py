@@ -72,6 +72,8 @@ class SuccessorCompositionTests(unittest.TestCase):
         self.spec = spec
         rows = {cid: item(cid) for cid in SOURCES}
         rows.update({CUSTODIAN: item(CUSTODIAN, 'container:'+NETNS), NETNS: item(NETNS), OTHER: item(OTHER, running=True)})
+        for row in rows.values():
+            row['HostConfig']['Dns'] = None
         self.metadata = {}
         for name in ('used-budget', 'source-data', 'old-empty'):
             self.metadata[name] = dict(Name=name, Driver='local', Scope='local', Options=None,
@@ -181,6 +183,100 @@ class SuccessorCompositionTests(unittest.TestCase):
         self.assertEqual((result['source_roles'],result['required_owners'],result['current_physical_budgets']), (7,9,1))
         self.assertEqual(self.original.read_bytes(), before)
         self.assertTrue(all(call[0]=='volume' and call[1] in ('inspect','ls') for call in self.docker.calls))
+
+    def direct_contract(self, dns=None):
+        frozen=copy.deepcopy(self.frozen);plan=copy.deepcopy(self.plan)
+        for cid,row in frozen.items():
+            row['HostConfig']['Dns']=copy.deepcopy(dns)
+            if cid in plan['live']:plan['live'][cid]['descriptor']=r.descriptor(row)
+        roles={group+':'+role:SOURCES[n*2+offset] for n,group in enumerate(('business-races','late-hold','mixed'))
+               for offset,role in enumerate(('Core','Native'))}
+        roles['business-races:Redis']=SOURCES[6]
+        return dependencies.build(plan,self.vplan,frozen,roles),frozen
+
+    def test_empty_dns_representations_are_bidirectional_and_raw_history_is_unchanged(self):
+        originals={path:path.read_bytes() for path in (self.archive/'plan.json',self.archive/'final-containers.json',self.original)}
+        for frozen_dns in (None,[]):
+            contract,frozen=self.direct_contract(frozen_dns)
+            self.assertEqual(contract['schema'],'d1-successor-cold-dependencies-v2')
+            self.assertEqual(contract['descriptor_comparison'],dependencies.DESCRIPTOR_COMPARISON)
+            for current_dns in (None,[]):
+                rows=copy.deepcopy(frozen)
+                for cid in contract['required']:rows[cid]['HostConfig']['Dns']=copy.deepcopy(current_dns)
+                before=copy.deepcopy(rows)
+                docker=ReadOnlyDocker(rows,self.docker.metadata)
+                with self.subTest(frozen=frozen_dns,current=current_dns):
+                    result=dependencies.verify(contract,docker)
+                    self.assertEqual(result['status'],'PASS_CURRENT_SUCCESSOR_COLD_DEPENDENCIES')
+                    self.assertEqual(rows,before)
+                    self.assertEqual(contract['required'][CUSTODIAN]['descriptor'],r.descriptor(frozen[CUSTODIAN]))
+                    if frozen_dns!=current_dns:self.assertNotEqual(r.descriptor(rows[CUSTODIAN]),r.descriptor(frozen[CUSTODIAN]))
+        for path,raw in originals.items():self.assertEqual(path.read_bytes(),raw)
+
+    def test_complete_cli_dns_alias_success_is_stable_and_keeps_strict_old_maintenance(self):
+        baseline=self.full();before=copy.deepcopy(self.docker.rows)
+        for cid in (*SOURCES,CUSTODIAN,NETNS):self.docker.rows[cid]['HostConfig']['Dns']=[]
+        self.assertEqual(self.full(),baseline)
+        with self.assertRaisesRegex(ValueError,'changed'):catalog.verify_maintenance_snapshot()
+        for cid,row in before.items():row['HostConfig']['Dns']=self.docker.rows[cid]['HostConfig']['Dns']
+        self.assertEqual(self.docker.rows,before)
+
+    def test_nonempty_dns_is_strict_and_never_participates_in_empty_equivalence(self):
+        contract,frozen=self.direct_contract(['192.0.2.53'])
+        self.assertIsNone(contract['required'][CUSTODIAN]['empty_dns_descriptor'])
+        self.assertEqual(dependencies.verify(contract,ReadOnlyDocker(frozen,self.docker.metadata))['status'],'PASS_CURRENT_SUCCESSOR_COLD_DEPENDENCIES')
+        for changed in (None,[],['192.0.2.54']):
+            rows=copy.deepcopy(frozen);rows[CUSTODIAN]['HostConfig']['Dns']=changed
+            with self.subTest(changed=changed),self.assertRaises(ValueError):dependencies.verify(contract,ReadOnlyDocker(rows,self.docker.metadata))
+
+    def test_dns_missing_wrong_type_or_new_resolvers_reject_in_complete_cli(self):
+        for dns in ('missing','',{},False,0,(),[None],[False],['192.0.2.53'],['']):
+            old=copy.deepcopy(self.docker.rows[CUSTODIAN])
+            if dns=='missing':self.docker.rows[CUSTODIAN]['HostConfig'].pop('Dns')
+            else:self.docker.rows[CUSTODIAN]['HostConfig']['Dns']=dns
+            with self.subTest(dns=dns),self.assertRaises(ValueError):self.full()
+            self.docker.rows[CUSTODIAN]=old
+
+    def test_empty_dns_does_not_hide_any_other_configuration_or_liveness_drift(self):
+        changes=[('HostConfig','DnsOptions',['ndots:1']),('HostConfig','DnsSearch',['example.invalid']),
+                 ('HostConfig','Privileged',True),('HostConfig','CapAdd',['SYS_ADMIN']),
+                 ('HostConfig','NetworkMode','host'),('Config','Cmd',['other']),('Config','Env',['EXTRA=1']),
+                 ('Config','User','0:0'),('State','Running',True),('State','Pid',99),
+                 (None,'Image','sha256:other'),(None,'Id','f'*64),(None,'Name','/other'),
+                 (None,'Mounts',[dict(Type='bind',Source='/extra',Destination='/root')])]
+        for section,key,value in changes:
+            old=copy.deepcopy(self.docker.rows[CUSTODIAN]);row=self.docker.rows[CUSTODIAN]
+            row['HostConfig']['Dns']=[]
+            (row if section is None else row[section])[key]=value
+            with self.subTest(section=section,key=key),self.assertRaises(ValueError):self.full()
+            self.docker.rows[CUSTODIAN]=old
+
+    def test_algorithm_hash_and_original_raw_hash_are_both_authoritative(self):
+        for fault,current_dns in ((fault,dns) for fault in ('old-schema','missing-tag','bad-tag','missing-hash','bad-hash','forged-hash')
+                                  for dns in (None,[])):
+            contract,frozen=self.direct_contract();rows=copy.deepcopy(frozen)
+            rows[CUSTODIAN]['HostConfig']['Dns']=current_dns
+            if fault=='old-schema':contract['schema']='d1-successor-cold-dependencies-v1'
+            elif fault=='missing-tag':contract.pop('descriptor_comparison')
+            elif fault=='bad-tag':contract['descriptor_comparison']='IGNORE_ALL_EMPTY_FIELDS'
+            elif fault=='missing-hash':contract['required'][CUSTODIAN].pop('empty_dns_descriptor')
+            elif fault=='bad-hash':contract['required'][CUSTODIAN]['empty_dns_descriptor']='0'*64
+            else:
+                rows[CUSTODIAN]['HostConfig']['Privileged']=True
+                contract['required'][CUSTODIAN]['empty_dns_descriptor']=dependencies.empty_dns_descriptors(rows[CUSTODIAN])[0]
+            with self.subTest(fault=fault,current_dns=current_dns),self.assertRaises((ValueError,KeyError)):
+                dependencies.verify(contract,ReadOnlyDocker(rows,self.docker.metadata))
+
+    def test_budget_and_volume_checks_still_reject_with_empty_dns_alias(self):
+        for fault in ('bytes','owner','mount','missing'):
+            old_rows=copy.deepcopy(self.docker.rows);old_meta=copy.deepcopy(self.docker.metadata)
+            self.docker.rows[CUSTODIAN]['HostConfig']['Dns']=[]
+            if fault=='bytes':self.wsl.stdout=archive('.',b'new attempt')
+            elif fault=='owner':self.docker.metadata['used-budget']['Labels']['lifecycle307.remaining']='other'
+            elif fault=='mount':self.docker.rows[OTHER]['Mounts']=[dict(Type='volume',Name='used-budget',Destination='/extra')]
+            else:self.docker.metadata.pop('used-budget')
+            with self.subTest(fault=fault),self.assertRaises(ValueError):self.full()
+            self.docker.rows=old_rows;self.docker.metadata=old_meta;self.wsl.stdout=archive('.')
 
     def test_unrelated_stop_restart_new_session_and_broken_foreign_netns_do_not_change_contract(self):
         original=self.full()
