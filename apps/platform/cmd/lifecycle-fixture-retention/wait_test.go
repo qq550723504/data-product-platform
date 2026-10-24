@@ -26,7 +26,7 @@ func TestRetentionWaitFalseToTrueThenFreshAuthorization(t *testing.T) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	if waitPermission(ctx, dir, raw, now, time.Millisecond) != nil || f.requests != 0 {
+	if waitPermission(ctx, dir, raw, now, time.Millisecond, func() error { return nil }) != nil || f.requests != 0 {
 		t.Fatal("wait failed or contacted provider")
 	}
 	// A true control is never authorization; stale proof is still rejected.
@@ -74,7 +74,7 @@ func TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation(t *testing.T) {
 			if fault == "cancelled" {
 				cancel()
 			}
-			if waitPermission(ctx, dir, raw, func() time.Time { return at }, time.Millisecond) == nil || f.requests != 0 {
+			if waitPermission(ctx, dir, raw, func() time.Time { return at }, time.Millisecond, func() error { return nil }) == nil || f.requests != 0 {
 				t.Fatal("unsafe wait admitted")
 			}
 		})

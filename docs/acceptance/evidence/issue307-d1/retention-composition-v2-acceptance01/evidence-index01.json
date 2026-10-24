@@ -1,0 +1,1343 @@
+{
+  "status": "PASS_LOCAL_NONDELETE_EVIDENCE_BYTES",
+  "scope": "NOT_EXECUTION_OR_PUBLICATION_AUTHORITY",
+  "count": 334,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/acceptance-commands01.json": {
+      "sha256": "8079d46aaddb9601e77139406c666054cc28936ac2b3e353833e427f81c584cd",
+      "bytes": 3680
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/final-nondelete-checkpoint01.json": {
+      "sha256": "f0fe80be8971e1d69e25aa30c1a94b07fbd745dbc549257dcdefafb0acb34563",
+      "bytes": 2313
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/finalize_evidence01.py": {
+      "sha256": "d8b31b910c8bbb2185020a85562ac3e3ce1eb35907379a90975392a1c41f5a2f",
+      "bytes": 3217
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/linux-probe01.json": {
+      "sha256": "6b208de4b06b02b4b4d6d0830d2419ca6cf225b4a0f2f32c7b1d867ee2d3c787",
+      "bytes": 5045
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/prepare_probe04.py": {
+      "sha256": "4b59de239623ce11fe4e5526e4542b062d74436bb779883713c7e68355e5c3e0",
+      "bytes": 581
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/prepare_runtime04.py": {
+      "sha256": "dffbe407c927b8019b8fb2428d1fe17348ee5537e162f2f3100491f3586c4b67",
+      "bytes": 3301
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-01-inspect.json": {
+      "sha256": "0364d5035757710c99f89f172d1eb39381cdefa9790b814839c3aa7411df6d2b",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-01-inspect.redacted.json": {
+      "sha256": "8fba5034412e8abc6a63c89c3c19922c44bdd63624e3c5261079f7a78d970819",
+      "bytes": 8521
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-01-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-02-inspect.json": {
+      "sha256": "08d194e45e48058ceb164df652e4b22d40790f18fdea182fc246958934714377",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-02-inspect.redacted.json": {
+      "sha256": "ad88dbd9bdadd9989ea298329a4eb94258eba7093140ed64894ee83dfbdf5a6c",
+      "bytes": 8520
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-02-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-03-compile.json": {
+      "sha256": "8eacb5e2da9bfc39eef2505e54099e6be49c0c509ab109c98de45b40b888ae4b",
+      "bytes": 350
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-03-compile.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-03-compile.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-04-volume-create.json": {
+      "sha256": "21f97940c1c7ee4bba092c688102caaa184023c831473c5358f8ff00b82766bb",
+      "bytes": 311
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-04-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-04-volume-create.stdout": {
+      "sha256": "152e4206ef97743ff44b9a6901f732627029d6585d77ce231aa27b3442045ece",
+      "bytes": 40
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-05-volume-inspect.json": {
+      "sha256": "5cb5332ba411d7c1829c8f6f89ca4ca6ddada845739202c3ee09391e45898779",
+      "bytes": 245
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-05-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-05-volume-inspect.stdout": {
+      "sha256": "eb5836c4b141964f1f5c8d01070a26101147df0c76575dbbb05c625411b7b794",
+      "bytes": 383
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-06-empty.json": {
+      "sha256": "c7d627642fceda23ca4ebb5f7ee9905fd8a53893903338adffb3666843fa6442",
+      "bytes": 329
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-06-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-06-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-07-initialize-new.json": {
+      "sha256": "c15b6d4ef955ccd9c231c0a016d1f0c16f0866557dc9cc1951b015935b147647",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-07-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-07-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-08-linux-snapshot.json": {
+      "sha256": "541ca586d85bdecf862200c31ba33e3b9236a609c54e296be699e20dd1461b83",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-08-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-08-linux-snapshot.stdout": {
+      "sha256": "4caa147837e13012a8f19365a3eb65b6aedebbaceeaf22017e45ab9285a7076b",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-09-linux-snapshot.json": {
+      "sha256": "8d87d5a6a40f938b0b84c1f9b3f41e6b1e85fbf3b90913287caca5d5926d06ed",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-09-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-09-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-10-volume-create.json": {
+      "sha256": "01fc243680c20a2600f70c92057dc3ad957d2c3cffe3bd3b66d5755483829817",
+      "bytes": 310
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-10-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-10-volume-create.stdout": {
+      "sha256": "746d4d2493e11b66a2a0c9b3ac94ce0027e34a7756dedc35c2594b14528d297d",
+      "bytes": 39
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-11-volume-inspect.json": {
+      "sha256": "b22871f1180c9c6b3ebfdb29f8a9eeddc3f26b8500e5e7e14b8c3859460aac09",
+      "bytes": 244
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-11-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-11-volume-inspect.stdout": {
+      "sha256": "049c1483afc03be193abf61903a0fa42b30edc22d2c24aeb09d54738d7658873",
+      "bytes": 381
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-12-empty.json": {
+      "sha256": "8f94adb1acad3fcb57212fa197fe2d01e929cfcc948351291367d10202cff8c2",
+      "bytes": 328
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-12-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-12-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-13-initialize-new.json": {
+      "sha256": "d40cc30517c1888c343fadb296fc381836aa8a34ff1a162392b702e45a56eac1",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-13-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-13-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-14-linux-snapshot.json": {
+      "sha256": "d6993d6d46eac3e8dfb3799904357538035811711b9de6be094dfc2889efdcb5",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-14-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-14-linux-snapshot.stdout": {
+      "sha256": "9e788c5cbc0cfb34b125c668a567a096c8d43f3646ed3a8578a870a9fbc088b9",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-15-volume-create.json": {
+      "sha256": "1b266c3f60800d9d215e21e6e81eb48c6083166711de1a0093566ba7eb315744",
+      "bytes": 310
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-15-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-15-volume-create.stdout": {
+      "sha256": "e6bf3d27910d4261f24e8fbe5efef8341ccabdcf5c20feb0153c2a062db92203",
+      "bytes": 39
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-16-volume-inspect.json": {
+      "sha256": "4a6fee00129db947a9584c4ac0e568cf4fc9bbb60d9bd88b9aa7c5c7ea5f7d37",
+      "bytes": 244
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-16-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-16-volume-inspect.stdout": {
+      "sha256": "8359695cea8a40274f234bad664fe985ba9fba303b5dacb95d7a15b6307b6d87",
+      "bytes": 381
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-17-empty.json": {
+      "sha256": "c3f4e42a5c6f2cedf48237cd7cec09e20b163487d91b33a2733b3f4e94057467",
+      "bytes": 328
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-17-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-17-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-18-initialize-new.json": {
+      "sha256": "9874b97cb693f8f6510b4be6c6e4e973ee222063264fe05f291f2cc666287b80",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-18-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-18-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-19-linux-snapshot.json": {
+      "sha256": "b053855f8fd4efb5d25245bd28a05da00f003ac4c1cc8ae017c32e27e8d2cefe",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-19-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-19-linux-snapshot.stdout": {
+      "sha256": "9e788c5cbc0cfb34b125c668a567a096c8d43f3646ed3a8578a870a9fbc088b9",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-20-create.json": {
+      "sha256": "32b61878cbf94b18646f660cdc40ef563492cebeebc1282041b3d1782310458f",
+      "bytes": 1396
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-20-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-20-create.stdout": {
+      "sha256": "1d9e761a77d0f87a7378d5d301000c0098d501a09e3344ff68c058435ac0a2b6",
+      "bytes": 65
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-21-start-test.json": {
+      "sha256": "17047caff516e6a587d3a48c85353c575bcb8a752cc1426987c3da00949037ef",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-21-start-test.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-21-start-test.stdout": {
+      "sha256": "45d319f7b2c3a4860e8643700acbb2196eb53c65e5ae441e9b3e7b7360d4ae42",
+      "bytes": 11439
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-22-inspect.json": {
+      "sha256": "0281b40a1defed3d2bdeecd4a4964a7668afbdac8c233d0af1c7525d7383556d",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-22-inspect.redacted.json": {
+      "sha256": "5b204aadc91ef4ec72698ef39364b0b788aebab737d8b0bf76cc00c667d90788",
+      "bytes": 9772
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-22-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-23-linux-snapshot.json": {
+      "sha256": "a7b33970ead41e1bab6bdfb5ab99c71d3d691367ef5b3d3a2a12006f05f53e33",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-23-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-23-linux-snapshot.stdout": {
+      "sha256": "4caa147837e13012a8f19365a3eb65b6aedebbaceeaf22017e45ab9285a7076b",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-24-linux-snapshot.json": {
+      "sha256": "90c454e37d39cbdccaa4ba0f4d1bab50b422ecd5363565216fc1f174af40d9a2",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-24-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-24-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-25-linux-snapshot.json": {
+      "sha256": "f25dd2301c047d9446bca50fdb0ee9fe21cc2262280647f5f9f0f7c391b6ddd0",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-25-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-25-linux-snapshot.stdout": {
+      "sha256": "bd583ca31ac8d5079ef150eef2ca58e50c0d5d8787ba2d3e63f04e0eb7201aa7",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-26-linux-snapshot.json": {
+      "sha256": "6c1939c24ab88445b94ff8693f76afe9919925672f4cb4a2538297e6338b1d43",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-26-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-26-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-27-linux-snapshot.json": {
+      "sha256": "00b8f1533ca838623a93b1ac01797f1442253ff9160efb0e55bfe53c3327d3d1",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-27-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-27-linux-snapshot.stdout": {
+      "sha256": "bd583ca31ac8d5079ef150eef2ca58e50c0d5d8787ba2d3e63f04e0eb7201aa7",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-28-linux-snapshot.json": {
+      "sha256": "c75a1ce064f597367450a677506853b3c257c762d094cecdc56177a6994d0c4a",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-28-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-28-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-29-linux-snapshot.json": {
+      "sha256": "ba26a51f6a99501163b5f75af2212a2e29770570087766442bc78485ea44292c",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-29-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-29-linux-snapshot.stdout": {
+      "sha256": "e0226013acf1e0803360df591a6e22ecbdcf06a53ab632e23b4fa3eadb5f9f8b",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-30-linux-snapshot.json": {
+      "sha256": "3a92ff946581bd34efba3905545c9470aee1d597c93e7dd1b14c3d968fe6a65b",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-30-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-30-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-31-inspect.json": {
+      "sha256": "5341087b4cfabd1c0887e52b45f26d42d382b26c95f03ce1b01d7da70256eb40",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-31-inspect.redacted.json": {
+      "sha256": "d3e12984002de901226e709911c323d47b51c9ba36a54e5c6c668bc670edbd13",
+      "bytes": 9772
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-31-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-32-inspect.json": {
+      "sha256": "09fcf216f7844020c3d48ca9b02e8a7d86de1bb5f38496ea3dd5e8a641120aa3",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-32-inspect.redacted.json": {
+      "sha256": "006d076b436d6f6bfb979d9eef99fc0813638bfb813df2c460895b9de6df42b0",
+      "bytes": 8521
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-32-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-33-inspect.json": {
+      "sha256": "c0724fece91c970d378125161fa060578df3d20728b533d1389c33051dd59969",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-33-inspect.redacted.json": {
+      "sha256": "e167ea6839cd7e8ccd582d6a43396799a3221c426f880dee1a2bfb868843bcc1",
+      "bytes": 8520
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe-33-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe_linux04.py": {
+      "sha256": "a1e6df20467a3ade28444d5d46e923de913c0ebfd94d7e2b61ccaad8a97910b5",
+      "bytes": 7256
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/probe_windows_controls04.py": {
+      "sha256": "52c561cbde228e0ae7bd6de7ea3fc7567d0feb66c7da5ef6c88216bac4749470",
+      "bytes": 2109
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_composition-normal.json": {
+      "sha256": "0ed954b0b547c322e86f1bdcd10f5ba080035ce90f285e270db07d28d0cd2cf6",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_composition-normal.stderr": {
+      "sha256": "26fe302fb15be30dd2ec92957a1c23e7037a395faccd27e81e23f77accd96d56",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_composition-O.json": {
+      "sha256": "cf43aa33bd9a11547af6524ba3e7b3a6969e01a4f08b93f02983225302a567a1",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_composition-O.stderr": {
+      "sha256": "5b6db365ae535b97401eb7d80eb9b72c9385a7c3bab6d886a4f19f2fda3df6b1",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_maintenance-normal.json": {
+      "sha256": "6a10ecbebc0de43238aa20db793fb8af2bd3ce40de179e6675dea77798e8e093",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_maintenance-normal.stderr": {
+      "sha256": "64c79b3801cb2b4bb9e79d302c252b940fd4ce99a4b506ab35f399f2bb4e6bfa",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_maintenance-O.json": {
+      "sha256": "b196c36264d3b56322f6cdfcef033ae1a43649fca4b7a2b701a6f9e8ab5c9d9e",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_maintenance-O.stderr": {
+      "sha256": "d9d3001e4d1f6e19cad847cae0ac1400d919a8ccca17632df670e9505fabbe25",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_maintenance-O.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_renewal-normal.json": {
+      "sha256": "ff182e2b9f9de8015ae9ddace6a8ac2035aa9094a51e0fc34ef52be427e1ee5b",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_renewal-normal.stderr": {
+      "sha256": "36331cf1492070acd10239d552ef9d3796f75ee5c187dd2389e6be718f0a1058",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_renewal-O.json": {
+      "sha256": "0a6c2d42e3d3ae913deca8babcbd715638991c03c25bdc3e1affeaba61c21461",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_renewal-O.stderr": {
+      "sha256": "36331cf1492070acd10239d552ef9d3796f75ee5c187dd2389e6be718f0a1058",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_staging-normal.json": {
+      "sha256": "9f7dd7e0bafe6fddc1a5f6f113d9757394f7697a3a53fce2de2f476b5d4cdbd1",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_staging-normal.stderr": {
+      "sha256": "1fa3cf840597564e70fdfdd555d673dc6e062af29a1b3d64d1ca159465154fdb",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_staging-O.json": {
+      "sha256": "c684835361b1c1a0d6f87e94ed1d694a33dfb416d8f7edc48c133a24dd4ea76b",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_staging-O.stderr": {
+      "sha256": "60ce10399dac04e70cc4897f5ee1b41eb950c5a2b6d2b6e99df5dc50047f0ef8",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/acceptance-commands01.json": {
+      "sha256": "65488ce3e7132a66b8419e13fdb96ed153f9b421889f18675a2de330dcf275c5",
+      "bytes": 8012
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/actual-R4-ci-entry.json": {
+      "sha256": "89d193cd45384fb050d3731bc12636c14ed9a3730651ffa91fd8022c426e7e15",
+      "bytes": 333
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/actual-R4-ci-entry.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/actual-R4-ci-entry.stdout": {
+      "sha256": "9a1fd03c3bca3b3eb3ca6a59c88b2fd301ce3eb3453b51e4770d5f4c57e90302",
+      "bytes": 869
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/evidence_indexes-normal.json": {
+      "sha256": "ec6632486bc2298f0e7d0af46e99c67a737dc5b23b10a85eadb14f9b04fe24c6",
+      "bytes": 336
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/evidence_indexes-normal.stderr": {
+      "sha256": "74449713a09166a4784f88b769254ce0f6e80c1c0203640f860da5c8169e1480",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/evidence_indexes-O.json": {
+      "sha256": "69b6fb77fd27b966745df02b6a434598ad745b32502a0d74367c71289ced73ec",
+      "bytes": 342
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/evidence_indexes-O.stderr": {
+      "sha256": "dd1a8a352f5c626addaa7772e5e972dc877d3de15ad88f21cb84d08d6ae68b3b",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/fixture_artifacts-normal.json": {
+      "sha256": "f1125af859d5606b6bedf30451d4326752c8cbfef5eeaad48f80e033c166c4b8",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/fixture_artifacts-normal.stderr": {
+      "sha256": "00a91e20b56268169193c15f0fdf236303b942e7640d9d93dcf881d40d49460c",
+      "bytes": 350
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/fixture_artifacts-O.json": {
+      "sha256": "869290e44942823d2dfcd4dd69cdc4f6c435570e67e40ade50894aeabdd67db2",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/fixture_artifacts-O.stderr": {
+      "sha256": "ad17b4e25635f3e80a9142509a8c2f8a08eb36612522fea671ad4c792bf2bb02",
+      "bytes": 350
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/001-intent.json": {
+      "sha256": "ed0dbedab6c7d4b31c4f554d866697315eb342c510a537c1b6b6745e8851fd81",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/001-process.json": {
+      "sha256": "2bb5be90e8a0808189ddf5df0ab42ff808735e4f0d78be841d58cf11f0285296",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/001-stdout.json": {
+      "sha256": "d7560a4f34490a9ba79b14f67846154580b9b3cf2980eb7ff4ea1bcd0606dc8f",
+      "bytes": 4095
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/002-intent.json": {
+      "sha256": "7fc3e7fc309260e207b9e886f9bf16ce77c1047681c8379878f9e1cc4c6b7b81",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/002-process.json": {
+      "sha256": "f839de65a915af8499eb7ba8eaf8c32cec20377a7813bba671b29253bc9c7b4b",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/002-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/003-intent.json": {
+      "sha256": "cd9a09211b39705311b5b6ee9d7700c7d57596a0daeecf3c18e8f9fe0b0263b5",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/003-process.json": {
+      "sha256": "0f4df8eac4e711fab2225fe060de9c952142f1e820e3db951cdbdff76172e5be",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/003-stdout.json": {
+      "sha256": "6b2b2b5c79289e01ff00cd8a9abc015b7003dc5a9a1e8b62e2522b48523d8c97",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/004-intent.json": {
+      "sha256": "0fd577435e7e1c643364af59b61f1b1ea8486cb5f9ae1b3f82761757a8e748b9",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/004-process.json": {
+      "sha256": "82b9fcb8b91a5bb425aa543b2975fa2486bf0628e3011eb2e532917e3a8efe56",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/004-stdout.json": {
+      "sha256": "322b3929a89e65c52334db6b2a0013264f9b3d0722c0b6de803c8cc4440634e8",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/005-intent.json": {
+      "sha256": "f8ecf409302a796622d8f4fdcc9a31f57a95765a417111f8c949a85e2b3d49a2",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/005-process.json": {
+      "sha256": "00c043256314da3c99a1063a88a2ffbf2a1d9f173f3d1556887d288f54ad8eec",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/006-intent.json": {
+      "sha256": "d389089997e6b9e344181cc54e00e35189317e24a8c2511dc3e31254c96d40b2",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/006-process.json": {
+      "sha256": "df38735d2d744f5fa9972f71aedcaeb466de261f583799b9db87b79cf56a6c1d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/006-stdout.json": {
+      "sha256": "b7fa4e234cf63e50463620b6a83c097c59552635f61abf963c2a02a6068254c8",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/007-intent.json": {
+      "sha256": "3b2f8b766228082777417c39d4b98dcac0aa24258154ff90ffebbc9f4db1198a",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/007-process.json": {
+      "sha256": "5339fdbb3dd1e3a442a3c9a5fb06f5d90d9416b890918b6d2a0171a13469b1a5",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/007-stdout.json": {
+      "sha256": "8e9dcb6f7447c56d16b7de839a8724d9304281cce32045426756dc7755ac8254",
+      "bytes": 28634
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/008-intent.json": {
+      "sha256": "062980599c74f8def878f596bf5f58d34a8873ef88edb339a335c9763dbde26b",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/008-process.json": {
+      "sha256": "1ec884db1a28181c9e1353d99a618cdf0ebb571bb48831bc4f09ccc9e28c35d0",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/008-stdout.json": {
+      "sha256": "a3aebd83b3cbbcc83019bce48b49d14c48b195fcba3aa4a0212076d6a06ada88",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/009-intent.json": {
+      "sha256": "34ed32a765b94b1b6b769ca23229d35d35cb958a4f2650262ee45514fdd741cc",
+      "bytes": 335
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/009-process.json": {
+      "sha256": "3e194bbd32ae3d70912c9569c30dfadfa432b1c9a5e7d044f9d547dea82520b3",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/github-readonly/009-stdout.json": {
+      "sha256": "ee948d473f7a4956120ebd511c7a9e12fdef87ed82acd4b23da2776b4527e379",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/go-product-three.json": {
+      "sha256": "99651203fe417535804430f2ad6a052e79de6ae1471f5b6e58a1f6862caf24c8",
+      "bytes": 351
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/go-product-three.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/go-product-three.stdout": {
+      "sha256": "9216818e7826bd0722c794ffb1a5449542413b500333c7950fea17a596d28a1b",
+      "bytes": 313
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/published-boundary-readonly.json": {
+      "sha256": "9ccedde3c521ac1ede9441577ab74ca04c681fed6d7e65aad57b72a42b681f7a",
+      "bytes": 10243
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_composition-normal.json": {
+      "sha256": "a622e855a83fdb0b55affb438da94ed932a0fea7a38242dd0a110cb63b134e7b",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_composition-normal.stderr": {
+      "sha256": "1fdb9f4e91bbf089638b3324f4dac884f23f14f1fc9de865073e9cbffa7b03b0",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_composition-O.json": {
+      "sha256": "9b995c15d8e7b1a04a6df903ee75b1b29c36f6fd51e0b00771e465cd62343a3b",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_composition-O.stderr": {
+      "sha256": "fd0e08a49c8c0272483236d9f2f0ce4497dcb386d2ca9aff37731a17e16a3b30",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_maintenance-normal.json": {
+      "sha256": "5ec00fb9194cb711a8cc3a96bac73fb276c8e9542f78b07c69c5cb5111affdd6",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_maintenance-normal.stderr": {
+      "sha256": "8ddb7cc924a89a0b4adb7feb1431c830966b5a26aa6b4bc5ac5d8450ec5f48da",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_maintenance-O.json": {
+      "sha256": "b7cc3b5323d43b969b72877a77c4caa33fcb7e27a392b0f9e74f668622607a67",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_maintenance-O.stderr": {
+      "sha256": "9348d07f8c7c16f96072bfc2f30c3e4c7797669e58695413e22431577dbecaec",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_maintenance-O.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_renewal-normal.json": {
+      "sha256": "1ab631b96f622cf6319e60902db319eabb5b31c49cdaac6c5ea45b8d6eabb493",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_renewal-normal.stderr": {
+      "sha256": "fd5335fdc384400a16a1f62aed1927e7e8d43db25a6c20e55a864401f38a7bf6",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_renewal-O.json": {
+      "sha256": "2423ca4ab7e26b5f78ae8211052c6bb69e9f5c27391b621ab53191222257f428",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_renewal-O.stderr": {
+      "sha256": "8f8f994f78db8fd53aeb49426da3a16af3ffe63f5f1adcee45db0c78d2a51834",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_staging-normal.json": {
+      "sha256": "74ffaa509c2c91472ffbe4f141ca6a204676601d768e04c01813db2105fa4f79",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_staging-normal.stderr": {
+      "sha256": "af478e170956cc2d8cf6805259173f26ee9df8fc718a28b6a91b832d6e27d008",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_staging-O.json": {
+      "sha256": "05e0a4a05769e46ba57c06ea10fb03f6dd3c180c0e194cb9088ace47a65194c5",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_staging-O.stderr": {
+      "sha256": "0a893e92462a539849953a3757e4691f90d2a17ea71bc76fd77dedc368afe280",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retired_budget_bytes-normal.json": {
+      "sha256": "d25bd195df5ec8a37c7f75ffff3ee018393b078ec4e44d2b9c041bc814788f1e",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retired_budget_bytes-normal.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retired_budget_bytes-O.json": {
+      "sha256": "954e3f72d7d5278d147a81fa0d2a300fc048485aa331c98722af7c3576725c85",
+      "bytes": 350
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retired_budget_bytes-O.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/successor_dependencies-normal.json": {
+      "sha256": "422ff5ee5dfdfa91a7bb233602719e9463685cf640054f0d8f81b3f0a6615f6b",
+      "bytes": 348
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/successor_dependencies-normal.stderr": {
+      "sha256": "83a84decf7665d7dc8b88fac74072886a8c373efc208534f3744127b4b394ab4",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/successor_dependencies-O.json": {
+      "sha256": "52eb20eed9e15409d2960876df274195e505866e24a42040cb903a024126f2b8",
+      "bytes": 354
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/successor_dependencies-O.stderr": {
+      "sha256": "279a73f21b3131b741f717208ee6033582a62308733f2e74ee53449036f60564",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/verify_six_native-normal.json": {
+      "sha256": "d090fcbf6981337b775d87ab56f249e41ad3fd2599c153128cf18c7c072edb56",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/verify_six_native-normal.stderr": {
+      "sha256": "09e2992db6cc879aa87256a84e81d4b7b74f048dd93c025f90541e52c7cae3c8",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/verify_six_native-O.json": {
+      "sha256": "67fab90140ca689d28a087ca59f1a8cc8d1b088cda09c11d093185eb2ffb1254",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/verify_six_native-O.stderr": {
+      "sha256": "3a868541e6b7d1e2019003c2c35758e95f8affc58f3228dbad0c9e037767eb56",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest02/verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/acceptance-commands01.json": {
+      "sha256": "f0411d93bdf5c4e71f8440678c17df9fb0c1517f13897ba2ce408c4ce1005301",
+      "bytes": 8012
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/actual-R4-ci-entry.json": {
+      "sha256": "35c34cfd39f09fb5d3bdaf4399801b96b03ed837e3252215aa5c8f215b5c29f2",
+      "bytes": 333
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/actual-R4-ci-entry.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/actual-R4-ci-entry.stdout": {
+      "sha256": "0da064da3e33c0b3790286cb7bb1dfaf80dabca4411a43ae8f63bcb61254ad6b",
+      "bytes": 868
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/evidence_indexes-normal.json": {
+      "sha256": "ad89006b1abca1661ba49015674a8bf830a88d7f3e878b8635e750ad43d1c8bd",
+      "bytes": 336
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/evidence_indexes-normal.stderr": {
+      "sha256": "4f6936d0f454a60a86da85689db247ba123e7dc9c4a0873842bcd8b05c7fd92d",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/evidence_indexes-O.json": {
+      "sha256": "8346ef1cbafc62102d453608a7e43b4b7d18bc328c1b7429156666424609d45c",
+      "bytes": 342
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/evidence_indexes-O.stderr": {
+      "sha256": "6b6ba56bf7acaa6f644b97d3271191441c3f51b43b96e1462bafb0d5761230b7",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/fixture_artifacts-normal.json": {
+      "sha256": "dc63d5f1e2762c1132b139a46ec3849bda436a289d28dec034623235ab5623ce",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/fixture_artifacts-normal.stderr": {
+      "sha256": "642444adc2a4c1365aa75e0e3d64f284d141e30edef779d6a6b7e24e9b6e1cb0",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/fixture_artifacts-O.json": {
+      "sha256": "a84e28925d05df699c3d73536a0ba6f2bd7d8516f615bc56d478bf46aa414ae3",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/fixture_artifacts-O.stderr": {
+      "sha256": "9468b73ecf81481d4a8cc8957c9a459bea4917c8480915be0c1c0dfe4927b2ba",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/001-intent.json": {
+      "sha256": "63407d1ab416151de66e4eee78271d9dac92c0e581f0f1922280917c288e19b6",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/001-process.json": {
+      "sha256": "225ae8ba314eab0afa8f0c93bcb4db4130f2c1f7bc8fb9789c3947fae5825c12",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/001-stdout.json": {
+      "sha256": "d7560a4f34490a9ba79b14f67846154580b9b3cf2980eb7ff4ea1bcd0606dc8f",
+      "bytes": 4095
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/002-intent.json": {
+      "sha256": "31f6ce707fd772ea85a3252b6a08c85b02472a573744fbfe2b6bbe02e2d385c8",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/002-process.json": {
+      "sha256": "de331c53f1a2caee8128844b9240c7f3edb05b9754088e3946d3facc30f284d4",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/002-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/003-intent.json": {
+      "sha256": "55e0091419111328ae80087f3ae751a19a964afcd3fad741e14612d49d4ee087",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/003-process.json": {
+      "sha256": "b4eaf0f6f21392ba983d9d971b9b66fb8b3fe0ec5f55be30931d1fcaffd2ee68",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/003-stdout.json": {
+      "sha256": "6b2b2b5c79289e01ff00cd8a9abc015b7003dc5a9a1e8b62e2522b48523d8c97",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/004-intent.json": {
+      "sha256": "5de832d6251701905e691bc3c086d26d4164673177cb93cb1e67a69068860094",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/004-process.json": {
+      "sha256": "7e0a1defe3d396f49e05406c8c260caf3cf5d4aff0d9013d39479fd026bd9c50",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/004-stdout.json": {
+      "sha256": "322b3929a89e65c52334db6b2a0013264f9b3d0722c0b6de803c8cc4440634e8",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/005-intent.json": {
+      "sha256": "b101b8e58f494d73d709ca5bcda95f1c66cc6c60b3dd07c0ccdaa71c247bf48d",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/005-process.json": {
+      "sha256": "33d7e0d2e34ed6d58a3d7d8cb061d0900215ae56c81adef4e7fcd25eca29c32e",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/006-intent.json": {
+      "sha256": "531f87289231214a7beeb9653a28540a814ccc1688456be200e31f15a969b988",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/006-process.json": {
+      "sha256": "4d1e3dbf86d05f192ab6663fc1899b7e56eb928500567afcf5ea5372dd54c9ff",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/006-stdout.json": {
+      "sha256": "b7fa4e234cf63e50463620b6a83c097c59552635f61abf963c2a02a6068254c8",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/007-intent.json": {
+      "sha256": "7025ccce53b9ac116882ffc2c556240852a3a587fafb8792f35c651e4776dd9c",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/007-process.json": {
+      "sha256": "f3e658074fd28e3fddf3b6e76e08547c6091eaab86b9ddf88e181e16a3511a84",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/007-stdout.json": {
+      "sha256": "8e9dcb6f7447c56d16b7de839a8724d9304281cce32045426756dc7755ac8254",
+      "bytes": 28634
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/008-intent.json": {
+      "sha256": "f10c3dc376dbbcb0e4b4f184c4647d833a52adda6db8bc977317b000e1755a3a",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/008-process.json": {
+      "sha256": "e81c8c8769b72a09085f0e75410d6daa09b693b76fc0db7aa157f5b556d7fd08",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/008-stdout.json": {
+      "sha256": "a3aebd83b3cbbcc83019bce48b49d14c48b195fcba3aa4a0212076d6a06ada88",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/009-intent.json": {
+      "sha256": "0f1c3d17e5009af82cac2f34bf14e81786a301d3810f2a4af6b7c67008fbdc6e",
+      "bytes": 335
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/009-process.json": {
+      "sha256": "1271a971802dcffa9c9e022707e75307d531e6c18b4c4d5ba3fdeaaec8a83094",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/github-readonly/009-stdout.json": {
+      "sha256": "ee948d473f7a4956120ebd511c7a9e12fdef87ed82acd4b23da2776b4527e379",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/go-product-three.json": {
+      "sha256": "24d1e809a742ebbd8564f5b84ecd785c5e388d58605f3b733607413e83145017",
+      "bytes": 351
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/go-product-three.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/go-product-three.stdout": {
+      "sha256": "9d5f041213101e0913e97d7c52ed3d936483526fbb3a1f41fa6f3591d06a3c5a",
+      "bytes": 313
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/published-boundary-readonly.json": {
+      "sha256": "9ccedde3c521ac1ede9441577ab74ca04c681fed6d7e65aad57b72a42b681f7a",
+      "bytes": 10243
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_composition-normal.json": {
+      "sha256": "6f49519c2c3618a3c05353537483b21e02ac9acdbd6ccfd1b10360e2fcf8b1c7",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_composition-normal.stderr": {
+      "sha256": "52d8d824cb440e6220af003d5015100bb50839bd8052830d9bc8dd6b0c8ffef9",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_composition-O.json": {
+      "sha256": "f5d9e33a53d5fb323b42905accb4fe9669805ad216479be0687218471946e633",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_composition-O.stderr": {
+      "sha256": "57606a952630e39815a29b2b22fe9390f4820d154ec847a9d39c7a9e1891c80b",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_maintenance-normal.json": {
+      "sha256": "615488b689b40cf770e4d4752a6439e2c394e5602310b12f1e2a0528d34fdec0",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_maintenance-normal.stderr": {
+      "sha256": "8c38b98052c22904edf80e31912e656d1a3c4bd067759a38d64fde48cffe4f36",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_maintenance-O.json": {
+      "sha256": "bb76e1ff23bc2623a5cc31733cb7395cea0e9441e7a59af209bf8f9b5813fb07",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_maintenance-O.stderr": {
+      "sha256": "6438d0adca76317b2f63b459309b57b7e4847bba16010da6e0a20c6c166f6153",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_maintenance-O.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_renewal-normal.json": {
+      "sha256": "abd405bd7ae5ab90475163a0d868c127f0008ca8903243b51c5563948ac92e9d",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_renewal-normal.stderr": {
+      "sha256": "36331cf1492070acd10239d552ef9d3796f75ee5c187dd2389e6be718f0a1058",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_renewal-O.json": {
+      "sha256": "e73d1ab8060d87a766705253f98f1db4f72146b5e52ae1f712564e1242df731f",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_renewal-O.stderr": {
+      "sha256": "c7bd7de5eb9e3fac8dfe40a87d107178f17f044678e269208e351aa4ac151834",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_staging-normal.json": {
+      "sha256": "d15b5918da697ff51092fd128651e81f5e358d818e2d56a3732202bc9dbf670d",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_staging-normal.stderr": {
+      "sha256": "86cb1b1e38f695e5b5da7ecef809633932661e9824222fc1a6cc48b751306c64",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_staging-O.json": {
+      "sha256": "68f16a45cc9bc81e077836ae851915cdda6f1a92c27b705e8eaa6809533a37f5",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_staging-O.stderr": {
+      "sha256": "9cb12bdd7918f7505a1a64a56d7645597ad9f248d7778318e3d088aaec541d9f",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retired_budget_bytes-normal.json": {
+      "sha256": "72bb32b1583cc509546646d2fa08480efc3e17845824f2b1552eac858006f5e4",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retired_budget_bytes-normal.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retired_budget_bytes-O.json": {
+      "sha256": "ca093962e85d038a68194673f80fed2b3e209b71f1c9cfc8c12d79831b985ac1",
+      "bytes": 350
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retired_budget_bytes-O.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/successor_dependencies-normal.json": {
+      "sha256": "eec98c8013d40e0e38cc8bfcba73f114b19323d1df68784333b1ec9f48b4d112",
+      "bytes": 348
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/successor_dependencies-normal.stderr": {
+      "sha256": "41b9d3b04de89769c26217d52a5bae5059b14956859230f75bb750e8bcb4ae0f",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/successor_dependencies-O.json": {
+      "sha256": "577c45683efa6fdbc24929ff4b1d72febe8e256e10427572de324773ac79cd1d",
+      "bytes": 354
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/successor_dependencies-O.stderr": {
+      "sha256": "9d2b4075b851b8a36271df52be8426f00033d319b2b1b545f1b07ed1c31472be",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/verify_six_native-normal.json": {
+      "sha256": "ac664e121fcce539b39e3a3e70ea86a99346ec021a9066f03b849479a3ea9250",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/verify_six_native-normal.stderr": {
+      "sha256": "3e7cc34bb98d9c7a97523c0583adcbf4ce691303aa9a17e77da683b3ae5b1f6c",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/verify_six_native-O.json": {
+      "sha256": "06a50c7cd23a90fbd6133642bcb4ed12d8ad05b71b34d359ca6370060a3417f6",
+      "bytes": 344
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/verify_six_native-O.stderr": {
+      "sha256": "b4e9a171eeb98a534f04a85950044c8d527987d7af649a92411dc5a1e9c84923",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/retest03/verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/run_acceptance01.py": {
+      "sha256": "8c008810f8ac9e16772ab78c602951566e768a81ac486740f6cfb51646356320",
+      "bytes": 3018
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/run_acceptance_failed01.py": {
+      "sha256": "5452c6e2a377655a135bad768854587aab2ccc2fab573f763a53c61f7894777e",
+      "bytes": 2919
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/runtime-artifact04.json": {
+      "sha256": "8854e49bf47231129ed8efe2be59fa55dcc9b6820ccc6dd05708341556084b6f",
+      "bytes": 1518
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/verify_six_native-normal.json": {
+      "sha256": "e4178f56ff20af7e7259a7a9eece899e5a86fd40277234241d1894fa7102c3d6",
+      "bytes": 338
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/verify_six_native-normal.stderr": {
+      "sha256": "24e2b846c2f198a07cea77a5bcfabf19a2b9c7801b748677524a0fbcebdc5a56",
+      "bytes": 19817
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/windows-control-probe04.json": {
+      "sha256": "1d30f00aa58d4cc98627f7189dff4146d1152131147d3d9f74a6218d74476f00",
+      "bytes": 831
+    }
+  }
+}

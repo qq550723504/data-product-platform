@@ -26,7 +26,7 @@ class HostTests(unittest.TestCase):
         at=dt.datetime(2026,10,23,14,tzinfo=dt.timezone.utc)
         binary=folder/'retention';binary.write_bytes(b'fake bound binary')
         b={'Kind':m.KIND,'MaintenanceID':str(uuid.uuid4()),'NotBefore':'2026-10-23T13:59:00Z','NotAfter':'2026-10-23T14:30:00Z',
-           'PlanSHA256':'ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f','BinarySHA256':m.sha(binary.read_bytes()),'HostPublicSHA256':'a'*64,'BudgetID':'b'*64,'Owners':[]}
+           'RetainUntil':'2026-10-24T12:40:00Z','PlanSHA256':m.sha(m.proposal.plan_bytes('2026-10-24T12:40:00Z','2026-10-23T14:30:00Z')),'BinarySHA256':m.sha(binary.read_bytes()),'HostPublicSHA256':'a'*64,'BudgetID':'b'*64,'Owners':[]}
         host={'bindings_sha256':'','owners':{},'closed_cids':['7'*64],'budget_name':'d1-retention-budget-test','binary':str(binary),'volume_metadata':self.metadata}
         items={}
         self.metadata[host['budget_name']]=self.volume(host['budget_name'])
@@ -42,7 +42,7 @@ class HostTests(unittest.TestCase):
                 ('/run/private',pv,False,'volume'),('/run/output',ov,True,'volume'),('/run/budget',host['budget_name'],True,'volume'),('/runtime/retention',str(binary),False,'bind')]]
             item={'Id':ident,'Image':'sha256:'+'c'*64,'Path':'/runtime/retention','Args':['-wait'],
                   'Config':{'User':'10001:10001','Env':[]},'HostConfig':{'RestartPolicy':{'Name':'no'},'Privileged':False,'ReadonlyRootfs':True,'NetworkMode':'container:'+native,
-                    'CapDrop':['ALL'],'SecurityOpt':['no-new-privileges:true'],'Tmpfs':{'/tmp':'rw,noexec,nosuid,size=16m'}},'Mounts':mounts,'State':{'Running':True,'Pid':100+i},'NetworkSettings':{'Ports':{}}}
+                    'CapDrop':['ALL'],'SecurityOpt':['no-new-privileges:true'],'Tmpfs':{'/tmp':'rw,noexec,nosuid,size=16m'}},'Mounts':mounts,'State':{'Running':True,'Pid':100+i,'StartedAt':'2026-10-23T13:59:59Z'},'NetworkSettings':{'Ports':{}}}
             desc=m.sha(m.canonical(m.descriptor(item)))
             b['Owners'].append({'Group':group,'CID':ident,'Native':native,'DescriptorSHA256':desc,'ConfigSHA256':m.sha((private/'root.json').read_bytes())})
             host['owners'][group]={'cid':ident,'private':str(private),'output':str(output),'descriptor_sha256':desc,'private_volume':pv,'output_volume':ov}
@@ -57,6 +57,9 @@ class HostTests(unittest.TestCase):
 
     def bind(self,b,host):
         raw=m.canonical(b);host['_bindings_raw']=raw;host['bindings_sha256']=m.sha(raw)
+        for o in b['Owners']:
+            if o['Group'] not in host['owners']:continue
+            (Path(host['owners'][o['Group']]['output'])/'wait-ready.json').write_bytes(m.canonical({'Kind':m.KIND,'MaintenanceID':b['MaintenanceID'],'BindingsSHA256':m.sha(raw),'Group':o['Group'],'Owner':o['CID'],'DescriptorSHA256':o['DescriptorSHA256'],'ConfigSHA256':o['ConfigSHA256'],'At':'2026-10-23T14:00:00Z'}))
 
     def test_complete_actual_attestation_signature_and_all_group_seal_composition(self):
         with tempfile.TemporaryDirectory() as d:
@@ -162,7 +165,7 @@ class HostTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             b,host,items,_=self.fixture(Path(d));blocked='1'*64;seen=[]
             # Permission archive unavailable, one initial/final inspect fails.
-            output=Path(host['owners']['business-races']['output']);output.rmdir()
+            output=Path(host['owners']['business-races']['output']);raw=(Path(host['owners']['business-races']['private'])/'permission.json').read_bytes();(output/('permission-before-seal-'+m.sha(raw)+'.json')).mkdir()
             def get(ident):
                 if ident==blocked:raise OSError('inspect unavailable')
                 return items[ident]
@@ -194,5 +197,27 @@ class HostTests(unittest.TestCase):
             with patch('sys.argv',args),patch.object(m,'docker',side_effect=AssertionError('Docker forbidden')):m.main()
             self.assertEqual(m.load(out)['status'],'PASS_FILE_BINDINGS_ONLY_NOT_AUTHORIZED')
             with patch('sys.argv',args),self.assertRaises(FileExistsError):m.main()
+
+    def test_cold_new_budget_and_confirmed_previous_slot_never_repair_drift(self):
+        for group in ('business-races','mixed'):
+            for fault in ('none','ownership','nonempty','missing','failed-previous'):
+                with self.subTest(group=group,fault=fault),tempfile.TemporaryDirectory() as d:
+                    folder=Path(d);b,h,_,_=self.fixture(folder);budget=folder/'budget';budget.mkdir()
+                    (budget/'ownership.json').write_bytes(m.canonical(dict(Kind=m.KIND,MaintenanceID=b['MaintenanceID'],BindingsSHA256=h['bindings_sha256'],BudgetID=b['BudgetID'])))
+                    if group=='mixed':
+                        for suffix in ('invocation','slot'):(budget/('business-races-'+suffix+'.json')).write_bytes(b'original fact')
+                        (budget/'business-races-success.json').write_bytes(m.canonical(dict(MaintenanceID=b['MaintenanceID'],BindingsSHA256=h['bindings_sha256'],Status='PASS_EXACT_RETENTION_READBACK')))
+                    if fault=='ownership':(budget/'ownership.json').write_bytes(b'{}')
+                    if fault=='nonempty':(budget/'mixed-slot.json').write_bytes(b'original consumed budget')
+                    if fault=='missing':(budget/'ownership.json').unlink()
+                    if fault=='failed-previous':
+                        if group=='mixed':(budget/'business-races-success.json').write_bytes(b'{}')
+                        else:(budget/'business-races-failed.json').write_bytes(b'UNKNOWN')
+                    before={p.name:p.read_bytes() for p in budget.iterdir()}
+                    with patch.object(m.staging,'paths',return_value=('test-only',str(budget))):
+                        if fault=='none':m.budget_state(b,h,group)
+                        else:
+                            with self.assertRaises((ValueError,FileNotFoundError)):m.budget_state(b,h,group)
+                    self.assertEqual({p.name:p.read_bytes() for p in budget.iterdir()},before)
 
 if __name__=='__main__':unittest.main()

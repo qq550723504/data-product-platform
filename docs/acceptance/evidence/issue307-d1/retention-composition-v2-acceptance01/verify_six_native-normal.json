@@ -1,0 +1,11 @@
+{
+  "name": "verify_six_native-normal",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/test_verify_six_native.py"
+  ],
+  "started_at": "2026-10-24T11:03:33.131063+00:00",
+  "finished_at": "2026-10-24T11:03:34.634449+00:00",
+  "returncode": 1
+}

@@ -1,0 +1,209 @@
+EEEEEEEE...
+======================================================================
+ERROR: test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure (__main__.SixCompleteTests.test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure) (phase='before', group='business-races')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 153, in collect
+    maintenance['register_owner'](cid,retention_maintenance.sha(retention_maintenance.canonical(retention_maintenance.descriptor(x))))
+                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\retention_maintenance.py", line 61, in descriptor
+    return {key:item[key] for key in ('Id','Image','Path','Args','Config','HostConfig','Mounts')}
+                ~~~~^^^^^
+KeyError: 'Path'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 138, in test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure
+    with self.subTest(phase=phase,group=group):self.composition(group,maintenance_phase=phase)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 113, in composition
+    result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline,maintenance=context);self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure (__main__.SixCompleteTests.test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure) (phase='before', group='late-hold')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 153, in collect
+    maintenance['register_owner'](cid,retention_maintenance.sha(retention_maintenance.canonical(retention_maintenance.descriptor(x))))
+                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\retention_maintenance.py", line 61, in descriptor
+    return {key:item[key] for key in ('Id','Image','Path','Args','Config','HostConfig','Mounts')}
+                ~~~~^^^^^
+KeyError: 'Path'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 138, in test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure
+    with self.subTest(phase=phase,group=group):self.composition(group,maintenance_phase=phase)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 113, in composition
+    result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline,maintenance=context);self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure (__main__.SixCompleteTests.test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure) (phase='before', group='mixed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 153, in collect
+    maintenance['register_owner'](cid,retention_maintenance.sha(retention_maintenance.canonical(retention_maintenance.descriptor(x))))
+                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\retention_maintenance.py", line 61, in descriptor
+    return {key:item[key] for key in ('Id','Image','Path','Args','Config','HostConfig','Mounts')}
+                ~~~~^^^^^
+KeyError: 'Path'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 138, in test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure
+    with self.subTest(phase=phase,group=group):self.composition(group,maintenance_phase=phase)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 113, in composition
+    result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline,maintenance=context);self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure (__main__.SixCompleteTests.test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure) (phase='after', group='business-races')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 153, in collect
+    maintenance['register_owner'](cid,retention_maintenance.sha(retention_maintenance.canonical(retention_maintenance.descriptor(x))))
+                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\retention_maintenance.py", line 61, in descriptor
+    return {key:item[key] for key in ('Id','Image','Path','Args','Config','HostConfig','Mounts')}
+                ~~~~^^^^^
+KeyError: 'Path'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 138, in test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure
+    with self.subTest(phase=phase,group=group):self.composition(group,maintenance_phase=phase)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 113, in composition
+    result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline,maintenance=context);self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure (__main__.SixCompleteTests.test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure) (phase='after', group='late-hold')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 153, in collect
+    maintenance['register_owner'](cid,retention_maintenance.sha(retention_maintenance.canonical(retention_maintenance.descriptor(x))))
+                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\retention_maintenance.py", line 61, in descriptor
+    return {key:item[key] for key in ('Id','Image','Path','Args','Config','HostConfig','Mounts')}
+                ~~~~^^^^^
+KeyError: 'Path'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 138, in test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure
+    with self.subTest(phase=phase,group=group):self.composition(group,maintenance_phase=phase)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 113, in composition
+    result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline,maintenance=context);self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure (__main__.SixCompleteTests.test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure) (phase='after', group='mixed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 153, in collect
+    maintenance['register_owner'](cid,retention_maintenance.sha(retention_maintenance.canonical(retention_maintenance.descriptor(x))))
+                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\retention_maintenance.py", line 61, in descriptor
+    return {key:item[key] for key in ('Id','Image','Path','Args','Config','HostConfig','Mounts')}
+                ~~~~^^^^^
+KeyError: 'Path'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 138, in test_maintenance_seventeen_both_phases_use_sdk_core_and_typed_checker_closure
+    with self.subTest(phase=phase,group=group):self.composition(group,maintenance_phase=phase)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 113, in composition
+    result=v.collect(g,{},packet,private,output,r.now()+dt.timedelta(minutes=20),core_baseline=baseline,maintenance=context);self.assertEqual(result['copies'],{'business-races':7,'late-hold':6,'mixed':4}[group])
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_maintenance_shared_entry_failure_combinations_still_revoke_and_close (__main__.SixCompleteTests.test_maintenance_shared_entry_failure_combinations_still_revoke_and_close) (fault='wait-timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 142, in test_maintenance_shared_entry_failure_combinations_still_revoke_and_close
+    with self.subTest(fault=fault):self.composition(fault=fault,maintenance_phase='before')
+                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 120, in composition
+    if fault=='wait-timeout':self.assertEqual((output/'operation/wait-stdout.txt').read_bytes(),b'wait-partial')
+                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpaynir2r2\\public-read\\operation\\wait-stdout.txt'
+
+======================================================================
+ERROR: test_maintenance_shared_entry_failure_combinations_still_revoke_and_close (__main__.SixCompleteTests.test_maintenance_shared_entry_failure_combinations_still_revoke_and_close) (fault='logs-timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 142, in test_maintenance_shared_entry_failure_combinations_still_revoke_and_close
+    with self.subTest(fault=fault):self.composition(fault=fault,maintenance_phase='before')
+                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-composition\data-product-platform\examples\lifecycle-d1\test_verify_six_native.py", line 121, in composition
+    if fault=='logs-timeout':self.assertEqual((output/'operation/stdout.txt').read_bytes(),b'logs-partial')
+                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp8u2wwb1z\\public-read\\operation\\stdout.txt'
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.167s
+
+FAILED (errors=8)

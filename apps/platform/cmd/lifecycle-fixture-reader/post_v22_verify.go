@@ -274,6 +274,8 @@ func verifyNativeAuditPhase(ctx context.Context, p postV22ReadProfile, raw []byt
 		fact["maintenance_id"] = maintenance.MaintenanceID
 		fact["phase"] = maintenance.Phase
 		fact["bindings_sha256"] = maintenance.BindingsSHA256
+		fact["retain_until"] = maintenance.RetainUntil
+		fact["maintenance_end"] = maintenance.MaintenanceEnd
 	}
 	return write(c, receiptFile, fact)
 }

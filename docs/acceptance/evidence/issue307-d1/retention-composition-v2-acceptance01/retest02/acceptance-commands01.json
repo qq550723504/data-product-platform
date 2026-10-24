@@ -1,0 +1,241 @@
+{
+  "commands": [
+    {
+      "name": "retention_renewal-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_renewal.py"
+      ],
+      "started_at": "2026-10-24T11:04:33.161951+00:00",
+      "finished_at": "2026-10-24T11:04:33.919495+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retention_renewal-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retention_renewal.py"
+      ],
+      "started_at": "2026-10-24T11:04:33.920661+00:00",
+      "finished_at": "2026-10-24T11:04:34.576979+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retention_maintenance-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_maintenance.py"
+      ],
+      "started_at": "2026-10-24T11:04:34.577468+00:00",
+      "finished_at": "2026-10-24T11:04:38.044113+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retention_maintenance-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retention_maintenance.py"
+      ],
+      "started_at": "2026-10-24T11:04:38.044727+00:00",
+      "finished_at": "2026-10-24T11:04:41.493810+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retention_composition-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_composition.py"
+      ],
+      "started_at": "2026-10-24T11:04:41.494385+00:00",
+      "finished_at": "2026-10-24T11:05:07.490835+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retention_composition-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retention_composition.py"
+      ],
+      "started_at": "2026-10-24T11:05:07.491674+00:00",
+      "finished_at": "2026-10-24T11:05:41.057785+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retention_staging-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_staging.py"
+      ],
+      "started_at": "2026-10-24T11:05:41.058336+00:00",
+      "finished_at": "2026-10-24T11:05:42.087546+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retention_staging-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retention_staging.py"
+      ],
+      "started_at": "2026-10-24T11:05:42.088223+00:00",
+      "finished_at": "2026-10-24T11:05:42.957867+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "verify_six_native-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "started_at": "2026-10-24T11:05:42.958415+00:00",
+      "finished_at": "2026-10-24T11:05:46.782767+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "verify_six_native-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "started_at": "2026-10-24T11:05:46.783339+00:00",
+      "finished_at": "2026-10-24T11:05:50.113396+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "fixture_artifacts-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "started_at": "2026-10-24T11:05:50.114297+00:00",
+      "finished_at": "2026-10-24T11:06:03.269158+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "fixture_artifacts-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "started_at": "2026-10-24T11:06:03.272326+00:00",
+      "finished_at": "2026-10-24T11:06:15.344386+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "evidence_indexes-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "started_at": "2026-10-24T11:06:15.344934+00:00",
+      "finished_at": "2026-10-24T11:06:16.994542+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "evidence_indexes-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "started_at": "2026-10-24T11:06:16.995159+00:00",
+      "finished_at": "2026-10-24T11:06:17.957537+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "successor_dependencies-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_successor_dependencies.py"
+      ],
+      "started_at": "2026-10-24T11:06:17.958693+00:00",
+      "finished_at": "2026-10-24T11:06:22.640597+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "successor_dependencies-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_successor_dependencies.py"
+      ],
+      "started_at": "2026-10-24T11:06:22.641349+00:00",
+      "finished_at": "2026-10-24T11:06:27.310825+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retired_budget_bytes-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retired_budget_bytes.py"
+      ],
+      "started_at": "2026-10-24T11:06:27.311502+00:00",
+      "finished_at": "2026-10-24T11:06:27.612709+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "retired_budget_bytes-O",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retired_budget_bytes.py"
+      ],
+      "started_at": "2026-10-24T11:06:27.613408+00:00",
+      "finished_at": "2026-10-24T11:06:27.901115+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "go-product-three",
+      "command": [
+        "go",
+        "test",
+        "./cmd/lifecycle-fixture-retention",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-readonly-check",
+        "-count=1"
+      ],
+      "started_at": "2026-10-24T11:06:27.901668+00:00",
+      "finished_at": "2026-10-24T11:07:08.515939+00:00",
+      "returncode": 0
+    },
+    {
+      "name": "actual-R4-ci-entry",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+      ],
+      "started_at": "2026-10-24T11:07:08.516665+00:00",
+      "finished_at": "2026-10-24T11:08:06.417853+00:00",
+      "returncode": 0
+    }
+  ],
+  "all_commands_success": true,
+  "source_start": 0,
+  "provider_io": 0,
+  "retention_write": 0,
+  "delete": 0
+}

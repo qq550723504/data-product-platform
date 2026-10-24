@@ -1,0 +1,3 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-retention	10.067s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	3.745s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	23.289s

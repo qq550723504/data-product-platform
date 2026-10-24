@@ -18,7 +18,7 @@ import retention_staging as staging
 from evidence_indexes import unlinked_absolute
 
 ROOT=Path(__file__).resolve().parents[2]
-KIND='RETENTION_EXTENSION_EXACT_TWO_V1'
+KIND='RETENTION_EXTENSION_EXACT_TWO_V2'
 spec=importlib.util.spec_from_file_location('renewal_preparation',Path(__file__).with_name('prepare-retention-renewal.py'))
 proposal=importlib.util.module_from_spec(spec);spec.loader.exec_module(proposal)
 need=proposal.protection.need
@@ -36,11 +36,11 @@ def load(path):
     return json.loads(path.read_bytes().decode('utf-8','strict'),object_pairs_hook=pairs)
 
 def fixed_bindings(b,host):
-    need(set(b)=={'Kind','MaintenanceID','NotBefore','NotAfter','PlanSHA256','BinarySHA256','HostPublicSHA256','BudgetID','Owners'},'MAINTENANCE_BINDING_FIELDS')
+    need(set(b)=={'Kind','MaintenanceID','NotBefore','NotAfter','RetainUntil','PlanSHA256','BinarySHA256','HostPublicSHA256','BudgetID','Owners'},'MAINTENANCE_BINDING_FIELDS')
     need(str(uuid.UUID(b['MaintenanceID']))==b['MaintenanceID'] and uuid.UUID(b['MaintenanceID']).int!=0 and b['MaintenanceID']!='4fad1007-6595-4037-a7a5-1d8d38cb8bcc','MAINTENANCE_NEW_ID')
     start,end=map(proposal.protection.instant,(b['NotBefore'],b['NotAfter']))
-    need(start<end<=proposal.protection.instant(proposal.DEADLINE) and end-start<=dt.timedelta(minutes=40),'MAINTENANCE_BOUND_WINDOW')
-    need(b['PlanSHA256']=='ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f','MAINTENANCE_EXACT_PLAN')
+    need(start<end and end-start<=dt.timedelta(minutes=40),'MAINTENANCE_BOUND_WINDOW')
+    need(b['PlanSHA256']==sha(proposal.plan_bytes(b['RetainUntil'],b['NotAfter'])),'MAINTENANCE_EXACT_PLAN')
     for value in (b['BinarySHA256'],b['HostPublicSHA256'],b['BudgetID']):need(type(value) is str and len(value)==64 and all(c in '0123456789abcdef' for c in value),'MAINTENANCE_SHA256')
     need(b['Kind']==KIND and len(b['Owners'])==2 and {x['Group'] for x in b['Owners']}==set(proposal.TARGETS),'MAINTENANCE_TARGET_GROUPS')
     need(set(host)=={'bindings_sha256','owners','closed_cids','budget_name','binary','volume_metadata','_bindings_raw'},'MAINTENANCE_HOST_FIELDS')
@@ -74,8 +74,40 @@ def inspect(ident):
     need(len(rows)==1 and rows[0]['Id']==ident,'MAINTENANCE_INSPECT_IDENTITY')
     return rows[0]
 
+
+def budget_state(b,host,group):
+    """Cold, append-only slot membership; never initialize or remove a file."""
+    current=json.loads(docker('volume','inspect',host['budget_name']).decode('utf-8','strict'))
+    need(len(current)==1 and current[0]==host['volume_metadata'][host['budget_name']],'MAINTENANCE_BUDGET_METADATA_DRIFT')
+    _,path=staging.paths(current[0]);folder=unlinked_absolute(path)
+    staging.validate_directory(current[0],path)
+    need(load(folder/'ownership.json')==dict(Kind=KIND,MaintenanceID=b['MaintenanceID'],BindingsSHA256=host['bindings_sha256'],BudgetID=b['BudgetID']),'MAINTENANCE_BUDGET_OWNERSHIP')
+    expected={'ownership.json'}
+    if group=='mixed':
+        expected.update('business-races-'+name+'.json' for name in ('invocation','slot','success'))
+        need(load(folder/'business-races-success.json')==dict(MaintenanceID=b['MaintenanceID'],BindingsSHA256=host['bindings_sha256'],Status='PASS_EXACT_RETENTION_READBACK'),'MAINTENANCE_PREVIOUS_BUDGET_UNCONFIRMED')
+    else:need(group=='business-races','MAINTENANCE_BUDGET_GROUP')
+    need({p.name for p in folder.iterdir()}==expected,'MAINTENANCE_BUDGET_NO_RESTART_OR_RESET')
+
+
+def inventory():
+    ids=docker('ps','-aq','--no-trunc').decode('utf-8','strict').splitlines()
+    need(len(ids)==len(set(ids)),'MAINTENANCE_INVENTORY_DUPLICATE')
+    result=[]
+    for start in range(0,len(ids),128):
+        batch=ids[start:start+128];rows=json.loads(docker('inspect',*batch).decode('utf-8','strict'))
+        need(len(rows)==len(batch) and {x['Id'] for x in rows}==set(batch),'MAINTENANCE_INVENTORY_INCOMPLETE')
+        result.extend(rows)
+    return result
+
 def topology(b,host,group,get=inspect,list_items=None):
     fixed_bindings(b,host)
+    # One complete batch snapshot serves both dependency and mount-membership
+    # checks. Hundreds of per-CID subprocesses cannot satisfy the one-minute
+    # attestation bound on the retained host.
+    all_items=inventory() if list_items is None else list_items()
+    if get is inspect and list_items is None:
+        current={row['Id']:row for row in all_items};get=current.__getitem__
     selected=next(x for x in b['Owners'] if x['Group']==group)
     item=host['owners'][group];actual=get(selected['CID']);native=get(selected['Native'])
     need(actual['State']['Running'] and actual['State']['Pid']>0 and native['State']['Running'] and native['State']['Pid']>0,'MAINTENANCE_OWNER_NOT_RUNNING')
@@ -129,18 +161,22 @@ def topology(b,host,group,get=inspect,list_items=None):
     staging.validate_directory(current[0],budget_path)
     expected_budget={x['CID'] for x in b['Owners']}
     # Inventory is the complete host Docker inventory, not a provided subset.
-    if list_items is None:
-        ids=docker('ps','-aq','--no-trunc').decode('utf-8','strict').splitlines()
-        all_items=[get(ident) for ident in ids]
-    else:all_items=list_items()
     for name,wanted in expected_mounts.items():
         mounted={x['Id'] for x in all_items if any(m.get('Type')=='volume' and m.get('Name')==name for m in x['Mounts'])}
         need(mounted==wanted,'MAINTENANCE_VOLUME_MOUNT_SET')
     return selected
 
 def attest(b,host,group,key_path,at,get=inspect,list_items=None):
-    need(proposal.protection.instant(b['NotBefore'])<=at<proposal.protection.instant(b['NotAfter'])<=proposal.protection.instant(proposal.DEADLINE),'MAINTENANCE_PROOF_WINDOW')
+    need(proposal.protection.instant(b['NotBefore'])<=at<proposal.protection.instant(b['NotAfter']),'MAINTENANCE_PROOF_WINDOW')
     o=topology(b,host,group,get,list_items)
+    actual=get(o['CID']);ready=load(Path(host['owners'][group]['output'])/'wait-ready.json')
+    need(set(ready)=={'Kind','MaintenanceID','BindingsSHA256','Group','Owner','DescriptorSHA256','ConfigSHA256','At'},'MAINTENANCE_READY_FIELDS')
+    expected={'Kind':KIND,'MaintenanceID':b['MaintenanceID'],'BindingsSHA256':host['bindings_sha256'],'Group':group,'Owner':o['CID'],'DescriptorSHA256':o['DescriptorSHA256'],'ConfigSHA256':o['ConfigSHA256']}
+    need(all(ready[k]==v for k,v in expected.items()),'MAINTENANCE_READY_IDENTITY')
+    started=proposal.protection.instant(actual['State']['StartedAt'])
+    observed=proposal.protection.instant(ready['At'])
+    need(started<=observed<=at and at-observed<=dt.timedelta(minutes=1),'MAINTENANCE_READY_STALE_OR_REPLAYED')
+
     private_key=unlinked_absolute(key_path)
     need(private_key.is_file() and private_key.stat().st_nlink==1,'MAINTENANCE_HOST_KEY_LINK')
     for item in host['owners'].values():

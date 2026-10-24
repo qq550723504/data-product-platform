@@ -1,0 +1,14 @@
+{
+  "command": [
+    "wsl",
+    "-d",
+    "docker-desktop",
+    "--",
+    "ls",
+    "-A",
+    "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-private-4598c8c87879/_data"
+  ],
+  "started_at": "2026-10-24T11:06:00.848568+00:00",
+  "finished_at": "2026-10-24T11:06:01.253604+00:00",
+  "returncode": 0
+}

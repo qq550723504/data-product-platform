@@ -95,17 +95,35 @@ def sealed_gate(packet=PACKET):
             'backup_hashes':9,'old_backups_retained':66,'budgets_empty':3,'native_delete':0,'source_provider_io':0}
 
 
-def collect(g,b,packet,private,output,deadline,*,core_baseline=None):
+def collect(g,b,packet,private,output,deadline,*,core_baseline=None,maintenance=None):
     private.mkdir(parents=True,exist_ok=False);output.mkdir(parents=True,exist_ok=False)
     (output/'files').mkdir()
-    a=load(r.CONTROL/'allocation.json');allocation=next(x for x in a['groups'] if x['group']==g['Group'])
-    old_source=next(x for x in load(p.p1.PACKET/'candidate.json')['Groups'] if x['Group']==g['Group'])
-    cfg=r.profile(allocation,'SOURCE','SIX_TARGET_PREPARATION_NATIVE_READONLY',str(uuid.uuid4()))
+    if maintenance is None:
+        a=load(r.CONTROL/'allocation.json');allocation=next(x for x in a['groups'] if x['group']==g['Group'])
+        old_source=next(x for x in load(p.p1.PACKET/'candidate.json')['Groups'] if x['Group']==g['Group'])
+        cfg=r.profile(allocation,'SOURCE','SIX_TARGET_PREPARATION_NATIVE_READONLY',str(uuid.uuid4()))
+        reader=r.CONTROL/'reader';checker=r.CONTROL/'readonly-check.exe'
+        mode='six-verify-native';profile_file='six-readonly.json';receipt_file='six-native-verification.json'
+        label_key='lifecycle307.six-readonly';label_value=p.EXECUTION
+        input_files={name:r.CONTROL/g['Group']/name for name in ('frozen-inventory.json','present-inventory.json')}
+        input_files['six-map.json']=r.CONTROL/'six-map.json'
+        baseline_folder=packet/g['Group']/'expectation'
+    else:
+        # This is the finite maintenance contract, never a bypass of the old
+        # six/delete gate. Caller validates all frozen bytes and authority first.
+        old_source=maintenance['source'];cfg=dict(maintenance['profile'])
+        reader=Path(maintenance['reader']);checker=Path(maintenance['checker'])
+        mode='retention-maintenance-verify-native';profile_file='retention-readonly.json';receipt_file='retention-native-verification.json'
+        label_key='lifecycle307.maintenance-readonly';label_value=cfg['MaintenanceID']
+        input_files={name:Path(path) for name,path in maintenance['inputs'].items()}
+        need(set(input_files)=={'frozen-inventory.json','present-inventory.json','effective-inventory.json'},'maintenance exact input members differ')
+        baseline_folder=Path(maintenance['expectation'])
+        need(cfg['Group']==g['Group'] and cfg['Purpose']=='RETENTION_MAINTENANCE_NATIVE_READONLY' and cfg['Phase'] in ('before','after') and cfg['MaxProviderDeletes']==0,'maintenance read scope differs')
     start=r.now().replace(microsecond=0)
     need(start<deadline and deadline-start<=dt.timedelta(minutes=55),'complete readonly deadline expired')
     cfg.update(Enabled=True,NotBefore=start.isoformat().replace('+00:00','Z'),ExpiresAt=deadline.isoformat().replace('+00:00','Z'))
-    for name in ('frozen-inventory.json','present-inventory.json'):r.write_raw(private/name,(r.CONTROL/g['Group']/name).read_bytes())
-    r.write_raw(private/'six-map.json',(r.CONTROL/'six-map.json').read_bytes());save(private/'six-readonly.json',cfg)
+    for input_name,input_path in input_files.items():r.write_raw(private/input_name,input_path.read_bytes())
+    save(private/profile_file,cfg)
     cid=None;known=[];failure=None;name='dpp307-six-read-'+cfg['AuditID'];before=None;creation_attempted=False;unknown_owner=None
     try:
         p.prior.closure.source_contract({'source':old_source})
@@ -118,28 +136,44 @@ def collect(g,b,packet,private,output,deadline,*,core_baseline=None):
         need(before==load(baseline),'Core differs from bound source checkpoint')
         n=json.loads(r.docker('network','inspect',g['Network']))[0]
         need(n['Internal'] and set(n['Containers'])=={g['Core'],g['Native']},'active source network expanded')
+        if maintenance is not None:maintenance['record_creation']()
         creation_attempted=True
-        allocated=r.docker('create','--pull','never','--name',name,'--label','lifecycle307.six-readonly='+p.EXECUTION,
+        allocated=r.docker('create','--pull','never','--name',name,'--label',label_key+'='+label_value,
                      '--network','container:'+g['Native'],'--user','10001:10001','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges',
                      '--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m',
-                     '--mount',f'type=bind,source={private},target=/run/private,readonly','--mount',f'type=bind,source={r.CONTROL}/reader,target=/run/reader,readonly',
-                     '--mount',f'type=bind,source={output}/files,target=/run/output','--entrypoint','/run/reader',p.p1.PG,'-mode','six-verify-native').decode('utf-8','strict').strip()
+                     '--mount',f'type=bind,source={private},target=/run/private,readonly','--mount',f'type=bind,source={reader},target=/run/reader,readonly',
+                     '--mount',f'type=bind,source={output}/files,target=/run/output','--entrypoint','/run/reader',p.p1.PG,'-mode',mode).decode('utf-8','strict').strip()
         need(len(allocated)==64 and all(c in '0123456789abcdef' for c in allocated),'full read owner CID required')
-        cid=allocated;known.append(cid);save(output/'allocated-owner.json',{'cid':cid,'name':name,'profile_sha256':sha(private/'six-readonly.json'),'native_delete':0})
-        x=r.inspect(cid);r.unprivileged(x,'/run/reader',['-mode','six-verify-native'],g['Native'])
-        r.mounts_exact(x,{'/run/private':('bind',private,False),'/run/reader':('bind',r.CONTROL/'reader',False),'/run/output':('bind',output/'files',True)})
-        private_files(private,{'six-readonly.json','six-map.json','frozen-inventory.json','present-inventory.json'},{'six-readonly.json','six-map.json','frozen-inventory.json','present-inventory.json'})
+        cid=allocated;known.append(cid);save(output/'allocated-owner.json',{'cid':cid,'name':name,'profile_sha256':sha(private/profile_file),'native_delete':0})
+        x=r.inspect(cid);r.unprivileged(x,'/run/reader',['-mode',mode],g['Native'])
+        r.mounts_exact(x,{'/run/private':('bind',private,False),'/run/reader':('bind',reader,False),'/run/output':('bind',output/'files',True)})
+        private_files(private,set(input_files)|{profile_file},set(input_files)|{profile_file})
+        if maintenance is not None:
+            import retention_maintenance
+            maintenance['register_owner'](cid,retention_maintenance.sha(retention_maintenance.canonical(retention_maintenance.descriptor(x))))
         r.run_owner(cid,output/'operation')
-        expectation=dict(audit_id=cfg['AuditID'],profile_sha256=sha(private/'six-readonly.json'),binary_sha256=cfg['BinarySHA256'],candidate_sha256=cfg['CandidateSHA256'],frozen_inventory_sha256=cfg['FrozenInventorySHA256'],
-                         present_inventory_sha256=cfg['PresentInventorySHA256'],core=g['Core'],native=g['Native'],network=g['Network'],not_before=cfg['NotBefore'],expires_at=cfg['ExpiresAt'],Execution=p.EXECUTION,Profile=p.PROFILE,Role='SOURCE')
+        expectation=dict(audit_id=cfg['AuditID'],profile_sha256=sha(private/profile_file),binary_sha256=cfg['BinarySHA256'],candidate_sha256=cfg['CandidateSHA256'],frozen_inventory_sha256=cfg['FrozenInventorySHA256'],
+                         present_inventory_sha256=cfg['PresentInventorySHA256'],core=g['Core'],native=g['Native'],network=g['Network'],not_before=cfg['NotBefore'],expires_at=cfg['ExpiresAt'])
+        if maintenance is None:
+            expectation.update(Execution=p.EXECUTION,Profile=p.PROFILE,Role='SOURCE')
+            checker_args=['-six','-inventory',str(private/'present-inventory.json'),'-mapping',str(private/'six-map.json')]
+            wanted_status='PASS_COMPLETE_SIX_NATIVE_AGGREGATION'
+        else:
+            expectation.update(MaintenanceID=cfg['MaintenanceID'],Phase=cfg['Phase'],BindingsSHA256=cfg['BindingsSHA256'],RetainUntil=cfg['RetainUntil'],MaintenanceEnd=cfg['MaintenanceEnd'])
+            expectation['present_inventory_sha256']=cfg['EffectiveInventorySHA256']
+            checker_args=['-retention-maintenance','-inventory',str(private/'effective-inventory.json')]
+            wanted_status='PASS_COMPLETE_RETENTION_MAINTENANCE_NATIVE_AGGREGATION'
         save(output/'expectation.json',expectation)
-        completed=subprocess.run([str(r.CONTROL/'readonly-check.exe'),'-six','-baseline',str(packet/g['Group']/'expectation'),'-fresh',str(output/'files'),'-group',g['Group'],
-                                  '-expectation',str(output/'expectation.json'),'-inventory',str(private/'present-inventory.json'),'-mapping',str(private/'six-map.json')],capture_output=True,timeout=45)
+        completed=subprocess.run([str(checker),*checker_args,'-baseline',str(baseline_folder),'-fresh',str(output/'files'),'-group',g['Group'],
+                                  '-expectation',str(output/'expectation.json')],capture_output=True,timeout=45)
         r.write_raw(output/'checker-stdout.txt',completed.stdout);r.write_raw(output/'checker-stderr.txt',completed.stderr)
-        need(completed.returncode==0,'complete six readonly aggregation denied')
-        result=json.loads(completed.stdout);need(result['status']=='PASS_COMPLETE_SIX_NATIVE_AGGREGATION','complete six result missing')
-        protection=native_protection.validate_group(g['Group'],load(output/'files/six-native-verification.json'),r.now(),p.W['RecoveryEnd'])
-        save(output/'native-protection-precondition.json',protection)
+        need(completed.returncode==0,'complete readonly aggregation denied')
+        result=json.loads(completed.stdout);need(result['status']==wanted_status,'complete result missing')
+        if maintenance is None:
+            protection=native_protection.validate_group(g['Group'],load(output/'files'/receipt_file),r.now(),p.W['RecoveryEnd'])
+            save(output/'native-protection-precondition.json',protection)
+        else:
+            result.update(maintenance_id=cfg['MaintenanceID'],phase=cfg['Phase'],bindings_sha256=cfg['BindingsSHA256'],retain_until=cfg['RetainUntil'],maintenance_end=cfg['MaintenanceEnd'])
         result.update(technical_requests=p.prior.old_verifier.journals(output/'files'),amount='NOT_ASSESSED')
         save(output/'result.json',result)
         return result
@@ -152,20 +186,25 @@ def collect(g,b,packet,private,output,deadline,*,core_baseline=None):
         if cid is None and creation_attempted:
             try:
                 x=r.inspect(name)
-                need(x['Name']=='/'+name and x['Config']['Labels'].get('lifecycle307.six-readonly')==p.EXECUTION
+                need(x['Name']=='/'+name and x['Config']['Labels'].get(label_key)==label_value
                      and len(x['Id'])==64 and all(c in '0123456789abcdef' for c in x['Id']),'uncertain temporary owner name/label differs')
                 known.append(x['Id'])
             except Exception as error:unknown_owner={'name':name,'state':'UNCONFIRMED','error_type':type(error).__name__}
-        if cid is not None:p.p1.close_known(cid)
+        def close_attempt(ident):
+            try:return p.p1.close_known(ident)
+            except Exception as error:return dict(cid=ident,closed=False,error_type=type(error).__name__)
+        if cid is not None:
+            first_close=close_attempt(cid)
+            if not first_close['closed']:failure=failure or {'type':'ClosureUnconfirmed','message':'reader stop not confirmed'}
         try:
             if before is not None:
                 after=p.native.fingerprints(g['Core']);save(output/'Core-after.json',after)
                 need(after==before,'Core changed during complete readonly verification')
         except Exception as error:failure=failure or {'type':type(error).__name__,'message':str(error)}
         try:
-            cfg['Enabled']=False;r.replace(private/'six-readonly.json',cfg)
+            cfg['Enabled']=False;r.replace(private/profile_file,cfg)
         except Exception as error:failure=failure or {'type':type(error).__name__,'message':'read profile revoke: '+str(error)}
-        closure=[p.p1.close_known(ident) for ident in reversed(list(dict.fromkeys(known)))]
+        closure=[close_attempt(ident) for ident in reversed(list(dict.fromkeys(known)))]
         all_closed=unknown_owner is None and all(x['closed'] for x in closure)
         save(output/'closure.json',{'owners':closure,'failure':failure,'unknown_temporary_owner':unknown_owner,'native_delete':0,'all_closed':all_closed})
         need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
