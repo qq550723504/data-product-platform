@@ -33,20 +33,23 @@ type postV22Expectation struct {
 	ExpiresAt time.Time `json:"expires_at"`
 }
 type postV22Receipt struct {
-	Schema    string    `json:"schema"`
-	Audit     string    `json:"audit_id"`
-	Profile   string    `json:"profile_sha256"`
-	Binary    string    `json:"binary_sha256"`
-	Candidate string    `json:"candidate_sha256"`
-	Frozen    string    `json:"frozen_inventory_sha256"`
-	Core      string    `json:"core"`
-	Native    string    `json:"native"`
-	Network   string    `json:"network"`
-	NotBefore time.Time `json:"not_before"`
-	ExpiresAt time.Time `json:"expires_at"`
-	Started   time.Time `json:"started_at"`
-	Finished  time.Time `json:"finished_at"`
-	Absence   *struct {
+	MaintenanceID  string    `json:"maintenance_id,omitempty"`
+	Phase          string    `json:"phase,omitempty"`
+	BindingsSHA256 string    `json:"bindings_sha256,omitempty"`
+	Schema         string    `json:"schema"`
+	Audit          string    `json:"audit_id"`
+	Profile        string    `json:"profile_sha256"`
+	Binary         string    `json:"binary_sha256"`
+	Candidate      string    `json:"candidate_sha256"`
+	Frozen         string    `json:"frozen_inventory_sha256"`
+	Core           string    `json:"core"`
+	Native         string    `json:"native"`
+	Network        string    `json:"network"`
+	NotBefore      time.Time `json:"not_before"`
+	ExpiresAt      time.Time `json:"expires_at"`
+	Started        time.Time `json:"started_at"`
+	Finished       time.Time `json:"finished_at"`
+	Absence        *struct {
 		Copy    json.RawMessage `json:"copy"`
 		Attempt string          `json:"attempt_id"`
 		Status  int             `json:"status"`
@@ -101,6 +104,10 @@ func checkPostV22(baseline, fresh, group, expectation, inventory string) (result
 }
 
 func checkNativeAudit(baseline, fresh, group, inventory string, want postV22Expectation, contract nativeAuditContract) (result, error) {
+	return checkNativeAuditPhase(baseline, fresh, group, inventory, want, contract, "")
+}
+
+func checkNativeAuditPhase(baseline, fresh, group, inventory string, want postV22Expectation, contract nativeAuditContract, phase string) (result, error) {
 	out := result{Group: group}
 	count, ok := map[string][2]int{"business-races": {7, 4}, "late-hold": {6, 2}, "mixed": {4, 2}}[group]
 	if !ok {
@@ -125,7 +132,11 @@ func checkNativeAudit(baseline, fresh, group, inventory string, want postV22Expe
 		return out, errors.New("post-v22 expectation scope or lifetime differs")
 	}
 	var r postV22Receipt
-	raw, e := strictPostFile(filepath.Join(fresh, contract.receiptFile), &r, 15)
+	members := 15
+	if phase != "" {
+		members = 18
+	}
+	raw, e := strictPostFile(filepath.Join(fresh, contract.receiptFile), &r, members)
 	if e != nil {
 		return out, e
 	}
@@ -171,6 +182,12 @@ func checkNativeAudit(baseline, fresh, group, inventory string, want postV22Expe
 	}
 	if len(retained) != count[0] || len(a.Copies) != count[0]+boolInt(group == "business-races") || (group == "business-races") != (p1 != nil) {
 		return out, errors.New("baseline must have exactly one permitted absence")
+	}
+	if phase != "" {
+		retained, e = retentionPhaseRows(group, phase, retained)
+		if e != nil {
+			return out, e
+		}
 	}
 	for i := range retained {
 		if !semanticEqual(retained[i], supplied[i]) || !semanticEqual(retained[i], b.Copies[i]) {

@@ -23,12 +23,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 )
 
-type remainingExpected struct {
-	Copy        domain.Copy
-	LegalHold   bool
-	Retention   string
-	RetainUntil *time.Time
-}
+type remainingExpected = pilot.RetentionInventory
 type remainingVerifyTransport struct {
 	c    config
 	base http.RoundTripper

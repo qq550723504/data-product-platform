@@ -1,5 +1,5 @@
 // Exact-two retained-fixture maintenance, outside Core. No DELETE/IAM/hold API.
-// A production --run requires a newly compiled host-key anchor and a fresh,
+// A production run requires a newly compiled host-key anchor and a fresh,
 // human-referenced signed grant. The default build cannot perform a write.
 package main
 
@@ -496,20 +496,44 @@ func loadEngine(private, budget, output string) (*engine, error) {
 	}
 	return r, nil
 }
-func mainRun(check bool) error {
+
+// No provider client or budget exists in this stage. The initial false control
+// must be observed, so a pre-enabled or reused owner cannot skip host attestation.
+func waitPermission(ctx context.Context, private string, original []byte, now func() time.Time, interval time.Duration) error {
 	var b bindings
-	raw, e := os.ReadFile("/run/private/bindings.json")
-	if e != nil || strict(raw, &b) != nil || checkedBindings(b) != nil {
+	if strict(original, &b) != nil || checkedBindings(b) != nil {
 		return denied
 	}
-	if check {
-		fmt.Println("PASS_FINITE_BINDINGS_ONLY; NOT_AUTHORIZED; no source/provider I/O")
-		return nil
+	first := true
+	timer := time.NewTicker(interval)
+	defer timer.Stop()
+	for {
+		if ctx.Err() != nil {
+			return denied
+		}
+		at := now().UTC()
+		raw, err := os.ReadFile(filepath.Join(private, "bindings.json"))
+		var p permission
+		if err != nil || !bytes.Equal(raw, original) || at.Before(b.NotBefore) || !at.Before(b.NotAfter) ||
+			read(filepath.Join(private, "permission.json"), &p) != nil || p.BindingsSHA256 != digest(original) {
+			return denied
+		}
+		if p.Enabled {
+			if first {
+				return denied
+			}
+			return nil
+		}
+		first = false
+		select {
+		case <-ctx.Done():
+			return denied
+		case <-timer.C:
+		}
 	}
-	if runtime.GOOS != "linux" || !hash(trustedHostPublicSHA256) {
-		return denied
-	}
-	for _, dir := range []string{"/run/private", "/run/budget", "/run/output"} {
+}
+func checkPrivateDirectories(dirs []string) error {
+	for _, dir := range dirs {
 		// These three literal mount points belong to the frozen Linux image.
 		// Use the standard library Root boundary without depending on newer
 		// product custody/schema code absent from the retained fixture R.
@@ -525,6 +549,32 @@ func mainRun(check bool) error {
 			return denied
 		}
 	}
+	return nil
+}
+
+func mainRun(check, wait bool) error {
+	var b bindings
+	raw, e := os.ReadFile("/run/private/bindings.json")
+	if e != nil || strict(raw, &b) != nil || checkedBindings(b) != nil {
+		return denied
+	}
+	if check {
+		fmt.Println("PASS_FINITE_BINDINGS_ONLY; NOT_AUTHORIZED; no source/provider I/O")
+		return nil
+	}
+	if runtime.GOOS != "linux" || !hash(trustedHostPublicSHA256) {
+		return denied
+	}
+	if checkPrivateDirectories([]string{"/run/private", "/run/budget", "/run/output"}) != nil {
+		return denied
+	}
+	if wait {
+		ctx, cancel := context.WithDeadline(context.Background(), b.NotAfter)
+		defer cancel()
+		if waitPermission(ctx, "/run/private", raw, time.Now, 100*time.Millisecond) != nil {
+			return denied
+		}
+	}
 	r, e := loadEngine("/run/private", "/run/budget", "/run/output")
 	if e != nil {
 		return denied
@@ -534,9 +584,10 @@ func mainRun(check bool) error {
 	return r.run(ctx)
 }
 func main() {
+	wait := flag.Bool("wait", false, "wait for a bound false-to-true permission before complete authorization")
 	check := flag.Bool("check", false, "check finite bindings only; never contacts a provider")
 	flag.Parse()
-	if flag.NArg() != 0 || mainRun(*check) != nil {
+	if flag.NArg() != 0 || (*check && *wait) || mainRun(*check, *wait) != nil {
 		fmt.Fprintln(os.Stderr, denied)
 		os.Exit(1)
 	}

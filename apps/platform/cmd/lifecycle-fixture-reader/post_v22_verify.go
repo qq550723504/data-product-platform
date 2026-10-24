@@ -187,6 +187,10 @@ func postV22Verify(ctx context.Context) error {
 }
 
 func verifyNativeAudit(ctx context.Context, p postV22ReadProfile, raw []byte, started time.Time, profileFile, receiptFile string, six bool) error {
+	return verifyNativeAuditPhase(ctx, p, raw, started, profileFile, receiptFile, six, nil)
+}
+
+func verifyNativeAuditPhase(ctx context.Context, p postV22ReadProfile, raw []byte, started time.Time, profileFile, receiptFile string, six bool, maintenance *retentionReadProfile) error {
 	executable, e := os.Executable()
 	if e != nil {
 		return e
@@ -206,6 +210,17 @@ func verifyNativeAudit(ctx context.Context, p postV22ReadProfile, raw []byte, st
 	full, actual, absent, e := postV22Inventories(p, frozen, present)
 	if e != nil {
 		return e
+	}
+	if maintenance != nil {
+		effective, err := os.ReadFile("/run/private/effective-inventory.json")
+		if err != nil {
+			return err
+		}
+		actual, err = retentionEffectiveInventory(*maintenance, actual, effective)
+		if err != nil {
+			return err
+		}
+		p.PresentInventorySHA256 = maintenance.EffectiveInventorySHA256
 	}
 	scope, e := pilot.RemainingScopeFor(p.Group)
 	if e != nil {
@@ -254,5 +269,11 @@ func verifyNativeAudit(ctx context.Context, p postV22ReadProfile, raw []byte, st
 	if !finished.Before(p.ExpiresAt) {
 		return errors.New("post-v22 read deadline exceeded")
 	}
-	return write(c, receiptFile, map[string]any{"schema": p.Purpose, "audit_id": p.AuditID, "profile_sha256": postV22Hash(raw), "binary_sha256": p.BinarySHA256, "candidate_sha256": p.CandidateSHA256, "frozen_inventory_sha256": p.FrozenInventorySHA256, "core": p.Core, "native": p.Native, "network": p.Network, "not_before": p.NotBefore, "expires_at": p.ExpiresAt, "started_at": started, "finished_at": finished, "p1_absence": absence, "verification": verification})
+	fact := map[string]any{"schema": p.Purpose, "audit_id": p.AuditID, "profile_sha256": postV22Hash(raw), "binary_sha256": p.BinarySHA256, "candidate_sha256": p.CandidateSHA256, "frozen_inventory_sha256": p.FrozenInventorySHA256, "core": p.Core, "native": p.Native, "network": p.Network, "not_before": p.NotBefore, "expires_at": p.ExpiresAt, "started_at": started, "finished_at": finished, "p1_absence": absence, "verification": verification}
+	if maintenance != nil {
+		fact["maintenance_id"] = maintenance.MaintenanceID
+		fact["phase"] = maintenance.Phase
+		fact["bindings_sha256"] = maintenance.BindingsSHA256
+	}
+	return write(c, receiptFile, fact)
 }
