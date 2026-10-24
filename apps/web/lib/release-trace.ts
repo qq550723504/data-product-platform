@@ -17,11 +17,13 @@ export function validReleaseTrace(value:unknown,ws:string,id:string,productId?:s
  return true;
 }
 export function traceSelection(q:Record<string,string|string[]|undefined>){
+ const archiveId=q.returnArchiveId===undefined?undefined:typeof q.returnArchiveId==='string'&&isIdentity(q.returnArchiveId)?q.returnArchiveId.toLowerCase():null;
+ if(archiveId===null)throw Error('INVALID_ARCHIVE_REFERENCE');
  const releaseId=q.releaseId===undefined?'':typeof q.releaseId==='string'&&isIdentity(q.releaseId)?q.releaseId.toLowerCase():null;
  const productId=q.productId===undefined?undefined:typeof q.productId==='string'&&isIdentity(q.productId)?q.productId.toLowerCase():null;
  const offset=q.returnOffset===undefined?'0':typeof q.returnOffset==='string'&&/^\d{1,8}$/.test(q.returnOffset)?q.returnOffset:null;
  const status=q.returnStatus===undefined?'':typeof q.returnStatus==='string'&&(q.returnStatus===''||RELEASE_STATUSES.includes(q.returnStatus))?q.returnStatus:null;
  if(releaseId===null||productId===null||offset===null||status===null)throw Error('INVALID_TRACE_REFERENCE');
  const back=new URLSearchParams({offset,status});if(releaseId)back.set('releaseId',releaseId);
- return {releaseId,productId,offset,status,back:'/core/releases?'+back};
+ return {releaseId,productId,offset,status,archiveId,back:'/core/releases?'+back};
 }

@@ -77,6 +77,7 @@ func main() {
 	releaseHandler := readmodelhttp.NewHandler(readmodel.NewRepository(db))
 	releaseHandler.Principal = resolver
 	releaseHandler.RegisterReleaseHistoryReadOnly(mux)
+	releaseHandler.RegisterDeliveryHistoryReadOnly(mux)
 	traceHandler := traceabilityhttp.NewHandler(traceability.NewRepository(db))
 	traceHandler.Principal = resolver
 	traceHandler.Register(mux)

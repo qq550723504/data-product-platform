@@ -41,6 +41,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/entity-match-reviews", h.listEntityReviews)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products", h.listDataProducts)
 	h.RegisterReleaseHistoryReadOnly(mux)
+	h.RegisterDeliveryHistoryReadOnly(mux)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products/{productId}/releases", h.listProductReleases)
 }
 

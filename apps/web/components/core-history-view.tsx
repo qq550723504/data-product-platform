@@ -10,7 +10,7 @@ import {HISTORY_LIMIT,RELEASE_STATUSES,historySelection,historyHref,validCertifi
 export default async function CoreHistoryView({searchParams,certification=false}:{searchParams:Promise<Record<string,string|string[]|undefined>>;certification?:boolean}){
  const base=certification?'/core/certifications':'/core/releases';const ws=configuredWorkspaceId()??'';
  let s;try{s=historySelection(await searchParams,certification);}catch{return <><PageHeader title="历史查询引用无效"/><UnknownHistory>请选择明确版本，使用有效的分页与历史时点。</UnknownHistory><a href="/core/assets">返回资产目录</a></>;}
- const nav=<nav className="capability-links" aria-label="Core 只读导航"><a href="/core/assets">资产目录</a><a href="/core/releases">发布历史</a><a href="/core/release-trace">发布证据链</a>{certification&&<a href={historyHref('/core/assets',{datasetId:s.datasetId,versionId:s.versionId})}>返回版本与质量</a>}</nav>;
+ const nav=<nav className="capability-links" aria-label="Core 只读导航"><a href="/core/assets">资产目录</a><a href="/core/releases">发布历史</a><a href="/core/release-trace">发布证据链</a><a href="/core/deliveries">交付记录</a><a href="/core/archives">验收归档</a>{certification&&<a href={historyHref('/core/assets',{datasetId:s.datasetId,versionId:s.versionId})}>返回版本与质量</a>}</nav>;
  const title=certification?'认证历史':'发布历史';
  const header=<>{nav}<PageHeader title={title} description="只读服务端历史事实；不运行认证、发布或交付。"/><p>工作空间：<code>{ws||'未配置'}</code></p></>;
  if(certification){

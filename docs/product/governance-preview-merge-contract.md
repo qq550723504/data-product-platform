@@ -84,3 +84,8 @@ B01 补齐所有该组件直接渲染字段与所选上下文形状校验；实�
 ## 用户新授权后的独立库验收（2026-10-24）
 
 用户已明确批准默认只读改造、独立验收库准备与现场API/浏览器验收，先前夜间运行限制不再阻止这一明确范围。原库仍不修改。当前范围与实际结果以docs/product/governance-readonly-live-acceptance-20261024.md为准：新库完整DDL/SELECT角色、API四组与Edge读取闭环、双库216表读取窗口无写入证据已完成；保留原Agent API、模型/worker/执行关闭。现场发现Trace空映射null响应已根因修复。旧NOT_RUN条目是当时的检查点，不冒称原保留库已升级或原可写预览已验收。新增提交仍需独立增量审查与精确HEAD完整CI，不因旧546f39bc绿灯合并。
+
+
+## 交付历史与证据归档增量（2026-10-24）
+
+直接用户授权继续只读接入交付记录与验收归档、补页面并完成浏览器验收。当前增量 contract 由 `governance-delivery-history-readonly-20261024.md` 拥有：仅现有 DeliveryOperation/gate/transition 和 EvidenceSnapshot 的 workspace-scoped 查询，不新增业务验收事实，不将 ISSUED/快照等同签收；不接模型、provider 或真实执行。原库保留；独立验收库准备一笔明确标记 synthetic BLOCKED 历史，读窗口无写入。保持 Draft，不含 merge/deploy。

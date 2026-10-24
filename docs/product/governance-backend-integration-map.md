@@ -86,3 +86,6 @@
 
 
 2026-10-24 发布 Trace 更新：身份/工作空间与同一只读快照边界、新版发布证据链页面已实现，自动化回归通过。浏览器与重启后接口验收 NOT_RUN，不能视为本轮已完成接入验收。详见 [发布证据链只读接入](governance-release-trace-readonly-20261024.md)。
+
+
+2026-10-24 交付/归档更新：`/core/deliveries` 已接现有 DeliveryOperation 历史及 gate/transition 只读投影；`/core/archives` 已接 EvidenceSnapshot 冻结档案。业务签收/验收通过仍缺少独立 authoritative contract，不能用归档证据替代。独立库 API 与 Edge 验收、指纹无写入验证 PASS，见 [本轮交付与证据归档验收](governance-delivery-history-readonly-20261024.md)。前述 Trace 浏览器 NOT_RUN 是历史快照，已由上一轮独立只读验收文档及本轮实际路径覆盖。

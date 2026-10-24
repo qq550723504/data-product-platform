@@ -132,3 +132,9 @@ test('history binding references accept absent/null identities but reject object
   }
  }
 });
+
+test('archive return keeps exact snapshot and refuses malformed reference',()=>{
+ assert.equal(traceSelection({releaseId:id,returnArchiveId:other}).archiveId,other);
+ assert.throws(()=>traceSelection({releaseId:id,returnArchiveId:'latest'}));
+ assert.throws(()=>traceSelection({releaseId:id,returnArchiveId:[id,other]}));
+});
