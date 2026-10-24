@@ -23,7 +23,8 @@ def metadata(name):
 def main():
     if os.environ.get('ACCEPTANCE_IDENTITY_PREPARE_ACK')!='NEW_ISOLATED_1A_ONLY':raise RuntimeError('explicit isolated preparation required')
     if (RUN/'profile.json').exists() or metadata(PG) or metadata(IDP):raise RuntimeError('existing 1A resources found; inspect and reuse, never overwrite')
-    RUN.mkdir(parents=True,exist_ok=True)
+    os.umask(0o077)
+    RUN.mkdir(parents=True,exist_ok=True,mode=0o700)
     before={'original':metadata('dpp-agent-q2-test-postgres-20261023')}
     (RUN/'retained-before.json').write_text(json.dumps(before),encoding='utf-8')
     pw={name:secrets.token_urlsafe(24) for name in PEOPLE}
@@ -41,7 +42,11 @@ def main():
     (RUN/'pg.env').write_text('POSTGRES_PASSWORD='+profile['pgPassword']+'\nPOSTGRES_DB='+DATABASE+'\n',encoding='utf-8')
     (RUN/'idp.env').write_text('KC_BOOTSTRAP_ADMIN_USERNAME=fixture-admin\nKC_BOOTSTRAP_ADMIN_PASSWORD='+profile['adminPassword']+'\n',encoding='utf-8')
     call(['docker','run','-d','--name',PG,'--label','codex.scope=acceptance-identity-1a','--env-file',str(RUN/'pg.env'),'-p','127.0.0.1:25495:5432','--mount',f'type=bind,source={RUN},target=/fixture,readonly','postgres:17-alpine','sh','-c','cp /fixture/server.key /tmp/fixture-server.key && cp /fixture/server.crt /tmp/fixture-server.crt && chown postgres:postgres /tmp/fixture-server.* && chmod 600 /tmp/fixture-server.key && exec docker-entrypoint.sh postgres -c ssl=on -c ssl_cert_file=/tmp/fixture-server.crt -c ssl_key_file=/tmp/fixture-server.key'])
-    call(['docker','run','-d','--name',IDP,'--label','codex.scope=acceptance-identity-1a','--env-file',str(RUN/'idp.env'),'-p','127.0.0.1:19120:8443','--mount',f'type=bind,source={RUN}/server.crt,target=/tls/server.crt,readonly','--mount',f'type=bind,source={RUN}/server.key,target=/tls/server.key,readonly','--mount',f'type=bind,source={RUN}/realm.json,target=/opt/keycloak/data/import/dpp-acceptance-1a-realm.json,readonly',KEYCLOAK,'start-dev','--http-enabled=false','--hostname=https://localhost:19120','--https-certificate-file=/tls/server.crt','--https-certificate-key-file=/tls/server.key','--import-realm'])
+    # Match the Linux host file owner, preserving private key mode 0600.
+    # The official image's data/conf directories support arbitrary nonroot UID
+    # in group 0. Windows bind mounts do not use host POSIX uid ownership.
+    user=['--user',str(os.getuid())+':0'] if hasattr(os,'getuid') and os.getuid()!=0 else []
+    call(['docker','run','-d','--name',IDP,'--label','codex.scope=acceptance-identity-1a',*user,'--env-file',str(RUN/'idp.env'),'-p','127.0.0.1:19120:8443','--mount',f'type=bind,source={RUN}/server.crt,target=/tls/server.crt,readonly','--mount',f'type=bind,source={RUN}/server.key,target=/tls/server.key,readonly','--mount',f'type=bind,source={RUN}/realm.json,target=/opt/keycloak/data/import/dpp-acceptance-1a-realm.json,readonly',KEYCLOAK,'start-dev','--http-enabled=false','--hostname=https://localhost:19120','--https-certificate-file=/tls/server.crt','--https-certificate-key-file=/tls/server.key','--import-realm'])
     (RUN/'resources.json').write_text(json.dumps({'postgres':metadata(PG),'keycloak':metadata(IDP)},indent=2),encoding='utf-8')
     assert metadata('dpp-agent-q2-test-postgres-20261023')==before['original'],'retained original changed'
     print('Isolated 1A PostgreSQL/Keycloak created; credentials remain in the ignored private profile. Retained original unchanged.')

@@ -22,7 +22,15 @@ def wait(url):
    with urllib.request.urlopen(url,context=ctx,timeout=3) as response:
     if response.status==200:return
   except Exception:time.sleep(1)
- raise RuntimeError('isolated endpoint did not become ready')
+ # Fixed owned fixture only, with generated secrets redacted before diagnostics.
+ p=json.loads((RUN/'profile.json').read_text(encoding='utf-8'))
+ logs=subprocess.run(['docker','logs','--tail','30',p['keycloak']],capture_output=True,encoding='utf-8')
+ safe=logs.stdout+logs.stderr
+ for key,value in p.items():
+  if isinstance(value,str) and any(t in key.lower() for t in ['password','secret','encryptionkey']):safe=safe.replace(value,'[REDACTED]')
+ for value in p['people'].values():safe=safe.replace(value['password'],'[REDACTED]')
+ print(safe,flush=True)
+ raise RuntimeError('isolated endpoint did not become ready; no automatic restart')
 def main():
  if os.environ.get('ACCEPTANCE_IDENTITY_PREPARE_ACK')!='NEW_ISOLATED_1A_ONLY':raise RuntimeError('new isolated fixture authorization required')
  provision();p=json.loads((RUN/'profile.json').read_text(encoding='utf-8'))
