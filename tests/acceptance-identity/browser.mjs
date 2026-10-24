@@ -34,7 +34,7 @@ async function noExecution(){for(const table of ['execution','agent_task','agent
 }}
 async function person(name,workspace=a){
  const context=await browser.newContext({ignoreHTTPSErrors:true,serviceWorkers:'block',viewport:{width:1440,height:1000}});contexts.push(context);
- await context.route('**/*',route=>{const u=new URL(route.request().url());return ['localhost','127.0.0.1'].includes(u.hostname)?route.continue():route.abort();});
+ await context.route('**/*',route=>{const u=new URL(route.request().url());return [origin,new URL(profile.issuer).origin].includes(u.origin)?route.continue():route.abort();});
  const page=await context.newPage();
  await page.goto(origin+'/auth/login?workspaceId='+workspace);
  await page.getByRole('button',{name:'使用统一身份登录'}).click();

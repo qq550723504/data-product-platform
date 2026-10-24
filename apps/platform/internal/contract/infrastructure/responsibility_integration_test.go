@@ -9,6 +9,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal/bindings"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal/oidc"
 	"os"
 	"testing"
 	"time"
@@ -31,13 +32,19 @@ func TestResponsibilityTransactionFencesDispositionAndRejectsForeignScope(t *tes
 	target := uuid.New()
 	var p principal.RequestPrincipal
 	p.WorkspaceID = ws
-	p.IdentityRevision = "1:1:1"
 	p.IdentityExpiresAt = time.Now().Add(time.Minute)
 	e = db.QueryRow(ctx, `SELECT a.actor_id,b.issuer,b.subject FROM platform_actor_state a JOIN platform_subject_binding b ON b.actor_id=a.actor_id WHERE a.actor_id='73000000-0000-4000-8000-000000000001'`).Scan(&p.ActorID, &p.IdentityIssuer, &p.IdentitySubject)
 	if e != nil {
 		t.Fatal(e)
 	}
 	p.Subject = p.ActorID.String()
+	// Resolve the current revision; browser revocation tests retain their
+	// append-only revision progression and must not be reset for this fixture.
+	current, e := bindings.NewStore(db).Lookup(ctx, oidc.Identity{Issuer: p.IdentityIssuer, Subject: p.IdentitySubject}, ws)
+	if e != nil || !current.Active {
+		t.Fatalf("fixture authority unavailable: %v", e)
+	}
+	p.IdentityRevision = current.AuthorityRevision
 	setup, e := db.Begin(ctx)
 	if e != nil {
 		t.Fatal(e)

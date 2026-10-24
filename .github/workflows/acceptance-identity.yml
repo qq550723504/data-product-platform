@@ -16,10 +16,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install locked web and browser dependencies
+      - name: Install locked web and pinned browser dependencies
         run: |
           npm ci --ignore-scripts --prefix apps/web
-          npm ci --ignore-scripts --prefix tests/browser
+          npm install --ignore-scripts --prefix tests/browser
           cd tests/browser && npx playwright install --with-deps chromium
       - name: Prepare NEW independent TLS IdP and readonly 1A fixture
         env:
@@ -38,6 +38,7 @@ jobs:
           name: acceptance-identity-1a-results
           retention-days: 7
           if-no-files-found: ignore
+          include-hidden-files: true
           path: |
             .data/acceptance-identity-1a/browser-results.json
             .data/acceptance-identity-1a/privilege-results.json
