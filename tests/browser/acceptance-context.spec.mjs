@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';import {ids,fixtureToken} from './fixture-server.mjs';
-import {bindingId} from './acceptance-bindings-fixture.mjs';
+import {bindingId} from '../../apps/web/tests/fixtures/acceptance-bindings.mjs';
 const control='http://127.0.0.1:4400/__control';
 async function reset(request,scenario='acceptance-sources'){expect((await request.post(control+'/reset',{headers:{'x-fixture-token':fixtureToken},data:{scenario}})).ok()).toBeTruthy();}
 async function calls(request){return(await(await request.get(control+'/state',{headers:{'x-fixture-token':fixtureToken}})).json()).requests;}

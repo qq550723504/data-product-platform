@@ -1,4 +1,5 @@
-// Fixed synthetic query responses for frontend fault/interaction tests. The real
+// Shared synthetic responses live inside the web build context so unit tests
+// and browser fixtures use the same data in standalone Docker builds too. The real
 // evaluator and persistence guards are exercised separately against PostgreSQL.
 export const bindingRoles=['PROVIDER','RECEIVER','BASIS_CONFIRMER','REVIEWER','ARCHIVIST','DISPOSER'];
 export const bindingId=n=>`85000000-0000-4000-8000-${String(n).padStart(12,'0')}`;

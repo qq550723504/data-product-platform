@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {createRequire} from 'node:module';
-import {acceptanceBindingFixture,bindingId} from '../../../tests/browser/acceptance-bindings-fixture.mjs';
+import {acceptanceBindingFixture,bindingId} from './fixtures/acceptance-bindings.mjs';
 const require=createRequire(import.meta.url);const {validStandard,validStandards,validAcceptanceContext,acceptanceSelection,acceptanceHref,responsibilityRoles}=require('../.history-tests/acceptance-context.js');
 const ws='11111111-1111-4111-8111-111111111111',id='44444444-4444-4444-8444-444444444444';
 const standard={id,workspaceId:ws,contractId:id,name:'TEST',version:'1.0.0',status:'PUBLISHED',sourceSha256:'a'.repeat(64),createdAt:'2026-10-24T00:00:00Z',publishedAt:'2026-10-24T00:00:00Z',acceptanceSource:{status:'SUPPORTED',schemaVersion:'1',setHash:'b'.repeat(64),criteria:[{id:'C1',clause:'3.1',text:'明确成果',required:true,method:'MANUAL_CHECK',evidenceCategory:'RECEIPT'}]}};

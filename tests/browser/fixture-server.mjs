@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import {acceptanceBindingFixture} from './acceptance-bindings-fixture.mjs';
+import {acceptanceBindingFixture} from '../../apps/web/tests/fixtures/acceptance-bindings.mjs';
 export const ids = {
   workspace: "11111111-1111-4111-8111-111111111111",
   actor: "22222222-2222-4222-8222-222222222222",
