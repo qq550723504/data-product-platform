@@ -1,6 +1,8 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-当前文档增量（核对 `73e6f3f1`）：用户要求先设计业务签收下一步，不开发。交付[可信依据清单](../architecture/business-receipt-trusted-basis-v1.md)、[第一切片签收补充](../architecture/business-acceptance-draft-receipt-admission-v1.md)、[页面流程稿](business-receipt-page-flow-20261024.md)、[异常验收矩阵](business-receipt-exception-acceptance-matrix-20261024.md)和[写入启用清单](business-receipt-write-enablement-checklist-20261024.md)，同步清理“1A候选未集成”的过时表述。业务/来源语义以对应文档各自范围为准，不在评审中扩展通用来源注册、上传、IAM或业务写实现。本轮仅 Markdown；来源 UNCONFIGURED、写入关闭，原库/独立预览/Agent保留，模型/派发关闭，Draft不合并、不部署。静态一致性与链接核对不冒充新接口、PG、浏览器或真实来源验收。
+当前文档复审（核对 `2399fa89`）：按用户授权审查五项签收设计，修正后置依据成为前置门禁、旧成功恢复套入新写条件、历史材料污染当前准备依赖三类问题，权威修正仍归原契约。边界与闭包见[复审记录](business-receipt-design-review-20261024.md)，矩阵新增 R45–R48。只改文档，不扩展实体/Command/状态或实现范围；真实来源 UNCONFIGURED，业务写关闭，原库/独立预览/Agent保留，模型/真实派发关闭，Draft不合并、不部署。真实接纳模型、来源撤销窗口和运行授权保持后续 blocker，静态/CI 通过不解除。
+
+上一文档增量（核对 `73e6f3f1`）：用户要求先设计业务签收下一步，不开发。交付[可信依据清单](../architecture/business-receipt-trusted-basis-v1.md)、[第一切片签收补充](../architecture/business-acceptance-draft-receipt-admission-v1.md)、[页面流程稿](business-receipt-page-flow-20261024.md)、[异常验收矩阵](business-receipt-exception-acceptance-matrix-20261024.md)和[写入启用清单](business-receipt-write-enablement-checklist-20261024.md)，同步清理“1A候选未集成”的过时表述。业务/来源语义以对应文档各自范围为准，不在评审中扩展通用来源注册、上传、IAM或业务写实现。本轮仅 Markdown；来源 UNCONFIGURED、写入关闭，原库/独立预览/Agent保留，模型/派发关闭，Draft不合并、不部署。静态一致性与链接核对不冒充新接口、PG、浏览器或真实来源验收。
 
 上一实施增量：1B前置业务依据只读核对。用户确认企业来源暂未确定；复用1A会话/事务fence、责任/标准和Evidence，补齐两个GET、新版核对页、安全材料投影、只读权限及独立环境PG/浏览器验收，无新业务表/DDL/写入。权威契约为[业务依据只读契约](../architecture/acceptance-business-basis-read-v1.md)，范围及证据见[实施记录](acceptance-business-basis-read-implementation.md)。真实来源、内容与收到均不推断，原库/Agent保留、业务写关闭、模型/派发关闭、Draft不合并。
 

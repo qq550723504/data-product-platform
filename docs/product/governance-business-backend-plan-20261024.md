@@ -4,12 +4,14 @@
 
 本轮按用户授权，仅将签收可信依据和下一步准入整理成文档；核对实现基线 `73e6f3f1`。没有开发、改库或更新运行配置，真实来源保持 UNCONFIGURED，业务写入口关闭，原库及 Agent API 保留，模型/真实执行关闭，PR #363 继续 Draft、不合并。本段与下表按当前实现更新，历史切片的证据不延伸为新写入通过。
 
+文档复审核对 `2399fa89`，修正依据形成顺序、旧成功/未决恢复分流、历史材料与当前依赖的边界，见[本轮复审记录](business-receipt-design-review-20261024.md)。异常矩阵扩展为 R01–R48；新增场景仍 NOT_RUN，不改变只读实现或运行授权。
+
 | 交付物 | 权威范围 | 本轮结果 |
 |---|---|---|
 | [可信依据清单 T01–T12](../architecture/business-receipt-trusted-basis-v1.md) | 人员、责任、标准、材料出处/内容/接收主体和当前接纳条件 | 语义及 owner 清楚；真实系统、具体责任人、接纳事实与撤销窗口待定 |
 | [签收契约补充 §3.1](../architecture/business-acceptance-draft-receipt-admission-v1.md#31-签收契约补充可信依据与准备闭环) | RECEIVED/PARTIAL/MISSING/DISPUTED、材料、补正、当前准备及历史 | 沿用四个 Command、只写 DRAFT；没有实施 |
 | [页面流程稿](business-receipt-page-flow-20261024.md) | 只读准备态、将来登记/补正、角色入口、刷新/回跳/UNKNOWN | 复用现有完整核对流程；没有开发新控件或页面 |
-| [异常验收矩阵 R01–R44](business-receipt-exception-acceptance-matrix-20261024.md) | 来源、身份/空间、材料、历史、并发、恢复和页面的可观察结果 | 新写入和来源现场验证均 NOT_RUN |
+| [异常验收矩阵 R01–R48](business-receipt-exception-acceptance-matrix-20261024.md) | 来源、身份/空间、材料、历史、并发、恢复和页面的可观察结果 | 新写入和来源现场验证均 NOT_RUN |
 | [写入启用清单 G0–G8](business-receipt-write-enablement-checklist-20261024.md) | 来源选择→真实只读见证→另行实施/验收→明确运行授权 | 当前 DISABLED/BLOCKED；不因文档或 CI 自动启用 |
 
 下一步先由实际业务责任方选定一条来源链、明确材料接纳与撤销规则，再另行授权一空间/一笔既有交付的真实只读见证。真实来源未定期间维持本设计和缺口，不先造来源服务或开放无依据的签收。

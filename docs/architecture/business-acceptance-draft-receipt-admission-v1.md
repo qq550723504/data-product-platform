@@ -103,7 +103,7 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 
 可信依据的必需内容和来源职责统一归 [T01–T12 清单](business-receipt-trusted-basis-v1.md)，不在各页面或 Command 中各自实现一套“可信”算法。当前目录、代表责任、标准权威源及材料来源均 UNCONFIGURED；新写入口一律关闭，包括无附件的 MISSING/DISPUTED，不因其较易满足而提前开放。
 
-未来 `RecordBusinessReceipt` 仍只有第 5 节现有请求字段；客户端不能提交接收主体、可信来源、核验时点或验证结论。服务端依次核对当前本人/冻结接收责任、明确成果及当前原签收，再按 outcome 和引用用途，由 Evidence owner 的来源接纳 Port 核对精确 evidenceIds。收到证明须满足 T07–T10；背景或争议材料不自动升级为收到证明。提交的每个引用均须有权读取、目标匹配且满足其用途，不能丢弃无效引用后把剩余材料当整次成功。
+未来 `RecordBusinessReceipt` 仍只有第 5 节现有请求字段；客户端不能提交接收主体、可信来源、核验时点或验证结论。第 4/6 节原回执分支优先；仅无已提交回执的新写依次核对当前本人/冻结接收责任、明确成果及当前原签收，再按 outcome 和引用用途，由 Evidence owner 的来源接纳 Port 核对精确 evidenceIds。收到证明须满足 T07–T10；背景或争议材料不自动升级为收到证明。提交的每个引用均须有权读取、目标匹配且满足其用途，不能丢弃无效引用后把剩余材料当整次成功。
 
 | outcome | 额外准入与准备投影 | 写入后含义 |
 |---|---|---|
@@ -118,12 +118,12 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 
 - 本单签收冻结明确材料/内容/接纳引用及办理依据；Receipt header 与全部材料成员同事务追加，创建后不可原地变更。底层具体强类型接纳事实由实际来源确定后定稿，不把 source URL/metadata 当关系模型。
 - 可信内容变化须新内容身份及新接纳依据；新收到声明通过补正追加。原签收与将来已有 submission/archive 的旧引用不变，不自动转换 outcome 或移动 current pointer。
-- 接纳被撤销、过期或当前不可核对时，准备情况阻断并显示具体缺口；保留当时签收依据。历史回执恢复仍按第 6 节的当前 READ 和同主体规则，不因来源变化重做已提交业务动作。
+- 当前签收冻结的依据被撤销、过期或当前不可核对时，准备情况阻断并显示具体缺口；保留当时签收依据。已补正退出当前指针的旧签收，其专属材料失效不自动阻断无此依赖的新签收。历史回执恢复仍按第 6 节的当前 READ 和同主体规则，不因来源变化重做已提交业务动作。
 - 当前 Evidence envelope hash 只校验平台记录；不能据此重建附件 hash、证明企业授权或自动填 RECEIVED。`CORE_CONFIRMED` 来源标记也不替代企业接纳。
 
 未来可变本地接纳有效性必须参与第 4 节最终重读及共享依赖 fence；来源检查只在别的连接做一次预检不足以授权写入。外部检查点与本地串行化的边界归可信依据清单，具体来源/处置路径或撤销窗口未定稿则不启用。本轮不新增锁服务、来源注册中心或接纳写接口。
 
-首次签收显式传 `replacesReceiptId=null`；补正必须等于当前 receiptId，并提供 expectedRevision。并发补正最多一个成功。RECEIVED 改为 DISPUTED 合法，旧收到声明仍保留，准备齐全投影随之阻断。仅签收变化不改草稿 hash 或原标准确认；未来冻结提交仍精确引用当时 receiptId。
+新写首次签收显式传 `replacesReceiptId=null`；新补正必须等于当前 receiptId，并提供 expectedRevision。并发补正最多一个成功。RECEIVED 改为 DISPUTED 合法，旧收到声明仍保留，准备齐全投影随之阻断。仅签收变化不改草稿 hash 或原标准确认；未来冻结提交仍精确引用当时 receiptId。已提交原键重放不再要求其旧 replacesReceiptId 或 resultingRevision 等于当前指针/revision，也不再次移动当前指针。
 
 | 当前状态 | 本切片动作 | 状态结果 | 追加事实/版本 |
 |---|---|---|---|
@@ -134,6 +134,8 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 | 其他状态 | 上述新增写请求 | 拒绝 | 本切片不借用后续状态或演示实现 |
 
 查询返回 `preparation={complete, blockers, evaluatedAt}`，不新增 Case READY 状态。complete 需要所有冻结责任当前有效、标准/来源有效、当前草稿有有效确认、当前签收为 RECEIVED 且证据满足。它不提供下一切片的提交授权；当前实际只读页面仍为 writeEnabled=false。责任或标准失效只改变当前 blockers，不能改写原草稿、确认、签收与办理依据。
+
+这里的确认和材料只取 Case 显式当前草稿/签收的依赖闭包；历史查询独立展示旧事实及来源变化，不把历史成员并入准备判定。创建只核验其自身依赖，不要求尚未产生的 BasisConfirmation/BusinessReceipt；确认与签收由后续各自 Command 产生，不能作为来源只读见证或建单的前置产物。
 
 标准确认和收到登记可在建单后分别办理，没有“先签收才能确认标准”的硬依赖；只有修改草稿才要求重新确认。两者都齐全也不会在第一切片创建 Submission 或 AcceptanceDecision。
 
@@ -148,6 +150,8 @@ draftHash 使用有版本的本领域规范化方案，覆盖 case/固定成果/
 事务按 READ COMMITTED 读写；取得 fence 后才读取当前本地权限、责任和依赖，不能复用入口快照。第一次查同主体幂等回执在新业务 revision/状态校验之前：已提交请求走历史重放读取；新请求才取得 case/current revision 并完整准入。创建时先用幂等锁串行化，没有 case 行也不能双建。
 
 HTTP 入口先以本模块 READ 解析可信人员，不在查回执前要求 DRAFT/BASIS_CONFIRM/RECEIPT_RECORD。持 IAM fence 后重读当前 READ；仅本人、同空间、命令/target/key/指纹匹配且结果可读的 COMMITTED 请求可直接返回原回执。没有匹配回执的新请求，再在相同事务锁内要求动作能力、当前责任和所有业务依赖。读权限丧失时所有分支拒绝；写权限丧失时，已提交请求仍可恢复，未提交请求不能借原键获得新写权限。同键异内容仍为冲突，不把旧成功结果套给新 body。
+
+该优先级也覆盖当前 case 非 DRAFT、原 expectedRevision/replacesReceiptId 已陈旧、标准/材料失效或来源服务不可用的情况：同主体当前仍可读的已提交结果保持原回执，不再按新写条件拒绝。外部材料候选核验仍在持业务锁前完成，但失败结果只由无原回执的新写分支消费，不得在幂等恢复之前提前终结；业务事务内仍先在原键锁下重查是否已有 COMMITTED，再消费候选并执行最终准入。这里不要求持锁发外部请求，也不新增平行恢复服务。全局写入口关闭时不分发任何 POST，已经可用的受权回执 GET 可继续恢复；本轮尚无该业务 GET，实现前不伪造回执。
 
 所有新写在持锁后、追加事实前执行最后一次权威决策，使用**新的数据库 clock_timestamp** 重查有效期及已生效 disposition，并核对固定依赖和 revision；禁止用事务开始时间、浏览器 asOf 或预检 evaluatedAt。最后受锁决策是本地时间资格的判定点；不声称真实时钟到期与物理 commit 无时间间隔。本地撤销/事实变更则由同 fence 排序：撤销先提交就拒绝，业务先提交则保留其当时依据。锁等待超时、死锁或连接中断没有授权兜底或自动 Command 重试。
 
@@ -216,7 +220,7 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 | GET 找到匹配的 COMMITTED 回执 | 固定原 case/事实 ID 与原 revision；再独立读详情，成功后结束未决状态 |
 | 回执已确认，详情 GET 失败 | 显示“命令已确认，当前详情未知”；保留成功事实，只读刷新，不重新创建或改键 |
 | GET 回执 404 | 显示 NOT_OBSERVED；可能原事务仍在途，不能称作未执行，不允许换键补建 |
-| 持续 NOT_OBSERVED，需要继续原请求 | 未来仅提供明确的“恢复原请求”动作：本人重新授权后发送**相同键、逐字段相同 body**，Core 同一键锁串行化并重放/首次提交；先展示原意图，不自动重试。该设计动作现在不开启 |
+| 持续 NOT_OBSERVED，需要继续原请求 | 未来仅提供明确的“恢复原请求”动作：先展示可信恢复记录中的原意图，只有写运行边界已另行授权且开放、本人/空间与原意图一致并重新获当前资格时，才发送**相同键、逐字段相同 body**。Core 原键锁下先重查 COMMITTED，否则按本次新写完整准入；仍陈旧的 revision/责任/来源不自动替换。它是原四个 Command 的原意图恢复，不是第五个 Command、后台重试或只读操作。当前关闭，禁止分发 |
 | 会话到期或权限撤销 | 重新登录同一 canonical actor/workspace 后先只读恢复；新身份、替任人或新空间不得接管未决请求 |
 | 保护记录丢失或原 body/指纹不可核实 | 不伪造新键/新 body 重试；只读查本人历史并核对明确回执，未能关联则保留 UNKNOWN，人工核对后才允许新的独立业务意图 |
 | revision、标准或责任变化 | 展示原事实与当前 blockers；已确定失败的新请求可在用户重新核对后生成新意图；原 UNKNOWN 先结清，不悄悄更新 body |
@@ -245,7 +249,7 @@ BFF 将待发意图的原键、完整 body、指纹、canonical actor/workspace 
 
 下表是未来准入工作，不是本次开发任务或启用授权。
 
-后续详细核对使用[异常验收矩阵 R01–R44](../product/business-receipt-exception-acceptance-matrix-20261024.md)和[写入启用清单 G0–G8](../product/business-receipt-write-enablement-checklist-20261024.md)。它们是本文的验证/启用视图，不另定义 Command 状态机；全部新写入与真实来源现场用例仍 NOT_RUN，业务写入仍 NOT_AUTHORIZED。
+后续详细核对使用[异常验收矩阵 R01–R48](../product/business-receipt-exception-acceptance-matrix-20261024.md)和[写入启用清单 G0–G8](../product/business-receipt-write-enablement-checklist-20261024.md)。它们是本文的验证/启用视图，不另定义 Command 状态机；全部新写入与真实来源现场用例仍 NOT_RUN，业务写入仍 NOT_AUTHORIZED。
 
 | 门禁/责任 owner | 必须提供的证据 | 当前判定 |
 |---|---|---|
