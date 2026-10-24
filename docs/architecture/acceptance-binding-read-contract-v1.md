@@ -21,7 +21,7 @@ external_identity_binding 仅代表外部系统身份关联，其 provider/exter
 
 查询使用同一个 READ ONLY/REPEATABLE READ transaction 的数据库时间 evaluatedAt。有效区间为 validFrom <= evaluatedAt < validTo，空 validTo 表示无有限结束时间；已生效 disposition 优先。前端时间、任意 actor/consumer 参数不参与判定。
 
-责任分别为 PROVIDER、RECEIVER、BASIS_CONFIRMER、REVIEWER、ARCHIVIST、DISPOSER。无记录 UNASSIGNED；记录存在但未到期/过期/失效或代表关系失效为 INACTIVE；同一角色存在多个当前有效责任事实为 AMBIGUOUS，不选 latest；唯一且全部依赖满足为 ASSIGNED。提供方与验收人、提供方与标准确认人须 actor 和 subject 均分离，否则相关角色 CONFLICT 并阻断。当前调用者匹配只来自 Resolver，展示 isCurrentCaller 不授予办理能力。
+责任分别为 PROVIDER、RECEIVER、BASIS_CONFIRMER、REVIEWER、ARCHIVIST、DISPOSER。无记录 UNASSIGNED；记录存在但尚未生效/已过期/已处置或代表关系失效为 INACTIVE；同一角色存在多个当前有效责任事实为 AMBIGUOUS，不选 latest；唯一且全部依赖满足为 ASSIGNED。提供方与验收人、提供方与标准确认人须 actor 和 subject 均分离，否则相关角色 CONFLICT 并阻断。当前调用者匹配只来自 Resolver，展示 isCurrentCaller 不授予办理能力。
 
 标准适用必须绑定查询中的明确交付、DatasetVersion 和 ContractVersion，来源须 PUBLISHED、格式 SUPPORTED、source hash 与完整标准集 hash 均相等；确认责任必须是当前唯一有效的 BASIS_CONFIRMER 且精确等于记录中的 confirmerBindingId，代表接收主体。没有选择标准为 UNSELECTED，无记录 MISSING，过期/处置为 INACTIVE，多个当前记录 AMBIGUOUS，hash/确认人不匹配为 MISMATCH，仅全部满足 MATCHED。新的责任人不会自动接管旧适用确认。
 
