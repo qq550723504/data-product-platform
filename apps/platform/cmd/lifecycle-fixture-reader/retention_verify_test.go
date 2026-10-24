@@ -20,12 +20,14 @@ func TestRetentionReadonlyAllGroupsBothPhasesAndCrossFieldDenials(t *testing.T) 
 				if err != nil {
 					t.Fatal(err)
 				}
-				effective, err := pilot.RetentionMaintenanceInventory(group, phase, actual)
+				end := time.Now().UTC().Truncate(time.Second).Add(30 * time.Minute)
+				until := end.Add(24 * time.Hour)
+				effective, err := pilot.RetentionMaintenanceInventory(group, phase, actual, until)
 				if err != nil {
 					t.Fatal(err)
 				}
 				rawExpected, _ := json.Marshal(effective)
-				profile := retentionReadProfile{p, uuid.New(), phase, p.CandidateSHA256, postV22Hash(rawExpected)}
+				profile := retentionReadProfile{p, uuid.New(), phase, p.CandidateSHA256, postV22Hash(rawExpected), until, end}
 				raw, _ := json.Marshal(profile)
 				parsed, err := parseRetentionReadProfile(raw, time.Now().UTC())
 				if err != nil {
@@ -34,10 +36,22 @@ func TestRetentionReadonlyAllGroupsBothPhasesAndCrossFieldDenials(t *testing.T) 
 				if _, err = retentionEffectiveInventory(parsed, actual, rawExpected); err != nil {
 					t.Fatal(err)
 				}
-				for _, fault := range []string{"phase", "execution", "source", "delete", "hash", "deadline", "missing-zero", "duplicate"} {
+				for _, fault := range []string{"phase", "execution", "source", "delete", "hash", "deadline", "missing-zero", "duplicate", "short-horizon", "long-horizon", "fractional-date", "missing-date", "null-date", "recovery-expansion"} {
 					var bad map[string]any
 					json.Unmarshal(raw, &bad)
 					switch fault {
+					case "short-horizon":
+						bad["RetainUntil"] = end.Add(2*time.Hour - time.Second)
+					case "long-horizon":
+						bad["RetainUntil"] = end.Add(72*time.Hour + time.Second)
+					case "fractional-date":
+						bad["RetainUntil"] = until.Add(time.Nanosecond)
+					case "missing-date":
+						delete(bad, "RetainUntil")
+					case "null-date":
+						bad["MaintenanceEnd"] = nil
+					case "recovery-expansion":
+						bad["MaintenanceEnd"] = p.NotBefore.Truncate(time.Second).Add(-3 * time.Hour)
 					case "phase":
 						bad["Phase"] = "repair"
 					case "execution":

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func retentionMock(t *testing.T, group, phase string) (string, string, string, string) {
@@ -13,10 +14,11 @@ func retentionMock(t *testing.T, group, phase string) (string, string, string, s
 	baseline, fresh, expectation, inventory, _ := sixMock(t, group, "SOURCE")
 	var old sixExpectation
 	strictPostFile(expectation, &old, 14)
-	want := retentionExpectation{old.postV22Expectation, uuid.NewString(), phase, old.Candidate}
+	end := time.Date(2026, 10, 24, 10, 40, 0, 0, time.UTC)
+	want := retentionExpectation{old.postV22Expectation, uuid.NewString(), phase, old.Candidate, end.Add(24 * time.Hour), end}
 	var r postV22Receipt
 	strictPostFile(filepath.Join(fresh, "six-native-verification.json"), &r, 15)
-	rows, err := retentionPhaseRows(group, phase, r.Verification.Copies)
+	rows, err := retentionPhaseRows(group, phase, r.Verification.Copies, want.RetainUntil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,6 +29,8 @@ func retentionMock(t *testing.T, group, phase string) (string, string, string, s
 	}
 	want.Present = digest(raw)
 	r.Verification.Inventory = want.Present
+	r.RetainUntil = &want.RetainUntil
+	r.MaintenanceEnd = &want.MaintenanceEnd
 	r.MaintenanceID = want.MaintenanceID
 	r.Phase = want.Phase
 	r.BindingsSHA256 = want.BindingsSHA256
@@ -59,10 +63,10 @@ func TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift(t *test
 		t.Run(fault, func(t *testing.T) {
 			b, f, e, i := retentionMock(t, "business-races", "after")
 			var want retentionExpectation
-			strictPostFile(e, &want, 14)
+			strictPostFile(e, &want, 16)
 			var r postV22Receipt
 			path := filepath.Join(f, "retention-native-verification.json")
-			strictPostFile(path, &r, 18)
+			strictPostFile(path, &r, 20)
 			switch fault {
 			case "foreign-new-id":
 				want.MaintenanceID = uuid.NewString()
@@ -110,10 +114,49 @@ func TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift(t *test
 func TestRetentionLateHoldPhaseCannotBeRelabelled(t *testing.T) {
 	b, f, e, i := retentionMock(t, "late-hold", "before")
 	var want retentionExpectation
-	strictPostFile(e, &want, 14)
+	strictPostFile(e, &want, 16)
 	want.Phase = "after"
 	putPostJSON(t, e, want)
 	if _, err := checkRetentionMaintenance(b, f, "late-hold", e, i); err == nil {
 		t.Fatal("unchanged copies hid phase relabel")
+	}
+}
+
+func TestRetentionAllGroupsRequireActualBoundDatesEvenWhenRowsUnchanged(t *testing.T) {
+	for _, group := range []string{"business-races", "late-hold", "mixed"} {
+		for _, phase := range []string{"before", "after"} {
+			for _, fault := range []string{"actual-until", "actual-end", "missing-until", "missing-end", "short-horizon", "long-horizon"} {
+				t.Run(group+"/"+phase+"/"+fault, func(t *testing.T) {
+					b, f, e, i := retentionMock(t, group, phase)
+					var want retentionExpectation
+					strictPostFile(e, &want, 16)
+					var actual postV22Receipt
+					path := filepath.Join(f, "retention-native-verification.json")
+					strictPostFile(path, &actual, 20)
+					changed := want.RetainUntil.Add(time.Second)
+					switch fault {
+					case "actual-until":
+						actual.RetainUntil = &changed
+					case "actual-end":
+						actual.MaintenanceEnd = &changed
+					case "missing-until":
+						actual.RetainUntil = nil
+					case "missing-end":
+						actual.MaintenanceEnd = nil
+					case "short-horizon":
+						want.RetainUntil = want.MaintenanceEnd.Add(2*time.Hour - time.Second)
+						actual.RetainUntil = &want.RetainUntil
+					case "long-horizon":
+						want.RetainUntil = want.MaintenanceEnd.Add(72*time.Hour + time.Second)
+						actual.RetainUntil = &want.RetainUntil
+					}
+					putPostJSON(t, e, want)
+					putPostJSON(t, path, actual)
+					if _, err := checkRetentionMaintenance(b, f, group, e, i); err == nil {
+						t.Fatal("date relabel admitted")
+					}
+				})
+			}
+		}
 	}
 }

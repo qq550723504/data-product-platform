@@ -8,6 +8,7 @@ import (
 	"context"
 	"crypto/ed25519"
 	"crypto/sha256"
+	_ "embed"
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
@@ -19,6 +20,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"time"
@@ -30,9 +32,10 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 )
 
-const deadline = "2026-10-24T12:40:00Z"
-const kind = "RETENTION_EXTENSION_EXACT_TWO_V1"
-const approvedPlanSHA256 = "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f"
+const kind = "RETENTION_EXTENSION_EXACT_TWO_V2"
+
+//go:embed testdata/approved-proposal.json
+var approvedProposalTemplate []byte
 
 // Set with -X only when the separately reviewed maintenance bindings are frozen.
 var trustedHostPublicSHA256 string
@@ -76,7 +79,7 @@ type owner struct{ Group, CID, Native, DescriptorSHA256, ConfigSHA256 string }
 type bindings struct {
 	Kind                                                 string
 	MaintenanceID                                        uuid.UUID
-	NotBefore, NotAfter                                  time.Time
+	NotBefore, NotAfter, RetainUntil                     time.Time
 	PlanSHA256, BinarySHA256, HostPublicSHA256, BudgetID string
 	Owners                                               []owner
 }
@@ -87,6 +90,7 @@ type grant struct {
 	NotBefore, NotAfter, ConfirmedAt   time.Time
 	MaxPerTarget, MaxTotal             int
 	OldAuthorizationReused             bool
+	RetainUntil                        time.Time
 }
 type proof struct {
 	Kind                                                                           string
@@ -178,16 +182,52 @@ func readPermission(path string, out *permission) error {
 	}
 	return nil
 }
+
+// The source-owned template freezes every non-date field. Dates can only
+// come from one newly frozen binding; the exact raw plan SHA remains signed.
+func proposalValue(b bindings) (map[string]any, error) {
+	var expected map[string]any
+	if strict(approvedProposalTemplate, &expected) != nil {
+		return nil, denied
+	}
+	expected["retain_until"] = b.RetainUntil.UTC().Format(time.RFC3339)
+	expected["maintenance_window_end"] = b.NotAfter.UTC().Format(time.RFC3339)
+	objects, ok := expected["objects"].([]any)
+	if !ok || len(objects) != 2 {
+		return nil, denied
+	}
+	for _, value := range objects {
+		object, ok := value.(map[string]any)
+		if !ok {
+			return nil, denied
+		}
+		options, ok := object["sdk_options"].(map[string]any)
+		if !ok {
+			return nil, denied
+		}
+		object["new_retain_until"] = expected["retain_until"]
+		options["RetainUntilDate"] = expected["retain_until"]
+	}
+	return expected, nil
+}
+func checkedProposal(raw []byte, b bindings) error {
+	var actual map[string]any
+	expected, err := proposalValue(b)
+	if err != nil || digest(raw) != b.PlanSHA256 || strict(raw, &actual) != nil || !reflect.DeepEqual(expected, actual) {
+		return denied
+	}
+	return nil
+}
 func checkedBindings(b bindings) error {
-	end, _ := time.Parse(time.RFC3339, deadline)
-	if b.Kind != kind || b.MaintenanceID == uuid.Nil || b.MaintenanceID.String() == pilot.RemainingExecution || b.NotBefore.IsZero() || !b.NotBefore.Before(b.NotAfter) || b.NotAfter.Sub(b.NotBefore) > 40*time.Minute || b.NotAfter.After(end) || b.PlanSHA256 != approvedPlanSHA256 || !hash(b.BinarySHA256) || !hash(b.HostPublicSHA256) || !hash(b.BudgetID) || len(b.Owners) != 2 {
+	if b.Kind != kind || b.MaintenanceID == uuid.Nil || b.MaintenanceID.String() == pilot.RemainingExecution || b.NotBefore.IsZero() || !b.NotBefore.Before(b.NotAfter) || b.NotAfter.Sub(b.NotBefore) > 40*time.Minute || pilot.CheckRetentionMaintenanceHorizon(b.NotAfter, b.RetainUntil) != nil || !hash(b.PlanSHA256) || !hash(b.BinarySHA256) || !hash(b.HostPublicSHA256) || !hash(b.BudgetID) || len(b.Owners) != 2 {
 		return denied
 	}
 	seen := map[string]bool{}
 	ids := map[string]bool{}
 	for _, o := range b.Owners {
 		t, e := fixed(o.Group)
-		if e != nil || seen[o.Group] || ids[o.CID] || !hash(o.CID) || o.CID == t.Native || o.Native != t.Native || !hash(o.DescriptorSHA256) || !hash(o.ConfigSHA256) {
+		oldUntil, _ := time.Parse(time.RFC3339, t.OldUntil)
+		if e != nil || !b.RetainUntil.After(oldUntil) || seen[o.Group] || ids[o.CID] || !hash(o.CID) || o.CID == t.Native || o.Native != t.Native || !hash(o.DescriptorSHA256) || !hash(o.ConfigSHA256) {
 			return denied
 		}
 		seen[o.Group] = true
@@ -240,9 +280,14 @@ func syncDirectory(dir string) error {
 	return errors.Join(f.Sync(), f.Close())
 }
 func (r *engine) authorize() error {
+	bindingRaw, err := os.ReadFile(filepath.Join(r.private, "bindings.json"))
+	var current bindings
+	planRaw, planErr := os.ReadFile(filepath.Join(r.private, "approved-proposal.json"))
+	if err != nil || digest(bindingRaw) != r.bindingSHA || strict(bindingRaw, &current) != nil || !reflect.DeepEqual(current, r.b) || planErr != nil || checkedProposal(planRaw, r.b) != nil {
+		return denied
+	}
 	at := r.now().UTC()
-	end, _ := time.Parse(time.RFC3339, deadline)
-	if checkedBindings(r.b) != nil || len(r.public) != ed25519.PublicKeySize || r.b.HostPublicSHA256 != trustedHostPublicSHA256 || !hash(trustedHostPublicSHA256) || digest(r.public) != trustedHostPublicSHA256 || at.Before(r.b.NotBefore) || !at.Before(r.b.NotAfter) || !at.Before(end) {
+	if checkedBindings(r.b) != nil || len(r.public) != ed25519.PublicKeySize || r.b.HostPublicSHA256 != trustedHostPublicSHA256 || !hash(trustedHostPublicSHA256) || digest(r.public) != trustedHostPublicSHA256 || at.Before(r.b.NotBefore) || !at.Before(r.b.NotAfter) {
 		return denied
 	}
 	var s signed
@@ -252,8 +297,12 @@ func (r *engine) authorize() error {
 	if read(filepath.Join(r.private, "authorization.json"), &s) != nil || !ed25519.Verify(r.public, s.Body, s.Signature) || strict(s.Body, &g) != nil {
 		return denied
 	}
+	var grantFields map[string]json.RawMessage
+	if json.Unmarshal(s.Body, &grantFields) != nil || len(grantFields) != 11 || string(grantFields["OldAuthorizationReused"]) != "false" {
+		return denied
+	}
 	human, e := os.ReadFile(filepath.Join(r.private, "user-message-verbatim.txt"))
-	if e != nil || len(human) == 0 || g.Kind != kind || g.MaintenanceID != r.b.MaintenanceID || g.BindingsSHA256 != r.bindingSHA || !hash(g.HumanMessageSHA256) || digest(human) != g.HumanMessageSHA256 || !g.NotBefore.Equal(r.b.NotBefore) || !g.NotAfter.Equal(r.b.NotAfter) || g.ConfirmedAt.IsZero() || at.Before(g.ConfirmedAt) || g.MaxPerTarget != 1 || g.MaxTotal != 2 || g.OldAuthorizationReused {
+	if e != nil || len(human) == 0 || g.Kind != kind || g.MaintenanceID != r.b.MaintenanceID || g.BindingsSHA256 != r.bindingSHA || !hash(g.HumanMessageSHA256) || digest(human) != g.HumanMessageSHA256 || !g.NotBefore.Equal(r.b.NotBefore) || !g.NotAfter.Equal(r.b.NotAfter) || g.ConfirmedAt.IsZero() || at.Before(g.ConfirmedAt) || g.MaxPerTarget != 1 || g.MaxTotal != 2 || g.OldAuthorizationReused || !g.RetainUntil.Equal(r.b.RetainUntil) {
 		return denied
 	}
 	if readPermission(filepath.Join(r.private, "permission.json"), &p) != nil || !p.Enabled || p.BindingsSHA256 != r.bindingSHA {
@@ -328,7 +377,7 @@ func (r *engine) RoundTrip(req *http.Request) (*http.Response, error) {
 	if method == "PUT" {
 		raw, e := io.ReadAll(io.LimitReader(req.Body, 1025))
 		req.Body.Close()
-		wanted := []byte("<Retention><Mode>GOVERNANCE</Mode><RetainUntilDate>" + deadline + "</RetainUntilDate></Retention>")
+		wanted := []byte("<Retention><Mode>GOVERNANCE</Mode><RetainUntilDate>" + r.b.RetainUntil.UTC().Format(time.RFC3339) + "</RetainUntilDate></Retention>")
 		if e != nil || !bytes.Equal(raw, wanted) || req.ContentLength != int64(len(raw)) {
 			return nil, denied
 		}
@@ -451,25 +500,25 @@ func (r *engine) run(ctx context.Context) (result error) {
 	if r.checkObject(ctx, t.OldUntil) != nil {
 		return denied
 	}
-	until, _ := time.Parse(time.RFC3339, deadline)
+	until := r.b.RetainUntil.UTC()
 	mode := minio.Governance
 	if e := r.client.PutObjectRetention(context.WithValue(ctx, callKey{}, call{"extend"}), t.Copy.Namespace, t.Copy.Key, minio.PutObjectRetentionOptions{VersionID: t.Copy.ProviderVersion, Mode: &mode, RetainUntilDate: &until, GovernanceBypass: false}); e != nil {
 		return denied
 	}
-	if r.checkObject(ctx, deadline) != nil {
+	if r.checkObject(ctx, r.b.RetainUntil.UTC().Format(time.RFC3339)) != nil {
 		return denied
 	}
 	return nil
 }
-func loadEngine(private, budget, output string) (*engine, error) {
+func loadInputs(private, budget, output string) (*engine, config, error) {
 	var b bindings
 	raw, e := os.ReadFile(filepath.Join(private, "bindings.json"))
 	if e != nil || strict(raw, &b) != nil || checkedBindings(b) != nil {
-		return nil, denied
+		return nil, config{}, denied
 	}
 	var cfg config
 	if read(filepath.Join(private, "root.json"), &cfg) != nil || cfg.Endpoint != "127.0.0.1:9000" || cfg.RootAccess == "" || cfg.RootSecret == "" {
-		return nil, denied
+		return nil, config{}, denied
 	}
 	var selected owner
 	for _, o := range b.Owners {
@@ -479,25 +528,33 @@ func loadEngine(private, budget, output string) (*engine, error) {
 	}
 	configRaw, e := os.ReadFile(filepath.Join(private, "root.json"))
 	if e != nil || digest(configRaw) != selected.ConfigSHA256 {
-		return nil, denied
+		return nil, config{}, denied
 	}
 	plan, e := os.ReadFile(filepath.Join(private, "approved-proposal.json"))
-	if e != nil || digest(plan) != b.PlanSHA256 {
-		return nil, denied
+	if e != nil || checkedProposal(plan, b) != nil {
+		return nil, config{}, denied
 	}
 	self, e := os.Executable()
 	if e != nil {
-		return nil, denied
+		return nil, config{}, denied
 	}
 	binary, e := os.ReadFile(self)
 	if e != nil || digest(binary) != b.BinarySHA256 {
-		return nil, denied
+		return nil, config{}, denied
 	}
 	key, e := os.ReadFile(filepath.Join(private, "host-public.key"))
 	if e != nil || len(key) != ed25519.PublicKeySize {
-		return nil, denied
+		return nil, config{}, denied
 	}
 	r := &engine{b: b, bindingSHA: digest(raw), group: cfg.Group, selected: selected, private: private, budget: budget, output: output, public: key, now: time.Now, endpoint: cfg.Endpoint, syncDir: syncDirectory}
+	return r, cfg, nil
+}
+
+func loadEngine(private, budget, output string) (*engine, error) {
+	r, cfg, e := loadInputs(private, budget, output)
+	if e != nil {
+		return nil, e
+	}
 	r.base = &http.Transport{Proxy: nil, DisableKeepAlives: true, ForceAttemptHTTP2: false, DialContext: (&net.Dialer{Timeout: 5 * time.Second}).DialContext, ResponseHeaderTimeout: 8 * time.Second, MaxResponseHeaderBytes: 64 << 10}
 	r.client, e = minio.New(cfg.Endpoint, &minio.Options{Creds: credentials.NewStaticV4(cfg.RootAccess, cfg.RootSecret, ""), Region: "us-east-1", BucketLookup: minio.BucketLookupPath, MaxRetries: 1, Transport: r})
 	if e != nil {
@@ -508,9 +565,9 @@ func loadEngine(private, budget, output string) (*engine, error) {
 
 // No provider client or budget exists in this stage. The initial false control
 // must be observed, so a pre-enabled or reused owner cannot skip host attestation.
-func waitPermission(ctx context.Context, private string, original []byte, now func() time.Time, interval time.Duration) error {
+func waitPermission(ctx context.Context, private string, original []byte, now func() time.Time, interval time.Duration, ready func() error) error {
 	var b bindings
-	if strict(original, &b) != nil || checkedBindings(b) != nil {
+	if strict(original, &b) != nil || checkedBindings(b) != nil || ready == nil {
 		return denied
 	}
 	first := true
@@ -532,6 +589,9 @@ func waitPermission(ctx context.Context, private string, original []byte, now fu
 				return denied
 			}
 			return nil
+		}
+		if first && ready() != nil {
+			return denied
 		}
 		first = false
 		select {
@@ -580,7 +640,13 @@ func mainRun(check, wait bool) error {
 	if wait {
 		ctx, cancel := context.WithDeadline(context.Background(), b.NotAfter)
 		defer cancel()
-		if waitPermission(ctx, "/run/private", raw, time.Now, 100*time.Millisecond) != nil {
+		if waitPermission(ctx, "/run/private", raw, time.Now, 100*time.Millisecond, func() error {
+			r, _, err := loadInputs("/run/private", "/run/budget", "/run/output")
+			if err != nil || digest(r.public) != trustedHostPublicSHA256 || r.b.HostPublicSHA256 != trustedHostPublicSHA256 {
+				return denied
+			}
+			return r.save(r.output, "wait-ready.json", map[string]any{"Kind": kind, "MaintenanceID": r.b.MaintenanceID, "BindingsSHA256": r.bindingSHA, "Group": r.group, "Owner": r.selected.CID, "DescriptorSHA256": r.selected.DescriptorSHA256, "ConfigSHA256": r.selected.ConfigSHA256, "At": time.Now().UTC()})
+		}) != nil {
 			return denied
 		}
 	}

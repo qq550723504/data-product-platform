@@ -52,21 +52,13 @@ func testFixture(t *testing.T) *fixture {
 	os.Mkdir(f.budget, 0700)
 	self, _ := os.Executable()
 	binary, _ := os.ReadFile(self)
-	f.b = bindings{Kind: kind, MaintenanceID: uuid.New(), NotBefore: f.at.Add(-time.Minute), NotAfter: f.at.Add(30 * time.Minute), PlanSHA256: approvedPlanSHA256, BinarySHA256: digest(binary), HostPublicSHA256: digest(public), BudgetID: digest([]byte("independent-new-maintenance-budget"))}
-	proposal, e := os.ReadFile(filepath.Join("testdata", "approved-proposal.json"))
+	f.b = bindings{Kind: kind, MaintenanceID: uuid.New(), NotBefore: f.at.Add(-time.Minute), NotAfter: f.at.Add(30 * time.Minute), RetainUntil: time.Date(2026, 10, 24, 12, 40, 0, 0, time.UTC), BinarySHA256: digest(binary), HostPublicSHA256: digest(public), BudgetID: digest([]byte("independent-new-maintenance-budget"))}
+	expected, e := proposalValue(f.b)
 	if e != nil {
 		t.Fatal(e)
 	}
-	// Preserve the original approved bytes, independent of Git checkout EOL.
-	if digest(proposal) != approvedPlanSHA256 {
-		proposal = bytes.ReplaceAll(proposal, []byte("\r\n"), []byte("\n"))
-		if digest(proposal) != approvedPlanSHA256 {
-			proposal = bytes.ReplaceAll(proposal, []byte("\n"), []byte("\r\n"))
-		}
-	}
-	if digest(proposal) != approvedPlanSHA256 {
-		t.Fatal("historical approved proposal bytes missing")
-	}
+	proposal, _ := json.Marshal(expected)
+	f.b.PlanSHA256 = digest(proposal)
 	for i, g := range []string{"business-races", "mixed"} {
 		cp, _ := fixed(g)
 		folder := filepath.Join(f.root, g)
@@ -125,7 +117,7 @@ func testFixture(t *testing.T) *fixture {
 				fmt.Fprint(w, "<Error><Code>AccessDenied</Code><Message>never-log-this-secret</Message></Error>")
 				return
 			}
-			f.expiries[g] = deadline
+			f.expiries[g] = f.b.RetainUntil.UTC().Format(time.RFC3339)
 			w.WriteHeader(204)
 			return
 		}
@@ -157,7 +149,7 @@ func (f *fixture) writeBindings(t *testing.T) {
 		os.WriteFile(filepath.Join(dir, "bindings.json"), raw, 0600)
 		human := []byte("TEST ONLY fresh protection-write grant\n")
 		os.WriteFile(filepath.Join(dir, "user-message-verbatim.txt"), human, 0600)
-		g := grant{kind, f.b.MaintenanceID, h, digest(human), f.b.NotBefore, f.b.NotAfter, f.at.Add(-time.Hour), 1, 2, false}
+		g := grant{kind, f.b.MaintenanceID, h, digest(human), f.b.NotBefore, f.b.NotAfter, f.at.Add(-time.Hour), 1, 2, false, f.b.RetainUntil}
 		body, _ := json.Marshal(g)
 		writeJSON(t, filepath.Join(dir, "authorization.json"), signed{body, ed25519.Sign(f.key, body)})
 		writeJSON(t, filepath.Join(dir, "permission.json"), permission{true, h})
@@ -201,7 +193,7 @@ func TestRetentionCompleteTwoOwnerSuccessAndPersistentReplayClosure(t *testing.T
 		t.Fatal(f.puts)
 	}
 	for _, g := range []string{"business-races", "mixed"} {
-		if f.expiries[g] != deadline {
+		if f.expiries[g] != f.b.RetainUntil.UTC().Format(time.RFC3339) {
 			t.Fatal("missing readback")
 		}
 		var terminal map[string]any
@@ -273,7 +265,7 @@ func TestRetentionWireRejectsExpansionBeforeSlotOrProvider(t *testing.T) {
 			f := testFixture(t)
 			r := f.engine(t, "business-races")
 			cp, _ := fixed(r.group)
-			body := "<Retention><Mode>GOVERNANCE</Mode><RetainUntilDate>" + deadline + "</RetainUntilDate></Retention>"
+			body := "<Retention><Mode>GOVERNANCE</Mode><RetainUntilDate>" + f.b.RetainUntil.UTC().Format(time.RFC3339) + "</RetainUntilDate></Retention>"
 			req, _ := http.NewRequestWithContext(context.WithValue(context.Background(), callKey{}, call{"extend"}), "PUT", "http://127.0.0.1:9000/"+cp.Copy.Namespace+"/"+cp.Copy.Key+"?retention=&versionId="+cp.Copy.ProviderVersion, strings.NewReader(body))
 			switch fault {
 			case "delete":
@@ -366,7 +358,7 @@ func TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation(t *testing.T
 			if fault == "content" {
 				f.bodies[r.group] = []byte("wrong")
 			} else if fault == "retention" {
-				f.expiries[r.group] = deadline
+				f.expiries[r.group] = f.b.RetainUntil.UTC().Format(time.RFC3339)
 			} else if fault == "response-version" {
 				f.wrongVersion = true
 			} else {

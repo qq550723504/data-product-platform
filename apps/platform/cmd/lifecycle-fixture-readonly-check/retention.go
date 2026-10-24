@@ -7,14 +7,16 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type retentionExpectation struct {
 	postV22Expectation
 	MaintenanceID, Phase, BindingsSHA256 string
+	RetainUntil, MaintenanceEnd          time.Time
 }
 
-func retentionPhaseRows(group, phase string, rows []json.RawMessage) ([]json.RawMessage, error) {
+func retentionPhaseRows(group, phase string, rows []json.RawMessage, until time.Time) ([]json.RawMessage, error) {
 	original := []pilot.RetentionInventory{}
 	for _, raw := range rows {
 		var row pilot.RetentionInventory
@@ -23,7 +25,7 @@ func retentionPhaseRows(group, phase string, rows []json.RawMessage) ([]json.Raw
 		}
 		original = append(original, row)
 	}
-	adjusted, err := pilot.RetentionMaintenanceInventory(group, phase, original)
+	adjusted, err := pilot.RetentionMaintenanceInventory(group, phase, original, until)
 	if err != nil {
 		return nil, err
 	}
@@ -50,21 +52,21 @@ func retentionPhaseRows(group, phase string, rows []json.RawMessage) ([]json.Raw
 
 func checkRetentionMaintenance(baseline, fresh, group, expectation, inventory string) (result, error) {
 	var want retentionExpectation
-	if _, err := strictPostFile(expectation, &want, 14); err != nil {
+	if _, err := strictPostFile(expectation, &want, 16); err != nil {
 		return result{}, err
 	}
 	id, err := uuid.Parse(want.MaintenanceID)
 	source, known := pilot.RemainingEnvironmentSources()[group]
-	if err != nil || id == uuid.Nil || want.MaintenanceID == pilot.RemainingExecution || want.Audit == want.MaintenanceID ||
+	if err != nil || pilot.CheckRetentionMaintenanceHorizon(want.MaintenanceEnd, want.RetainUntil) != nil || want.ExpiresAt.After(want.MaintenanceEnd.Add(2*time.Hour)) || want.ExpiresAt.After(want.RetainUntil) || id == uuid.Nil || want.MaintenanceID == pilot.RemainingExecution || want.Audit == want.MaintenanceID ||
 		(want.Phase != "before" && want.Phase != "after") || !hash.MatchString(want.BindingsSHA256) || want.Candidate != want.BindingsSHA256 ||
 		!known || want.Core != source[0] || want.Native != source[1] || want.Network != source[2] || want.Frozen != source[3] {
 		return result{}, errors.New("maintenance exact source/identity/phase differs")
 	}
 	var actual postV22Receipt
-	if _, err := strictPostFile(filepath.Join(fresh, "retention-native-verification.json"), &actual, 18); err != nil {
+	if _, err := strictPostFile(filepath.Join(fresh, "retention-native-verification.json"), &actual, 20); err != nil {
 		return result{}, err
 	}
-	if actual.MaintenanceID != want.MaintenanceID || actual.Phase != want.Phase || actual.BindingsSHA256 != want.BindingsSHA256 {
+	if actual.MaintenanceID != want.MaintenanceID || actual.Phase != want.Phase || actual.BindingsSHA256 != want.BindingsSHA256 || actual.RetainUntil == nil || actual.MaintenanceEnd == nil || !actual.RetainUntil.Equal(want.RetainUntil) || !actual.MaintenanceEnd.Equal(want.MaintenanceEnd) {
 		return result{}, errors.New("actual maintenance receipt identity/phase differs")
 	}
 	frozen, err := os.ReadFile(filepath.Join(baseline, "frozen-inventory.json"))
@@ -94,5 +96,5 @@ func checkRetentionMaintenance(baseline, fresh, group, expectation, inventory st
 		return result{}, err
 	}
 	return checkNativeAuditPhase(baseline, fresh, group, inventory, want.postV22Expectation,
-		nativeAuditContract{true, "RETENTION_MAINTENANCE_NATIVE_READONLY", "retention-readonly.json", "retention-native-verification.json", want.BindingsSHA256, "PASS_COMPLETE_RETENTION_MAINTENANCE_NATIVE_AGGREGATION", extra, dormant}, want.Phase)
+		nativeAuditContract{true, "RETENTION_MAINTENANCE_NATIVE_READONLY", "retention-readonly.json", "retention-native-verification.json", want.BindingsSHA256, "PASS_COMPLETE_RETENTION_MAINTENANCE_NATIVE_AGGREGATION", extra, dormant}, want.Phase, want.RetainUntil)
 }

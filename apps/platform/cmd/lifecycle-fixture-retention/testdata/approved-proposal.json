@@ -1,5 +1,12 @@
 {
-  "schema": "EXACT_TWO_RETENTION_EXTENSION_PREPARATION_V1",
+  "schema": "EXACT_TWO_RETENTION_EXTENSION_PREPARATION_V2",
+  "kind": "RETENTION_EXTENSION_EXACT_TWO_V2",
+  "retain_until": "2026-10-24T12:40:00Z",
+  "maintenance_window_end": "2026-10-24T10:40:00Z",
+  "retention_window_rules": {
+    "min_recovery_seconds": 7200,
+    "max_extension_seconds": 259200
+  },
   "status": "PREPARED_NOT_AUTHORIZED",
   "authority": "PREPARATION_DIRECTION_ONLY",
   "failed_execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
@@ -76,5 +83,5 @@
   "actual_source_write": false,
   "new_delete_candidate": "NOT_CREATED",
   "new_delete_execution": "NOT_CREATED",
-  "next_write_entry": "NOT_IMPLEMENTED_NOT_AUTHORIZED"
+  "next_write_entry": "REQUIRES_NEW_AUTHORITY_AND_PACKET"
 }
