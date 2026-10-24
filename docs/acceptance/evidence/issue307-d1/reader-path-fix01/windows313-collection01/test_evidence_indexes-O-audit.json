@@ -1,0 +1,11 @@
+{
+  "test": "test_evidence_indexes.py",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\reader-path-fix01\\python-export01",
+  "reads": [
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/test_evidence_indexes.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

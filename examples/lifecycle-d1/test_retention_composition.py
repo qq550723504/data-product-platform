@@ -5,9 +5,12 @@ The Go SDK protocol and the shared Core/reader/checker collector are tested too.
 """
 import base64
 import copy
+import ctypes
 import datetime as dt
 import json
+import os
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -106,6 +109,10 @@ class CompositionTests(unittest.TestCase):
         self.enterContext(patch.object(c.host,'docker',side_effect=docker))
 
     def fixture(self,folder,fault=None):
+        # Freeze one canonical root before deriving paths or signing facts.
+        # This also rejects links/traversal before fixture creation; resolving
+        # each future reader file would be wrong because it does not exist yet.
+        folder=c.indexes.unlinked_absolute(folder)
         b,h,items,self.current=host_tests.HostTests.fixture(self,folder)
         private_base=folder/'controls';private_base.mkdir();control=private_base/b['MaintenanceID'];control.mkdir()
         self.enterContext(patch.object(c,'PRIVATE_BASE',private_base))
@@ -154,6 +161,77 @@ class CompositionTests(unittest.TestCase):
             raw=c.host.canonical(body);path=control/name;c.save(path,dict(Body=base64.b64encode(raw).decode(),Signature=base64.b64encode(key.sign(raw)).decode()));return path
         grants=(signed('read-authority.json',read),human,signed('write-authority.json',write),human)
         return entry,ops,grants,read,write,key
+
+    def test_real_path_spellings_freeze_one_canonical_reader_root(self):
+        modes=('canonical','upper-case','short-name') if os.name=='nt' else ('canonical',)
+        for mode in modes:
+            with self.subTest(mode=mode),tempfile.TemporaryDirectory(prefix='dpp307 reader binding ') as d:
+                canonical=Path(d).resolve(strict=True);folder=canonical
+                if mode=='upper-case':folder=Path(str(canonical).upper())
+                elif mode=='short-name':
+                    query=ctypes.windll.kernel32.GetShortPathNameW
+                    query.argtypes=[ctypes.c_wchar_p,ctypes.c_wchar_p,ctypes.c_uint];query.restype=ctypes.c_uint
+                    buffer=ctypes.create_unicode_buffer(32768)
+                    length=query(str(canonical),buffer,len(buffer))
+                    self.assertTrue(0<length<len(buffer));folder=Path(buffer.value)
+                    if str(folder)==str(canonical):self.skipTest('filesystem did not allocate an 8.3 alias')
+                self.assertTrue(folder.samefile(canonical))
+                if mode!='canonical':self.assertNotEqual(str(folder),str(canonical))
+                entry,ops,args,*_=self.fixture(folder)
+                self.assertEqual(str(entry.control),str(canonical/'controls'/entry.b['MaintenanceID']))
+                self.assertEqual(entry.packet['control'],str(entry.control))
+                self.assertFalse((entry.control/'run').exists())
+                for reader in entry.anchor['readers']:
+                    destination=entry.control/'run'/reader['phase']/reader['group']
+                    for field,relative in [('intent','reader-create-intent.json'),('registration','reader-created.json'),('closure','public/closure.json'),('profile','private/retention-readonly.json')]:
+                        self.assertEqual(reader[field],str(destination/relative))
+                self.assertFalse(ops.calls)
+                entry.run(*args)
+                self.assertEqual(ops.enabled,['business-races','mixed'])
+                self.assertEqual(c.host.load(entry.control/'run/terminal.json')['status'],'PASS_MAINTENANCE_BEFORE_WRITE_AFTER_CLOSED')
+
+    def test_rehashed_reader_path_or_native_drift_still_rejects_before_operations(self):
+        for fault in ('foreign-root','other-group','other-phase','traversal','raw-case','other-native'):
+            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as d:
+                entry,ops,*_=self.fixture(Path(d));packet=copy.deepcopy(entry.packet);anchor=copy.deepcopy(entry.anchor)
+                reader=anchor['readers'][0];destination=entry.control/'run'/reader['phase']/reader['group']
+                if fault=='foreign-root':reader['intent']=str(entry.control.parent/'other-maintenance'/'reader-create-intent.json')
+                elif fault=='other-group':reader['registration']=str(entry.control/'run'/'before'/'late-hold'/'reader-created.json')
+                elif fault=='other-phase':reader['closure']=str(entry.control/'run'/'after'/reader['group']/'public/closure.json')
+                elif fault=='traversal':reader['profile']=str(destination/'..'/reader['group']/'private/retention-readonly.json')
+                elif fault=='raw-case':reader['intent']=str(Path(str(entry.control).upper())/'run'/reader['phase']/reader['group']/'reader-create-intent.json')
+                else:reader['native']=entry.sources[1]['source']['Native']
+                raw=c.host.canonical(anchor);path=entry.control/'rehashed-bad-anchor.json';path.write_bytes(raw)
+                packet['anchor']=dict(path=str(path),sha256=c.host.sha(raw),bytes=len(raw))
+                # Both hashes are internally consistent. The real semantic
+                # path/native gate, rather than just a stale hash, must reject.
+                c.checked_anchor(raw,c.host.sha(raw))
+                with self.assertRaisesRegex(ValueError,'COMPOSITION_ANCHOR_READER_PATH_BINDING'):
+                    c.Composition(packet,c.host.sha(c.host.canonical(packet)),ops,lambda:self.current)
+                self.assertFalse(ops.calls);self.assertFalse((entry.control/'run').exists())
+
+    def test_fixture_traversal_and_real_link_reject_before_any_fixture_write(self):
+        for fault in ('traversal','linked-root'):
+            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as d:
+                root=Path(d).resolve();target=root/'target';target.mkdir();alias=root/'alias'
+                if fault=='linked-root':
+                    try:alias.symlink_to(target,target_is_directory=True)
+                    except OSError:
+                        if os.name!='nt':raise
+                        result=subprocess.run(['powershell','-NoProfile','-NonInteractive','-Command',
+                            '& { param($link,$target) New-Item -ItemType Junction -Path $link -Target $target -ErrorAction Stop | Out-Null }',str(alias),str(target)],capture_output=True,timeout=30)
+                        self.assertEqual(result.returncode,0,result.stderr.decode('utf-8','replace'))
+                    self.assertTrue(alias.is_symlink() or alias.is_junction())
+                else:alias=target/'..'
+                try:
+                    with patch.object(host_tests.HostTests,'fixture',side_effect=AssertionError('untrusted root reached fixture IO')) as inherited:
+                        with self.assertRaisesRegex(ValueError,'linked evidence path|traversing absolute evidence path'):self.fixture(alias)
+                        inherited.assert_not_called()
+                    self.assertEqual(list(target.iterdir()),[])
+                finally:
+                    if fault=='linked-root':
+                        if alias.is_junction():alias.rmdir()
+                        elif alias.is_symlink():alias.unlink()
 
     def test_complete_before_seventeen_two_ordered_workers_after_seventeen_and_closure(self):
         with tempfile.TemporaryDirectory() as d:

@@ -1,0 +1,816 @@
+{
+  "format": "files-map-v1",
+  "snapshot": "C:\\Users\\Henry\\.codex\\fixture-private\\reader-path-fix01\\python-export01",
+  "files": {
+    ".gitattributes": {
+      "sha256": "566962e88fd9ea23203fb662840d18553ef7a0d655032ee75e4e43ab1bce8b4a",
+      "bytes": 25746
+    },
+    "examples/temporary_containers.py": {
+      "sha256": "f4a75dd748d3df7e557fb8af13b95766446293ecc199fd2bb565617fd1174a42",
+      "bytes": 12889
+    },
+    "examples/temporary_containers_test.py": {
+      "sha256": "d3e52486b76eead8da31310c715e52d95ca00261236663bb40d9ff352ad15633",
+      "bytes": 8943
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "sha256": "c527ff491dcc0c638847909e78602ce86012e9d84d03f0a6e719cadee83f928b",
+      "bytes": 12046
+    },
+    "examples/lifecycle-d1/audit-old-business-dispatches.py": {
+      "sha256": "c1763aadf3aa715a16c6c43b356ba04ffe9c6d407e814fe13537ff17f4ba2001",
+      "bytes": 11069
+    },
+    "examples/lifecycle-d1/audit-v28-business-dispatches.py": {
+      "sha256": "48c0632c0fae862b207173001f82b794c35edb8d6b503b0affa0b22ed12ea875",
+      "bytes": 3089
+    },
+    "examples/lifecycle-d1/branch-freeze.py": {
+      "sha256": "610eaa2da0f3b2d875bb76485305592aa0608db07810e5e34ee364a83cb3afad",
+      "bytes": 3084
+    },
+    "examples/lifecycle-d1/capture-retained-c22.py": {
+      "sha256": "0188388cdce2aa4c506f826eef8bad1595c753c6d515688dadd85d15c200825d",
+      "bytes": 13496
+    },
+    "examples/lifecycle-d1/check-p2-permission-native.py": {
+      "sha256": "29cdd1f42cdd1194fb5e104efc94df008e8d45f0c1a6edbd7365b285878286de",
+      "bytes": 8513
+    },
+    "examples/lifecycle-d1/check-reference-candidate05-history.py": {
+      "sha256": "14fed4fc9682302f8e8f570746c03024a853f66e11cf14e8937d39a482a91aac",
+      "bytes": 4840
+    },
+    "examples/lifecycle-d1/check-reference-candidate05.py": {
+      "sha256": "0b1ea41c18cc2697863b89bc2b31ec37776bbb7067575c4678243438e85c01b7",
+      "bytes": 12176
+    },
+    "examples/lifecycle-d1/check-reference-history.py": {
+      "sha256": "0081291c447e02f62bef6aac681e83d35b921fd779771ddea1cbb7b1e0910574",
+      "bytes": 6262
+    },
+    "examples/lifecycle-d1/check-reference-proposal.py": {
+      "sha256": "969073695e548eaaa5a9f27e32e22c1e44103e67acd71a1ea47d290506d412d4",
+      "bytes": 10986
+    },
+    "examples/lifecycle-d1/check-reference-refresh.py": {
+      "sha256": "8be6f3f988c425dd5a9a0af7bff55a00264308ff1fe6aa2743a4981c38a0f44d",
+      "bytes": 12354
+    },
+    "examples/lifecycle-d1/check-reference-v10.py": {
+      "sha256": "93e992194c610629a5251263dae56eb2e566ae0f8fcfbb4f612d02a8d0b112f6",
+      "bytes": 583
+    },
+    "examples/lifecycle-d1/check-reference-v11.py": {
+      "sha256": "b654642b293332a55b86e0380b8f45df667d3df5afa92baf0a7d65936229a849",
+      "bytes": 583
+    },
+    "examples/lifecycle-d1/check-reference-v12.py": {
+      "sha256": "edd845a62b6017ad53b24cd5cfc1285a69d9eec5a73dc8c3d02b8a0ff96fda19",
+      "bytes": 583
+    },
+    "examples/lifecycle-d1/check-reference-v13.py": {
+      "sha256": "8763e7e9e2242693f9c4144ffeb82819aa7732bf49df41955da9f31c03f30784",
+      "bytes": 583
+    },
+    "examples/lifecycle-d1/check-reference-v14.py": {
+      "sha256": "89cbdd839110ba6fcfdb3733ae1091ea2dcd88df26f5d72a76ca5373e8171adb",
+      "bytes": 583
+    },
+    "examples/lifecycle-d1/check-reference-v8.py": {
+      "sha256": "d3c1709beb25745922f4c85525b3c02dfbe36398d3cc60e1e4061926ab70c941",
+      "bytes": 578
+    },
+    "examples/lifecycle-d1/check-reference-v9.py": {
+      "sha256": "f9aa5c3be258481c7d0a530d6aa97facf040dd819360a09c2b14c8e96f2cf94a",
+      "bytes": 578
+    },
+    "examples/lifecycle-d1/check-remaining-candidate07-freeze.py": {
+      "sha256": "7e3844de7d2217a1a92169a168026114e4658c300901d90251d903c074a3466a",
+      "bytes": 5942
+    },
+    "examples/lifecycle-d1/check-remaining-candidate07.py": {
+      "sha256": "fe459ac1df67e1a39529e1aa1279909b6d09843480b6cbaae30824731afbe11f",
+      "bytes": 9164
+    },
+    "examples/lifecycle-d1/check-remaining-candidate08.py": {
+      "sha256": "597fd71b740a9628c4037e32c8b9c9577c2d6364ebbec827f9a6cb1b781432d8",
+      "bytes": 5355
+    },
+    "examples/lifecycle-d1/check-remaining-candidate09.py": {
+      "sha256": "898d25d663bc6eceda9596ba3ac321bb7d05257d23a214c5198ea348b49a9a8d",
+      "bytes": 5355
+    },
+    "examples/lifecycle-d1/check-remaining-candidate10.py": {
+      "sha256": "2150fcc9cd252fc13c7f1653c9b032504239b40c9dc8753dfd84c8b2561c07b2",
+      "bytes": 5355
+    },
+    "examples/lifecycle-d1/check-remaining-candidate11.py": {
+      "sha256": "33f86360d6d4d8d748184b5f3ce681ff3ead166ea70557c8e8959283deb576ca",
+      "bytes": 5595
+    },
+    "examples/lifecycle-d1/check-remaining-candidate12.py": {
+      "sha256": "f0fb2dbfd63388b049899fb228c44dbbf80ee8e3dda0974b82ad171b0d9e1cbf",
+      "bytes": 7897
+    },
+    "examples/lifecycle-d1/check-remaining-v16-history.py": {
+      "sha256": "fbd24618b56272c24c95fc49e4276d89a083ef0fa986e2bbb81af2f8f168e1aa",
+      "bytes": 3342
+    },
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py": {
+      "sha256": "b1f321d3013120980bb8553f32650ba10ff1aee23bd8d7772c0778b87793791b",
+      "bytes": 3556
+    },
+    "examples/lifecycle-d1/close-old-business-dispatches.py": {
+      "sha256": "7fbfe112bcc74a38be8892fe06bf10269e8200d8b698d54f950ed8eb4fd3011f",
+      "bytes": 38374
+    },
+    "examples/lifecycle-d1/close-v27-business-dispatches.py": {
+      "sha256": "1a6ba8447d9c2c62bfa55cc6bb4d8dba8e3f8f793dffe79bcbf1f24cb627b978",
+      "bytes": 24985
+    },
+    "examples/lifecycle-d1/close-v28-business-dispatches.py": {
+      "sha256": "1901129064e23c2d46728daa4bcd9ad987a3aa2a141227828584e5ac07ec8b16",
+      "bytes": 19757
+    },
+    "examples/lifecycle-d1/complete-lc13-continuation.py": {
+      "sha256": "886dc0dba8083ac021c3353da591f410867bed7addfb2e2876362c958f696577",
+      "bytes": 29495
+    },
+    "examples/lifecycle-d1/complete-lc13-readonly.py": {
+      "sha256": "03b1893c2e3234bd22f0e76e98e957e8ad900cda20127030fc12dbda19588d70",
+      "bytes": 20922
+    },
+    "examples/lifecycle-d1/complete-native-d1.py": {
+      "sha256": "4c246864b976fa225aa96f27868f8d4bc1a9fdc92ecce230714c899018408c16",
+      "bytes": 21825
+    },
+    "examples/lifecycle-d1/complete-remaining-candidate07.py": {
+      "sha256": "7411760c8c959cb4ff751adf34f3dbed3a72cbb1705a38124044390d25ba98e1",
+      "bytes": 6476
+    },
+    "examples/lifecycle-d1/complete-remaining-executable-mixed.py": {
+      "sha256": "8e0b8e79351cd46a800e4dd4867fbfcaf0aa15c5ae7d1753cd8fb096dcd336bd",
+      "bytes": 4518
+    },
+    "examples/lifecycle-d1/complete-remaining-native-checkpoint.py": {
+      "sha256": "ef0e501d283a06e89c71ba56a876f7c6f5325081eb7f65ead8b3419b70fec72e",
+      "bytes": 3752
+    },
+    "examples/lifecycle-d1/complete-remaining-runner.py": {
+      "sha256": "c8221795ced25ad5a117146da21a883289097b904ce6d88839a27ddef9c0bda8",
+      "bytes": 8750
+    },
+    "examples/lifecycle-d1/docker_host_paths.py": {
+      "sha256": "218d7b0f0ea51506aa1f93e43937a16d41f94de87fe1d340ec0c40bbe4142a0c",
+      "bytes": 814
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "bytes": 8053
+    },
+    "examples/lifecycle-d1/execution_freeze.py": {
+      "sha256": "310d2e1017ea39bc1d635dbf0563e9427c6b5e543b1c9bcc97c068c4eeb4cc50",
+      "bytes": 18201
+    },
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": {
+      "sha256": "7915856584bb83fad50982e2a0c95a6c930de3fbe8e36f842fdbae8bb9f5e0d9",
+      "bytes": 110507
+    },
+    "examples/lifecycle-d1/fixture_artifacts.py": {
+      "sha256": "9aba4c12091efd729696e1ca7d7981c786462dd29da783ebf4a2092cddade7f4",
+      "bytes": 8579
+    },
+    "examples/lifecycle-d1/freeze-remaining-executable.py": {
+      "sha256": "dc4f4df1e617aafd3f0e2b8b262f3c09ad34fd8ff490d5efb6354f96ecde9524",
+      "bytes": 35229
+    },
+    "examples/lifecycle-d1/freeze-remaining-preparation.py": {
+      "sha256": "25cd70f50ea33a51c6c67c2be91bd6002037370999c4f2494f1bb294563d34b5",
+      "bytes": 8366
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "fc8e77dda33ef5baf5f94fb95ef312083ada84cc5cd88d2dda833ee2ffc22d84",
+      "bytes": 23824
+    },
+    "examples/lifecycle-d1/historical_descriptors.py": {
+      "sha256": "9853e4e68ccd75d61c36104ec3517b2082b388da5cbafd5af780b11df4421c5a",
+      "bytes": 2303
+    },
+    "examples/lifecycle-d1/index-lc13-continuation.py": {
+      "sha256": "e03529605688a8bb6034b631012c1ed52cf9e7c202ce75478f723c05337ca05a",
+      "bytes": 6656
+    },
+    "examples/lifecycle-d1/native_protection.py": {
+      "sha256": "33e091df5dc9cf584c31d7483d195f5c6186e316d138e925ad6dacafcf2daff4",
+      "bytes": 3547
+    },
+    "examples/lifecycle-d1/prepare-reference-candidate05.py": {
+      "sha256": "c3e231fba37ffab8752564e5cbae9a35be9e6cff8abe69f7de11f82caeba8f24",
+      "bytes": 20398
+    },
+    "examples/lifecycle-d1/prepare-reference-delete.py": {
+      "sha256": "3e9d4caef5fb9f24062b3b45a6f881338f0ac2fc593a33e23fb8297a455b8c27",
+      "bytes": 16445
+    },
+    "examples/lifecycle-d1/prepare-reference-disposal.py": {
+      "sha256": "7f9e774deff128148efdd52c01fc158bf15dc412898a3eeb027db9ad6c11cd6f",
+      "bytes": 17414
+    },
+    "examples/lifecycle-d1/prepare-remaining-case-regression.py": {
+      "sha256": "d01dc526c79bde347e1f36284d34ba07599650a775a34146776c8c350315b3d6",
+      "bytes": 11272
+    },
+    "examples/lifecycle-d1/prepare-remaining-executable.py": {
+      "sha256": "7d1285e6b2a31b61f41bd92f35ff8abd3b8a306001d405e334a148bcf04a12a8",
+      "bytes": 21335
+    },
+    "examples/lifecycle-d1/prepare-remaining-native.py": {
+      "sha256": "d9b3064ae5533631c01c453c39272b076df5fa4e8e0da6636e22b628586eda18",
+      "bytes": 19826
+    },
+    "examples/lifecycle-d1/prepare-remaining-runner.py": {
+      "sha256": "0f5277c525b717f43b7b3d2fad324c0b62c3b345eebe2a172a532b7450769f74",
+      "bytes": 20093
+    },
+    "examples/lifecycle-d1/prepare-resource-retirement.py": {
+      "sha256": "f387ecf9f0fc9b5be3c4eb9845c371ac994b0e000488355f5ac9e5ac78dfe449",
+      "bytes": 15696
+    },
+    "examples/lifecycle-d1/prepare-retention-renewal.py": {
+      "sha256": "e035f2cd13722486c421aef6ce6e04de845d6fcfcc5e2c1f6a6bec30e78fce1f",
+      "bytes": 6923
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "f85a21ee0224c4d3336710e436648b5fce35ee661e83e7a9ab091f959277aca5",
+      "bytes": 41011
+    },
+    "examples/lifecycle-d1/protection_test_fixtures.py": {
+      "sha256": "2f7463f023655d5ff53a051181edbb511060ce75b21ce37beda11be16ed020dd",
+      "bytes": 602
+    },
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py": {
+      "sha256": "d6775ea1c1862fd26585077468c924c285e10ca795b9b022ce851a3ea8b86e83",
+      "bytes": 31521
+    },
+    "examples/lifecycle-d1/refresh-post-v27-seventeen.py": {
+      "sha256": "2682c084057ef776d5746ba871f511e61e602e35aed937d55b73cda300056362",
+      "bytes": 9913
+    },
+    "examples/lifecycle-d1/refresh-post-v28-seventeen.py": {
+      "sha256": "d6b5db3091afd0a5b34fb36e7f91e19901c182eaaa0c854b70bdb6cd2104b3b5",
+      "bytes": 5704
+    },
+    "examples/lifecycle-d1/refresh-reference-readonly.py": {
+      "sha256": "f3ff11a97ae1a06eb9ca63ba52ce4e880c343a9a50384137fb683f97f18c56b0",
+      "bytes": 7689
+    },
+    "examples/lifecycle-d1/refresh-reference-v10-readonly.py": {
+      "sha256": "89aa8b3d6abd6d2f7616bb46443223781c7b7928b63f6e718a78f31e210ab93b",
+      "bytes": 475
+    },
+    "examples/lifecycle-d1/refresh-reference-v11-readonly.py": {
+      "sha256": "5d7672c67a101f43819e184cfcd4182000f157e2905df5989b4a79480f64616c",
+      "bytes": 475
+    },
+    "examples/lifecycle-d1/refresh-reference-v12-readonly.py": {
+      "sha256": "ec93a8aa826c15aa93236b7eaa8bde64d67825bb4aee0fb7f9f742cc5e2073fb",
+      "bytes": 475
+    },
+    "examples/lifecycle-d1/refresh-reference-v13-readonly.py": {
+      "sha256": "790e0d9eb295b803292ff118b8ad9d2da596f45f93794f6169ab4e24d6d1b53a",
+      "bytes": 475
+    },
+    "examples/lifecycle-d1/refresh-reference-v7-readonly.py": {
+      "sha256": "5ee4e69a7d7902d86f49e9ea6959fac164eefb1a7fe5104a705a97a4afa871f2",
+      "bytes": 473
+    },
+    "examples/lifecycle-d1/refresh-reference-v8-readonly.py": {
+      "sha256": "9df4d717bc40c9a44fe5ca436817fc6b1d5c33b3b9e7db9e93c031a7db24039c",
+      "bytes": 473
+    },
+    "examples/lifecycle-d1/refresh-reference-v9-readonly.py": {
+      "sha256": "1e5191427d7717fecd8963bb314da8933032d9762b8e42d65fe4bf74a0d0475e",
+      "bytes": 473
+    },
+    "examples/lifecycle-d1/rehearse-host-path.py": {
+      "sha256": "6a944ef79f9f169a7434d33182246fc4da10de985bbc22888595202fe3cc7578",
+      "bytes": 15321
+    },
+    "examples/lifecycle-d1/rehearse-remaining-renewal.py": {
+      "sha256": "dc294809548d0d1762f7789cbfb0755f17c5595c223aaabab3f0a4c0ea1a29c9",
+      "bytes": 7222
+    },
+    "examples/lifecycle-d1/rehearse-v27-restored-core.py": {
+      "sha256": "433c930186feb045bf5da0d05c47112e58f7fc990e85b3edb387bc0389823122",
+      "bytes": 9680
+    },
+    "examples/lifecycle-d1/rehearse-v28-restored-core.py": {
+      "sha256": "3b60d1cbd8e59ade084e178dbb3e36af12751bdf11674de599eeba13cc36bb47",
+      "bytes": 8293
+    },
+    "examples/lifecycle-d1/remaining_sequence.py": {
+      "sha256": "0596c039e67cf386cde2b9dd0d870bd5646bb4a3e89553f849ecd70c1a429a1c",
+      "bytes": 7221
+    },
+    "examples/lifecycle-d1/remaining_six_window.py": {
+      "sha256": "8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494",
+      "bytes": 1978
+    },
+    "examples/lifecycle-d1/remaining_window.py": {
+      "sha256": "c856e3b8224fdfb2b17a9340c8577fbb3ef619e5c12be236152502fd5ab9790a",
+      "bytes": 6565
+    },
+    "examples/lifecycle-d1/replay-remaining-business.py": {
+      "sha256": "6ccee74cc46384d6bdce770cf663554cde9c0ef70b6afb71f535d4c4f4a4655d",
+      "bytes": 5132
+    },
+    "examples/lifecycle-d1/resume-remaining-late-case.py": {
+      "sha256": "94cf246e5d52e3dfb81bfb1db18819706acc9a2f23202a1b797957462ffd5c07",
+      "bytes": 5262
+    },
+    "examples/lifecycle-d1/retained_v26.py": {
+      "sha256": "c1c7fd485e1e030a25b1bfa72681358ddc659c5cf27534e0ea6994e80cf9693f",
+      "bytes": 9927
+    },
+    "examples/lifecycle-d1/retained_v27.py": {
+      "sha256": "a4305dc35492b6525bf3baf7356e4c37cfdad6cbd203ed2a9fcd9cacc9429012",
+      "bytes": 12641
+    },
+    "examples/lifecycle-d1/retained_v28.py": {
+      "sha256": "4c9b4b5b97098082c4b5d7fd0e4cffb452fe2931218b69787e02d2b94f1a8826",
+      "bytes": 3484
+    },
+    "examples/lifecycle-d1/retained_v29.py": {
+      "sha256": "cddd9756187a5ae8083eb67c1272830b232dc8f11fa9fd2b8b033c3028c3a1ea",
+      "bytes": 8430
+    },
+    "examples/lifecycle-d1/retained_v30.py": {
+      "sha256": "ce4f43439db266ba73962a693e012adaca8607633916f3684b3474c6c422443a",
+      "bytes": 12235
+    },
+    "examples/lifecycle-d1/retained_v31.py": {
+      "sha256": "04617c0b3f34d296528a2abea340c3d829655e02cdbd0404cda5472acac74ee2",
+      "bytes": 7253
+    },
+    "examples/lifecycle-d1/retained_v32.py": {
+      "sha256": "229981a95fb401f3e2534c2f8faa09fbe4f1c6b276968325c8b72f7bfb469d7e",
+      "bytes": 8623
+    },
+    "examples/lifecycle-d1/retention_composition.py": {
+      "sha256": "ef22fdff37c5e7638093de420ee446f14c5c755cede841a56119c81a5032fdda",
+      "bytes": 36037
+    },
+    "examples/lifecycle-d1/retention_maintenance.py": {
+      "sha256": "a24eae67d2ae85b82853571d19212402d638061db729ef57281176ab8a3a337a",
+      "bytes": 17151
+    },
+    "examples/lifecycle-d1/retention_staging.py": {
+      "sha256": "f6ae0f0d8b8b08c6596a355e469ee04dbfa37abbbc2c0f55ee51956bf9afa12c",
+      "bytes": 3275
+    },
+    "examples/lifecycle-d1/retire-d1-resources.py": {
+      "sha256": "7c6f84158fc98953b55a7391bced2f3a16cd429a4ae16c4a6aa20ffeef3861dc",
+      "bytes": 3663
+    },
+    "examples/lifecycle-d1/retired_budget_bytes.py": {
+      "sha256": "705d9f07831afc32a70431b10753b3bc174eeb95e3da5751daf5c8917d4e50fb",
+      "bytes": 2515
+    },
+    "examples/lifecycle-d1/retired_resources.py": {
+      "sha256": "567576cf8e0cf9d83ca9c0fef613a7545b5f5ffce9afcfacd0f5163f4dd0a69d",
+      "bytes": 19687
+    },
+    "examples/lifecycle-d1/retired_volumes.py": {
+      "sha256": "8ed6f6b323376ab1df3b21345b8526ca1d80933319f590fad582cc4f904b2018",
+      "bytes": 8169
+    },
+    "examples/lifecycle-d1/retirement_catalog.py": {
+      "sha256": "f3109da30aa7530f55327fa4b5f483ad03741cae8415dd794b58a3dd72d95255",
+      "bytes": 9579
+    },
+    "examples/lifecycle-d1/run-confirmed-race.py": {
+      "sha256": "5127bed8a01ff30f3fd3d713a3784e19c4a0c4d92cce1daa5417b31ff8f57530",
+      "bytes": 18362
+    },
+    "examples/lifecycle-d1/run-frozen-remaining-holds.py": {
+      "sha256": "6277402d682e5bc096147720246fe15f6adb18f58afc292757640fafe314eae5",
+      "bytes": 6005
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "bc14c6cf52dd6269587fcdbcaf5446f29abe12d1cb103762460fe9f20a26b561",
+      "bytes": 44856
+    },
+    "examples/lifecycle-d1/successor_dependencies.py": {
+      "sha256": "e53d5e6bcff8525ebb5b7411d44ff2f52b21222bd7b4d105d6099783e0618dd1",
+      "bytes": 5093
+    },
+    "examples/lifecycle-d1/test-remaining-policy-renewal.py": {
+      "sha256": "5f73f5d99aebf4c167c9a7466f5c0e5d1d7d3e09e3e468950dfb14214da9743c",
+      "bytes": 3850
+    },
+    "examples/lifecycle-d1/test_attest_remaining_executable.py": {
+      "sha256": "84803bb366e1986682f106c5c9b4ae643417f191ae14d98ec0e6fcc43172bcdd",
+      "bytes": 16227
+    },
+    "examples/lifecycle-d1/test_complete_remaining_preflight.py": {
+      "sha256": "2ee5ae49c470e2e8845ca775959ef45e550e78cf23291b85993f9739d2395ef3",
+      "bytes": 17486
+    },
+    "examples/lifecycle-d1/test_confirmed_race.py": {
+      "sha256": "b83248cf7cef6a6d20f1e06ae634fba6760f9ae115369f0e714a48855a0337a1",
+      "bytes": 11383
+    },
+    "examples/lifecycle-d1/test_evidence_indexes.py": {
+      "sha256": "dd77b040079303295404565d4a5cd441ac79dc99b09985c9374fe8bd7a5d7dcc",
+      "bytes": 11841
+    },
+    "examples/lifecycle-d1/test_execution_freeze.py": {
+      "sha256": "d262576832a773c4d601a631e3dfa9428c02604c192e6f0e63019e5f5e1cd84b",
+      "bytes": 15266
+    },
+    "examples/lifecycle-d1/test_fixture_artifacts.py": {
+      "sha256": "a09731ab172e0c511d9b17fd06fe072be1cbe81d48b070f4cf1fcc20625abde0",
+      "bytes": 9715
+    },
+    "examples/lifecycle-d1/test_freeze_remaining_executable.py": {
+      "sha256": "d5572f3461bc41b62faf680f01258ac6426cc0eaebf84aebb32077e029d14062",
+      "bytes": 2785
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "144678d09e0d4524e1704d718fb7ee2cb0f8d716e1e8f4e38451e5412685b028",
+      "bytes": 7603
+    },
+    "examples/lifecycle-d1/test_lc13_continuation.py": {
+      "sha256": "2db8e7ec29ce6ce74327a8f2e0a67e3d1dd4fe9cbfbb0bba8a6edfffaed5c72e",
+      "bytes": 1440
+    },
+    "examples/lifecycle-d1/test_lc13_readonly.py": {
+      "sha256": "20cc7837e50b34ec1c6bb5fe8d5674c72f11c481bb5ce2f677606dc1d69689bc",
+      "bytes": 8320
+    },
+    "examples/lifecycle-d1/test_native_d1_completion.py": {
+      "sha256": "592ea4fe38ea1ac09c2ec8cec06956e059dfd57009c0a2218362d12c6ff47ca5",
+      "bytes": 2035
+    },
+    "examples/lifecycle-d1/test_native_protection.py": {
+      "sha256": "8a8af579fa2cdd1be31438f68f552918b16dcb5f8bcc2de6f7c28c25426ba8ec",
+      "bytes": 3331
+    },
+    "examples/lifecycle-d1/test_old_business_dispatch_audit.py": {
+      "sha256": "060d8337c2f8658103b40c41688cde7ee5454d65b6b59f529742c812cd98c746",
+      "bytes": 11807
+    },
+    "examples/lifecycle-d1/test_old_business_dispatch_closure.py": {
+      "sha256": "56a38ddf75dfde77c5054a2fcf8178b3a9716ab6a6b41d797460bbd630c06087",
+      "bytes": 21750
+    },
+    "examples/lifecycle-d1/test_p1_post_v22_readonly.py": {
+      "sha256": "924f9252f56afd91ccb3d1c1f48c160e60205a0bf5e7b180fce6fac5182a6542",
+      "bytes": 14660
+    },
+    "examples/lifecycle-d1/test_post_v22_seventeen.py": {
+      "sha256": "f45bb14d2e8b24f2c0680683bddaa053ccbadb11d138c9bca0bc1e694f1ca688",
+      "bytes": 11867
+    },
+    "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py": {
+      "sha256": "1f8db6e48ff0df77171dd79484be1c347990a605069adde59b0a9e83b95fa1b9",
+      "bytes": 5144
+    },
+    "examples/lifecycle-d1/test_preallocation_ci.py": {
+      "sha256": "446170bc7f77534609432aaba1228923f1fa374e4bd8c9ecdadccb762e92de47",
+      "bytes": 9175
+    },
+    "examples/lifecycle-d1/test_receipt_bytes.py": {
+      "sha256": "6a0dc2c600c58303cbb3befa6047f567b51b06775704fad0bf36bda620d1d895",
+      "bytes": 5743
+    },
+    "examples/lifecycle-d1/test_reference_candidate05.py": {
+      "sha256": "81fba4e0d495da9cbe0db759fa42246c7f802800b1f4f96cda584769bed40622",
+      "bytes": 3586
+    },
+    "examples/lifecycle-d1/test_reference_candidate05_check.py": {
+      "sha256": "bf7b922c1b9ca159bc00ee0f0bb16f721ecdc06537295ff02950173dc96005df",
+      "bytes": 3953
+    },
+    "examples/lifecycle-d1/test_reference_candidate05_history.py": {
+      "sha256": "d793eee29b135c016293372e60efb0ea637c7bdfc6e1e301a68a585da3cfad63",
+      "bytes": 2845
+    },
+    "examples/lifecycle-d1/test_reference_delete_preflight.py": {
+      "sha256": "7144028159f36d85fb3383a38888ccc482754cdbdf92298c1b51d8c1a466fbb3",
+      "bytes": 6614
+    },
+    "examples/lifecycle-d1/test_reference_disposal_preparation.py": {
+      "sha256": "a605b84e9b55fd9e48f2e50c891f04e204e3b018cde57d191cdf4a7e399c8806",
+      "bytes": 3621
+    },
+    "examples/lifecycle-d1/test_reference_history.py": {
+      "sha256": "ed2abbc17f750b9460ff56fbbc0947e4f2080aa5cc0233c062af0094825a899a",
+      "bytes": 4550
+    },
+    "examples/lifecycle-d1/test_reference_proposal.py": {
+      "sha256": "0750a3f397558a5a5a3189b7755c72ec9afedda24c086349fd54937cf971ef5a",
+      "bytes": 8903
+    },
+    "examples/lifecycle-d1/test_reference_refresh.py": {
+      "sha256": "0ac6b5e590acde785e908862e32e26057fa1b800578b21259481f60bb06db044",
+      "bytes": 4248
+    },
+    "examples/lifecycle-d1/test_reference_v10.py": {
+      "sha256": "b0a3062240843e6d5d9bf09d54d896eb3f96bc5bdd9a2f85e2652a01e17d77d2",
+      "bytes": 3942
+    },
+    "examples/lifecycle-d1/test_reference_v11.py": {
+      "sha256": "60e6c232acd377e38d96225dcbef11c39e2d97219fc5b7c65a249891d79e787d",
+      "bytes": 3947
+    },
+    "examples/lifecycle-d1/test_reference_v12.py": {
+      "sha256": "eacd32df26b09273956cc42405f6637d83230e816b282db95a2705c446109b68",
+      "bytes": 3947
+    },
+    "examples/lifecycle-d1/test_reference_v13.py": {
+      "sha256": "aa67397f76af4ed137460248741e0aa6bc99d17363bd85b57875a04d7021bcac",
+      "bytes": 3947
+    },
+    "examples/lifecycle-d1/test_reference_v14.py": {
+      "sha256": "03a2704f18777247b8fd8d84d646d7c9b800153bf479fc8b617013a4f63ea17d",
+      "bytes": 3947
+    },
+    "examples/lifecycle-d1/test_reference_v8.py": {
+      "sha256": "eca18e9a98fccaf141bc64d7f8803a7a11b4342fbbe934d63853194abe4840b8",
+      "bytes": 3905
+    },
+    "examples/lifecycle-d1/test_reference_v9.py": {
+      "sha256": "210438fa54b6560727bc3cda040e2cc4fbc1cedd521b131b7b59ab489737ae63",
+      "bytes": 3938
+    },
+    "examples/lifecycle-d1/test_remaining_candidate07.py": {
+      "sha256": "4a921e5fa6e8617809f7f0b6ceb7f3c2cd576d1836928f9014a939ec2ad259a6",
+      "bytes": 2998
+    },
+    "examples/lifecycle-d1/test_remaining_candidate07_freeze.py": {
+      "sha256": "09ad54eaa3b531ee46e63acc62f02f05a7ad5d09d7694eb48e2f2643d784569c",
+      "bytes": 3075
+    },
+    "examples/lifecycle-d1/test_remaining_sequence.py": {
+      "sha256": "58eb6e8da9381689f8a6dc4da57c236741186994fa7346a947cb6105939a4ee2",
+      "bytes": 5990
+    },
+    "examples/lifecycle-d1/test_remaining_six_window.py": {
+      "sha256": "a9313bfe457d1019bb06ef774b6e679a16965705b35508c105bb89226aabd90c",
+      "bytes": 6472
+    },
+    "examples/lifecycle-d1/test_remaining_window.py": {
+      "sha256": "cecd841f697d44ccf466599c189b09db510f33d5cd5c839c92602ed53e47f5d8",
+      "bytes": 7956
+    },
+    "examples/lifecycle-d1/test_retained_v26.py": {
+      "sha256": "290fe144583bdac27e5a792a0882de6fd26e2057f59e6db3854824ed871cde7f",
+      "bytes": 6646
+    },
+    "examples/lifecycle-d1/test_retained_v27.py": {
+      "sha256": "c466904227231779fcb6b55567f7825c400b41e40a1d5d194b2e8192c5e2982e",
+      "bytes": 4706
+    },
+    "examples/lifecycle-d1/test_retained_v29.py": {
+      "sha256": "6844995132f37f795ad36b722ae7d59c4725a8fedcbebbcf95c837e60275abf0",
+      "bytes": 8863
+    },
+    "examples/lifecycle-d1/test_retained_v30.py": {
+      "sha256": "90bcee5a3cf50e0eedb0b8b8afc86ee758d09e0f48bfac502808a15f148b6f76",
+      "bytes": 12621
+    },
+    "examples/lifecycle-d1/test_retained_v31.py": {
+      "sha256": "dc81612872cb902769ade5d5c7d4766e998321bb0c94c98cb9a7110fb9e909bd",
+      "bytes": 10808
+    },
+    "examples/lifecycle-d1/test_retained_v32.py": {
+      "sha256": "ba189a4353cc1cd1f34d99e00f2ca853a4ca205acd3c43c5e27866642a3da290",
+      "bytes": 12380
+    },
+    "examples/lifecycle-d1/test_retention_composition.py": {
+      "sha256": "536667d5d50c439e97b60651c40fe2003c795d4b416816a443b0dfdda677dcc9",
+      "bytes": 26624
+    },
+    "examples/lifecycle-d1/test_retention_maintenance.py": {
+      "sha256": "846c3651360b873ad5a705d4ecb4f74dacbe277f21b46fadf41c92c6198d1d3f",
+      "bytes": 17880
+    },
+    "examples/lifecycle-d1/test_retention_renewal.py": {
+      "sha256": "c245106078b17391ee16508661a0924e68c8b7b98176d0659caf9ca66439e0f0",
+      "bytes": 5074
+    },
+    "examples/lifecycle-d1/test_retention_staging.py": {
+      "sha256": "cac76144d092952c7a07e8db62b63704fcc69e182da21708cbe17dc0eed8e762",
+      "bytes": 2906
+    },
+    "examples/lifecycle-d1/test_retired_budget_bytes.py": {
+      "sha256": "cd792403e64c96ae87d647a71b247954b72f1b6208d179db7f0146a93ae5d1c7",
+      "bytes": 1375
+    },
+    "examples/lifecycle-d1/test_retired_resources.py": {
+      "sha256": "abab96a21af954aef91b381d0c613864bb675f344f5d395642b6836ee2bf56ed",
+      "bytes": 15877
+    },
+    "examples/lifecycle-d1/test_retired_volumes.py": {
+      "sha256": "c3ef582747994dbdb2298b3715ecaa87c2c2e430d9a36d05abbb339faa0410ad",
+      "bytes": 3696
+    },
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": {
+      "sha256": "857d3a4e4358231975dc4f030d068591d88cc10b27a9e96a4d7a13f388902517",
+      "bytes": 28053
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "4f6f0cdc44d6589c5ebdca1e62d1a5c64ff806f8984089f52bcc348a7406e691",
+      "bytes": 18616
+    },
+    "examples/lifecycle-d1/test_successor_dependencies.py": {
+      "sha256": "acb8e957af9517c454450488ada7a97cb7a43d35108028aec734eef5caba9395",
+      "bytes": 19402
+    },
+    "examples/lifecycle-d1/test_v27_dispatch_closure.py": {
+      "sha256": "3bf3627198f599982184c653454d85ae89a16dbbab9d8dbec2f3cfa5831c4501",
+      "bytes": 7582
+    },
+    "examples/lifecycle-d1/test_verify_remaining_native.py": {
+      "sha256": "dd59a5fb56941d48bf892dcd36edb69abfaa1dbc1f8a97eb258e01631e77a14e",
+      "bytes": 9329
+    },
+    "examples/lifecycle-d1/test_verify_six_native.py": {
+      "sha256": "6ee221a5fdfc3fdcc4880bb94f232dd90bc87fd17bb9d7bd84a43fec614efc84",
+      "bytes": 13226
+    },
+    "examples/lifecycle-d1/test_window_six_support.py": {
+      "sha256": "1b4eab4e1a84c86d13136c07142c0bc8431c3d82155019fd9a86ec076c1f8f4d",
+      "bytes": 14775
+    },
+    "examples/lifecycle-d1/verify-post-v22-seventeen.py": {
+      "sha256": "65233c875f10bdb1a1a6ed71c5b4aebf842106e3e739902913fed390c099be01",
+      "bytes": 25235
+    },
+    "examples/lifecycle-d1/verify-remaining-native.py": {
+      "sha256": "c2f86587608e5666c2899a296b009469b03159f4db8ddee5600c98be44a067b5",
+      "bytes": 26153
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "ce2a47ffd079526a1be38a6a63be378117134fa9f76bbd56272218f8b685ede8",
+      "bytes": 20122
+    },
+    "examples/lifecycle-d1/verify-successor-history.py": {
+      "sha256": "105de0e9445ae6c674fc950dfebc5a8249410855f3cd50a240e75cb72df24bf8",
+      "bytes": 1608
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "7a63d1adfcca240e7ff2fc49958d4fa2665d48a3e9d9afa54419751f5026abe7",
+      "bytes": 12988
+    },
+    "docs/acceptance/.gitattributes": {
+      "sha256": "ef6609c1e09885b597f535b937e508aa714c7ad6fc1473609555889fa3fb385b",
+      "bytes": 1305
+    },
+    "docs/acceptance/issue307-d1-v29-crosscheck01.md": {
+      "sha256": "738922be86ce34cc05b38a8be65e751797f93452ed7fe4bdb1dce7ea380b4fd3",
+      "bytes": 2966
+    },
+    "docs/acceptance/issue307-d1-v29-execution01.md": {
+      "sha256": "8c63ae25cf36ad3c76dd30bd7fc8dd6e391abe98284e6b80232bd1d2571e4659",
+      "bytes": 3032
+    },
+    "docs/acceptance/issue307-d1-v29-schedule01.md": {
+      "sha256": "24d30fe3dd44a8e302eb827d62ac3f3f7ecafdaf04a99ba85574bbc888a48ea9",
+      "bytes": 2926
+    },
+    "docs/acceptance/issue307-d1-v29-window01.md": {
+      "sha256": "fea219346f07dedc37fc8d4be483065f81cdcbc1d8ce0a1f87b15aba6074e08c",
+      "bytes": 3229
+    },
+    "docs/acceptance/issue307-d1-v31-preparation.md": {
+      "sha256": "14f81fdeffc338d399b7a6c12f33ab86089dde4b7481575ca0c6a3c03bdef24c",
+      "bytes": 4182
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/plan.json": {
+      "sha256": "26d27adacec543172a7c570ca3a8d174565348e9c424e5a17dea06b286cc1667",
+      "bytes": 294135
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v28-seventeen01/plan.json": {
+      "sha256": "5f2574f9bdca02cfce9782896b54c8d1bc3b21d49928617d25e01267aac4fb41",
+      "bytes": 873719
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json": {
+      "sha256": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+      "bytes": 21046
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/allocation.json": {
+      "sha256": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+      "bytes": 93902
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/materialize-cold-network-observation01.jsonl": {
+      "sha256": "b820f0451ea9c877e78256574f6b17b2b590bc5c93c0a046148f37f319dbc2d7",
+      "bytes": 9316
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/owner-descriptors.json": {
+      "sha256": "5a248613f65b789dc6fa3f8427d80816810cb9df70826038acca6e281f3ed498",
+      "bytes": 141269
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/candidate.json": {
+      "sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643",
+      "bytes": 20540
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate18/candidate.json": {
+      "sha256": "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+      "bytes": 20540
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json": {
+      "sha256": "d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db",
+      "bytes": 20540
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review06/composition/window_support.py": {
+      "sha256": "ad4a7179efb96a02ef23401f1fbe5d489452f5cd923b09c7aae6fba12944738f",
+      "bytes": 28447
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/budget-before-continuation01/business-races.tar": {
+      "sha256": "6394dd7e1a436cccf09a106c054ed6a0ae40f9f8a0712e131c54762fbc2b0cc8",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/budget-before-continuation01/late-hold.tar": {
+      "sha256": "d1e1cb4cd7ef901796b94dbc6c16911ed4cec74a9f3f80a45c68b26f529532dc",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/budget-before-continuation01/mixed.tar": {
+      "sha256": "c55f7fd8287aa9c64de4982b74022a27a6df2118fab0c4794dacd380b1e8446e",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/mixed/readonly/native-policy-lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd.json": {
+      "sha256": "247ebba00c26d1237177ce4208ab8017b2a7779314f4ccf512e24111a1c0e0b2",
+      "bytes": 541
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/mixed/readonly/native-policy-lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd.json": {
+      "sha256": "da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf",
+      "bytes": 501
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/mixed/readonly/native-verification.json": {
+      "sha256": "e5c6b61c557362aa7467dc79becf3d59f6bfc0ce21390b52a88e29633c8d89ea",
+      "bytes": 2945
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/late-hold/readonly/native-policy-lifecycle307-inspection-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b.json": {
+      "sha256": "7a0b85b266cbbcacdd4d92d5b8bd5626ae99ac8235b4c7a43f8194c7d6434dca",
+      "bytes": 651
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/late-hold/readonly/native-policy-lifecycle307-remaining-delete-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b.json": {
+      "sha256": "4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0",
+      "bytes": 268
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/late-hold/readonly/native-verification.json": {
+      "sha256": "7faf25b5f18d150211333f3dcb48ea94d436ecab231f70f502e68d4134fb0083",
+      "bytes": 4031
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/business-races/readonly/native-policy-lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5.json": {
+      "sha256": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+      "bytes": 803
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/business-races/readonly/native-policy-lifecycle307-remaining-business-remainput808a6960.json": {
+      "sha256": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/business-races/readonly/native-policy-lifecycle307-remaining-business-remainread808a6960.json": {
+      "sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+      "bytes": 1316
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/business-races/readonly/native-policy-lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5.json": {
+      "sha256": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf",
+      "bytes": 951
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/business-races/readonly/native-verification.json": {
+      "sha256": "275e9ecb84343f84612895b250e00646131934e1f7e84d3fbb1ecac7d5cdba5e",
+      "bytes": 5601
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.json": {
+      "sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+      "bytes": 3953
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "sha256": "5282ba7e3190bde8d9f07ae5afb3150b37405dd687c3119d51ae59ca466457af",
+      "bytes": 2438
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.json": {
+      "sha256": "d5758dd1082e6191a508d6ab9ad9db1d9e8ea8ecd2b2b7a61b5d0d1c38ae447c",
+      "bytes": 13485
+    },
+    "offline_python_runner01.py": {
+      "sha256": "ca6c577075f4c4a8052fa071f14db20cf563a3e411d7232868eda05acd0fc8e6",
+      "bytes": 2043
+    },
+    "run_python_collection01.py": {
+      "sha256": "0577fd1de143f7df66c54537e8ee607e4b4169d7dfac7315517f2375ded5419d",
+      "bytes": 1961
+    },
+    "collection.json": {
+      "sha256": "5fe255463f9297866a545df0492fae8b7e1fc8dc376ae2d1459f82c9d44d4332",
+      "bytes": 759
+    }
+  },
+  "count": 202,
+  "retained_source_start": 0
+}

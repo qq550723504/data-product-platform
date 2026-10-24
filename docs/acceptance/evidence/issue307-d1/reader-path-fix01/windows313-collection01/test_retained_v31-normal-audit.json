@@ -1,0 +1,17 @@
+{
+  "test": "test_retained_v31.py",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\reader-path-fix01\\python-export01",
+  "reads": [
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/remaining_sequence.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/retained_v30.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/retained_v31.cpython-313.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/remaining_sequence.py",
+    "examples/lifecycle-d1/retained_v30.py",
+    "examples/lifecycle-d1/retained_v31.py",
+    "examples/lifecycle-d1/test_retained_v31.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

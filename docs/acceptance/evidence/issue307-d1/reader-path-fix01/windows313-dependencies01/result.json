@@ -1,0 +1,28 @@
+{
+  "started_at": "2026-10-24T14:02:04.100761+00:00",
+  "finished_at": "2026-10-24T14:02:15.488113+00:00",
+  "command": [
+    "python",
+    "-m",
+    "pip",
+    "install",
+    "--no-compile",
+    "--only-binary=:all:",
+    "--platform",
+    "win_amd64",
+    "--python-version",
+    "3.13",
+    "--implementation",
+    "cp",
+    "--abi",
+    "cp313",
+    "--target",
+    "C:/Users/Henry/.codex/fixture-private/reader-path-fix01/windows-python313/Lib/site-packages",
+    "cryptography==49.0.0"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

@@ -1,0 +1,32 @@
+{
+  "started_at": "2026-10-24T14:10:58.548495+00:00",
+  "finished_at": "2026-10-24T14:11:51.535701+00:00",
+  "command": [
+    "docker",
+    "run",
+    "--name",
+    "dpp307-reader-path-python313-01",
+    "--network",
+    "none",
+    "--user",
+    "10001:10001",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--mount",
+    "type=bind,source=C:/Users/Henry/.codex/fixture-private/reader-path-fix01/python-export01,target=/work,readonly",
+    "--mount",
+    "type=bind,source=C:/Users/Henry/.codex/fixture-private/reader-path-fix01/linux313-output01,target=/out",
+    "dpp307-reader-path-python:31316",
+    "python",
+    "-B",
+    "/work/run_python_collection01.py",
+    "/out/collection01"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

@@ -1,0 +1,23 @@
+{
+  "status": "READ_ONLY_CONFIRMED_CI_FAILURE_WITH_BOUNDED_SOURCE_ANALYSIS",
+  "head": "16ec447f2c60ddf08a514207963f478bc70c7e09",
+  "run": 40099260254,
+  "attempt": 1,
+  "job": 120887885664,
+  "confirmed_error": "COMPOSITION_ANCHOR_READER_PATH_BINDING",
+  "confirmed_tests": 9,
+  "confirmed_errors": 42,
+  "source_facts": [
+    "Composition.__init__ normalizes packet.control via evidence_indexes.unlinked_absolute before deriving expected reader paths",
+    "unlinked_absolute checks every original component for symlink/junction then calls Path.resolve(strict=True)",
+    "The test fixture derives anchor reader strings from its incoming TemporaryDirectory Path without first normalizing that root",
+    "Local Windows regression used Python 3.14.6; this GitHub job uses the configured Windows Python 3.13 environment"
+  ],
+  "bounded_diagnosis": "Canonical control versus original temporary-root spelling is an uncovered portability boundary. The failing CI did not print both path values, so the exact alias/case expansion in this runner is not claimed as proven.",
+  "next_repair_boundary": "A separate reviewed change should normalize fixture root identity before constructing bound paths and cover real Windows alias/canonical spellings. Do not weaken production exact path, hash, identity, or link-rejection gates.",
+  "source_changes_after_authorized_push": 0,
+  "new_pushes": 0,
+  "workflow_reruns": 0,
+  "business_provider_io": 0,
+  "delete": 0
+}

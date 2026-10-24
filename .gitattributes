@@ -324,3 +324,6 @@ docs/acceptance/issue307-d1-be38-publication-proposal01.md -text
 docs/acceptance/issue307-d1-integrated-publication-contract.md -text
 docs/acceptance/issue307-d1-integrated-publication-acceptance01.md -text
 docs/acceptance/issue307-d1-integrated-publication-proposal01.md -text
+
+# This CI repair binds its local matrix/proposal bytes exactly.
+docs/acceptance/issue307-d1-reader-path*.md -text

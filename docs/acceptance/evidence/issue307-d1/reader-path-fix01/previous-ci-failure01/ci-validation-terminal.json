@@ -1,0 +1,31 @@
+{
+  "status": "FAILED_EXACT_P_PR_CI_BRANCH_REMAINS_LOCKED",
+  "observed_at": "2026-10-24T13:52:02.951560+00:00",
+  "P": "16ec447f2c60ddf08a514207963f478bc70c7e09",
+  "CI": {
+    "at": "2026-10-24T13:52:02.951084+00:00",
+    "id": 40099260254,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "jobs": 13,
+    "succeeded": 11,
+    "pending": [],
+    "failed": [
+      {
+        "name": "temporary-container-contracts (windows-latest)",
+        "conclusion": "failure"
+      },
+      {
+        "name": "required",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "source_starts": 0,
+  "business_delete": 0,
+  "business_protection_write": 0,
+  "workflow_reruns": 0,
+  "new_pushes": 0,
+  "original_operation_status": "PUSHED_EXACT_P_AND_RELOCKED_PENDING_PR_CI"
+}

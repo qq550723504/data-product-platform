@@ -1,0 +1,14 @@
+{
+  "source_tool": "github.fetch_workflow_job_logs",
+  "job_id": 120887885664,
+  "run_id": 40099260254,
+  "head": "16ec447f2c60ddf08a514207963f478bc70c7e09",
+  "representation": "exact UTF-8 encoding of tool decoded text",
+  "sha256": "43a769a80760fa5ae0ef6d3454f28309f22f63b70fa3b87d3962a0cec5320e16",
+  "bytes": 146237,
+  "confirmed_error": "COMPOSITION_ANCHOR_READER_PATH_BINDING",
+  "tests": 9,
+  "errors": 42,
+  "source_edits_after_push": 0,
+  "reruns": 0
+}
