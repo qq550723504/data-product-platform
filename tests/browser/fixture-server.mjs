@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import {acceptanceBindingFixture} from './acceptance-bindings-fixture.mjs';
 export const ids = {
   workspace: "11111111-1111-4111-8111-111111111111",
   actor: "22222222-2222-4222-8222-222222222222",
@@ -50,6 +51,7 @@ scenarios.add("isolation-validating");
 scenarios.add("agent-quality-pages");
 scenarios.add("modern-trace");scenarios.add("modern-trace-foreign");scenarios.add("modern-trace-extra");
 for(const s of ['acceptance-sources','acceptance-source-invalid','acceptance-source-foreign','acceptance-context-denied','acceptance-list-denied','acceptance-source-extra'])scenarios.add(s);
+for(const s of ['current','expired','revoked','ambiguous','conflict','mismatch','replaced','history'])scenarios.add('acceptance-binding-'+s);
 const readFaultKeys = new Set(["summary", "reviews", "executions", "failures", "products", "releases", "readiness", "failed-page", "validating-page", "ready-page", "quality", "schema", "exceptions", "requests", "attempts", "quality-original-report", "quality-latest-report", "quality-history", "quality-latest-summary", "quality-attempt", "agent-context"]);
 const readFaultModes = new Set(["fail", "denied", "notfound", "invalid", "hold"]);
 for (const s of ["schema-requests", "schema-requests-arrived", "schema-requests-empty", "schema-requests-unavailable", "schema-requests-foreign", "schema-requests-mismatch"]) scenarios.add(s);
@@ -211,7 +213,8 @@ export function createFixtureServer() {
         if(state.scenario==='acceptance-context-denied')return send(403,{});
         if(url.searchParams.get('deliveryOperationId')!==ids.deliveryOperation||url.searchParams.get('datasetVersionId')!==ids.goldVersion)return send(404,{});
         const selected=url.searchParams.get('contractVersionId');const items=selected?standards.filter(v=>v.id===selected):standards.slice(0,25);if(selected&&!items.length)return send(404,{});
-        return send(200,{workspaceId:ids.workspace,delivery:{id:ids.deliveryOperation,datasetVersionId:ids.goldVersion,status:'BLOCKED'},standards:{workspaceId:ids.workspace,items,page:{limit:25,offset:0,total:selected?1:26}},responsibilities:['PROVIDER','RECEIVER','BASIS_CONFIRMER','REVIEWER','ARCHIVIST','DISPOSER'].map(role=>({role,status:'UNASSIGNED'})),receivingPartyStatus:'UNVERIFIED',writeEnabled:false,blockers:['RESPONSIBILITIES_NOT_CONFIGURED','RECEIVING_PARTY_UNVERIFIED','ACCEPTANCE_WRITES_DISABLED','DELIVERY_NOT_ISSUED',...(!selected?['EXPLICIT_STANDARD_REQUIRED']:[])]});
+        const context=acceptanceBindingFixture({ids,stamp,standards,selected,scenario:state.scenario,offset:Number(url.searchParams.get('bindingOffset')||0),selectedBinding:url.searchParams.get('bindingId')});
+        return context?send(200,context):send(404,{});
       }
       const qualityRoute = /^\/api\/v1\/(?:quality-(?:results|assessments|assessment-attempts)\/|dataset-versions\/[^/]+\/(?:quality-assessments|quality-checks|gold-quality-checks)(?:\/|$))/.test(url.pathname);
       if (qualityRoute) {

@@ -1,6 +1,6 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-第 0 切片增量：用户授权标准与责任只读查询、合约版本 GET 的身份/workspace 改造及新版页面/API/浏览器验收。当前读取契约归 [标准与责任验收记录](governance-acceptance-s0-readonly-20261024.md)，正式业务写入仍为后续设计。必须保证范围校验、精确引用、安全投影、缺失责任 fail closed、历史不改写及原库/Agent API 保留；不加入业务写接口、IAM、模型、真实执行或新 migration。保持 Draft、不 merge/deploy。只读能力不是业务验收通过。
+当前增量：用户进一步授权责任绑定和标准适用关系的契约、持久化只读查询、新版页面与独立库接口/浏览器验收。主要契约归 [责任与适用关系](../architecture/acceptance-binding-read-contract-v1.md)，前置第 0 切片记录保留为历史。允许 migration 74 在独立验收库新增四类最小业务事实与 SELECT 权限，不修改原库；这替代前置增量“不新增 migration”的范围限制。必须保证可信身份/workspace、精确成果、完整来源与原确认责任、有效期/处置、职责分离、多绑定 fail closed、历史不可变及 Agent API 保留。业务写接口、IAM、模型和真实执行仍为非目标。保持 Draft、不 merge/deploy；绑定有效不等于签收、验收通过或交付授权。
 
 日期：2026-10-24。分支 `codex/agent-quality-readonly`，独占 checkout `C:/Users/Henry/.codex/worktrees/aq1`。基础提交 `f7a90022aad5da4d67ea594ccb86f8b9925a3840`（#358）；准备时与 origin/main 一致。
 

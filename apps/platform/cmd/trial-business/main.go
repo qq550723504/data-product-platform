@@ -41,10 +41,10 @@ import (
 
 const businessContract = "issue325/business-prerequisites-v1"
 
-// This newly built candidate requires schema73. Retained schema71/schema72
+// This newly built candidate requires schema74. Retained schema71/schema72/schema73
 // binaries and frozen receipts remain separate; this does not upgrade a runtime
 // or accept an arbitrary older/newer database.
-const requiredBusinessSchema = 73
+const requiredBusinessSchema = 74
 const purpose = "ENTERPRISE_CREDIT_RISK_SUPPORT"
 const contractRef = "examples/enterprise-activity/contract/data-contract-v1.yaml"
 

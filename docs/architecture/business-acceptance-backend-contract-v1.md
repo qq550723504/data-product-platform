@@ -1,6 +1,6 @@
 # 业务签收验收与归档后端契约草案
 
-状态：业务写入为 DESIGN ONLY。设计基线为 2026-10-24 的 `e448fa8fc98079b5d86d0fb9aeb4d71937cd9042`。用户随后授权第 0 切片只读实施，当前标准格式、查询与验收见 [第 0 切片记录](../product/governance-acceptance-s0-readonly-20261024.md)。其余业务 Command、表及写入契约仍为目标设计，不授权 migration、后端业务写入、模型调用、真实交付或执行。
+状态：业务写入为 DESIGN ONLY。设计基线为 2026-10-24 的 `e448fa8fc98079b5d86d0fb9aeb4d71937cd9042`。用户随后授权第 0 切片和责任/标准适用的只读实施；当前绑定事实与判定以 [责任与适用关系契约](acceptance-binding-read-contract-v1.md) 为准，允许独立验收库 migration 74、合成夹具、查询和页面验收。前置标准格式见 [第 0 切片记录](../product/governance-acceptance-s0-readonly-20261024.md)。Case/Receipt/Submission/Decision/Archive 等业务 Command、表及写入契约仍为目标设计，不授权其 migration、后端业务写入、模型调用、真实交付或执行。
 
 ## 业务事实与范围
 

@@ -27,6 +27,7 @@ func (f *sourceReader) ReadAcceptanceSources(_ context.Context, x q.Query) (q.Sn
 	}
 	now := time.Now().UTC()
 	r := q.Snapshot{Total: 1, Versions: []q.StoredVersion{{WorkspaceID: x.WorkspaceID, Name: "SOURCE_TEST", Version: domain.ContractVersion{ID: uuid.MustParse("44444444-4444-4444-8444-444444444444"), ContractID: uuid.New(), Status: domain.VersionPublished, SourceRef: "private-source-location", SourceSHA256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", CreatedAt: now, PublishedAt: &now, Document: map[string]any{"secret": "private-document-sentinel"}}}}}
+	r.EvaluatedAt = now
 	if x.DeliveryID != nil {
 		r.Delivery = &q.Delivery{ID: *x.DeliveryID, DatasetVersionID: *x.DatasetVersionID, Status: "BLOCKED"}
 	}
@@ -50,6 +51,9 @@ func TestAcceptanceReadonlyAuthorityBeforeRepository(t *testing.T) {
 		{"GET", root + "/contract-versions?offset=-1", "test-token", 400}, {"GET", root + "/contract-versions?limit=25&limit=25", "test-token", 400}, {"GET", root + "/contract-versions?actorId=" + id, "test-token", 400},
 		{"GET", root + "/acceptance-context?deliveryOperationId=" + id, "test-token", 400}, {"GET", root + "/acceptance-context?deliveryOperationId=" + id + "&datasetVersionId=" + id + "&contractVersionId=bad", "test-token", 400},
 		{"POST", root + "/acceptance-context", "test-token", 405},
+		{"GET", root + "/acceptance-context?deliveryOperationId=" + id + "&datasetVersionId=" + id + "&bindingOffset=-1", "test-token", 400},
+		{"GET", root + "/acceptance-context?deliveryOperationId=" + id + "&datasetVersionId=" + id + "&bindingId=bad", "test-token", 400},
+		{"GET", root + "/acceptance-context?deliveryOperationId=" + id + "&datasetVersionId=" + id + "&bindingId=" + id + "&bindingId=" + id, "test-token", 400},
 	} {
 		r := httptest.NewRequest(tc.method, tc.path, nil)
 		if tc.token != "" {
@@ -85,6 +89,9 @@ func TestAcceptanceReadonlyAuthorityBeforeRepository(t *testing.T) {
 		}
 		if path == root+"/contract-versions" && reader.query.WorkspaceID.String() != ws {
 			t.Fatal("scope missing")
+		}
+		if reader.query.ActorID.String() != "22222222-2222-4222-8222-222222222222" || reader.query.Subject != "operator" {
+			t.Fatal("trusted caller omitted or replaced by header")
 		}
 	}
 	reader.err = q.ErrNotFound

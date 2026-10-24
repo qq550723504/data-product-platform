@@ -53,6 +53,8 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 		allowed["deliveryOperationId"] = true
 		allowed["datasetVersionId"] = true
 		allowed["contractVersionId"] = true
+		allowed["bindingOffset"] = true
+		allowed["bindingId"] = true
 	}
 	for key, values := range params {
 		if !allowed[key] || len(values) != 1 {
@@ -60,8 +62,8 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 			return
 		}
 	}
-	query := q.Query{WorkspaceID: ws, Limit: 25}
-	for key, target := range map[string]*int{"limit": &query.Limit, "offset": &query.Offset} {
+	query := q.Query{WorkspaceID: ws, Limit: 25, ActorID: actor.ActorID, Subject: actor.Subject}
+	for key, target := range map[string]*int{"limit": &query.Limit, "offset": &query.Offset, "bindingOffset": &query.BindingOffset} {
 		if raw, ok := params[key]; ok {
 			n, e := strconv.Atoi(raw[0])
 			if e != nil || n < 0 || n > 2147483647 || (key == "limit" && (n < 1 || n > 100)) {
@@ -102,6 +104,13 @@ func (h ReadOnlyHandler) read(w http.ResponseWriter, r *http.Request, kind strin
 				return
 			}
 			query.Offset = 0
+		}
+		if raw, exists := params["bindingId"]; exists {
+			query.BindingID, ok = parse(raw[0])
+			if !ok {
+				httpserver.WriteError(w, r, 400, "INVALID_REFERENCE", "explicit binding UUID required", nil)
+				return
+			}
 		}
 	}
 	p, c, err := (q.Service{Reader: h.Reader}).Read(r.Context(), query)
