@@ -1,0 +1,71 @@
+{
+  "status": "PASS_MOCK_FILE_ONLY_C21_COMPOSER_ORDER_AND_ACYCLIC_TYPED_INDEXES",
+  "source_CI_or_native_or_authority_proof": false,
+  "actual_Docker_Core_provider_actions": 0,
+  "documents_succeed_before_artifact_review_exists": true,
+  "machine_block_exact_bytes": true,
+  "host_binding_members": 41,
+  "host_index_excludes_later_final_review": true,
+  "typed_final_plan_indexes": 5,
+  "typed_audit": {
+    "status": "PASS_EXPLICIT_EVIDENCE_INDEX_AUDIT",
+    "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+    "plan_sha256": "c55c325df0168bd622820612f7d0207eb4e53772636e318b309ed36040e693ed",
+    "candidate_sha256": "83b7a3091480653068ee2e68789b0dd063aeb3f4f567953b2072adfba55684a6",
+    "indexes": [
+      {
+        "id": "source-reviewed-external-artifacts",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-source-review01/reviewed-artifacts01.json",
+        "sha256": "2f4d98cf9cf5521cbea5879afc2dffad6105c29aaad300c16770e3af18550962",
+        "members_verified": 1
+      },
+      {
+        "id": "frozen-host-bindings",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-planning01/candidate21-host-bindings01.json",
+        "sha256": "8504b8fca187db7a32196e5442f090bf873eb39b9dd60c860c9853596aa1d305",
+        "members_verified": 41
+      },
+      {
+        "id": "packet-independent-review",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-artifacts-review01/evidence-index.json",
+        "sha256": "e4e4ab69d2c684774f3dbe739c726f67ef8487e790edb768fdedb721b0ba421d",
+        "members_verified": 1
+      },
+      {
+        "id": "independent-reviewed-external-artifacts",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-artifacts-review01/reviewed-artifacts01.json",
+        "sha256": "7bac4d9db2c57ff648cdf7ba3cfb07fe13f101657f90f455e1b780b34c10af88",
+        "members_verified": 2
+      },
+      {
+        "id": "final-static-references",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-planning01/final-static-reference-index01.json",
+        "sha256": "47fc32121f4353f8efbd09fe4a262f99ae105ef658f3e73edef5ff96787c98a0",
+        "members_verified": 54
+      }
+    ],
+    "members_verified": 99,
+    "source_provider_io": 0,
+    "native_delete": 0,
+    "execution_authority": false
+  },
+  "manifest_members": 56,
+  "manifest_excludes_self": true,
+  "R_P_and_final_branch_binding_separate": true,
+  "script_inputs": {
+    "write-frozen-documents01.py": {
+      "sha256": "3e0baab40fa34a44ff3bd9320fb68b16da396721371f31d4f0a976a1b3dd2727",
+      "bytes": 19599
+    },
+    "finalize-static-bindings01.py": {
+      "sha256": "b489ce27690d70b2f0db1a392e821bdb5951485d0909eae8f32c85fd7cadce0a",
+      "bytes": 6003
+    }
+  },
+  "stdout": "{\"machine_lines\": 18, \"host_binding_members\": 41, \"authorization\": \"NOT_RECEIVED\", \"schedule\": \"NOT_CREATED\"}\n{\"static_members\": 54, \"audit_indexes\": 5, \"audit_member_references\": 99, \"manifest_members\": 56, \"plan\": {\"sha256\": \"c55c325df0168bd622820612f7d0207eb4e53772636e318b309ed36040e693ed\", \"bytes\": 2216}, \"manifest\": {\"sha256\": \"cd826281bfd4ad5a8cb81eb4cc75bb2e35cbc39a65f0260ccd521391c1be1dc1\", \"bytes\": 12795}, \"native_delete\": 0, \"execution_authority\": false}\n"
+}

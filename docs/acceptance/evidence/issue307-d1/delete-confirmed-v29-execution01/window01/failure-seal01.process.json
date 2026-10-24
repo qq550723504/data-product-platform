@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-10-22T06:02:43.909399+00:00",
+  "finished_at": "2026-10-22T06:02:50.790350+00:00",
+  "exit_code": 0,
+  "entry": "examples/lifecycle-d1/window_six_support.py",
+  "action": "seal",
+  "new_send_stopped": true
+}

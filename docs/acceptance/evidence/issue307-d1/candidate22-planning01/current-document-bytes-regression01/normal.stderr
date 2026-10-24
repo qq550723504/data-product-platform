@@ -1,0 +1,14 @@
+.F.
+======================================================================
+FAIL: test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal (test_receipt_bytes.ReceiptBytesTests.test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c22\data-product-platform\examples\lifecycle-d1\test_receipt_bytes.py", line 71, in test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal
+    self.assertNotEqual(hashlib.sha256(blob).hexdigest(),hashlib.sha256(raw).hexdigest())
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'd7e2cbc6b529f5858aa1cdda3862e2fcdef7836b7aed1567575b45e4f0ee8640' == 'd7e2cbc6b529f5858aa1cdda3862e2fcdef7836b7aed1567575b45e4f0ee8640'
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.877s
+
+FAILED (failures=1)

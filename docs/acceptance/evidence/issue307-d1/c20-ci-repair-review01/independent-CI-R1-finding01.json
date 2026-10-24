@@ -1,0 +1,13 @@
+{
+  "status": "BLOCKED_PENDING_PREALLOCATION_SOURCE_CROSS_BINDING",
+  "id": "CI-R1",
+  "at": "2026-10-22T09:22:19.508190+00:00",
+  "source_path": "examples/lifecycle-d1/prepare-six-candidate.py",
+  "source_sha256_at_finding": "b48e594fdc89cba34e66caa976d21a2f9dbd65eae4e4a4ae7131cc715bbe2c9a",
+  "observation": "allocate() invokes preallocation_ci() without retaining its return value. It subsequently runs retained history and build(), whose artifact.host.source is captured independently from then-current HEAD. No equality to the exact successful-CI HEAD is required before Allocation.network/volume/create.",
+  "current_invariant": "All necessary exact-source CI must succeed before allocating resources bound to that P source.",
+  "trigger": "CI success for local/source HEAD A, then local HEAD/source changes to B during history/build; build host snapshot records B. Existing host_snapshot only verifies clean current HEAD, not equality to CI head A.",
+  "minimal_fix": "Retain CI head/provenance; before first resource creation require actual build host.source equals that head and reuse strict host byte verification. Bind the successful CI receipt into the new allocation. Keep original C20 allocation immutable and terminal.",
+  "regression": "Complete allocate must reject post-CI host HEAD mismatch or host byte drift before network/volume/container calls, while a matching source reaches the modeled allocation boundary.",
+  "scope": "No requirement for another host revision protocol, new source migration, early branch lock, resource cleanup or authority reuse."
+}

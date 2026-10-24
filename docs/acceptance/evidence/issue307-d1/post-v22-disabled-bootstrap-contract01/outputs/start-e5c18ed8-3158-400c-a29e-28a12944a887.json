@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-19T18:07:48.58370751Z",
+  "id": "e5c18ed8-3158-400c-a29e-28a12944a887",
+  "method": "PUT",
+  "path": "/minio/admin/v3/add-user",
+  "query": "accessKey=dpp307-contract-disabled"
+}

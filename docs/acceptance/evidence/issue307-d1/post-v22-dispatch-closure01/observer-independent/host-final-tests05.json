@@ -1,0 +1,110 @@
+{
+  "status": "PASS_OFFLINE_WHOLE_ENTRY_AND_PRIOR_TWO_PREPARATIONS_MOCK_ONLY",
+  "at": "2026-10-19T12:53:55.108845+00:00",
+  "whole_methods_per_mode": 20,
+  "prior_two_methods_per_mode": 2,
+  "prior_drift_subcombinations": 10,
+  "records": [
+    {
+      "mode": "normal",
+      "scope": "whole",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-whole-normal05-stdout.txt",
+          "sha256": "ad33566e7739ddde59a52e49b40a352ce5407631e4af9b5de542ed13d88bae55",
+          "bytes": 507
+        },
+        "stderr": {
+          "file": "host-final-whole-normal05-stderr.txt",
+          "sha256": "c09e69980a8424a5f51580ee2d254a71ceed32efd5c92d1fec1ad3cbc4d401c7",
+          "bytes": 3470
+        }
+      }
+    },
+    {
+      "mode": "normal",
+      "scope": "prior-two",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-closure01\\observer-independent\\test_prior_two_preparations_gate01.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-prior-two-normal05-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "host-final-prior-two-normal05-stderr.txt",
+          "sha256": "19e2915a833eb6291e6a28b673c3a6d778935e6aba71f03a6f72da1767466610",
+          "bytes": 397
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "scope": "whole",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-whole-optimized05-stdout.txt",
+          "sha256": "11029bf06ea26dd8457a882ea9e1d1b9a30184bd19c58ed89d9344eb31d1d859",
+          "bytes": 507
+        },
+        "stderr": {
+          "file": "host-final-whole-optimized05-stderr.txt",
+          "sha256": "a56035646a2c534f7401c518022d9740230a13a3eccf478d43a814f3aabc6489",
+          "bytes": 3470
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "scope": "prior-two",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-closure01\\observer-independent\\test_prior_two_preparations_gate01.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-prior-two-optimized05-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "host-final-prior-two-optimized05-stderr.txt",
+          "sha256": "df158636eab93c1aeb35193b6fab1884e57acfd952ebb4c967f1d05286c0515d",
+          "bytes": 397
+        }
+      }
+    }
+  ],
+  "source_start": 0,
+  "provider": 0,
+  "DELETE": 0
+}

@@ -1,0 +1,20 @@
+test_all_exact_scope_fields_are_bound_to_frozen_render (test_reference_candidate05_check.Candidate05OfflineEvidence.test_all_exact_scope_fields_are_bound_to_frozen_render) ... ok
+test_authority_and_old_execution_cannot_be_substituted (test_reference_candidate05_check.Candidate05OfflineEvidence.test_authority_and_old_execution_cannot_be_substituted) ... ok
+test_changed_render_artifact_and_matching_new_index_still_fail (test_reference_candidate05_check.Candidate05OfflineEvidence.test_changed_render_artifact_and_matching_new_index_still_fail) ... ok
+test_checkpoint_history_accounting_and_seal_are_required (test_reference_candidate05_check.Candidate05OfflineEvidence.test_checkpoint_history_accounting_and_seal_are_required) ... ok
+test_cli_has_no_authorization_or_native_options (test_reference_candidate05_check.Candidate05OfflineEvidence.test_cli_has_no_authorization_or_native_options) ... usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: delete
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --confirm
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --source HEAD
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --execution old
+ok
+test_complete_current_proposal_is_prepared_without_authority (test_reference_candidate05_check.Candidate05OfflineEvidence.test_complete_current_proposal_is_prepared_without_authority) ... ok
+test_native_scope_protection_and_iam_are_not_relaxed (test_reference_candidate05_check.Candidate05OfflineEvidence.test_native_scope_protection_and_iam_are_not_relaxed) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.321s
+
+OK

@@ -1,0 +1,11 @@
+{
+  "provenance": "Parent recorded the actual read-only subagent conclusions in this chat; later PASS does not overwrite these findings",
+  "reviewer": "/root/docker_linux_engine_repair",
+  "prior_conclusion": "BLOCKED",
+  "remaining_blockers_at_that_time": [
+    "Windows schema-attempts offset25 RSC was correct and returned 200 but no client/history commit; URL/href waits were insufficient",
+    "Exact client suspension/discard/commit cause remained UNKNOWN; do not declare all failures to be missing test waits"
+  ],
+  "original_trace_sha256": "cadb7651c2d4d5dc37e2119d754db8bf140f10c08feb25e3779ed9e1ea6ab871",
+  "resolution": "A separate held-read counterexample proved the application query identity gap; independent Suspense identities were reset, and both uninstrumented full04 collections passed. React issue equivalence is not claimed."
+}

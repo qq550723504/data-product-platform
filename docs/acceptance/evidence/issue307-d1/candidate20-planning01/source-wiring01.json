@@ -1,0 +1,49 @@
+{
+  "status": "NEW_UNFROZEN_SOURCE_WIRED_ONLY",
+  "execution": "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6",
+  "files": [
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_scope.go",
+      "before_sha256": "c104960954dfe8e5f52b5745fbcb97aa630398042d06c72891c6553a4a2e2c69",
+      "after_sha256": "7b7df2b8f5fc4d58dbb3ff698708047464a97cd59d99c609e517c45a8c75e806"
+    },
+    {
+      "path": "examples/lifecycle-d1/prepare-six-candidate.py",
+      "before_sha256": "db12d1348720144ef91480b7c58caa474d8addac9328d39de6cce4b566d46f52",
+      "after_sha256": "10c51a01e0116d72675aa84209c3644cc71706c33242141dfe68ad324a634659"
+    },
+    {
+      "path": "examples/lifecycle-d1/six_candidate_runtime.py",
+      "before_sha256": "37bd67e59ae3d78685e1bc8761434970f58c9f1e42cabfe42d7c2b110a1cf057",
+      "after_sha256": "9e748053988fc1c97d1f03dd5b385aa1c21e1d3125fbd2fd6390cfad65ec24cd"
+    },
+    {
+      "path": "examples/lifecycle-d1/freeze-six-candidate.py",
+      "before_sha256": "3ab2229c436fe7bd4337c03323c030ec9f426922e800510eb9db24331d20ff3c",
+      "after_sha256": "14526128f34e16d9d8b678bfa0c41aa4ca642dbe854e7ec602135ed46040c258"
+    },
+    {
+      "path": "examples/lifecycle-d1/window_six_support.py",
+      "before_sha256": "e2d1c0bbf5e80343fdf5980063ea006fe38aacc932d2a5e673ba01bdda36fc30",
+      "after_sha256": "6e1d9b43730ccac607ac29880e03ea81e10128f7f0d40c8568d6be1675bc8336"
+    },
+    {
+      "path": "examples/lifecycle-d1/test_retained_v26.py",
+      "before_sha256": "ecb72f884e3d7e3d9b345b6f460883009442cd5ba9e4422ee7694db2794fb7bf",
+      "after_sha256": "71006967135ffe7caf0fc7d61c3061622f3410ef6700772c1bb7986c447589c7"
+    },
+    {
+      "path": "examples/lifecycle-d1/test_retained_v27.py",
+      "before_sha256": "ba2c5b9f6b0c76e9e715d726c98e32fa16fa81a2a21a9c62c40f3a983ef2d0b3",
+      "after_sha256": "40ef1944b2df1d644341e665560eabaef0a4b115a53a122c6d3b8b48d3fa525f"
+    },
+    {
+      "path": "examples/lifecycle-d1/test_freeze_six_candidate.py",
+      "before_sha256": "5fefea35f1432da3b1e14e0259b479433be1392d409fc8b1b93186d946c1aa6e",
+      "after_sha256": "51695f8b5709916224072c1c785e3ed4b0f0ba9668d33c23b523e0ad59477299"
+    }
+  ],
+  "native_delete": 0,
+  "provider_io": 0,
+  "old_authorization_reused": false
+}

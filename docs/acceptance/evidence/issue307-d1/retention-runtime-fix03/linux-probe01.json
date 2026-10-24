@@ -1,0 +1,166 @@
+{
+  "status": "PASS_ISOLATED_LINUX_CUSTODY_FSYNC_WAIT_TESTS",
+  "failure": null,
+  "cid": "a2c0aeedd29f76a5b9cfde7f0a562c25926688f7ea4654736b18e5dec4466b0c",
+  "volumes": [
+    "d1-retention-probe-private-24d6ecfecd55",
+    "d1-retention-probe-output-ecdeafad1652",
+    "d1-retention-probe-budget-975765abf52d"
+  ],
+  "views": {
+    "private": {
+      "metadata": {
+        "CreatedAt": "2026-10-24T09:01:18Z",
+        "Driver": "local",
+        "Labels": {
+          "dpp.retention-maintenance": "preparation-only"
+        },
+        "Mountpoint": "/var/lib/docker/volumes/d1-retention-probe-private-24d6ecfecd55/_data",
+        "Name": "d1-retention-probe-private-24d6ecfecd55",
+        "Options": null,
+        "Scope": "local"
+      },
+      "linux": "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-private-24d6ecfecd55/_data",
+      "windows": "\\\\wsl.localhost\\docker-desktop\\mnt\\docker-desktop-disk\\data\\docker\\volumes\\d1-retention-probe-private-24d6ecfecd55\\_data",
+      "before": {
+        "": {
+          "type": "5",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 448,
+          "size": 0
+        },
+        "control.json": {
+          "type": "0",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 384,
+          "size": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        }
+      },
+      "after": {
+        "": {
+          "type": "5",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 448,
+          "size": 0
+        },
+        "control.json": {
+          "type": "0",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 384,
+          "size": 2,
+          "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        }
+      },
+      "after_host_update": {
+        "": {
+          "type": "5",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 448,
+          "size": 0
+        },
+        "control.json": {
+          "type": "0",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 384,
+          "size": 18,
+          "sha256": "cab401f73e320e379dfb3ca454c90ca459b8650b55b9b09cd42397f4766e2b80"
+        }
+      }
+    },
+    "output": {
+      "metadata": {
+        "CreatedAt": "2026-10-24T09:01:19Z",
+        "Driver": "local",
+        "Labels": {
+          "dpp.retention-maintenance": "preparation-only"
+        },
+        "Mountpoint": "/var/lib/docker/volumes/d1-retention-probe-output-ecdeafad1652/_data",
+        "Name": "d1-retention-probe-output-ecdeafad1652",
+        "Options": null,
+        "Scope": "local"
+      },
+      "linux": "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-output-ecdeafad1652/_data",
+      "windows": "\\\\wsl.localhost\\docker-desktop\\mnt\\docker-desktop-disk\\data\\docker\\volumes\\d1-retention-probe-output-ecdeafad1652\\_data",
+      "before": {
+        "": {
+          "type": "5",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 448,
+          "size": 0
+        }
+      },
+      "after": {
+        "": {
+          "type": "5",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 448,
+          "size": 0
+        },
+        "synthetic-fsync.json": {
+          "type": "0",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 384,
+          "size": 35,
+          "sha256": "b6494cbd7cf4bcfadd908f3b2624176630a7441eb2dfd50859edb13888448648"
+        }
+      }
+    },
+    "budget": {
+      "metadata": {
+        "CreatedAt": "2026-10-24T09:01:19Z",
+        "Driver": "local",
+        "Labels": {
+          "dpp.retention-maintenance": "preparation-only"
+        },
+        "Mountpoint": "/var/lib/docker/volumes/d1-retention-probe-budget-975765abf52d/_data",
+        "Name": "d1-retention-probe-budget-975765abf52d",
+        "Options": null,
+        "Scope": "local"
+      },
+      "linux": "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-budget-975765abf52d/_data",
+      "windows": "\\\\wsl.localhost\\docker-desktop\\mnt\\docker-desktop-disk\\data\\docker\\volumes\\d1-retention-probe-budget-975765abf52d\\_data",
+      "before": {
+        "": {
+          "type": "5",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 448,
+          "size": 0
+        }
+      },
+      "after": {
+        "": {
+          "type": "5",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 448,
+          "size": 0
+        },
+        "synthetic-fsync.json": {
+          "type": "0",
+          "uid": 10001,
+          "gid": 10001,
+          "mode": 384,
+          "size": 35,
+          "sha256": "b6494cbd7cf4bcfadd908f3b2624176630a7441eb2dfd50859edb13888448648"
+        }
+      }
+    }
+  },
+  "source_states_unchanged": true,
+  "retained_source_start": 0,
+  "retained_provider_io": 0,
+  "retention_write": 0,
+  "delete": 0,
+  "cleanup": 0
+}

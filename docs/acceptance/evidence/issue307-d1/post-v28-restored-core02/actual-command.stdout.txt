@@ -1,0 +1,4 @@
+=== RUN   TestV28ActualRestoredCommandAndReplay
+    v28_integration_test.go:104: full restored command append outbox event: routing obligation source is not configured [map[attempt:4d930776-fd98-4a86-8ed2-0a1eaad7dd34 case:P2 old_approval_already_revoked:false preserved_original:CONFIRMED DENIED]]
+--- FAIL: TestV28ActualRestoredCommandAndReplay (0.35s)
+FAIL

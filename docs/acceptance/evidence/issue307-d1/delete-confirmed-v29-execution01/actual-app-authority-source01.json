@@ -1,0 +1,8 @@
+{
+  "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "turn_id": "01a16187-457a-7a22-88b2-dc486c16571f",
+  "app_message_id": "01a16187-4686-7943-8fa7-a526bb53a2d5",
+  "turn_started_at": 1792637617,
+  "user_message_verbatim": "授权按已核对的 candidate19/v29 完整方案及全部冻结绑定执行，execution a5d1e569-f80e-4b38-8f32-d8139a30a077。仅在2026年10月22日新加坡14:00–14:40、全部新鲜前置通过后删除所列6份目标，每份最多一次、全局最多6次，UNKNOWN不重发；遵守全部保留限制，失败或过窗立即封存，不延长窗口，旧授权不复用。#332保持Draft、不合并，#307保持OPEN。\n",
+  "preceding_crosscheck_message_id": "msg_099c3841d45c7835016ad97a2c95dc81998d403eba6281ca59"
+}

@@ -1,0 +1,115 @@
+{
+  "mode": "normal01",
+  "optimization": 0,
+  "methods": 57,
+  "pass": 56,
+  "skip": 1,
+  "suites": [
+    {
+      "module": "test_remaining_six_window",
+      "methods": 5,
+      "pass": 5,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_remaining_six_window.txt",
+      "sha256": "7c05b248eef8617ca8d9526ecdcb8d611628c4c8a3a968f18fb734a1e8a81a58"
+    },
+    {
+      "module": "test_six_candidate_runtime",
+      "methods": 13,
+      "pass": 13,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_six_candidate_runtime.txt",
+      "sha256": "34f529198d395623ba361013e28cf90db8efaba3388c3fa9ca94d4c5435fb586"
+    },
+    {
+      "module": "test_freeze_six_candidate",
+      "methods": 1,
+      "pass": 1,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_freeze_six_candidate.txt",
+      "sha256": "023e38ad55eae5b9529aa69884544821447b64874e36a0d3123537f14359a614"
+    },
+    {
+      "module": "test_verify_six_native",
+      "methods": 2,
+      "pass": 2,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_verify_six_native.txt",
+      "sha256": "3594f84491007f40058794f82830ef718e26c175bb535f49a7e8496c31f9d199"
+    },
+    {
+      "module": "test_window_six_support",
+      "methods": 7,
+      "pass": 7,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_window_six_support.txt",
+      "sha256": "06cb544b02115bc3ed7af61d3127374ae2d21a0633d9136fe8527d3423e74705"
+    },
+    {
+      "module": "test_remaining_sequence",
+      "methods": 6,
+      "pass": 6,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_remaining_sequence.txt",
+      "sha256": "d3f72aafe3fae3e9395925bc93bb825f4af40f295de7f78ec0f54d1592abff65"
+    },
+    {
+      "module": "test_evidence_indexes",
+      "methods": 12,
+      "pass": 11,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [
+        {
+          "test": "test_symlink_member_and_parent_are_rejected (test_evidence_indexes.EvidenceIndexTests.test_symlink_member_and_parent_are_rejected)",
+          "reason": "OS does not permit symlinks for this account"
+        }
+      ],
+      "successful": true,
+      "log": "normal01-test_evidence_indexes.txt",
+      "sha256": "3a2730ea3c1d461f8bef7b1f699559ebb6ce1ee1b11f802ceaefa7a86bc7c36b"
+    },
+    {
+      "module": "test_six_native_entry",
+      "methods": 6,
+      "pass": 6,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_six_native_entry.txt",
+      "sha256": "a4f45e577ad57f9a50888ca326fc63347ded92f20460589d312b8a5ac2e5cc01"
+    },
+    {
+      "module": "test_retained_v26",
+      "methods": 5,
+      "pass": 5,
+      "errors": 0,
+      "failures": 0,
+      "skipped": [],
+      "successful": true,
+      "log": "normal01-test_retained_v26.txt",
+      "sha256": "4af1b7fb26c507cffe22ca890ffa14087073a2ea080902019464b27781e096a0"
+    }
+  ],
+  "unmocked_external_process_attempts": [],
+  "native_Source_Docker_provider_DELETE": 0
+}

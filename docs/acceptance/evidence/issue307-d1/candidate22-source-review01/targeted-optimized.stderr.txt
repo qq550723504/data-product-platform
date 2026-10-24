@@ -1,0 +1,21 @@
+test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build (test_preallocation_ci.PreallocationTests.test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build) ... ok
+test_complete_allocate_rejects_failed_pending_foreign_and_unknown_ci_before_history_or_build (test_preallocation_ci.PreallocationTests.test_complete_allocate_rejects_failed_pending_foreign_and_unknown_ci_before_history_or_build) ... ok
+test_dirty_or_untracked_host_cannot_adopt_old_green_ci_or_read_history (test_preallocation_ci.PreallocationTests.test_dirty_or_untracked_host_cannot_adopt_old_green_ci_or_read_history) ... ok
+test_fresh_exact_source_success_records_provenance_without_lock_or_resources (test_preallocation_ci.PreallocationTests.test_fresh_exact_source_success_records_provenance_without_lock_or_resources) ... ok
+test_byte_authority_terminal_topology_resource_and_budget_faults_fail_closed (test_retained_v31.RetainedV31Tests.test_byte_authority_terminal_topology_resource_and_budget_faults_fail_closed) ... ok
+test_complete_preservation_success_uses_host_reads_only (test_retained_v31.RetainedV31Tests.test_complete_preservation_success_uses_host_reads_only) ... ok
+test_archive_bytes_stable_across_inherited_timezones_and_all_members_stored (test_fixture_artifacts.ArtifactTests.test_archive_bytes_stable_across_inherited_timezones_and_all_members_stored) ... ok
+test_archive_rejects_path_escape_links_duplicates_and_extra_members (test_fixture_artifacts.ArtifactTests.test_archive_rejects_path_escape_links_duplicates_and_extra_members) ... C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'apps/platform/a'
+  return self._open_to_write(zinfo, force_zip64=force_zip64)
+ok
+test_cross_artifact_contract_and_schema_refuse_before_build (test_fixture_artifacts.ArtifactTests.test_cross_artifact_contract_and_schema_refuse_before_build) ... fatal: git cat-file: could not get object info
+ok
+test_full_build_uses_R_archive_and_P_host_as_distinct_facts (test_fixture_artifacts.ArtifactTests.test_full_build_uses_R_archive_and_P_host_as_distinct_facts) ... ok
+test_current_rule_keeps_original_blob_archive_and_both_checkout_modes (test_receipt_bytes.ReceiptBytesTests.test_current_rule_keeps_original_blob_archive_and_both_checkout_modes) ... ok
+test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal (test_receipt_bytes.ReceiptBytesTests.test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal) ... ok
+test_prior_rule_changes_indexed_markdown_outside_evidence_on_checkout (test_receipt_bytes.ReceiptBytesTests.test_prior_rule_changes_indexed_markdown_outside_evidence_on_checkout) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 11.160s
+
+OK

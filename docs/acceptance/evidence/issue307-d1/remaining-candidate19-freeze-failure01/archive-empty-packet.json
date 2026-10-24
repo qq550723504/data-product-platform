@@ -1,0 +1,13 @@
+{
+  "status": "PRESERVED_EMPTY_FIRST_FREEZE_PACKET_DIRECTORY",
+  "original": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c19\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate19",
+  "archived": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c19\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate19-freeze-failure01\\empty-packet",
+  "member_count": 0,
+  "original_creation_ns": 1792633952595810700,
+  "source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "binary_build_files_unchanged": true,
+  "root_cause": "Git child lacked process-local core.longpaths=true; no source/binary/candidate edits",
+  "source_io": 0,
+  "native_delete": 0,
+  "old_budget_refund": 0
+}

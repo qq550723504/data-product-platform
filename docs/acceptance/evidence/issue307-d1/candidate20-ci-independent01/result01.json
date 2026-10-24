@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-22T08:18:48.763373+00:00",
+  "attempt": "authenticated gh api readonly logs",
+  "results": [
+    {
+      "name": "host",
+      "job": 119709177861,
+      "args": [
+        "gh",
+        "api",
+        "repos/qq550723504/data-product-platform/actions/jobs/119709177861/logs",
+        "--allow-escape-sequences"
+      ],
+      "exit": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 133,
+      "stderr_sha256": "9636bd734b863e8409c22c1b55505e09e741b319ca443e71e158c4952d4124a1",
+      "stderr_text": "Get \"https://api.github.com/repos/qq550723504/data-product-platform/actions/jobs/119709177861/logs\": net/http: TLS handshake timeout\n"
+    },
+    {
+      "name": "go",
+      "job": 119709178160,
+      "args": [
+        "gh",
+        "api",
+        "repos/qq550723504/data-product-platform/actions/jobs/119709178160/logs",
+        "--allow-escape-sequences"
+      ],
+      "exit": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 133,
+      "stderr_sha256": "1eb724b63d8c673f079bc046ff7890063e854f8257bebe8fe420bd27c4e005f5",
+      "stderr_text": "Get \"https://api.github.com/repos/qq550723504/data-product-platform/actions/jobs/119709178160/logs\": net/http: TLS handshake timeout\n"
+    },
+    {
+      "name": "demo",
+      "job": 119709178414,
+      "args": [
+        "gh",
+        "api",
+        "repos/qq550723504/data-product-platform/actions/jobs/119709178414/logs",
+        "--allow-escape-sequences"
+      ],
+      "exit": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 133,
+      "stderr_sha256": "a798c68982954c4217f76721271bbf094bc0fed610daa11087d9d5b5a27cc6b1",
+      "stderr_text": "Get \"https://api.github.com/repos/qq550723504/data-product-platform/actions/jobs/119709178414/logs\": net/http: TLS handshake timeout\n"
+    }
+  ]
+}

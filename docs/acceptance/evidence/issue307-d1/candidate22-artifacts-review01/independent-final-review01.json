@@ -1,0 +1,107 @@
+{
+  "status": "PASS_BOUNDED_C22_FROZEN_NONDELETE_PREPARATION_REVIEW",
+  "reviewed_at": "2026-10-23T06:10:46.104381+00:00",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "profile": "candidate22/v32",
+  "host_source": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "packet_anchor": "10e39eede9c0b30f1cab1397a4a42c5698479862",
+  "remaining_blockers": [],
+  "window": {
+    "not_before": "2026-10-23T10:00:00Z",
+    "not_after": "2026-10-23T10:40:00Z",
+    "SGT": "2026-10-23 18:00-18:40",
+    "readonly_not_after": "2026-10-23T12:40:00Z"
+  },
+  "packet": {
+    "candidate.json": "d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db",
+    "bindings.json": "e63b908ca5269853478f7d5a65621327bc5f52ff2ff389de96707e0a137296af",
+    "confirmation-template.txt": "4a2aeed1f62bb10883a8b9f37b5c4da817bddb3580c22f59f54e942b6dd1b34d",
+    "source-freeze.json": "0766c339df95c00427713c3699d0fb65e1a9b463897ba37206d47dde95bd212f"
+  },
+  "authoritative_contracts": [
+    "AGENTS.md sections 1A,3,13,16,17",
+    "docs/acceptance/issue307-d1-execution-freeze-boundary.md",
+    "docs/acceptance/issue307-d1-v32-preparation-contract02.md",
+    "docs/acceptance/issue307-d1-v32-preparation-contract03.md"
+  ],
+  "scope": "Independent read-only review of the saved actual bounded non-delete preparation and current frozen packet. No new native/Docker/SQL/HTTP/provider call, enabling, permission or schedule mutation, source modification, Git ref update or deletion was performed by the reviewer.",
+  "verified_facts": [
+    "R81/P a50, strict shared scope/windows/policies, actual 12-member original build and private binary hashes,769 runtime archive members and2249 host source members cross-bind. Exact source CI run39903332833 is the completed13-job PR CI for a50; it is not final artifact HEAD CI or main CI.",
+    "Three-group actual non-delete preparation completed with failure=null, closure and profile revocation receipts. Source/clean/rehearsal restored Core fingerprints and fresh full-entry fingerprints agree. Source Core business Commands/object PUT/DELETE remain0. Isolated rehearsal Commands append legitimate new facts while historical multiset and existing send-claim multiset are preserved; cloned validation is not source execution.",
+    "18 historical copies include permanently excluded absent P1. The17 current exact versions comprise6 exact ordered target tuples and11 protected survivors. The143-line UTF8/LF/terminal-LF machine template is embedded byte-for-byte exactly once and agrees with candidate, private role-specific frozen files and windows.",
+    "Actual saved complete native entry PASS covers17 versions/6targets/11survivors,53 disabled known IAM users:52sole-policy/no-groups plus the unique fixed NONE/no-groups partial,15 fresh NoSuchUser, and P1 exact NoSuchVersion404. Independent frozen Windows file-only checker replay passes all3 saved source groups7/6/4 using official policy Equals. Object-lock400 is not object absence.",
+    "All179 actual technical request start/observation pairs in saved native evidence have unique linked identities and GET/HEAD methods, native audit linkage and group69/58/52 counts. amount remains NOT_ASSESSED. Independent replay has no provider I/O; original technical native observations are real saved author runs.",
+    "Role distinction is explicit: all30 sender/root permission files have Enabled=false and exact candidate/template/window/count bindings. Six non-delete source-case profiles intentionally have NonDelete=true,Base.Enabled=true,Rehearsal=false with fixed future10:00-10:40 window; their owners are stopped and new authorization/schedule absent. Six separate SyntheticOnly read-only recovery profiles expire12:40 and contain neither DeleteSecret nor WirePrivateKey. Operator/root private mounts, whitelist memberships and role-specific credentials match the frozen contract.",
+    "All75 actual private backup originals were independently rehashed:66old=63complete+3failedpartial and9new.33budgets retain30old including used markers plus3new initially empty execution/nonce-owned budgets withUID/GID10001, full reconstructed mounted-CID ownership sets and no source/clean/rehearsal volume aliasing. Pins,old failures,UNKNOWN,attempts and costs remain historical facts.",
+    "Actual saved final cold inventory is the exact1085 unique union996old+86newowners+3newtechnicalreaders,allstopped/PID0/noports/no-restart.30permissionsfalse,new3emptybudget and old-retained gate results match allocation.75host-binding members audit successfully. New authorization NOT_RECEIVED and schedule NOT_CREATED were verified from the final saved absence receipt and current local paths; old schedules are PAUSED or ABSENT.",
+    "Five v29 receipt restorations were previously independently verified against124issued originals and preserved bad-LF backups. Packet anchor10e now contains their exact original rawCRLF Git blobs. Failed allocate01/bounded01 and original drift receipts remain unchanged; later successful attempt02 is a separate fact.",
+    "Four actual approval-document byte proofs bind current confirmation/runbook/contract03/childattrs bytes through real temporary Git blob/archive/autocrlftrue/false checkout; current filtered/raw Git object hashes independently agree. Bound author publication-secret-scan02 compares54actual secret values over11029files and12archive members with0findings; reviewer did not claim an independent full secret rescan.",
+    "Future sequence remainsP2→T1→T2→H2A→M1A→M1B,max1each/max6total,UNKNOWNnoresend. H0/H1zero-send and physical-owner/profile/IAM/gateway closure precede signedNOT_SENT. H2requiresrealA204 beforewitness/holds/revoke/lostresponse,Bneverdispatches. M1requiresAabsence thenBUNKNOWN+C-onlycheckpoint rawcopy/hash beforeBlookup;Cneverdeletes. No new sending or enabling after10:40;readonly12:40does not re-enable or extend send authority."
+  ],
+  "observations": [
+    {
+      "id": "REVIEWER-CASE-ENABLED-ASSUMPTION",
+      "status": "CORRECTED_REVIEWER_ASSUMPTION_NOT_PACKET_FAILURE",
+      "evidence": "independent-check-assumption01.json",
+      "detail": "Initial reviewer helper expected all case Base.Enabled=false; canonical preparation gate requires enabled future-window non-delete case profiles. All original check/correction bytes remain; no source or frozen case was changed."
+    },
+    {
+      "id": "HISTORICAL-SUBNET-AND-CI",
+      "status": "HISTORY_PRESERVED",
+      "detail": "Original source-review01 PASS is historical, superseded by actual subnet blocker and current a50 source-review02 PASS. Old Hop CI failure remains finite UNKNOWN; new exact a50 full source CI independently completed. No old failed receipt was rewritten."
+    }
+  ],
+  "execution_boundaries": {
+    "source_six_send_and_recover": "NOT_RUN",
+    "source_H2_and_mixed_outcomes": "NOT_RUN",
+    "native_delete": 0,
+    "source_business_mutations": 0,
+    "new_delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "old_authorization_reused": false,
+    "cleanup": 0,
+    "hold_release": 0,
+    "bypass": 0,
+    "independent_native_provider_calls": 0,
+    "final_artifact_HEAD_PR_CI": "PENDING_SEPARATE_PUBLICATION_GATE",
+    "native_branch_lock": "PENDING_FINAL_HEAD_CI",
+    "execution_binding": "NOT_CREATED",
+    "PR332": "OPEN_DRAFT_UNMERGED",
+    "issue307": "OPEN",
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "indexes": {
+    "reviewed_artifacts": {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/reviewed-artifacts01.json",
+      "sha256": "0a757134d0d03a47c7ee878a8b7404004dc6bae2f1fa52b99c7e7a6da702f514",
+      "bytes": 1172374,
+      "count": 4931,
+      "audit": {
+        "id": "candidate22-artifacts-review01-reviewed-artifacts01",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/reviewed-artifacts01.json",
+        "sha256": "0a757134d0d03a47c7ee878a8b7404004dc6bae2f1fa52b99c7e7a6da702f514",
+        "members_verified": 4931
+      }
+    },
+    "evidence": {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/evidence-index.json",
+      "sha256": "72fe68c21fc2ba525b65d3cc4cf708c382c2dae0d720ae4f1d41f444ebd3a288",
+      "bytes": 3117,
+      "count": 19,
+      "audit": {
+        "id": "candidate22-artifacts-review01-evidence-index",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/evidence-index.json",
+        "sha256": "72fe68c21fc2ba525b65d3cc4cf708c382c2dae0d720ae4f1d41f444ebd3a288",
+        "members_verified": 19
+      }
+    }
+  },
+  "limitations": [
+    "Saved actual native observations were independently audited as files and file-only replayed; no live native observations were repeated.",
+    "Final static plan/manifest, final artifact commit and exactHEAD CI, native branch lock and execution-binding remain subsequent separate gates. This report creates no execution authority.",
+    "Approval excludes speculative cross-slice hardening and follows the current finite AGENTS/contracts boundary."
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PRIOR_READ_FAILURE_BEFORE_PUSH_INTENT",
+  "at": "2026-10-23T06:13:32.556595+00:00",
+  "failed_endpoint": "GET branch protection",
+  "push_attempted": false,
+  "source_or_HEAD_changed": false,
+  "originals_preserved": true
+}

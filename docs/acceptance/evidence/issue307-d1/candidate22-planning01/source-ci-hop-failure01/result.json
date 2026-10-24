@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "gh",
+    "api",
+    "repos/qq550723504/data-product-platform/actions/jobs/120243918908/logs"
+  ],
+  "exit": 1,
+  "at": "2026-10-23T04:48:54.622288+00:00",
+  "run": 39901487931,
+  "job": 120243918908,
+  "head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "native_delete": 0
+}

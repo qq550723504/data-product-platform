@@ -1,0 +1,11 @@
+{
+  "name": "actual-R4-ci-entry",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+  ],
+  "started_at": "2026-10-24T11:09:59.693086+00:00",
+  "finished_at": "2026-10-24T11:10:43.160729+00:00",
+  "returncode": 0
+}

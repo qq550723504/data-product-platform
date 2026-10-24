@@ -1,0 +1,46 @@
+{
+  "status": "PASS_INDEPENDENT_R_P_ARTIFACT_CLONE_EVIDENCE_AUDIT",
+  "at": "2026-10-22T07:58:38.538583+00:00",
+  "runtime_source": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "rehearsal_host_source": "a23316fec0e3085475ee84b5de956ab9123b298c",
+  "archive": {
+    "sha256": "1562acb9e667053b096f63bc6611d1f5084782b5089661cf1ebd1ce94b707bf6",
+    "bytes": 1821418,
+    "members": 769
+  },
+  "groups": [
+    {
+      "group": "business-races",
+      "exact_copies": 3,
+      "unchanged_original_relations": 194
+    },
+    {
+      "group": "late-hold",
+      "exact_copies": 1,
+      "unchanged_original_relations": 194
+    },
+    {
+      "group": "mixed",
+      "exact_copies": 2,
+      "unchanged_original_relations": 194
+    }
+  ],
+  "schema_gates": {
+    "ALLOW": 3,
+    "DENY": 3
+  },
+  "source_closed_observations": 12,
+  "command_counts": {
+    "inspect": 14,
+    "start": 1,
+    "exec": 37,
+    "stop": 1
+  },
+  "journal_commands": 53,
+  "source_start_exec": 0,
+  "source_migration": false,
+  "provider_delete": 0,
+  "reviewed_spec_from_commit": "a23316fec0e3085475ee84b5de956ab9123b298c",
+  "new_R72ec_test_only_delta_not_covered_by_historical_native_source_claim": true,
+  "scope": "Saved actual evidence audit only. No source/clone/container operation performed by reviewer. Original role/ACL preservation not claimed by --no-owner --no-acl clone restore. Native build witness used earlier P a233; R unchanged. Final P CI additions reviewed separately."
+}

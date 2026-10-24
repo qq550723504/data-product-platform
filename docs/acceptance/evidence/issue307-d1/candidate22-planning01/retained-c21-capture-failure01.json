@@ -1,0 +1,14 @@
+{
+  "status": "FAILED_HOST_ONLY_OLD_ISSUED_RECEIPT_CHECKOUT_BYTES",
+  "script_sha256": "c4a6baf766e16fac08f1d618b65ac7ce08ac0a42e9b7783aa1dbfc1e0ee266da",
+  "error": "old evidence checkout bytes differ: docs/acceptance/issue307-d1-v31-preparation.md",
+  "path": "docs/acceptance/issue307-d1-v31-preparation.md",
+  "new_checkout_sha256": "a0b9be7a336b7d9ffa6b3fe8f68bd2a191f7817e1bedebaee214749cfa78b2d7",
+  "old_issued_sha256": "14f81fdeffc338d399b7a6c12f33ab86089dde4b7481575ca0c6a3c03bdef24c",
+  "new_checkout_CRLF": 27,
+  "old_issued_CRLF": 0,
+  "LF_equivalent": true,
+  "source_start": 0,
+  "native_delete": 0,
+  "new_resource_allocation": 0
+}

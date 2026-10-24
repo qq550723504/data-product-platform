@@ -1,0 +1,18 @@
+{
+  "status": "FAIL_REAL_POSTGRES_COMPOSITION",
+  "at": "2026-10-19T12:31:18.660216+00:00",
+  "exit": 1,
+  "scratch_cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "pass": [],
+  "skip": [],
+  "failure_output": [
+    "--- FAIL: TestOldDispatchClosureThreeCommandCompositionPreservesFacts (0.00s)\n"
+  ],
+  "channels": {
+    "stdout": "e5d484af8dc5264fc608f52b9f3d06ec89363602237030504a3965e6c40b5aee",
+    "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_environment_changes": 0,
+  "provider_DELETE": 0,
+  "scratch_stopped_PID0": true
+}

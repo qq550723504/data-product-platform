@@ -51,8 +51,11 @@ var name = regexp.MustCompile(`^lifecycle307-[a-z0-9-]+$`)
 
 func digest(raw []byte) string { h := sha256.Sum256(raw); return hex.EncodeToString(h[:]) }
 func readReceipt(dir string) (receipt, error) {
+	return readNativeContract(dir, "native-verification.json", "PASS_EXACT_NATIVE_READONLY", "remaining.json")
+}
+func readNativeContract(dir, file, status, source string) (receipt, error) {
 	var r receipt
-	raw, e := os.ReadFile(filepath.Join(dir, "native-verification.json"))
+	raw, e := os.ReadFile(filepath.Join(dir, file))
 	if e != nil {
 		return r, e
 	}
@@ -68,7 +71,7 @@ func readReceipt(dir string) (receipt, error) {
 	// Missing zero-valued safety fields must not masquerade as explicit zero.
 	var fields map[string]json.RawMessage
 	_ = json.Unmarshal(raw, &fields)
-	if len(fields) != 9 || string(fields["delete"]) != "0" || string(fields["mutations"]) != "0" || r.Status != "PASS_EXACT_NATIVE_READONLY" || !hash.MatchString(r.Inventory) || r.Source != "remaining.json" {
+	if len(fields) != 9 || string(fields["delete"]) != "0" || string(fields["mutations"]) != "0" || r.Status != status || !hash.MatchString(r.Inventory) || r.Source != source {
 		return r, errors.New("native receipt incomplete or unsafe")
 	}
 	return r, nil
@@ -107,7 +110,18 @@ func check(baseline, fresh, group string) (result, error) {
 	if e != nil {
 		return out, e
 	}
-	if a.Group != group || b.Group != group || len(a.Copies) != count[0] || len(b.Copies) != count[0] || a.Inventory != b.Inventory || !reflect.DeepEqual(a.Users, b.Users) || len(a.Users) != count[1] || len(a.Policies) != count[1] || len(b.Policies) != count[1] {
+	if len(a.Copies) != count[0] || len(b.Copies) != count[0] || a.Inventory != b.Inventory {
+		return out, errors.New("inventory membership differs")
+	}
+	return compareNativeReceipts(baseline, fresh, group, a, b, count[1])
+}
+
+func compareNativeReceipts(baseline, fresh, group string, a, b receipt, identities int) (result, error) {
+	return compareNativeReceiptsWithDormant(baseline, fresh, group, a, b, identities, "")
+}
+func compareNativeReceiptsWithDormant(baseline, fresh, group string, a, b receipt, identities int, dormant string) (result, error) {
+	out := result{Group: group}
+	if a.Group != group || b.Group != group || len(a.Copies) != len(b.Copies) || !reflect.DeepEqual(a.Users, b.Users) || len(a.Users) != identities || len(a.Policies) != identities || len(b.Policies) != identities {
 		return out, errors.New("inventory or disabled identity binding differs")
 	}
 	for i := range a.Copies {
@@ -119,15 +133,18 @@ func check(baseline, fresh, group string) (result, error) {
 			return out, errors.New("exact version/content/protection differs")
 		}
 	}
-	if e = policyFiles(baseline, a.Policies); e != nil {
+	if e := policyFiles(baseline, a.Policies); e != nil {
 		return out, e
 	}
-	if e = policyFiles(fresh, b.Policies); e != nil {
+	if e := policyFiles(fresh, b.Policies); e != nil {
 		return out, e
 	}
 	for user, n := range a.Users {
 		if user == "" {
 			return out, errors.New("empty disabled identity")
+		}
+		if user == dormant && dormant != "" && n == "" {
+			continue
 		}
 		if _, ok := a.Policies[n]; !ok {
 			return out, errors.New("user policy missing")
@@ -164,19 +181,51 @@ func check(baseline, fresh, group string) (result, error) {
 		out.Policies = append(out.Policies, comparison{n, digest(x), digest(y), true})
 	}
 	out.Status = "PASS_COMPLETE_NATIVE_AGGREGATION"
-	out.Copies = count[0]
+	out.Copies = len(b.Copies)
 	return out, nil
 }
 func main() {
 	baseline := flag.String("baseline", "", "frozen readonly receipt directory")
 	fresh := flag.String("fresh", "", "new readonly receipt directory")
 	group := flag.String("group", "", "finite group")
+	maintenance := flag.Bool("retention-maintenance", false, "exact-two maintenance before/after read-only contract")
+	postV22 := flag.Bool("post-v22", false, "explicit post-v22 17-version contract")
+	six := flag.Bool("six", false, "explicit six-target current source/restore contract")
+	exportSix := flag.Bool("six-expectation", false, "file-only new expectation, never native observation")
+	frozen := flag.String("frozen", "", "original exact inventory bytes")
+	mapping := flag.String("mapping", "", "frozen source/restore environment map")
+	expectation := flag.String("expectation", "", "post-v22 public execution bindings")
+	inventory := flag.String("inventory", "", "actual present inventory bytes")
 	flag.Parse()
 	if *baseline == "" || *fresh == "" || *group == "" || flag.NArg() != 0 {
 		fmt.Fprintln(os.Stderr, "exact baseline/fresh/group required")
 		os.Exit(1)
 	}
-	out, e := check(*baseline, *fresh, *group)
+	var out result
+	var e error
+	if *maintenance {
+		if *exportSix || *six || *postV22 || *mapping != "" || *frozen != "" {
+			e = errors.New("one maintenance contract required")
+		} else {
+			out, e = checkRetentionMaintenance(*baseline, *fresh, *group, *expectation, *inventory)
+		}
+	} else if *exportSix && !*six && !*postV22 && *mapping == "" && *expectation == "" && *frozen != "" {
+		e = exportSixExpected(*baseline, *fresh, *group, *inventory, *frozen)
+		out.Status = "SIX_EXPECTATION_EXPORTED_NOT_OBSERVATION"
+		out.Group = *group
+	} else if *exportSix || *frozen != "" {
+		e = errors.New("exact expectation generation arguments required")
+	} else if *six && !*postV22 {
+		out, e = checkSix(*baseline, *fresh, *group, *expectation, *inventory, *mapping)
+	} else if *six || *mapping != "" {
+		e = errors.New("exactly one native audit contract required")
+	} else if *postV22 {
+		out, e = checkPostV22(*baseline, *fresh, *group, *expectation, *inventory)
+	} else if *expectation != "" || *inventory != "" {
+		e = errors.New("post-v22 arguments require explicit mode")
+	} else {
+		out, e = check(*baseline, *fresh, *group)
+	}
 	if e != nil {
 		fmt.Fprintln(os.Stderr, "readonly aggregation denied:", e)
 		os.Exit(1)

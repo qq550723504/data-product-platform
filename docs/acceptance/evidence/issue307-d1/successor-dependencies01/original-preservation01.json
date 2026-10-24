@@ -1,0 +1,23 @@
+{
+  "status": "PASS_PRIOR_EVIDENCE_AND_WORKTREE_PRESERVED",
+  "original_worktree": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retirement\\data-product-platform",
+  "original_HEAD": "182946ca8a130e97da06418b50fbabef58ab90bb",
+  "original_worktree_clean": true,
+  "index_checks": [
+    {
+      "id": "resource-retirement01",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/resource-retirement01/evidence-index01.json",
+      "sha256": "af1b0b25fc86e97048f509af7c52ec6f6d8b3d171b4b9bb3766cded15bfab89c",
+      "members_verified": 182
+    },
+    {
+      "id": "resource-retirement-review01",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/resource-retirement-review01/evidence-index01.json",
+      "sha256": "3e5d0b5199d0e891dbf0479b7c27624597ace5927544ab3f6264013bcd5bc791",
+      "members_verified": 48
+    }
+  ],
+  "current_reviewed_bytes_match": true
+}

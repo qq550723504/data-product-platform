@@ -1,0 +1,123 @@
+{
+  "status": "PASS_FRESH_PR_HEAD_AND_13_PR_JOBS_ADMIN_READ_UNCONFIRMED",
+  "observed_at": "2026-10-23 03:26:27 UTC",
+  "source": "GitHub connector GET responses",
+  "head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "branch": "codex/issue307-post-v22-dispatch-closure",
+  "repository": "qq550723504/data-product-platform",
+  "pr": 332,
+  "draft": true,
+  "state": "open",
+  "merged": false,
+  "run": 39773563527,
+  "attempt": 1,
+  "jobs": [
+    {
+      "id": 119806800929,
+      "name": "classify-changes",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806890843,
+      "name": "go-platform",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806890854,
+      "name": "gx-smoke",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806890932,
+      "name": "label-studio-smoke",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806890959,
+      "name": "hop-smoke",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806890969,
+      "name": "splink-smoke",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806890978,
+      "name": "web-console",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806890987,
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806891004,
+      "name": "temporary-container-contracts (windows-latest)",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806891477,
+      "name": "browser-contracts / web-browser-contracts",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806891479,
+      "name": "demo / demo-lifecycle",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119806891502,
+      "name": "live-core / live-core-browser",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119811315881,
+      "name": "required",
+      "head_sha": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "old_head_CI_only": true,
+  "new_execution_source_CI": "NOT_RUN",
+  "main_CI": "NOT_CLAIMED",
+  "branch_protection": "UNCONFIRMED_CURRENT_ADMIN_ENDPOINT_FORBIDDEN_BY_INTEGRATION",
+  "local_administration_route": "TLS_HANDSHAKE_TIMEOUT_NO_MUTATION",
+  "protection_connector_error": {
+    "error": "GitHub API error 403: {\"message\":\"Resource not accessible by integration\",\"documentation_url\":\"https://docs.github.com/rest/branches/branch-protection#get-branch-protection\",\"status\":\"403\"}",
+    "error_code": "FORBIDDEN",
+    "error_data": {
+      "message": "Resource not accessible by integration",
+      "documentation_url": "https://docs.github.com/rest/branches/branch-protection#get-branch-protection",
+      "status": "403"
+    }
+  },
+  "branch_unlock": 0,
+  "native_delete": 0
+}

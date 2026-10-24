@@ -1,0 +1,22 @@
+{
+  "status": "PASS_ROOT_READBACK_INDEPENDENT_FROZEN_REVIEW",
+  "report_sha256": "9992e0d7451526896489a4c8825b11dfce43414e664fc01509b8985d585c1a35",
+  "indexes": [
+    {
+      "id": "reviewed-artifacts01.json",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/reviewed-artifacts01.json",
+      "sha256": "0a757134d0d03a47c7ee878a8b7404004dc6bae2f1fa52b99c7e7a6da702f514",
+      "members_verified": 4931
+    },
+    {
+      "id": "evidence-index.json",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/evidence-index.json",
+      "sha256": "72fe68c21fc2ba525b65d3cc4cf708c382c2dae0d720ae4f1d41f444ebd3a288",
+      "members_verified": 19
+    }
+  ],
+  "execution_authority": false,
+  "native_delete": 0
+}

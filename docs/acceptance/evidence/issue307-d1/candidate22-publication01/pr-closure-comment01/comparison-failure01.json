@@ -1,0 +1,6 @@
+{
+  "status": "RETAIN_FIRST_COMPARISON_ERROR",
+  "cause": "Compared API body against in-memory text without the exact body-file terminal LF",
+  "posted_message_changed": false,
+  "readback_file_bytes_equal": true
+}

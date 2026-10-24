@@ -1,0 +1,35 @@
+{
+  "runs": [
+    {
+      "module": "test_verify_six_native",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_verify_six_native",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_window_six_support",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_window_six_support",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_six_candidate",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_six_candidate",
+      "optimized": true,
+      "exit_code": 0
+    }
+  ],
+  "scope": "recorded Docker/Linux/checker models; real local Ed25519 only; no retained Native"
+}

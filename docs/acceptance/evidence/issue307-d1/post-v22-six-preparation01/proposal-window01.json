@@ -1,0 +1,13 @@
+{
+  "status": "PROPOSED_WINDOW_NOT_AUTHORIZED",
+  "profile": "candidate13/v23",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "window_sgt": "2026-10-20 14:00-14:40",
+  "not_before": "2026-10-20T06:00:00Z",
+  "not_after": "2026-10-20T06:40:00Z",
+  "recovery_end": "2026-10-20T08:40:00Z",
+  "human_window_reply": "10月20日14:00–14:40（推荐）",
+  "deletion_authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "old_authority_reused": false
+}

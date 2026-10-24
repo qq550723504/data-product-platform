@@ -1,0 +1,16 @@
+{
+  "status": "PRESERVED_AUXILIARY_OBSERVATION_FAILURE",
+  "observed_at": "2026-10-21T10:07:50.244929+00:00",
+  "original_tool_chunk": "bc94e3",
+  "command": "python -X utf8 -B docs/acceptance/evidence/issue307-d1/candidate18-crosscheck01/observe-manifest-build01.py",
+  "exit_code": 1,
+  "original_script_sha256": "42b2f2958680a7360115fea0cdf9253471d357fd2e7973c8e6854f3ff7e07fe2",
+  "original_error": "ValueError: ZIP source membership differs",
+  "cause": "Auxiliary wrapper incorrectly equated 2129 suffix-selected source members with the full Git archive, which contains 2184 files and 230 directories. The frozen generator deliberately selects only stated suffixes in source-freeze.files. All ZIP bytes remain frozen by the original SHA.",
+  "correction": "Separate original full Git archive membership from suffix-selected frozen source and raw/LF checks; preserve original observer unchanged. No candidate, source, config, binary or runtime gate change.",
+  "replacement_observation": "observe-manifest-build02.py",
+  "native_delete": 0,
+  "provider_io": 0,
+  "source_start": 0,
+  "execution_authority": false
+}

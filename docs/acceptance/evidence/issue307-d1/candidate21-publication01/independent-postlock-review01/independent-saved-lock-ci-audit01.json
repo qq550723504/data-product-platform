@@ -1,0 +1,106 @@
+{
+  "status": "PASS_SAVED_POSTLOCK_API_CI_ARTIFACT_AND_STATIC_BINDINGS_FILE_AUDIT",
+  "final_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "ci_run": 39773563527,
+  "ci_attempt": 1,
+  "ci_event": "pull_request",
+  "jobs_checks": 13,
+  "unresolved_threads_in_saved_snapshot": 0,
+  "thread_snapshot_hasNextPage": false,
+  "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "prior_protection": "NATIVE_CONFIRMED_ABSENT",
+  "change_kind": "CREATE_EXACT_NATIVE_RULE_FROM_UNPROTECTED_TO_FROZEN",
+  "nonfreeze_dictionary_equality": "NOT_APPLICABLE_NO_PRIOR_POLICY",
+  "existing_permissions_relaxed": false,
+  "mutation_native_single_call_five_flags_only": true,
+  "source_API_requests": 17,
+  "native_atomic_CAS_claim": false,
+  "auto_unlock": false,
+  "artifact_fields": {
+    "candidate_sha256": "813b941ff3d1be0d9b83f81bcd5dd532bd1f6da4df81181d2a1d1ecae7d34867",
+    "bindings_sha256": "e47174bddd358850896e85d270b9a65bcf144cb783a862e14b772077d4314ca9",
+    "template_sha256": "960d08299c6f06aa0b8528fd6aec28ea8c31c2b8ab7cd587fc74ca8e5d6b7691",
+    "source_freeze_sha256": "a38c14fc70114147c514ba97ba21268724614ed8f8df0525e7deb5babbd3d939",
+    "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+    "reader": "4483059c0028b27868c1d2bf564abb02d23b1a68e2421d6f57a7afa1bbd5c79a",
+    "sender": "21186be6763fc76e56d5e000384dbae1aa2b6e39f2155bfeb1a9d2a03c8821ae",
+    "owner": "e604b4b71fec2e5cb3e66b199b68ab5d7301cf39c8bb8a273226d170e9d06c67"
+  },
+  "binding_sha256": "f27a617f278fcbaf64db29ddf536d5816d88acaba8a0d760280eb23bbe55d0de",
+  "public_private_same_bytes": true,
+  "source_saved_native_snapshots_replayed_without_network": true,
+  "typed_final_static_plan": {
+    "status": "PASS_EXPLICIT_EVIDENCE_INDEX_AUDIT",
+    "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+    "plan_sha256": "dcc6c136e40950aa6c98a79e3673f820f6885993e82cdba65a5459d7ba83aedc",
+    "candidate_sha256": "813b941ff3d1be0d9b83f81bcd5dd532bd1f6da4df81181d2a1d1ecae7d34867",
+    "indexes": [
+      {
+        "id": "source-review",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-source-review01/evidence-index.json",
+        "sha256": "951cd1c24809f75d5a63ccdea7aa83d65ad4f1db5f808bb9d8ea1a0130a238c6",
+        "members_verified": 82
+      },
+      {
+        "id": "nondelete-preparation",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate21-preparation01/non-delete-evidence-index.json",
+        "sha256": "c4a047656f5ff5c860aea2d4fbe207bbc755f0c49bfd016759789fc26fc3912e",
+        "members_verified": 1430
+      },
+      {
+        "id": "source-review-report-binding",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate21/source-review-binding-index.json",
+        "sha256": "2bca8f8b476252b113eab55a432f1782e727ba1996455804ae37e5c7e472c505",
+        "members_verified": 2
+      },
+      {
+        "id": "source-reviewed-external-artifacts",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-source-review01/reviewed-artifacts01.json",
+        "sha256": "2a3c61f204b558da8c845d2f18aa472603e9c04d0440feb3d8d90217a6ee30b4",
+        "members_verified": 1121
+      },
+      {
+        "id": "frozen-host-bindings",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-planning01/candidate21-host-bindings01.json",
+        "sha256": "f257059fe67dd04e533ba91f9e3878c4246c55c1272299f7f1c531fb497a0596",
+        "members_verified": 74
+      },
+      {
+        "id": "packet-independent-review",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-artifacts-review01/evidence-index.json",
+        "sha256": "6f2787fc77bc41d2bb53ccbcce0c9306c5900dd6c42acb80e37515ce4b6246bf",
+        "members_verified": 20
+      },
+      {
+        "id": "independent-reviewed-external-artifacts",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-artifacts-review01/reviewed-artifacts01.json",
+        "sha256": "b8e5043d5938f00b78660150eb96443da6dbe999ceaf07d5209221b3f14f5b4a",
+        "members_verified": 2537
+      },
+      {
+        "id": "final-static-references",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate21-planning01/final-static-reference-index01.json",
+        "sha256": "f0e53218e82d5f14c3772f3a1d670be7e5be9c51a26ae1ca9308009f02eea81c",
+        "members_verified": 1100
+      }
+    ],
+    "members_verified": 6366,
+    "source_provider_io": 0,
+    "native_delete": 0,
+    "execution_authority": false
+  },
+  "manifest_members_rehashed": 1102,
+  "new_authorization": "NOT_RECEIVED",
+  "new_schedule": "NOT_CREATED_AS_SAVED_PREPARATION_FACT",
+  "actual_reviewer_Docker_Core_provider_GitHub_IO": 0,
+  "native_delete": 0,
+  "proof_freshness": "Saved observations12:01-12:05UTC only; future window still requires live checks"
+}

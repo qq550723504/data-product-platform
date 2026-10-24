@@ -1,0 +1,33 @@
+{
+  "role": "six-verify-native",
+  "group": "late-hold",
+  "cid": "89ef2085f5dc62fd4dee7cea5576900a021ea9b6f1c6e66007dac1b5ecc8375f",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate18-maintenance-restore",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:b7640984585916a9b886b0c6d335e8f558363cd0b61e4d49606776ccedc7c6ba",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate18\\late-hold\\maintenance-restore,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate18\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate18\\late-hold\\outputs\\maintenance-restore,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "six-verify-native"
+  ]
+}

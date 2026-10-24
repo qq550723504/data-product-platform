@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "candidate_sha256": "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+  "indexes": [
+    {
+      "id": "source-review",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate18-source-review01/evidence-index.json",
+      "sha256": "8994847872b0c232ade5809da5afc0c70076b4b15d53545225a6133bd37e9f55",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/candidate18-source-review01",
+      "expected_count": 180,
+      "expected_status": "C18_SOURCE_REVIEW_EVIDENCE_INDEX"
+    },
+    {
+      "id": "nondelete-preparation",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/non-delete-evidence-index.json",
+      "sha256": "337158214ffdf7d5c18f133878bc767d11ed406987f59f2be19aafdf3acccc4e",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01",
+      "expected_count": 1274,
+      "expected_status": "SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX"
+    },
+    {
+      "id": "source-review-report-binding",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate18/source-review-binding-index.json",
+      "sha256": "91b4ff10db4fc34cc76e10eb4c5bef4594dd554442ed33b81d436a3b2e09035e",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 2,
+      "expected_status": "SIX_SOURCE_REVIEW_BINDING_INDEX"
+    }
+  ]
+}

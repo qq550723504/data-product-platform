@@ -1,0 +1,14 @@
+旧v22在P1确认删除后留下P2/T1/T2 dispatch，旧候选又引用执行前的policy heads。本PR以可信NOT_SENT闭合旧dispatch，以实际Core successor checkpoint统一生成器、完整预检和离线校验，并复用MinIO官方ImportIAMV2为disabled新身份绑定受限policy，准备剩余六份目标；P1永久排除，11份survivor保留。
+
+窗口前独立评审进一步复现固定宿主CLI的必需路径错误：archive-root/revoke-case把组名字符串传给要求完整组对象的继承方法。当前开发修复复用Host.group解析后再调用；新增实际main组合回归验证真实临时归档、原始journal和单字段撤销，以及live/failed owner、profile drift、未知stage和缺参数的拒绝。修复前TypeError原样保留；修复后normal/-O各7项及独立复评通过，main之外宿主AST不变。
+
+权威业务契约为issue307-d1-post-v22-six-contract.md。candidate15/v25的完整确认文本、窗口手册和冻结证据解释当时的准备与授权；issue307-v25-host-cli-repair.md说明本次开发修复及激活边界。复用既有Port/MinIO SDK/PostgreSQL/Outbox→Asynq，不引入平行工作流或自建IAM。保留原失败、UNKNOWN、真实attempt/成本、旧预算/pins及全部备份；每份最多一次、全局最多六次，send→disable→选定只读恢复→Core absence后才进入下一份。
+
+验证分别留证：
+- 冻结运行源码f6acb072db9881e7b1cfd72003d4ef616955947b的Go/Python、三组真实Source与独立clean/rehearsal恢复、四业务副本重跑、17版本/IAM/备份/owner/预算及冻结完整只读入口结果保留；其历史源码CI不能替代当前开发HEAD CI，更不能称为main CI。
+- 当前开发修复8a172cade7b5eab2d871fc75ac9d0963f9d27199只含宿主CLI、对应回归和修复边界说明。实际main组合normal/-O各7项均由独立reviewer重跑通过；对应PR CI为39354370553，结果另行实时读回。
+- 本轮真实聊天删除授权原文、单独调度授权和56项引用一致；实际关闭检查93个CID全部停止、15个root owner合同通过、30份permission=false。未启动Source/Core/helper、未启用身份、未签发送proof、未执行真实删除。这不替代未来窗口内fresh Core/native/IAM证明。
+
+当前执行状态：candidate15/v25原冻结checkout仍为a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf，全部冻结字节及原授权保留；由于独立评审B1，该候选保持BLOCKED。原2026-10-20新加坡14:00–14:40一次heartbeat已PAUSED、next_run_at=NULL、0runs，不改期、不重开、不把本次开发修复套用到旧授权。未来执行必须另行冻结精确绑定并取得新的人类确认；本PR不创建新候选、execution或窗口。
+
+完整D1仍NOT_ACCEPTED，实际六份发送及H1/H2/M1本代live outcomes仍NOT_RUN。#332保持Draft、不合并，#307保持OPEN；#323的历史合并不回写。

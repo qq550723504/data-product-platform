@@ -1,0 +1,40 @@
+{
+  "audit_id": "23587686-0a95-4eaa-a010-a8c896c9735b",
+  "old_execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "started_at": "2026-10-19T11:35:40.464333+00:00",
+  "native_delete": 0,
+  "business_mutations": 0,
+  "proof_signed": false,
+  "fresh_IAM_or_native_verified": false,
+  "cases": [
+    {
+      "case": "P2",
+      "status": "CORE_NO_CONFLICT_NOT_YET_TRUSTED_NOT_SENT",
+      "conflicts": {},
+      "unresolved": 1,
+      "proof_signed": false,
+      "business_mutations": 0
+    },
+    {
+      "case": "T1",
+      "status": "CORE_NO_CONFLICT_NOT_YET_TRUSTED_NOT_SENT",
+      "conflicts": {},
+      "unresolved": 1,
+      "proof_signed": false,
+      "business_mutations": 0
+    },
+    {
+      "case": "T2",
+      "status": "CORE_NO_CONFLICT_NOT_YET_TRUSTED_NOT_SENT",
+      "conflicts": {},
+      "unresolved": 1,
+      "proof_signed": false,
+      "business_mutations": 0
+    }
+  ],
+  "Core_unchanged": true,
+  "source_stopped_PID0": true,
+  "retained_unchanged": true,
+  "failure": null,
+  "status": "PASS_CORE_READONLY_AUDIT_ONLY"
+}

@@ -1,0 +1,84 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_WEB_LOCKFILE_REVIEW",
+  "remaining_blockers": [],
+  "observed_at_utc": "2026-10-19T17:28:04.435668+00:00",
+  "base_head": "355717c022fe36052dcf8b3cc37ceeef901286f7",
+  "scope": "Six web dependency/build/workflow/documentation files only; no lifecycle runtime or candidate authorization.",
+  "files_sha256": {
+    ".github/workflows/ci.yml": "8933d2e974b28bc418e25faeedeb732117e0a01765c319968853b3a1581aa500",
+    ".github/workflows/live-core-browser.yml": "c433f9c33d6e4dddb8b954f42f76e1dc4886d4351b426a49afd4f3e02b686e7d",
+    ".github/workflows/web-browser.yml": "45548d2987907dbcc0497f122ac18878892b497f215c7489850e37949c8da6f1",
+    "apps/web/README.md": "e1950303b3033668e29c05e123b36efdce833aa13cd7b7dba2d725d8fa17b4f4",
+    "deploy/demo/Dockerfile.web": "7a44e3efa9e30cba60efa247e4dc2776a5b0dfd3b25a1609bbe43f64504e5f03",
+    "apps/web/package-lock.json": "87fc873e9a7f05d530667dba54abdbf3cc2739a7327aa58d4f45feb5f88b8b50"
+  },
+  "package_json": {
+    "sha256": "ef0f0cae55e8e7ede87c3e995e2ef92f37a263d828b2893c812c9c2fa0550cfa",
+    "equal_to_git_head_raw_bytes": true,
+    "lock_root_dependencies_and_versions_exactly_match": true,
+    "existing_scripts_and_tests_unchanged": true
+  },
+  "static_validation": {
+    "lockfile_version": 3,
+    "packages_including_root": 371,
+    "resolved_package_versions": 370,
+    "registry": "All 370 resolved URLs are HTTPS registry.npmjs.org, without credentials, query or fragment.",
+    "integrity": "All 370 entries have valid-length SHA512 SRI.",
+    "dependency_edges": 711,
+    "optional_dependency_edges": 66,
+    "peer_dependency_edges": 36,
+    "resolution_and_semver_errors": 0,
+    "validator": "Existing npm semver library; read-only lock graph resolution, no npm install/ci.",
+    "target_native_optional_members": "Linux x64/arm64 glibc and Windows x64 Next SWC and sharp members present.",
+    "engine_check": "Static Node 22.22.2 compatibility for Linux x64/arm64 and Windows x64; excluded optional win32-ia32 sharp requires Node20 and is outside these targets.",
+    "install_script_packages": [
+      "unrs-resolver"
+    ],
+    "actual_tarball_fetch_by_reviewer": false
+  },
+  "build_and_ci_contract": {
+    "docker_copy": "Explicit package.json and package-lock.json before npm ci.",
+    "docker_context_ignore_sha256": "bcafea15e4b506d40cbac5963f4bd4dec027e92796e96faef4a8210a66970ae7",
+    "lock_included_in_docker_context": true,
+    "three_workflows": "Only apps/web installation changes to npm ci; lint/typecheck/build/smoke/browser/live-Core gates retained.",
+    "independent_browser_packages": "Existing separate npm install commands retained; no unsupported ci conversion without their own locks.",
+    "scripts_not_disabled_in_ci_or_build": true,
+    "git_diff_check": "PASS"
+  },
+  "original_failure": {
+    "run_id": "39291709408",
+    "job_id": "118193819314",
+    "raw_log_bytes": 201092,
+    "raw_log_sha256": "0cb15ae1207b451dd12567cd6c806688de4330e00fbb286d3eec907448233542",
+    "actual_error": "ETARGET: No matching version found for @typescript-eslint/parser@^8.72.0.",
+    "certain_gap": "No committed lockfile; build-time npm install re-resolved floating transitive dependencies.",
+    "propagation_delay": "Inference only; not established by this independent file review.",
+    "retained": true
+  },
+  "parent_build_evidence_readback": {
+    "independently_executed_by_reviewer": false,
+    "receipt_sha256": "fc58fce0157a1d47cd2ca5611bda6ef08d466ee9df8e8d1218ec97e9818be501",
+    "raw_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_stderr_sha256": "2ce01d7a766d950704375b4400279f5ec59d1fb7a13ad3b4428f974d1031d4b0",
+    "exact_generated_lock_and_manifest_match_working_bytes": true,
+    "npm_ci_seen_and_completed": true,
+    "tap_tests": 204,
+    "tap_pass": 204,
+    "tap_fail": 0,
+    "build_exit": 0,
+    "image_id": "sha256:bb993a2ec5074a4f3e9a95e2b828b80976b52b7a495f1a1ef660e8ee66f1d3d6",
+    "new_exact_head_pr_ci": "NOT_REVIEWED_OR_CLAIMED",
+    "main_ci": "NOT_REVIEWED_OR_CLAIMED"
+  },
+  "reviewer_harness_note": "Initial custom graph resolver failed to normalize the root dot path and reported false missing dependencies. Corrected using existing path.join normalization; final graph and target-platform validation PASS with zero errors.",
+  "boundaries": {
+    "reviewer_installs": 0,
+    "reviewer_docker_calls": 0,
+    "reviewer_network_calls": 0,
+    "reviewer_file_writes": 0,
+    "reviewer_fixture_provider_calls": 0,
+    "source_checkpoint_rebuild_profile_and_budget_approval": "OUT_OF_SCOPE",
+    "native_acceptance": "NOT_CLAIMED",
+    "deletion_authorization": "NONE"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "network_name": "dpp-lifecycle307-754ea8f0-candidate16-restore",
+  "subnet": "10.246.200.0/28",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "allocation": "80f2e672-e294-480d-b96d-2fa35722950e",
+  "preexisting": false
+}

@@ -1,0 +1,2 @@
+{"at": "2026-10-21T08:54:58.688319+00:00", "phase": "worker"}
+{"at": "2026-10-21T08:54:58.712122+00:00", "audit_id": "fixed-test-audit", "status": "BLOCKED_PRESTART_NO_SOURCE_IO", "failure": "ValueError: synthetic drift", "source_started": false, "identity_enabled": false, "native_delete": 0, "old_execution_resumed": false, "full_D1": "NOT_ACCEPTED"}

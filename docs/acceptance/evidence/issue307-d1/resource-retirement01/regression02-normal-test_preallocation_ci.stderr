@@ -1,0 +1,11 @@
+test_all_new_subnets_pass_real_existing_overlap_check_with_c21_retained (test_preallocation_ci.PreallocationTests.test_all_new_subnets_pass_real_existing_overlap_check_with_c21_retained) ... ok
+test_any_subnet_conflict_rejects_complete_allocate_before_history_build_or_control (test_preallocation_ci.PreallocationTests.test_any_subnet_conflict_rejects_complete_allocate_before_history_build_or_control) ... ok
+test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build (test_preallocation_ci.PreallocationTests.test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build) ... ok
+test_complete_allocate_rejects_failed_pending_foreign_and_unknown_ci_before_history_or_build (test_preallocation_ci.PreallocationTests.test_complete_allocate_rejects_failed_pending_foreign_and_unknown_ci_before_history_or_build) ... ok
+test_dirty_or_untracked_host_cannot_adopt_old_green_ci_or_read_history (test_preallocation_ci.PreallocationTests.test_dirty_or_untracked_host_cannot_adopt_old_green_ci_or_read_history) ... ok
+test_fresh_exact_source_success_records_provenance_without_lock_or_resources (test_preallocation_ci.PreallocationTests.test_fresh_exact_source_success_records_provenance_without_lock_or_resources) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.378s
+
+OK

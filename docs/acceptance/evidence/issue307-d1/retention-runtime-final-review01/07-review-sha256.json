@@ -1,0 +1,97 @@
+[
+  {
+    "file": "01-r3-offline-ci.json",
+    "bytes": 434,
+    "sha256": "9A18B6A5020A73C9C35D6E47BA7A36DFF6840A42CCB6E027FCFFF4213D43C927"
+  },
+  {
+    "file": "01-r3-offline-ci.stderr",
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "file": "01-r3-offline-ci.stdout",
+    "bytes": 868,
+    "sha256": "BEE6249B36156AD4216DED2B1F44532971D3204F47CD9528499894E017171A67"
+  },
+  {
+    "file": "02-python-normal.stderr",
+    "bytes": 114,
+    "sha256": "3ACBCAFE5285D10D7507AE1884E3ED3D2794CDD69C1E455EE7AF64D8419D455B"
+  },
+  {
+    "file": "02-python-normal.stdout",
+    "bytes": 151,
+    "sha256": "0793118E4AA7030205F13C2E80F6F24BEACABC4A78007804885B8CD0E9EAE963"
+  },
+  {
+    "file": "02-python-offline.json",
+    "bytes": 458,
+    "sha256": "581CCF9288A5798C5E9D4C7567153AA166DB2D16566CCA95E2CEB625058B7312"
+  },
+  {
+    "file": "02-python-optimized.stderr",
+    "bytes": 114,
+    "sha256": "E2B9B797FB319BD7782C562563D2C963DA0443F6A8BB212F5939AE6D72B97CBA"
+  },
+  {
+    "file": "02-python-optimized.stdout",
+    "bytes": 151,
+    "sha256": "0793118E4AA7030205F13C2E80F6F24BEACABC4A78007804885B8CD0E9EAE963"
+  },
+  {
+    "file": "03-input-audit-command.json",
+    "bytes": 240,
+    "sha256": "41C7094408A318C83E75DF28D5CF52B65194A81BD5552C6F700BDEDCE5BC9E1D"
+  },
+  {
+    "file": "03-input-audit-rerun-command.json",
+    "bytes": 428,
+    "sha256": "01BBC71DE95C9CAEF82FECB3DFF519B9862FE0768EFA684D527D81C2F2A3A6E1"
+  },
+  {
+    "file": "03-input-audit-rerun.stderr",
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "file": "03-input-audit-rerun.stdout",
+    "bytes": 1877,
+    "sha256": "BE8B611CB7D0774FAFE7FA86767DE213460C1FB7266BD2D4C6470353DAC4FDB2"
+  },
+  {
+    "file": "03-input-audit.json",
+    "bytes": 1875,
+    "sha256": "BCE0471AE34B9B3E080A806A84A2190947CF6212B21834FEF799FD9984672F34"
+  },
+  {
+    "file": "03-input-audit.stderr",
+    "bytes": 703,
+    "sha256": "32CD808F391DE499B47916D6D240BE63D3FCA2F2A5369B4859C8241AA420AFA3"
+  },
+  {
+    "file": "03-input-audit.stdout",
+    "bytes": 0,
+    "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "file": "04-input-hashes.json",
+    "bytes": 15943,
+    "sha256": "0161082212B4E28AD75C95C2AB915DE298ED1C86D908F0078AC2699825FFD5D3"
+  },
+  {
+    "file": "05-independent-review.json",
+    "bytes": 8331,
+    "sha256": "DA1FDEAE5513399CF9CE968BFCFAE23DD051EDF7482D4C67553A3399B04A2A42"
+  },
+  {
+    "file": "06-public-safety.json",
+    "bytes": 1913,
+    "sha256": "B4691F27F2EE8D62A866521D5DA592CF429440996FBF31897DE113BE402BCC33"
+  },
+  {
+    "file": "audit_inputs.py",
+    "bytes": 8897,
+    "sha256": "B2949904452653257C4998469C5AB6C1BBCF4CC80688021A4DF384C253F1BC83"
+  }
+]

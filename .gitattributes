@@ -136,3 +136,191 @@ docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/p
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/** -text whitespace=cr-at-eol
 
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-dispatch-audit/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-business-closure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-business-closure02/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/manifest03-go-version-m-stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
+apps/platform/cmd/lifecycle-fixture-reader/testdata/post-v22/*.json -text
+docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate13/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/test_remaining_window-current01.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/manifest-checker-buildinfo01.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/manifest-reader-buildinfo01.txt -text whitespace=cr-at-eol,-blank-at-eol
+
+docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation-failure01/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-contract01/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-native02/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-native03/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-six-preparation02/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/remaining-candidate14-preparation01/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/remaining-candidate14/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-native04/** -text whitespace=cr-at-eol
+apps/platform/internal/lifecycle/pilot/remaining_policy_heads.json -text
+docs/acceptance/evidence/issue307-d1/post-v22-policy-heads01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate15-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate15/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate14-preparation-failure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-six-preparation02/cold-budget-independent03/*-buildinfo03.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate15-readonly01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/exact-scope-trial-buildinfo06.json -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/operator-buildinfo06.stderr.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/operator-buildinfo06.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/owner-buildinfo06.stderr.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/owner-buildinfo06.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/reader-buildinfo06.stderr.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/reader-buildinfo06.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/readonly-check.exe-buildinfo06.stderr.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/readonly-check.exe-buildinfo06.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-candidate15-confirmation.md text eol=lf
+docs/acceptance/issue307-d1-v25-window-runbook.md text eol=lf
+docs/acceptance/issue307-d1-v25-preparation.md text eol=lf
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16-readonly01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16-freeze-failure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate16-review01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/** -text whitespace=cr-at-eol
+docs/acceptance/issue307-d1-candidate16-confirmation.md text eol=lf
+docs/acceptance/issue307-d1-v26-window-runbook.md text eol=lf
+docs/acceptance/issue307-d1-v26-preparation.md text eol=lf
+
+# Retain exact failed v26 and index-audit repair receipts.
+docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/index-audit-repair01/** -text whitespace=cr-at-eol
+
+# Historical authorization indexes bind these original Markdown bytes too.
+docs/acceptance/issue307-d1-v26-execution01.md -text
+docs/acceptance/issue307-d1-v26-schedule01.md -text
+docs/acceptance/issue307-d1-v26-window01-outcome.md -text
+
+# Frozen candidate17 and independent non-delete preparation evidence.
+docs/acceptance/evidence/issue307-d1/remaining-candidate17-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate17/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate17-readonly01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate17-source-review01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate17-review01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate17-planning01/** -text whitespace=cr-at-eol
+
+# Exact candidate17 confirmation and bounded window contract bytes.
+docs/acceptance/issue307-d1-candidate17-confirmation.md -text
+docs/acceptance/issue307-d1-v27-window-runbook.md -text
+docs/acceptance/issue307-d1-v27-preparation.md -text
+
+# Preserve captured bytes for the bounded host-path/non-delete closure slice.
+docs/acceptance/evidence/issue307-d1/host-path-repair01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v27-business-closure01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v27-business-closure02/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v27-business-closure03/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-host-path-convergence01.md -text
+examples/lifecycle-d1/attest-remaining-executable.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/reconcile-p1-post-v22.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_old_business_dispatch_closure.py -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/current-head-ci-15afaac1/** -text
+docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-post-v27-readonly17-and-six-readiness.md -text
+examples/lifecycle-d1/verify-six-native.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/refresh-post-v27-seventeen.py -text
+examples/lifecycle-d1/test_post_v27_seventeen_refresh.py -text
+examples/lifecycle-d1/test_verify_six_native.py -text whitespace=cr-at-eol
+
+# Exact current candidate18 host contracts and immutable evidence bytes.
+docs/acceptance/evidence/issue307-d1/candidate18-planning01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate18-source-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate18-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate18/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate18-readonly01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-candidate18-confirmation.md -text
+docs/acceptance/issue307-d1-v28-window-runbook.md -text
+docs/acceptance/issue307-d1-v28-preparation.md -text
+examples/lifecycle-d1/prepare-six-candidate.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/six_candidate_runtime.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/freeze-six-candidate.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/window_six_support.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/retained_v27.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_retained_v27.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_retained_v26.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_six_candidate_runtime.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_freeze_six_candidate.py -text whitespace=cr-at-eol
+examples/lifecycle-d1/test_remaining_six_window.py -text whitespace=cr-at-eol
+
+# Preserve original c18 authorization/failure receipts and this repair evidence.
+docs/acceptance/evidence/issue307-d1/candidate18-crosscheck01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/p2-http403-repair01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-v28-crosscheck01.md -text
+docs/acceptance/issue307-d1-v28-execution01.md -text
+docs/acceptance/issue307-d1-v28-schedule01.md -text
+docs/acceptance/issue307-d1-v28-window01.md -text
+docs/acceptance/issue307-d1-p2-http403-repair01.md -text
+examples/lifecycle-d1/check-p2-permission-native.py -text
+docs/acceptance/evidence/issue307-d1/candidate18-planning01/publication-ci-watch01.stdout.txt -text whitespace=cr-at-eol,-blank-at-eof
+
+# Preserve v28 maintenance and new c19 preparation raw evidence.
+docs/acceptance/evidence/issue307-d1/post-v28-core-audit01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v28-restored-core01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v28-restored-core02/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v28-restored-core03/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v28-business-closure01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v28-seventeen01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate19-planning01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate19-source-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate19-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate19-preparation01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate19/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate19-freeze-failure01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate19-readonly01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-candidate19-confirmation.md -text
+docs/acceptance/issue307-d1-v29-window-runbook.md -text
+docs/acceptance/issue307-d1-v29-preparation.md -text
+examples/lifecycle-d1/audit-v28-business-dispatches.py -text
+examples/lifecycle-d1/close-v28-business-dispatches.py -text
+examples/lifecycle-d1/rehearse-v28-restored-core.py -text
+examples/lifecycle-d1/refresh-post-v28-seventeen.py -text
+examples/lifecycle-d1/retained_v28.py -text
+
+# Preserve the original failed c20 preparation and bounded CI repair receipts.
+docs/acceptance/evidence/issue307-d1/candidate20-planning01/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+docs/acceptance/evidence/issue307-d1/candidate20-source-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/candidate20-ci-independent01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate20-preparation01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/c20-ci-repair-evidence01/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/c20-ci-repair-regression02/** -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/c20-ci-repair-review01/** -text whitespace=cr-at-eol,-blank-at-eol
+# Diff context whitespace is original review evidence, not executable source style.
+docs/acceptance/evidence/issue307-d1/candidate20-source-review01/*.patch -text -whitespace
+docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01/*.patch -text -whitespace
+
+# Opaque D1 original receipts: preserve issued bytes in blob, archive and checkout.
+# Later generations inherit this rule; normalization cannot repair an old SHA.
+docs/acceptance/evidence/issue307-d1/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab
+# These indexed historical receipts live outside the evidence subtree.
+docs/acceptance/issue307-d1-v29-crosscheck01.md -text
+docs/acceptance/issue307-d1-v29-execution01.md -text
+docs/acceptance/issue307-d1-v29-schedule01.md -text
+docs/acceptance/issue307-d1-v29-window01.md -text
+
+docs/acceptance/issue307-d1-v31-preparation.md -text
+
+# This bounded integration keeps indexed proposal/acceptance Markdown bytes exact.
+docs/acceptance/issue307-d1-be38-publication-proposal01.md -text
+docs/acceptance/issue307-d1-integrated-publication-contract.md -text
+docs/acceptance/issue307-d1-integrated-publication-acceptance01.md -text
+docs/acceptance/issue307-d1-integrated-publication-proposal01.md -text

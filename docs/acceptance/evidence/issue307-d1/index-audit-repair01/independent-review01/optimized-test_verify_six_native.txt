@@ -1,0 +1,7 @@
+test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close (test_verify_six_native.SixCompleteTests.test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close) ... ok
+test_three_source_groups_use_current_six_checker_and_close (test_verify_six_native.SixCompleteTests.test_three_source_groups_use_current_six_checker_and_close) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.357s
+
+OK

@@ -1,0 +1,3123 @@
+{
+  "format": "files-map-v1",
+  "status": "PASS_FROZEN_NONDELETE_REVIEW_EVIDENCE",
+  "count": 779,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/capture_command01.py": {
+      "sha256": "6865d8b14c34f9cb355fa05a3ac3c2659de7ab44529b724c373da56040108fe9",
+      "bytes": 2278
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-build01/result.json": {
+      "sha256": "c1ae5509fae6e4dd81a09f99d11798aaf7f4d2d1b424337889745c24b1aff4b4",
+      "bytes": 451
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-build01/start.json": {
+      "sha256": "f36d18001e6d01a5bfcb9dd35405779db9a8f6ae47ae137592a6c898458b516b",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-build01/stderr": {
+      "sha256": "7f49bd366255a9bba5cf62e4e0720e6bf6ff9554efc842fdf7255dfe78a40efa",
+      "bytes": 4700
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-build01/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-run01/result.json": {
+      "sha256": "6bf27a4ad0715b4ce139954a0f1706a7a3af5a180add480d3d691d65ad849901",
+      "bytes": 655
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-run01/start.json": {
+      "sha256": "d624a5b8670249cc85cccd1b6100644a0f841b5ff6c98269487afd8ec61ae984",
+      "bytes": 514
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-run01/stderr": {
+      "sha256": "b775bbb1f189637af239f6b03d17e88ce2da6dcebf0a1ae6cd4f8558e1df7d32",
+      "bytes": 396
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/client-diagnostic-run01/stdout": {
+      "sha256": "82e3fcff064214b3c444836acc2999a57997de159defb089cd529e57e5c7e17f",
+      "bytes": 1157
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/collect_final_inputs01.py": {
+      "sha256": "54cc39f4c8aaf0d21b08b88be7bd833209b31d056d373daa438ce8b9ba0f1822",
+      "bytes": 3658
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/collect_python_results01.py": {
+      "sha256": "87cd4c0cd2189cf8281d2b0f2c6f69af76415aa617b365785433ac4303cdef78",
+      "bytes": 2504
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/final-browser-summary01.json": {
+      "sha256": "1bbe1392c06ed2f8f558b3cc0bf645afece0a8d7e5a49fc4909969499fce5a41",
+      "bytes": 791
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/generated-next-env-after-build.txt": {
+      "sha256": "f4e8976c19fc926644d72610bf1058bd6bf52add97e46a02bc0b912a751625c0",
+      "bytes": 268
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-final-review01.json": {
+      "sha256": "c9832ea344384b2d4be756c619e3e14f90b574f54bf0ca698ca57065319bcd74",
+      "bytes": 1998
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-export01.json": {
+      "sha256": "e989c9f47cb7c25ae77115d01ba14b8d1df76ca1872922ff1d5092ded3896f84",
+      "bytes": 30645
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-export02.json": {
+      "sha256": "a8199a1e6f9526d0e971ffa4975ce8086d96db20b6f74413bdb44cce1c3a18ec",
+      "bytes": 53760
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-final-export-manifest01.json": {
+      "sha256": "46d21b1f16a129a45f9f14b1d0086b95f7cdcdf66466419ee759442ce866efb6",
+      "bytes": 36566
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/result.json": {
+      "sha256": "e77cceb71c3800e18e3f891e6c1214e6815d55931340ab6dc7047ff3747cc75e",
+      "bytes": 9239
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/temporary_containers_test-normal-audit.json": {
+      "sha256": "0f6d74b46f397b28fe13e5b34b1119ed70d635805664babdff803242a8d078c5",
+      "bytes": 276
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/temporary_containers_test-normal.stderr": {
+      "sha256": "89a747fa8707ab595a96cec4ca11dad6fb77044c3ace5a613c46de5430e9b452",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/temporary_containers_test-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/temporary_containers_test-O-audit.json": {
+      "sha256": "ce952445d66e3e378d6f07569b4b3c81c43e3427f5f2ceb45ecab11c4f551b6a",
+      "bytes": 282
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/temporary_containers_test-O.stderr": {
+      "sha256": "8a2ac46889bc1a5b5ed7b28608dfc51eb974c008b48da8f075174b42ac73b68b",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/temporary_containers_test-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_attest_remaining_executable-normal-audit.json": {
+      "sha256": "40f583c67e08c3fc3ca9b09e8bb6e8a24af96fc613129237600d518613d483f0",
+      "bytes": 1474
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_attest_remaining_executable-normal.stderr": {
+      "sha256": "1a38cbd3f0a98c5d65cac96eaa56edc6500e13acd0a2668e5d8afa7deffbe700",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_attest_remaining_executable-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_attest_remaining_executable-O-audit.json": {
+      "sha256": "1e90dd7e8ba3697a932041d9d9685c282e85990556d3684f0574bfde0c230489",
+      "bytes": 1522
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_attest_remaining_executable-O.stderr": {
+      "sha256": "3fd886f6333a16e1776de8874885def50180072be4ffc2c4449d0226cf89ac24",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_attest_remaining_executable-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_evidence_indexes-normal-audit.json": {
+      "sha256": "76ee5b8ac88a3b27d03a7636a1692e5e39ee2bb2046cce4236be6e060063c638",
+      "bytes": 296
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_evidence_indexes-normal.stderr": {
+      "sha256": "1f1238acd4c787ee6bf00f315c5225080469c13a205bef59a0979161adb918be",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_evidence_indexes-O-audit.json": {
+      "sha256": "857880fb258ad7234226855ffdd8500a6a673cd585d318b5f4d273504dff9e97",
+      "bytes": 302
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_evidence_indexes-O.stderr": {
+      "sha256": "eb8ec816c0a90df47c80dcabf46fc1d6eb7e6ec1cffb10987b359b6c45920928",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_execution_freeze-normal-audit.json": {
+      "sha256": "11db23cb35436b18996f797c986191ca5d8545cf8039009b8df0f211b9b02e31",
+      "bytes": 2970
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_execution_freeze-normal.stderr": {
+      "sha256": "130cae8f49c6f567bf8a7e52a971badfe322ffe997cb1afca171b6b806ff1dab",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_execution_freeze-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_execution_freeze-O-audit.json": {
+      "sha256": "ce2d8bc452f2acbb497a9b7212bff2e74038a46e52671b412056aad4a25ab051",
+      "bytes": 3090
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_execution_freeze-O.stderr": {
+      "sha256": "8081988f60731d373a8a8047a97d26a9450c501428a7e2d62ef5ff6989653df6",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_execution_freeze-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_fixture_artifacts-normal-audit.json": {
+      "sha256": "53ae8434e83fa087cf3445d78f407b44e1f6e1abd794c9d6c8e47edc0ccd50ef",
+      "bytes": 2620
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_fixture_artifacts-normal.stderr": {
+      "sha256": "64ff7db1d6d58075a7d88cc96a2af3c7e0b312117ad40ebd93b46b4af507810e",
+      "bytes": 309
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_fixture_artifacts-O-audit.json": {
+      "sha256": "78fca494a73b3c9f538246136bf040068553354977d44038cc434ba04435e8cd",
+      "bytes": 2728
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_fixture_artifacts-O.stderr": {
+      "sha256": "341db543e62255518f29e26e5a1571784cf8c516fda55aed4e59a508f5b0b1b8",
+      "bytes": 309
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_freeze_six_candidate-normal-audit.json": {
+      "sha256": "c8815190a0aa7624af0985272aa4e8d11830b3011179a7a4877127fbf4223507",
+      "bytes": 4514
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_freeze_six_candidate-normal.stderr": {
+      "sha256": "f1a48b970c5aa74f22cb7c754138c34d0c82c442caab12d45cd605b64d493a6d",
+      "bytes": 98
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_freeze_six_candidate-normal.stdout": {
+      "sha256": "9a50a6690faa390facfdd544cf349e44eb0ff49e9c4ded12a71b0e53f6a9f6ec",
+      "bytes": 188
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_freeze_six_candidate-O-audit.json": {
+      "sha256": "e4d3ff148a0c072331c3ec584a654c28eaf36d7ad64b964608ac47c00f683692",
+      "bytes": 4622
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_freeze_six_candidate-O.stderr": {
+      "sha256": "cb49b61d05c9941fd634cca362209b3d8af3012579c2285dca27757318cd06d6",
+      "bytes": 98
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_freeze_six_candidate-O.stdout": {
+      "sha256": "3e900233a01c38c5763db8b92a9f16cb54a0351e2aa565868ac5065a3392b05c",
+      "bytes": 188
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_native_protection-normal-audit.json": {
+      "sha256": "ad94e1233c2344134fc4c9b1c0551cbf109f6e116ec609f3fccacb3fd4b4c64f",
+      "bytes": 506
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_native_protection-normal.stderr": {
+      "sha256": "4263bc39d50eb7653ee6500b08f23fb1897880b6fabb37665c1bd0a4134f16c3",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_native_protection-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_native_protection-O-audit.json": {
+      "sha256": "c4b816065f1a3f478efb52eeb11e5fb130a96dffd5675ec688c550541bc0f978",
+      "bytes": 518
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_native_protection-O.stderr": {
+      "sha256": "a931d03139f279dc9c63904aeb01fc7675c1b8d4ba3725d859b1f80336c67991",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_native_protection-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_preallocation_ci-normal-audit.json": {
+      "sha256": "910910d7038aae38881e536e16128e2a7b389cb573910ab6910eb6165d77ae44",
+      "bytes": 2245
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_preallocation_ci-normal.stderr": {
+      "sha256": "e6264192373bd2a1af5933e25c85ada6781a66ae492b462c31133007c0409bcb",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_preallocation_ci-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_preallocation_ci-O-audit.json": {
+      "sha256": "400384780c103da571df069a71297f1d62aa4835ad7ab1091f0eedb77e610aa3",
+      "bytes": 2335
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_preallocation_ci-O.stderr": {
+      "sha256": "54da2470dda9d3cb2e43fb1da8c3a90120bc071bc0576bcfa707945db6eb5a2a",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_preallocation_ci-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_receipt_bytes-normal-audit.json": {
+      "sha256": "b66f8ca1da15d0725a4fed5ce6bacdd4a1f862ddebd62a63d6ec4ef3c7f8ff46",
+      "bytes": 494
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_receipt_bytes-normal.stderr": {
+      "sha256": "95e50638661923b61502acbb5bfdc4ef4996c0b796882ca9bae56aca3e0b6245",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_receipt_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_receipt_bytes-O-audit.json": {
+      "sha256": "b66f8ca1da15d0725a4fed5ce6bacdd4a1f862ddebd62a63d6ec4ef3c7f8ff46",
+      "bytes": 494
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_receipt_bytes-O.stderr": {
+      "sha256": "2a1d0ee29d38f002e4f8461c6be52dfa5697d47bd1bffe465cb13387c946cad1",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_receipt_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v26-normal-audit.json": {
+      "sha256": "0c1b8c0ad1ace1bdb7192c07444dfe49854a212515cc21376a04b4f70ffbdb75",
+      "bytes": 2731
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v26-normal.stderr": {
+      "sha256": "049cb78c84e8b47928ec178b6bc29da8e84f252c6a0a0e0d6d9d2ba4e3d0e00c",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v26-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v26-O-audit.json": {
+      "sha256": "75aff20fff2c76c1d849a6254122d2489fb412ff8c8a64652c3d6be9e0ee8c69",
+      "bytes": 2845
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v26-O.stderr": {
+      "sha256": "d23a779286d084475a21a6546bda4df7a6af54bcad120df91bca9bc08e965327",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v26-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v29-normal-audit.json": {
+      "sha256": "7198fd6dd325fef6cec683c819733d3e8d6e87183634a5e1d3586c772c085144",
+      "bytes": 403
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v29-normal.stderr": {
+      "sha256": "213c2677dc24ec032405ef8f5a66e72c3019de9eb014a5d5ad1430dce71c512c",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v29-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v29-O-audit.json": {
+      "sha256": "e012020ac69b1be9bdfd3b90e60aa8d487f076284521bb021c7d490f9441760c",
+      "bytes": 415
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v29-O.stderr": {
+      "sha256": "fe5592aeea2ba3123e5f4be14976f9870992bc05eb4a99226ea9878280b07fee",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v29-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v30-normal-audit.json": {
+      "sha256": "a0477256f442e55f9f49268004dfb9da0370bba2e331f36bc0436d2d2d9185f0",
+      "bytes": 530
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v30-normal.stderr": {
+      "sha256": "6a14a4649e30f6559c25300e5548923bad264e43b504f134b0043d7fd5a8b46f",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v30-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v30-O-audit.json": {
+      "sha256": "281282b35c3dbb125d37c4210df32ce7b0b8f279b21f0d95e6ced5ed199b7722",
+      "bytes": 548
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v30-O.stderr": {
+      "sha256": "1709f020aa580c73bcd5c81539dc1373a8257abe6b3026c47ba3b8d33386a279",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v30-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v31-normal-audit.json": {
+      "sha256": "e9177aa5d0262446b4559e2e1bf71c6be2edd9dc8c55d14c44f0f5640d09b819",
+      "bytes": 645
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v31-normal.stderr": {
+      "sha256": "a37e72ed5a8dc0f0561bea77019254268abdada8aa2ca7282c082fb1cb626ace",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v31-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v31-O-audit.json": {
+      "sha256": "3cbacbe5972f37eacee45bed41da26d25c0a5d058450299bc11981eb2b08b402",
+      "bytes": 669
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v31-O.stderr": {
+      "sha256": "6921a3394dfa1d12d7d9d76eba0cfd089eff1498d4485075a8731a9f694842bd",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v31-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v32-normal-audit.json": {
+      "sha256": "6fcd6d540c33fdab2249d0d29bb9136155564e4d881f0ba8a931726c4985c593",
+      "bytes": 803
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v32-normal.stderr": {
+      "sha256": "729b825cb2d7f3ad6f75f0bab2613f6c235e1e7ed7428dbfa4c096c6582e8b5f",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v32-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v32-O-audit.json": {
+      "sha256": "26498d37cf50e62c976b617f1f467427cfbfaafcb152777e5b008dd7c1b675e2",
+      "bytes": 827
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v32-O.stderr": {
+      "sha256": "a22bfcea6791385e5bcb1afb8726aa85d29150f04b02101bd88fa2bb60096e23",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retained_v32-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_composition-normal-audit.json": {
+      "sha256": "9c1448c8e2332fc88a81f5319b82c40a883b472dd73a53d0bf84f6f49f8e7267",
+      "bytes": 1885
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_composition-normal.stderr": {
+      "sha256": "6cf86f8ba99c682937095511c9c685100cd2a4123b84b3b1fa2fbda55c9b8907",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_composition-O-audit.json": {
+      "sha256": "0c8bba3c79c9b5a19838622ed2c8db3afb782b61856226089cd17e7cdbef2231",
+      "bytes": 1957
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_composition-O.stderr": {
+      "sha256": "0d5a5e01ee20b0707baa91efd01c1dd156fd6c6eed55a66ad50126c262db1538",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_maintenance-normal-audit.json": {
+      "sha256": "cd7ab3a4bfd1249008c38914734da7526118fef636ff0686a8b2599b4fd65043",
+      "bytes": 1153
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_maintenance-normal.stderr": {
+      "sha256": "6504d46cbaa5b122961d2e919d54d3d0093d92d1ace3cd34d00dded77506e26c",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_maintenance-normal.stdout": {
+      "sha256": "6acbd090ac49b526cd94d1312dfaa8d9c25addf1fafc50a1380fb84c5ba0d31a",
+      "bytes": 150
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_maintenance-O-audit.json": {
+      "sha256": "f94b415b55b051634156bf51222f78ff98035cc04569bb4897832e422be05d97",
+      "bytes": 1195
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_maintenance-O.stderr": {
+      "sha256": "1d69e6323170c4ee5f081889fc0d6e60fbbd349f4d78eef8711c7466a2d39183",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_maintenance-O.stdout": {
+      "sha256": "6acbd090ac49b526cd94d1312dfaa8d9c25addf1fafc50a1380fb84c5ba0d31a",
+      "bytes": 150
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_renewal-normal-audit.json": {
+      "sha256": "73ff027a75ea20cae418c65d841f0533131a7669b0e77be0583a3318a27bea30",
+      "bytes": 647
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_renewal-normal.stderr": {
+      "sha256": "020569d164516b8274200c05ff59664ec0d2f3068ce528d664af0d0c692e21c1",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_renewal-O-audit.json": {
+      "sha256": "07132c7a5fa1994c22ad0d8eb13b46524a28e474abd108014285edf84cd1c24a",
+      "bytes": 665
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_renewal-O.stderr": {
+      "sha256": "2f36ec85f1eb90d9ab04261dcc741ce49592a5202d8587a37fedb2217cfad79c",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_staging-normal-audit.json": {
+      "sha256": "fc0e9778d7c1fd17cee8eaf6f3b248534010e9c9a16bc3588badc9d5c89d1c9f",
+      "bytes": 679
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_staging-normal.stderr": {
+      "sha256": "e84af6fb3183f2e6c929d3188feaa38c20151c825192a5117c1911fec8992ee5",
+      "bytes": 100
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_staging-O-audit.json": {
+      "sha256": "5b150ae1dc6ba6d6bed1eae4b730bd61d3240072106f82918de8bd4c877ddc2a",
+      "bytes": 703
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_staging-O.stderr": {
+      "sha256": "ada8287c158c47db545f6c9e762701c9fdb3de124ea9dbacac45d9e31b016b77",
+      "bytes": 100
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_budget_bytes-normal-audit.json": {
+      "sha256": "99d970312eb612a8cf20f518fa46a484d28218c85efed27c160fab9d78533537",
+      "bytes": 560
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_budget_bytes-normal.stderr": {
+      "sha256": "199ba496f288116d36c62f29346d4fbf0bd75745a1c893abfcbdaa4c6d5b1033",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_budget_bytes-O-audit.json": {
+      "sha256": "e3272c2ea0536b891bb867486b0b3e24a0a710e02d5fc74c40197793d1b57e0b",
+      "bytes": 578
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_budget_bytes-O.stderr": {
+      "sha256": "199ba496f288116d36c62f29346d4fbf0bd75745a1c893abfcbdaa4c6d5b1033",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_resources-normal-audit.json": {
+      "sha256": "9a9e843024c538441019c029844d52403851ae46a536a2b076f7eb97846490ab",
+      "bytes": 423
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_resources-normal.stderr": {
+      "sha256": "6d28be46f8d628df47327d50b7a5ad011d1c9c9d3691f7fefc23b6683156aac1",
+      "bytes": 119
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_resources-normal.stdout": {
+      "sha256": "b3138ef70f8bb383e5296d4ceb592949f71d4202a5f4b11ae623b2996cda15f9",
+      "bytes": 44
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_resources-O-audit.json": {
+      "sha256": "8f40f0fc8bd0de157d1236e09552cf9d107bca2ca3a4a030c2dc95d841b61874",
+      "bytes": 435
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_resources-O.stderr": {
+      "sha256": "05843deb6ab8e9a7dda8242cc27ce7b2357a461e125cf1481752da91f1b66dc2",
+      "bytes": 119
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_resources-O.stdout": {
+      "sha256": "b3138ef70f8bb383e5296d4ceb592949f71d4202a5f4b11ae623b2996cda15f9",
+      "bytes": 44
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_volumes-normal-audit.json": {
+      "sha256": "3584b562c68b3336b1f9284323bc4e672584276261e00ecf849f1c6a93a2c907",
+      "bytes": 540
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_volumes-normal.stderr": {
+      "sha256": "df0df0e3a0be5d746738450d3eb1a73e9a335e045f91076e8016b2734e10ff45",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_volumes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_volumes-O-audit.json": {
+      "sha256": "cc34a7cde05b6e60b58dc837f88a2896521e48ab226b37502fea26f7c8dcdb02",
+      "bytes": 558
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_volumes-O.stderr": {
+      "sha256": "b21843aa8438170aecf2010e7bb7843a186b7517a3f08ee0174876f8d7cd3d05",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_retired_volumes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_candidate_runtime-normal-audit.json": {
+      "sha256": "7127a79313c67dff9dfd94d092b6128526a8383b0afebfa6119b15ffb0b3f114",
+      "bytes": 3691
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_candidate_runtime-normal.stderr": {
+      "sha256": "fb2fcc85504a8e3a12457072694f31b454f2b8ae189b45b890062ef604d40141",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_candidate_runtime-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_candidate_runtime-O-audit.json": {
+      "sha256": "6ac3699f1e4986158a27b7054e16692cfe4d96597391fddbba4540b982b4b6d6",
+      "bytes": 3805
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_candidate_runtime-O.stderr": {
+      "sha256": "72aa826267e20e291c36fdca15ba6aff189ec1a31364229ffb5e7dccbb2edad2",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_candidate_runtime-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_native_entry-normal-audit.json": {
+      "sha256": "8b7e4b95303fefa8e61884621ca5f182a1931b5131e92086a58baf759385b3d0",
+      "bytes": 2986
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_native_entry-normal.stderr": {
+      "sha256": "a2821271647fa4e8294dbe1023eeafde57e6066c35127cd52b41ebf453c432d4",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_native_entry-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_native_entry-O-audit.json": {
+      "sha256": "12ffb0c4329d3d25e54cc0f085da05b53ce3ed7ca53834b23ec640125879606e",
+      "bytes": 3100
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_native_entry-O.stderr": {
+      "sha256": "811d1518c14fdc33a459713676a38c571f036c027ed1f0dd0e56c0d42e9f45c2",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_six_native_entry-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_successor_dependencies-normal-audit.json": {
+      "sha256": "25eb8448f81d14f80e60c6f0e96974bd992251213429a00af428d541768ac780",
+      "bytes": 1416
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_successor_dependencies-normal.stderr": {
+      "sha256": "a7262fa5731af0df67b551b403dc0a98a96ae3ef069025376b1bf2fbd470c4dd",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_successor_dependencies-O-audit.json": {
+      "sha256": "6a3bfed69eec5dc80770fa25e4e639cdfcd913ca4ee300f7f75882aef7ed7ee3",
+      "bytes": 1470
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_successor_dependencies-O.stderr": {
+      "sha256": "3402cb0bc181c36184ab113cf6e1f25b70937d6ea3bf4ed5e340073142451f0c",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_verify_six_native-normal-audit.json": {
+      "sha256": "97970bce81be0fae2042862872ac2d1070550525996cf27645c4b2631fd5e1ab",
+      "bytes": 3562
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_verify_six_native-normal.stderr": {
+      "sha256": "4e8e2dad83d223998303f9a6623a4a1235af71cb0b8fcb71c51c55931956eb35",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_verify_six_native-O-audit.json": {
+      "sha256": "eca86c6c5ce4ad8327fceb2a5a6c8b9b0bc171c4b72888faced452ab9681a1f4",
+      "bytes": 3706
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_verify_six_native-O.stderr": {
+      "sha256": "7b5cc00efdca3b54ac17a9201da14493f3b2441c3b37003a1252890902c5726a",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_window_six_support-normal-audit.json": {
+      "sha256": "a8b745e7ac31bd65aef9da2a45d35b7821b674e48a10da5e40bfaebb3bcc7ebe",
+      "bytes": 2974
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_window_six_support-normal.stderr": {
+      "sha256": "34f343f165d44b8024c4d5cfce4d94e892ff31efd9489fef900bceee3fcac359",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_window_six_support-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_window_six_support-O-audit.json": {
+      "sha256": "fb64e89bbc40b5f6a2389ecc47ae747f63265a410bdd18c70c19b22131592765",
+      "bytes": 3094
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_window_six_support-O.stderr": {
+      "sha256": "750309f91716bfad40a82a4ba0bb3e88c2aa5609e2ef81791791d7f6b752c993",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-linux01/test_window_six_support-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-summary01.json": {
+      "sha256": "38f4219bfbeca24dbd937855d36a48155d92c945dccd026b82f8e697b49cc3fd",
+      "bytes": 945
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/result.json": {
+      "sha256": "70f69d271f07e7a200c26db8cc7afc7384d78d10d459c708023df1353d3c3b1d",
+      "bytes": 9308
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/temporary_containers_test-normal-audit.json": {
+      "sha256": "bebcb227d289dfd18afac227c84b21a4ad586961e32be9e80f313c68be20a427",
+      "bytes": 351
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/temporary_containers_test-normal.stderr": {
+      "sha256": "34a05961f194e7abcaeb97aed39f1aa343028f974bbe2b04be6f687d8407995e",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/temporary_containers_test-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/temporary_containers_test-O-audit.json": {
+      "sha256": "006657bf4e1448109b2edebe41bc8a6c8709dcc9b62729d2122e01f951aba962",
+      "bytes": 357
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/temporary_containers_test-O.stderr": {
+      "sha256": "2aa613c291a78a608d7547c2b86b973747aead165b966024449ec2f0b3e23808",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/temporary_containers_test-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_attest_remaining_executable-normal-audit.json": {
+      "sha256": "f4e1c426f68927973ce8b670c40b8092370f81b691b3fc6849d7492fc29bb3b1",
+      "bytes": 1549
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_attest_remaining_executable-normal.stderr": {
+      "sha256": "20615b33eb22fd220fb419a1227c38c2fe8714b4818cef30efa89bc51ad5a43c",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_attest_remaining_executable-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_attest_remaining_executable-O-audit.json": {
+      "sha256": "1fda6d339f4aa5b87d41c4ccdf5a8dbeca00caa51025561e1c06f727504499d5",
+      "bytes": 1597
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_attest_remaining_executable-O.stderr": {
+      "sha256": "a842679536d88ed4877231d87f61a2620e38348d6be1ab9e5e95c0bd551d38f3",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_attest_remaining_executable-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_evidence_indexes-normal-audit.json": {
+      "sha256": "81ed0bfe5331a735579a0f7e6b5d67e9a0964ccff53e379f404b18b3a00888f6",
+      "bytes": 371
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_evidence_indexes-normal.stderr": {
+      "sha256": "523682da2837beaffec302ede97d9a0b6faac950e1585c4fec6c8624adc93989",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_evidence_indexes-O-audit.json": {
+      "sha256": "3da33a78cecb10b7326288cd91ee9016bb909506b705fd4fc7ad596152cdc82a",
+      "bytes": 377
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_evidence_indexes-O.stderr": {
+      "sha256": "523682da2837beaffec302ede97d9a0b6faac950e1585c4fec6c8624adc93989",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_execution_freeze-normal-audit.json": {
+      "sha256": "1373a4baecaf6d9cf3e9228c22ca19d375027629fb8306a14cfe1df694fd74b8",
+      "bytes": 3045
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_execution_freeze-normal.stderr": {
+      "sha256": "b8eb98a3b10f27953f27547899516d310130ce45419b00d5cdc49b035ff8ae50",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_execution_freeze-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_execution_freeze-O-audit.json": {
+      "sha256": "f008d30823e81f89260ea17b55f24a11b15bd1f8992a7b152e74c7e88f749c7c",
+      "bytes": 3165
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_execution_freeze-O.stderr": {
+      "sha256": "a6e423deec401751f3e14c8a25f859f5c9710164b25d422e94f060bf756fa9d1",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_execution_freeze-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_fixture_artifacts-normal-audit.json": {
+      "sha256": "728f6c1ad72736542352882b368335d7b79388637055d810a9ec2c4640786195",
+      "bytes": 2695
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_fixture_artifacts-normal.stderr": {
+      "sha256": "3e9ff003c50e01a5ef28fe7d56c751efc851bd4851a2a383dd47770cdd152bbf",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_fixture_artifacts-O-audit.json": {
+      "sha256": "a89aac7ba8bead25e09808a6b2c3694e6bb1066d67afc67386d4a85417ff2803",
+      "bytes": 2803
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_fixture_artifacts-O.stderr": {
+      "sha256": "3e9ff003c50e01a5ef28fe7d56c751efc851bd4851a2a383dd47770cdd152bbf",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_freeze_six_candidate-normal-audit.json": {
+      "sha256": "97a04051e620294eaf0754b4cdb142dbe0e2c19e5a56e85fe5c554c4a6952ee6",
+      "bytes": 4589
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_freeze_six_candidate-normal.stderr": {
+      "sha256": "ade144eaa462b56b19f14253ee998e6b6a3e12907db5aa2854115493ba741628",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_freeze_six_candidate-normal.stdout": {
+      "sha256": "efeea2cd39050c08d8382322318f81314cc21ab78810c9f68dca230e52bc4abf",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_freeze_six_candidate-O-audit.json": {
+      "sha256": "083230873f66b7817afa1fecb783a646739ebba7f5b27a99832dd431ab85fe7c",
+      "bytes": 4697
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_freeze_six_candidate-O.stderr": {
+      "sha256": "e357b7e68d1d7263fe8e6eceb2f52a81123ff07d8a0157d1e6c33581d947d916",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_freeze_six_candidate-O.stdout": {
+      "sha256": "0447040633b0ccb9ea2d6ac4e4db4021ef812635503f72a1eb74924a54506f43",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_native_protection-normal-audit.json": {
+      "sha256": "ac47a6337c26de0d42abb7408228bf2066f2de144eef817c089b2828d29ef27a",
+      "bytes": 581
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_native_protection-normal.stderr": {
+      "sha256": "cd0f217d615c8f295e481fa4bad633f4bbfa341160e276cdf7d56052091a59e4",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_native_protection-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_native_protection-O-audit.json": {
+      "sha256": "8c9e50e56a887922ead16a82a973a536e8fa441707cd8e161e4c52ce81d2deac",
+      "bytes": 593
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_native_protection-O.stderr": {
+      "sha256": "334c48edb7a3221e2e4dbb4bb3142145d51817f8b5e65593f0892532d0f2591c",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_native_protection-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_preallocation_ci-normal-audit.json": {
+      "sha256": "fddc92fdafb6cd4b0267d0924c59e36593cf5c2a6ce8f9ae59b0cde41d3d8ecb",
+      "bytes": 2320
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_preallocation_ci-normal.stderr": {
+      "sha256": "12060931f483081983781fe8a2c865300220dccd84da26510f7de8f4650b2623",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_preallocation_ci-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_preallocation_ci-O-audit.json": {
+      "sha256": "e590138500375836811691b8e057f716de2e58719792a80d529a045a8e646333",
+      "bytes": 2410
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_preallocation_ci-O.stderr": {
+      "sha256": "cb39f1aa9e0c475ef923597c3e75945785a99d6b90b414a02b0ac9ad18b74d2a",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_preallocation_ci-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_receipt_bytes-normal-audit.json": {
+      "sha256": "e3c50b95e136273f8b464711e162c1a7dfaefedd282471690be3563de64d6507",
+      "bytes": 569
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_receipt_bytes-normal.stderr": {
+      "sha256": "facff797bcb7fda5ffe631fcfad1993dec560e0023228b4decdf5bc0530981f1",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_receipt_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_receipt_bytes-O-audit.json": {
+      "sha256": "e3c50b95e136273f8b464711e162c1a7dfaefedd282471690be3563de64d6507",
+      "bytes": 569
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_receipt_bytes-O.stderr": {
+      "sha256": "1f9ac00b1f04b8b9e2aa88ef63e2177d7aee5ffa18f3838275d81436863c9bfc",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_receipt_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v26-normal-audit.json": {
+      "sha256": "7d32ab3a88239ede1cf8827585f6b653fccc2c0394177e266596c43766005450",
+      "bytes": 2806
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v26-normal.stderr": {
+      "sha256": "e724a7c979a0c9b6321c896fa9cc8b34e59d57dcc0d5950716d4461435c5e453",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v26-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v26-O-audit.json": {
+      "sha256": "d86b9d95d586969c06deed81f0341f3bf047fc1410b5be9909835c5169a3078b",
+      "bytes": 2920
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v26-O.stderr": {
+      "sha256": "da1e1f0179d5f1d04cfabc7ec1854a614316a0f7bb93b1cdb65180dbbf25ef35",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v26-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v29-normal-audit.json": {
+      "sha256": "b877e611f511e2c6078229838d738863512a5573b84f012f75bad239dbe4cc99",
+      "bytes": 478
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v29-normal.stderr": {
+      "sha256": "6f3c928c7ae12ad6c85f874ad53ff0b221980558622f9f1410136c0cb1493804",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v29-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v29-O-audit.json": {
+      "sha256": "52c6474064cd816f94751cb50d37777bbd4581cba791c8022a6236efdce0c8d1",
+      "bytes": 490
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v29-O.stderr": {
+      "sha256": "3d077a231ee2b24de0606d084ef1061be943d1d3b7138c2a5d6e176155f8e4bb",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v29-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v30-normal-audit.json": {
+      "sha256": "70c0118819ff272bf274c5e68c9164c476f2a388a0661414f1ed6c23fdda83bd",
+      "bytes": 605
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v30-normal.stderr": {
+      "sha256": "19a999c607060d5dda00d3fcec32e8e19dd46e75281863bb72d7ddfd9a63eb08",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v30-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v30-O-audit.json": {
+      "sha256": "47ab8ed8b39ff529df0313b16a96571a03f8a3efaa726dc9cd78c41c0f995394",
+      "bytes": 623
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v30-O.stderr": {
+      "sha256": "936652dada8d6db888a35c379db040d4162885d7087a3aa840786d411eb8a3d2",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v30-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v31-normal-audit.json": {
+      "sha256": "591e9405095ac8e634ac4b5383305f179431d03d571c00cc1f680246c3156e75",
+      "bytes": 720
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v31-normal.stderr": {
+      "sha256": "ade3092d343df4f9154d33ca124cf2748655a50c3e12d1d1f7a60fb094c742da",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v31-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v31-O-audit.json": {
+      "sha256": "09fcd1a8429ebab83ab9379b11697f58e3af4aa8372ec08832c7745244470490",
+      "bytes": 744
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v31-O.stderr": {
+      "sha256": "2ba88fe811c01b45b31ecc0a80f07e3ad4b9a17adaf97d301f27cd091bdb7c9c",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v31-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v32-normal-audit.json": {
+      "sha256": "ff8f51608f3402d3287fb6c0ec6cc57f179b33113976d16136e5f78f7627ac66",
+      "bytes": 878
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v32-normal.stderr": {
+      "sha256": "b3068437a378062f184ce154b2a901be10754bba1d718359557c34207e88398e",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v32-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v32-O-audit.json": {
+      "sha256": "5b1335749a165eb9605e2e8a42c45771b20c3a272e658b9df107a5437c32a913",
+      "bytes": 902
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v32-O.stderr": {
+      "sha256": "a5bce9e36b9655e8a72a86edc4ff99726f7a978145a08e1e1ef54c823706329c",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retained_v32-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_composition-normal-audit.json": {
+      "sha256": "6ee04a21b6461a6bc57e54b7b9d48211b493442ca9fc1c864abf41f32d562be3",
+      "bytes": 1960
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_composition-normal.stderr": {
+      "sha256": "1a49572caec59a9e957072637cef8d97ba2039d7b2bd0ba312bfb57a3edb63a1",
+      "bytes": 113
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_composition-O-audit.json": {
+      "sha256": "f880169b8f5d6b98dad44adaaeb7a40a6b8aaaa36155b1a6c00b51eae92dd553",
+      "bytes": 2032
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_composition-O.stderr": {
+      "sha256": "bb4777d97dcb59eff89487f64bdebb783390c2d82b9d5bb7190345a883abfcb9",
+      "bytes": 113
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_maintenance-normal-audit.json": {
+      "sha256": "c362bd7a9d9f48c97707d2976b9b26277878ed80fab428f6c2397f6234f2a169",
+      "bytes": 1228
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_maintenance-normal.stderr": {
+      "sha256": "a562e7b3c77381460fdec7cf48312d2abd3be525ed153d1a7cf382488e36bb7a",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_maintenance-O-audit.json": {
+      "sha256": "8569c290dba1ca53b81b2215509809bc6079d4fe1348e6f121ba55e2b08774fa",
+      "bytes": 1270
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_maintenance-O.stderr": {
+      "sha256": "50c0811392246bc01fa23ea53f88375101877b38b8036971435044dd178064f5",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_maintenance-O.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_renewal-normal-audit.json": {
+      "sha256": "86a27e981cfe8cb62b8b0f4fbf60daefe0f224fc8a85e4068ddf1354e322881c",
+      "bytes": 722
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_renewal-normal.stderr": {
+      "sha256": "b8f65d9d103797086cec2590c33d62753fc1e6f56e1758b7cda30d7f14368f00",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_renewal-O-audit.json": {
+      "sha256": "1173681d0c70c3d02b80a064dc778a5a43a8a7194ea5e98ac48b207d1854ccc5",
+      "bytes": 740
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_renewal-O.stderr": {
+      "sha256": "7229b5bce2f4b1ab0d86411662b5a653219b620697b9332bff724f26cc7128e9",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_staging-normal-audit.json": {
+      "sha256": "76976973544077f09e83ca776851c17ffdfeedca7b75763097b43a7697e352e2",
+      "bytes": 754
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_staging-normal.stderr": {
+      "sha256": "d276ce24f7df0df832d00f4a1a5c0f13780199247c21005b2c7d8868238f187a",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_staging-O-audit.json": {
+      "sha256": "dd8ab508d85a2a9b4d4102c23689cb4f46838542a36bc13a165e629eebe5b265",
+      "bytes": 778
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_staging-O.stderr": {
+      "sha256": "a1526f402a3f59eaa46763df51ca96e494c7a554dd8b9ad49eb3a7ae3c794ef3",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_budget_bytes-normal-audit.json": {
+      "sha256": "49a95543b71571ff391d717c48dff987d3ed97abd646e4d31ddd81a07209a939",
+      "bytes": 635
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_budget_bytes-normal.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_budget_bytes-O-audit.json": {
+      "sha256": "10502985e85413e528dbf7d4878c8db40914db82a7bde2cb7eaa64a4617c9dea",
+      "bytes": 653
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_budget_bytes-O.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_resources-normal-audit.json": {
+      "sha256": "461bdca3faaed2a4b5ef8a91482e5088bdd7fbf9a2924fa5eaf24e5b043cc771",
+      "bytes": 498
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_resources-normal.stderr": {
+      "sha256": "5264fd45dc39bd4c1b299497b33d48a48812d922570b5514790c0a25aae1a69e",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_resources-normal.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_resources-O-audit.json": {
+      "sha256": "6ea8f5249e16c838a7e3dd48e96e90b8d591af6d44c38c08c37f3dfe7f61ce95",
+      "bytes": 510
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_resources-O.stderr": {
+      "sha256": "a9beb8c289fc5a571f163f0b0d0f2eeacfbb020cf1b947bc4c25aae52f160aa3",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_resources-O.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_volumes-normal-audit.json": {
+      "sha256": "6dc191ab658f6996289e36f2fe02d8d9a0ff0ad12c85b52e8c9a8adfc35f9bea",
+      "bytes": 615
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_volumes-normal.stderr": {
+      "sha256": "b371852c93772033322e286b6fbfc931a70da65c5968c5a4879706994152c8fe",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_volumes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_volumes-O-audit.json": {
+      "sha256": "10be9f911220722d7a811ff668e66f1eefe70b1913f2b2a43c13ec793314a531",
+      "bytes": 633
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_volumes-O.stderr": {
+      "sha256": "e1e73df193c766f96d0a87af8d537ac2b04316528636e4dd0080ad8c6de8f603",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_retired_volumes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_candidate_runtime-normal-audit.json": {
+      "sha256": "3206a26d2033ecb21a1a5f3b7fee133e1c49d3472e8e03b767aff7a36e87db14",
+      "bytes": 3766
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_candidate_runtime-normal.stderr": {
+      "sha256": "7ee7df1f4988df5db99296f2e3f1aa601db1d0d7016de037befabfbd9e7c855e",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_candidate_runtime-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_candidate_runtime-O-audit.json": {
+      "sha256": "d4f473363d5e03696c223882b74eba1130122360395970798fe841f9d8a9e2ba",
+      "bytes": 3880
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_candidate_runtime-O.stderr": {
+      "sha256": "eafebdfa6f76a34f6158d46b3bd1ccfc17441a91a6e1a82117ab5593200dcf4b",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_candidate_runtime-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_native_entry-normal-audit.json": {
+      "sha256": "500a29a38348e771e8c8e505244b337d3bfacdac33590dc54cfc72b4a158afe2",
+      "bytes": 3061
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_native_entry-normal.stderr": {
+      "sha256": "926fd83b9cbb0f6241ebf70fa6d5ee16f2093496f8046d8471500b877a845da2",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_native_entry-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_native_entry-O-audit.json": {
+      "sha256": "134720f394ace4ff191daa669b99f4a5bf9df8346f3bc4c56c745584cb7dca64",
+      "bytes": 3175
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_native_entry-O.stderr": {
+      "sha256": "926fd83b9cbb0f6241ebf70fa6d5ee16f2093496f8046d8471500b877a845da2",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_six_native_entry-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_successor_dependencies-normal-audit.json": {
+      "sha256": "1041ead9f91b902ef28185451ae8fb1faffb0a5da009cab41c4a6edaca361789",
+      "bytes": 1491
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_successor_dependencies-normal.stderr": {
+      "sha256": "30790abf1bd3374fbac8c0b866e6b3fb6c1d171f42a3ff930a1df727540b3368",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_successor_dependencies-O-audit.json": {
+      "sha256": "3982aeed6073611063499867eb9d8cd2a18cc0a136ace141ab96a6a454ae2e1e",
+      "bytes": 1545
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_successor_dependencies-O.stderr": {
+      "sha256": "c6634912c014fa56fed7003f33e4b387cf9efa667dd23bf59a53601cf99e46f1",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_verify_six_native-normal-audit.json": {
+      "sha256": "ebeebd1afb56ec6484d47d1ba5e4f24ca7e8573db1ffd6312b472c619727bca1",
+      "bytes": 3637
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_verify_six_native-normal.stderr": {
+      "sha256": "4a7680e0060f0c71f083ae1ffca5ddf6dc3ce0f74ad12d750666224facda5209",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_verify_six_native-O-audit.json": {
+      "sha256": "23db5204edc14910b4f739e8e2d5490bff62c37034fb6b38ff7415b7a0dc10dd",
+      "bytes": 3781
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_verify_six_native-O.stderr": {
+      "sha256": "3e60f21c4c5c98a3cbc34bd7c034a9a19b389c8bfa284dd1520e11107a90d221",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_window_six_support-normal-audit.json": {
+      "sha256": "70c1837677f33a110dd56733182eb16949873ec3108ae99a684c75daf0da6845",
+      "bytes": 3049
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_window_six_support-normal.stderr": {
+      "sha256": "4f0ec4f4e339c735948c584dcdc957516e150a3a2ed82252483a7d4b895a97c7",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_window_six_support-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_window_six_support-O-audit.json": {
+      "sha256": "53b7866336e5abbdbe469e6eb321c8ac6a4f69b9bf4ae617a6c5d7d18e66a2f3",
+      "bytes": 3169
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_window_six_support-O.stderr": {
+      "sha256": "3a80346420c2088f4f5d85e3d8cdd59312820fc43639c6050273823705e94f1d",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-python-windows01/test_window_six_support-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/independent-review-history01.json": {
+      "sha256": "b13fd5ab0f9409615456ae43564a0d7f95739d734fd705a560776400188c1333",
+      "bytes": 852
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-build-input01.json": {
+      "sha256": "4370f59328b65d4beee4a0ad6b1fb22b7cabdc15cd66cfe2df8f9a50237ae3a9",
+      "bytes": 22701
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container01/after.json": {
+      "sha256": "6637ff98aab72c07533e866a11b8e6e6be753904464f7320587421331cab58fc",
+      "bytes": 6312
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container01/before.json": {
+      "sha256": "99dcb52b0989307554696790a9268b36ebf6c134049e07707826ac50c6eb7c3b",
+      "bytes": 5930
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container02/after.json": {
+      "sha256": "df9fab006a4346646b180ebee87ed4622726a20530ecefb5801b6fa76f06441a",
+      "bytes": 6311
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container02/before.json": {
+      "sha256": "4db39a6732e8371fed0adfc501259650d63dad9681bb2e63adcff3273855c29a",
+      "bytes": 5930
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container03/after.json": {
+      "sha256": "ff3c0406ada72f96aeac3d458f9eb1c5d65ab2d99a399688267be2e1592662c1",
+      "bytes": 6315
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container03/before.json": {
+      "sha256": "ae50452c408b01c6130ee967369ee990725398c9949c524d0d4680ec3325cc73",
+      "bytes": 5933
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container03/result.json": {
+      "sha256": "7b86869f9fa64d9e3056e5e2a72cc18de975bf7ffdfdb4937b2393290d16df17",
+      "bytes": 397
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container04/after.json": {
+      "sha256": "6d40d8f06a2559c5e7ff77301d3b3951914f0a863e29b12529b31841c1138b69",
+      "bytes": 6315
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container04/before.json": {
+      "sha256": "c264dd870349052b4c0c2bb5b86dc5846c278d1f9bc7249985ca0e72974d2a98",
+      "bytes": 5933
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-container04/result.json": {
+      "sha256": "4389080ac3ab9c1972245d241c6f82a7b1fb8d012b664384d8bec53a14237d28",
+      "bytes": 397
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full01/result.json": {
+      "sha256": "e3e803eab4b96102b3798b3bd21113a5401916b813535ec4200027bfbc9f3854",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full01/start.json": {
+      "sha256": "4183430d020a353f04ab3f6f1dffab62c29aff4324117fd27f1b2c2b2dfd880e",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full01/stderr": {
+      "sha256": "b775bbb1f189637af239f6b03d17e88ce2da6dcebf0a1ae6cd4f8558e1df7d32",
+      "bytes": 396
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full01/stdout": {
+      "sha256": "6b3e11d94a2c6c0cedbdbf8147de6f3782a7e1361ff6cbb9ba00671dbfd3d37a",
+      "bytes": 27530
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full02/result.json": {
+      "sha256": "8e7b11b91d2ebcf703a507047fe5631f8a9bacd44c82f0dec8de62104e00d774",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full02/start.json": {
+      "sha256": "032aa81bc763fa82efca07c62432c9ab52c5a3426756c699bc313d10fedd242e",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full02/stderr": {
+      "sha256": "b775bbb1f189637af239f6b03d17e88ce2da6dcebf0a1ae6cd4f8558e1df7d32",
+      "bytes": 396
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full02/stdout": {
+      "sha256": "20db85cd254c4200ee585d5222e31fece62e40efef99d1ae490436d32acd3457",
+      "bytes": 27353
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full03/result.json": {
+      "sha256": "c300bf14e37d86778a20d7c9e594eb2af5d28d8a00604cb6174d54a72314b43c",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full03/start.json": {
+      "sha256": "75a34fc947e298f78194bc37683868e198ff4788cebcdce159c3862a829f7a2e",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full03/stderr": {
+      "sha256": "b775bbb1f189637af239f6b03d17e88ce2da6dcebf0a1ae6cd4f8558e1df7d32",
+      "bytes": 396
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full03/stdout": {
+      "sha256": "b6cb6b1217f124c70b1d944fc34eeb65b9f32ddfae56fb83dc7fa74478a9c12a",
+      "bytes": 24480
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full04/result.json": {
+      "sha256": "b730ec38f7d1ddba2a9af23911fbffa6114a08e5e21a54dae6b9ee054431cee6",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full04/start.json": {
+      "sha256": "83f5169e6cc5078e1752c85b6a20d8353f931bd78f62ab99d810daaece354c33",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full04/stderr": {
+      "sha256": "b775bbb1f189637af239f6b03d17e88ce2da6dcebf0a1ae6cd4f8558e1df7d32",
+      "bytes": 396
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-full04/stdout": {
+      "sha256": "182f60fa2bf3c34c87bb93da9f56d09559a11cfff514cf1519991b1ba4e7d2d8",
+      "bytes": 24620
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build01/result.json": {
+      "sha256": "9bd9255fbd1369009a28255c06abc10c4198d2b15e0e00aff64a39a16c677693",
+      "bytes": 422
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build01/start.json": {
+      "sha256": "a702501752039d4516bb52e2798e99c63506360fd49312d5efe63294c13073fd",
+      "bytes": 325
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build01/stderr": {
+      "sha256": "4ac9d3995d999f27d6e70cd0d54e9738b6686e41c3c27705bf61df1cf062ae7e",
+      "bytes": 74451
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build01/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build02/result.json": {
+      "sha256": "804112c64d4b91ff854b7377eae6578ddce1f9d35fb3ab8b7ee14c71f0db68e8",
+      "bytes": 451
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build02/start.json": {
+      "sha256": "fda546c8ab78f9f92e40d75a060fb5d5806f273c8304697c439d495d58f0d6a1",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build02/stderr": {
+      "sha256": "f8a2e6c300f98cc4cc23f7913157e694dc778b88b579aedd32539ad84805a4fc",
+      "bytes": 1596
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build02/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build03/result.json": {
+      "sha256": "be6764b9c35b4c455115096caa72ad1d8b4db3d70263c2837664f51c4097a2c1",
+      "bytes": 451
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build03/start.json": {
+      "sha256": "2df4f931b87d8f51a7d3975b8f58a01d28e01c1f1cee0f78e7f1464949c7df5b",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build03/stderr": {
+      "sha256": "30a23e0e24e4f3ffb34b66a17370544345282c938f93f9242cf2b04a2edf35b0",
+      "bytes": 1546
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-browser-image-build03/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-independent-python01/result.json": {
+      "sha256": "295976ede8d7b18ab5e281aa8b28269865dfe970ca89883657b5c88acafede0c",
+      "bytes": 854
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-independent-python01/start.json": {
+      "sha256": "4004d8e3552d93fd1ec4786ac53a6b9199f659d8a8d22e47693a8a3c50d73ee3",
+      "bytes": 697
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-independent-python01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-independent-python01/stdout": {
+      "sha256": "6141ca8348e2d568430e396b734ac28036c6c4c1f00e3da7364ab7081ca99640",
+      "bytes": 49
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-python-image-build01/result.json": {
+      "sha256": "9ddf38e5655692d5418bfcfe5fd890bdfb16ace97302e57b0ce8d83ae4e810de",
+      "bytes": 418
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-python-image-build01/start.json": {
+      "sha256": "045a200817eb1b8cab2fb10d5d02fbea46c47141e203a9888e67937bc1c520b6",
+      "bytes": 321
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-python-image-build01/stderr": {
+      "sha256": "6e587b9f704cb43aa48ec56c5354e44e9d32c1a6ef82159c0f1a42cc139d4a2d",
+      "bytes": 19574
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-python-image-build01/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-query-key-build01/result.json": {
+      "sha256": "d02dd672389e16f253c8776687fe78fb71ad195cdae19e612973585bf9ffba62",
+      "bytes": 451
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-query-key-build01/start.json": {
+      "sha256": "7a9a069ab83451537b4e17e02e030812f919da551319140bf2521905e2b92fd8",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-query-key-build01/stderr": {
+      "sha256": "ee31a357813b3ab456bfaab4cc9147c783db5bb4fb7cd4971e9f4f964d781d11",
+      "bytes": 4721
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/linux-query-key-build01/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/next15-backport-inspect01/result.json": {
+      "sha256": "f8592aabc8c5a1e9ddc2bf7e2e84e2708b41877e5a61503fbe67102a7ca7ed5f",
+      "bytes": 416
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/next15-backport-inspect01/start.json": {
+      "sha256": "e147afe1751d94b0c395e65e931dc53b86e9ddc283127f6069042c6a4bd45859",
+      "bytes": 319
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/next15-backport-inspect01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/next15-backport-inspect01/stdout": {
+      "sha256": "0231ef5247573422321900253ac445138e8771e808a1dc361af564a94307c6ea",
+      "bytes": 17
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/node22-image-pull01/result.json": {
+      "sha256": "77faff179d2166264be1da1fc6bb15d602d7106c85551aa5ca4bcc7f0796055e",
+      "bytes": 299
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/node22-image-pull01/start.json": {
+      "sha256": "bdf45a67638d413365373ae7cd6bfeda363b888280de0797dc2baec0ebf462e7",
+      "bytes": 214
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/node22-image-pull01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/node22-image-pull01/stdout": {
+      "sha256": "2649f768905c5914ef311a0bcada1c4d06f8b37b6b991a1559c2611a6a82b343",
+      "bytes": 345
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/offline_python_runner01.py": {
+      "sha256": "a9db67d288fcec197fc99be185ab7921aab4fa92a2057539f123d33e937a43c2",
+      "bytes": 1843
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-browser-artifact-metadata.json": {
+      "sha256": "edbb0e53f112a19348d21209aef6b75092b7e8420b98c26797f527cd36934bc3",
+      "bytes": 885
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-browser-job-full.log": {
+      "sha256": "fd603008afb78f5906d4a7bcf53ce122e5d1118d48e115d6cb82bcc0e15bafc9",
+      "bytes": 192525
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-publication-failure01/browser-job120863177328-bounded.log": {
+      "sha256": "17e27223492e948aa35437fc4f3f47ad9dfc7baf8145a1c1fefc2c987d62bc67",
+      "bytes": 123804
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-publication-failure01/ci-validation-terminal.json": {
+      "sha256": "0072f2dab1b33786ba870328fdfdbc27f39f8e2595573d7032e1d8c84064b4e9",
+      "bytes": 1016
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/original-publication-failure01/ubuntu-job120863177170-bounded.log": {
+      "sha256": "79170a02dc617b6e086ec9bc9297f1c6d3d9e2e7044e28ff73dcaa2fb4f5f872",
+      "bytes": 120000
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/prepare_browser_linux01.py": {
+      "sha256": "8f15f4306bedd0b1cf25333dc508b2f0f4404e9804c6b2818ce2f3c0f0634400",
+      "bytes": 2014
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/prepare_client_diagnostic01.py": {
+      "sha256": "6969e208688901f1a1b8fce2748c3bdbb1c8279cddfd7e35d79d888a9cb49e37",
+      "bytes": 3407
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/prepare_full_python02.py": {
+      "sha256": "f2ca203494141df7e59227a50a61fea31bec8df1ea0559f073ddeb1fc3efbc87",
+      "bytes": 3435
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/prepare_independent_python01.py": {
+      "sha256": "aa4e734a2e8c726ea4874f1ee3c7d962f48ee1873623871811fc8a80e1ef78da",
+      "bytes": 3157
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/preservation-readonly-result01.json": {
+      "sha256": "b485a5d3a4cb712132473a9bfc0549f32349360ec29cb7522ea9c1dc6a00bafc",
+      "bytes": 959
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/preservation_readonly01.py": {
+      "sha256": "2aedf3ce9c2631131392ba71d9a2b82492cc8487f6eb9a7b67babc079a352a95",
+      "bytes": 1824
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/preserved-browser-failures01/linux-first-schema-requests-independen-d4fe3-vive-other-queue-navigation.zip": {
+      "sha256": "dd3418e0d4c85089c09b161f57eb90ef9697dab47cada11e1cc529903911f42c",
+      "bytes": 1048875
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/preserved-browser-failures01/linux-second-schema-attempts-compact-an-0b6f6-arate-and-preserve-its-page.zip": {
+      "sha256": "d4e849ff6ac42aef34d8249655aa2bc70defbd5bf00b2e52c498031604147668",
+      "bytes": 1434215
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/preserved-browser-failures01/old-query-counterexample-schema-attempts-page-switc-95565-new-attempt-read-stays-held.zip": {
+      "sha256": "cc93768f9f92c266c940ee7dbe270629f1a0cccff30c19dcb7a65b0151950657",
+      "bytes": 307964
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/preserved-browser-failures01/windows-third-schema-attempts-compact-an-0b6f6-arate-and-preserve-its-page.zip": {
+      "sha256": "cadb7651c2d4d5dc37e2119d754db8bf140f10c08feb25e3779ed9e1ea6ab871",
+      "bytes": 757551
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/private-artifact-bindings01.json": {
+      "sha256": "fbe6ee4a542e514242d772462badebf1c234935018098796d89d721f9b75d6b6",
+      "bytes": 612
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-capture01/result.json": {
+      "sha256": "1e75f3d13c9646418ba517fe3909b2c1e7cd1156a4b696e4e2acbd071012a148",
+      "bytes": 364
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-capture01/start.json": {
+      "sha256": "c6b081198b8f126ef3c091df88763dce772a75df7c630dc721403f7d9ffa5b52",
+      "bytes": 279
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-capture01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-capture01/stdout": {
+      "sha256": "d45ed6a864ff74be6f602cc7d14bae18651d1fc64057f74e72543bfec0a7a038",
+      "bytes": 446
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/001-intent.json": {
+      "sha256": "7c4f1936cc70c36d9fa8de47c21c22b77a3d905e116a58670bb3a60d5ec38f89",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/001-process.json": {
+      "sha256": "a05205b752c9d4a01e6e8b69808bb7688ba64c5758705ed8089303b6142a90d5",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/001-stdout.json": {
+      "sha256": "2aeecc9b95000c8f247b5c0276be2ae862b3f591346884f3152d0446c7d09941",
+      "bytes": 4902
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/002-intent.json": {
+      "sha256": "6e60c768da53d4c7d01e5e38101a0004c9e8ca5a05c587102531b297c7fe1f8a",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/002-process.json": {
+      "sha256": "cd0b1ee293051dc85aad68b68ad9182972777378aea40406f9e7cf7877246579",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/002-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/003-intent.json": {
+      "sha256": "83983fa3e5dc0eb1a3f4dc378330c5f19b54e723e64d4d2da8eaec60aaf5060b",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/003-process.json": {
+      "sha256": "64aa4ad5ab0472f3677c24567d488d3a2cd64e498744c402a8c0c8e75e719e1c",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/003-stdout.json": {
+      "sha256": "fdcf3e0ecf60ad8e4814ed9a726c584b4631210e4cdb9d47b3fe363ff83fc11d",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/004-intent.json": {
+      "sha256": "e71de0597f6351d532c02f27746dd18799668bfbf2ba35c220e2b02343ad75e6",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/004-process.json": {
+      "sha256": "6444010799090ff1e6d12f8fce9b11b3eade84db3799eeb1dda9cb2e2dfd36d4",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/004-stdout.json": {
+      "sha256": "60dd4927c39b9c827ec732dce35e8150b47923fb17fbe0d587829e531a96771f",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/005-intent.json": {
+      "sha256": "1bdf11e887d4c33111e429a372f0eae4081dfd6df12649742f3c502a31c3c997",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/005-process.json": {
+      "sha256": "e602011dd9e66ae302e5f1ad7b6327098fb1d386623624040ff784f2547ba938",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/006-intent.json": {
+      "sha256": "57f146cae08f786f0ba803fb0c6440364db573569430114508ef258bd8754b85",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/006-process.json": {
+      "sha256": "ea9e3ec669ea08ba34124fde5ca5e05b69da8c6a511bdfc4cb5c8bd9b7e3fea8",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/006-stdout.json": {
+      "sha256": "b6befb9681d8794fbaedda1d42e2e1eb1bd9ef0698bcce336a0f2bea5f6c1e8c",
+      "bytes": 51380
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/007-intent.json": {
+      "sha256": "f6b5539abb5c2b289acf2bd55969ceaa510e6a62372b67072f973cbff2a5afde",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/007-process.json": {
+      "sha256": "7681c3efe9b876efc96bd0179a4036bf3385a4c545ce3c63293f7c684a2e0d76",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/007-stdout.json": {
+      "sha256": "b4f3f12ec11d09542f51aedf5ac16d552204fcf9d5ae9d200534ff3290039fcd",
+      "bytes": 29678
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/008-intent.json": {
+      "sha256": "971721f2bc2858068655b5b8767fbc5045e006f6135879a1fdd33e2eca0309ee",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/008-process.json": {
+      "sha256": "b17eb7244d2f222c58000179d7519f0cf1c797b810f6211ec8f13adbd197779f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/008-stdout.json": {
+      "sha256": "8edc8e393826db9c6729552da34bf1f0aafd210e5ceb295d5c8716161466cfa1",
+      "bytes": 40498
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/result.json": {
+      "sha256": "a88320c6b95d6cd0bf7d275906f195701c4c602e611c8ba061fa03627ce367e7",
+      "bytes": 638
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/publication-boundary-read01/snapshot.json": {
+      "sha256": "edf2536f1b22d42dee120c56aea059800bd9081bf379a400362f90b4de30fd2c",
+      "bytes": 9500
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/query-context-counterexample01/result.json": {
+      "sha256": "806c2a9ef8502c82a730edaca9ad068fdcdd2d43b218d550e74a34c5d3be897c",
+      "bytes": 513
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/query-context-counterexample01/start.json": {
+      "sha256": "7515006acab17d0e511b035fa5961c98ee234af2b07c0dc34cecc941ef1c0675",
+      "bytes": 424
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/query-context-counterexample01/stderr": {
+      "sha256": "f4d06b305d1037f444c9f9b4eac074357685079cd888435bf0dd6b79b14a47fc",
+      "bytes": 1311
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/query-context-counterexample01/stdout": {
+      "sha256": "1d5ec60ce593f5145b11c19095377b333da5d708fadc8234fcdf7eef189f56c9",
+      "bytes": 3315
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/read_publication_boundary01.py": {
+      "sha256": "12907ecbb192bb9ca23420ea4b18a9c4e17a3e9048ca06ee4e72a7cd3deee2d6",
+      "bytes": 2022
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/retained-sources-inspect-redacted01.json": {
+      "sha256": "28b01d8f8c194628f2933a369110bc6e8c4ae784f815343aaade003ab8ffd884",
+      "bytes": 4254
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/review-inputs-audit01.json": {
+      "sha256": "796489828d1f9f5c36a2086c4af39c7008e0fe912f8c564f40c0ada72a08b8ef",
+      "bytes": 176
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/review-inputs-index01.json": {
+      "sha256": "7c3f4fdeff3ef4d80482b339bf83d389fb91dabc03224f0241fa7bf6b58bf560",
+      "bytes": 184971
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/reviewed-source-bytes01.json": {
+      "sha256": "f8a075c9ea1eeddc3ef1127b56ab31bcbed3e63dcfb6a1522fc8b5f76ab5903d",
+      "bytes": 730616
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/run_linux_browser01.py": {
+      "sha256": "169f1001c52d638b1948cfa9797e70091329891ce9b8d6f0bf480d12496263d8",
+      "bytes": 1929
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/run_linux_browser02.py": {
+      "sha256": "c660aac6ae4f7e275a06f50883fcfeec244b0f1fca1e08620d86b2e5b55a72f2",
+      "bytes": 1950
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/run_linux_browser03.py": {
+      "sha256": "9c4ccacdcdc0a2db127b8b6d0d5dc4caa7ff7301229afc6236d0bc9bfcb4e311",
+      "bytes": 1950
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/run_linux_browser04.py": {
+      "sha256": "a9d0739f72380760ba647c290c93c0b2b272f01668c430a36419d321a5024967",
+      "bytes": 1950
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/run_python_collection01.py": {
+      "sha256": "0577fd1de143f7df66c54537e8ee607e4b4169d7dfac7315517f2375ded5419d",
+      "bytes": 1961
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/evidence_indexes-normal-audit.json": {
+      "sha256": "c308ca7c7ee27ba7e6b2dbe14fc7da3aed8db5fa935fd945be230be53fbfec55",
+      "bytes": 368
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/evidence_indexes-normal.stderr": {
+      "sha256": "1ebfbf49f411b7f2c27536f0f4239c5ba5930dbfc4f50d53571084a5ba7c2a27",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/evidence_indexes-O-audit.json": {
+      "sha256": "98969e31fcb814854d9e4b7d8461fe45a13fa860b2b8f4d7fd272cbeecd2fdf8",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/evidence_indexes-O.stderr": {
+      "sha256": "4b8c5cd063dd7feab8e6bacb694f3f4eb816952b6a70a9c15ebab90818f7123c",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/fixture_artifacts-normal-audit.json": {
+      "sha256": "22264f2fb962c393338803ea4996f08b5748962ce7e61dfa1097a82ad1c56071",
+      "bytes": 2692
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/fixture_artifacts-normal.stderr": {
+      "sha256": "d9c5f50293b226649ca0d98821d364c93cce9d2a13df72c1000fc1bae282b56b",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/fixture_artifacts-O-audit.json": {
+      "sha256": "a7002835766a9f748e873b655b257a535b95d83549b1ffdb002dd2d37899b673",
+      "bytes": 2800
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/fixture_artifacts-O.stderr": {
+      "sha256": "c40722fec6aa34b43951397e0040fd63148e03e573f4512fc6d43710dfba8840",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_composition-normal-audit.json": {
+      "sha256": "4be8f7997232e7a2550234c0f1f8c43bd0777790863acf67ec1c21e784bfb8dc",
+      "bytes": 1957
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_composition-normal.stderr": {
+      "sha256": "dd26681741448be488d0d9cdd4fe87d195714caa5f375bc217a93202394e1448",
+      "bytes": 113
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_composition-O-audit.json": {
+      "sha256": "99442ce0db114c9c6d3ceb83f147680e3e12e635f8e56c19973c916d624c20d3",
+      "bytes": 2029
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_composition-O.stderr": {
+      "sha256": "ee48007fe44463cb0ca9c04ecb007ed1292026e41a563443ee0025df72b169f4",
+      "bytes": 113
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_maintenance-normal-audit.json": {
+      "sha256": "77e1843db0da7b8c7425f26262a83d829867cd62f658863d289d6d2ef58a4d94",
+      "bytes": 1225
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_maintenance-normal.stderr": {
+      "sha256": "4009a16236dbdb0e53b0639b31476c80bd742bb5d3e7d3d5355c1ce3e14032b7",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_maintenance-O-audit.json": {
+      "sha256": "5bc8de9834915d1114752c854a9e0a22770c96544b2f200e032d99243996da81",
+      "bytes": 1267
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_maintenance-O.stderr": {
+      "sha256": "302737f1b66d59592a85a5d3f5e6d151fe38112bc8e6dee25d751a0ce7f40efa",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_maintenance-O.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_renewal-normal-audit.json": {
+      "sha256": "5571aa4d605e8d33ad03151ef93be9acf7bed4f31828f1fb8d6e91971141eec7",
+      "bytes": 719
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_renewal-normal.stderr": {
+      "sha256": "4cae6a073ee66065723fd6f9d2dc8cd23254d6f05274c1622202edadf6740888",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_renewal-O-audit.json": {
+      "sha256": "3ab39c50a3a56089d968140f56b8c12564042d625095d6aca2cfd50f624c6dd6",
+      "bytes": 737
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_renewal-O.stderr": {
+      "sha256": "fd5335fdc384400a16a1f62aed1927e7e8d43db25a6c20e55a864401f38a7bf6",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_staging-normal-audit.json": {
+      "sha256": "b99d153e6aed8d4a5a5763f256baf62865e69f78d7842a2a2ea50c1a21671521",
+      "bytes": 751
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_staging-normal.stderr": {
+      "sha256": "930f25f98ccae7d929aca483adda13142268010d59410634d2f6b0a6576f536a",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_staging-O-audit.json": {
+      "sha256": "7df39b8b05f7f27e0710f4c5a7b9200f19b39a28a8b7fa354e2b569cf64dad09",
+      "bytes": 775
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_staging-O.stderr": {
+      "sha256": "60ce10399dac04e70cc4897f5ee1b41eb950c5a2b6d2b6e99df5dc50047f0ef8",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retired_budget_bytes-normal-audit.json": {
+      "sha256": "fdeced780ba66740620cd8af9e801b27b91fc48644054e6321c8e528ca591560",
+      "bytes": 632
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retired_budget_bytes-normal.stderr": {
+      "sha256": "383a12fba9b5b327054a24ce7e5739569c4f0b6621facd981f2d6a4271063b3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retired_budget_bytes-O-audit.json": {
+      "sha256": "53cd23cfd82e4b85877e053a5ef05d4aee7ee7b148f85c26a24d6938847968ff",
+      "bytes": 650
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retired_budget_bytes-O.stderr": {
+      "sha256": "383a12fba9b5b327054a24ce7e5739569c4f0b6621facd981f2d6a4271063b3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/successor_dependencies-normal-audit.json": {
+      "sha256": "c417af66280f415eee555ae00c742a0122f1106e29bf6626c96bc5d8605f5132",
+      "bytes": 1488
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/successor_dependencies-normal.stderr": {
+      "sha256": "9ae87cc0b6519cfbea725e74f65499d0d798e68d215be6c7092f74247c322225",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/successor_dependencies-O-audit.json": {
+      "sha256": "e6fff5944d18478bcae9d5997f7cc10c0b815575245314f74b4307772920a113",
+      "bytes": 1542
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/successor_dependencies-O.stderr": {
+      "sha256": "ef84012250d07feb7c951479ecc1ef656994283611dcf331ca57f8e68a5a1446",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/verify_six_native-normal-audit.json": {
+      "sha256": "69a1d50d31653cd031e37124af6057827f415ea3c64f2977b9e161845aaff37c",
+      "bytes": 3634
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/verify_six_native-normal.stderr": {
+      "sha256": "cf84c469e5cd85be9a05c3867244d52a194e374c3da6853752412ff9a8d44fbc",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/verify_six_native-O-audit.json": {
+      "sha256": "f47d3d4c2870d6183955965726ad0c061629c9b4026200ff6e812cc82c410cbb",
+      "bytes": 3778
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/verify_six_native-O.stderr": {
+      "sha256": "e8d20656ea13b50346863a77cc3a6b73b4452facdbe0532d53dd37cd7fe40735",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-audited-preparation01/verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-final03/result.json": {
+      "sha256": "8cdbc75d3786bbf0f4f5a58fd761cafca3b98bd29fbce130bcaf5bd98c5db524",
+      "bytes": 469
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-final03/start.json": {
+      "sha256": "6a8f57b89760e41e4dbd59a7c67e66702ce56b3351de65323fb12301e86ed80e",
+      "bytes": 388
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-final03/stderr": {
+      "sha256": "e030a78c0455d16099b04f6889998ef4149220b77a3320df69cce60efff70c9e",
+      "bytes": 1475
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-final03/stdout": {
+      "sha256": "4dd1352ddc7f55aeac14642864a67de37405b1b2dd3fa08b9a5acb0765192edd",
+      "bytes": 4103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full01/result.json": {
+      "sha256": "3ae9b731b6d52e68f76dc2a15fbf334dc3ec34aa5584d8e36bc02d31d5a70ec7",
+      "bytes": 436
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full01/start.json": {
+      "sha256": "9b7c26c456907c95e61a32d7643143dc2c2fa1e0afbafca9d1145dce53db0bc7",
+      "bytes": 359
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full01/stderr": {
+      "sha256": "80ab31856e4c1848cb1b1c80e353332d966b3c359ee9e9891bf60ba34873986f",
+      "bytes": 1312
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full01/stdout": {
+      "sha256": "404d6ae3bcee1d2a91baa38b769d379971159c4b8d470f8ae6f07a2a2678a786",
+      "bytes": 12754
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full02/result.json": {
+      "sha256": "f7aa76ea687a640ba369765fa8606a2fef0abd417d0a649c69e3bc22fed5a181",
+      "bytes": 436
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full02/start.json": {
+      "sha256": "d3c49d5f29e65f893e5c15c1e833366fc3d5bacdc607632193be5cbedfcab41e",
+      "bytes": 359
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full02/stderr": {
+      "sha256": "7c76d3105c91f4cdb5af8fff7041aea9ac37db68bec533c87cd4c4ed467c1231",
+      "bytes": 1312
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full02/stdout": {
+      "sha256": "1a465b5fa2c22486da2b5c6f5fdc3ed46152e142ec14749ed1cf450d6bc9b1bd",
+      "bytes": 12740
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full04/result.json": {
+      "sha256": "b9a9fe54a7cef7df286d5a9fa7986d3fd67bd2835f7727e97e30d7b9fafbd739",
+      "bytes": 436
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full04/start.json": {
+      "sha256": "3919f64733c93bacbec7564d6574139aceeca6c1a638acc93c7131805940a6ad",
+      "bytes": 359
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full04/stderr": {
+      "sha256": "25d1d0903bac8727cab6ab0d85320febcaf75818708862ac672ea8c8903a7a27",
+      "bytes": 1312
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-full04/stdout": {
+      "sha256": "a4570ba2a6747f28ac9fb81775112d409b79c636138ac3fcbcf51431ed173590",
+      "bytes": 12885
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-target01/result.json": {
+      "sha256": "f91db507b663c00bf7e9bbaef688d82470a1ac22b8f0e6856d9154a40c416cdb",
+      "bytes": 357
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-target01/start.json": {
+      "sha256": "7c1a71ca9d232c6fd9b3876831da2fec0eaca06dc1a6dea6be46f4818375ce04",
+      "bytes": 280
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-target01/stderr": {
+      "sha256": "4220d74e96fae554ee1d1e27fac70108871c1699a0e447fd32969576ff6b9ff7",
+      "bytes": 1312
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-browser-target01/stdout": {
+      "sha256": "ba2cc6834360efd630ad4c71212ad827b64b359ef55dd2e4b07d6fc07636084a",
+      "bytes": 675
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run01/result.json": {
+      "sha256": "73dbc8e6967bf9b7105237ac221f9e5daf7607a67028a75c6a00c8986b8665b2",
+      "bytes": 628
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run01/start.json": {
+      "sha256": "0eaf5138ef3128ac45c3bfc5d554e2f787105ef64ca5bc32296ca278d643fa23",
+      "bytes": 531
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run01/stderr": {
+      "sha256": "cf0917e3c8477a69579ffce94e55bae01527ec408227b33db677232af0156c69",
+      "bytes": 1054
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run01/stdout": {
+      "sha256": "39972a72dff0d728110d581ae471d57c5448aec843a34524fadab46d24a94310",
+      "bytes": 74
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run02/result.json": {
+      "sha256": "34d18c12b5757f0a5632c0e704baf84842e3dc372ad2a2d2420b9d48495abbcc",
+      "bytes": 630
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run02/start.json": {
+      "sha256": "5939c58c18ecb4a81cc28c1c5f10aa43741400d6c98aa761e6b42726bd238ce0",
+      "bytes": 533
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run02/stderr": {
+      "sha256": "d4ba92e4b94779336120a131663b64ded5c3f62e7d266c90d1c019e66559e00e",
+      "bytes": 2458
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-client-diagnostic-run02/stdout": {
+      "sha256": "8078f71a90c208601aabe92afc27c31466e3ae32935b4107860528fd7dce4089",
+      "bytes": 1781
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_evidence_indexes-normal-audit.json": {
+      "sha256": "c308ca7c7ee27ba7e6b2dbe14fc7da3aed8db5fa935fd945be230be53fbfec55",
+      "bytes": 368
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_evidence_indexes-normal.stderr": {
+      "sha256": "ed86a3dc6877eec1912db0ad1b5e44d442711ee177500609b198fc3078f5f89f",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_evidence_indexes-O-audit.json": {
+      "sha256": "98969e31fcb814854d9e4b7d8461fe45a13fa860b2b8f4d7fd272cbeecd2fdf8",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_evidence_indexes-O.stderr": {
+      "sha256": "6309671c0aa732e31cd6717407a98a63d1a080bdb09185c316627ea73268469c",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_six_native_entry-normal-audit.json": {
+      "sha256": "cf6d35acb8e6cef92ffdb5c139529b1e937695fb610302f1931a3c6f32ce3af8",
+      "bytes": 3075
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_six_native_entry-normal.stderr": {
+      "sha256": "d96870b3b8832429dad1fcfb9038b44dd39639b013e8a46b360b3d30c57eddca",
+      "bytes": 9168
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation02/test_six_native_entry-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_evidence_indexes-normal-audit.json": {
+      "sha256": "c308ca7c7ee27ba7e6b2dbe14fc7da3aed8db5fa935fd945be230be53fbfec55",
+      "bytes": 368
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_evidence_indexes-normal.stderr": {
+      "sha256": "7498b11c9c881d7d6f917ae110b9a276c5cbae7ded126cdd8c3f9d318e3ee1ab",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_evidence_indexes-O-audit.json": {
+      "sha256": "98969e31fcb814854d9e4b7d8461fe45a13fa860b2b8f4d7fd272cbeecd2fdf8",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_evidence_indexes-O.stderr": {
+      "sha256": "68f7f1a4d1324484357c863c99f330380957d1ca137365fd2c09e62f55870f66",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_fixture_artifacts-normal-audit.json": {
+      "sha256": "22264f2fb962c393338803ea4996f08b5748962ce7e61dfa1097a82ad1c56071",
+      "bytes": 2692
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_fixture_artifacts-normal.stderr": {
+      "sha256": "c931301d7b827acd3c12e028ba92d141a6b0749eff6823bbb4cb9595abf1ebf9",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_fixture_artifacts-O-audit.json": {
+      "sha256": "a7002835766a9f748e873b655b257a535b95d83549b1ffdb002dd2d37899b673",
+      "bytes": 2800
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_fixture_artifacts-O.stderr": {
+      "sha256": "41f8de7a22c821d63b38198142e095b06432d606937b48d9c26e1a5e3b6c111f",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_preallocation_ci-normal-audit.json": {
+      "sha256": "26ea04216508b42bb2b3d2632cfbc86bbda90458aafc310de6d112278228a206",
+      "bytes": 2317
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_preallocation_ci-normal.stderr": {
+      "sha256": "978cdaa0ed214cc93e0aaaa7d9ae2571ecd15458f232ba5f9171f4aaceb6fc55",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_preallocation_ci-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_preallocation_ci-O-audit.json": {
+      "sha256": "00902852300718fe1099fdfd1f015eca2445311b2235b1b7332121d32815de51",
+      "bytes": 2407
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_preallocation_ci-O.stderr": {
+      "sha256": "4c1eb86b2f6a1afd9be91500fad423c0d9d10db8840451aed94200246de1c419",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_preallocation_ci-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_receipt_bytes-normal-audit.json": {
+      "sha256": "7b4733ec0f39d48abe17c79d5408649eea00b7f8a116d5dccfd7707267b9c583",
+      "bytes": 566
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_receipt_bytes-normal.stderr": {
+      "sha256": "1dbe20564854410147bd6d3f06c40bffbc734ee41ffb9d5212df7e2459bb8283",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_receipt_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_receipt_bytes-O-audit.json": {
+      "sha256": "7b4733ec0f39d48abe17c79d5408649eea00b7f8a116d5dccfd7707267b9c583",
+      "bytes": 566
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_receipt_bytes-O.stderr": {
+      "sha256": "188d3f682c04ac4cc1da178c6f80325b5aa65d84a3ec4e887b06e117d9954fcb",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_receipt_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_budget_bytes-normal-audit.json": {
+      "sha256": "fdeced780ba66740620cd8af9e801b27b91fc48644054e6321c8e528ca591560",
+      "bytes": 632
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_budget_bytes-normal.stderr": {
+      "sha256": "383a12fba9b5b327054a24ce7e5739569c4f0b6621facd981f2d6a4271063b3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_budget_bytes-O-audit.json": {
+      "sha256": "53cd23cfd82e4b85877e053a5ef05d4aee7ee7b148f85c26a24d6938847968ff",
+      "bytes": 650
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_budget_bytes-O.stderr": {
+      "sha256": "383a12fba9b5b327054a24ce7e5739569c4f0b6621facd981f2d6a4271063b3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_resources-normal-audit.json": {
+      "sha256": "672b1a178ee9b98667213f4f9a923bdc4e658ffb7cc7b7f9e72dbfc0da8094bf",
+      "bytes": 495
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_resources-normal.stderr": {
+      "sha256": "310040f15ac4e905c7bf2d24af44d502c8f17ae86819caae6d234bb69aae80d7",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_resources-normal.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_resources-O-audit.json": {
+      "sha256": "cd729f0cf16654eeeb841e02e79cf00b1fa29d93658caa0a93c90a5863b2623c",
+      "bytes": 507
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_resources-O.stderr": {
+      "sha256": "14bb8586a556411fd939c430fbd251df4411e07ad80a232c2d635df53da9e0b0",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_resources-O.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_volumes-normal-audit.json": {
+      "sha256": "e1d99c1cdc8866a5bed55e42024273fee5443f6f5635b23c8abbc57be7f79d8b",
+      "bytes": 612
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_volumes-normal.stderr": {
+      "sha256": "6f6559e226b27f249e09fab65bfa0ae78e67d84633693c577aec78d540c2896f",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_volumes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_volumes-O-audit.json": {
+      "sha256": "d85b6d5d03e462a8c26d5594258d1fe5d2b143422abe5d26e56fa8129b548c02",
+      "bytes": 630
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_volumes-O.stderr": {
+      "sha256": "6704cb5add1d647380bef83c5b33761f3e7dac956ee4a0f00048e01be361554c",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_retired_volumes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_candidate_runtime-normal-audit.json": {
+      "sha256": "39e3f033ed7ec57c5716a5e8da7b7c54031389826a764f55f4aed06d3a9426e9",
+      "bytes": 3780
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_candidate_runtime-normal.stderr": {
+      "sha256": "583ce19438077712456de63cddc68058720d1910e8f0f2225ebbdb999ad8b4ec",
+      "bytes": 6107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_candidate_runtime-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_native_entry-normal-audit.json": {
+      "sha256": "bea6a7378e930e5c004275180a88ae42a133c35954b9de40c20ab48336b27bd8",
+      "bytes": 3058
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_native_entry-normal.stderr": {
+      "sha256": "5ddf54e80eccf83c8f606bfbe6e3cf5d90f380083fa43828030948105db3b63a",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_native_entry-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_native_entry-O-audit.json": {
+      "sha256": "580a8acb521185860607cb4e9eaea0299fcef0e24e5d9a6a939c5ff61a8e100f",
+      "bytes": 3172
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_native_entry-O.stderr": {
+      "sha256": "f04556f2049eef05d199ee2c6091ece7975fe7c1b2dc0eafdb7b65fcd02523a0",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_six_native_entry-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_successor_dependencies-normal-audit.json": {
+      "sha256": "c417af66280f415eee555ae00c742a0122f1106e29bf6626c96bc5d8605f5132",
+      "bytes": 1488
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_successor_dependencies-normal.stderr": {
+      "sha256": "2078d59d8f406664a4c98738acb18265d7dd1ac886a3692985c7b5ff676844dc",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_successor_dependencies-O-audit.json": {
+      "sha256": "e6fff5944d18478bcae9d5997f7cc10c0b815575245314f74b4307772920a113",
+      "bytes": 1542
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_successor_dependencies-O.stderr": {
+      "sha256": "d8ce67b9188aa4154080af790b315741bf3f538c636abc8f7b4ef4f8b6462d34",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation03/test_successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/temporary_containers_test-normal-audit.json": {
+      "sha256": "8d9ccae9a9225ca68920830ff66e724cfa6e809b33a9d940735ddc54277413be",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/temporary_containers_test-normal.stderr": {
+      "sha256": "d754b943247dc6f2477a99d07cc2df1f39bfb171cdc00383838c942de96d974b",
+      "bytes": 748
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/temporary_containers_test-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/temporary_containers_test-O-audit.json": {
+      "sha256": "8d9ccae9a9225ca68920830ff66e724cfa6e809b33a9d940735ddc54277413be",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/temporary_containers_test-O.stderr": {
+      "sha256": "d754b943247dc6f2477a99d07cc2df1f39bfb171cdc00383838c942de96d974b",
+      "bytes": 748
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/temporary_containers_test-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_attest_remaining_executable-normal-audit.json": {
+      "sha256": "43c9150744b36dfa4b106a3d7e4f1589602a4e5c6ca3472b6ecd853fb09709e6",
+      "bytes": 1546
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_attest_remaining_executable-normal.stderr": {
+      "sha256": "380e714b83ad853f394794f83edbafd318a4ff7cd93e448ac6a0dcef5d7b08eb",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_attest_remaining_executable-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_attest_remaining_executable-O-audit.json": {
+      "sha256": "2895933b6a88e843e0ff26ced7316843fa87176290f988360d573d6671afee9c",
+      "bytes": 1594
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_attest_remaining_executable-O.stderr": {
+      "sha256": "2cfdbcff6627f55c61f75e95ab4363bc23ad0ac0531d7168588e0fe9a27f7f6d",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_attest_remaining_executable-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_evidence_indexes-normal-audit.json": {
+      "sha256": "c308ca7c7ee27ba7e6b2dbe14fc7da3aed8db5fa935fd945be230be53fbfec55",
+      "bytes": 368
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_evidence_indexes-normal.stderr": {
+      "sha256": "39aacf9d8df91bdf01f439bea30c6b1daa1c6a1f7a9a3388f6caa3cd806bab9b",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_evidence_indexes-O-audit.json": {
+      "sha256": "98969e31fcb814854d9e4b7d8461fe45a13fa860b2b8f4d7fd272cbeecd2fdf8",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_evidence_indexes-O.stderr": {
+      "sha256": "be57d9aebaf57182ca19fd5085907760f4cdd13cbfb6f12a7198d2d76a8c6dad",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_execution_freeze-normal-audit.json": {
+      "sha256": "6164cbe19689a1e17519f4bed4ade98f8eb71798dc0ccdc6169f1876d40f95ed",
+      "bytes": 3042
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_execution_freeze-normal.stderr": {
+      "sha256": "4d1692a4dddb4d496e096c80490f3b3e7b5888faf35076c57628e3f8abca16c3",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_execution_freeze-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_execution_freeze-O-audit.json": {
+      "sha256": "d8498f6fb2135067147bce7dd508e622ed43192eb6f33386317e4ace948dbd8e",
+      "bytes": 3162
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_execution_freeze-O.stderr": {
+      "sha256": "6ea550623a9dd93d4ba7c3f5d266000528805b964387a62682a9652ea7902e39",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_execution_freeze-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_fixture_artifacts-normal-audit.json": {
+      "sha256": "22264f2fb962c393338803ea4996f08b5748962ce7e61dfa1097a82ad1c56071",
+      "bytes": 2692
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_fixture_artifacts-normal.stderr": {
+      "sha256": "49f6d7d10727f537ee0f5539aaf5ee86c159fe22d29988c1753da5f9304efa31",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_fixture_artifacts-O-audit.json": {
+      "sha256": "a7002835766a9f748e873b655b257a535b95d83549b1ffdb002dd2d37899b673",
+      "bytes": 2800
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_fixture_artifacts-O.stderr": {
+      "sha256": "0cd57a31a09553cb05951ab6059ba1aab03403993a6b1b91cfd01a4d1c3cfa3b",
+      "bytes": 349
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_freeze_six_candidate-normal-audit.json": {
+      "sha256": "a02346f1c6f304280f863fe15d44e144752b8bda7beb9492df046b6ce00cda7d",
+      "bytes": 4586
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_freeze_six_candidate-normal.stderr": {
+      "sha256": "006cde38fcec5717813adadac82fbeecf6e8f44c9ef4bc1f1cbd600c4ffdedfb",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_freeze_six_candidate-normal.stdout": {
+      "sha256": "3c4a463d7720ed9426060956972e60e87ba792ac403dc7aec92ecd05cfac0a96",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_freeze_six_candidate-O-audit.json": {
+      "sha256": "59902342823f267ce4bef34f19136e238645c2f0ef3595a09aa1b83b41d540a6",
+      "bytes": 4694
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_freeze_six_candidate-O.stderr": {
+      "sha256": "2ac30092d190ec0793b1ab59f6df25443e2367a76042868fc4b46cecda622fb6",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_freeze_six_candidate-O.stdout": {
+      "sha256": "85c0ca3f625960c5d6f37110a91114f6621fb60f2d50cc888ee980ac77746ccc",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_native_protection-normal-audit.json": {
+      "sha256": "129abe9764bb91a0c8ff6b3cca38b1cb450368c1f1b466d250c53d6944bf6d67",
+      "bytes": 578
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_native_protection-normal.stderr": {
+      "sha256": "c7bd7de5eb9e3fac8dfe40a87d107178f17f044678e269208e351aa4ac151834",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_native_protection-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_native_protection-O-audit.json": {
+      "sha256": "3996365a29e5eed7e50d98f0bfbd24267c4bc1f93a9502fe3d7ebf35d666923b",
+      "bytes": 590
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_native_protection-O.stderr": {
+      "sha256": "09a33835eb27cae91e1addf50fd936eb545e5ed151b99f2ea70e0f916fde306f",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_native_protection-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_preallocation_ci-normal-audit.json": {
+      "sha256": "26ea04216508b42bb2b3d2632cfbc86bbda90458aafc310de6d112278228a206",
+      "bytes": 2317
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_preallocation_ci-normal.stderr": {
+      "sha256": "a918c09dfa059a42f93b8114445b8d744a8c008de1c0c527b83b1d5fb66feaf3",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_preallocation_ci-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_preallocation_ci-O-audit.json": {
+      "sha256": "00902852300718fe1099fdfd1f015eca2445311b2235b1b7332121d32815de51",
+      "bytes": 2407
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_preallocation_ci-O.stderr": {
+      "sha256": "9a29a5dc8bab47d3dd2a52395be51b0cdd46e682d47554bd91fe4b5a078742f9",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_preallocation_ci-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_receipt_bytes-normal-audit.json": {
+      "sha256": "7b4733ec0f39d48abe17c79d5408649eea00b7f8a116d5dccfd7707267b9c583",
+      "bytes": 566
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_receipt_bytes-normal.stderr": {
+      "sha256": "134bd357a2620b13aebac524a7bc0ae2ed7e6be6886ecae54c7ca12d05679d24",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_receipt_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_receipt_bytes-O-audit.json": {
+      "sha256": "7b4733ec0f39d48abe17c79d5408649eea00b7f8a116d5dccfd7707267b9c583",
+      "bytes": 566
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_receipt_bytes-O.stderr": {
+      "sha256": "7e57748bc38b114da0b13165c1144e2b2a985a68b7414aa653cd8f7eaff8f68e",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_receipt_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v26-normal-audit.json": {
+      "sha256": "70e806aefa102ac3f117d8e314c4bddf9398e8df66b2d2ec3def2edb99ba73ca",
+      "bytes": 2803
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v26-normal.stderr": {
+      "sha256": "18719ff416d1c1d18ddac767bb36d387e1eb686937ac53b82a5827f59e32e11d",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v26-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v26-O-audit.json": {
+      "sha256": "4243212052b725a44671fb39e715d699ad76340b30e946eb7b9020adce4843b5",
+      "bytes": 2917
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v26-O.stderr": {
+      "sha256": "14d5a5547d42e20982398925897b6ff8bee46be14d042ece37291ca260687901",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v26-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v29-normal-audit.json": {
+      "sha256": "70bd875f462571f75654805c9d9f95bc5dbe402f0926ca8d72054560660f60c8",
+      "bytes": 475
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v29-normal.stderr": {
+      "sha256": "f81e25548e43db9a5b128b98727839bd21c7f1d687987e14cdd161c002a7e0eb",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v29-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v29-O-audit.json": {
+      "sha256": "bde4b841f065b0dfa6bd3c0009f4b0448b72d999fe243b1c1b3542db7d9dc458",
+      "bytes": 487
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v29-O.stderr": {
+      "sha256": "815f29b847b4f585c7f1d28892c44138635691d4beea92d26713a1b44c82135f",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v29-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v30-normal-audit.json": {
+      "sha256": "757b3cb5b81232943d6b6d4100460cb689edd9c730f3dbc9994a940d6077eda8",
+      "bytes": 602
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v30-normal.stderr": {
+      "sha256": "f3197df85a4e52fdf5960f2fdc3099f43445a72fcdb1c7df16361377a391a310",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v30-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v30-O-audit.json": {
+      "sha256": "f0d3833e61930d8f1bec262cc8c77263bcc508503bcc51402decd277f5db1af6",
+      "bytes": 620
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v30-O.stderr": {
+      "sha256": "efaa20cd10f44e9f1168219c787bcc36b04ff86773885897ac8e7e1adecfd7d4",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v30-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v31-normal-audit.json": {
+      "sha256": "7ef8535f77fa351f636bfad68a50faf346389ee4d48b889a9562169a94c02cc4",
+      "bytes": 717
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v31-normal.stderr": {
+      "sha256": "e291237b2c9cf20bd3b48e2bf7ce0bc6a7b33f8d1956db34c3dd8952eeb9b0e4",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v31-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v31-O-audit.json": {
+      "sha256": "53a754a91ecac4a8f9fa1fdfab0495693b551e29d6d34eb74860fcae82e6b0cb",
+      "bytes": 741
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v31-O.stderr": {
+      "sha256": "94a8dac093d10180be42bd1a3a6f13248ef6590384857cf8828e590113cd9db3",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v31-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v32-normal-audit.json": {
+      "sha256": "47b863dee604e524853ccebf1551ca8ee88a284ada5581951430b979d12a0edc",
+      "bytes": 875
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v32-normal.stderr": {
+      "sha256": "478c124db0b7f468308751348eaa73c18d46c2e309485ec0ae5b1cc288c7f779",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v32-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v32-O-audit.json": {
+      "sha256": "2f0b3ea11a9f8838da04dd5269db7486a8e528447eb44449522614c246df90e8",
+      "bytes": 899
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v32-O.stderr": {
+      "sha256": "8f6ab1bde21c2ed31f03ada94b4e8f2cb04897468b15a20c3aaef52877db0207",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retained_v32-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_composition-normal-audit.json": {
+      "sha256": "4be8f7997232e7a2550234c0f1f8c43bd0777790863acf67ec1c21e784bfb8dc",
+      "bytes": 1957
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_composition-normal.stderr": {
+      "sha256": "ad8ed6ebec25d9bae8a2d6427834ae5f4f1869e20d52e55bf471c1af908b7d80",
+      "bytes": 113
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_composition-O-audit.json": {
+      "sha256": "99442ce0db114c9c6d3ceb83f147680e3e12e635f8e56c19973c916d624c20d3",
+      "bytes": 2029
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_composition-O.stderr": {
+      "sha256": "83b808ea3298a9f0692f9d9440e41b834982c56f291554fcdc32aaec5cf6546c",
+      "bytes": 113
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_maintenance-normal-audit.json": {
+      "sha256": "77e1843db0da7b8c7425f26262a83d829867cd62f658863d289d6d2ef58a4d94",
+      "bytes": 1225
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_maintenance-normal.stderr": {
+      "sha256": "708ecf2e6cd03e3d355f42b8063e3b891abf0c8871cec681cb9b65c1cf8aaf4a",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_maintenance-O-audit.json": {
+      "sha256": "5bc8de9834915d1114752c854a9e0a22770c96544b2f200e032d99243996da81",
+      "bytes": 1267
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_maintenance-O.stderr": {
+      "sha256": "302737f1b66d59592a85a5d3f5e6d151fe38112bc8e6dee25d751a0ce7f40efa",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_maintenance-O.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_renewal-normal-audit.json": {
+      "sha256": "5571aa4d605e8d33ad03151ef93be9acf7bed4f31828f1fb8d6e91971141eec7",
+      "bytes": 719
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_renewal-normal.stderr": {
+      "sha256": "2c6992c9829eddc55c4c4ffa5572afb8f785f03c267e6de9e4782d91ca9635c3",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_renewal-O-audit.json": {
+      "sha256": "3ab39c50a3a56089d968140f56b8c12564042d625095d6aca2cfd50f624c6dd6",
+      "bytes": 737
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_renewal-O.stderr": {
+      "sha256": "72f5595d3b7def0aedf14601dce26d3ce3ed29eee815fe930e26ed611dc705ec",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_staging-normal-audit.json": {
+      "sha256": "b99d153e6aed8d4a5a5763f256baf62865e69f78d7842a2a2ea50c1a21671521",
+      "bytes": 751
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_staging-normal.stderr": {
+      "sha256": "a1526f402a3f59eaa46763df51ca96e494c7a554dd8b9ad49eb3a7ae3c794ef3",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_staging-O-audit.json": {
+      "sha256": "7df39b8b05f7f27e0710f4c5a7b9200f19b39a28a8b7fa354e2b569cf64dad09",
+      "bytes": 775
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_staging-O.stderr": {
+      "sha256": "9cb12bdd7918f7505a1a64a56d7645597ad9f248d7778318e3d088aaec541d9f",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_budget_bytes-normal-audit.json": {
+      "sha256": "fdeced780ba66740620cd8af9e801b27b91fc48644054e6321c8e528ca591560",
+      "bytes": 632
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_budget_bytes-normal.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_budget_bytes-O-audit.json": {
+      "sha256": "53cd23cfd82e4b85877e053a5ef05d4aee7ee7b148f85c26a24d6938847968ff",
+      "bytes": 650
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_budget_bytes-O.stderr": {
+      "sha256": "383a12fba9b5b327054a24ce7e5739569c4f0b6621facd981f2d6a4271063b3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_resources-normal-audit.json": {
+      "sha256": "672b1a178ee9b98667213f4f9a923bdc4e658ffb7cc7b7f9e72dbfc0da8094bf",
+      "bytes": 495
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_resources-normal.stderr": {
+      "sha256": "60987ac8256d49e303f69855b37a716d84f4629d75feb1f40c55d7a1e19debc3",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_resources-normal.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_resources-O-audit.json": {
+      "sha256": "cd729f0cf16654eeeb841e02e79cf00b1fa29d93658caa0a93c90a5863b2623c",
+      "bytes": 507
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_resources-O.stderr": {
+      "sha256": "10b08684b6cd1b8de9f3d6fba2cea8078b3bae4748367dec32bda7012eb76789",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_resources-O.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_volumes-normal-audit.json": {
+      "sha256": "e1d99c1cdc8866a5bed55e42024273fee5443f6f5635b23c8abbc57be7f79d8b",
+      "bytes": 612
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_volumes-normal.stderr": {
+      "sha256": "dedf6d48c5315c1b9b1d18341cb7cf1e792f646b6dbbc79f62c02258e0408f53",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_volumes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_volumes-O-audit.json": {
+      "sha256": "d85b6d5d03e462a8c26d5594258d1fe5d2b143422abe5d26e56fa8129b548c02",
+      "bytes": 630
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_volumes-O.stderr": {
+      "sha256": "6c1d23ecbe1d27d6614098858459b37c0f72e008008e65cab29d38808dae9028",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_retired_volumes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_candidate_runtime-normal-audit.json": {
+      "sha256": "9d5e22b4e3aa8f5f82da9f05358e71647d44a04d34aca584f5628f149a80d824",
+      "bytes": 3763
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_candidate_runtime-normal.stderr": {
+      "sha256": "cfa57d1b24cd30d3da656edaa0c3ba5327e969fc42cef90f3f07d260e8ce5116",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_candidate_runtime-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_candidate_runtime-O-audit.json": {
+      "sha256": "1ae2b011443033030bdb6eddc003fbdc97b398083722608c75b4a177f1cdd3ab",
+      "bytes": 3877
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_candidate_runtime-O.stderr": {
+      "sha256": "7f34993dbcf4a51046d2d0c5081e98d6618468b0cd70d16b21c0cf265ee302ab",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_candidate_runtime-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_native_entry-normal-audit.json": {
+      "sha256": "bea6a7378e930e5c004275180a88ae42a133c35954b9de40c20ab48336b27bd8",
+      "bytes": 3058
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_native_entry-normal.stderr": {
+      "sha256": "ef6bdf68b79a8165fd4a41f68237c0166a605b84b00302806657c498a32ac148",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_native_entry-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_native_entry-O-audit.json": {
+      "sha256": "580a8acb521185860607cb4e9eaea0299fcef0e24e5d9a6a939c5ff61a8e100f",
+      "bytes": 3172
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_native_entry-O.stderr": {
+      "sha256": "000461ddfe8a0a13826535c9a7202c52551a5c5b81fbc20c0ebdf5f1b6961f7f",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_six_native_entry-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_successor_dependencies-normal-audit.json": {
+      "sha256": "c417af66280f415eee555ae00c742a0122f1106e29bf6626c96bc5d8605f5132",
+      "bytes": 1488
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_successor_dependencies-normal.stderr": {
+      "sha256": "68c8d3bb66e12871e01b4ee18dd5aff203d9769aaf141efb96f643ba9f29a64b",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_successor_dependencies-O-audit.json": {
+      "sha256": "e6fff5944d18478bcae9d5997f7cc10c0b815575245314f74b4307772920a113",
+      "bytes": 1542
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_successor_dependencies-O.stderr": {
+      "sha256": "cc567100f12cd0ab4a90764defe5cf5ab86cc8bc62caa5eaa48a46b681fd3a19",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_verify_six_native-normal-audit.json": {
+      "sha256": "69a1d50d31653cd031e37124af6057827f415ea3c64f2977b9e161845aaff37c",
+      "bytes": 3634
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_verify_six_native-normal.stderr": {
+      "sha256": "638dfbdb956ef24b9928fe8016f9f5b5a4e879ff4ebc458b31bc7998b65469af",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_verify_six_native-O-audit.json": {
+      "sha256": "f47d3d4c2870d6183955965726ad0c061629c9b4026200ff6e812cc82c410cbb",
+      "bytes": 3778
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_verify_six_native-O.stderr": {
+      "sha256": "ac9ebfb0c5666bf5c38e232e414e5a716db9c1ef2ce606a2efc30c2e518c0064",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_window_six_support-normal-audit.json": {
+      "sha256": "e80f1febabca83a0e20f32f86e75c4fa4a9ea2bec21ef0b56a0be5c93b65acb2",
+      "bytes": 3046
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_window_six_support-normal.stderr": {
+      "sha256": "f8f79aa3e78993ad84622c4c0086de19a8590a9701ed06f28dc3f6e90dda6f61",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_window_six_support-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_window_six_support-O-audit.json": {
+      "sha256": "8d2198cab17408b7625f3bf3d9b456e68bf9464b2b7a38f82420433b72e8e7d8",
+      "bytes": 3166
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_window_six_support-O.stderr": {
+      "sha256": "a5a2774bedfdef953f67c412da9750dea4c42b0f1317d23b3b4a1cb970924611",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation04/test_window_six_support-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation05/temporary_containers_test-normal-audit.json": {
+      "sha256": "1a98cb8d43d025b2048f66a03ab3eae63443596106526c370d7c98475f6156a0",
+      "bytes": 348
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation05/temporary_containers_test-normal.stderr": {
+      "sha256": "729c3b14e08afef097914fe9871a9b8608e13f5f43997bd2479c54a31c241e8a",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation05/temporary_containers_test-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation05/temporary_containers_test-O-audit.json": {
+      "sha256": "38499daac5e1528474e6279fbb80950d5730d966cb5ce990772bc5548801691d",
+      "bytes": 354
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation05/temporary_containers_test-O.stderr": {
+      "sha256": "9f6241caed8c3aa74841573f23be256633b9a99cca0f49a82a764d39c2953883",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-full-audited-preparation05/temporary_containers_test-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-independent-python01/result.json": {
+      "sha256": "b7a33664efcafdb1d16a87b5314ed26731a2749b147d02d796b57db624a66784",
+      "bytes": 467
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-independent-python01/start.json": {
+      "sha256": "aae4a49bb1ceffcc8799d5b81805f5c0a1c5fe7617befca8a11ed0f12e482676",
+      "bytes": 378
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-independent-python01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-independent-python01/stdout": {
+      "sha256": "50b659dd85c322864d6556592b4a4c56190a4b13a20c645713a28ab984cad198",
+      "bytes": 50
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-query-key-build01/result.json": {
+      "sha256": "594a1dd92037c7777d3d7c8bcba2d9e7e8bde8f6f51625d07011af6ae9488264",
+      "bytes": 315
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-query-key-build01/start.json": {
+      "sha256": "d4ebd70f688429fee70179544f8bca58c497cb8c3d79a85be2a461f6dea707a9",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-query-key-build01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/windows-query-key-build01/stdout": {
+      "sha256": "adf10a1de8724eb164cb2045f2925ed8147733bbc5ca30e25ff355425bd93bfa",
+      "bytes": 23791
+    }
+  }
+}

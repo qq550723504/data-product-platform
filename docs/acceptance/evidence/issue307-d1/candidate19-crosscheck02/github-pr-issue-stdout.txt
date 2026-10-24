@@ -1,0 +1,1 @@
+{"data":{"repository":{"pullRequest":{"headRefOid":"caab46da8761e71e1d80d0c0931707a410c13a4d","isDraft":true,"state":"OPEN","mergedAt":null,"reviewThreads":{"pageInfo":{"hasNextPage":false},"nodes":[]}},"issue":{"state":"OPEN"}}}}

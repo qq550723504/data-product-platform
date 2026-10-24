@@ -1,0 +1,44 @@
+{
+  "status": "PASS_RECORDED_WRITER_FREEZE_COMPLETE_AUDIT_SEAM",
+  "writer": "actual run_non_delete under author full-three-group process/provider doubles",
+  "preparation_members": 65,
+  "all_metadata_have_sha256_and_bytes": true,
+  "freeze_builder": "actual preparation_audit_plan",
+  "complete_entry_auditor": "actual evidence_indexes.audit_plan also called by main",
+  "plan_result": {
+    "status": "PASS_EXPLICIT_EVIDENCE_INDEX_AUDIT",
+    "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+    "plan_sha256": "2b25d30d94c35e53a9344a44e3f35d55c1f6f9d4904e51f96009ce9dc7730ae0",
+    "candidate_sha256": "8711531e1eece72ccac0838807c347ed4545d464734c38c0dde5a54406441810",
+    "indexes": [
+      {
+        "id": "source-review",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate17-source-review01/evidence-index.json",
+        "sha256": "d0646d8716782fc00297452a75154f249f15b03df7d7d2b640837ebf86e6026c",
+        "members_verified": 1
+      },
+      {
+        "id": "nondelete-preparation",
+        "format": "files-map-v1",
+        "index": "preparation/non-delete-evidence-index.json",
+        "sha256": "a40860adc49141f36ccfeb26008322fc292e8567f766ca52d913a872b7b80bb7",
+        "members_verified": 65
+      },
+      {
+        "id": "source-review-report-binding",
+        "format": "files-map-v1",
+        "index": "packet/source-review-binding-index.json",
+        "sha256": "e035caaeaa45dd5554865679c3e9ef73f25d99260f825e5a7b45ea02fe1f9075",
+        "members_verified": 2
+      }
+    ],
+    "members_verified": 68,
+    "source_provider_io": 0,
+    "native_delete": 0,
+    "execution_authority": false
+  },
+  "external_process_attempts": [],
+  "native_Source_Docker_provider_DELETE": 0,
+  "native_acceptance": "NOT_RUN"
+}

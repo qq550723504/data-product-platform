@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-10-24T13:05:26.378935+00:00",
+  "finished_at": "2026-10-24T13:06:32.897038+00:00",
+  "command": [
+    "docker",
+    "build",
+    "--pull=false",
+    "--network",
+    "none",
+    "-t",
+    "dpp307-client-diagnostic:01",
+    "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/client-diagnostic01"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

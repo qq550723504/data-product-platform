@@ -1,0 +1,13 @@
+
+Running 8 tests using 1 worker
+
+  ✓  1 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.5s)
+  ✓  2 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.1s)
+  ✓  3 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.0s)
+  ✓  4 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.1s)
+  ✓  5 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.3s)
+  ✓  6 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.2s)
+  ✓  7 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.0s)
+  ✓  8 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.0s)
+
+  8 passed (23.7s)

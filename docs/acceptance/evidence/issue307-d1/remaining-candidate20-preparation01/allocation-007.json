@@ -1,0 +1,17 @@
+{
+  "role": "recovery-redis",
+  "group": "business-races",
+  "cid": "656bbe881f75fc7f0fd9dec90a84047ab0cc99ba81f1b1309c528df6db123482",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate20-recovery-redis",
+    "--network",
+    "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-candidate20-recovery-redis,target=/data",
+    "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "redis-server",
+    "--appendonly",
+    "yes"
+  ]
+}

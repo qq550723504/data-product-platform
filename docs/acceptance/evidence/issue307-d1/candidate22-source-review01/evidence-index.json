@@ -1,0 +1,70 @@
+{
+  "status": "C22_SOURCE_REVIEW_EVIDENCE_INDEX",
+  "count": 16,
+  "files": {
+    "all-change-name-status.txt": {
+      "sha256": "8c9182a8d3008d6852f440e9b4cd2b3230647796a225affe42815202461b31e3",
+      "bytes": 138067
+    },
+    "existing-test-input-equivalence.json": {
+      "sha256": "3e735885d3a46db935e860a17b83afcb4a4d6ac6021ecbda66a4d07e9c8630ea",
+      "bytes": 605
+    },
+    "final-source-stability.json": {
+      "sha256": "6c3189210d524d2b16718e78c009a7f54da0ace65f484a6bc46c02934892a7b7",
+      "bytes": 357
+    },
+    "host-source.diff": {
+      "sha256": "768c98307acbc0dc13b8f84a214605fa92b34faf5973c2e0037619c39e8a6799",
+      "bytes": 182096
+    },
+    "independent-targeted-tests.json": {
+      "sha256": "d5815ea18916c14927414ee8b27a1ace9f417db299294a15e728c6121b52d0e5",
+      "bytes": 1146
+    },
+    "initial-worktree-observation.json": {
+      "sha256": "c53acf302a3bb57ea28c3bd03b98a866bf2b9b0079b6b3e39ddc9aff98c91214",
+      "bytes": 585
+    },
+    "input-and-diff-sha256.json": {
+      "sha256": "d055a8d2acdcf2c8dc1e91970981a1b75eb26e93c55b6aada40ac06b9cbb45ea",
+      "bytes": 14583
+    },
+    "readonly-input-bindings.json": {
+      "sha256": "311d31dee8cb4a876f7de47e2503032e552011e0a44563aa9202f568ec5258a1",
+      "bytes": 1339
+    },
+    "review-methods-and-findings.json": {
+      "sha256": "3781a6ee27354d99243906b77ecc3c88bbba591851f2779aa5cae2693c0ac4f1",
+      "bytes": 2464
+    },
+    "reviewed-artifacts01.json": {
+      "sha256": "f807bb5d419ad402077ff5d5361d8d62271a3967c6296b2b1570acbaf5cf4a20",
+      "bytes": 481765
+    },
+    "reviewer-report-build01-failure.json": {
+      "sha256": "5e4f991999cdf3f7015c0763fb5246dc5a5e9245277feb0466cddc8962271f7a",
+      "bytes": 414
+    },
+    "runtime-source.diff": {
+      "sha256": "1b110687f2a84bcfc8862a7d647af205565276013479fca1dbdabcc527be11c3",
+      "bytes": 7250
+    },
+    "targeted-normal.stderr.txt": {
+      "sha256": "8140d47d49e7728cf0b880741d224891daf23d06869edaa60850ce4ca8215fe3",
+      "bytes": 2816
+    },
+    "targeted-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "targeted-optimized.stderr.txt": {
+      "sha256": "b8b3764506afe21eb9acd1e1d8309e0b871f39a7bfa6b622f1995ea0112cdaed",
+      "bytes": 2816
+    },
+    "targeted-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  }
+}

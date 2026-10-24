@@ -1,0 +1,23 @@
+{
+  "status": "PASS_INDEPENDENT_R_ARCHIVE_OFFLINE_CI",
+  "argv": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+  ],
+  "exit": 0,
+  "started_at": "2026-10-22T10:44:44.306440+00:00",
+  "observed_at": "2026-10-22T10:45:10.188930+00:00",
+  "source_head": "4420957157ac818cbed719d8a6b8d9c6ccc4b646",
+  "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "outputs": {
+    "stdout": {
+      "sha256": "1139e146079ca23abc7eee5d3ca5ccd60c06158a01b038a8bbca066f0c08ed53",
+      "bytes": 765
+    },
+    "stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "native_provider_actions": 0
+}

@@ -1,0 +1,98 @@
+{
+  "status": "PASS_BOUNDED_SOURCE_AND_COLD_RECHECK",
+  "remaining_blockers": [],
+  "initial_build_source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "effective_source": "NOT_COMMITTED_OR_BOUND_YET",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "allocation_sha256": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+  "resolved_findings": [
+    {
+      "id": "COLD1",
+      "status": "CLOSED",
+      "basis": "Empty runtime endpoint accepted only for exact configured network/name and created/PID0/never-started/empty endpoint fields. Attached runtime network ID stays exact; exited-empty/foreign/extra/unknown reject."
+    },
+    {
+      "id": "COLD2",
+      "status": "CLOSED",
+      "basis": "Exactly canonical CAP_CHOWN; no capability expansion or changes to UID0/no-network/single new budget."
+    },
+    {
+      "id": "SOURCE1",
+      "status": "CLOSED",
+      "basis": "Exact12 independent regular rebuild members: four binaries and eight original compiler channels. No symlink/junction/hardlink; actual complete name/hash map equals receipt.files. bind_source and state share this contract. Receipt exact11 fields, actual changed_host_paths, active_binary_replaced=false and source_provider_io/native_delete=0 also checked."
+    }
+  ],
+  "independent_tests": {
+    "latest_affected_runtime": {
+      "normal_methods": 10,
+      "optimized_methods": 10,
+      "exit_each": 0,
+      "source_stable": true,
+      "normal_stderr_sha256": "2bcc2833d7e5b7b0609ab6ba5f49536f35fc0fa0bd5f9479bb46b8bdc272fd50",
+      "optimized_stderr_sha256": "cc1a5085104eb6d79c78c3922ce20eb3766ae996c527bbff05d9dd6bcd54dc3d"
+    },
+    "unchanged_suites_previously_passed_normal_optimized": {
+      "freeze_methods_each": 1,
+      "complete_methods_each": 2,
+      "support_methods_each": 2
+    },
+    "original_independent_rehash_counterexamples_now_rejected": [
+      "empty receipt files",
+      "four binaries only",
+      "missing compiler channel",
+      "extra receipt member",
+      "extra actual directory member"
+    ],
+    "valid_twelve_member_state_accepted_before_and_after_counterexamples": true,
+    "additional_executed_cases": "Missing checkpoint/cross-binding/source drift, symlink model, actual temporary hardlink, binary drift and rehashed receipt metadata mismatch",
+    "boundary": "Global unmodeled subprocess refusal; only synthetic temporary files/hardlink, no original rebuild/bind/materialize/native",
+    "original_SOURCE1_blocked_report_sha256": "70fe77016c02d9903b187751a8e94bd7102fa7a1d14caaa0b2c643aa63c0ad45"
+  },
+  "actual_cold_evidence_reused": {
+    "observed_at_utc": "2026-10-19T16:57:28.996765+00:00",
+    "status": "PASS_COLD_SIX_TOPOLOGY",
+    "owners": 86,
+    "readonly_queries": {
+      "inspect": 245,
+      "volume_inspect": 18,
+      "ps": 18,
+      "network_inspect": 9
+    },
+    "current_physical_functions_AST_unchanged": {
+      "cold_topology": "6a47d9ac086216633fc01b282f2061c191eb2552d2e21dcf820517efe3979587",
+      "direct_network": "b8043d50907fdc6fedb13d6c89cdd03f86183642de1411bd53b3c34dfcf96d47",
+      "initializer_security": "3d47d731460edee5157e5beb768894764cee0f18ad2aa792a74fef72ed7cdd16"
+    },
+    "additional_Docker_queries_for_SOURCE1": 0
+  },
+  "checkpoint_source_boundary": [
+    "Mandatory matching public/private checkpoint, no initial-source fallback.",
+    "Original allocation/build/binary/cold-failure facts retained. Initial build source and effective current projection explicit, no historical file rewrite.",
+    "Only five reviewed Python repair files allowed. Compiled apps/platform including embedded JSON/modules, migrations and extra host paths cannot change.",
+    "Fresh independent rebuild directory requires same four active binary bytes and all original build channels; active original binaries are preserved.",
+    "Final candidate/source archive/source-freeze/confirmation bind effective source separately from initial source and reference checkpoint plus identical rebuild receipt."
+  ],
+  "source_files": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "5a2697501928d09e92213ef17ec214416059fb01c937664a82b84218f9c00c6a",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "19764e168aabc1ca0be79b88a8a5e5592f3de51d81c2f5a364645d08ff07893c",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "f27373cce77cd854aca5c2e3eb006705e7e2778e79c7f25225a2a684092ba13f",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "fbc07dd4b7f9c994512e5bb153fb5c72d55e958e23faf425515635e3f486432a",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "b705df9f8097e3646a383bf40928171ff22745cc20f20df4b00b18d39e283e6a"
+  },
+  "scope_limits": {
+    "actual_rebuild_and_checkpoint": "NOT_RUN_NOT_REVIEWED",
+    "materialize": "NOT_RERUN",
+    "budget_initialization": "NOT_RUN",
+    "profiles": "NOT_CREATED_OR_REVIEWED",
+    "actual_candidate13_Source_IAM_backup_restore": "NOT_RUN",
+    "candidate": "NOT_FROZEN",
+    "CI": "NOT_REVIEWED_OR_CLAIMED",
+    "new_delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "full_D1": "NOT_ACCEPTED",
+    "repository_or_retained_file_writes_by_reviewer": 0,
+    "temporary_synthetic_test_files_only": true
+  },
+  "next_gate": "Commit exact reviewed source, then independently verify actual identical rebuild/checkpoint and cold profiles before candidate13 Source/IAM. Source/model PASS does not substitute for actual runtime evidence or delete authority."
+}

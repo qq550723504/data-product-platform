@@ -1,0 +1,20 @@
+{
+  "name": "actual-r-six-packages",
+  "command": [
+    "go",
+    "test",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-remaining-iam",
+    "./cmd/lifecycle-fixture-readonly-check",
+    "./cmd/lifecycle-fixture-retention",
+    "-count=1"
+  ],
+  "cwd": "C:\\Users\\Henry\\AppData\\Local\\Temp\\d1-review-retention-r215-9vrgpl_d\\apps\\platform",
+  "started_at": "2026-10-24T08:42:16.338799+00:00",
+  "finished_at": "2026-10-24T08:42:30.736213+00:00",
+  "returncode": 1,
+  "stdout_sha256": "ffb1bfeca36937c4d5672353c5720848347a3a05d970a54879961d806b84f6d4",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

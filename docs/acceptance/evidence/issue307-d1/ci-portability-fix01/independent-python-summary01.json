@@ -1,0 +1,32 @@
+{
+  "status": "PASS_INDEPENDENT_WINDOWS_LINUX_PYTHON_COLLECTION",
+  "rows": [
+    {
+      "os": "windows",
+      "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "commands": 52,
+      "suites": 26,
+      "test_methods_per_mode": 182,
+      "skips": [
+        "test_evidence_indexes-normal.stderr",
+        "test_evidence_indexes-O.stderr"
+      ],
+      "forbidden_host_reads": [],
+      "status": "PASS"
+    },
+    {
+      "os": "linux",
+      "python": "3.13.17 (main, Oct 21 2026, 22:33:32) [GCC 14.2.0]",
+      "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+      "commands": 52,
+      "suites": 26,
+      "test_methods_per_mode": 182,
+      "skips": [],
+      "forbidden_host_reads": [],
+      "status": "PASS"
+    }
+  ],
+  "retained_source_start": 0,
+  "business_provider_io": 0
+}

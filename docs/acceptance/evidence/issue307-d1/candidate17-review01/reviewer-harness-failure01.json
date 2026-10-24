@@ -1,0 +1,11 @@
+{
+  "status": "REVIEWER_HARNESS_SCHEMA_ASSUMPTION_FAILED",
+  "script": "audit_private_file_scope.py",
+  "script_sha256": "22cb84df735951407e6ca5c87d3c53a3c75f4bda2ac1548c58579d03721eadc1",
+  "observed_error": "KeyError: 'results'",
+  "cause": "Reviewer used an old budget receipt field name. Actual pinned candidate17 receipt uses groups. This is not an implementation or native failure.",
+  "original_script_preserved": true,
+  "source_or_private_changes": 0,
+  "Docker_Source_provider_DELETE": 0,
+  "correction": "Read actual groups; require exact3, UID/GID10001,initial_empty true,files empty and closed initializers."
+}

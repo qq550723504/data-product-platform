@@ -1,0 +1,127 @@
+{
+  "status": "BLOCKED_C20_SCHEMA_RUNTIME_COMPATIBILITY",
+  "at": "2026-10-22T07:21:54.020553+00:00",
+  "source_head": "955e98a2338b7d22a0686866683fb4413bf8dcdd",
+  "execution": "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6",
+  "remaining_blockers": [
+    {
+      "id": "SCHEMA-R1",
+      "severity": "BLOCKER_REQUIRED_PATH",
+      "root_cause": "Merged main changed the real PostgresRepository.LoadFixtureCopies query to require c.identity_kind=PROVIDER_VERSION while the three hash-bound retained source/restore Core dumps have no identity_kind column. Native/mock tests and compilation did not exercise these actual retained schemas.",
+      "required_paths": [
+        "remaining-resume-business / remaining-late / remaining-mixed -> newRemainingDisposition -> PlanService.PrepareDeletePlan -> PostgresRepository.LoadFixtureCopies",
+        "RegisterFixtureDisposalBasis -> DispositionService.lockedPlan -> PostgresRepository.GetPlan -> LoadFixtureCopies",
+        "Sender ClaimExactSend -> lockedPlan -> GetPlan / LockFixtureCopies -> LoadFixtureCopies"
+      ],
+      "preparation_impact": "Current run_non_delete provisions new disabled source IAM before restored business trial. The trial is not runnable against the frozen old schema; do not allocate the candidate86 owners or reach PROVISION merely because source unit review passed.",
+      "dispatch_impact": "Even an existing persisted plan requires GetPlan/LoadFixtureCopies on real sender/reconciliation paths; replay does not avoid the column dependency.",
+      "schema_witness": "independent-frozen-dump-schema01.json"
+    }
+  ],
+  "prior_review": {
+    "path": "independent-final-review01.json",
+    "sha256": "1043edfd95d89d114ec99b2097a6676341dda6e0e9c05aeb57734df2417f1264",
+    "bytes": 6015,
+    "index": {
+      "sha256": "d282cbf168ae4812f7b7e209cde9f88dfc89195569937137788743be83dfadb6",
+      "bytes": 9215
+    },
+    "unchanged": true,
+    "interpretation": "Prior PASS records the checks and unit/mock facts evaluated then. This append-only new finding supersedes any allocation/readiness inference; it does not rewrite prior test outcomes or evidence."
+  },
+  "current_decision": {
+    "candidate_allocation": "BLOCKED",
+    "materialize_budget_initialize_native_prepare_freeze": "BLOCKED",
+    "full_exact_delete_confirmation": "MUST_NOT_BE_PRESENTED_AS_EXECUTABLE",
+    "source_schema_migration": "NOT_AUTHORIZED_NOT_RUN",
+    "delete": "NOT_AUTHORIZED_NOT_RUN",
+    "original_auth_reuse": false
+  },
+  "finite_design_recommendation": [
+    "First restore each existing hash-bound core.dump into a NEW isolated PostgreSQL instance/volume using existing pg_restore tooling and fixed image, without starting any source Core/native or old owner. This produces only compatibility evidence and cannot substitute for authoritative source acceptance.",
+    "Read the actual ordered schema_migration version/name set from the restored copy and compare it with the fixed migration-file set. The fingerprint rows=66 is only a row count: the dumps already contain policy-renewal/reference-guard DDL. Do not infer version66, preselect 67-71, hand-edit migration metadata or ignore duplicate/partial DDL.",
+    "On the unmodified restored copy, execute the actual current repository LoadFixtureCopies/GetPlan path to retain the missing-column error before any provider invocation. Then let the existing official migration Runner apply only its actually pending versions on the copy; retain exact Runner input/output/failure facts.",
+    "Positive copy evidence must show current repository loads all 17 expected exact-provider-version identities and frozen plan hashes, protected objects remain ineligible for exact disposal, old-column projections/immutable facts/pins/attempts/costs remain unchanged, and provider DELETE/calls stay zero. Any migration failure or partial schema stays BLOCKED.",
+    "If the same six physical targets must continue using their original source Core, prepare a separate explicit bounded source-schema maintenance proposal with backup/known Core identities/expected DDL+data delta, Runner versions, privilege/containment and acceptance steps. Source migration is outside current no-migration preparation contract and must not be inferred from old deletion authorization or from copy PASS.",
+    "After any separately authorized source maintenance, capture a NEW current Core baseline and new native/non-delete evidence, retaining every old baseline/dump/raw hash. Full fingerprints are expected to change for schema additions; preserve old-column/value facts and old scope hashes rather than falsely reporting source fingerprint unchanged. New candidate/final CI/native branch lock/new exact authorization remain required.",
+    "If source schema must remain unchanged, this current binary/source cannot execute the same source-backed remaining-six plan. Keep it blocked. Do not delete the identity_kind predicate, weaken protected-object guards, silently choose an old binary/authority, or treat a migrated clone as the original Core."
+  ],
+  "reviewed_artifacts": {
+    "apps/platform/internal/lifecycle/infrastructure/postgres_repository.go": {
+      "sha256": "3d307158e99fba1ee03796fe8d60131af4cc3a86eafc07e637f1a587990a3902",
+      "bytes": 5896
+    },
+    "apps/platform/internal/lifecycle/infrastructure/occupancy_repository.go": {
+      "sha256": "bd7b33990219f720dbb420c776acfd351d396a50f99bd6b6366c4a1ad92ab2c2",
+      "bytes": 7981
+    },
+    "apps/platform/internal/lifecycle/application/prepare_plan.go": {
+      "sha256": "dd328799523af137a4b1403344a1a84bb49b920ecb73e6f71adc64a4270975ca",
+      "bytes": 7621
+    },
+    "apps/platform/internal/lifecycle/application/fixture_basis.go": {
+      "sha256": "111e9da6e28ab716b1ef27dd629d09b3497632c59f819b6acf968d629d870a6c",
+      "bytes": 4553
+    },
+    "apps/platform/internal/lifecycle/application/disposition.go": {
+      "sha256": "ca2d4b6a75f89f7683f8f5d2481afe996239c09dc6340b561e7819efd5b91ee5",
+      "bytes": 22975
+    },
+    "apps/platform/internal/lifecycle/application/exact_execution.go": {
+      "sha256": "bbd7ad8858fdb18ab7aeb1c2e17ea0366b27c06f5f7ba0e8920e63458d6defbe",
+      "bytes": 16501
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": {
+      "sha256": "16adbdba666e2f9f160e2384808a4115908612d9db6d98c69a382fd6c17e4023",
+      "bytes": 15917
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go": {
+      "sha256": "bf14f0e3c30d6076b5fe6c63230879da623f1309812b8f96e5c0fbff70b23cba",
+      "bytes": 10214
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": {
+      "sha256": "78e47fe8cc3ff734a9bc7d426c0608f26e761050622abba95e61ae3857f2bdf9",
+      "bytes": 23627
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "9e748053988fc1c97d1f03dd5b385aa1c21e1d3125fbd2fd6390cfad65ec24cd",
+      "bytes": 43116
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "82e736f4647dac6921c6a31f11980e1bc4af0d999d94d3742eb9ad10427a8408",
+      "bytes": 17065
+    },
+    "migrations/000067_lifecycle_fixture_reference_demand.up.sql": {
+      "sha256": "5cf68c3ea8a27e23b765fc5f2ac8b7126afed8de7cbae6e79d9081fd891dc42b",
+      "bytes": 12318
+    },
+    "migrations/000068_lifecycle_checkpoint_read.up.sql": {
+      "sha256": "972286c7335e3baf68c07d76d3daa647b00b5a3345ed1ad1bb634574aef947b1",
+      "bytes": 1019
+    },
+    "migrations/000069_lifecycle_copy_policy_renewal.up.sql": {
+      "sha256": "e993ded7eb4104b9188b7b00ad100dabddfedfc44d86343cc6fe027f7cccc102",
+      "bytes": 3712
+    },
+    "migrations/000070_workspace_protected_object_identity.up.sql": {
+      "sha256": "95ff03fbff2eff274cc126dcba09d32041893f91f6e19238b474e0409b27e349",
+      "bytes": 12444
+    },
+    "migrations/000071_operator_custody.up.sql": {
+      "sha256": "538cae2e7d7df00315c0a099664d026f0caf4c191f011aa8715f1f1959e61308",
+      "bytes": 9822
+    }
+  },
+  "independent_effects": {
+    "Docker": 0,
+    "source_start": 0,
+    "PostgreSQL_connections": 0,
+    "migration_execution": 0,
+    "provider_requests": 0,
+    "DELETE": 0,
+    "allocation": 0,
+    "source_modification": 0,
+    "prior_evidence_rewrite": 0
+  },
+  "scope_note": "This is an append-only blocker and finite design analysis. Isolated-PG actual error/migration evidence is pending, and no compatibility resolution is claimed."
+}

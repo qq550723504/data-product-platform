@@ -1,0 +1,16 @@
+{
+  "status": "PASS_PRE_ALLOCATION_CURRENT_HEAD",
+  "at": "2026-10-19T19:41:58.163399+00:00",
+  "source": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "pr_ci": 39311610413,
+  "event": "pull_request",
+  "jobs": 13,
+  "independent_repair_review_sha256": "7b8b5e63663d90acdc1d5b512c18349daf0f454ac904e65f99258dd47241325e",
+  "source_files": 26,
+  "unresolved_threads": 0,
+  "pr332": "DRAFT_OPEN",
+  "issue307": "OPEN",
+  "delete_authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "native_delete": 0
+}

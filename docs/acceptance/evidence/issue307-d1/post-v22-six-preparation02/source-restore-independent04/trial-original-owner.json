@@ -1,0 +1,11 @@
+{
+  "cid": "c9e51a46fd99cb7e49da51ace23b50a71f05009a2e833a8d6cd0b7cd71d9009d",
+  "closure": {
+    "cid": "c9e51a46fd99cb7e49da51ace23b50a71f05009a2e833a8d6cd0b7cd71d9009d",
+    "closed": true,
+    "initial_inspect_failed": false,
+    "stop_failed": false
+  },
+  "failure": "ValueError: non-delete helper failed",
+  "native_delete": 0
+}

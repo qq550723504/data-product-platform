@@ -1,0 +1,112 @@
+{
+  "status": "BLOCKED_V27_CLOSURE_MANIFEST_REVIEW_REVOKED_PREMATURE_PASS",
+  "reviewer_task": "/root/d1_remaining_independent_review",
+  "reviewed_at": "2026-10-21T06:56:05.714286+00:00",
+  "source_head": "32ee783f48dac67154d7621f1d01b11a275e7bb7",
+  "manifest_sha256": "e03e7e01f8f76a4d2767eef0ad71a96dc7ffe7b25191919640a8372c3ec74626",
+  "actual_owner_inspect_sha256": "22659bc36154d76c542955ed818d0b8662b71e24c88bd3fb09700fe14ba5625e",
+  "actual_owner_receipt_sha256": "fe85305eb8bb4b83d97eb1c026ab18febf685d82fb4393f2c41fae51fb6fc217",
+  "remaining_blockers": [
+    {
+      "id": "B1_IAM_COMPLETE_REQUEST_AND_ABSENCE_CONTRACT",
+      "classification": "BLOCKER",
+      "file": "examples/lifecycle-d1/close-v27-business-dispatches.py",
+      "function": "fresh_iam",
+      "reason": "The fixed root owner performs 27 requests, including a separately expected NoSuchUser GET for the never-created identity. The current 26-record/200-only checker rejects its legitimate result and does not express authoritative absence validation. Successful bounded maintenance is not executable under this contract.",
+      "required_fix": "Reuse the existing complete IAM/absence contract, verify 27 exact requests with the expected NoSuchUser response separately, add success/rejection tests, and freeze a new implementation and maintenance manifest. Do not execute manifest02."
+    }
+  ],
+  "allowed_operation": "Only fixed failed-v27 P2/T1/T2 approval revocation and trusted NOT_SENT observation/release through the existing Commands; no new candidate or sender.",
+  "reviewed_bindings": {
+    "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+    "candidate_sha256": "20d08f0a2d334e779b64f0c082515131c285d9fd005c6fbaa94294b147f38d42",
+    "bindings_sha256": "77ce0be4d5dccd95a276a5b4c3f060689bea870f4f3caef1a827ef81154efa24",
+    "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+    "audit_id": "e5b72c12-0f70-47ad-9884-06a21a08e787",
+    "targets": [
+      {
+        "Case": "P2",
+        "Plan": "bce1b1b1-d6e2-44fd-8b87-171142350ab9",
+        "Copy": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+        "Dispatch": "5e06d692-648a-4f8c-a13e-8bf1b1452c7b",
+        "Attempt": "ba5bec6b-84ec-4418-a63f-4b08601ccb76",
+        "Approval": "da615e44-5c9a-4c46-8614-a0a0012c444b",
+        "PlanHash": "d4758d9b64003d92aca60290fee1d2f22e7a857d2fe2be513d4a1ea2755ce6a3"
+      },
+      {
+        "Case": "T1",
+        "Plan": "247a2ca9-d2f3-4384-bcee-b10add497175",
+        "Copy": "f48755f1-976b-4f47-98da-70ead936a4c3",
+        "Dispatch": "e6067cd3-0fdf-4952-b18d-12f9913534df",
+        "Attempt": "c1f32764-d3d3-4752-ba48-fc88373c0210",
+        "Approval": "ffef8470-5b80-48fb-ae7b-821e17f36266",
+        "PlanHash": "7c4daf909a375bc21fcf8dd09b14d99960ae1f919ce138eb517ac0593faf1c1c"
+      },
+      {
+        "Case": "T2",
+        "Plan": "531c7b96-173f-4028-be97-2de9ed6c72f2",
+        "Copy": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+        "Dispatch": "b7f4e168-f8e8-42d4-bea7-1da6a8ec0de5",
+        "Attempt": "3c731704-cc91-4717-95fc-828ced05b46c",
+        "Approval": "1cabd635-f9ef-4b64-93c0-24cae172fccc",
+        "PlanHash": "84fbafb913dba44e5ceb43d670203e55f0244fad62a2dc2fd9ebb10b87e0cab5"
+      }
+    ],
+    "source_file_bytes_verified": 733,
+    "immutable_input_bytes_verified": 22,
+    "retained_private_file_bytes_verified": 531,
+    "retained_owner_descriptor_anchors": 540,
+    "retained_budget_hash_anchors": 18,
+    "exact_execution_owners": 36,
+    "new_maintenance_owner_cids": {
+      "observer": "819de63d8b44cafdfc8ddb52e1a4ac056ff33ac8668c21a3790a8d971e95650b",
+      "check-disabled": "dea9470840cd172e59048297ffffdb63d35a75da8950087003273859d0b891b0",
+      "disable-all": "48d2f6b440e4bdf06c21d5dd3898ec564c5c8ea4dcb871009c96cfc53b2845c3"
+    },
+    "all_new_owners_prepared_stopped_PID0_noports_norestart": true,
+    "observer_enabled": false,
+    "proof_present": false,
+    "max_provider_deletes": 0
+  },
+  "checked": [
+    "Public preparation bytes equal the private manifest; SHA256 matches the exact independently reviewed manifest.",
+    "All 733 source-file and 22 immutable-input hashes match actual host bytes; all 531 retained-file hashes match actual host bytes.",
+    "540 retained full-CID descriptor membership matches the original failed-window readback; 18 budget hashes remain explicit anchors for run-time recheck.",
+    "36 original execution-owner full-CID/binary hashes equal the fixed candidate packet; all three v27 dispatch/attempt/approval targets equal the fresh Core audit and server constants.",
+    "Actual saved Docker inspect bytes for the three newly created owners match exact CID/image/user/argv/network namespace/read-only bind mounts/capabilities/tmpfs/resource limits and stopped PID0/noports/norestart.",
+    "Observer mounts only closure.json before activation; public proof is absent and host signing key is not mounted. No source credential values were emitted by this review.",
+    "Fixed v27 verifier rejects claims/UNKNOWN/foreign attempts and accepts only the exact v22 revoked NOT_SENT/released predecessor; old v22 contract retains its original fixed scope.",
+    "Containment independently attempts profile disable, observer stop, final Core observation, disable-all, every owner/source stop and retained readback; partial/unknown outcomes do not become PASS.",
+    "Windows 540-CID inspect uses batches of at most 64 and validates the complete exact union; prior preparation failure remains retained.",
+    "The original IAM success-path conclusion is revoked: actual complete request/absence contract requires 27 requests and separate NoSuchUser validation, pending the bounded repair and a new manifest."
+  ],
+  "prior_nondelete_evidence_checked": {
+    "isolated04_actual_signatures_verified": 3,
+    "isolated04_closed_unique_CIDs": 28,
+    "PostgreSQL_verifier_adapter_leaf_passes": 69,
+    "PostgreSQL_full_source_Command_acceptance_claimed": false,
+    "source_core_readonly_before_after_bytes_identical": true
+  },
+  "limits": {
+    "reviewer_ran_Docker_or_DB_or_provider": false,
+    "reviewer_reran_tests": false,
+    "actual_v27_Core_closure_at_review": "NOT_RUN",
+    "source_full_native_preflight": "NOT_RUN",
+    "retained_live_budget_or_container_recheck_by_reviewer": false,
+    "runtime_fresh_rechecks_still_required": true,
+    "new_candidate_or_window_or_delete_authority": false,
+    "pins_released": 0,
+    "budgets_refunded": 0,
+    "native_delete": 0,
+    "only_reviewer_written_file": "independent-manifest-review.json"
+  },
+  "review_revocation": {
+    "at": "2026-10-21T06:56:55.077257+00:00",
+    "reason": "The primary identified a valid missed success-path blocker immediately after the reviewer created this report and before any maintenance execution. The premature PASS is revoked; this status cannot satisfy the run gate.",
+    "original_report_sha256": "202ea02032ba8db544c6031c82001c88f1a6f8c02745b3a6e59195605053fd2d",
+    "original_report_bytes_base64": "ewogICJzdGF0dXMiOiAiUEFTU19CT1VOREVEX0lOREVQRU5ERU5UX1YyN19DTE9TVVJFX01BTklGRVNUX1JFVklFVyIsCiAgInJldmlld2VyX3Rhc2siOiAiL3Jvb3QvZDFfcmVtYWluaW5nX2luZGVwZW5kZW50X3JldmlldyIsCiAgInJldmlld2VkX2F0IjogIjIwMjYtMTAtMjFUMDY6NTY6MDUuNzE0Mjg2KzAwOjAwIiwKICAic291cmNlX2hlYWQiOiAiMzJlZTc4M2Y0OGRhYzY3MTU0ZDc2MjFmMWQwMWIxMWEyNzVlN2JiNyIsCiAgIm1hbmlmZXN0X3NoYTI1NiI6ICJlMDNlN2UwMWY4Zjc2YTRkMjc2N2VlZjBhZDcxYTk2ZGM3ZmZlN2IyNTE5MTkxOTY0MGE4MzcyYzNlYzc0NjI2IiwKICAiYWN0dWFsX293bmVyX2luc3BlY3Rfc2hhMjU2IjogIjIyNjU5YmMzNjE1NGQ3NmM1NDI5NTVlZDgxOGQwYjg2NjJiNzFlMjRjODhiZDNmYjA5NzAwZmUxNGJhNTYyNWUiLAogICJhY3R1YWxfb3duZXJfcmVjZWlwdF9zaGEyNTYiOiAiZmU4NTMwNWViOGJiNGI4M2Q5N2ViMWMwMjZhYjE4ZmViZjY4NWQ4MmZiNDM5M2YyYzQxZmFlNTFmYjZmYzIxNyIsCiAgInJlbWFpbmluZ19ibG9ja2VycyI6IFtdLAogICJhbGxvd2VkX29wZXJhdGlvbiI6ICJPbmx5IGZpeGVkIGZhaWxlZC12MjcgUDIvVDEvVDIgYXBwcm92YWwgcmV2b2NhdGlvbiBhbmQgdHJ1c3RlZCBOT1RfU0VOVCBvYnNlcnZhdGlvbi9yZWxlYXNlIHRocm91Z2ggdGhlIGV4aXN0aW5nIENvbW1hbmRzOyBubyBuZXcgY2FuZGlkYXRlIG9yIHNlbmRlci4iLAogICJyZXZpZXdlZF9iaW5kaW5ncyI6IHsKICAgICJleGVjdXRpb24iOiAiNmY0MGJjYTktY2ZlMi00MzYyLWFkMmItNGUzOGJiYmQ4NDUzIiwKICAgICJjYW5kaWRhdGVfc2hhMjU2IjogIjIwZDA4ZjBhMmQzMzRlNzc5YjY0ZjBjMDgyNTE1MTMxYzI4NWQ5ZmQwMDVjNmZiYWE5NDI5NGIxNDdmMzhkNDIiLAogICAgImJpbmRpbmdzX3NoYTI1NiI6ICI3N2NlMGJlNGQ1ZGNjZDk1YTI3NmE1YjRjM2YwNjA2ODliZWE4NzBmNGYzY2FlZjFhODI3ZWY4MTE1NGVmYTI0IiwKICAgICJDb3JlIjogIjliYzZlOWVjODk0ZjlmZWNiMTU2Njk0MGQ5YjQ2ODBlMGE5ZGRlZTUyZjMxZjlhZWMxZjQ1YWZkYjM1YzdhYjAiLAogICAgImF1ZGl0X2lkIjogImU1YjcyYzEyLTBmNzAtNDdhZC05ODg0LTA2YTIxYTA4ZTc4NyIsCiAgICAidGFyZ2V0cyI6IFsKICAgICAgewogICAgICAgICJDYXNlIjogIlAyIiwKICAgICAgICAiUGxhbiI6ICJiY2UxYjFiMS1kNmUyLTQ0ZmQtOGI4Ny0xNzExNDIzNTBhYjkiLAogICAgICAgICJDb3B5IjogIjZmYWJmM2I1LTc2YjgtNDI0NS04ZjVkLTAxZTY0ZjYxMDE0NiIsCiAgICAgICAgIkRpc3BhdGNoIjogIjVlMDZkNjkyLTY0OGEtNGY4Yy1hMTNlLThiZjFiMTQ1MmM3YiIsCiAgICAgICAgIkF0dGVtcHQiOiAiYmE1YmVjNmItODRlYy00NDE4LWE2M2YtNGIwODYwMWNjYjc2IiwKICAgICAgICAiQXBwcm92YWwiOiAiZGE2MTVlNDQtNWM5YS00YzQ2LTg2MTQtYTBhMDAxMmM0NDRiIiwKICAgICAgICAiUGxhbkhhc2giOiAiZDQ3NThkOWI2NDAwM2Q5MmFjYTYwMjkwZmVlMWQyZjIyZTdhODU3ZDJmZTJiZTUxM2Q0YTFlYTI3NTVjZTZhMyIKICAgICAgfSwKICAgICAgewogICAgICAgICJDYXNlIjogIlQxIiwKICAgICAgICAiUGxhbiI6ICIyNDdhMmNhOS1kMmYzLTQzODQtYmNlZS1iMTBhZGQ0OTcxNzUiLAogICAgICAgICJDb3B5IjogImY0ODc1NWYxLTk3NmItNGY0Ny05OGRhLTcwZWFkOTM2YTRjMyIsCiAgICAgICAgIkRpc3BhdGNoIjogImU2MDY3Y2QzLTBmZGYtNDk1Mi1iMThkLTEyZjk5MTM1MzRkZiIsCiAgICAgICAgIkF0dGVtcHQiOiAiYzFmMzI3NjQtZDNkMy00NzUyLWJhNDgtZmM4ODM3M2MwMjEwIiwKICAgICAgICAiQXBwcm92YWwiOiAiZmZlZjg0NzAtNWI4MC00OGZiLWFlN2ItODIxZTE3ZjM2MjY2IiwKICAgICAgICAiUGxhbkhhc2giOiAiN2M0ZGFmOTA5YTM3NWJjMjFmY2Y4ZGQwOWIxNGQ5OTk2MGFlMWY5MTljZTEzOGViNTE3YWMwNTkzZmFmMWMxYyIKICAgICAgfSwKICAgICAgewogICAgICAgICJDYXNlIjogIlQyIiwKICAgICAgICAiUGxhbiI6ICI1MzFjN2I5Ni0xNzNmLTQwMjgtYmU5Ny0yZGU5ZWQ2YzcyZjIiLAogICAgICAgICJDb3B5IjogImUwOWZkNDMzLTU0Y2YtNGU4Mi1iOGM0LTA5ODQ3MjUwNWZhMiIsCiAgICAgICAgIkRpc3BhdGNoIjogImI3ZjRlMTY4LWY4ZTgtNDJkNC1iZWE3LTFkYTZhOGVjMGRlNSIsCiAgICAgICAgIkF0dGVtcHQiOiAiM2M3MzE3MDQtY2M5MS00NzE3LTk1ZmMtODI4Y2VkMDViNDZjIiwKICAgICAgICAiQXBwcm92YWwiOiAiMWNhYmQ2MzUtZjllZi00YjY0LTkzYzAtMjRjYWUxNzJmY2NjIiwKICAgICAgICAiUGxhbkhhc2giOiAiODRmYmFmYjkxM2RiYTQ0ZTVjZWI0M2Q2NzAyMDNlNTVmMDI0NGZhZDYyYTJkYzJmZDllYmIxMGI4N2UwY2FiNSIKICAgICAgfQogICAgXSwKICAgICJzb3VyY2VfZmlsZV9ieXRlc192ZXJpZmllZCI6IDczMywKICAgICJpbW11dGFibGVfaW5wdXRfYnl0ZXNfdmVyaWZpZWQiOiAyMiwKICAgICJyZXRhaW5lZF9wcml2YXRlX2ZpbGVfYnl0ZXNfdmVyaWZpZWQiOiA1MzEsCiAgICAicmV0YWluZWRfb3duZXJfZGVzY3JpcHRvcl9hbmNob3JzIjogNTQwLAogICAgInJldGFpbmVkX2J1ZGdldF9oYXNoX2FuY2hvcnMiOiAxOCwKICAgICJleGFjdF9leGVjdXRpb25fb3duZXJzIjogMzYsCiAgICAibmV3X21haW50ZW5hbmNlX293bmVyX2NpZHMiOiB7CiAgICAgICJvYnNlcnZlciI6ICI4MTlkZTYzZDhiNDRjYWZkZmM4ZGRiNTJlMWE0YWMwNTZmZjMzYWM4NjY4YzIxYTM3OTBhOGQ5NzFlOTU2NTBiIiwKICAgICAgImNoZWNrLWRpc2FibGVkIjogImRlYTk0NzA4NDBjZDE3MmU1OTA0ODI5N2ZmZmZkYjYzZDM1YTc1ZGE4OTUwMDg3MDAzMjczODU5ZDBiODkxYjAiLAogICAgICAiZGlzYWJsZS1hbGwiOiAiNDhkMmY2YjQ0MGU0YmRmMDZjMjFkNWRkMzg5OGVjNTY0YzVjOGVhNGRjYjg3MTAwOWM5NmNmYzUzYjI4NDVjMyIKICAgIH0sCiAgICAiYWxsX25ld19vd25lcnNfcHJlcGFyZWRfc3RvcHBlZF9QSUQwX25vcG9ydHNfbm9yZXN0YXJ0IjogdHJ1ZSwKICAgICJvYnNlcnZlcl9lbmFibGVkIjogZmFsc2UsCiAgICAicHJvb2ZfcHJlc2VudCI6IGZhbHNlLAogICAgIm1heF9wcm92aWRlcl9kZWxldGVzIjogMAogIH0sCiAgImNoZWNrZWQiOiBbCiAgICAiUHVibGljIHByZXBhcmF0aW9uIGJ5dGVzIGVxdWFsIHRoZSBwcml2YXRlIG1hbmlmZXN0OyBTSEEyNTYgbWF0Y2hlcyB0aGUgZXhhY3QgaW5kZXBlbmRlbnRseSByZXZpZXdlZCBtYW5pZmVzdC4iLAogICAgIkFsbCA3MzMgc291cmNlLWZpbGUgYW5kIDIyIGltbXV0YWJsZS1pbnB1dCBoYXNoZXMgbWF0Y2ggYWN0dWFsIGhvc3QgYnl0ZXM7IGFsbCA1MzEgcmV0YWluZWQtZmlsZSBoYXNoZXMgbWF0Y2ggYWN0dWFsIGhvc3QgYnl0ZXMuIiwKICAgICI1NDAgcmV0YWluZWQgZnVsbC1DSUQgZGVzY3JpcHRvciBtZW1iZXJzaGlwIG1hdGNoZXMgdGhlIG9yaWdpbmFsIGZhaWxlZC13aW5kb3cgcmVhZGJhY2s7IDE4IGJ1ZGdldCBoYXNoZXMgcmVtYWluIGV4cGxpY2l0IGFuY2hvcnMgZm9yIHJ1bi10aW1lIHJlY2hlY2suIiwKICAgICIzNiBvcmlnaW5hbCBleGVjdXRpb24tb3duZXIgZnVsbC1DSUQvYmluYXJ5IGhhc2hlcyBlcXVhbCB0aGUgZml4ZWQgY2FuZGlkYXRlIHBhY2tldDsgYWxsIHRocmVlIHYyNyBkaXNwYXRjaC9hdHRlbXB0L2FwcHJvdmFsIHRhcmdldHMgZXF1YWwgdGhlIGZyZXNoIENvcmUgYXVkaXQgYW5kIHNlcnZlciBjb25zdGFudHMuIiwKICAgICJBY3R1YWwgc2F2ZWQgRG9ja2VyIGluc3BlY3QgYnl0ZXMgZm9yIHRoZSB0aHJlZSBuZXdseSBjcmVhdGVkIG93bmVycyBtYXRjaCBleGFjdCBDSUQvaW1hZ2UvdXNlci9hcmd2L25ldHdvcmsgbmFtZXNwYWNlL3JlYWQtb25seSBiaW5kIG1vdW50cy9jYXBhYmlsaXRpZXMvdG1wZnMvcmVzb3VyY2UgbGltaXRzIGFuZCBzdG9wcGVkIFBJRDAvbm9wb3J0cy9ub3Jlc3RhcnQuIiwKICAgICJPYnNlcnZlciBtb3VudHMgb25seSBjbG9zdXJlLmpzb24gYmVmb3JlIGFjdGl2YXRpb247IHB1YmxpYyBwcm9vZiBpcyBhYnNlbnQgYW5kIGhvc3Qgc2lnbmluZyBrZXkgaXMgbm90IG1vdW50ZWQuIE5vIHNvdXJjZSBjcmVkZW50aWFsIHZhbHVlcyB3ZXJlIGVtaXR0ZWQgYnkgdGhpcyByZXZpZXcuIiwKICAgICJGaXhlZCB2MjcgdmVyaWZpZXIgcmVqZWN0cyBjbGFpbXMvVU5LTk9XTi9mb3JlaWduIGF0dGVtcHRzIGFuZCBhY2NlcHRzIG9ubHkgdGhlIGV4YWN0IHYyMiByZXZva2VkIE5PVF9TRU5UL3JlbGVhc2VkIHByZWRlY2Vzc29yOyBvbGQgdjIyIGNvbnRyYWN0IHJldGFpbnMgaXRzIG9yaWdpbmFsIGZpeGVkIHNjb3BlLiIsCiAgICAiUnVuIHJlcXVpcmVzIHRoaXMgZXhhY3QtbWFuaWZlc3QgaW5kZXBlbmRlbnQgZ2F0ZSwgZnJlc2ggMTMtdXNlci8yNi1HRVQgSUFNIHByb29mIHdpdGhpbiA0NSBzZWNvbmRzLCBzZWFsZWQgc3RvcHBlZCBuYXRpdmUvZ2F0ZXdheS9vd25lcnMgYW5kIGEgb25lLW1pbnV0ZSBzaWduZWQgcHJvb2YgYmVmb3JlIHRoZSBleGlzdGluZyBDb21tYW5kIHdyaXRlLiIsCiAgICAiQ29udGFpbm1lbnQgaW5kZXBlbmRlbnRseSBhdHRlbXB0cyBwcm9maWxlIGRpc2FibGUsIG9ic2VydmVyIHN0b3AsIGZpbmFsIENvcmUgb2JzZXJ2YXRpb24sIGRpc2FibGUtYWxsLCBldmVyeSBvd25lci9zb3VyY2Ugc3RvcCBhbmQgcmV0YWluZWQgcmVhZGJhY2s7IHBhcnRpYWwvdW5rbm93biBvdXRjb21lcyBkbyBub3QgYmVjb21lIFBBU1MuIiwKICAgICJXaW5kb3dzIDU0MC1DSUQgaW5zcGVjdCB1c2VzIGJhdGNoZXMgb2YgYXQgbW9zdCA2NCBhbmQgdmFsaWRhdGVzIHRoZSBjb21wbGV0ZSBleGFjdCB1bmlvbjsgcHJpb3IgcHJlcGFyYXRpb24gZmFpbHVyZSByZW1haW5zIHJldGFpbmVkLiIKICBdLAogICJwcmlvcl9ub25kZWxldGVfZXZpZGVuY2VfY2hlY2tlZCI6IHsKICAgICJpc29sYXRlZDA0X2FjdHVhbF9zaWduYXR1cmVzX3ZlcmlmaWVkIjogMywKICAgICJpc29sYXRlZDA0X2Nsb3NlZF91bmlxdWVfQ0lEcyI6IDI4LAogICAgIlBvc3RncmVTUUxfdmVyaWZpZXJfYWRhcHRlcl9sZWFmX3Bhc3NlcyI6IDY5LAogICAgIlBvc3RncmVTUUxfZnVsbF9zb3VyY2VfQ29tbWFuZF9hY2NlcHRhbmNlX2NsYWltZWQiOiBmYWxzZSwKICAgICJzb3VyY2VfY29yZV9yZWFkb25seV9iZWZvcmVfYWZ0ZXJfYnl0ZXNfaWRlbnRpY2FsIjogdHJ1ZQogIH0sCiAgImxpbWl0cyI6IHsKICAgICJyZXZpZXdlcl9yYW5fRG9ja2VyX29yX0RCX29yX3Byb3ZpZGVyIjogZmFsc2UsCiAgICAicmV2aWV3ZXJfcmVyYW5fdGVzdHMiOiBmYWxzZSwKICAgICJhY3R1YWxfdjI3X0NvcmVfY2xvc3VyZV9hdF9yZXZpZXciOiAiTk9UX1JVTiIsCiAgICAic291cmNlX2Z1bGxfbmF0aXZlX3ByZWZsaWdodCI6ICJOT1RfUlVOIiwKICAgICJyZXRhaW5lZF9saXZlX2J1ZGdldF9vcl9jb250YWluZXJfcmVjaGVja19ieV9yZXZpZXdlciI6IGZhbHNlLAogICAgInJ1bnRpbWVfZnJlc2hfcmVjaGVja3Nfc3RpbGxfcmVxdWlyZWQiOiB0cnVlLAogICAgIm5ld19jYW5kaWRhdGVfb3Jfd2luZG93X29yX2RlbGV0ZV9hdXRob3JpdHkiOiBmYWxzZSwKICAgICJwaW5zX3JlbGVhc2VkIjogMCwKICAgICJidWRnZXRzX3JlZnVuZGVkIjogMCwKICAgICJuYXRpdmVfZGVsZXRlIjogMCwKICAgICJvbmx5X3Jldmlld2VyX3dyaXR0ZW5fZmlsZSI6ICJpbmRlcGVuZGVudC1tYW5pZmVzdC1yZXZpZXcuanNvbiIKICB9Cn0K",
+    "source_resources_started_by_reviewer": 0,
+    "Core_closure_executed": false,
+    "manifest02_bytes_changed": false
+  }
+}

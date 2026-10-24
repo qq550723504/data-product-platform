@@ -1,0 +1,15 @@
+{
+  "offline_never_started": "bda34187e02e33be3e215afd79f526d397512b279bbcf8056561a7f8d9323930",
+  "packet_members": [],
+  "operator_root_configs_absent": true,
+  "permissions_all_original_false": 30,
+  "case_sha256": {
+    "business-races/case-business/remaining.json": "b26801630fb5c1be788bd1e21809627ab4415052910fa8acd226ab52f1cb3378",
+    "late-hold/case-late/remaining.json": "d096d9573757f9b5be33db6f6e8815d490632027d9be6b76097d48ecdeb24c15",
+    "late-hold/case-close-H1/remaining.json": "d096d9573757f9b5be33db6f6e8815d490632027d9be6b76097d48ecdeb24c15",
+    "mixed/case-mixed/remaining.json": "c9b9b96985bdfbbed3a10050e6182c0db851b82db6656afa844d49a7a483eea4",
+    "mixed/case-mixed-b/remaining.json": "c9b9b96985bdfbbed3a10050e6182c0db851b82db6656afa844d49a7a483eea4",
+    "mixed/case-mixed-c/remaining.json": "c9b9b96985bdfbbed3a10050e6182c0db851b82db6656afa844d49a7a483eea4"
+  },
+  "native_delete": 0
+}

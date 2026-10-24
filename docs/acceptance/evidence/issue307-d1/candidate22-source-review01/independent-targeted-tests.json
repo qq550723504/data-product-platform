@@ -1,0 +1,49 @@
+{
+  "status": "PASS_FILE_ONLY_TARGETED_LOCAL_NOT_NATIVE",
+  "runs": [
+    {
+      "mode": "normal",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_preallocation_ci",
+        "test_retained_v31",
+        "test_fixture_artifacts",
+        "test_receipt_bytes"
+      ],
+      "at": "2026-10-23T04:40:28.240173+00:00",
+      "returncode": 0,
+      "stdout_bytes": 0,
+      "stderr_bytes": 2816
+    },
+    {
+      "mode": "optimized",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-O",
+        "-m",
+        "unittest",
+        "-v",
+        "test_preallocation_ci",
+        "test_retained_v31",
+        "test_fixture_artifacts",
+        "test_receipt_bytes"
+      ],
+      "at": "2026-10-23T04:40:40.069785+00:00",
+      "returncode": 0,
+      "stdout_bytes": 0,
+      "stderr_bytes": 2816
+    }
+  ],
+  "native_delete": 0,
+  "provider_calls": 0,
+  "retained_environment_actions": 0
+}

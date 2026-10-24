@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-19T16:16:49.898342+00:00",
+  "scope": "Pure recorded doubles with global unmodeled subprocess refusal; no Docker/Core/native/provider",
+  "source_before": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "22999e23445d5cdbc7843fedd256085186e02564f5f6e0dc463eee60064ab1ae",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "9e39dbcfd3f0c56782247e4dca8963aab619db4bd8869b6af4b0521cdbce56cd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_after": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "22999e23445d5cdbc7843fedd256085186e02564f5f6e0dc463eee60064ab1ae",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "9e39dbcfd3f0c56782247e4dca8963aab619db4bd8869b6af4b0521cdbce56cd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_unchanged": true,
+  "guard_sha256": "64e0132ae79308656e7a285a94ff112247247e42933a8ffff905b89f10df3296",
+  "results": [
+    {
+      "mode": "normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-six-preparation01\\run-host-guarded03.py"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal03-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal03-stderr.txt",
+          "sha256": "7578947079809d7ed4f89fb1b309ddfa7c4ebce170f95dbd2a51a2cea1b3634d"
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-six-preparation01\\run-host-guarded03.py"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized03-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized03-stderr.txt",
+          "sha256": "72fbf6cda10619d1713fcbc41547789d2de3b6342c427d636b06e80f6610448e"
+        }
+      }
+    }
+  ],
+  "prior_harness_failure_retained": "independent-host-python02.json",
+  "prior_failure": "Popen replaced by function breaks Windows asyncio subclass import before target import; no external call"
+}

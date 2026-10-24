@@ -1,0 +1,73 @@
+{
+  "status": "PASS_BOUNDED_C21_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-22T10:53:45.512111+00:00",
+  "source_head": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "runtime_parent": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "profile": "candidate21/v31",
+  "window": {
+    "not_before": "2026-10-22T14:00:00Z",
+    "not_after": "2026-10-22T14:40:00Z",
+    "read_only_not_after": "2026-10-22T16:40:00Z",
+    "human_selected_for_preparation_only": true
+  },
+  "remaining_blockers": [],
+  "scope": "Finite source/dual-artifact/terminal C20 retention and offline required-path review. Preparation resources, native source/provider verification, final packet, branch lock, new authority and schedule are separate later gates.",
+  "resolved_findings": [
+    {
+      "id": "BYTE-R1",
+      "original": "independent-v29-markdown-byte-blocker01.json",
+      "resolution_commit": "4420957157ac818cbed719d8a6b8d9c6ccc4b646",
+      "proof": "independent-receipt-bytes02/result.json",
+      "summary": "All four indexed Markdown receipts outside evidence now have explicit -text; actual Git blob/archive/autocrlf true and false checkout succeeds, prior-rule counterexamples remain."
+    },
+    {
+      "id": "PATH-R1",
+      "original": "independent-windows-shortpath-blocker01.json",
+      "resolution_commit": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+      "proof": "independent-shortpath-fix02/result.json",
+      "summary": "file_set normalizes the original base with the same unlinked_absolute as members; actual Win32 8.3 vs long path reproduces prior failure, current three spellings agree, hardlink rejection remains."
+    }
+  ],
+  "verified_contracts": [
+    "R is the one direct schema69 fixture descendant, exactly four reviewed delta files. P retains protected identity_kind provider-version predicate; no source migration or product predicate rollback.",
+    "Exact UTC/store/LF native Git archive has769 files/6427821 bytes/SHA148efd92fe1e1261e044425ffecadbfab837414c9bbc00bac4bca78280855fd9 and exact shared scope/policies between R and P.",
+    "C20 is terminal unfrozen/no reusable authority/no provisioning:86 owners,18 resources,3 original empty budgets,939 private files and292 clone files are retained through fixed original hashes, state and mount ownership; old820 plus86 plusclone1 gives907.",
+    "C20 six IAM names are required official NoSuchUser facts, never relabelled as disabled retained users. R counts3/6/6 absence and rejects missing,denied,foreign-attempt proof. Existing C19 two-action exact-version policy and earlier Version-only policies remain.",
+    "Original v29 124 indexed bytes and79 restoration rows match original retained roots; all124 now text unset; failed history01 remains. The prior_Git_blob field is calculated checkout-byte Git SHA1, not necessarily a stored object.",
+    "Actual author history02 records948 allowed host-only reads and907 closed CIDs with no Source/provider/new allocation. Independently audited saved records, not repeated native execution.",
+    "Exact native GitHub source CI must pass before history/build/allocation; actual built host HEAD must equal CI head, host bytes rechecked before first resource creation. source_ci run/receipt/snapshot and frozen R/P/build members remain cross-bound.",
+    "C20 terminal cannot be resumed, copied into a candidate or reused as authority. New target/wire budgets and selected subnets221-223 will be allocated only after separate exact source CI gate.",
+    "P/R execution9ba,SGT22:00-22:40 and max1/max6,UNKNOWN no-resend,P1 exclusion,old budgets/pins/failure retention and disabled-only provision wiring remain consistent."
+  ],
+  "independent_checks": {
+    "broader_offline_suite": "independent-source-regression01/result.json;11 modules normal/-O each62 methods passed before bounded receipt/path fixes; immutable input-equivalence addenda and affected retests bind final source",
+    "receipt_git_retest": "normal/-O each3 methods PASS",
+    "retained_path_retest": "normal/-O each4 methods PASS plus actual distinct Win32 short/canonical same tree and hardlink refusal",
+    "R_archive_CI_helper": "exact R archive plus pilot subset and all four fixture cmd packages PASS; DB/native opt-ins cleared",
+    "R_pilot": "TestRemaining -count=1 PASS including C20 absent-name membership",
+    "author907_receipt_file_audit": "independent-history-receipt-audit01.json",
+    "raw_byte_audit": "independent-byte-restoration-audit02.json"
+  },
+  "provenance_boundaries": {
+    "source_CI": "NOT_ASSESSED_BY_THIS_REVIEW; exact final HEAD completed PR CI required by preallocation_ci; earlier b25f/442 failed or superseded runs are historical only",
+    "independent_Docker_Core_provider_io": 0,
+    "independent_native_delete": 0,
+    "C21_allocation": "NOT_RUN_AT_SOURCE_REVIEW",
+    "native_preparation": "NOT_RUN",
+    "final_frozen_candidate": "NOT_CREATED",
+    "branch_lock": "NOT_YET_APPLIED_TO_THIS_NEW_EXECUTION",
+    "delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "old_authorization_reused": false,
+    "source_upgrade": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "historical_IAM": "Original UNCONFIRMED facts are preserved, not upgraded by offline or host-only evidence"
+  },
+  "reviewed_artifacts_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate21-source-review01/reviewed-artifacts01.json",
+    "sha256": "2a3c61f204b558da8c845d2f18aa472603e9c04d0440feb3d8d90217a6ee30b4",
+    "count": 1121
+  },
+  "forbidden_actions_performed": []
+}

@@ -1,0 +1,31 @@
+{
+  "status": "PASS_PREWINDOW_CLOSED",
+  "observed_at": "2026-10-22T03:00:25.835935+00:00",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "head": "caab46da8761e71e1d80d0c0931707a410c13a4d",
+  "github_checkpoint": "github-checkpoint01.json",
+  "actual_host_check": {
+    "status": "PASS_PREWINDOW_CLOSED",
+    "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+    "host_gate": {
+      "status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+      "cases": 6,
+      "recoveries": 6,
+      "permissions_false": 30,
+      "owners_closed": 86,
+      "backup_hashes": 9,
+      "old_backups_retained": 48,
+      "budgets_empty": 3,
+      "native_delete": 0,
+      "source_provider_io": 0
+    },
+    "containment_anchor": "749257f15e13ee7ab64b4b828857e2e88a054fbc",
+    "source_provider_io": 0,
+    "native_delete": 0
+  },
+  "new_native_preflight": "NOT_RUN",
+  "schedule": "NOT_CREATED",
+  "native_delete": 0,
+  "source_start": 0,
+  "provider_io": 0
+}

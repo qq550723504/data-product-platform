@@ -1,0 +1,501 @@
+{
+  "status": "PASS_INDEPENDENT_C18_PREPARATION_FILE_ANALYSIS",
+  "at": "2026-10-21T09:16:20.045960+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "source_head": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "source_preparation_index": {
+    "id": "c18-native-preparation",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/non-delete-evidence-index.json",
+    "sha256": "337158214ffdf7d5c18f133878bc767d11ed406987f59f2be19aafdf3acccc4e",
+    "members_verified": 1274
+  },
+  "groups": [
+    {
+      "group": "business-races",
+      "Core_fingerprints_equal": [
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/business-races/source-Core-before.json",
+          "sha256": "ffdf75013a393da6a8444b28284fdfcc47b5a01a346f7fdf25a8c03138cd8a7f",
+          "bytes": 31435
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/business-races/source-Core-after.json",
+          "sha256": "ffdf75013a393da6a8444b28284fdfcc47b5a01a346f7fdf25a8c03138cd8a7f",
+          "bytes": 31435
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/business-races/clean-restored-Core.json",
+          "sha256": "ffdf75013a393da6a8444b28284fdfcc47b5a01a346f7fdf25a8c03138cd8a7f",
+          "bytes": 31435
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/business-races/trial-restored-Core.json",
+          "sha256": "ffdf75013a393da6a8444b28284fdfcc47b5a01a346f7fdf25a8c03138cd8a7f",
+          "bytes": 31435
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/business-races/clean-Core-after-trial.json",
+          "sha256": "ffdf75013a393da6a8444b28284fdfcc47b5a01a346f7fdf25a8c03138cd8a7f",
+          "bytes": 31435
+        }
+      ],
+      "three_Core_roles_distinct": true,
+      "new_backups": {
+        "core.dump": {
+          "sha256": "dc3c401c3a1e23f27e96f25b8b0c2ce90eaeb62425606574cb93fc0e73000853",
+          "bytes": 1381479
+        },
+        "globals.sql": {
+          "sha256": "522a4e8b43e514b117390aaf3fe025cfa2f689a7165330c6d80691d34aae6492",
+          "bytes": 669
+        },
+        "native.tar": {
+          "sha256": "999ff56b95d1c6f40694481bd5a180a70419357156626b0f3cb0860f9f39de0a",
+          "bytes": 327168
+        }
+      },
+      "old_immutable_tables": 20,
+      "old_rows_multiset_preserved": true,
+      "trial_facts": {
+        "send_claims": 1,
+        "copy_count": 8,
+        "dataset_versions": 8,
+        "policies": 18
+      },
+      "native": [
+        {
+          "role": "source",
+          "copies": 7,
+          "known_disabled_users": 15,
+          "absent_users": 1,
+          "p1_absent": {
+            "attempt_id": "9b746f8d-57a5-4a39-b277-0474953bd4ed",
+            "code": "NoSuchVersion",
+            "copy": {
+              "ID": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+              "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+              "DatasetVersionID": "76f7f44e-4a2a-46c6-a6dc-a529f9ade834",
+              "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+              "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+              "Namespace": "dpp-lifecycle307-online",
+              "Key": "fixture/p1.csv",
+              "ProviderVersion": "fed0102b-bc8b-4f47-b9e2-fae8d5c563ce",
+              "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+              "ByteSize": 232
+            },
+            "status": 404
+          },
+          "checker_status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION"
+        },
+        {
+          "role": "restore",
+          "copies": 7,
+          "known_disabled_users": 15,
+          "absent_users": 1,
+          "p1_absent": {
+            "attempt_id": "c9f35185-efab-43a4-9ef1-fc9fea9e099a",
+            "code": "NoSuchVersion",
+            "copy": {
+              "ID": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+              "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+              "DatasetVersionID": "76f7f44e-4a2a-46c6-a6dc-a529f9ade834",
+              "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+              "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+              "Namespace": "dpp-lifecycle307-online",
+              "Key": "fixture/p1.csv",
+              "ProviderVersion": "fed0102b-bc8b-4f47-b9e2-fae8d5c563ce",
+              "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+              "ByteSize": 232
+            },
+            "status": 404
+          },
+          "checker_status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION"
+        }
+      ]
+    },
+    {
+      "group": "late-hold",
+      "Core_fingerprints_equal": [
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/late-hold/source-Core-before.json",
+          "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/late-hold/source-Core-after.json",
+          "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/late-hold/clean-restored-Core.json",
+          "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/late-hold/trial-restored-Core.json",
+          "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/late-hold/clean-Core-after-trial.json",
+          "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+          "bytes": 31414
+        }
+      ],
+      "three_Core_roles_distinct": true,
+      "new_backups": {
+        "core.dump": {
+          "sha256": "5ad011788b67c807d8d4bf6931bd160572f1da889d531461030b71f79f9cbbdf",
+          "bytes": 1166712
+        },
+        "globals.sql": {
+          "sha256": "8841a0260a40c83848c7749900ce6e25b09152cddc681b6669f09f288103b046",
+          "bytes": 669
+        },
+        "native.tar": {
+          "sha256": "f3346392a0e9e4e7e2fbc5599b7afb29fff4f4d3454546df0a4123afbc36d718",
+          "bytes": 145920
+        }
+      },
+      "old_immutable_tables": 20,
+      "old_rows_multiset_preserved": true,
+      "trial_facts": {
+        "send_claims": 0,
+        "copy_count": 6,
+        "dataset_versions": 4,
+        "policies": 0
+      },
+      "native": [
+        {
+          "role": "source",
+          "copies": 6,
+          "known_disabled_users": 10,
+          "absent_users": 4,
+          "p1_absent": null,
+          "checker_status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION"
+        },
+        {
+          "role": "restore",
+          "copies": 6,
+          "known_disabled_users": 10,
+          "absent_users": 4,
+          "p1_absent": null,
+          "checker_status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION"
+        }
+      ]
+    },
+    {
+      "group": "mixed",
+      "Core_fingerprints_equal": [
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/mixed/source-Core-before.json",
+          "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/mixed/source-Core-after.json",
+          "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/mixed/clean-restored-Core.json",
+          "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/mixed/trial-restored-Core.json",
+          "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+          "bytes": 31414
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/mixed/clean-Core-after-trial.json",
+          "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+          "bytes": 31414
+        }
+      ],
+      "three_Core_roles_distinct": true,
+      "new_backups": {
+        "core.dump": {
+          "sha256": "20b3a938828e538f42ff52245367c95493e1ceafc5792ae8a77f9d1b70dacf07",
+          "bytes": 1158775
+        },
+        "globals.sql": {
+          "sha256": "d91aa4ac646aed5cfb63f886cd7e0a1d2a3388a9249af2c3150a1a1e28b6bff1",
+          "bytes": 669
+        },
+        "native.tar": {
+          "sha256": "0704457424d5e7c47e8272236f212851f48d520eee97592b31af3ad6b22ddf00",
+          "bytes": 141824
+        }
+      },
+      "old_immutable_tables": 20,
+      "old_rows_multiset_preserved": true,
+      "trial_facts": {
+        "send_claims": 0,
+        "copy_count": 4,
+        "dataset_versions": 2,
+        "policies": 0
+      },
+      "native": [
+        {
+          "role": "source",
+          "copies": 4,
+          "known_disabled_users": 10,
+          "absent_users": 4,
+          "p1_absent": null,
+          "checker_status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION"
+        },
+        {
+          "role": "restore",
+          "copies": 4,
+          "known_disabled_users": 10,
+          "absent_users": 4,
+          "p1_absent": null,
+          "checker_status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION"
+        }
+      ]
+    }
+  ],
+  "technical_journals": [
+    {
+      "group": "business-races",
+      "role": "maintenance-source",
+      "starts": 55,
+      "observations": 55,
+      "methods": {
+        "GET": 54,
+        "HEAD": 1
+      },
+      "http_statuses": {
+        "400": 12,
+        "200": 41,
+        "404": 2
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "business-races",
+      "role": "maintenance-restore",
+      "starts": 55,
+      "observations": 55,
+      "methods": {
+        "GET": 54,
+        "HEAD": 1
+      },
+      "http_statuses": {
+        "200": 41,
+        "400": 12,
+        "404": 2
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "business-races",
+      "role": "maintenance-provision",
+      "starts": 16,
+      "observations": 16,
+      "methods": {
+        "PUT": 6,
+        "GET": 10
+      },
+      "http_statuses": {
+        "200": 12,
+        "404": 4
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "business-races",
+      "role": "restore-inspect-enable",
+      "starts": 4,
+      "observations": 4,
+      "methods": {
+        "PUT": 1,
+        "GET": 3
+      },
+      "http_statuses": {
+        "200": 4
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "business-races",
+      "role": "restore-inspect-disable",
+      "starts": 2,
+      "observations": 2,
+      "methods": {
+        "GET": 1,
+        "PUT": 1
+      },
+      "http_statuses": {
+        "200": 2
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "late-hold",
+      "role": "maintenance-source",
+      "starts": 44,
+      "observations": 44,
+      "methods": {
+        "GET": 44
+      },
+      "http_statuses": {
+        "400": 11,
+        "200": 29,
+        "404": 4
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "late-hold",
+      "role": "maintenance-restore",
+      "starts": 44,
+      "observations": 44,
+      "methods": {
+        "GET": 44
+      },
+      "http_statuses": {
+        "200": 29,
+        "400": 11,
+        "404": 4
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "late-hold",
+      "role": "maintenance-provision",
+      "starts": 16,
+      "observations": 16,
+      "methods": {
+        "GET": 10,
+        "PUT": 6
+      },
+      "http_statuses": {
+        "404": 4,
+        "200": 12
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "late-hold",
+      "role": "restore-inspect-enable",
+      "starts": 4,
+      "observations": 4,
+      "methods": {
+        "GET": 3,
+        "PUT": 1
+      },
+      "http_statuses": {
+        "200": 4
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "late-hold",
+      "role": "restore-inspect-disable",
+      "starts": 2,
+      "observations": 2,
+      "methods": {
+        "GET": 1,
+        "PUT": 1
+      },
+      "http_statuses": {
+        "200": 2
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "mixed",
+      "role": "maintenance-source",
+      "starts": 38,
+      "observations": 38,
+      "methods": {
+        "GET": 38
+      },
+      "http_statuses": {
+        "200": 28,
+        "404": 4,
+        "400": 6
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "mixed",
+      "role": "maintenance-restore",
+      "starts": 38,
+      "observations": 38,
+      "methods": {
+        "GET": 38
+      },
+      "http_statuses": {
+        "200": 28,
+        "404": 4,
+        "400": 6
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "mixed",
+      "role": "maintenance-provision",
+      "starts": 16,
+      "observations": 16,
+      "methods": {
+        "PUT": 6,
+        "GET": 10
+      },
+      "http_statuses": {
+        "200": 12,
+        "404": 4
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "mixed",
+      "role": "restore-inspect-enable",
+      "starts": 4,
+      "observations": 4,
+      "methods": {
+        "PUT": 1,
+        "GET": 3
+      },
+      "http_statuses": {
+        "200": 4
+      },
+      "amount": "NOT_ASSESSED"
+    },
+    {
+      "group": "mixed",
+      "role": "restore-inspect-disable",
+      "starts": 2,
+      "observations": 2,
+      "methods": {
+        "GET": 1,
+        "PUT": 1
+      },
+      "http_statuses": {
+        "200": 2
+      },
+      "amount": "NOT_ASSESSED"
+    }
+  ],
+  "technical_requests": 340,
+  "source_restore_read_requests": 274,
+  "terminal": {
+    "sha256": "9e66048c29611df69c660dbd4bc5f2dfb3500bed7afbf9e254c60d1cd27c2f6b",
+    "bytes": 19163
+  },
+  "budget_initialization": {
+    "sha256": "116fab427d6377ab1c00e688e16c8a0d0c455bc4c490d6ac65276f1b3fa22a9f",
+    "bytes": 2353
+  },
+  "actual_native_calls_by_reviewer": 0,
+  "reviewer_file_only_checker_replays": 6,
+  "reviewer_DELETE": 0,
+  "cost_note": "Technical request quantities and starts/observations are retained. Amount remains NOT_ASSESSED; provider_io=0 in the aggregate is not a claim that technical HTTP calls or their costs did not occur.",
+  "remaining": [
+    "Frozen packet, full-entry fresh receipt, confirmation/runbook and final physical closure are pending separate review."
+  ],
+  "native_mixed_outcomes": "NOT_RUN"
+}

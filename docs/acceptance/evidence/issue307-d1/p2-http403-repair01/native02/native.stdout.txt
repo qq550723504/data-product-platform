@@ -1,0 +1,3 @@
+=== RUN   TestNativeExactDeletePermissionWithoutObjectDeletion
+--- PASS: TestNativeExactDeletePermissionWithoutObjectDeletion (0.78s)
+PASS

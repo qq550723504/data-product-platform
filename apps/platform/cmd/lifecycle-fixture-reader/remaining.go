@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -70,10 +71,9 @@ func loadRemaining() (remainingConfig, error) {
 	dsn, dsnErr := url.Parse(c.PostgresDSN)
 	expectedHost := "dpp-lifecycle307-" + c.RunID.String()[:8] + "-postgres:5432"
 	if r.Rehearsal {
-		expectedHost = "dpp-lifecycle307-" + c.RunID.String()[:8] + "-remaining-regression-pg:5432"
-		if r.Checkpoint == "candidate07" {
-			expectedHost = "dpp-lifecycle307-" + c.RunID.String()[:8] + "-candidate07-checkpoint:5432"
-		} else if r.Checkpoint != "" {
+		generation := strings.Split(pilot.RemainingProfile, "/")[0]
+		expectedHost = "dpp-lifecycle307-" + c.RunID.String()[:8] + "-" + generation + "-rehearsal:5432"
+		if r.Checkpoint != generation {
 			return r, lc.ErrStorageScope
 		}
 	}
@@ -222,6 +222,8 @@ func remainingStep(ctx context.Context, mode string) error {
 		return remainingBaseline(ctx, r, pool, cs)
 	case "remaining-business":
 		return remainingBusiness(ctx, r, pool, cs)
+	case "remaining-resume-business":
+		return remainingResumeBusiness(ctx, r, pool)
 	case "remaining-late", "remaining-mixed", "remaining-mixed-b", "remaining-mixed-c", "remaining-mixed-protected":
 		return remainingCases(ctx, r, pool, cs, mode)
 	case "remaining-close-H1":

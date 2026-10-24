@@ -1,0 +1,39 @@
+{
+  "status": "PASS_FINITE_R21_GO_TESTS",
+  "runs": [
+    {
+      "args": [
+        "go",
+        "test",
+        "./internal/lifecycle/pilot",
+        "-run",
+        "TestRemaining(FixtureSchemaSingleContract|Retained|DeletePolicy|Uncreated)",
+        "-count=1"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "go",
+        "test",
+        "./cmd/lifecycle-fixture-readonly-check",
+        "-run",
+        "TestSix",
+        "-count=1"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "go",
+        "test",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-remaining",
+        "./cmd/lifecycle-fixture-remaining-iam",
+        "-count=1"
+      ],
+      "exit": 0
+    }
+  ],
+  "source_provider_actions": 0
+}

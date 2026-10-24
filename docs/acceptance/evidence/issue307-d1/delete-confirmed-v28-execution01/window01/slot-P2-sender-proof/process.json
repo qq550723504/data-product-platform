@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-21T14:14:10.775232+00:00",
+  "finished": "2026-10-21T14:14:12.481650+00:00",
+  "args": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/attest-remaining-executable.py",
+    "--group",
+    "business-races",
+    "--stage",
+    "P2"
+  ],
+  "exit_code": 0
+}

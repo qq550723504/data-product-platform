@@ -1,0 +1,14 @@
+{
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "exit": 0
+    }
+  ],
+  "scope": "receipt cross-fields plus complete12 original members, aliases, actual cold Docker models",
+  "native_delete": 0
+}

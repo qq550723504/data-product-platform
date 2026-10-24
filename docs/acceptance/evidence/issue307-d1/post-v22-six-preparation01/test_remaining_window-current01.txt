@@ -1,0 +1,670 @@
+test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) ... 
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_until') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_null') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_before') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_after') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='base_end') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='base_start') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='execution') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='candidate_end') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='recovery') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='membership') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='heads') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='actual_only') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='projection_lie') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='actual_heads') ... ERROR
+  test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='actual_group') ... ERROR
+test_generated_profiles_pass_public_and_actual_file_checks (test_remaining_window.WindowContractTests.test_generated_profiles_pass_public_and_actual_file_checks) ... ERROR
+test_generator_overwrites_old_deadline_and_does_not_mutate_template (test_remaining_window.WindowContractTests.test_generator_overwrites_old_deadline_and_does_not_mutate_template) ... ERROR
+test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) ... 
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_until') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_null') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_before') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_after') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='base_end') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='base_start') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='execution') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='candidate_end') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='recovery') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='membership') ... ERROR
+  test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='heads') ... ERROR
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_until')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_null')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_before')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='use_after')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='base_end')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='base_start')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='execution')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='candidate_end')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='recovery')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='membership')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='heads')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='actual_only')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='projection_lie')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='actual_heads')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) (kind='actual_group')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 110, in test_complete_cli_rejects_cross_fields_before_permission_or_source_io
+    root=Path(temp);packet,owner=self.mutate(root,kind)
+                                 ~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_generated_profiles_pass_public_and_actual_file_checks (test_remaining_window.WindowContractTests.test_generated_profiles_pass_public_and_actual_file_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 64, in test_generated_profiles_pass_public_and_actual_file_checks
+    packet,owner,_,_=self.fixture(Path(temp))
+                     ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_generator_overwrites_old_deadline_and_does_not_mutate_template (test_remaining_window.WindowContractTests.test_generator_overwrites_old_deadline_and_does_not_mutate_template)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 55, in test_generator_overwrites_old_deadline_and_does_not_mutate_template
+    actual=f.window.case_profile(template,{str(i):str(i) for i in range(6)},'new','epoch')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_until')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_null')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_before')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='use_after')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='base_end')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='base_start')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='execution')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='candidate_end')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='recovery')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='membership')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+======================================================================
+ERROR: test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) (kind='heads')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 102, in test_semantic_mutations_fail_even_after_rehash_offline
+    packet,_=self.mutate(Path(temp),kind)
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 69, in mutate
+    packet,owner,c,r=self.fixture(root);row=r['cases'][0]
+                     ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_remaining_window.py", line 39, in fixture
+    p=w.case_profile({'Base':{},'Group':group},g['PolicyHeads'],'not-a-credential','test')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 48, in case_profile
+    validate_case(result, w)
+    ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 56, in validate_case
+    need(len(profile['ExpectedPolicyHeads']) == 5, 'five present expected policy heads required')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_window.py", line 21, in need
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: five present expected policy heads required
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.093s
+
+FAILED (errors=28)

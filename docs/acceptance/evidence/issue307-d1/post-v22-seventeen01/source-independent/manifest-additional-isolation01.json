@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-19T14:06:01.643096+00:00",
+  "status": "PASS",
+  "owners": [
+    {
+      "group": "business-races",
+      "cid": "2191b98cb61107c4f89565eb5e94da77ad3f4f08191187e8dcf7e33a5580b4dc",
+      "inspect_raw_sha256": "f28e1e5f33f260f44f882646063da83ecc35c997c117b9517764081961b39da7",
+      "cap_add": null,
+      "privileged": false,
+      "auto_remove": false,
+      "nonbind_mounts": 0,
+      "pids_limit": 64,
+      "memory_bytes": 268435456,
+      "nanocpus": 1000000000
+    },
+    {
+      "group": "late-hold",
+      "cid": "138c13b0afe40ca4afd6c99e99b33460717c4efeb8baa92777e9c20752e1a100",
+      "inspect_raw_sha256": "de89753d6592b4ebab24e3a086e1e6f3c1f482f76b55c0bcd3e01cf8380df1c9",
+      "cap_add": null,
+      "privileged": false,
+      "auto_remove": false,
+      "nonbind_mounts": 0,
+      "pids_limit": 64,
+      "memory_bytes": 268435456,
+      "nanocpus": 1000000000
+    },
+    {
+      "group": "mixed",
+      "cid": "5be9993bf7fdc6a2b1a0557b6d0d448b959ed7a1be5684f199a1b961f0ea84ef",
+      "inspect_raw_sha256": "25eeb9e2cb5f6b2d0f2603481a4889a0ce9648d22aca78ac62129bca8c781abe",
+      "cap_add": null,
+      "privileged": false,
+      "auto_remove": false,
+      "nonbind_mounts": 0,
+      "pids_limit": 64,
+      "memory_bytes": 268435456,
+      "nanocpus": 1000000000
+    }
+  ],
+  "operations": [
+    "docker inspect exact 3 newly allocated CIDs"
+  ],
+  "source_or_provider_IO": false
+}

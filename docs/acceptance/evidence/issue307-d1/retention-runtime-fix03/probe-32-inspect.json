@@ -1,0 +1,10 @@
+{
+  "command": [
+    "docker",
+    "inspect",
+    "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce"
+  ],
+  "started_at": "2026-10-24T09:01:32.354941+00:00",
+  "finished_at": "2026-10-24T09:01:32.410938+00:00",
+  "returncode": 0
+}

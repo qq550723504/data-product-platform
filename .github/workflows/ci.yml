@@ -86,6 +86,64 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install the existing host signature dependency
+        run: python -m pip install 'cryptography==49.0.0'
+      - name: Test explicit evidence indexes and complete readonly entry without Docker
+        shell: bash
+        run: |
+          python -B examples/lifecycle-d1/test_evidence_indexes.py
+          python -O -B examples/lifecycle-d1/test_evidence_indexes.py
+          python -B examples/lifecycle-d1/test_six_native_entry.py
+          python -O -B examples/lifecycle-d1/test_six_native_entry.py
+          python -B examples/lifecycle-d1/test_retired_resources.py
+          python -O -B examples/lifecycle-d1/test_retired_resources.py
+          python -B examples/lifecycle-d1/test_retired_volumes.py
+          python -O -B examples/lifecycle-d1/test_retired_volumes.py
+          python -B examples/lifecycle-d1/test_retired_budget_bytes.py
+          python -O -B examples/lifecycle-d1/test_retired_budget_bytes.py
+          python -B examples/lifecycle-d1/test_successor_dependencies.py
+          python -O -B examples/lifecycle-d1/test_successor_dependencies.py
+          python -B examples/lifecycle-d1/test_retained_v26.py
+          python -O -B examples/lifecycle-d1/test_retained_v26.py
+          python -B examples/lifecycle-d1/test_retained_v29.py
+          python -O -B examples/lifecycle-d1/test_retained_v29.py
+          python -B examples/lifecycle-d1/test_retained_v30.py
+          python -O -B examples/lifecycle-d1/test_retained_v30.py
+          python -B examples/lifecycle-d1/test_retained_v31.py
+          python -O -B examples/lifecycle-d1/test_retained_v31.py
+          python -B examples/lifecycle-d1/test_retained_v32.py
+          python -O -B examples/lifecycle-d1/test_retained_v32.py
+          python -B examples/lifecycle-d1/test_receipt_bytes.py
+          python -O -B examples/lifecycle-d1/test_receipt_bytes.py
+          python -B examples/lifecycle-d1/test_fixture_artifacts.py
+          python -O -B examples/lifecycle-d1/test_fixture_artifacts.py
+          python -B examples/lifecycle-d1/test_preallocation_ci.py
+          python -O -B examples/lifecycle-d1/test_preallocation_ci.py
+          python -B examples/lifecycle-d1/test_six_candidate_runtime.py
+          python -O -B examples/lifecycle-d1/test_six_candidate_runtime.py
+          python -B examples/lifecycle-d1/test_native_protection.py
+          python -O -B examples/lifecycle-d1/test_native_protection.py
+          python -B examples/lifecycle-d1/test_retention_renewal.py
+          python -O -B examples/lifecycle-d1/test_retention_renewal.py
+          python -B examples/lifecycle-d1/test_retention_maintenance.py
+          python -O -B examples/lifecycle-d1/test_retention_maintenance.py
+          python -B examples/lifecycle-d1/test_retention_composition.py
+          python -O -B examples/lifecycle-d1/test_retention_composition.py
+          python -B examples/lifecycle-d1/test_verify_six_native.py
+          python -O -B examples/lifecycle-d1/test_verify_six_native.py
+          python -B examples/lifecycle-d1/test_retention_staging.py
+          python -O -B examples/lifecycle-d1/test_retention_staging.py
+          python -B examples/lifecycle-d1/test_execution_freeze.py
+          python -O -B examples/lifecycle-d1/test_execution_freeze.py
+          python -B examples/lifecycle-d1/test_freeze_six_candidate.py
+          python -O -B examples/lifecycle-d1/test_freeze_six_candidate.py
+          python -B examples/lifecycle-d1/test_window_six_support.py
+          python -O -B examples/lifecycle-d1/test_window_six_support.py
+          python -B examples/lifecycle-d1/test_attest_remaining_executable.py
+          python -O -B examples/lifecycle-d1/test_attest_remaining_executable.py
       - name: Test completed helper ownership, archival, and safe collection
         run: python examples/temporary_containers_test.py
       - name: Test lifecycle wrapper default retirement and explicit retention without Docker
@@ -186,11 +244,16 @@ jobs:
           python3 -O -B examples/lifecycle-d1/test_freeze_remaining_executable.py
 
       - name: Build API / worker / migrate / operator tools
+        # Current product P and retained fixture R have separate source/DDL.
         run: |
           go build ./cmd/api
           go build ./cmd/worker
           go build ./cmd/migrate
           go build ./cmd/outbox-replay
+
+      - name: Test the separately pinned retained fixture archive
+        working-directory: .
+        run: python3 -B examples/lifecycle-d1/ci-test-fixture-runtime.py
 
   web-console:
     needs: changes
@@ -214,7 +277,7 @@ jobs:
           node-version: '22'
 
       - name: Install web dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Lint
         run: npm run lint

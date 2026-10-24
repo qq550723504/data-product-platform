@@ -1,0 +1,90 @@
+{
+  "status": "BLOCKED_BOUNDED_SOURCE_AND_COLD_RECHECK",
+  "initial_build_source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "allocation_sha256": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+  "resolved_findings": [
+    "COLD1 strict created/PID0/never-started empty endpoint accepted only with exact configured network/name; attached runtime ID still exact",
+    "COLD2 exactly canonical CAP_CHOWN, no extra capabilities"
+  ],
+  "actual_cold_recheck": {
+    "observed_at_utc": "2026-10-19T16:57:28.996765+00:00",
+    "entry": "Actual current cold_topology on unchanged original allocation",
+    "status": "PASS_COLD_SIX_TOPOLOGY",
+    "owners": 86,
+    "readonly_queries": {
+      "inspect": 245,
+      "volume_inspect": 18,
+      "ps": 18,
+      "network_inspect": 9
+    },
+    "production_cold_functions_AST_sha256": {
+      "cold_topology": "6a47d9ac086216633fc01b282f2061c191eb2552d2e21dcf820517efe3979587",
+      "direct_network": "b8043d50907fdc6fedb13d6c89cdd03f86183642de1411bd53b3c34dfcf96d47",
+      "initializer_security": "3d47d731460edee5157e5beb768894764cee0f18ad2aa792a74fef72ed7cdd16"
+    },
+    "mutations": 0
+  },
+  "independent_offline_tests": {
+    "normal_and_optimized_each": {
+      "runtime_methods": 10,
+      "freeze_methods": 1,
+      "complete_methods": 2,
+      "support_methods": 2,
+      "exit_all": 0
+    },
+    "source_stable": true,
+    "unmodeled_external_subprocesses_refused": true,
+    "real_PG_or_provider": false
+  },
+  "remaining_blockers": [
+    {
+      "id": "SOURCE1",
+      "classification": "BLOCKER",
+      "location": "six_candidate_runtime.state receipt files validation",
+      "counterexamples": [
+        {
+          "receipt_files": "empty object",
+          "all_receipt_and_checkpoint_SHA_recomputed": true,
+          "accepted": true
+        },
+        {
+          "receipt_files": "four binaries only, no compiler channels",
+          "all_receipt_and_checkpoint_SHA_recomputed": true,
+          "accepted": true
+        }
+      ],
+      "baseline_files": 12,
+      "original_all_four_binaries_still_compared": true,
+      "problem": "Rebuild receipt membership is not required or complete; compiler original stdout/stderr can be omitted from evidence binding while checkpoint passes.",
+      "required_fix": "Require exactly four fixed binaries plus eight original build stdout/stderr files and matching actual rebuild directory regular-member set; reject empty/missing/extra/aliased members after rehash."
+    }
+  ],
+  "other_reviewed_boundaries": [
+    "Mandatory source checkpoint has no fallback",
+    "Original allocation is not written; initial source and effective current projection are explicit",
+    "Only five reviewed host/test repair paths allowed; compiled apps/platform/migrations or other host path changes rejected",
+    "Four independent rebuild output bytes must equal retained active binaries",
+    "Final source archive/confirmation explicitly bind effective source, initial allocation build source, checkpoint and rebuild receipt"
+  ],
+  "source_files": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "5a2697501928d09e92213ef17ec214416059fb01c937664a82b84218f9c00c6a",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "4462393fce670501494f17e2e492b47564642f150fb4c9d001c1fb8c5916c67e",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "f27373cce77cd854aca5c2e3eb006705e7e2778e79c7f25225a2a684092ba13f",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "d10d9b7bfaee39c594bdf0482bd94369b4f9d84bc2054a3352c7ebe283a78b99",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "b705df9f8097e3646a383bf40928171ff22745cc20f20df4b00b18d39e283e6a"
+  },
+  "scope_limits": {
+    "actual_rebuild_checkpoint": "NOT_RUN_NOT_REVIEWED",
+    "materialize": "NOT_RERUN",
+    "profiles": "NOT_CREATED_OR_REVIEWED",
+    "budget_UID_contents": "NOT_INITIALIZED_NOT_CHECKED",
+    "actual_Source_IAM_restore": "NOT_RUN",
+    "candidate": "NOT_FROZEN",
+    "delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "full_D1": "NOT_ACCEPTED",
+    "report_file_written": false
+  }
+}

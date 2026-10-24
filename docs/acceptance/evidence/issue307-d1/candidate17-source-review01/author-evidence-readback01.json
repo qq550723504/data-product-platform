@@ -1,0 +1,35 @@
+{
+  "scope": "File/hash readback of author-owned execution; reviewer did not inspect or operate Docker",
+  "files": {
+    "retained-cold01/result.json": {
+      "sha256": "0c82f05367db3d1853d65d9d8b7c57e42543573a8c9f437d94e46a91547b22d3",
+      "bytes": 92935
+    },
+    "retained-cold01/processes.jsonl": {
+      "sha256": "9944d9babacb37e3af05f10feb166033bc0689423b99b1bf2a1a5d335c8159a6",
+      "bytes": 220800
+    },
+    "source-final04/summary.json": {
+      "sha256": "a96cb5222f0a7e4e174d1679285e7e6d53ae2bfe0efeb8bcfe4e2d464d73ddb9",
+      "bytes": 1945
+    },
+    "source-tests01/summary.json": {
+      "sha256": "ce26b672d2af36b699f991ff4d7d056ac165a7f3230a64d771ba21c9f29ab0e7",
+      "bytes": 2024
+    }
+  },
+  "retained": {
+    "status": "PASS_RETAINED_445_CLOSED",
+    "closed_cids": 445,
+    "c16": {
+      "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+      "status": "PASS_RETAINED_V26_PHYSICAL_FILES_BUDGET_ONLY",
+      "historical_identity_closure": "UNCONFIRMED",
+      "approved_references": 76,
+      "cases_revoked": 6,
+      "recoveries_revoked": 6,
+      "never_replayed": true
+    }
+  },
+  "reviewer_Docker_Source_provider_calls": 0
+}

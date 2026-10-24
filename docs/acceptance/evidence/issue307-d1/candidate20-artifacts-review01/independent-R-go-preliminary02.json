@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-22T07:56:13.321070+00:00",
+  "source": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "args": [
+    "go",
+    "test",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-remaining-iam",
+    "-run",
+    "TestRemainingFixtureSchemaSingleContract|TestRemainingDeletePolicy|TestRemainingRetained|TestCurrentPolicyCheckpoint|TestRemainingWindow|TestResumeRejectsStaleCurrentPolicyCheckpointBeforeDatabase",
+    "-count=1",
+    "-v"
+  ],
+  "exit": 0,
+  "scope": "Pure prefix-filtered unit tests and package compilation; NativePostgres excluded; no source/provider I/O",
+  "GOPROXY": "off",
+  "stdout_sha256": "013b55f5fa3a72f8eaa39da182dfe8283bd81935dee03ffd7331d685c4265643",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "correction": "01 exact anchors matched only two intended names; 01 original receipts retained"
+}

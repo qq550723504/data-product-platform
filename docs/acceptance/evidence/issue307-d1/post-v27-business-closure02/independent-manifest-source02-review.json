@@ -1,0 +1,127 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_V27_CLOSURE_MANIFEST_REVIEW",
+  "reviewer_task": "/root/d1_remaining_independent_review",
+  "reviewed_at": "2026-10-21T07:00:16.413671+00:00",
+  "manifest_sha256": "5a655e6586948e584cbb796ef0f205378ef327a2c4fd95842e047a4bea3fff1c",
+  "source_head": "3eaf64323eeca2c0fac795ccf91a551e682ff518",
+  "source_binding_parent_sha256": "e03e7e01f8f76a4d2767eef0ad71a96dc7ffe7b25191919640a8372c3ec74626",
+  "observer_build_source_head": "32ee783f48dac67154d7621f1d01b11a275e7bb7",
+  "actual_prepared_owner_inspect_sha256": "22659bc36154d76c542955ed818d0b8662b71e24c88bd3fb09700fe14ba5625e",
+  "actual_prepared_owner_receipt_sha256": "fe85305eb8bb4b83d97eb1c026ab18febf685d82fb4393f2c41fae51fb6fc217",
+  "remaining_blockers": [],
+  "resolved_blockers": [
+    {
+      "id": "B1_IAM_COMPLETE_REQUEST_AND_ABSENCE_CONTRACT",
+      "root_cause": "The previous checker incorrectly expected 26 HTTP-200 requests and rejected the fixed root owner success path, which also authoritatively verifies one never-created user.",
+      "resolution": "fresh_iam now requires 27 GET requests: 13 unique known disabled users, the exact never-created identity d4e524c04808a6960 returning 404, and 13 policy reads. It checks within-owner request/observation chronology and the 45-second freshness cap. The frozen root executable independently requires SDK XMinioAdminNoSuchUser before a successful result, so HTTP404 alone is not trusted absence.",
+      "tests_reviewed": "Complete 27-request success and missing/200 absence, foreign user, missing policy, stale, future observation and duplicate-extra-read rejection branches are present. Reviewer did not rerun them.",
+      "old_report_revocation_sha256": "185d10c8f3b17106770b0989a3afdc7f1c7345cfa41fcb60ce9add2d0675bd62",
+      "old_premature_pass_sha256_preserved_in_revocation": "202ea02032ba8db544c6031c82001c88f1a6f8c02745b3a6e59195605053fd2d"
+    }
+  ],
+  "checked": {
+    "public_private_new_manifest_bytes_equal": true,
+    "original_manifest_bytes_unchanged": true,
+    "all_non_source_manifest_fields_exactly_unchanged": true,
+    "only_changed_source_bindings": [
+      "source_head",
+      "source_files"
+    ],
+    "added_provenance_fields": [
+      "source_binding_parent_sha256",
+      "observer_build_source_head"
+    ],
+    "host_source_files_changed": [
+      "examples/lifecycle-d1/close-v27-business-dispatches.py",
+      "examples/lifecycle-d1/test_v27_dispatch_closure.py"
+    ],
+    "Go_source_diff_since_observer_build": false,
+    "source_file_hashes_verified": 733,
+    "immutable_input_hashes_verified": 22,
+    "retained_private_file_hashes_verified": 531,
+    "retained_full_CID_descriptor_membership": 540,
+    "retained_budget_hash_anchors": 18,
+    "exact_failed_execution_owner_full_CID_binary_bindings": 36,
+    "new_maintenance_owner_actual_inspect_contracts_verified": 3,
+    "actual_owner_snapshot_unchanged": true,
+    "all_new_owners_prepared_stopped_PID0_noports_norestart": true,
+    "observer_private_members": [
+      "closure.json"
+    ],
+    "observer_enabled": false,
+    "proof_present": false,
+    "output_directories_empty": true,
+    "new_manifest_exact_SHA_required_by_run_gate": true,
+    "old_manifest_PASS_cannot_authorize_new_run": true
+  },
+  "fixed_scope": {
+    "failed_execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+    "candidate_sha256": "20d08f0a2d334e779b64f0c082515131c285d9fd005c6fbaa94294b147f38d42",
+    "bindings_sha256": "77ce0be4d5dccd95a276a5b4c3f060689bea870f4f3caef1a827ef81154efa24",
+    "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+    "audit_id": "e5b72c12-0f70-47ad-9884-06a21a08e787",
+    "targets": [
+      {
+        "Case": "P2",
+        "Plan": "bce1b1b1-d6e2-44fd-8b87-171142350ab9",
+        "Copy": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+        "Dispatch": "5e06d692-648a-4f8c-a13e-8bf1b1452c7b",
+        "Attempt": "ba5bec6b-84ec-4418-a63f-4b08601ccb76",
+        "Approval": "da615e44-5c9a-4c46-8614-a0a0012c444b",
+        "PlanHash": "d4758d9b64003d92aca60290fee1d2f22e7a857d2fe2be513d4a1ea2755ce6a3"
+      },
+      {
+        "Case": "T1",
+        "Plan": "247a2ca9-d2f3-4384-bcee-b10add497175",
+        "Copy": "f48755f1-976b-4f47-98da-70ead936a4c3",
+        "Dispatch": "e6067cd3-0fdf-4952-b18d-12f9913534df",
+        "Attempt": "c1f32764-d3d3-4752-ba48-fc88373c0210",
+        "Approval": "ffef8470-5b80-48fb-ae7b-821e17f36266",
+        "PlanHash": "7c4daf909a375bc21fcf8dd09b14d99960ae1f919ce138eb517ac0593faf1c1c"
+      },
+      {
+        "Case": "T2",
+        "Plan": "531c7b96-173f-4028-be97-2de9ed6c72f2",
+        "Copy": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+        "Dispatch": "b7f4e168-f8e8-42d4-bea7-1da6a8ec0de5",
+        "Attempt": "3c731704-cc91-4717-95fc-828ced05b46c",
+        "Approval": "1cabd635-f9ef-4b64-93c0-24cae172fccc",
+        "PlanHash": "84fbafb913dba44e5ceb43d670203e55f0244fad62a2dc2fd9ebb10b87e0cab5"
+      }
+    ],
+    "new_maintenance_owner_cids": {
+      "observer": "819de63d8b44cafdfc8ddb52e1a4ac056ff33ac8668c21a3790a8d971e95650b",
+      "check-disabled": "dea9470840cd172e59048297ffffdb63d35a75da8950087003273859d0b891b0",
+      "disable-all": "48d2f6b440e4bdf06c21d5dd3898ec564c5c8ea4dcb871009c96cfc53b2845c3"
+    },
+    "allowed_operation": "Existing explicit RevokeDispositionApproval and trusted RecordProviderObservation with append-only NOT_SENT/release for only fixed P2/T1/T2. No provider send client, queue, new candidate or deletion authority.",
+    "maximum_provider_deletes": 0,
+    "pins_released": 0,
+    "budgets_refunded": 0
+  },
+  "design_review": [
+    "Shared Docker hostpath is used by the active preflight composition and all four attester Source reads; complete attester.main signs and verifies on isolated Docker/SQL fixtures. Type/alias/mount/budget counterexamples remain fail closed before signature.",
+    "New v27 verifier pins exact dispatch/attempt/approval/plan/copy and permits only the exact revoked v22 NOT_SENT/released predecessor with zero claim; UNKNOWN and foreign history stay blocked. Original v22 public contract remains fixed.",
+    "Actual saved owner inspect binds full CIDs/images/user/argv/network namespace/mount types and paths/read-only settings/caps/tmpfs/resource limits. Host signing key is not mounted; no secret values were emitted by review.",
+    "Fresh runtime physical/IAM/source/input gates remain mandatory; signed closure proof has a one-minute validity cap. Every containment close continues independently and partial/unknown results remain failures.",
+    "Windows retained inspection batches at most 64 exact full CIDs and validates the complete union. Source02 is a bounded host-checker correction; no resource, Go binary, input, owner, target or scope was replaced."
+  ],
+  "prior_nondelete_evidence": {
+    "isolated_actual_signatures_independently_verified": 3,
+    "isolated_closed_unique_CIDs": 28,
+    "PostgreSQL_verifier_adapter_leaf_passes": 69,
+    "source_core_readonly_before_after_bytes_equal": true,
+    "full_source_Command_or_native_preflight_claimed": false
+  },
+  "limits": {
+    "reviewer_ran_Docker_DB_or_provider": false,
+    "reviewer_reran_tests": false,
+    "retained_live_container_or_budget_recheck_by_reviewer": false,
+    "retained_budget_hashes_are_explicit_runtime_recheck_anchors": true,
+    "source_full_native_preflight": "NOT_RUN",
+    "actual_v27_Core_closure_at_review": "NOT_RUN",
+    "no_new_candidate_window_or_delete_authority": true,
+    "runtime_fresh_rechecks_still_required": true,
+    "only_file_written_in_this_source02_review": "independent-manifest-source02-review.json"
+  }
+}

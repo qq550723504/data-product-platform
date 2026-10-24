@@ -1,0 +1,86 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 547B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/dpp307-ci-browser:portability03
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context:
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM docker.io/library/dpp307-ci-browser:portability03@sha256:7dc52fa50b10eefa6f613535d2c8cbb072a4a86736eb66ca09f12ba8c142688f
+#4 resolve docker.io/library/dpp307-ci-browser:portability03@sha256:7dc52fa50b10eefa6f613535d2c8cbb072a4a86736eb66ca09f12ba8c142688f 0.0s done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 11.43kB 0.0s done
+#5 DONE 0.1s
+
+#6 [2/4] COPY patch.cjs /diagnostics/patch.cjs
+#6 DONE 0.0s
+
+#7 [3/4] COPY --chown=10001:10001 schema-attempts.spec.mjs /work/tests/browser/schema-attempts.spec.mjs
+#7 DONE 0.0s
+
+#8 [4/4] RUN node /diagnostics/patch.cjs && cd /work/apps/web && node node_modules/next/dist/bin/next build && chown -R 10001:10001 /work
+#8 1.169    ▲ Next.js 15.5.24
+#8 1.170 
+#8 1.384    Creating an optimized production build ...
+#8 6.819  ✓ Compiled successfully in 3.4s
+#8 6.821    Linting and checking validity of types ...
+#8 13.55    Collecting page data ...
+#8 15.29    Generating static pages (0/3) ...
+#8 15.65  ✓ Generating static pages (3/3)
+#8 16.65    Finalizing page optimization ...
+#8 16.65    Collecting build traces ...
+#8 32.13 
+#8 32.14 Route (app)                                             Size  First Load JS
+#8 32.14 ┌ ƒ /                                                  185 B         106 kB
+#8 32.14 ├ ƒ /_not-found                                        993 B         104 kB
+#8 32.14 ├ ƒ /api/direct-data-deliveries                        127 B         103 kB
+#8 32.14 ├ ƒ /api/source-admissions                             127 B         103 kB
+#8 32.14 ├ ƒ /attention                                         185 B         106 kB
+#8 32.14 ├ ƒ /batches                                         1.03 kB         107 kB
+#8 32.14 ├ ƒ /batches/[id]                                    1.03 kB         107 kB
+#8 32.14 ├ ƒ /datasets                                          185 B         106 kB
+#8 32.14 ├ ƒ /datasets/[id]                                     185 B         106 kB
+#8 32.14 ├ ƒ /datasets/[id]/versions/[versionId]              6.22 kB         112 kB
+#8 32.14 ├ ƒ /datasets/[id]/versions/[versionId]/remediation  1.28 kB         107 kB
+#8 32.14 ├ ƒ /evidence                                          185 B         106 kB
+#8 32.14 ├ ƒ /ingest                                           4.5 kB         110 kB
+#8 32.14 ├ ƒ /production                                        185 B         106 kB
+#8 32.14 ├ ƒ /production/[id]                                  1.3 kB         107 kB
+#8 32.14 ├ ƒ /products                                          185 B         106 kB
+#8 32.14 ├ ƒ /products/[id]                                    5.4 kB         111 kB
+#8 32.14 ├ ƒ /products/[id]/releases/[releaseId]                185 B         106 kB
+#8 32.14 ├ ƒ /resources                                         185 B         106 kB
+#8 32.14 ├ ƒ /resources/[id]                                   1.4 kB         107 kB
+#8 32.14 ├ ƒ /reviews                                         3.44 kB         109 kB
+#8 32.14 └ ƒ /source-admissions                               3.05 kB         109 kB
+#8 32.14 + First Load JS shared by all                         103 kB
+#8 32.14   ├ chunks/255-c5a697ddbf82d774.js                   46.4 kB
+#8 32.14   ├ chunks/4bd1b696-c023c6e3521b1417.js              54.2 kB
+#8 32.14   └ other shared chunks (total)                      1.95 kB
+#8 32.14 
+#8 32.14 
+#8 32.14 ƒ  (Dynamic)  server-rendered on demand
+#8 32.14 
+#8 DONE 61.7s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 3.2s done
+#9 exporting manifest sha256:0772575750422e3e9e8472dad0a31c9a1065079a74fb205b866b7fd0bdadd621 done
+#9 exporting config sha256:d76295040c7a6399831d40591b6fe884277f8fd15d4270655095aa2d2ef3d17b done
+#9 exporting attestation manifest sha256:569c0ea1eff299ce9a5bfcd91f7f88451380bebff547dad67be7d18f20bb5671 0.0s done
+#9 exporting manifest list sha256:c454c20da337407bf74478b9137d867d9946f7c9a0e281455b18cac53c639994 done
+#9 naming to docker.io/library/dpp307-client-diagnostic:01 done
+#9 unpacking to docker.io/library/dpp307-client-diagnostic:01
+#9 unpacking to docker.io/library/dpp307-client-diagnostic:01 0.6s done
+#9 DONE 3.9s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/ptcegy178gcefgulpf48m6nm3

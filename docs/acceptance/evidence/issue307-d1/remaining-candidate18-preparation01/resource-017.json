@@ -1,0 +1,10 @@
+{
+  "volume": "dpp-lifecycle307-dfda43b4-candidate18-recovery-redis",
+  "driver": "local",
+  "scope": "local",
+  "labels": {
+    "lifecycle307.allocation": "f10b33ea-e4c8-460b-928d-ae6e496e3d19",
+    "lifecycle307.remaining": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5"
+  },
+  "mounted_cids": []
+}

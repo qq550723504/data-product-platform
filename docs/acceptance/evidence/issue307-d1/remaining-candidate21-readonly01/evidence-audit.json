@@ -1,0 +1,33 @@
+{
+  "status": "PASS_EXPLICIT_EVIDENCE_INDEX_AUDIT",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "plan_sha256": "77505973edf32ecc325216ff4d996399f9b7cd44f7cbed1b7ad844b6b22ac561",
+  "candidate_sha256": "813b941ff3d1be0d9b83f81bcd5dd532bd1f6da4df81181d2a1d1ecae7d34867",
+  "indexes": [
+    {
+      "id": "source-review",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate21-source-review01/evidence-index.json",
+      "sha256": "951cd1c24809f75d5a63ccdea7aa83d65ad4f1db5f808bb9d8ea1a0130a238c6",
+      "members_verified": 82
+    },
+    {
+      "id": "nondelete-preparation",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate21-preparation01/non-delete-evidence-index.json",
+      "sha256": "c4a047656f5ff5c860aea2d4fbe207bbc755f0c49bfd016759789fc26fc3912e",
+      "members_verified": 1430
+    },
+    {
+      "id": "source-review-report-binding",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate21/source-review-binding-index.json",
+      "sha256": "2bca8f8b476252b113eab55a432f1782e727ba1996455804ae37e5c7e472c505",
+      "members_verified": 2
+    }
+  ],
+  "members_verified": 1514,
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "execution_authority": false
+}

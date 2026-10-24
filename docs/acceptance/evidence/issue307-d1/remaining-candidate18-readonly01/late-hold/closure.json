@@ -1,0 +1,26 @@
+{
+  "owners": [
+    {
+      "cid": "fbf8957d7d5597c3a0fa78b97020c63f94a8f003a230a0ab44f96a7d9d5c49e5",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    }
+  ],
+  "failure": null,
+  "unknown_temporary_owner": null,
+  "native_delete": 0,
+  "all_closed": true
+}

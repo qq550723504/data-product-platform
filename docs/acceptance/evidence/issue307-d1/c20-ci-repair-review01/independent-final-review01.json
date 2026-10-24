@@ -1,0 +1,69 @@
+{
+  "status": "PASS_BOUNDED_C20_CI_REPAIR_SOURCE_REVIEW",
+  "at": "2026-10-22T09:36:20.900905+00:00",
+  "source_head": "923c06722f3099e9049894489006615f0f0e7ce2",
+  "runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "remaining_blockers": [],
+  "scope": "Finite source/offline review of the exact CI repairs, immutable archive recipe, preallocation source CI provenance, and terminal guard; saved C20 closure facts are audited as issued. This is not remote Linux CI, candidate native acceptance, deletion authorization, branch-lock acceptance, or permission to resume terminal C20.",
+  "reviewed_artifacts_index": "docs/acceptance/evidence/issue307-d1/c20-ci-repair-review01/independent-reviewed-artifacts01.json",
+  "reviewed_artifacts_index_sha256": "1c8289b3b2e698aa261552fec703e61592288a961ab22669d0e0b83b7e008a1b",
+  "root_cause_and_closure": [
+    {
+      "id": "CI-HOST-DEMO",
+      "state": "CLOSED_IN_SOURCE_AND_OFFLINE_TESTS",
+      "finding": "Historical test_retained_v26 fixture still generated the old source-only review path/status and omitted the separate P host source-freeze binding. It failed before its intended typed-index assertions.",
+      "resolution": "Fixture follows authoritative R/P report path/status, runtime/P heads, and same typed files-map semantics; wrong source and wrong runtime counterexamples now reach the intended strict gate. Production freeze semantics are retained."
+    },
+    {
+      "id": "CI-GO-ARCHIVE",
+      "state": "CLOSED_LOCAL_REPRODUCER_AND_RECIPE_REMOTE_LINUX_PENDING",
+      "finding": "Human-supplied CI excerpt observes ValueError exact runtime archive drift after fetching fixed R. Independent local old-recipe experiment reproduces UTC SHAffa3fe29ddae3beaf17bc85bfa13b39258d07517d7bcd06c180921d85cc8a217 versus GMT-8 SHA190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea for identical769file content. ZIP timestamps inherited local timezone.",
+      "resolution": "Native Git child process TZ=UTC, core.autocrlf=false, git archive zip -0 STORE; strict spec version2 and GIT_ZIP_STORE_UTC_LF_V1 recipe. Four inherited zones yield exactly38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c/6425445bytes/769files/allZIP_STORED. verify_archive exact byte SHA/size/member checks remain strict. Original C20 compressed archive is retained, not repacked in place. Windows evidence does not replace real Linux PR CI."
+    },
+    {
+      "id": "CI-R1",
+      "state": "CLOSED_BOTH_FINDINGS_WITH_ORIGINALS_RETAINED",
+      "finding": "Initial preallocation CI HEAD return was unused, allowing a subsequently built different host P snapshot; first fix also allowed inconsistent declared CI run versus the pinned ready-validated snapshot.",
+      "resolution": "Exact GitHub ready source CI precedes history/build/allocation. allocate retains source_ci, then requires built host.source equals checked CI HEAD and revalidates actual host raw/LF bytes before any network/volume/owner. Source CI receipt and snapshot SHAs, head, execution, run and captured snapshot.ci.id are checked together; same source_ci is copied into allocation/source-freeze/bindings/machine confirmation. Complete allocation rejects failed/pending/foreign/unknownCI and A-to-B/host-byte drift without resource calls; rehashed run100 versus actual snapshot9 is rejected. Existing exact final HEAD/PR CI/native branch-lock/new-human-authorization gates remain."
+    },
+    {
+      "id": "C20-TERMINAL",
+      "state": "PRESERVED_AND_NONRESUMABLE",
+      "resolution": "allocation_state refuses preparation-terminal presence or alias before allocation/history/build/Docker. Saved public/private terminal matches1aff9d0c516b4be3247e276e9b6a9ab2f9bb05af48e62f7f1dbe0cdcce28e9ae.86oldC20 owners closed,30permissionsfalse,19profiles onlyEnabled revoked with original private bytes,3newempty budgets preserve originalSHA/ownership/mounts; old_retained exactly equals original allocation snapshot. Original12build members and1907archive preserved. No source/native/IAM preparation or provider calls are claimed."
+    }
+  ],
+  "validation": {
+    "independent_normal_methods": 27,
+    "independent_optimized_methods": 27,
+    "independent_record": "independent-offline-regression02.json",
+    "independent_fixed_archive_readback": "independent-archive-recipe01.json",
+    "independent_saved_terminal_audit": "independent-c20-closure-audit01.json",
+    "author_broad_commands": 73,
+    "author_broad_result_sha256": "7ad36a377fdcd1d51c680639cd87954171bdb4c72272f5b5a50e516f6233cf9e",
+    "author_broad_limit": "73-command run precedes final snapshot/run equality; the affected final logic is independently re-run above on923c. Author witness is distinguished from reviewer execution.",
+    "prior_findings": [
+      "independent-CI-R1-finding01.json",
+      "independent-CI-R1-run-finding02.json"
+    ],
+    "all_prior_failures_kept": true
+  },
+  "boundaries": {
+    "remote_Linux_PR_CI": "SEPARATE_LIVE_RESULT_REQUIRED_NOT_ACCEPTED_HERE",
+    "current_C20": "TERMINAL_RETAIN_ONLY_NO_REUSE",
+    "new_candidate": "NOT_PREPARED_BY_THIS_REVIEW",
+    "new_execution_budget_or_authority": "NONE_CREATED",
+    "source_upgrade": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "source_or_provider_actions_by_reviewer": 0,
+    "provider_DELETE": 0,
+    "old_authorization_reused": false,
+    "cleanup_hold_release_bypass_pin_release_budget_refund": 0,
+    "PR332": "MUST_REMAIN_DRAFT_OPEN_UNMERGED",
+    "Issue307": "MUST_REMAIN_OPEN",
+    "old_IAM_native_status": "NOT_RELABELED_BY_THIS_OFFLINE_REVIEW"
+  },
+  "next_required_order": [
+    "Commit and obtain all necessary real PR CI success for the exact source HEAD before any new preparation allocation.",
+    "Keep terminal C20 and all earlier budgets/pins/failures intact; any future candidate has separate source/execution/budgets and a new finite review.",
+    "Complete its actual non-delete native preparation, fixed readonly verification, final packet review/static commit/final exact HEAD CI/branch lock/new confirmation; obtain fresh human authorization separately before any send."
+  ]
+}

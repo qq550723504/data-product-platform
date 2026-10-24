@@ -82,7 +82,7 @@ class FullDocker:
                 folder=self.owner/g['Group']/stage;write(folder/'permission.json',dict(common,Profile=self.c['Profile'],BinarySHA256=self.c['SenderBinarySHA256']));shutil.copyfile(self.packet/'candidate.json',folder/'candidate.json');shutil.copyfile(self.packet/'confirmation-template.txt',folder/'confirmation-template.txt')
             for action in b['root_owners']:write(self.owner/g['Group']/('root-'+action)/'permission.json',common)
     @staticmethod
-    def mount(target,source,rw):return {'Destination':target,'Source':str(source),'RW':rw}
+    def mount(target,source,rw):return {'Destination':target,'Source':str(source),'RW':rw,'Type':'bind'}
     @staticmethod
     def state(ident,image,g):
         return {'Id':ident,'Image':image,'State':{'Running':False,'Pid':0},'Mounts':[],

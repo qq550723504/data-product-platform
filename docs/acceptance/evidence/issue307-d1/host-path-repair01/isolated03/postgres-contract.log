@@ -1,0 +1,143 @@
+=== RUN   TestPostV22NoSendPostgresEligibility
+=== RUN   TestPostV22NoSendPostgresEligibility/success
+=== RUN   TestPostV22NoSendPostgresEligibility/unrevoked
+=== RUN   TestPostV22NoSendPostgresEligibility/claim
+=== RUN   TestPostV22NoSendPostgresEligibility/UNKNOWN
+=== RUN   TestPostV22NoSendPostgresEligibility/released
+=== RUN   TestPostV22NoSendPostgresEligibility/absence
+=== RUN   TestPostV22NoSendPostgresEligibility/new-attempt
+=== RUN   TestPostV22NoSendPostgresEligibility/new-dispatch
+=== RUN   TestPostV22NoSendPostgresEligibility/wrong-approval-hash
+--- PASS: TestPostV22NoSendPostgresEligibility (0.13s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/success (0.02s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/unrevoked (0.01s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/claim (0.01s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/UNKNOWN (0.01s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/released (0.01s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/absence (0.01s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/new-attempt (0.01s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/new-dispatch (0.01s)
+    --- PASS: TestPostV22NoSendPostgresEligibility/wrong-approval-hash (0.01s)
+=== RUN   TestPostV27NoSendPostgresEligibility
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/success
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/unrevoked
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/claim
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/UNKNOWN
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/released
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/absence
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/new-attempt
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/new-dispatch
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/wrong-approval-hash
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/wrong-basis
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-UNKNOWN
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-claim
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-unrevoked
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-unreleased
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-invoked
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-wrong-approval
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-wrong-basis
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-wrong-hash
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-wrong-release
+=== RUN   TestPostV27NoSendPostgresEligibility/P2/old-missing-attempt
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/success
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/unrevoked
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/claim
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/UNKNOWN
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/released
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/absence
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/new-attempt
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/new-dispatch
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/wrong-approval-hash
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/wrong-basis
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-UNKNOWN
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-claim
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-unrevoked
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-unreleased
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-invoked
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-wrong-approval
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-wrong-basis
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-wrong-hash
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-wrong-release
+=== RUN   TestPostV27NoSendPostgresEligibility/T1/old-missing-attempt
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/success
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/unrevoked
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/claim
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/UNKNOWN
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/released
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/absence
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/new-attempt
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/new-dispatch
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/wrong-approval-hash
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/wrong-basis
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-UNKNOWN
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-claim
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-unrevoked
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-unreleased
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-invoked
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-wrong-approval
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-wrong-basis
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-wrong-hash
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-wrong-release
+=== RUN   TestPostV27NoSendPostgresEligibility/T2/old-missing-attempt
+--- PASS: TestPostV27NoSendPostgresEligibility (0.51s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/success (0.02s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/unrevoked (0.02s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/claim (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/UNKNOWN (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/released (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/absence (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/new-attempt (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/new-dispatch (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/wrong-approval-hash (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/wrong-basis (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-UNKNOWN (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-claim (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-unrevoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-unreleased (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-invoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-wrong-approval (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-wrong-basis (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-wrong-hash (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-wrong-release (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/P2/old-missing-attempt (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/success (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/unrevoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/claim (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/UNKNOWN (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/released (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/absence (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/new-attempt (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/new-dispatch (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/wrong-approval-hash (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/wrong-basis (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-UNKNOWN (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-claim (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-unrevoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-unreleased (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-invoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-wrong-approval (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-wrong-basis (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-wrong-hash (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-wrong-release (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T1/old-missing-attempt (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/success (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/unrevoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/claim (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/UNKNOWN (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/released (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/absence (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/new-attempt (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/new-dispatch (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/wrong-approval-hash (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/wrong-basis (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-UNKNOWN (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-claim (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-unrevoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-unreleased (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-invoked (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-wrong-approval (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-wrong-basis (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-wrong-hash (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-wrong-release (0.01s)
+    --- PASS: TestPostV27NoSendPostgresEligibility/T2/old-missing-attempt (0.01s)
+PASS

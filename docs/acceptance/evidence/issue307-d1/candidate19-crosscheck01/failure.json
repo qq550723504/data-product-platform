@@ -1,0 +1,7 @@
+{
+  "status": "CROSSCHECK_FAILED",
+  "type": "ValueError",
+  "message": "Stored native membership differs",
+  "source_start": 0,
+  "native_delete": 0
+}

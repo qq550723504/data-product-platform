@@ -1,0 +1,16 @@
+[
+  {
+    "mode": "normal",
+    "started_at_utc": "2026-10-24T09:13:35.1346659Z",
+    "finished_at_utc": "2026-10-24T09:13:36.5955568Z",
+    "exit_code": 0,
+    "docker_wsl": "mocked in existing host/staging tests"
+  },
+  {
+    "mode": "optimized",
+    "started_at_utc": "2026-10-24T09:13:36.5963772Z",
+    "finished_at_utc": "2026-10-24T09:13:37.9612866Z",
+    "exit_code": 0,
+    "docker_wsl": "mocked in existing host/staging tests"
+  }
+]

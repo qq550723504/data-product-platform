@@ -1,0 +1,8 @@
+test_complete_retained_success_never_adopts_old_authority (test_retained_v30.RetainedV30Tests.test_complete_retained_success_never_adopts_old_authority) ... ok
+test_original_failure_controls_topology_resources_and_clone_reject (test_retained_v30.RetainedV30Tests.test_original_failure_controls_topology_resources_and_clone_reject) ... ok
+test_rehashed_budget_wrong_uid_or_nonempty_still_rejects (test_retained_v30.RetainedV30Tests.test_rehashed_budget_wrong_uid_or_nonempty_still_rejects) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 4.271s
+
+OK

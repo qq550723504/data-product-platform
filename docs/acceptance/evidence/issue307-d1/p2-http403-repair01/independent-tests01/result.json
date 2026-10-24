@@ -1,0 +1,154 @@
+{
+  "status": "PASS_INDEPENDENT_P2_REPAIR_UNIT",
+  "at": "2026-10-21T14:49:55.036379+00:00",
+  "source_files": {
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return.go": {
+      "sha256": "e303ead95fb3b8dd91a44efea88e0fff09f4c2949da536c02db78c1583701f45",
+      "bytes": 4614
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return_test.go": {
+      "sha256": "5210251776bc293a01484ef8874a2642db1cb27b43fa5cedd3deae9e7f68f8db",
+      "bytes": 11164
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire.go": {
+      "sha256": "e36fce8044f5450ac4ecefc025e4a4f6202e5353b0ed58cb19a9cfdf99e730fa",
+      "bytes": 15040
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire_test.go": {
+      "sha256": "02efd0e23c32a535ad582591e706652e17263a5e441f4b400980364436a66a5d",
+      "bytes": 5597
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire_native_test.go": {
+      "sha256": "969244b12908b6e8105c7874416212e9c805447330a6592b3906e27453577eb3",
+      "bytes": 11630
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "sha256": "dd280ca695f9b99dc7492a458972884bce52c953a4679d707048a4179a3ff92b",
+      "bytes": 6240
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go": {
+      "sha256": "23104732ce0f83fd5f4f94f8ce639545129882195974a8e4cf6ff8576c6dae31",
+      "bytes": 2287
+    },
+    "apps/platform/internal/platform/storage/lifecycle_delete.go": {
+      "sha256": "bb552594d94bd193d0dd49de27bad64d52f031da82b90e65cd191a6d0264738f",
+      "bytes": 7251
+    },
+    "apps/platform/internal/platform/storage/lifecycle_delete_response.go": {
+      "sha256": "d0c934073a645db7c27f8f2bac206f722ffcfdc9b8ea02401e147b25e2f85d8d",
+      "bytes": 2126
+    },
+    "apps/platform/internal/platform/storage/lifecycle_delete_response_test.go": {
+      "sha256": "e4d708932ff21f8b4bb255ec13312fd265d2c79001495123d784a727873b991f",
+      "bytes": 2856
+    },
+    "examples/lifecycle-d1/check-p2-permission-native.py": {
+      "sha256": "29cdd1f42cdd1194fb5e104efc94df008e8d45f0c1a6edbd7365b285878286de",
+      "bytes": 8513
+    }
+  },
+  "source_stable": true,
+  "results": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "./internal/platform/storage",
+        "-run",
+        "^(TestExactDeleter|TestExactDelete)"
+      ],
+      "started_at": "2026-10-21T14:49:45.802762+00:00",
+      "exit_code": 0,
+      "passed_tests_and_subtests": [
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText/native",
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText/signature",
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText/reflected-code",
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText/duplicate-code",
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText/wrong-root",
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText/trailing",
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText/truncated",
+        "TestExactDeleteSafeDiagnosticsAreBoundedAndDoNotExposeProviderText",
+        "TestExactDelete403RetainsReasonAndOriginalObservationWhenJournalFails",
+        "TestExactDeleterNoHiddenRetryNoReplayNoBypass/No_Content",
+        "TestExactDeleterNoHiddenRetryNoReplayNoBypass/Forbidden",
+        "TestExactDeleterNoHiddenRetryNoReplayNoBypass/Service_Unavailable",
+        "TestExactDeleterNoHiddenRetryNoReplayNoBypass",
+        "TestExactDeleterLostResponseIsUnknownAndNeverResent"
+      ],
+      "stdout": {
+        "sha256": "e24e2dadef1edfed2a5e61bec4513a79a9a4b5f4e351193d108745e556625d26",
+        "bytes": 16878
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "./internal/lifecycle/pilot",
+        "-run",
+        "^TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope$"
+      ],
+      "started_at": "2026-10-21T14:49:49.074125+00:00",
+      "exit_code": 0,
+      "passed_tests_and_subtests": [
+        "TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope"
+      ],
+      "stdout": {
+        "sha256": "dd5220e026d8615792c35ca360408fa0e431e51b670103a6e89a42c42feaeb64",
+        "bytes": 1926
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "./cmd/lifecycle-fixture-remaining",
+        "-run",
+        "^(TestWire|TestDeniedSendReturnKeepsSafeNativeReasonAndNoResend|TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost|TestAcceptedProviderThenLostObservationKeepsTransportAndBothErrors|TestCompiledRemainingTargetsExcludeSurvivorsAndOldProfiles)"
+      ],
+      "started_at": "2026-10-21T14:49:51.085560+00:00",
+      "exit_code": 0,
+      "passed_tests_and_subtests": [
+        "TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost/authority",
+        "TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost/budget",
+        "TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost/Core",
+        "TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost",
+        "TestAcceptedProviderThenLostObservationKeepsTransportAndBothErrors",
+        "TestDeniedSendReturnKeepsSafeNativeReasonAndNoResend",
+        "TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends/H2",
+        "TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends/M1B",
+        "TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends/P2",
+        "TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends",
+        "TestCompiledRemainingTargetsExcludeSurvivorsAndOldProfiles",
+        "TestWireSignsNativeDenialSeparatelyFromLocalRefusalWithoutSecrets"
+      ],
+      "stdout": {
+        "sha256": "68b4b6dfef7ee03ee6c4b60de9834d35fa0486d722666c672508f0b6e24d488d",
+        "bytes": 14996
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "native_environment_removed": true,
+  "Docker_calls": 0,
+  "database_calls": 0,
+  "provider_calls": 0,
+  "actual_object_deletions": 0
+}

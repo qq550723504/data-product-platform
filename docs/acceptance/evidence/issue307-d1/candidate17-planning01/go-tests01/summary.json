@@ -1,0 +1,30 @@
+{
+  "exit": 1,
+  "tests": {
+    "pass": 273,
+    "skip": 2,
+    "fail": 1
+  },
+  "packages": [
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check",
+      "Action": "fail"
+    }
+  ]
+}

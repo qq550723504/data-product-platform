@@ -1,0 +1,102 @@
+{
+  "status": "PASS_LOCAL_EXACT_CI_RECIPE",
+  "methods_per_mode": 43,
+  "observed_at": "2026-10-24T05:24:15.884959+00:00",
+  "runs": [
+    {
+      "mode": "normal",
+      "module": "test_retired_resources",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retired_resources.py"
+      ],
+      "exit_code": 0,
+      "summary": "....................\r\n----------------------------------------------------------------------\r\nRan 20 tests in 2.260s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "module": "test_retired_volumes",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retired_volumes.py"
+      ],
+      "exit_code": 0,
+      "summary": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.413s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "module": "test_retired_budget_bytes",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retired_budget_bytes.py"
+      ],
+      "exit_code": 0,
+      "summary": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.002s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "module": "test_successor_dependencies",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_successor_dependencies.py"
+      ],
+      "exit_code": 0,
+      "summary": "..............\r\n----------------------------------------------------------------------\r\nRan 14 tests in 3.152s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "module": "test_retired_resources",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retired_resources.py"
+      ],
+      "exit_code": 0,
+      "summary": "....................\r\n----------------------------------------------------------------------\r\nRan 20 tests in 1.048s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "module": "test_retired_volumes",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retired_volumes.py"
+      ],
+      "exit_code": 0,
+      "summary": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.160s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "module": "test_retired_budget_bytes",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retired_budget_bytes.py"
+      ],
+      "exit_code": 0,
+      "summary": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.001s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "module": "test_successor_dependencies",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_successor_dependencies.py"
+      ],
+      "exit_code": 0,
+      "summary": "..............\r\n----------------------------------------------------------------------\r\nRan 14 tests in 2.033s\r\n\r\nOK\r\n"
+    }
+  ],
+  "remote_CI": "NOT_RUN",
+  "source_started": 0,
+  "provider_calls": 0
+}

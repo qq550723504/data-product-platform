@@ -1,0 +1,18 @@
+{
+  "checks02": {
+    "sha256": "6f4358b5a03d0a885eed22ac4cb0ba2f2b887ceb374d96daa3959534ced9b4c4",
+    "bytes": 12484928,
+    "purpose": "LOCAL_DEFAULT_DISABLED_CROSS_BUILD_ONLY",
+    "trusted_host_key_anchor": "EMPTY",
+    "tracked_in_git": false,
+    "actual_execution": false
+  },
+  "checks03": {
+    "sha256": "84618b742001035c21da95e7bc4ed2d018fede33701923731962680265bfc021",
+    "bytes": 12483815,
+    "purpose": "LOCAL_DEFAULT_DISABLED_CROSS_BUILD_ONLY",
+    "trusted_host_key_anchor": "EMPTY",
+    "tracked_in_git": false,
+    "actual_execution": false
+  }
+}

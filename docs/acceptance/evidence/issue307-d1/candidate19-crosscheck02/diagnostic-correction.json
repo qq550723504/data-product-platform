@@ -1,0 +1,12 @@
+{
+  "original_failure": "candidate19-crosscheck01/failure.json",
+  "classification": "AUDIT_MODEL_ERROR_NOT_RUNTIME_OR_CANDIDATE_DRIFT",
+  "historical_copies": 18,
+  "present_versions": 17,
+  "historical_P1": "Retain exact identity and saved NoSuchVersion404; exclude from present/targets/budgets",
+  "completed_read_profile": "Locate by immutable AuditID; current Enabled=false is the legitimate finally revocation, not an unchanged original enabled-profile hash",
+  "candidate_source_binary_config_changed": false,
+  "gate_relaxed": false,
+  "source_start": 0,
+  "native_delete": 0
+}

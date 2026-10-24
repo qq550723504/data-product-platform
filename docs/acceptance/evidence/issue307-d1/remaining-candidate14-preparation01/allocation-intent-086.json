@@ -1,0 +1,32 @@
+{
+  "role": "offline-candidate-validator",
+  "group": "ALL",
+  "name": "dpp307-candidate14-offline",
+  "execution": "afc0e66c-535b-426e-a937-964d0c9ca0d6",
+  "argv": [
+    "--name",
+    "dpp307-candidate14-offline",
+    "--network",
+    "none",
+    "--user",
+    "10001:10001",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\offline,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14/operator,target=/run/operator,readonly",
+    "--entrypoint",
+    "/run/operator",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-stage",
+    "check-candidate"
+  ]
+}

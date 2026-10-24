@@ -1,0 +1,390 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_OLD_DISPATCH_CLOSURE_RESULT_REVIEW",
+  "reviewed_at": "2026-10-19T13:07:48.945462+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "audit_id": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+  "manifest_sha256": "b6b92f1e87714799293f1cf68486e48802650741f985f11278aa60ed867c2684",
+  "runtime_terminal": "PASS_TRUSTED_OLD_DISPATCH_NOT_SENT_SEALED",
+  "scope": "Finite actual non-delete P2/T1/T2 old dispatch trusted closure and final preservation result. Reviewer audits existing evidence/read-only closed state; no replay or new execution. This accepts this closure slice, not all of D1 or any future deletion.",
+  "source_and_prior_gate": {
+    "HEAD": "375ae03cee8789708d08dca84a34bf102cc094d6",
+    "source04": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-source-final-review04.json",
+      "sha256": "d32e20637b49151276fa73bfdae1b46a64cffc061c40998490b68a2be4daf16f",
+      "bytes": 18321
+    },
+    "manifest03": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/manifest-final-review03.json",
+      "sha256": "40783374024610fa8179ce125514a57b0257b340003a7b3e5feea220df924a62",
+      "bytes": 17157
+    },
+    "preparation": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/preparation.json",
+      "sha256": "b6b92f1e87714799293f1cf68486e48802650741f985f11278aa60ed867c2684",
+      "bytes": 133769
+    },
+    "actual_source_and_605_file_membership_unchanged": true,
+    "host": {
+      "path": "examples/lifecycle-d1/close-old-business-dispatches.py",
+      "sha256": "ec6e33d82999a43d7a286b118f1d736ae20802453e41f47da49fca88825deeb8",
+      "bytes": 37812
+    }
+  },
+  "authoritative_contracts": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "aa6f2bae5d755a582d124d02fe1d4f0776cf93f4bf693a6194d06d7d9bbd4f4f",
+      "bytes": 37394
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure.md",
+      "sha256": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+      "bytes": 4519
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure-host.md",
+      "sha256": "01afdf2ab5acbd0612cc89a97b3e7907cc742406d83899019339e052575c239b",
+      "bytes": 5356
+    }
+  ],
+  "execution_evidence": {
+    "terminal": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/terminal.json",
+      "sha256": "3ce05b24b298718b63dcd2c553c993b6f40a387c3a0eb26e13fda695ed5692cc",
+      "bytes": 4692
+    },
+    "Core_before": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/Core-before.json",
+      "sha256": "18e870e279c08714aeb72ddde2ee7ad5a3b9c597d6f6e9c0e4508703791a2e31",
+      "bytes": 31433
+    },
+    "Core_after": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/Core-after.json",
+      "sha256": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8",
+      "bytes": 31433
+    },
+    "trusted_evidence": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/trusted-evidence.json",
+      "sha256": "6ba325a75b775e6977c471852439a028928a3a0c1db5bcdfa7f519322275632b",
+      "bytes": 8576
+    },
+    "signed_proof": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/signed-closure-proof.json",
+      "sha256": "058f4540c439d51039aa2ce742e9c25fbf59efef8de157124c09c4c6b0b2cf6e",
+      "bytes": 9292
+    },
+    "immutable_index01": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/execution-evidence-index01.json",
+      "sha256": "93c2548f9fef103796cf12fcde67e85c8f525c59e31b5412fda686daf7b5878c",
+      "bytes": 4471
+    },
+    "append_index02": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/execution-evidence-index02.json",
+      "sha256": "ca4f3eab783a82a0f561e7bac9eaff8e7a4081ad28f98a625aefd1287e0a06c1",
+      "bytes": 5251
+    },
+    "index01_members": 31,
+    "index02_members": 40,
+    "every_indexed_actual_byte_sha_verified": true,
+    "raw_owner_channels_verified": 8,
+    "note": "Index02 adds the eight original owner channels and exact original index01 bytes without rewriting either old index or original receipts."
+  },
+  "actual_signature_and_authority": {
+    "Ed25519_signature": "PASS_VERIFIED_FROM_PREPARED_PUBLIC_KEY",
+    "body_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+    "scope_matches": "Fresh audit/nonce, exact old execution/candidate/bindings/Core, ordered P2/T1/T2 full identities,39 exact old CID/binary digests and actual trusted-evidence SHA all match the reviewed manifest.",
+    "proof_start_age_seconds": 8.437427,
+    "all_three_observations_within_one_minute": true,
+    "proof_flags": "all true as required: old execution owners stopped/PID0/norestart/config disabled/identity disabled/gateway sealed",
+    "facts": [
+      {
+        "case": "P2",
+        "old_approval_id": "77b4d18c-8f1d-44e4-8844-696ba44a9a0f",
+        "revocation_id": "25d63b01-82ec-4e81-8808-3885ced01c78",
+        "attempt_id": "73d9251e-a128-47b1-8f5a-eaa35603c233",
+        "observation_id": "92521ce8-2486-4b91-80ac-a14202de8786",
+        "dispatch_id": "670f5351-103f-472f-aeea-1f29213eda7c",
+        "proof_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+        "old_rows_equal_previous_actual_audit": true,
+        "old_pin_count": 0,
+        "unresolved": 0
+      },
+      {
+        "case": "T1",
+        "old_approval_id": "16df6254-abd2-419d-bf6d-99a9d1d675d0",
+        "revocation_id": "59cc1a3f-c7e5-4811-ac0a-af23a79f1cfb",
+        "attempt_id": "bb6ecab6-53f1-4a9c-a333-f0cf6f4edd4a",
+        "observation_id": "ac82beb2-cccd-4c82-ab90-2a941a0f7294",
+        "dispatch_id": "134315c3-bad8-4fda-a927-3ef71e2cca5e",
+        "proof_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+        "old_rows_equal_previous_actual_audit": true,
+        "old_pin_count": 3,
+        "unresolved": 0
+      },
+      {
+        "case": "T2",
+        "old_approval_id": "4a20d7d4-b0a8-4dde-9b20-f133f6355dda",
+        "revocation_id": "3d7802fe-ac55-4cb4-a640-273bc52e0bad",
+        "attempt_id": "933462ae-04d6-4da4-97de-067b62863e0a",
+        "observation_id": "7f7dc79d-28fc-4ca1-944a-8e4a5e76860c",
+        "dispatch_id": "b9ebd875-8942-4303-8e17-41612dd8100c",
+        "proof_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+        "old_rows_equal_previous_actual_audit": true,
+        "old_pin_count": 0,
+        "unresolved": 0
+      }
+    ],
+    "old_approvals": "Original approved rows are byte-for-byte identical to earlier actual readonly audit. Each now has a new append-only revocation, followed by signed NOT_SENT and matching existing dispatch release. No old fact is rewritten.",
+    "observed_actor_and_principal": "033a56ad-99c2-43e3-89e0-a749979a8644 / post-v22-dispatch-observer:94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+    "P1_excluded": true
+  },
+  "actual_IAM_and_cost_boundary": {
+    "technical_requests": 8,
+    "method": "GET",
+    "HTTP200": 8,
+    "original_records": 17,
+    "root_IAM_changes": 0,
+    "delete_identity_and_three_other_users": "all disabled; exact policy set verified by frozen official-parser owner",
+    "actual_requests_within_original_owner_start_finish": true,
+    "age_at_last_topology_seconds": 8.84841,
+    "all_technical_raw_hashes_equal_trusted_bundle": true,
+    "amount": "NOT_ASSESSED",
+    "provider_business_invocations": 0,
+    "DELETE": 0,
+    "business_provider_Cost_new": 0,
+    "interpretation": "Eight real technical admin GET calls are explicitly counted and may have unassessed technical cost. They are not eight business storage/provider invocations. Core storage-call/observation/cost tables remain exactly unchanged, and no business provider call or DELETE was made. Amount is not asserted zero."
+  },
+  "Core_result": {
+    "full_relation_rows_hashes_and_roles_ACL_recomputed": "PASS",
+    "changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_approval_revocation",
+      "lifecycle_dispatch_release",
+      "lifecycle_provider_observation",
+      "outbox_event"
+    ],
+    "changed_relation_count": 9,
+    "new_row_counts": {
+      "lifecycle_approval_revocation": 3,
+      "lifecycle_provider_observation": 3,
+      "lifecycle_dispatch_release": 3,
+      "command_idempotency": 6,
+      "audit_event": 9,
+      "evidence": 9,
+      "evidence_relation": 9,
+      "outbox_event": 9
+    },
+    "expected": "revocation/observation/release each3; command_idempotency6; audit/evidence/evidence_relation/outbox each9; only the declared delivery fence additionally changes.",
+    "all_other_relations_exactly_unchanged": true,
+    "original_readonly_Core_after_equals_execution_Core_before": true,
+    "critical_whole_table_before_after": {
+      "lifecycle_provider_attempt": {
+        "before": {
+          "relation": "lifecycle_provider_attempt",
+          "rows": 4,
+          "sha256": "e2371aa044787197440f1e050701b07d6b820b7b106d3050bdeda102e8b0e628"
+        },
+        "after": {
+          "relation": "lifecycle_provider_attempt",
+          "rows": 4,
+          "sha256": "e2371aa044787197440f1e050701b07d6b820b7b106d3050bdeda102e8b0e628"
+        },
+        "equal": true
+      },
+      "lifecycle_disposition_dispatch": {
+        "before": {
+          "relation": "lifecycle_disposition_dispatch",
+          "rows": 4,
+          "sha256": "1887945142eb3ac0182cbb8c10b76148fff42aae26c6f118d2f38d5c7555fa1c"
+        },
+        "after": {
+          "relation": "lifecycle_disposition_dispatch",
+          "rows": 4,
+          "sha256": "1887945142eb3ac0182cbb8c10b76148fff42aae26c6f118d2f38d5c7555fa1c"
+        },
+        "equal": true
+      },
+      "lifecycle_disposition_approval": {
+        "before": {
+          "relation": "lifecycle_disposition_approval",
+          "rows": 4,
+          "sha256": "a97ec8d02abf71c545aaa6c230017e6a55485932c42f85b88266b24ae682dde3"
+        },
+        "after": {
+          "relation": "lifecycle_disposition_approval",
+          "rows": 4,
+          "sha256": "a97ec8d02abf71c545aaa6c230017e6a55485932c42f85b88266b24ae682dde3"
+        },
+        "equal": true
+      },
+      "lifecycle_reader_pin": {
+        "before": {
+          "relation": "lifecycle_reader_pin",
+          "rows": 7,
+          "sha256": "2649867d3b2eb1fc5d2f14e2090d9bedcf189aa8c068060fc5393d98dabe6719"
+        },
+        "after": {
+          "relation": "lifecycle_reader_pin",
+          "rows": 7,
+          "sha256": "2649867d3b2eb1fc5d2f14e2090d9bedcf189aa8c068060fc5393d98dabe6719"
+        },
+        "equal": true
+      },
+      "lifecycle_provider_send_claim": {
+        "before": {
+          "relation": "lifecycle_provider_send_claim",
+          "rows": 1,
+          "sha256": "27aabfaa57536fd487233fab390cc859964d6a477d4506f24e3c61ae80b2f9c5"
+        },
+        "after": {
+          "relation": "lifecycle_provider_send_claim",
+          "rows": 1,
+          "sha256": "27aabfaa57536fd487233fab390cc859964d6a477d4506f24e3c61ae80b2f9c5"
+        },
+        "equal": true
+      },
+      "lifecycle_storage_call": {
+        "before": {
+          "relation": "lifecycle_storage_call",
+          "rows": 97,
+          "sha256": "ce5f76950dc52f5a22eb5441c3df9cd5cebefacfacced8309b386d68e16f2066"
+        },
+        "after": {
+          "relation": "lifecycle_storage_call",
+          "rows": 97,
+          "sha256": "ce5f76950dc52f5a22eb5441c3df9cd5cebefacfacced8309b386d68e16f2066"
+        },
+        "equal": true
+      },
+      "lifecycle_storage_observation": {
+        "before": {
+          "relation": "lifecycle_storage_observation",
+          "rows": 97,
+          "sha256": "e1f94e95902cd86c865728afc6794df907e2414ebebe5a7ba1162dc052afdf2e"
+        },
+        "after": {
+          "relation": "lifecycle_storage_observation",
+          "rows": 97,
+          "sha256": "e1f94e95902cd86c865728afc6794df907e2414ebebe5a7ba1162dc052afdf2e"
+        },
+        "equal": true
+      },
+      "cost_event": {
+        "before": {
+          "relation": "cost_event",
+          "rows": 117,
+          "sha256": "af6a78aa5d81448e4d75dd7a5a845bb109212e4943c95dd0aa75275b1a7dad51"
+        },
+        "after": {
+          "relation": "cost_event",
+          "rows": 117,
+          "sha256": "af6a78aa5d81448e4d75dd7a5a845bb109212e4943c95dd0aa75275b1a7dad51"
+        },
+        "equal": true
+      },
+      "cost_allocation": {
+        "before": {
+          "relation": "cost_allocation",
+          "rows": 113,
+          "sha256": "1eb446e56153215bdffd40e2016c2fe94a16efc1d0076ca9c7849c7c539b9fdc"
+        },
+        "after": {
+          "relation": "cost_allocation",
+          "rows": 113,
+          "sha256": "1eb446e56153215bdffd40e2016c2fe94a16efc1d0076ca9c7849c7c539b9fdc"
+        },
+        "equal": true
+      }
+    },
+    "exact_old_business_rows_and_T1_pins": "Three original attempt/dispatch/approval row arrays and all T1 three pin rows compared directly to prior actual Core rows and remain exactly equal.",
+    "new_nine_revocation_observation_release_rows_present_in_final_anchors": true,
+    "final_result_Core_rows_fingerprint_anchors_SHA_and_terminal_agree": true,
+    "unresolved_by_case": {
+      "P2": 0,
+      "T1": 0,
+      "T2": 0
+    },
+    "claim_by_case": {
+      "P2": 0,
+      "T1": 0,
+      "T2": 0
+    },
+    "copy_absence_by_case": {
+      "P2": 0,
+      "T1": 0,
+      "T2": 0
+    },
+    "old_append_multiset_evidence_limit": "Before append-anchor multisets were checked in memory by the frozen actual host gate and that gate passed; they were not serialized before execution. No original before-anchor raw bytes exist and none are reconstructed. Reviewer independently recomputed all relation/count/ACL differences, exact original business rows/pins, final-anchor membership for each new closure row and unchanged whole-table fingerprints; this report does not claim independent raw reconstruction of every pre-existing append row."
+  },
+  "final_preservation": {
+    "independent_current_closed_CIDs": 87,
+    "membership": {
+      "old_retained": 77,
+      "previous_failed_preparations": 6,
+      "stopped_allocation_regression": 1,
+      "this_attempt_helpers": 3
+    },
+    "Native_Core_PID0": true,
+    "noports_norestart_all_checked": true,
+    "observer_profile_Enabled": false,
+    "observer_profile_private_SHA": "494f2beda637b9ad9e47554c5f2dd80d13532872469d3c5c4892c5fd41813163",
+    "private_public_proof_bytes_equal": true,
+    "old46controls_8readonlyprofiles_9backups_3budgets_unchanged": true,
+    "six_old_anonymous_volumes_retained": true,
+    "no_pin_release_or_budget_refund": true,
+    "identity_containment": "All four identities were actually read disabled, no enable or IAM change occurred, Native was then stopped before the observer. Final normal-path containment correctly retains UNCHANGED_NO_ENABLE_PATH rather than inventing a fresh final IAM GET after Native was stopped.",
+    "proof_and_old_failures_preserved": true,
+    "new_terminal_prevents_replay": true
+  },
+  "independent_raw_audits": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/result03-evidence-audit01.json",
+      "sha256": "97abcde718e440c0ff05b24e1ffa7290ef184215197ac1ed76bf00dd6e2ef95f",
+      "bytes": 3497
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/result03-final-seal-audit01.json",
+      "sha256": "50a3fc2ab0e6e3dc78ffd9ed67d269d8618c2932236c6a7aac644ae50f3f04f1",
+      "bytes": 4165
+    }
+  ],
+  "reviewer_actions": {
+    "source_or_provider_execution": 0,
+    "Docker_start_exec_stop_create_remove": 0,
+    "Core_query_or_mutation": 0,
+    "proof_signing": 0,
+    "private_key_or_secret_output": 0,
+    "allowed_readonly": "Read public raw evidence, verify signature, compare facts/digests, existing bound CID inspect/network inspect and specified disabled profile metadata/SHA only."
+  },
+  "classifications": {
+    "BLOCKER": [],
+    "FOLLOWUP_REQUIRED": [
+      "Parent should append this actual closure/result review and current evidence bindings to the acceptance matrix, preserving prior snapshots.",
+      "Run the separately scoped full17-version read-only refresh before preparing any remaining-six frozen candidate.",
+      "Any future deletion requires a newly frozen execution/window/exact confirmation and fresh human authorization; no prior authorization is reused."
+    ],
+    "OUT_OF_SCOPE": [
+      "Replaying successful closure, changing failed facts, treating missing archived before-anchor raw as newly available, or starting source for extra evidence.",
+      "Calling this closure result completeD1,17-version acceptance,new six-target readiness or DELETE authority."
+    ]
+  },
+  "matrix_snapshot": {
+    "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure-acceptance.md",
+    "sha256": "0a7f0f8a3acdc24a1b7d626af70e702a14a6a55cb88973d7af6b69455715157b",
+    "bytes": 7455
+  },
+  "matrix_state": "Read at its historical preparation snapshots; parent is sole matrix writer and will append actual result/review after this report. No claim that its latest pending rows are already updated.",
+  "actual_trusted_three_dispatch_closure": "ACCEPTED_BOUNDED_NON_DELETE",
+  "17_version_full_readonly": "NOT_RUN",
+  "remaining_six_candidate": "NOT_FROZEN",
+  "new_delete_execution_window_authorization": "NOT_PREPARED",
+  "DELETE": 0,
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

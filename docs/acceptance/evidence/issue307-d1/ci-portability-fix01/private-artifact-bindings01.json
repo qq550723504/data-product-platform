@@ -1,0 +1,19 @@
+{
+  "format": "files-map-v1",
+  "count": 3,
+  "files": {
+    "original-browser-artifact.zip": {
+      "sha256": "0fdfcc01fe0aa065fbdc402561aeb4c7777f6cd070ee89839e6095f590281914",
+      "bytes": 8735067
+    },
+    "generated-browser-package-lock01.json": {
+      "sha256": "25e16800caeb8a0a89ffd2e895947f2a41c68ba7e1f61fef2e86371039d67973",
+      "bytes": 1752
+    },
+    "retained-sources-inspect01.private.json": {
+      "sha256": "16e6591107073390b0d5c4b314ce53e0f5cbdf794cd7081e2a9ccafcc266f029",
+      "bytes": 47036
+    }
+  },
+  "scope": "Private originals retained, never authority or a CI fixture path"
+}

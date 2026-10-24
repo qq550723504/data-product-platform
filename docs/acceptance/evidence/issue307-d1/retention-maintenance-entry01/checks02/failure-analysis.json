@@ -1,0 +1,12 @@
+{
+  "status": "FAILED_R_COMPILE_AND_HOST_RUNNER_PACKAGE_PATH",
+  "runtime_cause": "The isolated retained R lacks product pilot.CheckCustodyPrivatePath. The new command initially referenced it, so actual R Go compilation rejected the package. P local Go passed; it did not establish R compatibility.",
+  "runtime_fix": "Replace that cross-artifact reference with standard library checks on the three literal frozen Linux mount points and os.OpenRoot. No Core schema/custody migration or compatibility fallback introduced. Original R712 commit/spec and failed logs retained; a new local R commit and exact Git archive are used.",
+  "host_harness_cause": "Runner used nonexistent ./internal/storage instead of existing ./internal/platform/storage. The other three actual packages in the command passed. Correct only runner package path; retain original output.",
+  "passed_unchanged": "All 18 Python suite runs (normal/optimized) passed; default-disabled Linux build passed. No need to repeat unchanged Python suites for this Go-only fix.",
+  "next": "checks03 reruns affected P Go packages, actual isolated R archive CI entry, and default-disabled Linux cross-build; independent reviewer reruns actual R package compilation.",
+  "source_start": 0,
+  "provider_calls": 0,
+  "metadata_write": 0,
+  "delete": 0
+}

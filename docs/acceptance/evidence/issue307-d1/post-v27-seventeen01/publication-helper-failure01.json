@@ -1,0 +1,9 @@
+{
+  "status": "FAILED_BEFORE_DOCKER_IO",
+  "operation": "final readback helper import",
+  "error": "FileNotFoundError: refresh-post-v27-seventeen.py resolved from repository root instead of examples/lifecycle-d1",
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "native_audit_terminal_unchanged": true
+}

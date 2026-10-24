@@ -1,0 +1,14 @@
+[
+  {
+    "mode": "normal",
+    "exit_code": 0,
+    "stdout_tail": "{\"status\": \"SIX_PACKET_FROZEN_NOT_AUTHORIZED\", \"candidate_sha256\": \"b096d8c84e4708ba91f669e013c8ec9da812c2331990993daf9631caade1aaf8\", \"execution\": \"9f9c67d7-8a09-45a8-897f-9e3077b60980\"}\r\n{\"testsRun\": 29, \"failures\": 0, \"errors\": 0, \"skips\": 0, \"unmodeled_subprocess_attempts\": [], \"optimized\": false}\r\n",
+    "stderr_tail": "ence.test_actual_budget_owner_empty_and_burned_slot_contract) ... ok\r\ntest_budget_wrong_type_root_owner_foreign_execution_and_p1_reject (test_remaining_sequence.SixSequence.test_budget_wrong_type_root_owner_foreign_execution_and_p1_reject) ... ok\r\ntest_no_skip_cross_group_or_receipt_hole (test_remaining_sequence.SixSequence.test_no_skip_cross_group_or_receipt_hole) ... ok\r\ntest_p1_foreign_workspace_substitution_and_unknown_helper_reject (test_remaining_sequence.SixSequence.test_p1_foreign_workspace_substitution_and_unknown_helper_reject) ... ok\r\ntest_sender_or_permission_not_closed_blocks_recovery_and_next_group (test_remaining_sequence.SixSequence.test_sender_or_permission_not_closed_blocks_recovery_and_next_group) ... ok\r\ntest_six_complete_send_disable_recover_commit_composition (test_remaining_sequence.SixSequence.test_six_complete_send_disable_recover_commit_composition) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 29 tests in 2.086s\r\n\r\nOK\r\n"
+  },
+  {
+    "mode": "optimized",
+    "exit_code": 0,
+    "stdout_tail": "{\"status\": \"SIX_PACKET_FROZEN_NOT_AUTHORIZED\", \"candidate_sha256\": \"43f5d5488541f70db1ef48e362a1a5060f3339747c88b502a62cb899a3558475\", \"execution\": \"9f9c67d7-8a09-45a8-897f-9e3077b60980\"}\r\n{\"testsRun\": 29, \"failures\": 0, \"errors\": 0, \"skips\": 0, \"unmodeled_subprocess_attempts\": [], \"optimized\": true}\r\n",
+    "stderr_tail": "ence.test_actual_budget_owner_empty_and_burned_slot_contract) ... ok\r\ntest_budget_wrong_type_root_owner_foreign_execution_and_p1_reject (test_remaining_sequence.SixSequence.test_budget_wrong_type_root_owner_foreign_execution_and_p1_reject) ... ok\r\ntest_no_skip_cross_group_or_receipt_hole (test_remaining_sequence.SixSequence.test_no_skip_cross_group_or_receipt_hole) ... ok\r\ntest_p1_foreign_workspace_substitution_and_unknown_helper_reject (test_remaining_sequence.SixSequence.test_p1_foreign_workspace_substitution_and_unknown_helper_reject) ... ok\r\ntest_sender_or_permission_not_closed_blocks_recovery_and_next_group (test_remaining_sequence.SixSequence.test_sender_or_permission_not_closed_blocks_recovery_and_next_group) ... ok\r\ntest_six_complete_send_disable_recover_commit_composition (test_remaining_sequence.SixSequence.test_six_complete_send_disable_recover_commit_composition) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 29 tests in 1.688s\r\n\r\nOK\r\n"
+  }
+]

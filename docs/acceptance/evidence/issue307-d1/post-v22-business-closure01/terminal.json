@@ -1,0 +1,48 @@
+{
+  "status": "FAILED_PREPARATION_COMMAND_CONTRACT_BEFORE_ANY_SOURCE_OR_PROOF",
+  "at": "2026-10-19T12:42:53.997433+00:00",
+  "audit_id": "ab51f6de-8ae2-4f0e-93bf-9dfe4cddc0e3",
+  "owners": [
+    {
+      "kind": "observer",
+      "cid": "3d62276ce45023b6e0d3cd33d92565b3bf4909eaeab858459c47386b35efc37a",
+      "stopped_PID0": true,
+      "actual_command": null,
+      "expected_command": []
+    },
+    {
+      "kind": "check-disabled",
+      "cid": "5f1b177db48e8b9b8e325cf5eb484e37f4617e7642cd3ddb32c6da18a978b327",
+      "stopped_PID0": true,
+      "actual_command": [
+        "-action",
+        "check-disabled"
+      ],
+      "expected_command": [
+        "-action",
+        "check-disabled"
+      ]
+    },
+    {
+      "kind": "disable-all",
+      "cid": "c384af97be20bd3364ce7d6fd75264b6f377b04995acda9c5275b6281b724c16",
+      "stopped_PID0": true,
+      "actual_command": [
+        "-action",
+        "disable-all"
+      ],
+      "expected_command": [
+        "-action",
+        "disable-all"
+      ]
+    }
+  ],
+  "original_source_started": 0,
+  "profile_enabled": false,
+  "proof_exists": false,
+  "provider_calls": 0,
+  "business_mutations": 0,
+  "DELETE": 0,
+  "cause": "Docker create with empty trailing command inherited base PostgreSQL image Cmd=[postgres]; preserve this manifest and all CIDs; no run allowed",
+  "future": "new explicit nonempty observer command and separate new audit directory, subject to source and manifest review"
+}

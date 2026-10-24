@@ -1,0 +1,20 @@
+test_case_mount_expansion_fails (test_complete_remaining_preflight.CompleteCLI.test_case_mount_expansion_fails) ... ok
+test_case_private_root_file_fails (test_complete_remaining_preflight.CompleteCLI.test_case_private_root_file_fails) ... ok
+test_case_private_unbound_directory_fails (test_complete_remaining_preflight.CompleteCLI.test_case_private_unbound_directory_fails) ... ok
+test_expanded_mount_membership_fails (test_complete_remaining_preflight.CompleteCLI.test_expanded_mount_membership_fails) ... ok
+test_external_network_fails (test_complete_remaining_preflight.CompleteCLI.test_external_network_fails) ... ok
+test_missing_mount_member_fails (test_complete_remaining_preflight.CompleteCLI.test_missing_mount_member_fails) ... ok
+test_nonempty_budget_fails (test_complete_remaining_preflight.CompleteCLI.test_nonempty_budget_fails) ... ok
+test_offline_checker_requires_complete_exact_members_and_invocation (test_complete_remaining_preflight.CompleteCLI.test_offline_checker_requires_complete_exact_members_and_invocation) ... ok
+test_recovery_private_host_key_fails (test_complete_remaining_preflight.CompleteCLI.test_recovery_private_host_key_fails) ... ok
+test_success_combines_all_host_gates_and_three_real_file_aggregations (test_complete_remaining_preflight.CompleteCLI.test_success_combines_all_host_gates_and_three_real_file_aggregations) ... ok
+test_wrong_budget_execution_owner_fails (test_complete_remaining_preflight.CompleteCLI.test_wrong_budget_execution_owner_fails) ... ok
+test_wrong_output_type_fails_before_any_source_start (test_complete_remaining_preflight.CompleteCLI.test_wrong_output_type_fails_before_any_source_start) ... ok
+test_explicit_text_boundary_rejects_str_and_invalid_utf8 (test_complete_remaining_preflight.DockerOutputContract.test_explicit_text_boundary_rejects_str_and_invalid_utf8) ... ok
+test_real_wrapper_rejects_str_including_empty_str (test_complete_remaining_preflight.DockerOutputContract.test_real_wrapper_rejects_str_including_empty_str) ... ok
+test_real_wrapper_returns_bytes_and_explicit_text (test_complete_remaining_preflight.DockerOutputContract.test_real_wrapper_returns_bytes_and_explicit_text) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 14.196s
+
+OK

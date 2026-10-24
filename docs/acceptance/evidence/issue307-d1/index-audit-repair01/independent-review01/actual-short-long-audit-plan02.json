@@ -1,0 +1,39 @@
+{
+  "status": "PASS_ACTUAL_WINDOWS_SHORT_LONG_AUDIT_PLAN",
+  "distinct_spellings": true,
+  "combinations": [
+    {
+      "root": "C:\\Users\\Henry\\CODEX~1\\WORKTR~1\\D1-IND~1\\DATA-P~1",
+      "plan": "C:\\Users\\Henry\\.codex\\worktrees\\d1-index-audit\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\index-audit-repair01\\historical-evidence-audit-plan.json",
+      "members_verified": 84,
+      "index_counts": [
+        53,
+        19,
+        12
+      ]
+    },
+    {
+      "root": "C:\\Users\\Henry\\.codex\\worktrees\\d1-index-audit\\data-product-platform",
+      "plan": "C:\\Users\\Henry\\CODEX~1\\WORKTR~1\\D1-IND~1\\DATA-P~1\\docs\\ACCEPT~1\\evidence\\ISSUE3~1\\INDEX-~1\\HISTOR~2.JSO",
+      "members_verified": 84,
+      "index_counts": [
+        53,
+        19,
+        12
+      ]
+    },
+    {
+      "root": "C:\\Users\\Henry\\CODEX~1\\WORKTR~1\\D1-IND~1\\DATA-P~1",
+      "plan": "C:\\Users\\Henry\\CODEX~1\\WORKTR~1\\D1-IND~1\\DATA-P~1\\docs\\ACCEPT~1\\evidence\\ISSUE3~1\\INDEX-~1\\HISTOR~2.JSO",
+      "members_verified": 84,
+      "index_counts": [
+        53,
+        19,
+        12
+      ]
+    }
+  ],
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "real_external_process_attempts": 0
+}

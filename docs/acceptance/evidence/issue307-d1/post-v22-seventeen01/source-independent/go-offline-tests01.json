@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-19T13:35:40.469724+00:00",
+  "records": [
+    {
+      "scope": "blockers",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "-overlay",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\go-blocker-overlay01.json",
+        "-run",
+        "TestIndependent",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-readonly-check"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "go-blockers01-stdout.txt",
+          "sha256": "05bb4e9d71ead7a58560fce0f2e7f3b58180a0b708c4989d00c2fcb1987a86fc",
+          "bytes": 3689
+        },
+        "stderr": {
+          "file": "go-blockers01-stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      }
+    },
+    {
+      "scope": "current-unit",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-readonly-check"
+      ],
+      "exit": 1,
+      "channels": {
+        "stdout": {
+          "file": "go-current-unit01-stdout.txt",
+          "sha256": "fbf8cff3a9e96f5aec1046e2979392e47730ef9a26016ee3fde87031db726166",
+          "bytes": 125697
+        },
+        "stderr": {
+          "file": "go-current-unit01-stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      }
+    }
+  ],
+  "expected_blocker_reproductions_fail": true,
+  "source_native_Docker_provider": 0
+}

@@ -1,0 +1,33 @@
+{
+  "role": "remaining-resume-business",
+  "group": "business-races",
+  "cid": "89e3242b83ef3ee44c7a9b8e7a18b0b1df1321b443ef817a08514dacca859c69",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate13-case-business",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:27d3274ab725ab4385f4919c594f612a5baf1ddfa75d1532c5a960d94de17ab1",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\business-races\\case-business,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\business-races\\outputs\\case-business,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "remaining-resume-business"
+  ]
+}

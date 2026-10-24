@@ -1,0 +1,89 @@
+{
+  "status": "PASS_CURRENT_SERVICE_IMAGE_CID_BINDINGS_READONLY",
+  "at": "2026-10-23T05:52:35.756506+00:00",
+  "services": [
+    {
+      "group": "business-races",
+      "role": "Core",
+      "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "configured_image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "business-races",
+      "role": "Native",
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "image_id": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "configured_image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "business-races",
+      "role": "Gateway",
+      "cid": "680ddd131c3c1ec645ffbd3ce8eedb6ad6980583ed6147c7c4836e2dc245d687",
+      "image_id": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "configured_image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "late-hold",
+      "role": "Core",
+      "cid": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "configured_image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "late-hold",
+      "role": "Native",
+      "cid": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "image_id": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "configured_image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "late-hold",
+      "role": "Gateway",
+      "cid": "72d05bdecc3fee487867eb20c9e683a11617ec283d3a808eaeb8b975a1917b53",
+      "image_id": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "configured_image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "mixed",
+      "role": "Core",
+      "cid": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "configured_image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "mixed",
+      "role": "Native",
+      "cid": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "image_id": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "configured_image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "mixed",
+      "role": "Gateway",
+      "cid": "60479b860ca0fe44a93e7c7188f17cdb2d01d1dea9d752c7e1fcc74e20897af3",
+      "image_id": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "configured_image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "PID": 0,
+      "restart": "no"
+    }
+  ],
+  "source_start": 0,
+  "native_delete": 0
+}

@@ -1,0 +1,183 @@
+{
+  "at": "2026-10-19T16:20:13.716506+00:00",
+  "source_before": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "94580ec262bfb8b2669da4b54a274d47a70d169bb4c849f946a0b1c7bfaf3ecb",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "ca19651ee0e0a4aa864295d876beefca5c5d83c00ac6ff59a4a7463bb4de1fae",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_after": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "94580ec262bfb8b2669da4b54a274d47a70d169bb4c849f946a0b1c7bfaf3ecb",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "ca19651ee0e0a4aa864295d876beefca5c5d83c00ac6ff59a4a7463bb4de1fae",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_unchanged": true,
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "methods": 6,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal05-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal05-stderr.txt",
+          "sha256": "d2aae416b4be8aaaf82a555e1d7a92d63bee3eb46bfa41345dd0695e1ea442b0"
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 6,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized05-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized05-stderr.txt",
+          "sha256": "04c861027ea59e3d472d342610195f7eaa553f7a68ee2fcefb849f8c56a556f9"
+        }
+      }
+    }
+  ],
+  "cold_volume_ast_sha256": "9bdf16a2ced0b86acc05822943e123d9d3d7e2f8433901c92de38f4ea2f0fa53",
+  "volume_count": 15,
+  "volume_negative_rejections": [
+    {
+      "fault": "label",
+      "volume": "business-races-checkpoint"
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-rehearsal"
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-objects"
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-queue"
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-budget"
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-checkpoint"
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-rehearsal"
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-objects"
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-queue"
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-budget"
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-checkpoint"
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-rehearsal"
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-objects"
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-queue"
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-budget"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-checkpoint"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-rehearsal"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-objects"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-queue"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-budget"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-checkpoint"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-rehearsal"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-objects"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-queue"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-budget"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-checkpoint"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-rehearsal"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-objects"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-queue"
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-budget"
+    },
+    {
+      "fault": "anonymous"
+    },
+    {
+      "fault": "old-write"
+    },
+    {
+      "fault": "old-path"
+    }
+  ],
+  "allowed_old_readonly_source_volumes": 3,
+  "guard_sha256": "64e0132ae79308656e7a285a94ff112247247e42933a8ffff905b89f10df3296",
+  "actual_Docker": 0,
+  "scope": "Final current 6 mocked host methods normal/-O; actual AST cold prefix 15 volumes + 3 old source read-only exceptions, 33 rejected faults; no native/PG/provider"
+}

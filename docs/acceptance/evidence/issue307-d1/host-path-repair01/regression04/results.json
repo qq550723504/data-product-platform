@@ -1,0 +1,14 @@
+[
+  {
+    "name": "normal",
+    "exit": 0,
+    "stdout_sha256": "9c4fd9fae4fe7f8ab8c8df0ff024315b2ec4f151c7b2b1c3683cdb6593b4622b",
+    "stderr_sha256": "f7c2e6ad4e81bf481c65122ae885283128dde78b70326ffdbf613d6d1e69115c"
+  },
+  {
+    "name": "optimized",
+    "exit": 0,
+    "stdout_sha256": "7a0fb5641f3751ac8b3364ba6e87e03c1e1b20980dc29ff54d488d41c0ff43af",
+    "stderr_sha256": "1244ba7efbcdb1b6d2a73c15cf6a94a98d2a95aab6b3c00890d985bcb1054983"
+  }
+]

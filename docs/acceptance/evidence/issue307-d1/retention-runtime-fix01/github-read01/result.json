@@ -1,0 +1,22 @@
+{
+  "status": "PASS_FRESH_LOCKED_PUBLISHED_BASE",
+  "at": "2026-10-24T08:43:46.851741+00:00",
+  "head": "8249b55dec8fcf20de2d378887b9aff66047961f",
+  "draft": true,
+  "issue_state": "open",
+  "rule": {
+    "id": "BPR_kwDOUdQLBs4FE_7b",
+    "pattern": "codex/issue307-post-v22-dispatch-closure",
+    "lockBranch": true,
+    "isAdminEnforced": true,
+    "lockAllowsFetchAndMerge": false,
+    "allowsForcePushes": false,
+    "allowsDeletions": false
+  },
+  "ci_run": 40069249660,
+  "ci_event": "pull_request",
+  "ci_jobs": 13,
+  "unresolved": 0,
+  "nonlock_policy_sha256": "8533590f61abe7f06ac3e847d04f3df8d2c50ed1bb0f6c064eb98401e80cbdc3",
+  "mutation": 0
+}

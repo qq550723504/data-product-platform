@@ -1,0 +1,33 @@
+{
+  "role": "root-enable-send",
+  "group": "business-races",
+  "cid": "b0bd0e6c4ed1b9b1e2e8da0b1f4f620c42c8ab8b67eb1001d76cdc6d3ba75ace",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate18-root-enable-send",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate18\\business-races\\root-enable-send,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate18/owner,target=/run/owner,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate18\\business-races\\outputs\\root-enable-send,target=/run/output",
+    "--entrypoint",
+    "/run/owner",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-action",
+    "enable-send"
+  ]
+}

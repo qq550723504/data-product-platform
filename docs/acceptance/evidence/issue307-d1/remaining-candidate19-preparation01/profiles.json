@@ -1,0 +1,113 @@
+{
+  "audit_id": "5a2159b2-a14d-46e7-ad44-9b42bebe2bab",
+  "profiles": [
+    {
+      "group": "business-races",
+      "role": "SOURCE",
+      "filename": "six-readonly.json",
+      "sha256": "052a410cf4269051be832f4d254e758bc3539379a7d3658eba30e51b558cc7a8",
+      "enabled": false
+    },
+    {
+      "group": "business-races",
+      "role": "RESTORE",
+      "filename": "six-readonly.json",
+      "sha256": "5d2543507df1fed52e36e996b4543df77fe966ace2d8624dbdb17271bdcf9c65",
+      "enabled": false
+    },
+    {
+      "group": "business-races",
+      "role": "PROVISION",
+      "filename": "six-provision.json",
+      "sha256": "89a6cc9873e867cf8f0dcd233744fa3820f9d203d157bd66177f16d9dc637a48",
+      "enabled": false
+    },
+    {
+      "group": "business-races",
+      "role": "restore-inspect-enable",
+      "filename": "restore-inspector.json",
+      "sha256": "000e654d23a42c63ac883e4811d42082fcc42ff1dd9e4d85b072ceebc04ff090",
+      "enabled": false
+    },
+    {
+      "group": "business-races",
+      "role": "restore-inspect-disable",
+      "filename": "restore-inspector.json",
+      "sha256": "000e654d23a42c63ac883e4811d42082fcc42ff1dd9e4d85b072ceebc04ff090",
+      "enabled": false
+    },
+    {
+      "group": "late-hold",
+      "role": "SOURCE",
+      "filename": "six-readonly.json",
+      "sha256": "b8d30215388724459597382baa05031d0f9eca28ed3ead8815b7c9703bc3949c",
+      "enabled": false
+    },
+    {
+      "group": "late-hold",
+      "role": "RESTORE",
+      "filename": "six-readonly.json",
+      "sha256": "887336fb7b110e599f6de4aa8d061afa2ae9e4298d1b7e557cf58c5b4763f7d5",
+      "enabled": false
+    },
+    {
+      "group": "late-hold",
+      "role": "PROVISION",
+      "filename": "six-provision.json",
+      "sha256": "8c45aa9d65c382990e58fee3d01f35b2bc3e2c9235897fd9a45b73be3f7c91dc",
+      "enabled": false
+    },
+    {
+      "group": "late-hold",
+      "role": "restore-inspect-enable",
+      "filename": "restore-inspector.json",
+      "sha256": "cedbaece7c6bbf7436c15a34a4b834943503e979ad5b1d7ff94fe78a103852fc",
+      "enabled": false
+    },
+    {
+      "group": "late-hold",
+      "role": "restore-inspect-disable",
+      "filename": "restore-inspector.json",
+      "sha256": "cedbaece7c6bbf7436c15a34a4b834943503e979ad5b1d7ff94fe78a103852fc",
+      "enabled": false
+    },
+    {
+      "group": "mixed",
+      "role": "SOURCE",
+      "filename": "six-readonly.json",
+      "sha256": "a76de0dab80e2946c46635d91296923869a091dcd39553e173a70c8304b75de1",
+      "enabled": false
+    },
+    {
+      "group": "mixed",
+      "role": "RESTORE",
+      "filename": "six-readonly.json",
+      "sha256": "05b4b4bdf7f1724ecf0f35f9a599ed089d21b5f481b7013464d96b69e295fe2a",
+      "enabled": false
+    },
+    {
+      "group": "mixed",
+      "role": "PROVISION",
+      "filename": "six-provision.json",
+      "sha256": "72c62d079e4860383b23a1ecf238485f32f2e11670ea67269da4e3f137c1210b",
+      "enabled": false
+    },
+    {
+      "group": "mixed",
+      "role": "restore-inspect-enable",
+      "filename": "restore-inspector.json",
+      "sha256": "ff71a0d0b252d94675b551ee907e70c415241b95c7726faa6f6280a2b11c60c7",
+      "enabled": false
+    },
+    {
+      "group": "mixed",
+      "role": "restore-inspect-disable",
+      "filename": "restore-inspector.json",
+      "sha256": "ff71a0d0b252d94675b551ee907e70c415241b95c7726faa6f6280a2b11c60c7",
+      "enabled": false
+    }
+  ],
+  "send_permissions": false,
+  "native_delete": 0,
+  "authorization": "NOT_RECEIVED"
+}

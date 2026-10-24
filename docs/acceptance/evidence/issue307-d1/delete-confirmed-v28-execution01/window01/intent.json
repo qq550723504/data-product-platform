@@ -1,0 +1,24 @@
+{
+  "status": "AUTHORIZED_WINDOW_STARTED_READONLY_PREFLIGHT_ONLY",
+  "at": "2026-10-21T14:02:11.396691+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "human_messages": [
+    {
+      "id": "msg_01a15df3-b085-7a82-a891-abbb3b82c17c",
+      "timestamp": "2026-10-21T10:13:33.957Z",
+      "sha256": "3cd9468fcb8cfec8b8777020bb71c02f8e506ffb2033ac35fc8ddcd966e33fb9",
+      "text": "授权按已核对的 candidate18/v28 完整方案及全部冻结绑定执行，execution 4fd5a7e7-779e-41d7-a35a-3bab7dd615b5。仅在2026年10月21日新加坡22:00–22:40、全部新鲜前置通过后删除所列6份目标，每份最多一次、全局最多6次，UNKNOWN不重发；遵守全部保留限制，失败或过窗立即封存，不延长窗口，旧授权不复用。#332保持Draft、不合并，#307保持OPEN。\n"
+    },
+    {
+      "id": "msg_01a15e0b-4f97-7ca2-b69e-c95b2af21a0b",
+      "timestamp": "2026-10-21T10:39:22.008Z",
+      "sha256": "82224029f93f050a9a281e2bad7bace46452416d37407879c11c7c1e751c2274",
+      "text": "<send_user_message_question_reply>\n[{\"questionItemId\":\"[\\\"request_user_input_async\\\",\\\"call_f92cf41d14ea4033a15e6a6024c5c16c\\\",0]\",\"question\":\"删除授权已记录，绑定 candidate18/v28、execution 4fd5a7e7-779e-41d7-a35a-3bab7dd615b5。是否安排2026年10月21日新加坡22:00的一次定时续跑？仅在22:00–22:40内、全部新鲜前置通过后执行，完成、失败或过期即停止。这里只确认调度，删除授权无需重复。冻结的 v28 手册第8行要求“未来定时续跑仅按人类另行指令建立”。\",\"answer\":\"安排固定窗口续跑（推荐）\"}]\n</send_user_message_question_reply>\n"
+    }
+  ],
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "preconditions": "NOT_YET_COMPLETE"
+}

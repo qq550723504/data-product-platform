@@ -1,0 +1,31 @@
+{
+  "native_delete": 0,
+  "source_Native_started": false,
+  "source_business_mutations": 0,
+  "HEAD_oracle": "TEST_HTTP_ONLY_NOT_NATIVE_ACCEPTANCE",
+  "status": "PASS_ACTUAL_SCHEMA_V28_MIXED_CLOSURE_AND_REPLAY",
+  "observer_binary_sha256": "73cd0ae5d1c6983d8a3c366c944a78a5ae90e2013a19dd0d222bd80c4d69dea4",
+  "source_dump_sha256": "78b94fdaf4dc7fd3841f1845fdd9c7580be222f527affd98db39c9f5e2ec85ab",
+  "clone_core": "0e7d0446b49eea1c0ba2a207f3bee60ffea15bd4fe1457ca01b1a117491b3bbc",
+  "clone_network": "9a960715cdf048687096b932e4c1040460a6148251113a7446bd99d6574e8d44",
+  "retained_volume": "dpp307-v28-restored-core03",
+  "modeled_cases": 48,
+  "actual_schema_replay": true,
+  "source_Core_readonly_fingerprint_equal": true,
+  "closure": [
+    {
+      "cid": "0973496043d835947423781dbb45c41d597ea51c548f1e9012fd786c414fdc1f",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "ea4875b64e39553dfe123138ebd2aeb6befaf54e44b99c9ea65f881b935c3423",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "0e7d0446b49eea1c0ba2a207f3bee60ffea15bd4fe1457ca01b1a117491b3bbc",
+      "stopped_PID0": true
+    }
+  ],
+  "source_retained_unchanged": true,
+  "failure": null
+}

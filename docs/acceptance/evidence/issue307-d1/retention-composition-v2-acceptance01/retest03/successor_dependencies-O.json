@@ -1,0 +1,12 @@
+{
+  "name": "successor_dependencies-O",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-O",
+    "-B",
+    "examples/lifecycle-d1/test_successor_dependencies.py"
+  ],
+  "started_at": "2026-10-24T11:09:27.709385+00:00",
+  "finished_at": "2026-10-24T11:09:32.605760+00:00",
+  "returncode": 0
+}

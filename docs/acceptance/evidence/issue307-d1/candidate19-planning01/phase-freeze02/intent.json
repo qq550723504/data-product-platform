@@ -1,0 +1,17 @@
+{
+  "source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/freeze-six-candidate.py"
+  ],
+  "process_git_config": {
+    "core.longpaths": true
+  },
+  "global_or_local_git_config_changed": false,
+  "preserved_failure": "phase-freeze01",
+  "source_binary_changed": false,
+  "native_delete": 0
+}

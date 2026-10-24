@@ -1,0 +1,12 @@
+{
+  "started_at_utc": "2026-10-24T09:16:18.9986945Z",
+  "finished_at_utc": "2026-10-24T09:16:25.8090188Z",
+  "command": [
+    "python",
+    "-B",
+    "audit_inputs.py"
+  ],
+  "exit_code": 0,
+  "docker_wsl_provider_commands": 0,
+  "prior_failure": "Overbroad initial all-tracked clean-tree check rejected contemporaneous acceptance documentation update; initial failure retained separately; source remains frozen."
+}

@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "mode": "normal",
+      "module": "test_six_candidate_runtime",
+      "exit": 0
+    },
+    {
+      "mode": "normal",
+      "module": "test_freeze_six_candidate",
+      "exit": 0
+    },
+    {
+      "mode": "normal",
+      "module": "test_verify_six_native",
+      "exit": 0
+    },
+    {
+      "mode": "normal",
+      "module": "test_window_six_support",
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "module": "test_six_candidate_runtime",
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "module": "test_freeze_six_candidate",
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "module": "test_verify_six_native",
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "module": "test_window_six_support",
+      "exit": 0
+    }
+  ],
+  "native_delete": 0,
+  "actual_Docker_tests": false
+}

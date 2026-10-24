@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "at": "2026-10-21T09:18:07.661194+00:00",
+  "results": [
+    {
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit": 0
+    }
+  ],
+  "provider_io": 0,
+  "native_delete": 0
+}

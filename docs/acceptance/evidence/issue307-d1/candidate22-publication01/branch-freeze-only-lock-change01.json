@@ -1,0 +1,10 @@
+{
+  "status": "PASS_ACTUAL_ONLY_LOCKBRANCH_CHANGED",
+  "head": "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+  "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "other_rule_and_full_REST_fields": "FULL_EXACT_MATCH",
+  "binding_sha256": "a76132a5abc97b16209cf95317376ce0a9cfb8b3a3d7c9c845fd0509071bc437",
+  "private_public_bytes_equal": true,
+  "native_delete": 0,
+  "execution_authority": false
+}

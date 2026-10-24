@@ -1,0 +1,14 @@
+test_bad_backup_and_prior_attempt_cannot_prepare_authority (test_confirmed_race.DriverBoundaryTests.test_bad_backup_and_prior_attempt_cannot_prepare_authority) ... ok
+test_bad_confirmation_rejects_before_private_reads_or_io (test_confirmed_race.DriverBoundaryTests.test_bad_confirmation_rejects_before_private_reads_or_io) ... ok
+test_expected_process_loss_reseals_delete_route_before_return (test_confirmed_race.DriverBoundaryTests.test_expected_process_loss_reseals_delete_route_before_return) ... ok
+test_expired_or_disabled_authority_never_changes_gateway (test_confirmed_race.DriverBoundaryTests.test_expired_or_disabled_authority_never_changes_gateway) ... ok
+test_failed_helper_closes_all_object_and_admin_routes (test_confirmed_race.DriverBoundaryTests.test_failed_helper_closes_all_object_and_admin_routes) ... ok
+test_optimized_interpreter_enforces_confirmation_and_consumed_scope (test_confirmed_race.DriverBoundaryTests.test_optimized_interpreter_enforces_confirmation_and_consumed_scope) ... ok
+test_recovery_preflights_before_launch_without_opening_routes (test_confirmed_race.DriverBoundaryTests.test_recovery_preflights_before_launch_without_opening_routes) ... ok
+test_runtime_topology_and_schema_rejections_cannot_open_gateway (test_confirmed_race.DriverBoundaryTests.test_runtime_topology_and_schema_rejections_cannot_open_gateway) ... ok
+test_sealed_scope_all_phases_reject_before_private_reads_or_io (test_confirmed_race.DriverBoundaryTests.test_sealed_scope_all_phases_reject_before_private_reads_or_io) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 4.419s
+
+OK

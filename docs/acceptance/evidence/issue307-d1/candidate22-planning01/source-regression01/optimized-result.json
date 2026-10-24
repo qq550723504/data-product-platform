@@ -1,0 +1,29 @@
+{
+  "mode": "optimized",
+  "exit": 0,
+  "argv": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "-O",
+    "-m",
+    "unittest",
+    "test_retained_v31",
+    "test_retained_v30",
+    "test_retained_v29",
+    "test_retained_v26",
+    "test_retained_v27",
+    "test_remaining_six_window",
+    "test_remaining_window",
+    "test_six_native_entry",
+    "test_six_candidate_runtime",
+    "test_verify_six_native",
+    "test_fixture_artifacts",
+    "test_preallocation_ci",
+    "test_execution_freeze",
+    "test_evidence_indexes",
+    "test_receipt_bytes"
+  ],
+  "at": "2026-10-23T04:10:56.187362+00:00"
+}

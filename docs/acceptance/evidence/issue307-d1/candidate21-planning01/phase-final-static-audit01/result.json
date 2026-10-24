@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "at": "2026-10-22T11:49:10.611082+00:00",
+  "mode": "audit",
+  "stdout_bytes": 347,
+  "stderr_bytes": 0,
+  "native_delete": 0,
+  "delete_authority": false
+}

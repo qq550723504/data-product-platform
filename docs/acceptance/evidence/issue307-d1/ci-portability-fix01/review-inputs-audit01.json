@@ -1,0 +1,8 @@
+{
+  "status": "PASS_PARENT_BYTE_AUDIT",
+  "members": 784,
+  "independent_sources": 7,
+  "remaining_blockers": [],
+  "format": "files-map-v1",
+  "self_reference": false
+}

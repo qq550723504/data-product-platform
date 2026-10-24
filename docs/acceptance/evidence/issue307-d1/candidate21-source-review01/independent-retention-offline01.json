@@ -1,0 +1,52 @@
+{
+  "status": "PASS_INDEPENDENT_V30_RETENTION_OFFLINE_TESTS",
+  "at": "2026-10-22T10:20:59.978796+00:00",
+  "scope": "File/Docker doubles only, no Docker/native/provider operation.",
+  "runs": [
+    {
+      "mode": "normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v30.py"
+      ],
+      "exit": 0,
+      "test_count": 3,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f59f39e940a6edb38aede0d493abd59a1e53d906916e1f7b81d0eae2ebe222c2",
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 4.034s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v30.py"
+      ],
+      "exit": 0,
+      "test_count": 3,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f07f775a185cebc2e5e57f457d4fd840f161ed35b01712e4edb473d113c2af3a",
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 4.436s\r\n\r\nOK\r\n"
+    }
+  ],
+  "inputs": {
+    "examples\\lifecycle-d1\\retained_v30.py": {
+      "sha256": "bf7a4bea2bd103e8c8bc4df4f42e3495e3ba686412d1ec0864e402f310f69993",
+      "bytes": 11879
+    },
+    "examples\\lifecycle-d1\\test_retained_v30.py": {
+      "sha256": "c884f3761a5c3f9a8b1b4d27e391b7f484ca132721f16ed534b48927655c8a77",
+      "bytes": 11994
+    },
+    "examples\\lifecycle-d1\\prepare-six-candidate.py": {
+      "sha256": "42209840a428dd37e049cce694a1780530b8f62677dad7cd4921dce1b60374f0",
+      "bytes": 39413
+    },
+    "examples\\lifecycle-d1\\verify-six-native.py": {
+      "sha256": "5f147cfb8c6307f6314c327324ec7905b4282f971445cae945c9852b40d988b9",
+      "bytes": 17193
+    }
+  }
+}

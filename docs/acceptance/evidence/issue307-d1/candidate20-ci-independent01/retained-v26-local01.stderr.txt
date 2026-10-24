@@ -1,0 +1,184 @@
+E...EEEEEEEE
+======================================================================
+ERROR: test_current_source_report_and_preparation_form_exact_typed_plan (__main__.RetainedV26Tests.test_current_source_report_and_preparation_form_exact_typed_plan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 68, in test_current_source_report_and_preparation_form_exact_typed_plan
+    result=f.preparation_audit_plan(candidate)
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmprbpkru50\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='blocked')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp911op_qi\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='wrong-source')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp9yeb36g1\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='status')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmplg9y5xyl\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='members-in-map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp22ehj9cp\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='length')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpcbcl99t9\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='count')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmphtvvat1u\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='digest-map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmps5w6eyqf\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+======================================================================
+ERROR: test_source_review_or_raw_index_drift_stops_freeze_audit (__main__.RetainedV26Tests.test_source_review_or_raw_index_drift_stops_freeze_audit) (fault='traversal')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_retained_v26.py", line 91, in test_source_review_or_raw_index_drift_stops_freeze_audit
+    with self.assertRaises(ValueError):f.preparation_audit_plan(candidate)
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 40, in preparation_audit_plan
+    report=load(review/'independent-final-review01.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmprtkv459l\\docs\\acceptance\\evidence\\issue307-d1\\candidate20-artifacts-review01\\independent-final-review01.json'
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.121s
+
+FAILED (errors=9)

@@ -1,0 +1,19 @@
+{
+  "status": "PASS_HISTORICAL_MARKDOWN_BYTE_PRESERVATION",
+  "files": [
+    {
+      "path": "docs/acceptance/issue307-d1-v26-execution01.md",
+      "sha256": "6c38dfaff66b83c698fcc7a9ac2c8aa314463afe659e505fba3f45ad70510aa9"
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v26-schedule01.md",
+      "sha256": "fbd8dad34e3e11c14fe8a40c21b71d5a63c0c9181a5716eb21f8c98f77cff709"
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v26-window01-outcome.md",
+      "sha256": "24932cc5302f2dd12d0a5300f8b01619f5b5bc3907a9502fd86944e3f815a173"
+    }
+  ],
+  "reason": "Pinned member indexes include these Markdown files. Disable checkout newline conversion so a fresh Windows checkout preserves the original bytes.",
+  "runtime_source_or_frozen_old_worktree_changed": false
+}

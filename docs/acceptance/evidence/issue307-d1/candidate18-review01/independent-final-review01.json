@@ -1,0 +1,148 @@
+{
+  "status": "PASS_BOUNDED_C18_FROZEN_NONDELETE_PREPARATION_REVIEW",
+  "at": "2026-10-21T09:28:42.579740+00:00",
+  "reviewer": "/root/c18_independent_review",
+  "scope": "Actual frozen candidate18/v28, non-delete native preparation, full readonly-entry receipts, precise confirmation/runbook and recorded final containment. Independent work is file-only; no Docker/database/provider operation is performed.",
+  "source_head": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "packet_commit": "baa1555dab9b4fcaf058109b53a81e49ac13ccda",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "profile": "candidate18/v28",
+  "remaining_blockers": [],
+  "candidate_sha256": "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+  "bindings_sha256": "8d021af81d905cc6de255bf84e460fc0b416d5af5bacc8388cfbb2b423a60624",
+  "template_sha256": "5cd148132b380b4a3361ae7210c8cc02fe6932fee3824ae77b4fec0cc2523a90",
+  "source_freeze_sha256": "3e5e8a28621d18ae41c82fe32105b092e64fbb5623d2ae3d3a00f0b3e72104f0",
+  "source_zip_sha256": "4f1a7f8fd0c8a6df4a35136be98667033e2f69aa6b3aaa7d9a96ce2c60a2d9ad",
+  "window": {
+    "not_before": "2026-10-21T14:00:00Z",
+    "not_after": "2026-10-21T14:40:00Z",
+    "readonly_until": "2026-10-21T16:40:00Z",
+    "singapore": "2026-10-21 22:00-22:40"
+  },
+  "checks": [
+    {
+      "status": "PASS",
+      "subject": "Frozen runtime/build and authority boundaries",
+      "finding": "2129 raw/LF source members match the actual frozen runtime ZIP; 12 original build members and reader/operator/root-owner/checker bytes match. Current six identities, execution and three independent budgets do not reuse any old authorization. Wire key remains only in wire; root credentials are absent from case/operator configs and host key is excluded from workers."
+    },
+    {
+      "status": "PASS",
+      "subject": "Source/restore Core and physical backups",
+      "finding": "All three source before/after, clean restore, rehearsal restore and clean-after-trial full relations/roles/ACL fingerprints match their exact accepted baselines. Three Core roles and source/restore native are distinct. All 48 actual backup files match: 9 new plus 36 complete old checkpoint files and 3 retained c14 partial files. The full-entry old_backups_retained=27 field is the unchanged earlier subset statistic; c17 nine and c14 partial three are separately enforced by the fixed 531 historical file set."
+    },
+    {
+      "status": "PASS",
+      "subject": "Native versions, protection and IAM",
+      "finding": "Six independent Windows file-only replays of source/restore preparation plus three full-entry fresh replays pass official policy ParseConfig/Equals and complete inventory/content/protection checks. Each source/restore set has 17 exact versions, 35 known disabled users (34 sole-policy/no groups plus the one fixed NONE/no-groups partial identity), 9 fresh absent users and exact P1 NoSuchVersion404. Targets and survivors match the frozen template one by one."
+    },
+    {
+      "status": "PASS",
+      "subject": "Isolated business rehearsal and historical facts",
+      "finding": "P2/T1/T2 get only new-generation admission; no old Processing/DirectData replay or new output occurs. H0 is blocked by a real PG hold race; H1 claim is denied and trusted NOT_SENT closure remains explicitly pending; H2 A is prepared without sending and B remains undispatched. M1 A admission and C GOVERNANCE retention denial are recorded while real mixed outcomes remain NOT_RUN. All 20 old immutable-row multisets survive and Cost/Allocation/Audit/Evidence/Outbox additions agree."
+    },
+    {
+      "status": "PASS",
+      "subject": "Actual technical requests and cost facts",
+      "finding": "Preparation retains 340 paired starts/observations: 274 source/restore GET/HEAD and 66 MinIO admin requests. The fixed fresh full entry retains another 137 GET/HEAD pairs. Real HTTP 200/400/404 and all original physical-attempt/UNKNOWN/budget facts are preserved. Amount stays NOT_ASSESSED; file-only/provider_io=0 fields are not interpreted as zero technical invocation or zero cost."
+    },
+    {
+      "status": "PASS",
+      "subject": "Complete-entry topology and final containment",
+      "finding": "The actual fixed complete entry passes cases/recoveries/private whitelist, role-specific CID/image/command/mount/network/UID/security contracts and budgets, then closes its callers. Final recorded union is exactly 712 CIDs (623 old +86 allocated +3 readers), all stopped/PID0/noports/no restart; 30 permissions false, six case and six recovery bytes/window exact, 18 old budget SHA/mount sets preserved and three current budgets still empty at UID/GID10001. Twenty-four actual service image/CID bindings and 35 host artifact members match."
+    },
+    {
+      "status": "PASS",
+      "subject": "Precise scope, documents and future gates",
+      "finding": "The 121-line displayed machine block is byte-identical to the frozen six-target template. P2/T1/T2/H2A/M1A/M1B order and exact copy/version/hash/bytes/hold/retention fields match all six targets and eleven survivors; P1 is permanently excluded. Runbook preserves once-per-target/max6, UNKNOWN no resend, strict fixed window, fresh prerequisites, H1/H2/M1 finite sequencing and failure seal. New human authority and schedule are absent; seven old heartbeats remain PAUSED."
+    },
+    {
+      "status": "PASS",
+      "subject": "Required post-freeze regression closure",
+      "finding": "Independent post-freeze attester normal and -O each pass three methods including all composed counterexamples. The original author 61-command result remains FAIL with 59 passes and two missing-packet failures; the later successful post-freeze receipts append rather than overwrite it."
+    }
+  ],
+  "analyses": {
+    "preparation-file-analysis01.json": {
+      "sha256": "c5f1c67a76f5392e079a9b1a4230999e10da5837cdd251ef549014bf81f876b6",
+      "bytes": 15234
+    },
+    "business-file-analysis01.json": {
+      "sha256": "0afdf8dd744c911ec084ec873d8ba91fbdc0af7232579c420d1e1c536678171c",
+      "bytes": 2943
+    },
+    "frozen-file-analysis01.json": {
+      "sha256": "13cbbaa75654a04f58405ce8674c4f6761a2a2ea7679b81980f27c11d631d400",
+      "bytes": 6469
+    },
+    "complete-entry-file-analysis01.json": {
+      "sha256": "ca78996365d74c9a552693d6eb0999d9b6f7948e4d0d8f77015296160693bdcc",
+      "bytes": 2217
+    }
+  },
+  "reviewed_documents": {
+    "issue307-d1-candidate18-confirmation.md": {
+      "sha256": "d38318b208c24d9d0054fbf3bdf27f2911aa043fbb1db1ade2c2b94cc58ff35f",
+      "bytes": 41029
+    },
+    "issue307-d1-v28-window-runbook.md": {
+      "sha256": "e10480c9900c4b5663eb67bc06f06de32cd7495d14c72474e91c84ca6c5a4191",
+      "bytes": 9059
+    }
+  },
+  "reviewed_external_artifacts": {
+    "id": "c18-frozen-reviewed-external-artifacts",
+    "index": "docs/acceptance/evidence/issue307-d1/candidate18-review01/reviewed-artifacts01.json",
+    "sha256": "787366bbceb7f9409bad6aa42381f097447885177116720be6e38611ad5d0ba3",
+    "format": "files-map-v1",
+    "member_root": ".",
+    "expected_count": 808,
+    "expected_status": "C18_FROZEN_REVIEWED_EXTERNAL_ARTIFACTS"
+  },
+  "reviewed_external_artifacts_audit": {
+    "id": "c18-frozen-reviewed-external-artifacts",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/candidate18-review01/reviewed-artifacts01.json",
+    "sha256": "787366bbceb7f9409bad6aa42381f097447885177116720be6e38611ad5d0ba3",
+    "members_verified": 808
+  },
+  "independent_execution": {
+    "windows_file_only_checker_replays": 9,
+    "postfreeze_attester_methods_normal": 3,
+    "postfreeze_attester_methods_optimized": 3,
+    "Docker_calls": 0,
+    "database_calls": 0,
+    "provider_calls": 0,
+    "real_DELETE": 0
+  },
+  "recorded_physical_readback_time": "2026-10-21T09:20:20.991663+00:00",
+  "retained_reviewer_failure": {
+    "path": "reviewer-composition-failure01.json",
+    "cause": "The first file-only wrapper incorrectly selected a final revoked read profile by its old active SHA. Original script/error are retained; matching the unique AuditID plus Enabled=false fixed only reviewer file selection. Frozen runtime/gates/resources were untouched."
+  },
+  "pending_independent_gates": [
+    "Final static approval manifest/plan must be audited by the same typed full entry --audit-only after this report; no future manifest/plan is represented as already passed.",
+    "The final publishing HEAD, exact-head pull_request CI, review threads and Draft/Open status need the separate publication readback; this report does not substitute source/packet green for that CI.",
+    "Any deletion needs fresh direct human authorization for this exact candidate/execution/window and separate scheduling instruction. None exists now; all sending permissions remain false.",
+    "All fresh native/Core/IAM/version/topology/budget prerequisites must pass again inside the authorized fixed window; recorded preparation does not grant execution authority."
+  ],
+  "not_accepted": {
+    "real_six_source_deletes": "NOT_RUN",
+    "H1_trusted_final_closure": "NOT_RUN",
+    "H2_real_204_late_hold_unknown": "NOT_RUN",
+    "three_copy_real_mixed_outcomes": "NOT_RUN",
+    "full_D1": "NOT_ACCEPTED",
+    "human_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED"
+  },
+  "preservation": {
+    "old_budget_reset": false,
+    "old_pins_released": false,
+    "old_failure_overwritten": false,
+    "old_authorization_reused": false,
+    "cleanup": 0,
+    "hold_release": 0,
+    "bypass": 0,
+    "PR332": "DRAFT_UNMERGED_REQUIRED",
+    "Issue307": "OPEN_REQUIRED"
+  }
+}

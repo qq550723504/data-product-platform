@@ -1,0 +1,13 @@
+{
+  "runs": [
+    {
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "optimized": true,
+      "exit_code": 0
+    }
+  ],
+  "scope": "host composition with recorded Docker/Linux/checker doubles; no actual Native"
+}

@@ -1,0 +1,72 @@
+{
+  "status": "PASS_LINUX_ENGINE_RESTORED_SOURCES_STOPPED",
+  "reported_at_utc": "2026-10-24T09:01:55.0329348Z",
+  "action": {
+    "at_utc": "2026-10-24T08:57:58.7093230Z",
+    "command": "Start-Process -FilePath <installed Docker Desktop.exe> -WindowStyle Hidden",
+    "new_desktop_pid": 6156,
+    "config_changes": 0,
+    "container_start_stop_commands": 0,
+    "reset_prune_resource_deletes": 0,
+    "wsl_shutdown_unregister": 0,
+    "business_iam_metadata_changes": 0,
+    "provider_DELETE": 0,
+    "git_HEAD_branch_changes": 0,
+    "pushes": 0
+  },
+  "diagnosis": {
+    "direct_cause": "Docker Desktop/backend absent; docker-desktop WSL Stopped; Linux API named pipe absent",
+    "last_successful_backend_heartbeat_utc": "2026-10-24T08:44:10.4856798Z",
+    "exit_trigger": "UNKNOWN",
+    "exit_trigger_limit": "No captured quit/shutdown/crash cause in retained host logs; recent matching Application Error/WER events and WER report directories returned no Docker records. Do not infer who stopped it or claim permanent root-cause repair."
+  },
+  "verification": {
+    "first_server_query_started_utc": "2026-10-24T08:58:06.2179758Z",
+    "fresh_readback_utc": "2026-10-24T08:58:44.8363663Z",
+    "docker_version_exit": 0,
+    "docker_info_exit": 0,
+    "server_version": "29.8.2",
+    "api_version": "1.56",
+    "engine_id": "d8e3cb9f-adc6-4df6-b5de-eb23d57bb00f",
+    "os": "linux",
+    "wsl_distro": "docker-desktop Running WSL2",
+    "exact_source_cids": [
+      "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d"
+    ],
+    "sources_exist_stopped_PID0": true,
+    "restart_policies_no": true,
+    "source_started_and_finished_timestamps_unchanged": true
+  },
+  "evidence_safety": {
+    "scope": "Only evidence newly created in docker-engine-repair01",
+    "private_raw_root": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw",
+    "raw_files_privately_preserved": 7,
+    "exclusive_CreateNew": true,
+    "raw_original_bytes_sha256_verified": true,
+    "public_raw_logs_remaining": 0,
+    "public_full_source_inspect_env_saved": false,
+    "public_fields": "Whitelisted daemon metadata and source state/restart/image/mount descriptors; no credential bytes",
+    "custody_file": "16-raw-custody.json",
+    "scan_file": "18-public-evidence-safety-audit.json",
+    "historical_frozen_evidence_modified": false
+  },
+  "limits": [
+    "Docker info reports 1077 containers: 25 running, 1052 stopped; no pre-recovery daemon inventory was possible, so whole-host runtime drift is not proven. Existing daemon restart behavior was not changed.",
+    "Two retained sources remained stopped and were not started. Full object/volume byte integrity checks, business acceptance, and non-delete regression are NOT_RUN by this repair.",
+    "This restores current engine availability; unexplained prior Desktop exit remains UNKNOWN."
+  ],
+  "key_evidence": [
+    "03-before-version.txt",
+    "04-before-wsl.txt",
+    "07-action-start-desktop.json",
+    "10-after-version.json",
+    "11-after-info-redacted.json",
+    "12-after-source-readback.json",
+    "13-after-wsl.txt",
+    "14-verification-summary.json",
+    "16-raw-custody.json",
+    "17-before-log-safe-excerpt.json",
+    "18-public-evidence-safety-audit.json"
+  ]
+}

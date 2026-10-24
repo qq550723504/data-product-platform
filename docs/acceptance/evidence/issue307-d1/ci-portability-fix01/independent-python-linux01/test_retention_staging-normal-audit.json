@@ -1,0 +1,17 @@
+{
+  "test": "test_retention_staging.py",
+  "root": "/work",
+  "reads": [
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/retention_staging.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/retired_budget_bytes.cpython-313.pyc",
+    "examples/lifecycle-d1/__pycache__/retired_resources.cpython-313.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/retention_staging.py",
+    "examples/lifecycle-d1/retired_budget_bytes.py",
+    "examples/lifecycle-d1/retired_resources.py",
+    "examples/lifecycle-d1/test_retention_staging.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

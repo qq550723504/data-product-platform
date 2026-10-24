@@ -1,0 +1,115 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_COLD_CHECKPOINT_AND_PROFILE_REVIEW",
+  "remaining_blockers": [],
+  "scope": "Actual append-only source checkpoint, rebuild member bindings and file-only cold profiles; not a frozen candidate or native acceptance.",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "initial_build_source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "effective_source": "355717c022fe36052dcf8b3cc37ceeef901286f7",
+  "checkpoint_observed_at_utc": "2026-10-19T17:12:31.274534+00:00",
+  "profiles_observed_at_utc": "2026-10-19T17:17:21.266479+00:00",
+  "checkpoint": {
+    "sha256": "03596768d01cec5793319fcbc94e2fbf93dcc6ab390c3331c6c9755719e0e649",
+    "rebuild_receipt_sha256": "c7a8c2f51382bcae496e29467c57f5b8b912f8157cd4ee7859a89257b203411a",
+    "original_allocation_sha256": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+    "original_failure_sha256": "a43bb7af8beb988e1390ad45da4a4320301e03051cba1225111b0ce13ebd1443",
+    "public_private_checkpoint_and_allocation_bytes_equal": true,
+    "original_owner_count": 86,
+    "original_nonce": "d54522c4-20db-4be6-9bb7-f2f8ed9b3aa3",
+    "original_owner_set_nonce_and_active_binaries_preserved": true,
+    "exact_rebuild_members": 12,
+    "member_contract": "Four binaries plus eight compiler stdout/stderr files; exact actual names and receipt map; regular, no symlink/junction, st_nlink=1.",
+    "compiler_channel_count": 8,
+    "compiler_total_bytes": 0,
+    "receipt_exact_fields": 11,
+    "receipt_scope_and_zero_io_cross_fields_checked": true,
+    "actual_git_changes_exactly_five_reviewed_python_files": true,
+    "compiled_source_modules_assets_and_migrations_unchanged": true,
+    "independent_build_execution": false,
+    "active_binary_replaced": false
+  },
+  "same_original_active_and_rebuilt_binary_sha256": {
+    "reader": "4efd3322b8e1423eb55aa6e85b8522e85852eadcf9171a2478b66ae8d0e4a810",
+    "operator": "7a326665c129e9fb9cfefcfdb6af7e07decd1bcf248459d1b30edf5cd918bc0c",
+    "owner": "0682b6260b62e5ddc604fbf509f6e19ada835614813f107df828c44c147cfb92",
+    "readonly-check.exe": "538a8ec129aa57482f75928cabd79dc350ddc06f83b96778fdc0ed7e8c60db4d"
+  },
+  "source_files_sha256": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "5a2697501928d09e92213ef17ec214416059fb01c937664a82b84218f9c00c6a",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "19764e168aabc1ca0be79b88a8a5e5592f3de51d81c2f5a364645d08ff07893c",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "f27373cce77cd854aca5c2e3eb006705e7e2778e79c7f25225a2a684092ba13f",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "fbc07dd4b7f9c994512e5bb153fb5c72d55e958e23faf425515635e3f486432a",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "b705df9f8097e3646a383bf40928171ff22745cc20f20df4b00b18d39e283e6a"
+  },
+  "profiles": {
+    "audit_id": "fd1a176e-8e01-4242-8259-e892c7708d9d",
+    "receipt_sha256": "dbd05a4973cd19ff68c57e6ce8ee2de3a80a2a275b4ce17b8d9fd6159e7bc102",
+    "source_cases": 6,
+    "case_contract": "Exact execution; START 2026-10-20T06:00:00Z; END and CandidateUseUntil 2026-10-20T06:40:00Z; NonDelete=true; Rehearsal=false; source DSN retained; inspector only; no Root/Producer fields; exact two-file directories.",
+    "source_case_frozen_base_enabled_true_count": 6,
+    "case_base_enabled_explanation": "Frozen Base.Enabled=true remains unchanged; this is distinct from all thirty disabled sending/root permission placeholders and does not start case owners.",
+    "business_policy_heads_readonly": 5,
+    "independent_trials": 4,
+    "trial_contract": "Rehearsal=true/candidate13; Base.Enabled=false; zero start/end; DSN only to each new rehearsal Core, same bounded database/user/options; no Root/Producer fields.",
+    "maintenance_profiles": 15,
+    "maintenance_contract": "Exact twenty-one fields; Enabled=false; explicit MaxProviderDeletes=0; zero NotBefore/ExpiresAt; exact SOURCE/RESTORE map roles, audit, inventory, map and reader hashes.",
+    "operator_root_placeholders": 30,
+    "placeholders_contract": "Every file exactly {Enabled:false}; formal operator/root profiles do not yet exist.",
+    "reviewed_profile_policy_file_count": 72,
+    "reviewed_profile_policy_map_sha256": "a5ba0fa1f026343bc81297cf798f6fe06c61f402fcca339508d6151142c130da",
+    "reviewed_map_encoding": "SHA256 of UTF8 compact JSON, sort_keys=true, normalized slash-relative keys and raw file SHA256 values."
+  },
+  "expectations": [
+    {
+      "group": "business-races",
+      "sha256": "d93f48a8edae180b9cc2ab636bea502628d16c4b2948f8941490eb03999067ef",
+      "historical": 8,
+      "present_expected": 7,
+      "identities_expected_only": 6
+    },
+    {
+      "group": "late-hold",
+      "sha256": "5846113b1c4349bedf4562f806f579250a0a6e5fe1b74907c8f9203aeff380c4",
+      "historical": 6,
+      "present_expected": 6,
+      "identities_expected_only": 4
+    },
+    {
+      "group": "mixed",
+      "sha256": "88518d9d11f0af2dc38e34e6798fbfe18d58f61c2a3e12c0a81b6dd07c396b08",
+      "historical": 4,
+      "present_expected": 4,
+      "identities_expected_only": 4
+    }
+  ],
+  "expectation_contract": "FROZEN_SIX_EXPECTATION_NOT_OBSERVATION; historical eighteen copy rows and old serialized policy files preserved; present seventeen differs only by P1 copy 5a4c9789-3e67-4e54-ab58-128d111cbd65. Fourteen identities/policies are expectations after future disabled provisioning, not a current live IAM observation.",
+  "raw_channels_sha256": {
+    "bind-source-host01.stdout.txt": "cc2213288a7187726f1397f242733a1a8855764ebcef7bb61b8f2b83c7dd2293",
+    "bind-source-host01.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "materialize-host02.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "materialize-host02.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "prior_reviews_preserved": {
+    "original_cold_blocked_sha256": "09613e8bf682a8b4bb51fc36564c547383e2728a0439b8afc437e7f28b549e3a",
+    "source1_blocked_sha256": "70fe77016c02d9903b187751a8e94bd7102fa7a1d14caaa0b2c643aa63c0ad45",
+    "source_and_cold_final_sha256": "107837f89bac730d7d9e81f7093badab00fe8e129213cb16850d4ee9cf286da2"
+  },
+  "reviewer_harness_diagnostics": [
+    "Initial metadata probe used nonexistent users key; corrected to disabled_identities; no mutation.",
+    "Initial probe incorrectly equated historical provider-response policy digests with serialized file digests. Historical files are preserved byte-for-byte and compared semantically by existing official policy comparator; only new generated policy bytes use their exact raw digest. Corrected full seventy-two-file probe PASS."
+  ],
+  "boundaries": {
+    "reviewer_docker_calls_this_stage": 0,
+    "reviewer_sdk_calls": 0,
+    "reviewer_file_writes": 0,
+    "secret_or_dsn_values_output": false,
+    "cold_physical_recheck": "Reused accepted 2026-10-19T16:57:28.996765Z eighty-six-owner cold topology check; its three physical-check functions unchanged; no repeated Docker calls.",
+    "budget_initialization": "NOT_ASSESSED; no ownership/content assertion before initializer",
+    "source_iam_backup_restore_native": "NOT_RUN_BY_REVIEWER; no native acceptance claimed",
+    "ci": "NOT_REVIEWED_IN_THIS_REPORT",
+    "frozen_candidate": "NOT_FROZEN",
+    "authorization": "NOT_RECEIVED",
+    "schedule": "NONE",
+    "d1": "NOT_ACCEPTED"
+  }
+}

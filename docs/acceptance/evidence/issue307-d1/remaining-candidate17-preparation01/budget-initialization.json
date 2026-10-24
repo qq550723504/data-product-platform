@@ -1,0 +1,68 @@
+{
+  "status": "PASS_NEW_BUDGET_INITIALIZATION",
+  "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+  "source": "8cca345525af828a8c9461e75f2dc5bf5f1fb428",
+  "allocation_sha256": "4f7e15b06bef88c3e50498818cc8d849e683d58600aba8abbf769053b8f777c8",
+  "groups": [
+    {
+      "status": "PASS_EXACT_SIX_BUDGET",
+      "group": "business-races",
+      "initial_empty": true,
+      "uid": 10001,
+      "gid": 10001,
+      "files": [],
+      "native_delete": 0,
+      "initializer": "9d2b7c2e589d6bb34ca48156aff01f425a6eb8f287255c2f7c46c30971722b63",
+      "archive_sha256": "b90dd428b0c6b960784e02b757044ebe8971e73a4b7222e76fc6714a737c8529",
+      "owner_receipt_sha256": "735385b1bdecbd83fbadb08eb4a598a04a89dc50c094793e63afd9a737c3f43f"
+    },
+    {
+      "status": "PASS_EXACT_SIX_BUDGET",
+      "group": "late-hold",
+      "initial_empty": true,
+      "uid": 10001,
+      "gid": 10001,
+      "files": [],
+      "native_delete": 0,
+      "initializer": "80e7d329b5e66161e2a8eac56a4a7c45a4961cfb4220bc0000fd697727df6fd4",
+      "archive_sha256": "cea2608f53004e18113e7d062c1a46265d76c52549fb605f798f30ffd2229524",
+      "owner_receipt_sha256": "ce414b621a2aa7ba8064c5af96f199187b0d277ceaf47348a333ce1c8cdb42fd"
+    },
+    {
+      "status": "PASS_EXACT_SIX_BUDGET",
+      "group": "mixed",
+      "initial_empty": true,
+      "uid": 10001,
+      "gid": 10001,
+      "files": [],
+      "native_delete": 0,
+      "initializer": "b946077f332d20459b397b7835caa10c2151bdd9055a4fa692fe9eaea9615271",
+      "archive_sha256": "7432ef02c1b09aab25775c9ddc560f03090c541fe04e36c32353b1762cfff5c1",
+      "owner_receipt_sha256": "a3d785a994d5da63a87bc4178397b245d4b845e2d579f28fe032396b4faedcbb"
+    }
+  ],
+  "all_complete": true,
+  "failure": null,
+  "closure": [
+    {
+      "cid": "9d2b7c2e589d6bb34ca48156aff01f425a6eb8f287255c2f7c46c30971722b63",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "80e7d329b5e66161e2a8eac56a4a7c45a4961cfb4220bc0000fd697727df6fd4",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "b946077f332d20459b397b7835caa10c2151bdd9055a4fa692fe9eaea9615271",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    }
+  ],
+  "native_delete": 0,
+  "old_budget_changed": false
+}

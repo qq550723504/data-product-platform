@@ -1,0 +1,6 @@
+{
+  "status": "REVIEWER_ARTIFACT_LIST_PATH_ERROR_CORRECTED_WITHOUT_SOURCE_EDIT",
+  "error": "An R-only remaining_fixture_schema.go path was mistakenly included as a current P working file while composing reviewed-artifacts. No final report/index existed; source and tests unaffected. R-only schema file is already bound in exact runtime archive specification.",
+  "source_failure": false,
+  "source_mutation": 0
+}

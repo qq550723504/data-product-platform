@@ -1,0 +1,16 @@
+{
+  "status": "OBSERVED_SUCCESSFUL_STOPPED_ALLOCATION",
+  "observed_at": "2026-10-21T09:02:57.117605+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "source": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "owners": 86,
+  "networks": 3,
+  "new_volumes": 15,
+  "frozen_build_members": 12,
+  "allocation_sha256": "2d3b39f493245337f4033cf0addc63351f848bd04da72dc25664144db429af51",
+  "allocation_closure_sha256": "100bd794aff538be30fcff60caf599b99d847d4e9b61d61c40071e267cc8ce79",
+  "provider_io": 0,
+  "native_delete": 0,
+  "authority": false,
+  "note": "Readback of original successful allocation receipts; tool console not reclassified as a captured subprocess channel."
+}

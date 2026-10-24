@@ -1,0 +1,69 @@
+{
+  "mode": "optimized",
+  "suites": [
+    {
+      "suite": "test_remaining_six_window",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "source_sha256": "13d2375cf43824c3f2733565668747557a6547a35d30784e8ce2b9bb7fe21aa1",
+      "log_sha256": "a881aaf0b0d11172bd0884d8a6cbf14bbd15cb90279e8ab0f60233d78f10f1eb"
+    },
+    {
+      "suite": "test_six_candidate_runtime",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "source_sha256": "c12907b8f3eb3eaa575a5e78021c7cf19c3fa3276e1b662ddd363b601344b10f",
+      "log_sha256": "a3e94d3e6ad4568f1a00328617461da9364f87e0579c8c2d233f542ea9300e00"
+    },
+    {
+      "suite": "test_freeze_six_candidate",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "source_sha256": "fcbd2aba76fea0783fcab5f68e32439d4c133742fa8a0e4b881aad165140832d",
+      "log_sha256": "baba64096e7398e7436caff577a3aa0f53b62837769f86d8ffc7407f675c64eb"
+    },
+    {
+      "suite": "test_verify_six_native",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "source_sha256": "75c8612818762c22d92ffd1af1fa22f7674ecfd66589592c836446ac9dc968f5",
+      "log_sha256": "f4a03412e76a4a8dd3ada6fc63f8999d5717986ca1df0bb0f3912633fe7674ad"
+    },
+    {
+      "suite": "test_window_six_support",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "source_sha256": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b",
+      "log_sha256": "14036cf960d33778d5efaff86dbfa9aadb5b9119388479737b2e779b2e7511bd"
+    },
+    {
+      "suite": "test_remaining_sequence",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "PASS": true,
+      "source_sha256": "58eb6e8da9381689f8a6dc4da57c236741186994fa7346a947cb6105939a4ee2",
+      "log_sha256": "262094f92ac723a3ec2376ea8988a152a8d41fda7c968e50ea2b59ac2aa931bd"
+    }
+  ],
+  "total_methods": 34,
+  "all_pass": true,
+  "actual_external_processes": 0,
+  "actual_Docker_Source_HTTP_enable_sign_DELETE": 0
+}

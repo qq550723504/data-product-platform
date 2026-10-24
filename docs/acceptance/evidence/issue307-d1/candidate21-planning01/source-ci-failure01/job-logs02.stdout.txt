@@ -1,0 +1,353 @@
+﻿2026-10-22T10:46:03.5100668Z Current runner version: '2.338.0'
+2026-10-22T10:46:03.5122977Z ##[group]Runner Image Provisioner
+2026-10-22T10:46:03.5123632Z Hosted Compute Agent
+2026-10-22T10:46:03.5124064Z Version: 20261002.596
+2026-10-22T10:46:03.5124688Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-22T10:46:03.5125285Z Build Date: 2026-10-02T22:28:27Z
+2026-10-22T10:46:03.5125797Z Worker ID: {b9a9fc04-c31b-4625-a9d9-b41e2daf9ff7}
+2026-10-22T10:46:03.5126365Z Region: westus3
+2026-10-22T10:46:03.5126757Z Cloud: Azure
+2026-10-22T10:46:03.5127133Z ##[endgroup]
+2026-10-22T10:46:03.5128197Z ##[group]Operating System
+2026-10-22T10:46:03.5128662Z Microsoft Windows Server 2025
+2026-10-22T10:46:03.5129107Z 10.0.26100
+2026-10-22T10:46:03.5129533Z Datacenter
+2026-10-22T10:46:03.5129911Z ##[endgroup]
+2026-10-22T10:46:03.5130366Z ##[group]Runner Image
+2026-10-22T10:46:03.5130797Z Image: windows-2025-vs2026
+2026-10-22T10:46:03.5131224Z Version: 20261007.264.1
+2026-10-22T10:46:03.5132473Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261007.264/images/windows/Windows2025-VS2026-Readme.md
+2026-10-22T10:46:03.5133722Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261007.264
+2026-10-22T10:46:03.5134446Z ##[endgroup]
+2026-10-22T10:46:03.5135266Z ##[group]GITHUB_TOKEN Permissions
+2026-10-22T10:46:03.5136716Z Contents: read
+2026-10-22T10:46:03.5137153Z Metadata: read
+2026-10-22T10:46:03.5137563Z ##[endgroup]
+2026-10-22T10:46:03.5139273Z Secret source: Actions
+2026-10-22T10:46:03.5139969Z Cache mode: write
+2026-10-22T10:46:03.5140509Z Prepare workflow directory
+2026-10-22T10:46:03.5432184Z Prepare all required actions
+2026-10-22T10:46:03.5471545Z Getting action download info
+2026-10-22T10:46:03.8346120Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-22T10:46:03.9486087Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-22T10:46:04.1939413Z Complete job name: temporary-container-contracts (windows-latest)
+2026-10-22T10:46:04.3150630Z ##[group]Run actions/checkout@v4
+2026-10-22T10:46:04.3151514Z with:
+2026-10-22T10:46:04.3151864Z   repository: qq550723504/data-product-platform
+2026-10-22T10:46:04.3155119Z   token: ***
+2026-10-22T10:46:04.3155424Z   ssh-strict: true
+2026-10-22T10:46:04.3155735Z   ssh-user: git
+2026-10-22T10:46:04.3156048Z   persist-credentials: true
+2026-10-22T10:46:04.3156392Z   clean: true
+2026-10-22T10:46:04.3156696Z   sparse-checkout-cone-mode: true
+2026-10-22T10:46:04.3157060Z   fetch-depth: 1
+2026-10-22T10:46:04.3157357Z   fetch-tags: false
+2026-10-22T10:46:04.3157658Z   show-progress: true
+2026-10-22T10:46:04.3158030Z   lfs: false
+2026-10-22T10:46:04.3158498Z   submodules: false
+2026-10-22T10:46:04.3158830Z   set-safe-directory: true
+2026-10-22T10:46:04.3159184Z   allow-unsafe-pr-checkout: false
+2026-10-22T10:46:04.3159780Z ##[endgroup]
+2026-10-22T10:46:04.4346151Z Syncing repository: qq550723504/data-product-platform
+2026-10-22T10:46:04.4347628Z ##[group]Getting Git version info
+2026-10-22T10:46:04.4348196Z Working directory is 'D:\a\data-product-platform\data-product-platform'
+2026-10-22T10:46:04.4962866Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-22T10:46:04.9043545Z git version 2.56.0.windows.2
+2026-10-22T10:46:04.9097177Z ##[endgroup]
+2026-10-22T10:46:04.9116183Z Temporarily overriding HOME='D:\a\_temp\4772f6e3-3a01-4d54-b067-bc8ac5639a59' before making global git config changes
+2026-10-22T10:46:04.9118198Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-22T10:46:04.9127751Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\data-product-platform\data-product-platform
+2026-10-22T10:46:05.0030204Z Deleting the contents of 'D:\a\data-product-platform\data-product-platform'
+2026-10-22T10:46:05.0035449Z ##[group]Initializing the repository
+2026-10-22T10:46:05.0043706Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\data-product-platform\data-product-platform
+2026-10-22T10:46:05.1096877Z Initialized empty Git repository in D:/a/data-product-platform/data-product-platform/.git/
+2026-10-22T10:46:05.1142344Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/qq550723504/data-product-platform
+2026-10-22T10:46:05.1859730Z ##[endgroup]
+2026-10-22T10:46:05.1860717Z ##[group]Disabling automatic garbage collection
+2026-10-22T10:46:05.1868501Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-22T10:46:05.2180882Z ##[endgroup]
+2026-10-22T10:46:05.2182117Z ##[group]Setting up auth
+2026-10-22T10:46:05.2191369Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-22T10:46:05.2517154Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-22T10:46:15.8767970Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-22T10:46:15.9073584Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-22T10:46:16.3623744Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-22T10:46:16.3918065Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-22T10:46:16.8382937Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-22T10:46:16.8684828Z ##[endgroup]
+2026-10-22T10:46:16.8685444Z ##[group]Fetching the repository
+2026-10-22T10:46:16.8697499Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +587a118a69a9dec79a0787156f028689c5d9192f:refs/remotes/pull/332/merge
+2026-10-22T10:46:19.1438002Z From https://github.com/qq550723504/data-product-platform
+2026-10-22T10:46:19.1439882Z  * [new ref]           587a118a69a9dec79a0787156f028689c5d9192f -> pull/332/merge
+2026-10-22T10:46:19.1470284Z ##[endgroup]
+2026-10-22T10:46:19.1470754Z ##[group]Determining the checkout info
+2026-10-22T10:46:19.1473295Z ##[endgroup]
+2026-10-22T10:46:19.1481568Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-22T10:46:19.1947230Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-22T10:46:19.2246240Z ##[group]Checking out the ref
+2026-10-22T10:46:19.2256649Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/332/merge
+2026-10-22T10:46:20.5042308Z Updating files:  16% (4518/27357)
+2026-10-22T10:46:20.5646431Z Updating files:  17% (4651/27357)
+2026-10-22T10:46:20.6211915Z Updating files:  18% (4925/27357)
+2026-10-22T10:46:20.6783772Z Updating files:  19% (5198/27357)
+2026-10-22T10:46:20.7384799Z Updating files:  20% (5472/27357)
+2026-10-22T10:46:20.7940867Z Updating files:  21% (5745/27357)
+2026-10-22T10:46:20.8479668Z Updating files:  22% (6019/27357)
+2026-10-22T10:46:20.9021281Z Updating files:  23% (6293/27357)
+2026-10-22T10:46:20.9721940Z Updating files:  24% (6566/27357)
+2026-10-22T10:46:21.0298716Z Updating files:  25% (6840/27357)
+2026-10-22T10:46:21.0836158Z Updating files:  26% (7113/27357)
+2026-10-22T10:46:21.1383507Z Updating files:  27% (7387/27357)
+2026-10-22T10:46:21.1974891Z Updating files:  28% (7660/27357)
+2026-10-22T10:46:21.2489246Z Updating files:  29% (7934/27357)
+2026-10-22T10:46:21.3069378Z Updating files:  30% (8208/27357)
+2026-10-22T10:46:21.3075080Z Updating files:  31% (8481/27357)
+2026-10-22T10:46:21.3646229Z Updating files:  31% (8483/27357)
+2026-10-22T10:46:21.4253364Z Updating files:  32% (8755/27357)
+2026-10-22T10:46:21.4841059Z Updating files:  33% (9028/27357)
+2026-10-22T10:46:21.5447893Z Updating files:  34% (9302/27357)
+2026-10-22T10:46:21.6061859Z Updating files:  35% (9575/27357)
+2026-10-22T10:46:21.6607592Z Updating files:  36% (9849/27357)
+2026-10-22T10:46:21.9352461Z Updating files:  37% (10123/27357)
+2026-10-22T10:46:21.9920909Z Updating files:  38% (10396/27357)
+2026-10-22T10:46:22.0535799Z Updating files:  39% (10670/27357)
+2026-10-22T10:46:22.1104894Z Updating files:  40% (10943/27357)
+2026-10-22T10:46:22.1664362Z Updating files:  41% (11217/27357)
+2026-10-22T10:46:22.2221461Z Updating files:  42% (11490/27357)
+2026-10-22T10:46:22.2782446Z Updating files:  43% (11764/27357)
+2026-10-22T10:46:22.3151829Z Updating files:  44% (12038/27357)
+2026-10-22T10:46:22.3340255Z Updating files:  44% (12215/27357)
+2026-10-22T10:46:22.3905018Z Updating files:  45% (12311/27357)
+2026-10-22T10:46:22.4465704Z Updating files:  46% (12585/27357)
+2026-10-22T10:46:22.5032841Z Updating files:  47% (12858/27357)
+2026-10-22T10:46:22.5606011Z Updating files:  48% (13132/27357)
+2026-10-22T10:46:22.6171887Z Updating files:  49% (13405/27357)
+2026-10-22T10:46:22.6747214Z Updating files:  50% (13679/27357)
+2026-10-22T10:46:22.7306916Z Updating files:  51% (13953/27357)
+2026-10-22T10:46:22.7878473Z Updating files:  52% (14226/27357)
+2026-10-22T10:46:22.8436685Z Updating files:  53% (14500/27357)
+2026-10-22T10:46:22.9001325Z Updating files:  54% (14773/27357)
+2026-10-22T10:46:22.9565385Z Updating files:  55% (15047/27357)
+2026-10-22T10:46:23.1590640Z Updating files:  56% (15320/27357)
+2026-10-22T10:46:23.2159656Z Updating files:  57% (15594/27357)
+2026-10-22T10:46:23.2720147Z Updating files:  58% (15868/27357)
+2026-10-22T10:46:23.3266210Z Updating files:  59% (16141/27357)
+2026-10-22T10:46:23.3281451Z Updating files:  59% (16407/27357)
+2026-10-22T10:46:23.3843321Z Updating files:  60% (16415/27357)
+2026-10-22T10:46:23.4397207Z Updating files:  61% (16688/27357)
+2026-10-22T10:46:23.4953974Z Updating files:  62% (16962/27357)
+2026-10-22T10:46:23.5516333Z Updating files:  63% (17235/27357)
+2026-10-22T10:46:23.6081478Z Updating files:  64% (17509/27357)
+2026-10-22T10:46:23.6645958Z Updating files:  65% (17783/27357)
+2026-10-22T10:46:23.7198813Z Updating files:  66% (18056/27357)
+2026-10-22T10:46:23.7771896Z Updating files:  67% (18330/27357)
+2026-10-22T10:46:23.8324887Z Updating files:  68% (18603/27357)
+2026-10-22T10:46:23.8880111Z Updating files:  69% (18877/27357)
+2026-10-22T10:46:23.9447694Z Updating files:  70% (19150/27357)
+2026-10-22T10:46:24.0006434Z Updating files:  71% (19424/27357)
+2026-10-22T10:46:24.0566561Z Updating files:  72% (19698/27357)
+2026-10-22T10:46:24.1121020Z Updating files:  73% (19971/27357)
+2026-10-22T10:46:24.1696263Z Updating files:  74% (20245/27357)
+2026-10-22T10:46:24.2262656Z Updating files:  75% (20518/27357)
+2026-10-22T10:46:24.2813444Z Updating files:  76% (20792/27357)
+2026-10-22T10:46:24.3277355Z Updating files:  77% (21065/27357)
+2026-10-22T10:46:24.3375867Z Updating files:  77% (21289/27357)
+2026-10-22T10:46:24.3952339Z Updating files:  78% (21339/27357)
+2026-10-22T10:46:24.5922585Z Updating files:  79% (21613/27357)
+2026-10-22T10:46:24.6483302Z Updating files:  80% (21886/27357)
+2026-10-22T10:46:24.7042325Z Updating files:  81% (22160/27357)
+2026-10-22T10:46:24.7633115Z Updating files:  82% (22433/27357)
+2026-10-22T10:46:24.8209485Z Updating files:  83% (22707/27357)
+2026-10-22T10:46:24.8760038Z Updating files:  84% (22980/27357)
+2026-10-22T10:46:24.9316784Z Updating files:  85% (23254/27357)
+2026-10-22T10:46:24.9907122Z Updating files:  86% (23528/27357)
+2026-10-22T10:46:25.0468090Z Updating files:  87% (23801/27357)
+2026-10-22T10:46:25.1011521Z Updating files:  88% (24075/27357)
+2026-10-22T10:46:25.1591487Z Updating files:  89% (24348/27357)
+2026-10-22T10:46:25.2149588Z Updating files:  90% (24622/27357)
+2026-10-22T10:46:25.2726968Z Updating files:  91% (24895/27357)
+2026-10-22T10:46:25.3653154Z Updating files:  92% (25169/27357)
+2026-10-22T10:46:25.3999044Z Updating files:  92% (25318/27357)
+2026-10-22T10:46:25.4726561Z Updating files:  93% (25443/27357)
+2026-10-22T10:46:25.5224982Z Updating files:  94% (25716/27357)
+2026-10-22T10:46:25.5688506Z Updating files:  95% (25990/27357)
+2026-10-22T10:46:25.6157091Z Updating files:  96% (26263/27357)
+2026-10-22T10:46:25.6655408Z Updating files:  97% (26537/27357)
+2026-10-22T10:46:25.7124023Z Updating files:  98% (26810/27357)
+2026-10-22T10:46:25.7642643Z Updating files:  99% (27084/27357)
+2026-10-22T10:46:25.7642957Z Updating files: 100% (27357/27357)
+2026-10-22T10:46:25.7643176Z Updating files: 100% (27357/27357), done.
+2026-10-22T10:46:25.8011742Z Note: switching to 'refs/remotes/pull/332/merge'.
+2026-10-22T10:46:25.8012063Z 
+2026-10-22T10:46:25.8012356Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-22T10:46:25.8012956Z changes and commit them, and you can discard any commits you make in this
+2026-10-22T10:46:25.8013599Z state without impacting any branches by switching back to a branch.
+2026-10-22T10:46:25.8013952Z 
+2026-10-22T10:46:25.8014173Z If you want to create a new branch to retain commits you create, you may
+2026-10-22T10:46:25.8014718Z do so (now or later) by using -c with the switch command. Example:
+2026-10-22T10:46:25.8015028Z 
+2026-10-22T10:46:25.8015217Z   git switch -c <new-branch-name>
+2026-10-22T10:46:25.8015423Z 
+2026-10-22T10:46:25.8015540Z Or undo this operation with:
+2026-10-22T10:46:25.8015726Z 
+2026-10-22T10:46:25.8015823Z   git switch -
+2026-10-22T10:46:25.8015965Z 
+2026-10-22T10:46:25.8016217Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-22T10:46:25.8016603Z 
+2026-10-22T10:46:25.8017039Z HEAD is now at 587a118a Merge 4420957157ac818cbed719d8a6b8d9c6ccc4b646 into 8b9cf7a3d3af3916be763d1c0d851198d7c82627
+2026-10-22T10:46:25.8272568Z ##[endgroup]
+2026-10-22T10:46:25.8860085Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-22T10:46:25.9204184Z 587a118a69a9dec79a0787156f028689c5d9192f
+2026-10-22T10:46:25.9800991Z ##[group]Run actions/setup-python@v5
+2026-10-22T10:46:25.9801505Z with:
+2026-10-22T10:46:25.9801660Z   python-version: 3.13
+2026-10-22T10:46:25.9801848Z   check-latest: false
+2026-10-22T10:46:25.9803806Z   token: ***
+2026-10-22T10:46:25.9803968Z   update-environment: true
+2026-10-22T10:46:25.9804154Z   allow-prereleases: false
+2026-10-22T10:46:25.9804316Z   freethreaded: false
+2026-10-22T10:46:25.9804467Z ##[endgroup]
+2026-10-22T10:46:26.1038451Z ##[group]Installed versions
+2026-10-22T10:46:26.1236893Z (node:7076) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-22T10:46:26.1237416Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-22T10:46:26.1238280Z Successfully set up CPython (3.13.16)
+2026-10-22T10:46:26.1238663Z ##[endgroup]
+2026-10-22T10:46:26.1491546Z ##[group]Run python -m pip install 'cryptography==49.0.0'
+2026-10-22T10:46:26.1492214Z [36;1mpython -m pip install 'cryptography==49.0.0'[0m
+2026-10-22T10:46:26.2436937Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-22T10:46:26.2437228Z env:
+2026-10-22T10:46:26.2437457Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:26.2437842Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.13.16\x64/lib/pkgconfig
+2026-10-22T10:46:26.2438188Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:26.2438489Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:26.2438779Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:26.2439011Z ##[endgroup]
+2026-10-22T10:46:31.2412979Z Collecting cryptography==49.0.0
+2026-10-22T10:46:31.2953832Z   Downloading cryptography-49.0.0-cp311-abi3-win_amd64.whl.metadata (4.3 kB)
+2026-10-22T10:46:31.4225013Z Collecting cffi>=2.0.0 (from cryptography==49.0.0)
+2026-10-22T10:46:31.4340541Z   Downloading cffi-2.1.1-cp313-cp313-win_amd64.whl.metadata (2.6 kB)
+2026-10-22T10:46:31.4886907Z Collecting pycparser (from cffi>=2.0.0->cryptography==49.0.0)
+2026-10-22T10:46:31.4993155Z   Downloading pycparser-3.11-py3-none-any.whl.metadata (8.2 kB)
+2026-10-22T10:46:31.5335005Z Downloading cryptography-49.0.0-cp311-abi3-win_amd64.whl (3.8 MB)
+2026-10-22T10:46:31.6395508Z    ---------------------------------------- 3.8/3.8 MB 43.3 MB/s  0:00:00
+2026-10-22T10:46:31.6531282Z Downloading cffi-2.1.1-cp313-cp313-win_amd64.whl (185 kB)
+2026-10-22T10:46:31.6903715Z Downloading pycparser-3.11-py3-none-any.whl (51 kB)
+2026-10-22T10:46:31.8677674Z Installing collected packages: pycparser, cffi, cryptography
+2026-10-22T10:46:32.4965885Z 
+2026-10-22T10:46:32.4977031Z Successfully installed cffi-2.1.1 cryptography-49.0.0 pycparser-3.11
+2026-10-22T10:46:32.4988802Z 
+2026-10-22T10:46:32.4990217Z [notice] A new release of pip is available: 26.2.1 -> 26.2.2
+2026-10-22T10:46:32.4991268Z [notice] To update, run: python.exe -m pip install --upgrade pip
+2026-10-22T10:46:32.6723269Z ##[group]Run python -B examples/lifecycle-d1/test_evidence_indexes.py
+2026-10-22T10:46:32.6723749Z [36;1mpython -B examples/lifecycle-d1/test_evidence_indexes.py[0m
+2026-10-22T10:46:32.6724105Z [36;1mpython -O -B examples/lifecycle-d1/test_evidence_indexes.py[0m
+2026-10-22T10:46:32.6724446Z [36;1mpython -B examples/lifecycle-d1/test_six_native_entry.py[0m
+2026-10-22T10:46:32.6724764Z [36;1mpython -O -B examples/lifecycle-d1/test_six_native_entry.py[0m
+2026-10-22T10:46:32.6725075Z [36;1mpython -B examples/lifecycle-d1/test_retained_v26.py[0m
+2026-10-22T10:46:32.6725373Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v26.py[0m
+2026-10-22T10:46:32.6725669Z [36;1mpython -B examples/lifecycle-d1/test_retained_v29.py[0m
+2026-10-22T10:46:32.6725954Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v29.py[0m
+2026-10-22T10:46:32.6726253Z [36;1mpython -B examples/lifecycle-d1/test_retained_v30.py[0m
+2026-10-22T10:46:32.6726569Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v30.py[0m
+2026-10-22T10:46:32.6726862Z [36;1mpython -B examples/lifecycle-d1/test_receipt_bytes.py[0m
+2026-10-22T10:46:32.6727162Z [36;1mpython -O -B examples/lifecycle-d1/test_receipt_bytes.py[0m
+2026-10-22T10:46:32.6727462Z [36;1mpython -B examples/lifecycle-d1/test_fixture_artifacts.py[0m
+2026-10-22T10:46:32.6727770Z [36;1mpython -O -B examples/lifecycle-d1/test_fixture_artifacts.py[0m
+2026-10-22T10:46:32.6728078Z [36;1mpython -B examples/lifecycle-d1/test_preallocation_ci.py[0m
+2026-10-22T10:46:32.6728388Z [36;1mpython -O -B examples/lifecycle-d1/test_preallocation_ci.py[0m
+2026-10-22T10:46:32.6728707Z [36;1mpython -B examples/lifecycle-d1/test_six_candidate_runtime.py[0m
+2026-10-22T10:46:32.6729045Z [36;1mpython -O -B examples/lifecycle-d1/test_six_candidate_runtime.py[0m
+2026-10-22T10:46:32.6729366Z [36;1mpython -B examples/lifecycle-d1/test_execution_freeze.py[0m
+2026-10-22T10:46:32.6729675Z [36;1mpython -O -B examples/lifecycle-d1/test_execution_freeze.py[0m
+2026-10-22T10:46:32.6729986Z [36;1mpython -B examples/lifecycle-d1/test_freeze_six_candidate.py[0m
+2026-10-22T10:46:32.6730307Z [36;1mpython -O -B examples/lifecycle-d1/test_freeze_six_candidate.py[0m
+2026-10-22T10:46:32.6730634Z [36;1mpython -B examples/lifecycle-d1/test_window_six_support.py[0m
+2026-10-22T10:46:32.6731054Z [36;1mpython -O -B examples/lifecycle-d1/test_window_six_support.py[0m
+2026-10-22T10:46:32.6731666Z [36;1mpython -B examples/lifecycle-d1/test_attest_remaining_executable.py[0m
+2026-10-22T10:46:32.6732043Z [36;1mpython -O -B examples/lifecycle-d1/test_attest_remaining_executable.py[0m
+2026-10-22T10:46:32.6744895Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-22T10:46:32.6745219Z env:
+2026-10-22T10:46:32.6745434Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:32.6746414Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.13.16\x64/lib/pkgconfig
+2026-10-22T10:46:32.6746760Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:32.6747061Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:32.6747416Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-22T10:46:32.6747683Z ##[endgroup]
+2026-10-22T10:46:33.4020364Z ............
+2026-10-22T10:46:33.4020918Z ----------------------------------------------------------------------
+2026-10-22T10:46:33.4021303Z Ran 12 tests in 0.115s
+2026-10-22T10:46:33.4021444Z 
+2026-10-22T10:46:33.4021525Z OK
+2026-10-22T10:46:34.2514706Z ............
+2026-10-22T10:46:34.2514984Z ----------------------------------------------------------------------
+2026-10-22T10:46:34.2515265Z Ran 12 tests in 0.114s
+2026-10-22T10:46:34.2515377Z 
+2026-10-22T10:46:34.2515432Z OK
+2026-10-22T10:46:35.2107156Z ........
+2026-10-22T10:46:35.2107432Z ----------------------------------------------------------------------
+2026-10-22T10:46:35.2107743Z Ran 8 tests in 0.655s
+2026-10-22T10:46:35.2109339Z 
+2026-10-22T10:46:35.2109437Z OK
+2026-10-22T10:46:36.9767086Z ........
+2026-10-22T10:46:36.9767376Z ----------------------------------------------------------------------
+2026-10-22T10:46:36.9767658Z Ran 8 tests in 1.158s
+2026-10-22T10:46:36.9767764Z 
+2026-10-22T10:46:36.9767824Z OK
+2026-10-22T10:46:37.4174728Z .....
+2026-10-22T10:46:37.4175016Z ----------------------------------------------------------------------
+2026-10-22T10:46:37.4175297Z Ran 5 tests in 0.143s
+2026-10-22T10:46:37.4175410Z 
+2026-10-22T10:46:37.4175465Z OK
+2026-10-22T10:46:38.1327464Z .....
+2026-10-22T10:46:38.1327749Z ----------------------------------------------------------------------
+2026-10-22T10:46:38.1328036Z Ran 5 tests in 0.138s
+2026-10-22T10:46:38.1328146Z 
+2026-10-22T10:46:38.1328211Z OK
+2026-10-22T10:47:18.2008747Z ...
+2026-10-22T10:47:18.2009177Z ----------------------------------------------------------------------
+2026-10-22T10:47:18.2009634Z Ran 3 tests in 39.845s
+2026-10-22T10:47:18.2010407Z 
+2026-10-22T10:47:18.2010749Z OK
+2026-10-22T10:48:00.6756412Z ...
+2026-10-22T10:48:00.6756727Z ----------------------------------------------------------------------
+2026-10-22T10:48:00.6757020Z Ran 3 tests in 41.949s
+2026-10-22T10:48:00.6757133Z 
+2026-10-22T10:48:00.6757200Z OK
+2026-10-22T10:48:25.3516496Z E..
+2026-10-22T10:48:25.3516981Z ======================================================================
+2026-10-22T10:48:25.3517994Z ERROR: test_complete_retained_success_never_adopts_old_authority (__main__.RetainedV30Tests.test_complete_retained_success_never_adopts_old_authority)
+2026-10-22T10:48:25.3518664Z ----------------------------------------------------------------------
+2026-10-22T10:48:25.3518972Z Traceback (most recent call last):
+2026-10-22T10:48:25.3524727Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retained_v30.py", line 129, in test_complete_retained_success_never_adopts_old_authority
+2026-10-22T10:48:25.3525637Z     result=self.composition();self.assertEqual(result['new_budgets_preserved'],3);self.assertFalse(result['authorization_reusable'])
+2026-10-22T10:48:25.3526362Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retained_v30.py", line 87, in composition
+2026-10-22T10:48:25.3527581Z     anchor=dict(status='C20_RETAINED_UNFROZEN_PREPARATION_ANCHOR',execution=r.EXECUTION,authority_reusable=False,source_provider_actions=0,native_delete=0,owners=owners,permissions=permissions,resources=anchor_resources,new_budgets=budgets,private_files=r.file_set(old),schema_private_files=r.file_set(clone_folder),schema_clone=clone)
+2026-10-22T10:48:25.3528753Z                                                                                                                                                                                                                                                               ~~~~~~~~~~^^^^^
+2026-10-22T10:48:25.3529653Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retained_v30.py", line 46, in file_set
+2026-10-22T10:48:25.3530189Z     values[path.relative_to(folder).as_posix()]={'sha256':sha(path),'bytes':path.stat().st_size}
+2026-10-22T10:48:25.3530519Z            ~~~~~~~~~~~~~~~~^^^^^^^^
+2026-10-22T10:48:25.3530874Z   File "C:\hostedtoolcache\windows\Python\3.13.16\x64\Lib\pathlib\_local.py", line 385, in relative_to
+2026-10-22T10:48:25.3531325Z     raise ValueError(f"{str(self)!r} is not in the subpath of {str(other)!r}")
+2026-10-22T10:48:25.3532078Z ValueError: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\tmpszqc66xz\\private\\remaining-candidate20\\allocation.json' is not in the subpath of 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpszqc66xz\\private\\remaining-candidate20'
+2026-10-22T10:48:25.3532666Z 
+2026-10-22T10:48:25.3532781Z ----------------------------------------------------------------------
+2026-10-22T10:48:25.3533046Z Ran 3 tests in 24.435s
+2026-10-22T10:48:25.3533150Z 
+2026-10-22T10:48:25.3533902Z FAILED (errors=1)
+2026-10-22T10:48:25.3744164Z ##[error]Process completed with exit code 1.
+2026-10-22T10:48:25.4033075Z Post job cleanup.
+2026-10-22T10:48:25.5759205Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-22T10:48:25.6092528Z git version 2.56.0.windows.2
+2026-10-22T10:48:25.6155575Z Temporarily overriding HOME='D:\a\_temp\7df8109f-3a7f-4feb-b218-f43f598a54f1' before making global git config changes
+2026-10-22T10:48:25.6156792Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-22T10:48:25.6165584Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\data-product-platform\data-product-platform
+2026-10-22T10:48:25.6539731Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-22T10:48:25.6895462Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-22T10:48:26.5038606Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-22T10:48:26.5385522Z http.https://github.com/.extraheader
+2026-10-22T10:48:26.5432249Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-22T10:48:26.5832809Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-22T10:48:27.2671791Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-22T10:48:27.3100645Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-22T10:48:27.9319151Z Cleaning up orphan processes
+2026-10-22T10:48:27.9798885Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

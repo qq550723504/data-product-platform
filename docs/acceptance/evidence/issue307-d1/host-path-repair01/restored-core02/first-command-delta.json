@@ -1,0 +1,26 @@
+{
+  "changed_relations": [
+    "audit_event",
+    "command_idempotency",
+    "delivery_authorization_fence",
+    "evidence",
+    "evidence_relation",
+    "lifecycle_approval_revocation",
+    "lifecycle_dispatch_release",
+    "lifecycle_provider_observation",
+    "outbox_event"
+  ],
+  "new_row_counts": {
+    "lifecycle_approval_revocation": 2,
+    "lifecycle_provider_observation": 3,
+    "lifecycle_dispatch_release": 3,
+    "command_idempotency": 5,
+    "audit_event": 8,
+    "evidence": 8,
+    "evidence_relation": 8,
+    "outbox_event": 8
+  },
+  "old_rows_preserved": true,
+  "new_provider_Cost": 0,
+  "pins_released": 0
+}

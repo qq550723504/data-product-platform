@@ -137,19 +137,23 @@ export default async function AttentionPage({ searchParams }: { searchParams: Pr
     qualityView: attentionView(query.qualityView), qualityOffset: attentionOffset(query.qualityOffset),
   };
   for (const name of ["reviewOffset", "failureOffset", "failedReleaseOffset", "validatingReleaseOffset", "readyReleaseOffset"]) offsets[name] = attentionOffset(query[name]);
+  // A new filter/page is a different read context. Reset each independent
+  // boundary so a pending new query can commit UNKNOWN instead of retaining
+  // the previous page in the navigation transition. Links retain this context.
+  const readContext = JSON.stringify(offsets);
   const model = loadAttention(workspace, offsets);
   return <>
-    <PageHeader eyebrow="Attention" title="待办中心" description="各分区独立读取；历史异常与无观察请求不计为当前未恢复待办。" action={<Suspense fallback={<span>审核、执行与发布：UNKNOWN · 读取中</span>}><Total model={model} /></Suspense>} />
-    <Suspense fallback={<section id="quality-attention" data-testid="quality-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="质量异常汇总读取中" /></section>}><QualityAttention query={query} /></Suspense>
-    <Suspense fallback={<section id="source-schema-attention" data-testid="schema-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 漂移汇总读取中" /></section>}><SchemaAttention query={query} /></Suspense>
-    <Suspense fallback={<section id="schema-exception-history" data-testid="schema-exceptions-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 扫描异常历史读取中" /></section>}><SchemaExceptions query={query} /></Suspense>
-    <Suspense fallback={<section id="schema-unobserved-requests" data-testid="schema-requests-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察请求读取中" /></section>}><SchemaRequests query={query} /></Suspense>
-    <Suspense fallback={<section id="schema-unobserved-attempts" data-testid="schema-attempts-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察 attempt 读取中" /></section>}><SchemaAttempts query={query} /></Suspense>
+    <PageHeader eyebrow="Attention" title="待办中心" description="各分区独立读取；历史异常与无观察请求不计为当前未恢复待办。" action={<Suspense key={"total:" + readContext} fallback={<span>审核、执行与发布：UNKNOWN · 读取中</span>}><Total model={model} /></Suspense>} />
+    <Suspense key={"quality:" + readContext} fallback={<section id="quality-attention" data-testid="quality-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="质量异常汇总读取中" /></section>}><QualityAttention query={query} /></Suspense>
+    <Suspense key={"schema:" + readContext} fallback={<section id="source-schema-attention" data-testid="schema-attention-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 漂移汇总读取中" /></section>}><SchemaAttention query={query} /></Suspense>
+    <Suspense key={"exceptions:" + readContext} fallback={<section id="schema-exception-history" data-testid="schema-exceptions-pending" style={{ marginTop: 18 }}><ReadUnavailable title="源端 schema 扫描异常历史读取中" /></section>}><SchemaExceptions query={query} /></Suspense>
+    <Suspense key={"requests:" + readContext} fallback={<section id="schema-unobserved-requests" data-testid="schema-requests-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察请求读取中" /></section>}><SchemaRequests query={query} /></Suspense>
+    <Suspense key={"attempts:" + readContext} fallback={<section id="schema-unobserved-attempts" data-testid="schema-attempts-pending" style={{ marginTop: 18 }}><ReadUnavailable title="无观察 attempt 读取中" /></section>}><SchemaAttempts query={query} /></Suspense>
     <p className="panel-meta">各分区按各自读取结果展示，不是同一个冻结快照；产品名称不可用时使用已读取的对象 ID。</p>
     <div className="attention-grid">
-      <Suspense fallback={<ReadUnavailable title="实体审核读取中" />}><ReviewQueue model={model} offsets={offsets} /></Suspense>
-      <Suspense fallback={<ReadUnavailable title="未解决执行失败读取中" />}><FailureQueue model={model} offsets={offsets} /></Suspense>
-      {releaseGroups.map(group => <Suspense key={group.key} fallback={<ReadUnavailable title={group.title + "读取中"} />}><ReleaseQueue model={model} offsets={offsets} group={group} /></Suspense>)}
+      <Suspense key={"reviews:" + readContext} fallback={<ReadUnavailable title="实体审核读取中" />}><ReviewQueue model={model} offsets={offsets} /></Suspense>
+      <Suspense key={"failures:" + readContext} fallback={<ReadUnavailable title="未解决执行失败读取中" />}><FailureQueue model={model} offsets={offsets} /></Suspense>
+      {releaseGroups.map(group => <Suspense key={group.key + ":" + readContext} fallback={<ReadUnavailable title={group.title + "读取中"} />}><ReleaseQueue model={model} offsets={offsets} group={group} /></Suspense>)}
     </div>
   </>;
 }

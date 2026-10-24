@@ -1,0 +1,15 @@
+{
+  "status": "BLOCKED_V29_INDEXED_MARKDOWN_CHECKOUT_DRIFT",
+  "source_head": "b25f3f1f7fcc04f6a9853e1e4ddbe167ec2cea2f",
+  "path": "docs/acceptance/issue307-d1-v29-window01.md",
+  "original_raw_sha256": "fea219346f07dedc37fc8d4be483065f81cdcbc1d8ce0a1f87b15aba6074e08c",
+  "checkout_autocrlf_true_sha256": "e49fded446e9aa0bbe7ffa423095c47046e3b10600011822794321ce1f055ceb",
+  "raw_CRLF": 0,
+  "clone_CRLF": 30,
+  "same_raw": false,
+  "attrs": [
+    "docs/acceptance/issue307-d1-v29-window01.md: text: unspecified",
+    "docs/acceptance/issue307-d1-v29-window01.md: eol: unspecified"
+  ],
+  "scope": "Real temporary Git clone only; no network/Docker/source/provider. The path is in the immutable copied-v29 index but outside the new evidence/** rule."
+}

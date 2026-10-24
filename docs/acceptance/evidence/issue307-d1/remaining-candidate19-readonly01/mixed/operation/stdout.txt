@@ -1,0 +1,1 @@
+Six target readonly verification complete; DELETE=0

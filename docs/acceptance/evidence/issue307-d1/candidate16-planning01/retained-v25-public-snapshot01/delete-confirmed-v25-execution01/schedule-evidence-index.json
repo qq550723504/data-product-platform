@@ -1,0 +1,72 @@
+{
+  "status": "PASS_AUTHORIZATION_AND_SCHEDULE_EVIDENCE_INDEX",
+  "recorded_at": "2026-10-20T01:23:43.501608+00:00",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "members": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/automation-tool-receipts.json": {
+      "sha256": "d019b5d2128d421153e05d09c838cc055b5717e0176a7e686b227931bd07a6bd",
+      "bytes": 506
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/composition/authorized-prewindow-check.json": {
+      "sha256": "d16b95d690f32fa58ede78eb0f3675862b6d3889e27a57fdddecc14d6bcc6552",
+      "bytes": 778
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/composition/check-authorization.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/composition/check-authorization.stdout.txt": {
+      "sha256": "bf7bc6556a49b06002c7a4ac98ff056e1bda5fb849193a6cbcda2a09f8f191f0",
+      "bytes": 705
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/composition/check_authorization.py": {
+      "sha256": "2f9e9afdc7ce091787f25066c02a0af0425cf59f392579ebe0b62997f2cb6661",
+      "bytes": 2373
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/composition/finalize_schedule_receipts.py": {
+      "sha256": "36131dea80700c9c58f6c16ac0b976f9642b6fbaff94c132584371b286df33b8",
+      "bytes": 13383
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/composition/process-trace.json": {
+      "sha256": "d1985e3b95cfb86d46a3ffcc0894e825837e2442ce00d1a4e3e73b95e12dd6bc",
+      "bytes": 108289
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/composition/record_schedule_inputs.py": {
+      "sha256": "6e0c56a85cbbe1882ee98f494bc76810cd15ec2d6a048c9dc9ff0f24723d500d",
+      "bytes": 5456
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/github-checkpoint.json": {
+      "sha256": "5e0c9604b4eaf0e4e23093e4cf98830b011ad9641ca1ff766741f0a00c8addb2",
+      "bytes": 340
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/human-authorization.json": {
+      "sha256": "55f0be454529612e1d81c47c68f10542929f96d661be675d50aea32fe4029b9e",
+      "bytes": 15626
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/schedule-human-authority.json": {
+      "sha256": "65b68dd6c3f7f44dfec9d99e201deeb91e0d953c70bb55ec7ff0a7e13bdc4774",
+      "bytes": 1827
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-automation-snapshot.toml": {
+      "sha256": "461da6db8615d53a18f871b0d3d9b3aacafb4a0d4802dccb33f37cc530becefc",
+      "bytes": 14334
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-prompt-actual.txt": {
+      "sha256": "9200bc1c93375483b012948a1fb7c5db21fd00ecadfef2a2b4f33f427bdfb4eb",
+      "bytes": 13974
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-prompt.txt": {
+      "sha256": "f9979d73b469abd53490b1edf1a869dd42c08e04835a9d1fd8aa1639e29730fd",
+      "bytes": 13975
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-resume.json": {
+      "sha256": "1c8bbd122ebb9b10e6caf8d8a9fa901d5358d1d98cdb3bd218b42833a2a04676",
+      "bytes": 3010
+    }
+  },
+  "excludes": [
+    "this index itself",
+    "final checkpoint",
+    "append-only current execution matrix"
+  ]
+}

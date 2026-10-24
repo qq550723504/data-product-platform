@@ -1,0 +1,8 @@
+test_cross_fields_rehash_does_not_allow_stale_or_extended_window (test_remaining_six_window.SixWindow.test_cross_fields_rehash_does_not_allow_stale_or_extended_window) ... ok
+test_foreign_p1_recovery_or_renew_owner_not_accepted (test_remaining_six_window.SixWindow.test_foreign_p1_recovery_or_renew_owner_not_accepted) ... ok
+test_whole_six_success_uses_one_end_without_renew_or_p1 (test_remaining_six_window.SixWindow.test_whole_six_success_uses_one_end_without_renew_or_p1) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.407s
+
+OK

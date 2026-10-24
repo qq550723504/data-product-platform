@@ -1,0 +1,7 @@
+{
+  "status": "APPEND_ONLY_DIAGNOSIS_COMPLETION",
+  "at": "2026-10-19T12:49:12.431408+00:00",
+  "root_cause": "Both empty Cmd=null versus [] and automatic image VOLUME violated one combined command/mount check in attempt01. Initial analysis inspected only command; attempt02 proved the second component. Use full established P1 allocation contract, never weaken exact mounts.",
+  "original_source_started": 0,
+  "DELETE": 0
+}

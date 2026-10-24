@@ -1,0 +1,6 @@
+{
+  "at": "2026-10-23T06:30:58.366026+00:00",
+  "expected_head": "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+  "no_atomic_CAS_claim": true,
+  "automatic_unlock": false
+}

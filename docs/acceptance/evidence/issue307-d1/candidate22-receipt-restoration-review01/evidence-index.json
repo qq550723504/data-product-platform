@@ -1,0 +1,22 @@
+{
+  "status": "C22_RECEIPT_RESTORATION_REVIEW_EVIDENCE_INDEX",
+  "count": 4,
+  "files": {
+    "all-124-current-original-raw-checks.json": {
+      "sha256": "d2de8dda51f83fb48b22fba610bd05b11fe0fa779b0773d5eb388f682b8e019e",
+      "bytes": 28701
+    },
+    "five-terminal-CR-restorations.json": {
+      "sha256": "d217b0c665010ab0d32b1446e851b29c754c1be005fff57f1f24288b6bf3ed8d",
+      "bytes": 3991
+    },
+    "independent-final-review01.json": {
+      "sha256": "589c94d2dc1cdcd5bb6abb0748a263c4c8c8f81e9c3199412878fae58b1bbb48",
+      "bytes": 2214
+    },
+    "input-index.json": {
+      "sha256": "832f2f48f873d51c2516f83955eda401fd4726b2c910e1f01c14a35f1d27398a",
+      "bytes": 1875
+    }
+  }
+}

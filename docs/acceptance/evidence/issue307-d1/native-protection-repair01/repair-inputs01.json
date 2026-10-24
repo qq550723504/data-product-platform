@@ -1,0 +1,72 @@
+{
+  "host_base": "1841d39d9ab5a08a823f83ab8e9a625b619727e2",
+  "host_state": "LOCAL_REPAIR_NOT_PUBLISHED_NOT_EXECUTION_BINDING",
+  "runtime_source": "8e53ea564f9b81bdebf7c31d6a99060d1ec3b7db",
+  "runtime_parent": "92b9801dfb7e46295e17165e7762907cb6e87be2",
+  "runtime_archive_sha256": "a57c946610b968a8eaaa1414e85367af43938784c973d723a28a1f7355a5c0f5",
+  "runtime_archive_bytes": 6440579,
+  "shared_members": [
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_scope.go",
+      "raw_sha256": "5282ba7e3190bde8d9f07ae5afb3150b37405dd687c3119d51ae59ca466457af",
+      "lf_sha256": "fb284daaf2344acda651844e79d1c963209429a55b529bd603ae01835db5bb72"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_scope.json",
+      "raw_sha256": "d5758dd1082e6191a508d6ab9ad9db1d9e8ea8ecd2b2b7a61b5d0d1c38ae447c",
+      "lf_sha256": "6814f2e9e26c7f9305f6ebd675de1a9cdc6e70095583bac7d196bde13fe35288"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+      "raw_sha256": "2f68bbf0d678aad22d3253daf56cf1af437db49ee2c5eb01764b7ed107dda83a",
+      "lf_sha256": "44b98ddf1f726f316309e68789f6f1576ada080715fb7e404c5fba72663147b5"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go",
+      "raw_sha256": "e294a0ba58f649e122bf1fb0858c04d89da12611160a9c7732b208834e2f9990",
+      "lf_sha256": "c45e41d7ceaad4fa26ef3c81640628e9fa84c9725d18d691a7c4baf8668839ef"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go",
+      "raw_sha256": "0169d981c9ebcae68dcc6bcbbf4592d884aadae9998190b8a854ef392f2ddc0a",
+      "lf_sha256": "0169d981c9ebcae68dcc6bcbbf4592d884aadae9998190b8a854ef392f2ddc0a"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go",
+      "raw_sha256": "c35e9563274a48d0a2d0aad5a67438f0143d87b36c0fb5cc4c75e933e0698f8e",
+      "lf_sha256": "c35e9563274a48d0a2d0aad5a67438f0143d87b36c0fb5cc4c75e933e0698f8e"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go",
+      "raw_sha256": "9523a02f91f07c994085c5cac9fd997b63075fcdb50553248c12a38632cfde4e",
+      "lf_sha256": "9523a02f91f07c994085c5cac9fd997b63075fcdb50553248c12a38632cfde4e"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go",
+      "raw_sha256": "f5b6b3ac64ffde6789d475ef3254a152c4cb995f3c14094c2a5aa131d682fb4e",
+      "lf_sha256": "f5b6b3ac64ffde6789d475ef3254a152c4cb995f3c14094c2a5aa131d682fb4e"
+    }
+  ],
+  "selected_repair_files": [
+    ".github/workflows/ci.yml",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go",
+    "examples/lifecycle-d1/fixture-runtime-artifact.json",
+    "examples/lifecycle-d1/native_protection.py",
+    "examples/lifecycle-d1/prepare-retention-renewal.py",
+    "examples/lifecycle-d1/protection_test_fixtures.py",
+    "examples/lifecycle-d1/six_candidate_runtime.py",
+    "examples/lifecycle-d1/test_native_protection.py",
+    "examples/lifecycle-d1/test_retention_renewal.py",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py",
+    "examples/lifecycle-d1/test_six_native_entry.py",
+    "examples/lifecycle-d1/test_verify_six_native.py",
+    "examples/lifecycle-d1/verify-six-native.py"
+  ],
+  "source_started": false,
+  "native_write": false,
+  "delete": 0,
+  "old_c23_terminal_retained": true
+}

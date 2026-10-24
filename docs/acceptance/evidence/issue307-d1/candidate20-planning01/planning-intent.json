@@ -1,0 +1,28 @@
+{
+  "status": "PROPOSED_NOT_FROZEN_NOT_AUTHORIZED",
+  "at": "2026-10-22T06:48:26.911611+00:00",
+  "profile": "candidate20/v30",
+  "execution": "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6",
+  "window_selected_by_human": "2026-10-22 Singapore 18:00-18:40",
+  "not_before": "2026-10-22T10:00:00Z",
+  "not_after_exclusive": "2026-10-22T10:40:00Z",
+  "recovery_until": "2026-10-22T12:40:00Z",
+  "root_fix_head": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+  "root_fix_ci": "IN_PROGRESS_NOT_ACCEPTED_YET",
+  "source": "NOT_FROZEN",
+  "budgets": "NOT_ALLOCATED",
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "old_authorization_reused": false,
+  "targets": [
+    "P2",
+    "T1",
+    "T2",
+    "H2A",
+    "M1A",
+    "M1B"
+  ],
+  "survivors": 11,
+  "P1": "PERMANENTLY_EXCLUDED",
+  "native_delete": 0
+}

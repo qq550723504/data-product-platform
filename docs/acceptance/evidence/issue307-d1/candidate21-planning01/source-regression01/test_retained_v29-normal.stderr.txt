@@ -1,0 +1,8 @@
+test_changed_old_fact_owner_budget_mount_control_or_backup_rejected (test_retained_v29.RetainedV29Tests.test_changed_old_fact_owner_budget_mount_control_or_backup_rejected) ... ok
+test_full_retained_read_success_never_adopts_old_authority (test_retained_v29.RetainedV29Tests.test_full_retained_read_success_never_adopts_old_authority) ... ok
+test_owner_membership_and_budget_contract_reject_missing_duplicate_foreign_or_expanded (test_retained_v29.RetainedV29Tests.test_owner_membership_and_budget_contract_reject_missing_duplicate_foreign_or_expanded) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 26.460s
+
+OK

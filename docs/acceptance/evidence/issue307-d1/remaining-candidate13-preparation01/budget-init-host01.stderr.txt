@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 568, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 563, in main
+    elif args.action=='initialize-budgets':initialize_budgets()
+                                           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 343, in initialize_budgets
+    results.append(p.sequence.budget_archive(raw,packet,g['group'],initial=True))
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_sequence.py", line 39, in budget_archive
+    copies={cp['ID']:cp for name,_,cp in targets(candidate) if name==group}
+                                         ~~~~~~~^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_sequence.py", line 30, in targets
+    need(len(copies) == 1 and stage in groups[group]['Helpers'], 'six sequence target binding differs')
+                                       ~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'Helpers'

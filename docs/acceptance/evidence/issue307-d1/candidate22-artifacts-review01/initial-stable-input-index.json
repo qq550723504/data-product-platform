@@ -1,0 +1,114 @@
+{
+  "status": "C22_ARTIFACT_REVIEW_STABLE_INPUTS_COLD_PENDING",
+  "at": "2026-10-23T05:57:50.550747+00:00",
+  "count": 26,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json": {
+      "sha256": "d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db",
+      "bytes": 20540
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/bindings.json": {
+      "sha256": "e63b908ca5269853478f7d5a65621327bc5f52ff2ff389de96707e0a137296af",
+      "bytes": 4000041
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/confirmation-template.txt": {
+      "sha256": "4a2aeed1f62bb10883a8b9f37b5c4da817bddb3580c22f59f54e942b6dd1b34d",
+      "bytes": 35067
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/status.json": {
+      "sha256": "1f0067c34a4002c7befd04074073381c1bc8e8c4a143e2d2637f926a93f43d31",
+      "bytes": 738
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/source-freeze.json": {
+      "sha256": "0766c339df95c00427713c3699d0fb65e1a9b463897ba37206d47dde95bd212f",
+      "bytes": 755800
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/preparation-evidence-audit-plan.json": {
+      "sha256": "4fe01568288b9aa5bb2b3e542d8f4cb7f31aa0dda3284f34b6eef017e6a5a4c5",
+      "bytes": 1499
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/source-review-binding-index.json": {
+      "sha256": "292034d5a467e11b5a7120fe8bd085cdc794a9664da29b3f9920715c035e2e10",
+      "bytes": 503
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/profile-windows.json": {
+      "sha256": "06477b227e22ccb09bde0ad540c9035029c13fef62d6d95010cd8b4be7f2e687",
+      "bytes": 3527
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22/cross-field-windows.json": {
+      "sha256": "0032ef62c6c36232ce08dfb5a115eec7e39273cdbd51f76b935079e4ce2d1103",
+      "bytes": 358
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/host-anchor-readback01.json": {
+      "sha256": "351b896debc6496e332cdd2c8a753e1e2d9a9f3eb585b4e08832d4a9cee9ec79",
+      "bytes": 729
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/engine-service-bindings01.json": {
+      "sha256": "0c1b84732f5fdfd315905023bb2629874a8ece7601fa0c528e3b5e7612f37a5c",
+      "bytes": 3576
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/allocation-readback01.json": {
+      "sha256": "08f42efa9905b22f4438db579432844e028a2033e11726c831cdfd7ed0a1db41",
+      "bytes": 657
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/retained-backups75-readback01.json": {
+      "sha256": "229c89a5b70d0c45921fa6bdabd3fde0ec1adcaa87ab54307564e4d02c0a22a5",
+      "bytes": 17403
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/candidate22-host-bindings01.json": {
+      "sha256": "db966de2a58a81a230ebbf91a099b2f07398039b819ca2044db97ea5d4b42370",
+      "bytes": 17080
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/publication-secret-scan02.json": {
+      "sha256": "d67a18cbd660fa159b84b3c26e09b630ea099d778b502ecc9a2a3093a0df957e",
+      "bytes": 231
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/publication-bytes-regression01/result.json": {
+      "sha256": "fdcb3661f60a9ba64c292d1b3d970ef70d611fb4a76a477b1720be5ce375b7f1",
+      "bytes": 1380
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/allocation.json": {
+      "sha256": "330d4e78bc983e4c03d562757d881857556f890cb19d0bf0b0c5d74a713340fe",
+      "bytes": 1974623
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/owner-descriptors.json": {
+      "sha256": "df94c86c4eb2f53a00b17bce7493837255a8a88c9b04064314cf0d72a87e72c6",
+      "bytes": 141269
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/non-delete-terminal.json": {
+      "sha256": "06dfdea549c751b1182bb2252efbe859a556ddc3a3a3a2803609b6d056d78176",
+      "bytes": 19163
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/non-delete-evidence-index.json": {
+      "sha256": "3cd68924ece0e48221ec8b18e6c67ccebcf62be9585f3c22f4ba19d3fd82a12b",
+      "bytes": 292714
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/budget-initialization.json": {
+      "sha256": "6cb9440e9e394d50657e8f0ff9f6582ba475a88ee452aa670d1a0809386afbf3",
+      "bytes": 2353
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate22-readonly01/complete.json": {
+      "sha256": "49122650975099a7894ec7ef826b37ff4ba67a327971444b2ba75c03b7dc9464",
+      "bytes": 19627
+    },
+    "docs/acceptance/issue307-d1-candidate22-confirmation.md": {
+      "sha256": "0231736f29a345ea9e71b5ca58c2f54dc7d03878d4694d37b20b82625c3b2875",
+      "bytes": 53053
+    },
+    "docs/acceptance/issue307-d1-v32-window-runbook.md": {
+      "sha256": "009fab7c6aa81a16a3035d7a72797b02db3dfb2b12ae133e163a5382194a6f88",
+      "bytes": 9768
+    },
+    "docs/acceptance/issue307-d1-v32-preparation-contract02.md": {
+      "sha256": "598f407a2a3f0600e74331b7ebdb6a015bbccbd73fcd9efe60a10c5aad63143c",
+      "bytes": 4977
+    },
+    "docs/acceptance/issue307-d1-v32-preparation-contract03.md": {
+      "sha256": "5137cfa2675583b036300eb5ab6a136ced54bae7396d10f1c17b690c295c8677",
+      "bytes": 2287
+    }
+  },
+  "packet_anchor": "10e39eede9c0b30f1cab1397a4a42c5698479862",
+  "cold_receipts": "WAITING_FOR_PARENT",
+  "native_reexecution_by_reviewer": false
+}

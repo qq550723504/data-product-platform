@@ -1,0 +1,166 @@
+"""File-only final review of P2 repair and completed synthetic native evidence."""
+from collections import Counter
+import base64
+import datetime as dt
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tarfile
+
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[4]
+OLD_ROOT=Path('C:/Users/Henry/.codex/worktrees/d1-c18/data-product-platform')
+WINDOW='docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/window01'
+NATIVE=OUT/'native03'
+sys.path.insert(0,str(ROOT/'examples/lifecycle-d1'))
+import evidence_indexes as evidence
+
+def need(ok,message):
+ if not ok:raise ValueError(message)
+def load(path):return evidence.decode(path.read_bytes())
+def meta(path):
+ raw=evidence.unlinked_absolute(path).read_bytes()
+ return {'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)}
+def save(name,value):
+ with (OUT/name).open('x',encoding='utf-8',newline='\n') as target:json.dump(value,target,indent=2);target.write('\n')
+
+unit=load(OUT/'independent-tests01/result.json')
+need(unit['status']=='PASS_INDEPENDENT_P2_REPAIR_UNIT' and unit['source_stable'],'independent unit did not pass')
+for name,want in unit['source_files'].items():need(meta(evidence.bound_path(ROOT,name))==want,'reviewed source changed after tests')
+module=load(OUT/'actual-native-module.json')
+need(module['Version']=='v0.0.0-20251015172955-9e49d5e7a648'
+     and module['Origin']['Hash']=='9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a'
+     and module['Sum']=='h1:6TdolSCLSs2nwm8i0PpWDqf9iX2Ty9WQK8wmr7dCnUM=','exact native module identity differs')
+contract=load(NATIVE/'native-contract.json')
+need(contract['module']==module['Version'] and contract['ordinary_delete_disabled']
+     and contract['mutation_guard']=='X-Minio-Source-Replication-Check','native non-mutation guard differs')
+server=Path(module['Dir'])
+need(meta(server/'cmd/object-handlers.go')['sha256']==contract['handler_sha256']
+     and meta(server/'cmd/auth-handler.go')['sha256']==contract['auth_sha256'],'native source bytes differ')
+handler=(server/'cmd/object-handlers.go').read_text(encoding='utf-8').split('func (api objectAPIHandlers) DeleteObjectHandler',1)[1]
+need(handler.index('policy.DeleteObjectAction')<handler.index('MinIOSourceReplicationCheck')<handler.index('opts, err := delOpts')<handler.index('deleteObject(ctx'),'permission check is not before mutation')
+need(module['Version'] in (NATIVE/'native-buildinfo.txt').read_text(encoding='utf-8'),'native executable buildinfo differs')
+native=load(NATIVE/'native-permission-result.json')
+need(native['status']=='PASS_NATIVE_NON_MUTATING_PERMISSION_REGRESSION' and native['objects_unchanged']==17
+     and native['ordinary_delete_requests']==native['actual_object_deletions']==0
+     and native['transport_roundtrips']==130 and len(native['probe_requests'])==118,'native result membership differs')
+counts=Counter((x['policy'],x['mode'],x['response']['http_status'],x['response']['error_code']) for x in native['probe_requests'])
+need(counts[('old','exact',403,'AccessDenied')]==17 and counts[('fixed','exact',403,'AccessDenied')]==11
+     and counts[('fixed','exact',400,'ReplicationPermissionCheck')]==counts[('fixed','relay',400,'ReplicationPermissionCheck')]==6,'target/survivor native matrix differs')
+for policy in ('old','fixed'):
+ for mode in ('foreign-version','bare-key','foreign-key','foreign-bucket'):
+  need(counts[(policy,mode,403,'AccessDenied')]==6,'exact-scope refusal missing')
+ for mode in ('bad-signature','host-change'):
+  need(counts[(policy,mode,403,'SignatureDoesNotMatch')]==6,'signature refusal missing')
+need(counts[('old','relay',403,'AccessDenied')]==6,'old-policy relay refusal missing')
+need(all(x['response']['body_complete'] and len(x['response']['body_sha256'])==64 for x in native['probe_requests']),'native diagnostics incomplete')
+starts=[load(x) for x in NATIVE.glob('request-start-*.json')]
+observed=[load(x) for x in NATIVE.glob('request-observation-*.json')]
+need(len(starts)==len(observed)==205 and len({x['id'] for x in starts})==205 and {x['id'] for x in starts}=={x['id'] for x in observed},'native transport journal not exact paired membership')
+by_id={x['id']:x for x in observed}
+need(all(dt.datetime.fromisoformat(x['at'])<=dt.datetime.fromisoformat(by_id[x['id']]['at']) and by_id[x['id']]['invocation_quantity']==1
+     and by_id[x['id']]['amount']=='NOT_ASSESSED' for x in starts),'native observation/cost quantity differs')
+failed_transports=[x for x in starts if by_id[x['id']]['transport_error']]
+need(len(failed_transports)==1 and failed_transports[0]['method']=='GET' and failed_transports[0]['path']=='/minio/health/ready'
+     and by_id[failed_transports[0]['id']]['status']==0,'unexpected native transport failure')
+methods=dict(Counter(x['method'] for x in starts))
+need(methods=={'GET':28,'PUT':47,'DELETE':130} and all(x['native_permission_check'] for x in starts if x['method']=='DELETE'),'ordinary DELETE or transport count differs')
+interpret=load(OUT/'transport-count-interpretation01.json')
+need((interpret['native03_original_request_pairs'],interpret['wire_frontend_roundtrips'],interpret['native_backend_roundtrips'],interpret['native_permission_checks'],interpret['other_native_requests'])==(205,12,193,118,75),'native/relay count interpretation differs')
+wire=list(NATIVE.glob('wire-*/wire-response-*.json'))
+need(len(wire)==12,'native wire sample membership differs')
+for path in wire:
+ proof=load(path)
+ body=load_body=json.loads(base64.b64decode(proof['Body']))
+ need(len(base64.b64decode(proof['Signature']))==64 and body['Phase']=='UPSTREAM_HTTP_RESPONSE'
+      and body['Response']['error_code'] in ('AccessDenied','ReplicationPermissionCheck')
+      and body['Response']['body_complete'],'wire signed response shape differs')
+terminal=load(NATIVE/'terminal.json')
+need(terminal['status']=='PASS_ISOLATED_NONDELETE_REGRESSION' and terminal['failure'] is None and len(terminal['closure'])==2
+     and all(x['PID']==0 and not x['running'] and x['noports'] and x['restart']=='no' for x in terminal['closure']),'new synthetic resource closure incomplete')
+before=load(NATIVE/'retained-before.json');after=load(NATIVE/'retained-after.json')
+need(len(before['owners'])==len(after['owners'])==715 and before['owners']==after['owners']
+     and all(x['PID']==0 and not x['running'] for x in after['owners']),'715 retained owner readbacks differ')
+need(before['used_budget_archives']==after['used_budget_archives_unchanged'] and len(before['used_budget_archives'])==3,'used budget archive set differs')
+for name,digest in before['used_budget_archives'].items():need(meta(Path(name))['sha256']==digest,'original used budget archive changed')
+budget_readback=load(OUT/'actual-used-budget-readback01.json')
+need(budget_readback['status']=='PASS_CURRENT_STOPPED_VOLUME_BYTES_MATCH_ORIGINAL' and budget_readback['read_only_docker_cp']
+     and not budget_readback['container_started'],'current budget readback scope differs')
+business_archive=next(Path(name) for name in before['used_budget_archives'] if 'business-races' in name)
+need(meta(business_archive)['sha256']==budget_readback['original_archive_sha256'],'current budget reference archive differs')
+with tarfile.open(business_archive) as archive:
+ original_budget={Path(x.name).name:hashlib.sha256(archive.extractfile(x).read()).hexdigest() for x in archive.getmembers() if x.isfile()}
+need(len(original_budget)==2 and original_budget==budget_readback['members'],'actual consumed budget member proof differs')
+preserved=load(OUT/'original-c18-byte-preservation.json')
+need(preserved['status']=='PASS_EXACT_APPEND_ONLY_COPY' and len(preserved['members'])==1064 and preserved['source_checkout_modified'] is False,'original c18 copy boundary differs')
+for row in preserved['members']:
+ need(meta(evidence.bound_path(ROOT,row['path']))['sha256']==row['sha256']==meta(evidence.bound_path(OLD_ROOT,row['path']))['sha256'],'original c18 bytes changed')
+old_index=load(OLD_ROOT/WINDOW/'evidence-index.json')
+old_audit=evidence.audit_index(OLD_ROOT,{'id':'original-c18-failed-window','index':WINDOW+'/evidence-index.json','sha256':meta(OLD_ROOT/WINDOW/'evidence-index.json')['sha256'],
+  'format':'members-list-v1','member_root':'.','expected_count':970,'expected_status':'C18_V28_FAILED_FIXED_WINDOW_EVIDENCE_INDEX'})
+old_terminal=load(OLD_ROOT/WINDOW/'terminal.json')
+need(old_terminal['outcome']=='DENIED' and old_terminal['sender_budget_consumed']==old_terminal['wire_budget_consumed']==1
+     and old_terminal['other_five_targets']=='NOT_RUN' and old_terminal['no_resume'],'original failed terminal changed')
+failure=load(OUT/'native01/terminal.json')
+need(failure['status']=='FAILED_RETAINED' and failure['closure']==[] and not (OUT/'native01/allocation.json').exists(),'native01 module failure not retained before allocation')
+need(load(OUT/'native02/terminal.json')['status']=='PASS_ISOLATED_NONDELETE_REGRESSION','native02 original PASS changed')
+
+# Bind all closed native03 raw outputs and failed/old execution proof receipts.
+receipt_files=[*sorted(x for x in NATIVE.rglob('*') if x.is_file()),OUT/'native01/terminal.json',OUT/'native02/terminal.json',
+ OUT/'native02/native-permission-result.json',OUT/'actual-native-module.json',OUT/'original-c18-byte-preservation.json',
+ OUT/'transport-count-interpretation01.json',OUT/'actual-used-budget-readback01.json',OUT/'go-regression.json',OUT/'go-regression.stdout.txt',OUT/'go-regression.stderr.txt']
+receipt_map={path.relative_to(ROOT).as_posix():meta(path) for path in receipt_files}
+save('independent-receipt-bindings01.json',{'status':'P2_REPAIR_INDEPENDENT_REVIEW_RECEIPT_BINDINGS','count':len(receipt_map),'files':receipt_map})
+matrix=ROOT/'docs/acceptance/issue307-d1-p2-http403-repair01.md'
+report={
+ 'status':'PASS_BOUNDED_P2_HTTP403_NONDELETE_REPAIR_REVIEW','remaining_blockers':[],
+ 'at':dt.datetime.now(dt.timezone.utc).isoformat(),'reviewer':'/root/c18_independent_review',
+ 'reviewed_checkout_base':subprocess.check_output(['git','-c','core.longpaths=true','rev-parse','HEAD'],cwd=ROOT).decode().strip(),
+ 'source_binding':'Current reviewed diff and new files are bound below by actual bytes; no new executable candidate/authorization is accepted.',
+ 'reviewed_source_files':unit['source_files'],
+ 'matrix':{'path':matrix.relative_to(ROOT).as_posix(),**meta(matrix)},
+ 'native_receipt_bindings':{'path':(OUT/'independent-receipt-bindings01.json').relative_to(ROOT).as_posix(),**meta(OUT/'independent-receipt-bindings01.json')},
+ 'native_source':{'image':contract['image'],'module':module['Version'],'origin':module['Origin']['Hash'],'module_sum':module['Sum'],
+                  'binary_sha256':contract['binary_sha256'],'handler_sha256':contract['handler_sha256'],'auth_sha256':contract['auth_sha256']},
+ 'root_cause':{'status':'CONFIRMED_POLICY_CONTRACT_DEFECT_WITH_SAME_IMAGE_NON_MUTATING_REPRODUCTION',
+   'finding':'The actual MinIO handler authorizes DeleteObject before object mutation. Version-only policy omits that entry action; adding DeleteObject under the same exact namespace/key/version conditions allows the permission-only handler path. Retained policies keep their original Version-only semantics. Existing repository implementation and official SDK policy evaluator are reused.',
+   'official_handler':'https://github.com/minio/minio/blob/9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a/cmd/object-handlers.go',
+   'official_auth':'https://github.com/minio/minio/blob/9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a/cmd/auth-handler.go',
+   'historical_P2_XML_Code':'UNKNOWN_NOT_RETAINED_BY_FROZEN_TRANSPORT',
+   'historical_fact_boundary':'The original P2 remains CONFIRMED DENIED with its old proof hash, used sender/wire budgets and terminal seal. New AccessDenied reproduction is not backfilled as the old XML Code.'},
+ 'checks':[
+  {'status':'PASS','subject':'Policy scope and actual historical IAM','finding':'Both current delete actions share the same exact resource and s3:versionid condition; wrong/bare version, foreign key/bucket and survivors remain denied. RemainingAuditPolicies reproduces old retained Version-only policy bytes semantically rather than expanding them. Repair source still uses old c18 compile constants and must not be run to update that old source IAM.'},
+  {'status':'PASS','subject':'Safe adapter diagnostics and immutable proof binding','finding':'At most 64KiB+1 bytes are read; status, a closed allowlist Code, body digest and completeness flag are retained. Unknown/reflected codes and free-form Message/Resource/CanonicalRequest/Authorization are never persisted. New observation proof hashes bind the diagnostic summary; typed failure survives SDK/adapter to sender receipt. Existing proof hashes and facts are not rewritten.'},
+  {'status':'PASS','subject':'Wire provenance and no resend','finding':'Local admission/target/attempt/budget refusals and received upstream non204 responses have separate signed append-only receipts. Upstream budget is consumed before forwarding. The denied-return path preserves its original observation/cost/reservation facts and does not auto resend or recover. Signed local/upstream receipt safety and verification pass independent unit tests.'},
+  {'status':'PASS','subject':'Non-mutating native success and counterexamples','finding':'Actual binary module and exact source are pinned before the check. Every HTTP DELETE includes the signed native replication-check header, rechecked by transport; the actual handler returns before delOpts/DeleteObject. There is no unguarded DELETE positive control. The old/fixed exact and relay differential, eleven survivor refusals, foreign/bare version, foreign key/bucket, bad secret and changed Host all pass on the isolated native image.'},
+  {'status':'PASS','subject':'Preserved inventory, retained state and costs','finding':'All seventeen new synthetic object versions and bytes remain intact with no delete markers. The new server/runner are stopped with PID0/noports/no restart. Before/after records retain 715 old c18 CIDs closed; 1064 copied c18 history members and all 970 failed-window index members match actual bytes; three used-budget archive digests remain unchanged. No old source is started, no old IAM enabled, no pins released and no old authorization reused.'}
+ ],
+ 'independent_unit':{'path':(OUT/'independent-tests01/result.json').relative_to(ROOT).as_posix(),**meta(OUT/'independent-tests01/result.json'),
+  'packages':3,'storage_tests_and_subtests':14,'policy_tests':1,'wire_return_tests_and_subtests':12,'count':1,
+  'native_configuration_removed':True,'real_PostgreSQL':'NOT_RUN','reviewer_Docker_calls':0,'reviewer_provider_calls':0},
+ 'native03':{'permission_cases':118,'permission_probe_backend_requests':118,'guarded_DELETE_transport_roundtrips_including_frontend':130,
+  'all_HTTP_transport_pairs':205,'loopback_wire_frontend_roundtrips':12,'native_backend_roundtrips':193,'native_setup_readback_roundtrips':75,
+  'HTTP_methods':methods,'all_start_observation_pairs_verified':True,'amount':'NOT_ASSESSED',
+  'native_backend_HTTP_responses':192,'native_backend_failed_readiness_transport_attempts':1,
+  'readiness_failure':{'id':failed_transports[0]['id'],'status':0,'transport_error':True,'recovered_before_permission_cases':True,
+                       'meaning':'205 and 193 are transport-attempt counts; this failed connection is not evidence of a server-received native HTTP invocation.'},
+  'objects_unchanged':17,'ordinary_DELETE_requests':0,'actual_object_deletions':0,
+  'wire_signed_samples_retained':12,'native_sample_offline_crypto_verification':'NOT_CLAIMED_EPHEMERAL_PUBLIC_KEY_NOT_PERSISTED; unit actual signature verification passes'},
+ 'original_window_index_audit':old_audit,
+ 'current_stopped_budget_readback':{'path':(OUT/'actual-used-budget-readback01.json').relative_to(ROOT).as_posix(),
+  **meta(OUT/'actual-used-budget-readback01.json'),'original_two_consumed_members_match':True,'reviewer_Docker_calls':0},
+ 'earlier_receipts':{'native01':'Original wrong-module assumption failure retained with no resources allocated.',
+  'native02':'Earlier 94-case PASS and known 106 probe transport roundtrips retained. The later native03 journal does not imply that earlier setup/readback requests or costs never occurred.',
+  'formatting':'Author records native03 followed only by gofmt on send_return.go and wire_native_test.go. Final formatted source was independently unit-tested; native03 raw build bytes are not falsely claimed equal to final formatting.'},
+ 'reviewer_audit_failure':{'path':'independent-audit-failure01.json','meaning':'Original reviewer script/error are retained. The assumption that all readiness attempts received HTTP was corrected; native facts, runtime gates and source were not changed.'},
+ 'outside_this_review':{'new_execution':'NOT_PREPARED','new_candidate':'NOT_FROZEN','new_window':'NOT_AUTHORIZED','new_budget':'NOT_ALLOCATED',
+  'six_source_target_deletions':'NOT_RUN','new_Core_recovery':'NOT_RUN','full_D1':'NOT_ACCEPTED','merge':'NOT_AUTHORIZED',
+  'PR332':'DRAFT_UNMERGED_REQUIRED','Issue307':'OPEN_REQUIRED'},
+ 'next_boundary':'Any later source execution requires current Core dispatch handling, new execution/identities/independent budgets, frozen candidate/window/precise plan, fresh prerequisite checks and new direct human authorization. Do not use old c18 authority or alter frozen old bytes.'
+}
+for name,want in unit['source_files'].items():need(meta(evidence.bound_path(ROOT,name))==want,'source changed during final review')
+save('independent-review01.json',report)
+print(json.dumps({'status':report['status'],'remaining_blockers':[],'report':meta(OUT/'independent-review01.json'),
+ 'receipt_index':meta(OUT/'independent-receipt-bindings01.json'),'receipt_members':len(receipt_map)}))

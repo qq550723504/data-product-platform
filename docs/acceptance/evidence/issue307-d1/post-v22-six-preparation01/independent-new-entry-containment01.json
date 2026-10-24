@@ -1,0 +1,47 @@
+{
+  "at": "2026-10-19T16:24:14.351884+00:00",
+  "findings": {
+    "E1_inherited_stop": {
+      "inspect_unavailable": true,
+      "fixed_stop_requested": false,
+      "actual_modeled_commands": [],
+      "error": "RuntimeError"
+    },
+    "E2_unknown_create_closure": {
+      "raised": "ValueError",
+      "receipt": {
+        "owners": [
+          {
+            "cid": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+            "closed": true
+          },
+          {
+            "cid": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "closed": true
+          }
+        ],
+        "failure": {
+          "type": "RuntimeError",
+          "message": "recorded create transport outcome unknown"
+        },
+        "native_delete": 0,
+        "all_closed": true
+      },
+      "closed_known_cids": [
+        "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "create_names": [
+        "dpp307-six-read-11111111-1111-4111-8111-111111111111"
+      ],
+      "unconfirmed_created_name_recorded": false,
+      "model_only": true
+    }
+  },
+  "source_files": {
+    "window_six_support.py": "700c789e70b65101150397528c42b84eb443b218b87113cd333722020aad07ae",
+    "verify-six-native.py": "70f7e04e07af498b5641c8ec88c26493b964b3fcdf47b24f10446843296b6da4"
+  },
+  "actual_Docker": 0,
+  "actual_source_native_provider": 0
+}

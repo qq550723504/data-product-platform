@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "status": "DRAFT_HOST_REVIEW_REQUIRES_FINAL_RECHECK",
+  "reviewed_at": "2026-10-19T12:30:50.658244+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "scope": "Read-only design/draft review only; parent is concurrently implementing complete host entry and counterexamples. Not a final source or manifest/run gate.",
+  "snapshot": {
+    "file": "host-draft-snapshot01.py",
+    "sha256": "bf9d7d280174251ad5384432bb60317a4cd97ee8d4dbac7de0a6c5e51b6e70fc",
+    "bytes": 32808,
+    "note": "Captured after parent had already fixed original-channel preservation. Filename deliberately does not claim pre-fix bytes."
+  },
+  "required_current_slice_closure": [
+    {
+      "id": "HOST1",
+      "classification": "BLOCKER_OPEN_AT_SNAPSHOT",
+      "root": "Failure containment skips the fixed disable-all owner if the preliminary Native inspect raises.",
+      "required_behavior": "When the Native CID belongs to this audit attempted-start set, an unreadable running-state precheck must not suppress the known disable-all attempt. Do not start Native or enable anything in containment; attempt the fixed closer, preserve failure/unconfirmed if netns is actually stopped/unavailable, then independently attempt every fixed physical stop/readback."
+    },
+    {
+      "id": "HOST2",
+      "classification": "BLOCKER_OPEN_AT_SNAPSHOT",
+      "root": "Observer private allow-list currently checks only path names, accepting directory/symlink aliases as closure.json/proof.json.",
+      "required_behavior": "Use the existing strict private-file contract: exact allowed names, regular files, no symlink/junction/subdirectory/alias expansion at the mount/private boundary. Keep host key/root/Native credentials outside observer mounted reachability. Dynamic proof file still needs a strict last-stage check."
+    }
+  ],
+  "in_progress_parent_known_roots": [
+    "Fresh sealed gateway digest/state",
+    "Frozen old helper operator/case/root configuration SHA",
+    "Complete actual IAM readback/identity freshness",
+    "Actual Core delta and immutable row/pin/budget retention in full host composition"
+  ],
+  "independent_test": {
+    "file": "test_host_original_channels01.py",
+    "sha256": "f03bb2e0a9e4332747f8ba209f35d911319610ed94a01cd5d5cac2cd0f586688",
+    "bytes": 2091,
+    "command": "python -B test_host_original_channels01.py",
+    "result": "PASS_1_METHOD_2_MOCK_COMBINATIONS",
+    "combinations": [
+      "wait timeout with partial stdout/stderr",
+      "post-wait inspect failure"
+    ],
+    "proof": "The captured revised run_owner attempts independent owner logs and retains original stdout/stderr in both cases, then fails closed. Not a pre-fix failure reproduction.",
+    "log": {
+      "file": "host-original-channels01.txt",
+      "sha256": "533d0e5547f03ee03dfef3383b59f738e1437d9c0fab7176af22a7892049942f",
+      "bytes": 391
+    },
+    "Docker": "MOCKED",
+    "provider": 0
+  },
+  "failure_evidence_requirement": "Any partial-commit observer failure/timeout/result decode error must keep original result/log bytes and independently attempt Core rows/fingerprint/anchors before stopping Core. Missing data stays UNKNOWN_NOT_ASSESSED. Never roll back or manufacture the old lost P2 error, NOT_SENT, or zero cost. The concurrent final_core draft is moving in this direction and needs whole-entry fault tests.",
+  "scope_limits": [
+    "No Docker/provider/secret/host key access, no signing or execution of original environment.",
+    "Go adapter/observer existing source reviews and PG evidence remain separate and unchanged.",
+    "Wait for parent final source hashes and complete mock regressions before final source PASS; actual prepared owner manifest must be reviewed separately."
+  ],
+  "remaining_blockers": [
+    "HOST1",
+    "HOST2"
+  ],
+  "host_prepare": "NOT_RUN",
+  "host_proof_signed": "NOT_RUN",
+  "actual_closure": "NOT_RUN",
+  "full_D1": "NOT_ACCEPTED"
+}

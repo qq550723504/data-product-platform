@@ -1,0 +1,62 @@
+"""Record a pre-publication preparation snapshot; no runtime/network writes."""
+import hashlib
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[5]
+HERE = Path(__file__).parent
+BASE = HERE.parent
+load = lambda path: json.loads(path.read_bytes())
+sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    review = BASE / 'candidate22-artifacts-review01/independent-final-review01.json'
+    proof = load(review)
+    if proof['status'] != 'PASS_BOUNDED_C22_FROZEN_NONDELETE_PREPARATION_REVIEW' or proof['remaining_blockers']:
+        raise ValueError('Final bounded packet review missing')
+    cold = load(HERE / 'final-cold-inventory01.json')
+    if cold['count'] != 1085 or cold['native_delete'] != 0:
+        raise ValueError('Closed-state observation missing')
+    audit = load(HERE / 'phase-final-static-audit01/result.json')
+    if audit['exit'] != 0:
+        raise ValueError('Same complete entry static audit did not pass')
+    manifest = load(HERE / 'approval-reference-manifest01.json')
+    complete=load(BASE/'remaining-candidate22-readonly01/complete.json')
+    ci=load(BASE/'remaining-candidate22-preparation01/allocation.json')['source_ci']
+    if complete['status']!='PASS_COMPLETE_SIX_NATIVE_ENTRY':raise ValueError('Actual complete native receipt required')
+    text = f'''# #307 D1 candidate22/v32 非删除准备验收矩阵
+
+execution `0e5cb8f3-46a9-4339-88e4-7154d6ebe13f`，固定候选窗口2026-10-23新加坡18:00–18:40（UTC10:00≤now<10:40），只读恢复最晚12:40Z。本文件是最终提交前的准备快照。最终发布HEAD CI、原生分支锁与锁后execution-binding另存发布附录；本快照不冒称它们已经完成。当前无新删除授权、无定时续跑；#332 OPEN/Draft、不合并，#307 OPEN。
+
+| 验收项 | 实际结果 | 证据 |
+| --- | --- | --- |
+| R/P严格双制品与跨字段回归 | PASS；R固定schema69/66，无源升级或兼容fallback；P保留当前产品模型 | candidate22-source-review02/independent-final-review01.json |
+| 分配前P精确PR CI | PASS；{ci['head']} / run{ci['run']}，13/13；event=pull_request | allocation.json内source_ci原收据/完整snapshot |
+| 新代资源与预算 | PASS；86 owners、15新卷、3internal networks，3独立空预算归本execution，旧预算未复用 | remaining-candidate22-preparation01/allocation.json、budget-initialization.json |
+| 三源Core只读/备份与分离restore | PASS；3组完成、9新备份、独立clean及rehearsal，源Core业务命令及object PUT/DELETE=0 | remaining-candidate22-preparation01/non-delete-terminal.json及原始索引 |
+| 隔离业务重跑 | PASS；仅副本Command，历史事实multiset保留；不是六份源发送结果 | 各组rehearsal原始stdout及validation |
+| 完整17版本原生只读入口 | PASS；17现存、6目标、11survivor，P1真实NoSuchVersion404；Core指纹/roles/ACL前后不变 | remaining-candidate22-readonly01/complete.json |
+| 完整IAM语义与保护/库存 | PASS；53实际用户disabled，52 sole-policy/no-groups及固定NONE；15 fresh NoSuchUser，官方ParseConfig/Equals | 同一完整入口各组原始请求/聚合 |
+| 真实技术请求与成本 | {complete['technical_requests']}个start/observation对；amount=NOT_ASSESSED，非外部业务provider执行 | complete.json及每组technical原始回执 |
+| candidate21及旧失败/预算/pins | PASS保留；996旧CID，30旧预算（含已用v28预算），失败terminal与旧pins不改写 | retained-candidate21-anchor02、retained-full-readonly02、最终cold gate |
+| 全部备份 | PASS；66旧=63完整+3失败partial，9新，共75逐字节SHA | retained-backups75-readback01.json |
+| 最终关闭状态 | PASS；1085已知CID=996旧+86本代+3技术reader，全部stopped/PID0/noports/norestart；30permission=false | final-cold-inventory01.json |
+| 当前新授权/调度 | NOT_RECEIVED / NOT_CREATED；旧调度PAUSED或ABSENT | authority-schedule-absence01.json |
+| 四份实际审批文档Git字节 | PASS；真实blob/archive/autocrlf true与false checkout均原字节一致，含child attrs自身 | publication-bytes-regression01/result.json |
+| 冻结候选独立评审 | PASS；0有效阻断，报告SHA `{sha(review)}` | candidate22-artifacts-review01/independent-final-review01.json |
+| 最终静态索引/离线核验 | PASS；同一固定完整入口 --audit-only，审批manifest {manifest['count']}成员 | final-static-evidence-audit-plan01.json、phase-final-static-audit01 |
+| 最终发布HEAD PR CI | PENDING_PUBLICATION；必须另核精确HEAD，不能拿分配前CI代替 | 后续publication01追加回执 |
+| exact原生分支锁/execution-binding | PENDING_FINAL_HEAD_CI；锁后禁止推进HEAD，不自动解锁 | 后续branch-freeze01追加回执 |
+| 六份源真实发送/恢复/H2与mixed outcomes | NOT_RUN；P2→T1→T2→H2A→M1A→M1B每份max1/globalmax6仅未来新授权后允许 | 没有本代授权或发送结果 |
+| 完整D1 | NOT_ACCEPTED；PR Ready/merge/main CI均不在本轮授权内 | #332 Draft / #307 OPEN |
+
+完整静态方案见[确认文本](issue307-d1-candidate22-confirmation.md)及[v32手册](issue307-d1-v32-window-runbook.md)。最终锁后完整附录补齐前不得请求删除授权。旧原始失败、已用预算、pins、provider attempts/成本不覆盖；cleanup=0、hold-release=0、bypass=0。所有晚于本快照的事实只追加保存，不回写历史PENDING/NOT_RECEIVED字段。
+'''
+    with (ROOT / 'docs/acceptance/issue307-d1-v32-preparation.md').open('xb') as stream:
+        stream.write(text.encode('utf-8'))
+    print(json.dumps({'status': 'PREPUBLICATION_MATRIX_WRITTEN', 'execution_authority': False}))
+
+
+if __name__ == '__main__':
+    main()

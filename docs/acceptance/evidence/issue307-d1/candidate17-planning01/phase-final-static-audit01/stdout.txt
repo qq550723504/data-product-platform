@@ -1,0 +1,1 @@
+{"status": "PASS_SAVED_EVIDENCE_AUDIT_ONLY", "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453", "output": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate17-planning01\\final-static-audit01", "native_preflight": "NOT_RUN", "execution_authority": false, "native_delete": 0}

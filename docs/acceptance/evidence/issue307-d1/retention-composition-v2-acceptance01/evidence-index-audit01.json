@@ -1,0 +1,7 @@
+{
+  "id": "retention-v2-local-nondelete",
+  "format": "files-map-v1",
+  "index": "docs/acceptance/evidence/issue307-d1/retention-composition-v2-acceptance01/evidence-index01.json",
+  "sha256": "30d2fd176ce3df89630f1fcfb2fe5776b242e8ce85e1045598806d7054e25227",
+  "members_verified": 334
+}

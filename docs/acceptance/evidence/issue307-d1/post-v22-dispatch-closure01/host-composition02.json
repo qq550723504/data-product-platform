@@ -1,0 +1,37 @@
+{
+  "status": "PASS_OFFLINE_WHOLE_ENTRY_MOCK_ONLY",
+  "at": "2026-10-19T12:39:25.460186+00:00",
+  "tests_per_mode": 17,
+  "records": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-q"
+      ],
+      "exit": 0,
+      "stdout_sha256": "b019dcf5dfc54d65f896ef0494ae422e7a2bbc6a7febacd40f704824d2437b69",
+      "stderr_sha256": "98d697b6ea16b46fb36f876af591967bec9ae944d7dcaf2339a814f9a5cc84ef"
+    },
+    {
+      "command": [
+        "python",
+        "-O",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-q"
+      ],
+      "exit": 0,
+      "stdout_sha256": "1f136740f09a3338ce5d31a01f743f410bc7b7e029669fc81847d4fdeb7434a1",
+      "stderr_sha256": "d34776fa25138ddcebca083fcc4357f962bf0ff60f2749a08634a4f63926e927"
+    }
+  ],
+  "host_sha256": "aa68f18a07a184e0da074e1ca631f02302e397fc388f8dbf5aeffaa5cd01cae1",
+  "tests_sha256": "d7a2a037a1bfb051d1c564df7945a3c23542987d0998296643e1a55304089439",
+  "source_start": 0,
+  "provider": 0,
+  "DELETE": 0
+}

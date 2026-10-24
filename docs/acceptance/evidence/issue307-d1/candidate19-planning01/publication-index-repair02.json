@@ -1,0 +1,12 @@
+{
+  "status": "PASS_ORIGINAL_CONTENT_AND_RAW_GIT_INDEX",
+  "path": "docs/acceptance/evidence/issue307-d1/post-v28-restored-core01/address-pool-cause.json",
+  "worktree_raw_sha256": "7c19d8a22b5d898c4dac4c60b419c62fe209975647c1b91a2656119685f37e3c",
+  "previous_commit_representation_sha256": "48ecdd48667e673f7f52d572df8f7457b9585082aab7a5d5a0bd66a1f2a4e41b",
+  "staged_blob_sha256": "7c19d8a22b5d898c4dac4c60b419c62fe209975647c1b91a2656119685f37e3c",
+  "canonical_content_same_as_previous_commit": true,
+  "staged_equals_original_raw": true,
+  "attributes": "-text was already present; explicit reindex required",
+  "runtime_candidate_binary_config_changed": false,
+  "native_delete": 0
+}

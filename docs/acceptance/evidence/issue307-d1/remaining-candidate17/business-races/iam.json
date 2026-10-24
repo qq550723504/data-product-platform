@@ -1,0 +1,47 @@
+{
+  "disabled_identities": {
+    "d6f40bca9808a6960": "lifecycle307-six-d6f40bca9808a6960",
+    "d9f9c67d7808a6960": "lifecycle307-six-d9f9c67d7808a6960",
+    "daa2605a5808a6960": "lifecycle307-six-daa2605a5808a6960",
+    "dafc0e66c808a6960": "lifecycle307-six-dafc0e66c808a6960",
+    "delete808a6960": "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5",
+    "i4e524c04808a6960": "",
+    "i6f40bca9808a6960": "lifecycle307-six-i6f40bca9808a6960",
+    "i9f9c67d7808a6960": "lifecycle307-six-i9f9c67d7808a6960",
+    "iaa2605a5808a6960": "lifecycle307-six-iaa2605a5808a6960",
+    "iafc0e66c808a6960": "lifecycle307-six-iafc0e66c808a6960",
+    "inspect808a69606c36": "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5",
+    "remainput808a6960": "lifecycle307-remaining-business-remainput808a6960",
+    "remainread808a6960": "lifecycle307-remaining-business-remainread808a6960"
+  },
+  "policy_sha256": {
+    "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5": "abf6f5d5eddfc8e190c7d765963f781f2ef61b00fbc9e96115f36dde9055a513",
+    "lifecycle307-remaining-business-remainput808a6960": "9f9360695b08f2e638328119b4d976bbc446cbd410875e6914d5362f952afd97",
+    "lifecycle307-remaining-business-remainread808a6960": "15814900738437f53003c0cbd03bf0094ebb71bd5d5e0c00bba16eff020eeb33",
+    "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5": "100af1632032523f6e20529831ea05ab1046871ab72b287bdcffa52566fb907a",
+    "lifecycle307-six-d6f40bca9808a6960": "9c6a884b114eb01ce8c6abf35270103aa5308c8668ee3bfd706427ecef10529e",
+    "lifecycle307-six-d9f9c67d7808a6960": "9c6a884b114eb01ce8c6abf35270103aa5308c8668ee3bfd706427ecef10529e",
+    "lifecycle307-six-daa2605a5808a6960": "9c6a884b114eb01ce8c6abf35270103aa5308c8668ee3bfd706427ecef10529e",
+    "lifecycle307-six-dafc0e66c808a6960": "9c6a884b114eb01ce8c6abf35270103aa5308c8668ee3bfd706427ecef10529e",
+    "lifecycle307-six-i4e524c04808a6960": "f7fd89cba1152a9ed4cc90048c4e56cbde032624d26461f13c3ba930f82f8bfa",
+    "lifecycle307-six-i6f40bca9808a6960": "ecf09824926c49a26190e9956f12d683e3b36a861bc9f415ed2e0b1ccaca48fc",
+    "lifecycle307-six-i9f9c67d7808a6960": "ecf09824926c49a26190e9956f12d683e3b36a861bc9f415ed2e0b1ccaca48fc",
+    "lifecycle307-six-iaa2605a5808a6960": "34473efbb8d9116774c7a3fdc3feb34b15902cc19af03d81043ce20521116b3d",
+    "lifecycle307-six-iafc0e66c808a6960": "ecf09824926c49a26190e9956f12d683e3b36a861bc9f415ed2e0b1ccaca48fc"
+  },
+  "policy_file_sha256": {
+    "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5": "0cfc254aa4ded96ddaf123aa624a08c33ff743014b35ec4ee4f459343962a6c6",
+    "lifecycle307-remaining-business-remainput808a6960": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+    "lifecycle307-remaining-business-remainread808a6960": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+    "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5": "78fa626b4d04216ffc71b73b72fbe4c8f0349a26268f83519033494825d8e9bb",
+    "lifecycle307-six-d6f40bca9808a6960": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+    "lifecycle307-six-d9f9c67d7808a6960": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+    "lifecycle307-six-daa2605a5808a6960": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+    "lifecycle307-six-dafc0e66c808a6960": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+    "lifecycle307-six-i4e524c04808a6960": "00b8b3dfe14a48b6c8ad04467f04a78242e983499420b47a457ccb67080004f2",
+    "lifecycle307-six-i6f40bca9808a6960": "8c52d6812ffb8196f216a4a28c4641173e5b136a16f16bb08a6ae7c59759e859",
+    "lifecycle307-six-i9f9c67d7808a6960": "8c52d6812ffb8196f216a4a28c4641173e5b136a16f16bb08a6ae7c59759e859",
+    "lifecycle307-six-iaa2605a5808a6960": "838ce3570cd76de36c508a640ea5103d00ff37d1435574f9a576096365c775db",
+    "lifecycle307-six-iafc0e66c808a6960": "8c52d6812ffb8196f216a4a28c4641173e5b136a16f16bb08a6ae7c59759e859"
+  }
+}

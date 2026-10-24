@@ -1,0 +1,593 @@
+EEEEEEEEEEEEEEEEEEEEEEEEEEEE.
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='sealed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='foreign-confirmation')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='private-root')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='private-directory')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='junction')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='mount-type')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='mount-type-bool')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='mount-expanded')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='mount-duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='mount-foreign')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='mount-bytes')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='initializer-bytes')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='initializer-drift')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='initializer-expanded')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='initializer-running')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='foreign-budget')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='budget-expanded')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='budget-nonempty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='root-user')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='root-env')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='ports')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_all_counterexamples_reject_before_signature (__main__.AttesterTests.test_all_counterexamples_reject_before_signature) (fault='source-network')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 214, in test_all_counterexamples_reject_before_signature
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='wire', desktop=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 206, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='wire', desktop=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 206, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='P2', desktop=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 206, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='P2', desktop=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 206, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='recover-P2', desktop=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 206, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='recover-P2', desktop=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 206, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 45, in composition
+    candidate = copy.deepcopy(m.r.load(m.f.PUBLIC / 'candidate.json'))
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c18\data-product-platform\examples\lifecycle-d1\prepare-remaining-native.py", line 34, in load
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate18\\candidate.json'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.061s
+
+FAILED (errors=28)

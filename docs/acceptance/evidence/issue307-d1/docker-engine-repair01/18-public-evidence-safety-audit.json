@@ -1,0 +1,78 @@
+{
+  "at_utc": "2026-10-24T09:01:21.8265394Z",
+  "public_raw_log_files_remaining": 0,
+  "public_full_inspect_saved": false,
+  "public_source_projection": "Whitelist: Id, Name, Created, Image, State, HostConfig.RestartPolicy, mount descriptors; excludes Config.Env and all credential bytes",
+  "private_raw_file_count": 7,
+  "all_private_raw_hashes_verified": true,
+  "public_file_scan": [
+    {
+      "file": "01-before-host.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "02-before-context.txt",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "03-before-version.txt",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "04-before-wsl.txt",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "05-before-events-install-disks.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "06-historical-source-restart-policies.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "07-action-start-desktop.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "08-daemon-polls.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "09-recent-source-prestart-snapshots.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "10-after-version.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "11-after-info-redacted.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "12-after-source-readback.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "13-after-wsl.txt",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "14-verification-summary.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "15-after-host.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "16-raw-custody.json",
+      "sensitive_pattern_hits": 0
+    },
+    {
+      "file": "17-before-log-safe-excerpt.json",
+      "sensitive_pattern_hits": 0
+    }
+  ]
+}

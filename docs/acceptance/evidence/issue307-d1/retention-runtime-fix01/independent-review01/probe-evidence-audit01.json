@@ -1,0 +1,30 @@
+{
+  "status": "PASS_INDEPENDENT_SAVED_LINUX_PROBE_EVIDENCE_AUDIT",
+  "probe_cid": "56a5875a33bac11fd99c7c74e52a1a9e7287fd6e3faad7eb7d58d26674cfd37c",
+  "new_volumes": [
+    "d1-retention-probe-private-c1bbd8ab85d3",
+    "d1-retention-probe-output-4b5c79dde33b",
+    "d1-retention-probe-budget-8a7e167fc5f3"
+  ],
+  "stopped_PID0_exit0": true,
+  "retained_native_state_bytes_unchanged": true,
+  "uid_gid": 10001,
+  "directory_mode": "0700",
+  "file_mode": "0600",
+  "actual_mounts_checked": 3,
+  "evidence_sha256": {
+    "linux-probe01.json": "601a911b1db619067216ac2450dd19f1d8d682cdad897661348775c09a92b706",
+    "probe_linux01.py": "f60a1a429977615e02a4b8bd587d5e5de5fb730e26a1b1159041a51c63797a82",
+    "probe-21-start-test.stdout": "8088d244ce652e317b5bad241b643f57b1babfe8b4cf9b6ca5e1d4c32029ee00",
+    "probe-01-inspect.stdout": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+    "probe-02-inspect.stdout": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+    "probe-22-inspect.stdout": "e0e54c301293012aec06c04945c70c1416d5ed2d9283bc67822e43746ab23f6f",
+    "probe-31-inspect.stdout": "e0e54c301293012aec06c04945c70c1416d5ed2d9283bc67822e43746ab23f6f",
+    "probe-32-inspect.stdout": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+    "probe-33-inspect.stdout": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3"
+  },
+  "scope": "Saved actual new-volume custody/UNC/stat/fsync evidence plus Go wait and two-owner SDK loopback tests; not a production maintenance-packet or retained-native acceptance.",
+  "reviewer_Docker": 0,
+  "reviewer_WSL": 0,
+  "reviewer_provider": 0
+}

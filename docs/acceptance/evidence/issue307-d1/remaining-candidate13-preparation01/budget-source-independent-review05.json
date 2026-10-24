@@ -1,0 +1,83 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_BUDGET_REPAIR_SOURCE_REVIEW",
+  "remaining_blockers": [],
+  "reviewed_at_utc": "2026-10-19T17:37:37.749446+00:00",
+  "base_head": "355717c022fe36052dcf8b3cc37ceeef901286f7",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "source_state": "Reviewed working-tree bytes; checkpoint02/rebuild02 and runtime continuation remain NOT_RUN.",
+  "source_files_sha256": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "5a2697501928d09e92213ef17ec214416059fb01c937664a82b84218f9c00c6a",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "985f35004ec4137324f5e9b9c4bddc71565577ccc81b94960d3d9474dc19cdee",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "e7018c6f2e8de7683c74e0827310a8e6db8979fc719bea14908f348b693074e7",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "c5935bddc258da2e3f43c2b37f9729351eafa6f8e830216c497a982b8a8fb943",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "d52a2e4ac28f95c0452e3e0b0f15b33c0b740e03abea7a30f180a0c07449fa21"
+  },
+  "closed_findings": {
+    "BUDGET0": "Shared complete allocation Helpers plus historical eighteen Copies now pass actual six-target/budget_archive validators; P1 excluded from six targets.",
+    "BUDGET1": "Final unconfirmed physical closure persists failure, attempts all three owners and fails the call; original earlier exception is preserved.",
+    "HISTORY1": "Pinned checkpoint01, its twelve rebuild members/receipt and original cold-failure SHA remain mandatory; checkpoint02 has no old-source fallback."
+  },
+  "finite_continuation": "Business only reads/verifies original completion and empty owned budget. Late/mixed must be created, never-started, root-empty and fixed-scope before their only initialization. Exclusive intent/receipts prevent reopening; all false permission and topology gates remain.",
+  "completion_gate": "run_non_delete and freeze require exact three-group continuation/closure/archive evidence, current checkpoint and original failure binding.",
+  "independent_tests": [
+    {
+      "name": "runtime-normal",
+      "methods": 14,
+      "exit_code": 0,
+      "source_unchanged_during_test": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "263dd36b44a1b7e66b71e0b347870c95b0edf3856b2d9cb622b7b09cf12a448b"
+    },
+    {
+      "name": "runtime-optimized",
+      "methods": 14,
+      "exit_code": 0,
+      "source_unchanged_during_test": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4c19c5ef085b32295b3cac5a871c371e912efb302ef43225a2badf8ada6eaff9"
+    },
+    {
+      "name": "freeze-normal",
+      "methods": 1,
+      "exit_code": 0,
+      "source_unchanged_during_test": true,
+      "stdout_sha256": "16c0dbdbee78ca0eab1089233aa411b54d402bd4cf7a4ff6259a2eb4bd44e429",
+      "stderr_sha256": "5e2a45d6691a3c186d80885c6f9c29681a265239c792ab860fb0ea79cf96e303"
+    },
+    {
+      "name": "freeze-optimized",
+      "methods": 1,
+      "exit_code": 0,
+      "source_unchanged_during_test": true,
+      "stdout_sha256": "2de593c42245766277b1d3899aa07ed9569fb2f97ccae14938c3b2ac20fa3a40",
+      "stderr_sha256": "7d031d4313df1e94825bd01a3b0f8ea16bdaf94ad6dee15a9eb9335cf547fb8f"
+    }
+  ],
+  "tests_scope": "Runtime normal/-O each14 PASS; freeze normal/-O each1 PASS. Global refusal of unmodeled subprocess. Actual archived TAR bytes and real targets/budget_archive validators; runtime/PG/SDK and packet freeze are synthetic. No actual Native acceptance.",
+  "extra_raw_evidence_probe": "Actual and temp-copy budget_failure positive; four original failure/raw receipt/stderr/owner drift counterexamples rejected.",
+  "parent_checkpoint01_sha256": "03596768d01cec5793319fcbc94e2fbf93dcc6ab390c3331c6c9755719e0e649",
+  "budget_failure01_sha256": "163d41af4b95addb52bb0507527ecd20d131ebc426faa886a35a27583fe15378",
+  "web_report_written_once": {
+    "sha256": "e707abfed1c39a5f7fbd27ac4e24064e771c7ef65352c681f131efe99a4460e8",
+    "bytes": 4672,
+    "mode": "O_EXCL",
+    "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01/web-lockfile-independent-review01.json"
+  },
+  "boundaries": {
+    "no_compiled_source_or_migration_change": true,
+    "reviewer_docker_sdk_provider_calls": 0,
+    "reviewer_implementation_or_budget_mutations": 0,
+    "reviewer_report_writes": 1,
+    "other_retained_file_writes": 0,
+    "raw_independent_test_channels": "Preserved in tool outputs; exact hashes above, distinct from parent budget-repair01 logs.",
+    "checkpoint02_rebuild02": "NOT_RUN",
+    "late_mixed_initialization": "NOT_RUN",
+    "source_iam_backup_restore_native": "NOT_RUN",
+    "frozen_candidate": "NOT_FROZEN",
+    "precise_deletion_authorization": "NOT_RECEIVED",
+    "scheduling": "NONE",
+    "exact_new_head_ci": "NOT_REVIEWED",
+    "d1": "NOT_ACCEPTED"
+  }
+}

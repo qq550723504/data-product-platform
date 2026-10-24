@@ -1,0 +1,10 @@
+{
+  "status": "PASS_REAL_FIXED_CLI_SAVED_AUDIT_AND_TERMINAL_REJECTION",
+  "at": "2026-10-20T10:40:23.074043+00:00",
+  "head": "c1dd1b61495fd3150052744d6ba91e096a428b99",
+  "saved_evidence_members": 84,
+  "audit_only_exit": 0,
+  "terminal_rejection_exit": 1,
+  "source_Docker_provider_DELETE": 0,
+  "old_execution_authority_reused": false
+}

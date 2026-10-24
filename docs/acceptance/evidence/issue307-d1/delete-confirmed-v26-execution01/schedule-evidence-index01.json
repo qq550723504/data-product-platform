@@ -1,0 +1,73 @@
+{
+  "status": "PASS_SCHEDULE_EVIDENCE_INDEX",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "recorded_at": "2026-10-20T06:38:39.088762+00:00",
+  "members": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-human-authority.json",
+      "sha256": "fc67142925c8a3dbbf8f3ddea86728a9c5b9ea6687c1510aef25371408f59fef",
+      "bytes": 1867
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-prompt.txt",
+      "sha256": "5993bf6bff1948dbc4948d8a490fba9de252a7ccc0a883571f148ad979d93afd",
+      "bytes": 13405
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/automation-tool-receipts.json",
+      "sha256": "081f926507a14da57eeecab2276f533fded0b68c65ac4c83ea5f4a07eccac39c",
+      "bytes": 462
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-automation-snapshot.toml",
+      "sha256": "90d9e5bfdf589c6dbeca67f94b641df14762e24f53d950f25155cc8810022e04",
+      "bytes": 13767
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-prompt-actual.txt",
+      "sha256": "5993bf6bff1948dbc4948d8a490fba9de252a7ccc0a883571f148ad979d93afd",
+      "bytes": 13405
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-resume.json",
+      "sha256": "5e021271da0172772027c1c8db9f78eb31706a2c5797968f311b2e53c86a464c",
+      "bytes": 2661
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-client-diagnostic01.json",
+      "sha256": "2e8ed054acb9dd079eb9e5f75846d159c00953d11339bc3fa0a59b31d2446892",
+      "bytes": 434
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/pr-schedule-readback.json",
+      "sha256": "bcde571c1683eedd76d216a787b13919bcbb8da8b70becd3650596c5ef205614",
+      "bytes": 3556
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/pr-body-scheduled.txt",
+      "sha256": "ad6acf6bfa77f7e7e81a5272c0dd91ab3b37afa0b1742a89b31868e0c2c70485",
+      "bytes": 3214
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-final-checkpoint.json",
+      "sha256": "a23de01971cf44ad5be7b8a6e42ab3c91dd252244c79582c9be3939cbdd8de6b",
+      "bytes": 1255
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/authorization-evidence-index01.json",
+      "sha256": "6d946f93a2c48e2c41bb1774732133c32ae19e508f277216444eeb0b64c3da36",
+      "bytes": 4857
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v26-schedule01.md",
+      "sha256": "fbd8dad34e3e11c14fe8a40c21b71d5a63c0c9181a5716eb21f8c98f77cff709",
+      "bytes": 2712
+    }
+  ],
+  "scope": "Scheduling evidence plus immutable predecessor index; no running source or provider proof.",
+  "excludes": [
+    "self",
+    "future in-window execution evidence"
+  ],
+  "native_delete": 0
+}

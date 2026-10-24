@@ -1,0 +1,47 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_V23_RUNBOOK_REVIEW",
+  "source_head": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "runbook": "docs/acceptance/issue307-d1-v23-window-runbook.md",
+  "runbook_sha256": "e2507fcf21459c6f9bfa1b2a666f6bdd6630d64a3283fd2f064f9bfaeaead6a2",
+  "contract_sha256": "c1a2d5265efb5feb5c21b7c92bc683d52b8ec8b8a76c7d4aabf068130924583f",
+  "source_review_sha256": "1d0d9f0bbff1fce4c82e05adaa54e52e1b9b135bc10a3544058b60180dfa918c",
+  "reviewed_source_and_contract_files": 86,
+  "reviewed_source_drift": [],
+  "resolved_findings": [
+    {
+      "id": "RB-V23-1",
+      "status": "CLOSED",
+      "fix": "Worker UID10001/two tmpfs/capdrop constraints are scoped to workers; UID0 no-network CHOWN-only initializer and PG/Native/Redis/Caddy retain exact role descriptors. Provider root remains isolated from case/operator/recovery."
+    },
+    {
+      "id": "RB-V23-2",
+      "status": "CLOSED_WORDING",
+      "fix": "Preauthorization means do not start case owners; frozen time-bound Base fields must not be flipped or rewritten."
+    }
+  ],
+  "verified_contracts": [
+    "P2->T1->T2->H2A->M1A->M1B; each send then disable sending then selected Outbox/Asynq read-only recovery then committed Core absence before next budget slot.",
+    "H0/H1 zero sends; H1 requires successful PID0 owner, one-field profile revoke, all operators/enablers closed, fresh disabled IAM and stopped sealed gateway before one proof.",
+    "H2A only once; actual upstream204 precedes witness, late holds A+B, revoke and response loss; H2B never dispatches.",
+    "M1A absence precedes M1B; UNKNOWN plus C-only blocked checkpoint is copied and hashed before B lookup; C never deleted.",
+    "2026-10-20 UTC06:00<=now<06:40; recovery cutoff08:40; no new sender/wire/enable after06:40 and no window extension or UNKNOWN resend.",
+    "18 historical registrations, present17, six exact targets and eleven survivors are separate; no P1 replay, Renew, new rights or production/transfer replay.",
+    "30 permissions false and resources stopped before new authorization; actual current HEAD/PR CI/reviews must be verified separately; PR CI is not main CI.",
+    "Seal continues all known CID/group closure after failures and preserves unconfirmed IAM, raw evidence, pins, budgets, backups and old facts.",
+    "Current document is a preparation draft; no old authorization reuse, new schedule, merge or DELETE authority."
+  ],
+  "remaining_blockers": [],
+  "scope_limits": {
+    "review_type": "Read-only document/source consistency only; no runtime tests repeated for prose-only fixes",
+    "Docker_native_provider": 0,
+    "actual_manifest": "NOT_CREATED_OR_REVIEWED",
+    "actual_native_backup_restore": "NOT_RUN",
+    "candidate": "NOT_FROZEN",
+    "CI": "NOT_REVIEWED_OR_CLAIMED",
+    "delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "full_D1": "NOT_ACCEPTED"
+  }
+}

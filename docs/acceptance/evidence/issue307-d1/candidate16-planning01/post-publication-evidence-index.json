@@ -1,0 +1,51 @@
+{
+  "status": "PASS_POST_PUBLICATION_RECEIPTS_INDEX",
+  "at": "2026-10-20T02:50:11.868392+00:00",
+  "head": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+  "tracked_or_staged_changes": false,
+  "members": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-delivery-checkpoint.json",
+      "sha256": "f1edc89080ae9fc35a85c3f8bd155abcf9c405feeff9e467b00d6df635b882fa",
+      "bytes": 1929
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-document-readback.json",
+      "sha256": "274afc254f4f16570dc5ba12acf407001575d4779cbdde9af8309b5f37731d92",
+      "bytes": 954
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-publication-ci-api-readback.json",
+      "sha256": "3bd9b749860f3959a154bf3168b9485c3adeb9e33a48d71963812e2a304e2ffe",
+      "bytes": 6880
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-review-threads.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-review-threads.stdout.json",
+      "sha256": "186fe9ac899814a0d0de518af128c57eef9d3a79ebd10722e745f7b4ebfe7c51",
+      "bytes": 259
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/publication-byte-audit-harness-failure01.json",
+      "sha256": "edc1daf1c88880c338728574a2a1d71b9e31a7aeaa7b8e1cb2dfe02641f61e9e",
+      "bytes": 473
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/publication-byte-readback02.json",
+      "sha256": "c64066a311f4b6dd2b1c8fcaf0d4cd63f6571b363bbc4ef1fcb70da3808fb19f",
+      "bytes": 2145
+    }
+  ],
+  "excludes": [
+    "self",
+    "private mirrored delivery receipt"
+  ],
+  "purpose": "post-head CI/API and document readbacks retained separately; no runtime or approved document changes",
+  "human_authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "native_delete": 0
+}

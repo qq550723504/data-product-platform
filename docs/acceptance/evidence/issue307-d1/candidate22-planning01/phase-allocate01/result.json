@@ -1,0 +1,9 @@
+{
+  "phase": "allocate",
+  "exit": 1,
+  "stdout_bytes": 0,
+  "stderr_bytes": 1542,
+  "source": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "at": "2026-10-23T05:23:51.519086+00:00",
+  "delete_authority": false
+}

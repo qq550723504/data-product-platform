@@ -1,0 +1,104 @@
+{
+  "status": "PASS_EXACT_SOURCE_PR_RUN_AND_REQUIRED",
+  "run": 39286329231,
+  "event": "pull_request",
+  "source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "conclusion": "success",
+  "observed_at": "2026-10-19T16:45:21.980604+00:00",
+  "jobs_count": 13,
+  "jobs_summary": [
+    {
+      "id": 118173523669,
+      "name": "classify-changes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173636117,
+      "name": "web-console",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 118173636207,
+      "name": "gx-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173636297,
+      "name": "go-platform",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173636322,
+      "name": "hop-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173636659,
+      "name": "label-studio-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173636704,
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173636789,
+      "name": "splink-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173637264,
+      "name": "temporary-container-contracts (windows-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173637507,
+      "name": "live-core / live-core-browser",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173637545,
+      "name": "demo / demo-lifecycle",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118173637969,
+      "name": "browser-contracts / web-browser-contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 118178316835,
+      "name": "required",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "web_job_step_conclusions": [
+    "success",
+    "success",
+    "success",
+    "success",
+    "success",
+    "success",
+    "success",
+    "success",
+    "success",
+    "success",
+    "success"
+  ],
+  "limitation": "Raw web job summary may lag its successful Complete job and successful required/run aggregate; do not claim 13/13 job summaries unless all read back success. This is PR CI, not main CI.",
+  "native_delete": 0
+}

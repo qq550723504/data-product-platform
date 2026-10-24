@@ -1,0 +1,250 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_C14_HOST_SOURCE_REVIEW",
+  "remaining_blockers": [],
+  "scope": "Current candidate14/v24 five Python host entrypoints and bounded tests only. No allocation, build, materialize, freeze, budget initialization, Source/Core/provider execution, proof signing or permission enable was performed by reviewer.",
+  "proposal": {
+    "execution": "afc0e66c-535b-426e-a937-964d0c9ca0d6",
+    "profile": "candidate14/v24",
+    "window_utc": "2026-10-20T06:00:00Z <= now < 2026-10-20T06:40:00Z",
+    "recovery_deadline_utc": "2026-10-20T08:40:00Z",
+    "human_window_preference_only": true,
+    "human_delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED"
+  },
+  "checks": [
+    {
+      "invariant": "single_current_source_and_twelve_build_members",
+      "result": "PASS_SOURCE_MODEL",
+      "detail": "No c13 checkpoint fallback in current state(). Build source must be an existing commit; tracked runtime trees exactly match that source and untracked runtime inputs reject. Four binaries plus eight raw compiler channels form exact12 regular/non-symlink/non-junction/single-link hashed members. Later docs-only commits may differ in HEAD without rewriting runtime build source. Initial allocation source/build_files frozen as actual generation14 facts."
+    },
+    {
+      "invariant": "retained_generation_and_failure_separation",
+      "result": "PASS_SOURCE_AND_PARENT_RECEIPT_READBACK",
+      "detail": "Historical gate reuses accepted old closure/seventeen gates, preserves c13 allocation/failure bundle/original binaries/30 false controls/three old empty UID10001 budgets and exact mount graphs, plus probe/native02/native03/native04 scratch closure. Exact184 known CID set; failed native02 stays FAILED_OR_UNCONFIRMED_RETAINED. Old CP01/02/budget continuation are historical evidence, not active c14 runtime API."
+    },
+    {
+      "invariant": "new_allocation",
+      "result": "PASS_SOURCE_MODEL_NOT_ACTUAL_ALLOCATION",
+      "detail": "New execution nonce, exact-name no-adoption checks, intended86 owners/15 fresh local volumes/3 internal restore networks, complete descriptor/mount graph. No anonymous writable volume; sole old source-volume exception /source read-only. Canonical CAP_CHOWN initializer, precise created-empty network prebinding, no existed/exited-empty fallback. Separate root/service/UID10001 worker role constraints retained."
+    },
+    {
+      "invariant": "budgets",
+      "result": "PASS_SOURCE_MODEL_NOT_ACTUAL_INITIALIZATION",
+      "detail": "All three initializers must be never-started created/PID0/zero timestamps and all three new budgets empty/root-owned before any start. O_EXCL start marker prohibits replay. Same complete six target Helpers+Copies aggregate drives original TAR validator. Immutable initial TAR/owner receipt/exit bindings and closed membership required; failure/unconfirmed closure makes all_complete false; all three closures attempted. No c13 continuation or old CHOWN replay."
+    },
+    {
+      "invariant": "pre_source_case_topology_budget",
+      "result": "PASS_SOURCE_MODEL",
+      "detail": "Source run performs state/build, budget_completion, fixed six case cross-field/root-free checks, entire cold topology and30false sending/root permissions plus current empty budget archives before any Source start. P1 stays historical predecessor only; five readonly policy heads, no Renew/new Rights/producer/transfer."
+    },
+    {
+      "invariant": "Source_and_restore_non_delete",
+      "result": "PASS_SOURCE_MODEL",
+      "detail": "Fixed three Source pairs only; exact fresh full Core baseline; production disabled-only provision and file-only Source collection; Core before/after equal; fixed new dump/globals/native archive and distinct clean/rehearsal restore, actual-source and actual-restore IDs kept separate. Existing business Commands only on fresh rehearsal Core. Limited RESTORE inspector enable has fixed disable+physical finally; no Source identity enable. Actual behavior remains unrun for c14."
+    },
+    {
+      "invariant": "15_known_and_5_absent",
+      "result": "PASS_SOURCE_MODEL",
+      "detail": "Current Go guard accepted separately; Source and Restore six checker collect fifteen actual known disabled identities (strict14 sole-policy plus exact retained c13 NONE) and five compiled old-uncreated SDK absence proofs. Frozen IAM derives actual accepted receipt, keeps unassigned policy. Complete entry invokes current six checker rather than old18-as-present projection."
+    },
+    {
+      "invariant": "freeze_and_confirmation",
+      "result": "PASS_SOURCE_MODEL",
+      "detail": "Freeze requires three actual non-delete PASS checkpoints and original raw index consistency, budget_completion and preparation_gate; source archive binds runtime source and12 build members. Six exact targets/eleven survivors, P1 absence and old18 distinction, current binary/Core/IAM/gateway/owner/budget/windows exposed. All30 generated permissions false; no human authorization or schedule created."
+    },
+    {
+      "invariant": "window_and_containment",
+      "result": "PASS_SOURCE_MODEL",
+      "detail": "Case/recovery cross-fields precede permission and Docker in frozen sealed_gate; selected Outbox/Asynq/Core absence sequence remains P2,T1,T2,H2,M1A,M1B. H1 exact four late identities and closed enablers/gateway; H2/M1 prior finite semantics unchanged. Full fixed CID stop still attempted after initial inspect error; all_steps keeps group closure attempts and unknown states unconfirmed. Current support exposes check/archive/revoke/H1 proof/seal only, no enable/send/schedule."
+    }
+  ],
+  "independent_tests": {
+    "boundary": "All unmodeled subprocess.run/Popen globally refused before module import; only in-memory recorded Docker/Linux/PG/checker doubles and temporary files. No native/provider work. sys.dont_write_bytecode=True; no shared pycache written.",
+    "source_hashes_stable": {
+      "prepare-six-candidate.py": "7bdea9e030c1d44c84d4faceb6a29635aece6247bdce25657d78d8ee07de538b",
+      "six_candidate_runtime.py": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999",
+      "freeze-six-candidate.py": "b3b221aaf873d943932e423f12d9d20a09a2fbf3fe412bdc7e579ce108f0e61a",
+      "verify-six-native.py": "2b67ea1dd4e68b0e685ca58e86b2242dc88b0a49c784ce38b2d817562097d04e",
+      "window_six_support.py": "8cb5beece5c91ebb460f742f0a62143cb3b6eb08bf8e8ad272ae528e483ceedd",
+      "test_six_candidate_runtime.py": "01ada23ee6caf95c364b6944af79dc237f0b0f4713e36132ea31316007e29c3d",
+      "test_freeze_six_candidate.py": "c7f25c406f78c4823306d1bdb3a51e628ea9f6de240313633e81f82c73d2f057",
+      "test_verify_six_native.py": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+      "test_window_six_support.py": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+      "remaining_six_window.py": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef",
+      "test_remaining_six_window.py": "aa9db82c728aebbd0b742b80f3d30183062ecb711d40bd152a8cf7cc6f63c95d",
+      "remaining_sequence.py": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "test_remaining_sequence.py": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5"
+    },
+    "normal_and_optimized": [
+      {
+        "mode": "normal",
+        "test": "test_six_candidate_runtime.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "c20c228ab6473de70d0e31f1fa963fad9b80f9b9d8a1eedda04e1567ece9ff91",
+        "method_count": 12
+      },
+      {
+        "mode": "normal",
+        "test": "test_freeze_six_candidate.py",
+        "exit_code": 0,
+        "stdout_sha256": "49fd58b59662f695890d1dacd604531c4f76322abfb070291edbd555eb6efe6b",
+        "stderr_sha256": "a7ccb3f324f1fec3967dfdf10215f818a24ed5c587844009ca261b88d99ffad3",
+        "method_count": 1
+      },
+      {
+        "mode": "normal",
+        "test": "test_verify_six_native.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "248f75f8f6059b282acdac3f5b82fc88b69aaedb1142afedfc57b041452383cb",
+        "method_count": 2
+      },
+      {
+        "mode": "normal",
+        "test": "test_window_six_support.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "c01c590f18d1070d3814149669d3f1e3a1be23902978f8afce2c50c1f2bd09ad",
+        "method_count": 2
+      },
+      {
+        "mode": "normal",
+        "test": "test_remaining_six_window.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "a7793b6ab05b250a34e815e4385423c8df93e3eefc1282c27816e7297903af68",
+        "method_count": 3
+      },
+      {
+        "mode": "normal",
+        "test": "test_remaining_sequence.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "d4cdf6361ba8ddf0fac6d76817735be847c16a27325fb3718ed4cda931c47162",
+        "method_count": 6
+      },
+      {
+        "mode": "optimized",
+        "test": "test_six_candidate_runtime.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "7e23503d88ac088be21e8564e91629b8448ca8c34b98135dfaba91d10681329a",
+        "method_count": 12
+      },
+      {
+        "mode": "optimized",
+        "test": "test_freeze_six_candidate.py",
+        "exit_code": 0,
+        "stdout_sha256": "3a8a6a47825f156d34e355fb23d260b20f771d0430a011d220dc37863c57712e",
+        "stderr_sha256": "677cf796f722a56ddb1f08c43c7cba74a50ee9de5065ce96e7c9183cb06132b5",
+        "method_count": 1
+      },
+      {
+        "mode": "optimized",
+        "test": "test_verify_six_native.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "262b1a2b99597651f6df2e2348233f5107298808f41b5aaf65cade2f783df341",
+        "method_count": 2
+      },
+      {
+        "mode": "optimized",
+        "test": "test_window_six_support.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "73b3a57a36da1d7228c9d6ae9db8d37e5bbb7d91c4f150dd156c5f0b5f95f092",
+        "method_count": 2
+      },
+      {
+        "mode": "optimized",
+        "test": "test_remaining_six_window.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "848bb478247df199970d3c03f243f4f9fe405e0a996e04c8844830caec62208c",
+        "method_count": 3
+      },
+      {
+        "mode": "optimized",
+        "test": "test_remaining_sequence.py",
+        "exit_code": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "b471ecaa6b90e971e497c1cc00fcac437a6324cbfbf01496631be3c269e527cf",
+        "method_count": 6
+      }
+    ],
+    "counts_per_mode": {
+      "runtime": 12,
+      "freeze": 1,
+      "complete_entry": 2,
+      "host_support": 2,
+      "six_window": 3,
+      "sequence": 6,
+      "total": 26
+    },
+    "independent_fifteen_identity_freeze_model": {
+      "valid": {
+        "targets": 6,
+        "survivors": 11,
+        "sole_policy_lines": 14,
+        "exact_partial_NONE_lines": 1,
+        "status": "PASS_FIFTEEN_IDENTITY_DISPLAY_MODEL"
+      },
+      "foreign_NONE": "REJECTED unknown empty-policy identity before final permission publication",
+      "real_native_acceptance": false
+    }
+  },
+  "reviewer_actions": {
+    "implementation_edits": 0,
+    "docker_calls": 0,
+    "http_connections": 0,
+    "Source_calls": 0,
+    "credential_values_read": 0,
+    "git_github_writes": 0,
+    "report_writes": 1
+  },
+  "classification": {
+    "BLOCKER": [],
+    "FOLLOWUP": [],
+    "INVALID_OR_OUT_OF_SCOPE": [
+      "Treating old c13 CP01/02 contract and fourteen-identity text as active c14 execution authority: generation24 bootstrap supersedes that failed generation and no current CP fallback remains.",
+      "Reopening already accepted old dispatch closure or seventeen native acceptance.",
+      "Claiming these recorded/mock tests are native backups/restores, CI, candidate freeze, human authorization or full D1 acceptance."
+    ]
+  },
+  "required_next_gates": [
+    "Commit reviewed runtime source and validate exact matching necessary PR CI.",
+    "Review actual new stopped allocation/descriptors/profiles; actual fresh budget results separately.",
+    "Only after applicable gates, one-shot c14 non-delete Source/Restore run and independent result acceptance, then freeze/complete read-only validation/exact human confirmation."
+  ],
+  "full_D1": "NOT_ACCEPTED",
+  "candidate14_actual_allocation": "NOT_RUN_IN_THIS_REVIEW",
+  "candidate14_source_restore": "NOT_RUN",
+  "deletion": "NOT_RUN",
+  "source_files_sha256": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "7bdea9e030c1d44c84d4faceb6a29635aece6247bdce25657d78d8ee07de538b",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "b3b221aaf873d943932e423f12d9d20a09a2fbf3fe412bdc7e579ce108f0e61a",
+    "examples/lifecycle-d1/verify-six-native.py": "2b67ea1dd4e68b0e685ca58e86b2242dc88b0a49c784ce38b2d817562097d04e",
+    "examples/lifecycle-d1/window_six_support.py": "8cb5beece5c91ebb460f742f0a62143cb3b6eb08bf8e8ad272ae528e483ceedd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "01ada23ee6caf95c364b6944af79dc237f0b0f4713e36132ea31316007e29c3d",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "c7f25c406f78c4823306d1bdb3a51e628ea9f6de240313633e81f82c73d2f057",
+    "examples/lifecycle-d1/test_verify_six_native.py": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+    "examples/lifecycle-d1/test_window_six_support.py": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+    "examples/lifecycle-d1/remaining_six_window.py": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef",
+    "examples/lifecycle-d1/test_remaining_six_window.py": "aa9db82c728aebbd0b742b80f3d30183062ecb711d40bd152a8cf7cc6f63c95d",
+    "examples/lifecycle-d1/remaining_sequence.py": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+    "examples/lifecycle-d1/test_remaining_sequence.py": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5"
+  },
+  "reviewed_reference_sha256": {
+    "docs/acceptance/issue307-d1-v24-bootstrap-contract.md": "e22865348f94f897c02a35c428955beae6126ccad9f956b6a489952ee5edb807",
+    "docs/acceptance/issue307-d1-post-v22-six-contract.md": "629520cba0509208d9ec832cc118c0b1d3143d59911883baeffed1ad53e2a0b1",
+    "docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-contract01/independent-production-guard-review02.json": "63f37dfcdea4d8961bdcc8266330a14e29f7224c65f560d0f82dcc123437cc78",
+    "docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-contract01/independent-production-guard-native-review03.json": "ab0d5bed355956952fbb608f4bfdf7ef4cc9068c8b1d131c822251f3d1b3d456",
+    "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation02/retained-readonly01.json": "b1f3950d576ae7e9a8d08aed2189a3322ad084eb676200fb0b0257fcea22c052"
+  },
+  "retained_live_evidence_boundary": "Parent-produced 184-CID readonly gate receipt checked by file/hash/source binding only. Reviewer did not repeat live184 Docker checks in this source phase.",
+  "source_base_head": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "source_snapshot_kind": "CURRENT_UNCOMMITTED_RUNTIME_RAW_SHA; base HEAD does not contain this WIP",
+  "reviewed_at": "2026-10-19T18:39:04.590195+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "status": "PASS_PUBLICATION_CLOSED_READBACK",
+  "observed_at_utc": "2026-10-21T07:32:23.824462+00:00",
+  "owners": 620,
+  "stopped_PID0": true,
+  "noports": true,
+  "norestart": true,
+  "source_start": 0,
+  "provider_io": 0,
+  "real_DELETE": 0,
+  "prior_readback_sha256": "482768272a1f8ba07e144e66cb7fa338961ea219de327cf753e92f54ff8ed49c"
+}

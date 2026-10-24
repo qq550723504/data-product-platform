@@ -1,0 +1,12 @@
+{
+  "manifest_sha256": "e03e7e01f8f76a4d2767eef0ad71a96dc7ffe7b25191919640a8372c3ec74626",
+  "inspect_sha256": "22659bc36154d76c542955ed818d0b8662b71e24c88bd3fb09700fe14ba5625e",
+  "owners": [
+    "819de63d8b44cafdfc8ddb52e1a4ac056ff33ac8668c21a3790a8d971e95650b",
+    "dea9470840cd172e59048297ffffdb63d35a75da8950087003273859d0b891b0",
+    "48d2f6b440e4bdf06c21d5dd3898ec564c5c8ea4dcb871009c96cfc53b2845c3"
+  ],
+  "stopped_PID0": true,
+  "source_started": 0,
+  "native_delete": 0
+}

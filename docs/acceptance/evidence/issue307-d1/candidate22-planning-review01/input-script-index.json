@@ -1,0 +1,62 @@
+{
+  "status": "C22_PLANNING_SCRIPT_AST_INPUTS_ONLY",
+  "count": 9,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/run-preparation-phase.py": {
+      "sha256": "b0d0fead953119eb0b70ab2c791542d70e31ffcdd9300f0b64d2ea4b4d425673",
+      "bytes": 2341,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/run-bounded-preparation01.py": {
+      "sha256": "4be24cddde94dd4185fd946b76c906f88696c1c909e3867ecd6ae5550f2a9191",
+      "bytes": 2132,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/run-complete-entry01.py": {
+      "sha256": "504a645cdd861dd2a8874983c84edadbbc656a961537cd3cc5f8f7d0997aac41",
+      "bytes": 2441,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/observe-host-bindings01.py": {
+      "sha256": "e3faeedd9efbddc094c7576b620da0daf7d9cd1fb56c34852cb666659261adf5",
+      "bytes": 3365,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/observe-final-cold01.py": {
+      "sha256": "9b3becd3968ad76629397e424a6b82fe3a88f1a2205da60c161b99efb874ef79",
+      "bytes": 3684,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/observe-backups75.py": {
+      "sha256": "616b1f633e05bee415c741c26f379e64ab35df599d18643699dc83cc66d6da0a",
+      "bytes": 1811,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/write-frozen-documents01.py": {
+      "sha256": "4106f0be497e41cce1e7295b21a18c6c415400789634ace4197e8c2970eaa30d",
+      "bytes": 19717,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/finalize-static-bindings01.py": {
+      "sha256": "64baaa7a4f0c085faeee782ae62a975e6913a4488f58798a37b8cee1807d4072",
+      "bytes": 6005,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/write-postlock-confirmation01.py": {
+      "sha256": "e5d3501e6f562fcb7e9795866a8c97ed49eb9e312442d28f2ab31c549bab0dc9",
+      "bytes": 10269,
+      "AST_compile_normal_and_optimized": "PASS",
+      "entry_executed": false
+    }
+  },
+  "native": "NOT_RUN",
+  "allocation": "NOT_RUN"
+}

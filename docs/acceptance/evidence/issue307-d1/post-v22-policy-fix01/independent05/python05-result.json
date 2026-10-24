@@ -1,0 +1,14 @@
+[
+  {
+    "mode": "normal",
+    "exit_code": 1,
+    "stdout_tail": "",
+    "stderr_tail": "_(module_name)\r\n  File \"C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\examples\\lifecycle-d1\\test_six_candidate_runtime.py\", line 17, in <module>\r\n    from unittest.mock import patch\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\unittest\\mock.py\", line 27, in <module>\r\n    import asyncio\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\asyncio\\__init__.py\", line 45, in <module>\r\n    from .windows_events import *\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\asyncio\\windows_events.py\", line 26, in <module>\r\n    from . import windows_utils\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\asyncio\\windows_utils.py\", line 133, in <module>\r\n    class Popen(subprocess.Popen):\r\n    ...<47 lines>...\r\n                    os.close(stderr_wfd)\r\nTypeError: function() argument 'code' must be code, not str\r\n"
+  },
+  {
+    "mode": "optimized",
+    "exit_code": 1,
+    "stdout_tail": "",
+    "stderr_tail": "_(module_name)\r\n  File \"C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\examples\\lifecycle-d1\\test_six_candidate_runtime.py\", line 17, in <module>\r\n    from unittest.mock import patch\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\unittest\\mock.py\", line 27, in <module>\r\n    import asyncio\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\asyncio\\__init__.py\", line 45, in <module>\r\n    from .windows_events import *\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\asyncio\\windows_events.py\", line 26, in <module>\r\n    from . import windows_utils\r\n  File \"C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\asyncio\\windows_utils.py\", line 133, in <module>\r\n    class Popen(subprocess.Popen):\r\n    ...<47 lines>...\r\n                    os.close(stderr_wfd)\r\nTypeError: function() argument 'code' must be code, not str\r\n"
+  }
+]

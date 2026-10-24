@@ -1,0 +1,9 @@
+test_budget_complete_ownership_and_mount_membership (__main__.SeventeenTests.test_budget_complete_ownership_and_mount_membership) ... ok
+test_full_entry_success_all_three_groups (__main__.SeventeenTests.test_full_entry_success_all_three_groups) ... ok
+test_unreadable_inspect_still_stops_known_cid_and_continues (__main__.SeventeenTests.test_unreadable_inspect_still_stops_known_cid_and_continues) ... ok
+test_whole_entry_failures_close_and_stop_later_groups (__main__.SeventeenTests.test_whole_entry_failures_close_and_stop_later_groups) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.124s
+
+OK

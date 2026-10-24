@@ -1,0 +1,436 @@
+{
+  "status": "PASS_INDEPENDENT_OFFLINE_SOURCE_REGRESSION",
+  "source_head": "4420957157ac818cbed719d8a6b8d9c6ccc4b646",
+  "rows": [
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_retained_v30.py"
+      ],
+      "started_at": "2026-10-22T10:44:44.274265+00:00",
+      "observed_at": "2026-10-22T10:44:50.556570+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "784f6ac8bd66322892f8b71ec424a94c22ce9aff07e912358ed7e229f52ae5c4",
+          "bytes": 106
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "started_at": "2026-10-22T10:44:50.556609+00:00",
+      "observed_at": "2026-10-22T10:44:56.325272+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "d31b9221c0d5c7455a1b7a9473aac2b397df4ffd4f5cbba0580046b14dd55a89",
+          "bytes": 349
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_preallocation_ci.py"
+      ],
+      "started_at": "2026-10-22T10:44:56.325373+00:00",
+      "observed_at": "2026-10-22T10:44:56.943491+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "04de402741539d5630db15bb58998292784719bc826c6ad3c8d1285ed1701ce9",
+          "bytes": 106
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "started_at": "2026-10-22T10:44:56.943538+00:00",
+      "observed_at": "2026-10-22T10:44:58.063322+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "0229c6ffc9754cac93936a2223931f5844b54211a0aaedd817f5cb971485f0ef",
+          "bytes": 118
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "started_at": "2026-10-22T10:44:58.063367+00:00",
+      "observed_at": "2026-10-22T10:44:58.557995+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "1f075bf87d93ca2f19c2613abbcf1173f2629012e8b9d5025717a7a7a7609a78",
+          "bytes": 108
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "started_at": "2026-10-22T10:44:58.558037+00:00",
+      "observed_at": "2026-10-22T10:44:58.988886+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "024e7008b7418ce8d6cf9fe6cbf0e09f5316be06bae3003d3bbf78d5d9033c43",
+          "bytes": 109
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "started_at": "2026-10-22T10:44:58.988930+00:00",
+      "observed_at": "2026-10-22T10:45:42.977857+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "18542ea9002321117e1063d07ffcb71cbda5b6fd9183c2a6ccfec5e0cf130241",
+          "bytes": 107
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "started_at": "2026-10-22T10:45:42.977892+00:00",
+      "observed_at": "2026-10-22T10:45:43.751751+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e679df7c874a00959b5d21063f22c90cd8721449fc6ade30b257208940dfc15f",
+          "bytes": 189
+        },
+        "stderr": {
+          "sha256": "7da4588e430ece2003fdcca4010474cddcb54c2d2cc3622ddb04642658fda646",
+          "bytes": 103
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "started_at": "2026-10-22T10:45:43.751781+00:00",
+      "observed_at": "2026-10-22T10:45:44.385504+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "e51970930be024245ba0d41cacf8eab29ec6df8e3206eaedfd0fde6c46860e1b",
+          "bytes": 106
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "started_at": "2026-10-22T10:45:44.385532+00:00",
+      "observed_at": "2026-10-22T10:45:45.018898+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "71e8b0e196ea55d75a792b9d4d9066e2f7f49875db9295e1bd5ff7ba9a6ad3cb",
+          "bytes": 110
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "started_at": "2026-10-22T10:45:45.018932+00:00",
+      "observed_at": "2026-10-22T10:45:45.432180+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "200a928be3aeb5045d5ed9e5488345bb4dc565392fed0488913bbfc9ed92c553",
+          "bytes": 117
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v30.py"
+      ],
+      "started_at": "2026-10-22T10:45:45.432213+00:00",
+      "observed_at": "2026-10-22T10:45:49.672802+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "38d38eb1a6fc0392fd3ce34c100893071fb7eb508b6644cbe51b3816e228aa38",
+          "bytes": 106
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "started_at": "2026-10-22T10:45:49.672843+00:00",
+      "observed_at": "2026-10-22T10:45:52.922086+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "c683255c032feb7e86ac52a047091b875f7505eacc3e4bcc2b843b446f2998c4",
+          "bytes": 349
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_preallocation_ci.py"
+      ],
+      "started_at": "2026-10-22T10:45:52.922116+00:00",
+      "observed_at": "2026-10-22T10:45:53.150373+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "8b7df4f4a25fc5466cbead22af349eaa2c77bbc2812f1d213484be4860bb161a",
+          "bytes": 106
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "started_at": "2026-10-22T10:45:53.150406+00:00",
+      "observed_at": "2026-10-22T10:45:53.893278+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "b230ab1b413a0a512aff52429d8928f208d380f8a5837a6d2015cc9257cc8631",
+          "bytes": 118
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "started_at": "2026-10-22T10:45:53.893308+00:00",
+      "observed_at": "2026-10-22T10:45:54.291781+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "eeff649d0bfc0eb24d17db616fd6529ffd8745a6be59a552eaf2e55fee976904",
+          "bytes": 108
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "started_at": "2026-10-22T10:45:54.291825+00:00",
+      "observed_at": "2026-10-22T10:45:54.603023+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "13e8cc0096158e1ad9ebe0fb535c2ba76c7d38177fe4d49dcce49b89d9cd28e4",
+          "bytes": 109
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "started_at": "2026-10-22T10:45:54.603056+00:00",
+      "observed_at": "2026-10-22T10:46:20.189034+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "f7476b3d47999521193e1df45321ee632609992c96618571aa85bd569f9fdebb",
+          "bytes": 107
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "started_at": "2026-10-22T10:46:20.189065+00:00",
+      "observed_at": "2026-10-22T10:46:20.783295+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "9e63d2c20131a695f9ee6f7c0c069206582557640f71d9f8138384f0a7d6100c",
+          "bytes": 189
+        },
+        "stderr": {
+          "sha256": "cc65ca480a334e7ea87f6cc95346ccd135fd10fa3dc6b73a4507a23578983529",
+          "bytes": 103
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "started_at": "2026-10-22T10:46:20.783331+00:00",
+      "observed_at": "2026-10-22T10:46:21.411811+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "a3ad0f2af165771b6e621727f67e05c8116364a4f55c1bc97ab4e72a59d207b7",
+          "bytes": 106
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "started_at": "2026-10-22T10:46:21.411843+00:00",
+      "observed_at": "2026-10-22T10:46:21.967230+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "5465d2fc56668826b4c3f49ed0d9a459a7b7811f0b630efe92dee5760a2f6361",
+          "bytes": 110
+        }
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "started_at": "2026-10-22T10:46:21.967260+00:00",
+      "observed_at": "2026-10-22T10:46:22.358499+00:00",
+      "exit": 0,
+      "output": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "f12b3a38574993180322a52b3648ea07c47584df3263d27db9f4af0219059c2d",
+          "bytes": 117
+        }
+      }
+    }
+  ],
+  "native_provider_actions": 0
+}

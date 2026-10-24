@@ -1,0 +1,116 @@
+{
+  "id": 120502274778,
+  "run_id": 39979325471,
+  "workflow_name": "ci",
+  "head_branch": "codex/issue307-post-v22-dispatch-closure",
+  "run_url": "https://api.github.com/repos/qq550723504/data-product-platform/actions/runs/39979325471",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOUdQLBs8AAAAcDn7K2g",
+  "head_sha": "f2dbe4106ff5c27ff6b250091bbf9f9d79d71665",
+  "url": "https://api.github.com/repos/qq550723504/data-product-platform/actions/jobs/120502274778",
+  "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39979325471/job/120502274778",
+  "status": "completed",
+  "conclusion": "failure",
+  "created_at": "2026-10-23T15:34:00Z",
+  "started_at": "2026-10-23T15:34:04Z",
+  "completed_at": "2026-10-23T15:36:22Z",
+  "name": "temporary-container-contracts (windows-latest)",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-10-23T15:34:05Z",
+      "completed_at": "2026-10-23T15:34:06Z"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-10-23T15:34:06Z",
+      "completed_at": "2026-10-23T15:34:23Z"
+    },
+    {
+      "name": "Run actions/setup-python@v5",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-10-23T15:34:23Z",
+      "completed_at": "2026-10-23T15:34:24Z"
+    },
+    {
+      "name": "Install the existing host signature dependency",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-10-23T15:34:24Z",
+      "completed_at": "2026-10-23T15:34:30Z"
+    },
+    {
+      "name": "Test explicit evidence indexes and complete readonly entry without Docker",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 5,
+      "started_at": "2026-10-23T15:34:30Z",
+      "completed_at": "2026-10-23T15:36:18Z"
+    },
+    {
+      "name": "Test completed helper ownership, archival, and safe collection",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 6,
+      "started_at": "2026-10-23T15:36:18Z",
+      "completed_at": "2026-10-23T15:36:18Z"
+    },
+    {
+      "name": "Test lifecycle wrapper default retirement and explicit retention without Docker",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 7,
+      "started_at": "2026-10-23T15:36:18Z",
+      "completed_at": "2026-10-23T15:36:18Z"
+    },
+    {
+      "name": "Test Windows archive ACL replacement on existing diagnostics",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 8,
+      "started_at": "2026-10-23T15:36:18Z",
+      "completed_at": "2026-10-23T15:36:18Z"
+    },
+    {
+      "name": "Post Run actions/setup-python@v5",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 15,
+      "started_at": "2026-10-23T15:36:18Z",
+      "completed_at": "2026-10-23T15:36:18Z"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 16,
+      "started_at": "2026-10-23T15:36:18Z",
+      "completed_at": "2026-10-23T15:36:20Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 17,
+      "started_at": "2026-10-23T15:36:20Z",
+      "completed_at": "2026-10-23T15:36:20Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/qq550723504/data-product-platform/check-runs/120502274778",
+  "labels": [
+    "windows-latest"
+  ],
+  "runner_id": 1000053306,
+  "runner_name": "GitHub Actions 1000053306",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

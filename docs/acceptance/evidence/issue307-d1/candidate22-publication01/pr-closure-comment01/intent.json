@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "gh",
+    "pr",
+    "comment",
+    "332",
+    "--repo",
+    "qq550723504/data-product-platform",
+    "--body-file",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-publication01\\pr-closure-comment01\\body.md"
+  ],
+  "at": "2026-10-23T06:33:09.029562+00:00",
+  "authority": "AGENTS.md section17 closure checkpoint comment"
+}

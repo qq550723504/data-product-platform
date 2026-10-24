@@ -1,0 +1,15 @@
+{
+  "status": "CONFIRMED_EXTRA_AUDIT_SCRIPT_SCHEMA_ERROR",
+  "at": "2026-10-20T10:05:42.684930+00:00",
+  "index_sha256": "81c0fc49eebd4caed754072ce50b76e70ef30e06cc9e956f2afa56e0096f80a6",
+  "actual_schema": {
+    "files_type": "dict",
+    "count": 53,
+    "members_present": false
+  },
+  "error": "Extra audit incorrectly assumed a members list; actual immutable independent index uses a files map.",
+  "frozen_file_changed": false,
+  "execution_resumed": false,
+  "new_full_preflight_or_send": false,
+  "followup": "Move index verification into a fixed tested entry; cover actual independent files-map schema and authorization/schedule member-list schemas before any future authorization."
+}

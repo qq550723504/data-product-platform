@@ -1,0 +1,9 @@
+{
+  "status": "PASS_UNCHANGED_FINAL_PR_BOUNDARY",
+  "P": "e54967e822847e97316e703ee413ffc1298cb627",
+  "CI_run": 39983308178,
+  "CI_jobs": 13,
+  "PR332": "OPEN/Draft/unmerged",
+  "Issue307": "OPEN",
+  "lockBranch": true
+}

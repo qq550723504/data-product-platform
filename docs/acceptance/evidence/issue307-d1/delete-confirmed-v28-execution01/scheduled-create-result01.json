@@ -1,0 +1,13 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Created automation in the app."
+    },
+    {
+      "type": "text",
+      "text": "{\"automationId\":\"307-d1-candidate18-v28\",\"mode\":\"create\",\"status\":\"ACTIVE\"}"
+    }
+  ],
+  "isError": false
+}

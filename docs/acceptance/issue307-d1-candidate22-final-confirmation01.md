@@ -1,0 +1,329 @@
+# #307 D1 candidate22/v32 锁后完整精确确认方案
+
+当前为 **FROZEN_NOT_AUTHORIZED**，新 execution `0e5cb8f3-46a9-4339-88e4-7154d6ebe13f`。固定窗口仅2026-10-23新加坡18:00–18:40（UTC10:00≤now<10:40），只读恢复截止UTC12:40（新加坡10月23日20:40）。六份exact目标按P2→T1→T2→H2A→M1A→M1B，每份最多一次、全局最多六次；UNKNOWN不重发。P1永久排除，十一份survivor和全部其他保留限制见下方完整原文。尚无本代人类删除授权、无定时续跑，旧授权不复用。#332 OPEN/Draft/unmerged，#307 OPEN；真实DELETE=0，完整D1仍NOT_ACCEPTED。
+
+## 最终执行与分支保护绑定
+
+最终PR/本地HEAD `8de3bc4c9f737c3c3e81fddb60491422ba6039f2`；精确该HEAD的PR CI run `39910327376`，attempt `1`、event=pull_request、13/13 SUCCESS。这是PR CI，未合并，没有本代main CI。原生exact规则ID `BPR_kwDOUdQLBs4FE_7b`、branch `codex/issue307-post-v22-dispatch-closure`，已锁后重读HEAD/完整保护/CI；原生lock、管理员约束已生效，fork-sync/force-push/delete禁止。非freeze保护与锁前一致，锁后不得推进HEAD、Update branch、merge/rebase，不自动解锁。它是准备事实，不是删除授权，也不声称原子CAS。
+
+公开execution-binding路径 `docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/execution-binding.json`，SHA256 **`a76132a5abc97b16209cf95317376ce0a9cfb8b3a3d7c9c845fd0509071bc437`**；私有同名文件逐字节一致。其制品字段固定candidate/bindings/template/source-freeze/R/reader/sender/owner，分支字段含最终HEAD、ruleID、完整REST保护和全部CI provenance。完整保护当前原文如下：
+
+```json
+{
+  "url": "https://api.github.com/repos/qq550723504/data-product-platform/branches/codex/issue307-post-v22-dispatch-closure/protection",
+  "required_signatures": {
+    "url": "https://api.github.com/repos/qq550723504/data-product-platform/branches/codex/issue307-post-v22-dispatch-closure/protection/required_signatures",
+    "enabled": false
+  },
+  "enforce_admins": {
+    "url": "https://api.github.com/repos/qq550723504/data-product-platform/branches/codex/issue307-post-v22-dispatch-closure/protection/enforce_admins",
+    "enabled": true
+  },
+  "required_linear_history": {
+    "enabled": false
+  },
+  "allow_force_pushes": {
+    "enabled": false
+  },
+  "allow_deletions": {
+    "enabled": false
+  },
+  "block_creations": {
+    "enabled": false
+  },
+  "required_conversation_resolution": {
+    "enabled": false
+  },
+  "lock_branch": {
+    "enabled": true
+  },
+  "allow_fork_syncing": {
+    "enabled": false
+  }
+}
+```
+
+未来实际人类授权须同时引用本完整方案、全部冻结模板/宿主/审批manifest和本锁后binding SHA/最终HEAD。实际人类原文和批准机器文本分别保存，按引用时user_retyped_template=false；本方案本身不新增授权。未来执行完整入口须额外传 `--execution-binding-sha256 a76132a5abc97b16209cf95317376ce0a9cfb8b3a3d7c9c845fd0509071bc437`，并使用以下final-static plan精确SHA；后来真实授权/调度以追加phase plan核验，不覆盖准备plan。定时续跑只按人类另行指令建立。
+
+| 当前审批成员 | SHA256 |
+| --- | --- |
+| `docs/acceptance/evidence/issue307-d1/candidate22-publication01/branch-freeze01/execution-binding.json` | `a76132a5abc97b16209cf95317376ce0a9cfb8b3a3d7c9c845fd0509071bc437` |
+| `docs/acceptance/evidence/issue307-d1/candidate22-planning01/approval-reference-manifest01.json` | `7d75df3c48f8beca3c7bcedacad563a069112e0a2eae546afebaf1fcb321094e` |
+| `docs/acceptance/evidence/issue307-d1/candidate22-planning01/final-static-evidence-audit-plan01.json` | `9893a44b861cfcfd0d817e20e5e65b6e4cbcecca8bfc8edb881164f169206a5c` |
+| `docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01/independent-final-review01.json` | `9992e0d7451526896489a4c8825b11dfce43414e664fc01509b8985d585c1a35` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-readonly01/complete.json` | `49122650975099a7894ec7ef826b37ff4ba67a327971444b2ba75c03b7dc9464` |
+| `docs/acceptance/evidence/issue307-d1/candidate22-planning01/candidate22-host-bindings01.json` | `db966de2a58a81a230ebbf91a099b2f07398039b819ca2044db97ea5d4b42370` |
+| `docs/acceptance/issue307-d1-candidate22-confirmation.md` | `0231736f29a345ea9e71b5ca58c2f54dc7d03878d4694d37b20b82625c3b2875` |
+| `docs/acceptance/issue307-d1-v32-window-runbook.md` | `009fab7c6aa81a16a3035d7a72797b02db3dfb2b12ae133e163a5382194a6f88` |
+
+审批manifest固定1103个原准备引用，排除其自身、可变矩阵与未来授权/调度/锁后记录；后续实际授权另外固定manifest自身与本binding/本完整展示，不能把未来事实伪造进旧索引。静态方案内“最终分支锁待完成”等字样保留为提交前历史快照；本节实际锁后原始回执提供当前事实。
+
+## 六份目标与十一份保留版本的完整机器文本
+
+以下完整143行与冻结confirmation-template.txt原文一致，SHA256 `4a2aeed1f62bb10883a8b9f37b5c4da817bddb3580c22f59f54e942b6dd1b34d`，不得按相似key或旧版本猜测范围。
+
+```text
+CONFIRM_DELETE_EXACT_SIX；execution 0e5cb8f3-46a9-4339-88e4-7154d6ebe13f；candidate22/v32。
+固定窗口 2026-10-23 18:00–18:40 新加坡时间；UTC 2026-10-23T10:00:00Z≤now<2026-10-23T10:40:00Z；只读恢复截止 2026-10-23T12:40:00Z。
+candidate SHA256 d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db；bindings e63b908ca5269853478f7d5a65621327bc5f52ff2ff389de96707e0a137296af；source 81a083751c01a281d42df594f6e91012255081f1；source-freeze 0766c339df95c00427713c3699d0fb65e1a9b463897ba37206d47dde95bd212f。
+fixture runtime R=81a083751c01a281d42df594f6e91012255081f1；PR/host P=a50b5a6307e79896578669ed53a3e12f08a0a815；R archive aca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698；runtime artifact spec df8889b9b81f90d5285c02e881e1b737373684e9a6517387645b3da6fd02310a；schema仅69/66且无protected identity；最终review HEAD另由execution-binding精确绑定。
+分配前P精确PR CI a50b5a6307e79896578669ed53a3e12f08a0a815；run 39903332833；原收据 docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/passed.json SHA256 16d1c3a8a362ead2027de0c822073b353783599fe88a04a6cdef523d4c8afddd；最终review HEAD仍须独立精确CI。
+本代allocation与构建源 81a083751c01a281d42df594f6e91012255081f1；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15/16/17冷态/预算/IAM/失败证据、可信NOT_SENT闭合及新17版本只读证据独立原样保留，不复用旧execution或授权。
+准备阶段完整入口audit plan 4fe01568288b9aa5bb2b3e542d8f4cb7f31aa0dda3284f34b6eef017e6a5a4c5；显式files-map-v1；未来实际授权/调度后须另按批准manifest绑定对应phase audit plan，不能覆盖准备快照。
+Linux reader a192d8da28645d425273028bec49214063dcc680acd6caaa0fa0b794ca7d8c5a；sender/wire/recovery 281743abc70bab73103f56d8f95f83386efe5db4b9c15458b6afcdc235f9b16f；root owner 12a0f361645bb537b317d3fd368637a72d04ab0494f9440d23e286cc1f38ea07；Windows file-only checker 15367f67aa6fabadbbd1796f31a9d5743a245681482f20316f151c24c18da586。
+current policy checkpoint aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8；target digest 2a3b9c31e27de4bdf0185c3500600093356410b2f87ea0e4809863b78c2dacf4；host public key a095b48ea8c724cc26d2702b324a0b0cfe6194117a737d55b2edf196ff3995f2；wire public key a400f77811f91ba0f6e94d57ef016a63418631f04505fe7a94ff90e38b39e948；profile-windows 06477b227e22ccb09bde0ad540c9035029c13fef62d6d95010cd8b4be7f2e687；CandidateUseUntil=2026-10-23T10:40:00Z。
+18历史copy、17现存版本、6目标、11保留版本严格分开。旧P1已确认缺失，绝不纳入目标或新预算。
+环境 dpp-lifecycle307-808a6960；workspace a4aa2689-6e8f-4180-a567-dfb875407eac；provider cc068c8c-4f00-44cd-a825-377631253d59；incarnation d5f220ca-6133-42a0-a31c-1cf717d05274；manifest 2fd4356702a7903af53d4f1f6f8dc6c40372bed11b7069bb32beb130a5077c35。
+Core 9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0；native f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce；gateway 680ddd131c3c1ec645ffbd3ce8eedb6ad6980583ed6147c7c4836e2dc245d687；network 6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942；restore Core fa001a060a120a82cd7a21a2b2f3fcc2d480f0a2907a63fcb2d82d46985a7159；restore native 2326e46a16da7530a6ba04b050a8fb05ed6108778edd7b51f55a30585667faf7。
+Core dump 9a2c58de0e086fb82a0e61d556f1bdf52b6db290b6a8039c9b8086243ede1d25；globals a1da44f2a36d8d6d9d1b09fc24ec7c112b17306e35ed12c6ed85b07fed4e4427；native archive b7c172cbe3ccdb8c48f8952f6cfa82e3626a7382e9359b33757b9677984b2811；source Core 9fc524c5d2b84125815b8222c3d1ef70c77e3490c79428bee47e94d38f6c002e；native receipt ed37736d8a23e376822ea3be148fd6e4a03297331d1acd7fd0d730546f02273a。
+IAM 54704a261a0271fb76d7ec94f7198888a116601b8eca6e26d5b1ee4d44c21aab；active gateway be48290f61281a494b8be6901e9457d9367e687eb3b0333b45a93c34fa4937cf；sealed gateway d3479f91bad91553c449458da03651d8ed982f59474755ff3e9657f1bf14c3e9；allocation 330d4e78bc983e4c03d562757d881857556f890cb19d0bf0b0c5d74a713340fe；owner descriptors df94c86c4eb2f53a00b17bce7493837255a8a88c9b04064314cf0d72a87e72c6；environment map 9aec8f6445021a3671b735de27637bf7dff8b99f6b103a2f31bc94688f27ee21。
+新预算 dpp-lifecycle307-808a6960-candidate22-budget；initializer CID 9e075a7de5d231731dc6a820633c70dba0cd39639b0437d21f1d2c011827dcb8；initializer script 42c20d231a42bc66977b0a0351b59c029a94438a18211db96ddc089593a5098f；Redis f46a68c87a6808eebf06e8c9c082f9e7627db76c855e79d882e357cef6fd0d95；preparation terminal 06dfdea549c751b1182bb2252efbe859a556ddc3a3a3a2803609b6d056d78176。
+current policy head DV 4219373a-07a0-4c66-a666-305675304b14 → 4a9220c3-0a45-4af4-a7fc-9fd2a9abec1f；只读历史事实，不授予新的use/restore。
+current policy head DV 699b8292-7fdb-4c22-af04-41f2eba761d4 → 546332ee-6e70-45d8-98b0-66d5531333fe；只读历史事实，不授予新的use/restore。
+current policy head DV 70d9185e-5ee7-4d79-9853-64e8e8db3630 → 49161aa4-9799-428f-acda-01b3fdd2cc52；只读历史事实，不授予新的use/restore。
+current policy head DV 8cb255aa-a842-4aa5-a4ff-871798aeed0b → 3322f6bb-c5db-42de-b94d-ba8018a1e96c；只读历史事实，不授予新的use/restore。
+current policy head DV a26216b5-95f6-4dbb-8359-c98f5f873be1 → 1d4804a8-3726-49ee-8822-ede4bf10443e；只读历史事实，不授予新的use/restore。
+operator business-races/wire CID 766f1c773749630ed1e964f8c83f402332d9ea10a5d40fde2d379924d112e15f；config 714a6f482a980f566fef707046118f9f69220966f12abf9e6302592fbe9b150d。
+operator business-races/P2 CID 2070c8db91f2705da85c6377e342d86f68d9f0311b317e76156d1b203a78a721；config 8692a6840a9c63197717e93e1e80c09721ddb0c85b68ed8f9ecaa2e04794d44e。
+operator business-races/recover-P2 CID 235e85e1dc33e633a436386de5217c61760159a8d2d538651878d2208a393aa5；config 5d01436eb3cef1f3cf76b0271549327097424b930e944ac05f095dffcf7a4791。
+operator business-races/T1 CID 77f3badd5422277ca7ab8d4b05a906fa9c98e4130d10703b4ba5ddbe736bbebd；config 8692a6840a9c63197717e93e1e80c09721ddb0c85b68ed8f9ecaa2e04794d44e。
+operator business-races/recover-T1 CID abb72704fcf15fb30a7269801514b8b9ce90ca16dd12b591da1c47dc0cc313e2；config 5d01436eb3cef1f3cf76b0271549327097424b930e944ac05f095dffcf7a4791。
+operator business-races/T2 CID 8226601196a34375779fc9138c9c6dc1039d405147bbbf193870cb3e71d492a7；config 8692a6840a9c63197717e93e1e80c09721ddb0c85b68ed8f9ecaa2e04794d44e。
+operator business-races/recover-T2 CID 632b4cab14305c4a780562ae50a2091bb25dc3f9a04dd75c9b0b7ee757fe94d3；config 5d01436eb3cef1f3cf76b0271549327097424b930e944ac05f095dffcf7a4791。
+case business-races/business CID 4ca5f9d4f1fe134155b9c0d954c4ac27d6cf44a727139865e68bb5faefd2dfe6；config a5b9fce53210328517bd866411cbad15392c0e9a93d77880837534d15683fed7。
+root business-races/check-disabled CID 5483d1ca8bd1f0cffb5c39eb8b7fd4367e8b3c85221331856cd9438d8d089951；config c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9。
+root business-races/enable-read CID 4ab4f90debf714025fea0131fc00a28c08a40fad57b2548cf426c2be141999b9；config c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9。
+root business-races/enable-send CID 643d7e4e6d91e21a01ce12ef4df39e6e610bdf9eb636f437454eb7b3729ec6e3；config c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9。
+root business-races/disable-send CID 7c584b9ff48a39ae0373920bdcdd0537062a11418689437bdfb2734b053e6f13；config c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9。
+root business-races/disable-all CID 372b2e9be4759a32e0cc7a424d87088d7ae183e42273319abbda8383dee0e6b4；config c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9。
+IAM identity d0e5cb8f3808a6960=disabled；sole policy lifecycle307-six-d0e5cb8f3808a6960；无groups；policy file SHA256 44edb2d1be4f96003af5cfac94d60fbd05fdc8ad8cdfa6f5f39863bddc8a91f1。
+IAM identity d4fd5a7e7808a6960=disabled；sole policy lifecycle307-six-d4fd5a7e7808a6960；无groups；policy file SHA256 42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce。
+IAM identity d6f40bca9808a6960=disabled；sole policy lifecycle307-six-d6f40bca9808a6960；无groups；policy file SHA256 42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce。
+IAM identity d9ba214bd808a6960=disabled；sole policy lifecycle307-six-d9ba214bd808a6960；无groups；policy file SHA256 384cd7608fc7e41579ef6032fd33fa7841833fa33f1810412cdfbd9c2e91a76b。
+IAM identity d9f9c67d7808a6960=disabled；sole policy lifecycle307-six-d9f9c67d7808a6960；无groups；policy file SHA256 42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce。
+IAM identity da5d1e569808a6960=disabled；sole policy lifecycle307-six-da5d1e569808a6960；无groups；policy file SHA256 384cd7608fc7e41579ef6032fd33fa7841833fa33f1810412cdfbd9c2e91a76b。
+IAM identity daa2605a5808a6960=disabled；sole policy lifecycle307-six-daa2605a5808a6960；无groups；policy file SHA256 42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce。
+IAM identity dafc0e66c808a6960=disabled；sole policy lifecycle307-six-dafc0e66c808a6960；无groups；policy file SHA256 42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce。
+IAM identity delete808a6960=disabled；sole policy lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5；无groups；policy file SHA256 78fa626b4d04216ffc71b73b72fbe4c8f0349a26268f83519033494825d8e9bb。
+IAM identity i0e5cb8f3808a6960=disabled；sole policy lifecycle307-six-i0e5cb8f3808a6960；无groups；policy file SHA256 7ad1ffd1387f9eec89233abb5c56bd7dd26d8d10dcf7408afb2fb580b66604f5。
+IAM retained partial i4e524c04808a6960=disabled；policy=NONE；无groups；永不enable/复用secret；unassigned policy lifecycle307-six-i4e524c04808a6960 SHA256 d4dbb19394136f744d7a77d68e55d192749218c222a003b8e26be9675e382788。
+IAM identity i4fd5a7e7808a6960=disabled；sole policy lifecycle307-six-i4fd5a7e7808a6960；无groups；policy file SHA256 849854c31e97545f9a0173cec602d40a4e9d783d6e50307bbc6c89dd5a80a32e。
+IAM identity i6f40bca9808a6960=disabled；sole policy lifecycle307-six-i6f40bca9808a6960；无groups；policy file SHA256 8c52d6812ffb8196f216a4a28c4641173e5b136a16f16bb08a6ae7c59759e859。
+IAM identity i9ba214bd808a6960=disabled；sole policy lifecycle307-six-i9ba214bd808a6960；无groups；policy file SHA256 4b4e112feb9b27604bf4d56076fa109589cb8941a16c7f2d3965899bf443336c。
+IAM identity i9f9c67d7808a6960=disabled；sole policy lifecycle307-six-i9f9c67d7808a6960；无groups；policy file SHA256 8c52d6812ffb8196f216a4a28c4641173e5b136a16f16bb08a6ae7c59759e859。
+IAM identity ia5d1e569808a6960=disabled；sole policy lifecycle307-six-ia5d1e569808a6960；无groups；policy file SHA256 ff1adde900f2719d88a3bcc9bad5ac3cdc8da351afb9a7079f9939068d596fe6。
+IAM identity iaa2605a5808a6960=disabled；sole policy lifecycle307-six-iaa2605a5808a6960；无groups；policy file SHA256 41c5ec1634a95a5c48a35e73e177980c310d0327775b118a36dea30fc03257fe。
+IAM identity iafc0e66c808a6960=disabled；sole policy lifecycle307-six-iafc0e66c808a6960；无groups；policy file SHA256 a1cdfb8fce8c44f346ce4bf0e7f86779674a2991b3f714e0c6d38362c7655708。
+IAM identity inspect808a69606c36=disabled；sole policy lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5；无groups；policy file SHA256 0cfc254aa4ded96ddaf123aa624a08c33ff743014b35ec4ee4f459343962a6c6。
+IAM identity remainput808a6960=disabled；sole policy lifecycle307-remaining-business-remainput808a6960；无groups；policy file SHA256 f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b。
+IAM identity remainread808a6960=disabled；sole policy lifecycle307-remaining-business-remainread808a6960；无groups；policy file SHA256 c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a。
+保留版本 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/control-hold.csv@47026891-d10a-4400-a3cb-76915e3d51bf；copy 91d954ee-cce5-4ceb-840d-fd6bdab778be；DV 70b12ac5-1d86-462c-9176-fd5a681472cd；SHA256 ad335d6334c5e1213b18c16dd8fe5bbd5bb1c1f53351ab8f13ce6e3b04120a90；bytes 54；hold=True；retention=NONE；retain-until=None；非发送目标。
+保留版本 dpp-lifecycle307-808a6960 dpp-lifecycle307-quarantine/fixture/control-retention.csv@2606d71f-207b-42a7-b671-4b7f4ca4d194；copy aa8ecd43-1c17-4d0b-b462-42600a426b1b；DV 6837388a-80b1-4512-8976-ce2a7bae4e85；SHA256 51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183；bytes 55；hold=False；retention=GOVERNANCE；retain-until=2026-10-23T06:25:44Z；非发送目标。
+删除目标 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/p2.csv@d8040608-c5cd-4a6f-8a2d-b3f856cf5302；copy 6fabf3b5-76b8-4245-8f5d-01e64f610146；DV 4219373a-07a0-4c66-a666-305675304b14；SHA256 722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0；bytes 232；hold=False；retention=NONE；retain-until=None；plan bce1b1b1-d6e2-44fd-8b87-171142350ab9；hash d4758d9b64003d92aca60290fee1d2f22e7a857d2fe2be513d4a1ea2755ce6a3。
+保留版本 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/remaining-processed.csv@00d7e220-7714-4c31-a4c7-2dda08cfa306；copy 639c4cee-6a7c-4a13-aa68-37035d6e1811；DV a26216b5-95f6-4dbb-8359-c98f5f873be1；SHA256 d036fefe3225f322a8a2ad401bcc7e3e59127b98df0c6966d1b4c31018ff3fd0；bytes 232；hold=False；retention=NONE；retain-until=None；非发送目标。
+保留版本 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/remaining-standardized.csv@dac1dbc5-c9b5-412a-a2a6-bf082e109e22；copy da6cc6a8-c9c2-41a6-8811-2d46164a241d；DV 8cb255aa-a842-4aa5-a4ff-871798aeed0b；SHA256 f8a1a1c7f85ff910f44f011d0dc3aba1b410ace20cc7c4429e18ab6cccb1c77d；bytes 494；hold=False；retention=NONE；retain-until=None；非发送目标。
+删除目标 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/t1.csv@39d4ef5d-e983-413d-a6c2-9759d456b750；copy f48755f1-976b-4f47-98da-70ead936a4c3；DV 699b8292-7fdb-4c22-af04-41f2eba761d4；SHA256 b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524；bytes 129328；hold=False；retention=NONE；retain-until=None；plan 247a2ca9-d2f3-4384-bcee-b10add497175；hash 7c4daf909a375bc21fcf8dd09b14d99960ae1f919ce138eb517ac0593faf1c1c。
+删除目标 dpp-lifecycle307-808a6960 dpp-lifecycle307-quarantine/fixture/t2.csv@90bd8ded-337a-4ca1-aec3-66c4ee6a1314；copy e09fd433-54cf-4e82-b8c4-098472505fa2；DV 70d9185e-5ee7-4d79-9853-64e8e8db3630；SHA256 a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c；bytes 49；hold=False；retention=NONE；retain-until=None；plan 531c7b96-173f-4028-be97-2de9ed6c72f2；hash 84fbafb913dba44e5ceb43d670203e55f0244fad62a2dc2fd9ebb10b87e0cab5。
+环境 dpp-lifecycle307-754ea8f0；workspace 64f71fd8-def6-46a9-a314-f4645b1595b1；provider ab8ba084-1768-401a-9f27-fd4dc0c27dad；incarnation 9d5c2daf-40be-4155-811a-879f24ad0314；manifest fa787f45239d7b8d02367fff7827fbb0a04613f55fdaf5e965cb66d0916b2a80。
+Core 982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db；native f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061；gateway 72d05bdecc3fee487867eb20c9e683a11617ec283d3a808eaeb8b975a1917b53；network e27a29ee55732447bff932d15bcb83339784089c00f03b9139232417fe1a8847；restore Core 943cc6389f12de83464034086b4fef574cd40abcdca0d3910f755d96ea6985de；restore native 2d87530b1137eb77f7714f278b1b99e39632cf0c6937650e78778141d1811d02。
+Core dump fe8b4159c051f3b5f5ab65a78a5a2c3f5e9c1a0544ad6a355de8b641eb5017d3；globals 68bfe232a5a06a425147de283f8e14962927873d1d565b29b6af042fa652a49f；native archive 413ff237f49606422f37b78fc33bf1622480ec682e8286283ac8e18538536c8f；source Core 7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b；native receipt e542388e88e1f564b8229db120ea59e56a9fb74ce4ba399fb37d047f87f52085。
+IAM 0c70b8f721d5133adb9eca04a4c46a44588a646bfc5d3c36f7703c1b6c434c0c；active gateway 19885b977e6a2dc4f2959c7a610708dfc4703a53d1ee4fa6dd81dc4edf613f95；sealed gateway d3479f91bad91553c449458da03651d8ed982f59474755ff3e9657f1bf14c3e9；allocation 330d4e78bc983e4c03d562757d881857556f890cb19d0bf0b0c5d74a713340fe；owner descriptors df94c86c4eb2f53a00b17bce7493837255a8a88c9b04064314cf0d72a87e72c6；environment map 9aec8f6445021a3671b735de27637bf7dff8b99f6b103a2f31bc94688f27ee21。
+新预算 dpp-lifecycle307-754ea8f0-candidate22-budget；initializer CID 4edd1db9add439d2694ca3e38965fe8e7ce7fce842322e22b217ac16f2182771；initializer script 42c20d231a42bc66977b0a0351b59c029a94438a18211db96ddc089593a5098f；Redis deba0496bd7de36a815187a24322df26d762bd2438cd222dd54bcb813b159011；preparation terminal 06dfdea549c751b1182bb2252efbe859a556ddc3a3a3a2803609b6d056d78176。
+operator late-hold/wire CID 6bc729a57693bc435923f224e0de3deabc05651a1ce57b8368be4a613532a6b2；config 69901cd1d0b31f6a7f1ea97c43f746e8940cac750bd8ea80263d510fe23344d0。
+operator late-hold/H2 CID 3b85378b31a77242511ada95a6148c90aeccc4a3f25c4434975c7954a6894401；config 256802f4b07e5916878f0dbebe70082704841b3a9577514bacd5d5ec22750fa6。
+operator late-hold/recover-H2 CID 8eec2c7dc6ce5852317306bccac5f22554e6ba87b02ab83da367bf617ea1e6be；config ac8b64321d6f426886aa8f3b29f17b873274a038ec5b8b2afb52d736054a7aae。
+case late-hold/late CID 479ba5d4bfea307ede20d7cb8be9606354a04ee70023325d692785530f3fb433；config c963c8174be55fa648eedc7513a61bb7b78781b43dbeb10de59fcd2c01524c1f。
+case late-hold/close-H1 CID d82535f80cc71f0ab0bed6f1f6d6102c8867032a0d8aaa8918340ede4cc91898；config 60c24b3eb1de0e6a0fafb268c1fa296e2b92835ad9024601dcfeeb38fece8f52。
+root late-hold/check-disabled CID de1c0d3ddf1ca471cf4ab9bbd925fc4cc2ff57be75e83f775d89889be892b0cc；config 97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c。
+root late-hold/enable-read CID f055af7c5ff8da7483aa96c429ef4530dd7ba3069e81c890c3c43948d896b97f；config 97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c。
+root late-hold/enable-send CID 3ff33aa79e832ab43c5c2533da609608ef6f0841c7bbec414e4ddd8a1ea932e3；config 97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c。
+root late-hold/disable-send CID f3a78ad48f9db3c8ff691442bfab942335816b83de9b43cd6c5b2da3c0293c65；config 97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c。
+root late-hold/disable-all CID dc8916f07e94159c545c683d273f2f4f59765bc6b45b35ced5c61f91d47f4370；config 97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c。
+IAM identity d0e5cb8f3754ea8f0=disabled；sole policy lifecycle307-six-d0e5cb8f3754ea8f0；无groups；policy file SHA256 4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0。
+IAM identity d4fd5a7e7754ea8f0=disabled；sole policy lifecycle307-six-d4fd5a7e7754ea8f0；无groups；policy file SHA256 c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d。
+IAM identity d6f40bca9754ea8f0=disabled；sole policy lifecycle307-six-d6f40bca9754ea8f0；无groups；policy file SHA256 c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d。
+IAM identity d9ba214bd754ea8f0=disabled；sole policy lifecycle307-six-d9ba214bd754ea8f0；无groups；policy file SHA256 4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0。
+IAM identity d9f9c67d7754ea8f0=disabled；sole policy lifecycle307-six-d9f9c67d7754ea8f0；无groups；policy file SHA256 c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d。
+IAM identity da5d1e569754ea8f0=disabled；sole policy lifecycle307-six-da5d1e569754ea8f0；无groups；policy file SHA256 d89cd51ff19ddd4eba48e2e5208f7c80ed87f2afb5943b2017a5721107a0efab。
+IAM identity daa2605a5754ea8f0=disabled；sole policy lifecycle307-six-daa2605a5754ea8f0；无groups；policy file SHA256 c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d。
+IAM identity delete754ea8f0=disabled；sole policy lifecycle307-remaining-delete-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b；无groups；policy file SHA256 4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0。
+IAM identity i0e5cb8f3754ea8f0=disabled；sole policy lifecycle307-six-i0e5cb8f3754ea8f0；无groups；policy file SHA256 6f682157996fe17dcd9f37f02cfcc5aecf792326091a86884589c90a0e6f5851。
+IAM identity i4fd5a7e7754ea8f0=disabled；sole policy lifecycle307-six-i4fd5a7e7754ea8f0；无groups；policy file SHA256 88c925e569a0e17b4c5b75b9edc1cbd442734683d0a26f4fe2d71d3d549348fe。
+IAM identity i6f40bca9754ea8f0=disabled；sole policy lifecycle307-six-i6f40bca9754ea8f0；无groups；policy file SHA256 6f682157996fe17dcd9f37f02cfcc5aecf792326091a86884589c90a0e6f5851。
+IAM identity i9ba214bd754ea8f0=disabled；sole policy lifecycle307-six-i9ba214bd754ea8f0；无groups；policy file SHA256 f612201733abb338286be42c2f045f9fe2b723f98828887b10859ef1dc157466。
+IAM identity i9f9c67d7754ea8f0=disabled；sole policy lifecycle307-six-i9f9c67d7754ea8f0；无groups；policy file SHA256 c5aaf3cd4ff781299e739d7eca1c76cd6f5d8c244eb966daa54ec15821c4037c。
+IAM identity ia5d1e569754ea8f0=disabled；sole policy lifecycle307-six-ia5d1e569754ea8f0；无groups；policy file SHA256 c5a71e5376df1424eb1e14bd739987f798c2d6d7c336984f14add54ffcc3ffae。
+IAM identity iaa2605a5754ea8f0=disabled；sole policy lifecycle307-six-iaa2605a5754ea8f0；无groups；policy file SHA256 6f682157996fe17dcd9f37f02cfcc5aecf792326091a86884589c90a0e6f5851。
+IAM identity inspect754ea8f06ffc=disabled；sole policy lifecycle307-inspection-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b；无groups；policy file SHA256 dab5db10a0fd7d535037674337669f2c0171b642da94dbc6e383362f0d527af0。
+保留版本 dpp-lifecycle307-754ea8f0 dpp-lifecycle307-online/fixture/control-hold.csv@ca3b808e-734b-4d5e-8f2d-c78a16056ed6；copy a01751a1-9311-4357-8fb2-c833de6b8fc4；DV e6b6854f-b54a-462f-875d-9f74542b1fc3；SHA256 961b213e4d82865370d8da052e57af716297ddff615298ed8c43e938f39b1b7d；bytes 49；hold=True；retention=NONE；retain-until=None；非发送目标。
+保留版本 dpp-lifecycle307-754ea8f0 dpp-lifecycle307-online/fixture/h0.csv@369808db-a39a-4327-b9ed-5eb83aef7477；copy b3c4e113-f5c5-4421-a9d6-08403b1b9d0a；DV 8d59d129-662b-4dae-a389-894943c716df；SHA256 e35bd4635f1d7ab38c85a290a86a94275085b49bdae8e1a952712d5304816d8e；bytes 44；hold=False；retention=NONE；retain-until=None；plan b1fe2a92-0a3e-400b-a0ca-338c120ad74e；hash 67ff4eb1ac6dd477bf51a398745272ed47b68cfc6bb5aaa82fd7d3c3cad7e05a。
+保留版本 dpp-lifecycle307-754ea8f0 dpp-lifecycle307-online/fixture/h1-a.csv@28d9f84a-1889-498d-b033-df26cbf209f2；copy 0d8b77a8-195d-4a83-bd52-04f800d7dc68；DV 6d7d6978-cbbf-4c78-b9d1-82fad7271f0a；SHA256 838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0；bytes 44；hold=False；retention=NONE；retain-until=None；plan 620d0676-f3fa-42d1-b3bf-f34e683de43c；hash 89adf8f6854dfe03702ddc44daff92af79b39de2d4228d640ac765a6606738e2。
+保留版本 dpp-lifecycle307-754ea8f0 dpp-lifecycle307-quarantine/fixture/h1-b.csv@bae40a85-7539-4fe1-86b7-2cbb17df7812；copy e735d90a-8352-4a01-ad16-8573297bc684；DV 6d7d6978-cbbf-4c78-b9d1-82fad7271f0a；SHA256 838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0；bytes 44；hold=False；retention=NONE；retain-until=None；plan 620d0676-f3fa-42d1-b3bf-f34e683de43c；hash 89adf8f6854dfe03702ddc44daff92af79b39de2d4228d640ac765a6606738e2。
+删除目标 dpp-lifecycle307-754ea8f0 dpp-lifecycle307-online/fixture/h2-a.csv@453c6f42-fbb2-4fdf-9f86-00a20a54b7bc；copy c05307db-cb81-4220-b42e-be23f85821e3；DV 18721e15-7b01-47d3-a727-8b836d73dbcb；SHA256 b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838；bytes 44；hold=False；retention=NONE；retain-until=None；plan d78a9339-0968-45c9-bab6-bda86810ec33；hash 205cff03fcbaf25ff4b5d3ad690e5261a8a45e626180aa0782f22e4e249bbffd。
+保留版本 dpp-lifecycle307-754ea8f0 dpp-lifecycle307-quarantine/fixture/h2-b.csv@448112b2-baf3-4569-b06f-59011492cf80；copy a37c347d-dbff-492e-9c7a-317a1f188184；DV 18721e15-7b01-47d3-a727-8b836d73dbcb；SHA256 b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838；bytes 44；hold=False；retention=NONE；retain-until=None；plan d78a9339-0968-45c9-bab6-bda86810ec33；hash 205cff03fcbaf25ff4b5d3ad690e5261a8a45e626180aa0782f22e4e249bbffd。
+环境 dpp-lifecycle307-dfda43b4；workspace 91f84817-9f5a-4654-a793-92e51f1fb7a6；provider 01845fb6-7cc2-4010-8f2a-316576391e67；incarnation 2b760525-880f-468a-a027-a6851cd06487；manifest 7fd71687b4ed7151a3c37a789c6fd5beebea2bd1d61c452c0051cc7a1a08e972。
+Core cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82；native 66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d；gateway 60479b860ca0fe44a93e7c7188f17cdb2d01d1dea9d752c7e1fcc74e20897af3；network 77f72e9ef0781527a7e8e5ce4a6cd8d36018e527a9ea853ae72d5f8fff9ea0eb；restore Core 0f52610b2aa9a7ecf7a23c243699e4da84a90b7359ee9a56df0c8e01c5e9cfcc；restore native d42313c3ed02c764a947b591ceb7bb3fee0858481bf7086cbff4188cedb3353f。
+Core dump 5f5f9aa0afe99b54cfb441f53571bbdff19d85e6672072222beeaa4253d80611；globals 1f12f0088a948f9a528ab71dc5d8b268154aec31929c598f4a5b2c0d079b8aeb；native archive 2c8a1f11657be8c5abdfb4f3f958d44d1abd9ab3afb58b49a488925c31444f05；source Core 2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55；native receipt 1892f5118af8dbd12910ab9d45d76ae61139349cfeefbe979025bda492dbf3a2。
+IAM fe982398a682dbb612c83b5629b2f1f4ed17e033e06e08f8d216c5fc6f4f3271；active gateway c7e121427e8481171cd05144340c54e24d0395163eed897f54cec490704bac3f；sealed gateway d3479f91bad91553c449458da03651d8ed982f59474755ff3e9657f1bf14c3e9；allocation 330d4e78bc983e4c03d562757d881857556f890cb19d0bf0b0c5d74a713340fe；owner descriptors df94c86c4eb2f53a00b17bce7493837255a8a88c9b04064314cf0d72a87e72c6；environment map 9aec8f6445021a3671b735de27637bf7dff8b99f6b103a2f31bc94688f27ee21。
+新预算 dpp-lifecycle307-dfda43b4-candidate22-budget；initializer CID 81c50b84eb8c1fbb10e3ca97b5c90f7e4126b1aee5520b154de02a71d3f1d967；initializer script 42c20d231a42bc66977b0a0351b59c029a94438a18211db96ddc089593a5098f；Redis f3c3fe391f10aadf7e992e7d8df06921a2e24a38e08bbfa30d66ee59c04822ec；preparation terminal 06dfdea549c751b1182bb2252efbe859a556ddc3a3a3a2803609b6d056d78176。
+operator mixed/wire CID 90bf450af18b42f4b1d880f98edbe108adbb1bf365e725cfa32432e47138e28a；config 0a38b8563562933ac2a1713e8c7e6c824595b480a64efab666da36bb895094ff。
+operator mixed/M1A CID 88157ea4209151610e6a9332495069933b2fae3dc28c64b90707375cf5d9bdc9；config 13016ee3967d86212788f11d23ef4c263725f0b13ccc7638fe55d796abbae626。
+operator mixed/recover-M1A CID 9b51176f7af306beb735302402c2b4d78e29b3f651f55ac6ebaefe1ce4e647f5；config e2466180b31063aedf238a478f6e5912324cdcb53c0f73404871c57b30f6391b。
+operator mixed/M1B CID 5f9a9b331d3fdd1113f2389042255de85063528d3c4346499cb84b4bd07af5ba；config 13016ee3967d86212788f11d23ef4c263725f0b13ccc7638fe55d796abbae626。
+operator mixed/recover-M1B CID 801e03a46d5b1b071b588f2b56f5dd748292b947b0a1cf7517aeec472a385f8e；config e2466180b31063aedf238a478f6e5912324cdcb53c0f73404871c57b30f6391b。
+case mixed/mixed CID fd8e0f2d8baed2461bd3f61a6ab730018854365f0410bd702b5e7ec384b12ba8；config bc84cc5f7524854ba603ec1a2dea7d2bc1ca26ccdab4daaa40b2ad52979502b8。
+case mixed/mixed-b CID 0e929944bfd4cb14adaa2b3e3b1f411aa4fb6c901ff5dd529164d4a4144cdf32；config bc84cc5f7524854ba603ec1a2dea7d2bc1ca26ccdab4daaa40b2ad52979502b8。
+case mixed/mixed-c CID 73447e12ceb8b42ed67892c639505c4cc54fe30f4de273b1ba13b511bf9fcf53；config bc84cc5f7524854ba603ec1a2dea7d2bc1ca26ccdab4daaa40b2ad52979502b8。
+root mixed/check-disabled CID 6c16576b17ffcd057748248c02e7289f50905d495d1169bf6ee8cc6af87a6495；config 98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7。
+root mixed/enable-read CID cec31348fa4a71a6774d66e4f73fe0f85b0f18c099703470f58a6a155ad90b20；config 98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7。
+root mixed/enable-send CID d87c51161a6e421abcf3c9a486e3acd3970d9970f63056fec9c46b59afb1de7b；config 98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7。
+root mixed/disable-send CID e4001ffc073e1399506266288d381986e64cec491927f6b884f12d7762957dbf；config 98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7。
+root mixed/disable-all CID 5ceb762abf88c31374f1ad0b39d84f57b069d999c29c3f07d4915411f1222a46；config 98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7。
+IAM identity d0e5cb8f3dfda43b4=disabled；sole policy lifecycle307-six-d0e5cb8f3dfda43b4；无groups；policy file SHA256 da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf。
+IAM identity d4fd5a7e7dfda43b4=disabled；sole policy lifecycle307-six-d4fd5a7e7dfda43b4；无groups；policy file SHA256 2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649。
+IAM identity d6f40bca9dfda43b4=disabled；sole policy lifecycle307-six-d6f40bca9dfda43b4；无groups；policy file SHA256 2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649。
+IAM identity d9ba214bddfda43b4=disabled；sole policy lifecycle307-six-d9ba214bddfda43b4；无groups；policy file SHA256 da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf。
+IAM identity d9f9c67d7dfda43b4=disabled；sole policy lifecycle307-six-d9f9c67d7dfda43b4；无groups；policy file SHA256 2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649。
+IAM identity da5d1e569dfda43b4=disabled；sole policy lifecycle307-six-da5d1e569dfda43b4；无groups；policy file SHA256 8984f8693ba1641c977951b64ee5c850c5c0a3b55741c5033b9eaab41b07fa33。
+IAM identity daa2605a5dfda43b4=disabled；sole policy lifecycle307-six-daa2605a5dfda43b4；无groups；policy file SHA256 2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649。
+IAM identity deletedfda43b4=disabled；sole policy lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd；无groups；policy file SHA256 3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b。
+IAM identity i0e5cb8f3dfda43b4=disabled；sole policy lifecycle307-six-i0e5cb8f3dfda43b4；无groups；policy file SHA256 b6c442fd89038d13bf61c9e3f8967741554ab79c0da8c74838f63bfd728c4f4d。
+IAM identity i4fd5a7e7dfda43b4=disabled；sole policy lifecycle307-six-i4fd5a7e7dfda43b4；无groups；policy file SHA256 9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753。
+IAM identity i6f40bca9dfda43b4=disabled；sole policy lifecycle307-six-i6f40bca9dfda43b4；无groups；policy file SHA256 158592ce90efccb1d4af638fb7ee5f8dbd0758e8130594f2f76123e09e0ae540。
+IAM identity i9ba214bddfda43b4=disabled；sole policy lifecycle307-six-i9ba214bddfda43b4；无groups；policy file SHA256 9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753。
+IAM identity i9f9c67d7dfda43b4=disabled；sole policy lifecycle307-six-i9f9c67d7dfda43b4；无groups；policy file SHA256 b6c442fd89038d13bf61c9e3f8967741554ab79c0da8c74838f63bfd728c4f4d。
+IAM identity ia5d1e569dfda43b4=disabled；sole policy lifecycle307-six-ia5d1e569dfda43b4；无groups；policy file SHA256 9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753。
+IAM identity iaa2605a5dfda43b4=disabled；sole policy lifecycle307-six-iaa2605a5dfda43b4；无groups；policy file SHA256 9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753。
+IAM identity inspectdfda43b44419=disabled；sole policy lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd；无groups；policy file SHA256 443ac428d914137e948badf59982c3473673a93bc3b43cccab32bdf6af5a6eeb。
+保留版本 dpp-lifecycle307-dfda43b4 dpp-lifecycle307-online/fixture/control-hold.csv@a59df17d-70d7-40c5-88e8-8cfe77a915dd；copy f3167994-3790-4a6c-918e-ea6d95248b79；DV 57e8c123-6c69-44bc-98ba-d5db8c2b7aac；SHA256 367afd5e5ed47c5f2cadab63af56e0a5e82a1a32afa88f0c3f99448aab883821；bytes 45；hold=True；retention=NONE；retain-until=None；非发送目标。
+删除目标 dpp-lifecycle307-dfda43b4 dpp-lifecycle307-online/fixture/m1-a.csv@e8a8418e-c515-464e-99e5-10bc4c64fa8d；copy 5e712426-2109-4f0b-8791-df0a2be3a9f7；DV 44727cb2-5f3b-4b48-b891-931583488ea9；SHA256 e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725；bytes 40；hold=False；retention=NONE；retain-until=None；plan c2596491-a620-4cda-83d1-4697c64e27f7；hash 8e4380ab68e62e934dae7609b2b4b1711e8c66d0fa2a5a742d0ce6cf059f3a75。
+删除目标 dpp-lifecycle307-dfda43b4 dpp-lifecycle307-quarantine/fixture/m1-b.csv@54900849-d59d-459e-90bb-275a5975d0a6；copy ad08947a-4c4d-4b0f-8c7e-2d89f287819f；DV 44727cb2-5f3b-4b48-b891-931583488ea9；SHA256 e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725；bytes 40；hold=False；retention=NONE；retain-until=None；plan c2596491-a620-4cda-83d1-4697c64e27f7；hash 8e4380ab68e62e934dae7609b2b4b1711e8c66d0fa2a5a742d0ce6cf059f3a75。
+保留版本 dpp-lifecycle307-dfda43b4 dpp-lifecycle307-quarantine/fixture/m1-c.csv@81a8402e-390f-4247-9d34-552df5eadeb3；copy 13fd8ecf-07fd-4981-b553-5ce66b67444f；DV 44727cb2-5f3b-4b48-b891-931583488ea9；SHA256 e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725；bytes 40；hold=False；retention=GOVERNANCE；retain-until=2026-10-23T06:33:33Z；plan c2596491-a620-4cda-83d1-4697c64e27f7；hash 8e4380ab68e62e934dae7609b2b4b1711e8c66d0fa2a5a742d0ce6cf059f3a75。
+严格顺序P2→T1→T2→H2A→M1A→M1B；每份至多一次、全局至多六次，UNKNOWN不重发；每份send后关闭发送，经既有选定Outbox→Asynq只读恢复并提交absence，再进入下一份。三Core保持可读以核全局顺序。
+最终PR HEAD的源码/候选/评审/CI全部完成后，必须先以GitHub原生精确分支锁冻结该HEAD并锁后重新核对；锁后execution-binding.json的SHA须纳入新授权及完整批准引用，未绑定不得授权或调度。
+已授权窗口的完整入口必须提供--execution-binding-sha256；Host.check及每次发送拓扑/H1签名前fresh核对HEAD、ruleID与完整保护；锁定期间不push/同步main，授权/执行回执单独追加保存，终态不自动解锁。
+H0/H1零发送；可信owner终止、profile撤销、enabler关闭、fresh disabled-IAM及sealed gateway后H1才NOT_SENT。H2仅A真实204后witness/late hold A+B/revoke/响应丢失，B永不dispatch。M1先A absence，B UNKNOWN+C-only保护阻断checkpoint原字节复制并核SHA后才B lookup，C永不删除。
+全部新鲜前置及精确当前HEAD PR CI/评审通过后才可启用发送；每个sender/wire/recovery前≤1分钟新鲜实际host topology；wire context≤3分钟，每目标刷新；SDK无重试，持久预算先于Core claim。
+11份survivor、其他全部环境、全部旧/新备份、旧pins、旧预算、失败/UNKNOWN/真实attempt/成本事实保留。cleanup=0；hold-release=0；bypass=0。不得退款、补发、重发UNKNOWN、修改旧事实或复用旧授权。
+失败或过窗立即停止新增发送并逐组封存；不延长、平移、重开窗口。只读恢复期限不得重新启用身份或延长发送；关闭IAM后无法lookup即保留UNKNOWN/NOT_RUN。#332 Draft、不合并；#307 OPEN；完整D1不提前验收。
+```
+
+## 宿主、恢复与证据绑定
+
+fixture运行source R `81a083751c01a281d42df594f6e91012255081f1`；769R归档源码成员固定原字节SHA；宿主P a50b5a6307e79896578669ed53a3e12f08a0a815 的2249成员独立记录raw/LF SHA，source ZIP `aca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698`、6428089 bytes。12原始构建成员如下，不能只重编译active binary冒充原构建。packet Git anchor `10e39eede9c0b30f1cab1397a4a42c5698479862`，私有host-anchor SHA `4996408f4b4fb66cd5b750bf01cd8c90afd71b59c65696319435e1615f059929`，只供按相同SHA定位已批准关闭CID，不授予发送。
+
+| 原构建成员 | SHA256 |
+| --- | --- |
+| `reader` | `a192d8da28645d425273028bec49214063dcc680acd6caaa0fa0b794ca7d8c5a` |
+| `operator` | `281743abc70bab73103f56d8f95f83386efe5db4b9c15458b6afcdc235f9b16f` |
+| `owner` | `12a0f361645bb537b317d3fd368637a72d04ab0494f9440d23e286cc1f38ea07` |
+| `readonly-check.exe` | `15367f67aa6fabadbbd1796f31a9d5743a245681482f20316f151c24c18da586` |
+| `reader-build.stdout` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `reader-build.stderr` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `operator-build.stdout` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `operator-build.stderr` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `owner-build.stdout` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `owner-build.stderr` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `checker-build.stdout` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `checker-build.stderr` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+
+
+宿主绑定索引 `db966de2a58a81a230ebbf91a099b2f07398039b819ca2044db97ea5d4b42370`，包含下表全部实际字节；case/recovery、完整owner descriptor、mount/network/volume与预算归属见allocation和bindings。
+
+| 冻结成员 | SHA256 |
+| --- | --- |
+| `examples/lifecycle-d1/prepare-six-candidate.py` | `379edada6df47699e0a6614cf043d2e726c1938e3956096594424360088c482e` |
+| `examples/lifecycle-d1/six_candidate_runtime.py` | `15ba1a0b21c06dacc07308b04189012fc58dc8c449ce5825a025df1bf034c329` |
+| `examples/lifecycle-d1/freeze-six-candidate.py` | `5e96e4de400499c24336a012fb3f72fce5dc975b249667629aa8bd3071f04d96` |
+| `examples/lifecycle-d1/verify-six-native.py` | `936ed8961992555e7db9a6039e993ec3c72dba1eceaecb770a78aafcaa5870f7` |
+| `examples/lifecycle-d1/window_six_support.py` | `a7c4e50de04414c81e0dba72eccc08cadbeed43a2b4d311abe88da2334066b15` |
+| `examples/lifecycle-d1/attest-remaining-executable.py` | `c527ff491dcc0c638847909e78602ce86012e9d84d03f0a6e719cadee83f928b` |
+| `examples/lifecycle-d1/remaining_window.py` | `c856e3b8224fdfb2b17a9340c8577fbb3ef619e5c12be236152502fd5ab9790a` |
+| `examples/lifecycle-d1/remaining_six_window.py` | `8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494` |
+| `examples/lifecycle-d1/remaining_sequence.py` | `0596c039e67cf386cde2b9dd0d870bd5646bb4a3e89553f849ecd70c1a429a1c` |
+| `examples/lifecycle-d1/evidence_indexes.py` | `1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4` |
+| `examples/lifecycle-d1/docker_host_paths.py` | `218d7b0f0ea51506aa1f93e43937a16d41f94de87fe1d340ec0c40bbe4142a0c` |
+| `examples/lifecycle-d1/retained_v26.py` | `c1c7fd485e1e030a25b1bfa72681358ddc659c5cf27534e0ea6994e80cf9693f` |
+| `examples/lifecycle-d1/retained_v27.py` | `ebe742049d0ab2c145cee24f90ecb2f41f5be840995343a445e19d4685606c76` |
+| `examples/lifecycle-d1/retained_v28.py` | `4c9b4b5b97098082c4b5d7fd0e4cffb452fe2931218b69787e02d2b94f1a8826` |
+| `examples/lifecycle-d1/retained_v29.py` | `cddd9756187a5ae8083eb67c1272830b232dc8f11fa9fd2b8b033c3028c3a1ea` |
+| `examples/lifecycle-d1/fixture_artifacts.py` | `9aba4c12091efd729696e1ca7d7981c786462dd29da783ebf4a2092cddade7f4` |
+| `examples/lifecycle-d1/fixture-runtime-artifact.json` | `df8889b9b81f90d5285c02e881e1b737373684e9a6517387645b3da6fd02310a` |
+| `examples/lifecycle-d1/execution_freeze.py` | `310d2e1017ea39bc1d635dbf0563e9427c6b5e543b1c9bcc97c068c4eeb4cc50` |
+| `examples/lifecycle-d1/branch-freeze.py` | `610eaa2da0f3b2d875bb76485305592aa0608db07810e5e34ee364a83cb3afad` |
+| `examples/lifecycle-d1/retained_v30.py` | `ce4f43439db266ba73962a693e012adaca8607633916f3684b3474c6c422443a` |
+| `examples/lifecycle-d1/retained_v31.py` | `fc41bd21b2cc5663d419d7ee5bf9e7a6fcc95305a747652d21367366e621dd15` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json` | `d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/bindings.json` | `e63b908ca5269853478f7d5a65621327bc5f52ff2ff389de96707e0a137296af` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/confirmation-template.txt` | `4a2aeed1f62bb10883a8b9f37b5c4da817bddb3580c22f59f54e942b6dd1b34d` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/source-freeze.json` | `0766c339df95c00427713c3699d0fb65e1a9b463897ba37206d47dde95bd212f` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/profile-windows.json` | `06477b227e22ccb09bde0ad540c9035029c13fef62d6d95010cd8b4be7f2e687` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/cross-field-windows.json` | `0032ef62c6c36232ce08dfb5a115eec7e39273cdbd51f76b935079e4ce2d1103` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/preparation-evidence-audit-plan.json` | `4fe01568288b9aa5bb2b3e542d8f4cb7f31aa0dda3284f34b6eef017e6a5a4c5` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22/source-review-binding-index.json` | `292034d5a467e11b5a7120fe8bd085cdc794a9664da29b3f9920715c035e2e10` |
+| `docs/acceptance/evidence/issue307-d1/candidate22-planning01/host-anchor-readback01.json` | `351b896debc6496e332cdd2c8a753e1e2d9a9f3eb585b4e08832d4a9cee9ec79` |
+| `docs/acceptance/evidence/issue307-d1/candidate22-planning01/engine-service-bindings01.json` | `0c1b84732f5fdfd315905023bb2629874a8ece7601fa0c528e3b5e7612f37a5c` |
+| `docs/acceptance/evidence/issue307-d1/candidate22-planning01/allocation-readback01.json` | `08f42efa9905b22f4438db579432844e028a2033e11726c831cdfd7ed0a1db41` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-readonly01/complete.json` | `49122650975099a7894ec7ef826b37ff4ba67a327971444b2ba75c03b7dc9464` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/non-delete-terminal.json` | `06dfdea549c751b1182bb2252efbe859a556ddc3a3a3a2803609b6d056d78176` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/non-delete-evidence-index.json` | `3cd68924ece0e48221ec8b18e6c67ccebcf62be9585f3c22f4ba19d3fd82a12b` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/allocation.json` | `330d4e78bc983e4c03d562757d881857556f890cb19d0bf0b0c5d74a713340fe` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/owner-descriptors.json` | `df94c86c4eb2f53a00b17bce7493837255a8a88c9b04064314cf0d72a87e72c6` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/retained-before.json` | `e1643c41e868ed05785e1ea3e52bb6782625ae73e581c3d40bdb3bfc00c191b8` |
+| `docs/acceptance/evidence/issue307-d1/remaining-candidate22-preparation01/budget-initialization.json` | `6cb9440e9e394d50657e8f0ff9f6582ba475a88ee452aa670d1a0809386afbf3` |
+| `docs/acceptance/evidence/issue307-d1/remaining-window-review06/composition/window_support.py` | `ad4a7179efb96a02ef23401f1fbe5d489452f5cd923b09c7aae6fba12944738f` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/001-intent.json` | `39ddbc5c62d631791a75626f4b80e70de7e69c59d3845c7a94639169f0127e1a` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/001-process.json` | `02bc8c4aeed99e703df3905b9049bd79d649bfd39b422f55ea6419d8748e5b2b` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/001-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/001-stdout.json` | `01ef4dbc17f24ef59bbc61c9101f837f4c6a4bc0e5edb43a808d7c16318b1dd8` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/002-intent.json` | `ee60d68fbad27fa59f41f130ec9bf40916985ecbb33607b86512eca3ecc555be` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/002-process.json` | `a399c81bf27cd72aec4347a4b5f3455e4f2332d6121ba08983a4865617bd5017` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/002-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/002-stdout.json` | `a0c6b7483122434e0b105c21c90cd376ebc1c04c7e57924fee08fb0990928e3b` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/003-intent.json` | `3c30f0abd782c2e4c295575b034bb2a4bfe29cf80f520a100bf5230b75cb1a2f` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/003-process.json` | `c63fb9a7355da5e2ef55bd0169c3667aeba3e620281a6a9d920e97ea27e765b8` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/003-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/003-stdout.json` | `10c5fd43587c4c900ce46d5079a38f18fdb95b1392d61521642bead8992e63dd` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/004-intent.json` | `0ba23b4f91327d4f9ea27256ae851d16856e01456a9ef6e531e7c73c12d237b6` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/004-process.json` | `99d868336227401c83344783c468201a3bc07d57d6e6ae242f28bf5e4f5e82b0` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/004-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/004-stdout.json` | `078925bfb99ebc9f98e5d2ccfdac5948ba0b377e17f7ec6e6689bebf6b1e2aba` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/005-intent.json` | `83548081e1cb707801cdc98dd9919c99d93285827a3bc9a94c49cd324a20d6d4` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/005-process.json` | `8133c2f645a91087911bbbdef3e30929c334c82b74b5bed6c7e1a3a35de20fc7` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/005-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/005-stdout.json` | `697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/006-intent.json` | `b156455e9c7c9ff4f25cae482788e7e7d60c947531914d3da67756112c7abff7` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/006-process.json` | `de69cc33a8be6803768ada8bd3d901ad544f287880755c348a7f20fc31c0dd9b` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/006-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/006-stdout.json` | `6a734974f339647acc4fbf89d0567602c58a27b878fc0f2d3b530cc328569765` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/007-intent.json` | `deb9bfd5948c5345d15e30a145aaacb10f00c2d3987c2154ea2f8a42c3da544c` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/007-process.json` | `40f561b7bf6e0250c2ec98220788a0aba2ae4ded2a4d3c57ca4966b833bee42c` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/007-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/007-stdout.json` | `fa2f70d439ff601f70b790b0520245509ee5c1ea877b415dcf936089d4294a7d` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/008-intent.json` | `2b092e106d438f71efa0bca078a1be7917057b961a4466bead8c5b82ca70f091` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/008-process.json` | `5cde1e5acbd1610a164fa2a2945c3afea63128fcd44104b7afbbeaa3d543a856` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/008-stderr.txt` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/008-stdout.json` | `1796a08715b626eb043fead6a4966d86568e9e21011df658a7335aae09f5d35a` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/passed.json` | `16d1c3a8a362ead2027de0c822073b353783599fe88a04a6cdef523d4c8afddd` |
+| `docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6/snapshot.json` | `524daa247acf1f864057153c9fb49b414b6b814853f6bb665175c79a47beb15a` |
+| `docs/acceptance/.gitattributes` | `79ae2b7c123c2f8e8d03851fdcdd16784199ef059e2001a78ae70139a790b8e3` |
+
+
+三源当前Core业务基线在本代bindings中固定。business-races为本次v28可信混合闭合后的全关系指纹，另两组保留原完整指纹；aab0 policy checkpoint及五个head/已过期期限仍是历史事实，不Renew，不把它的历史CoreSHA当当前全关系指纹。原v28 P2 CONFIRMED DENIED/已用预算、T1/T2未发送以及之后可信混合闭合、新17版本只读结果分别保留，不回写原终态。
+
+本代三组原生非删除准备、9新备份、独立clean/rehearsal Core/native恢复及隔离业务重跑、Go离线校验、完整原生只读入口均通过。完整入口核17版本、53已知disabled身份（52 sole-policy/no-groups及唯一固定NONE/no-groups）、15 fresh NoSuchUser；本次保存179技术请求start/observation对，amount=NOT_ASSESSED。这些是准备事实，不能替代将来窗口内fresh核验。
+
+R仅支持固定schema69/66且无identity_kind，宿主P保留当前产品保护模型；同一source-freeze v2固定两制品、共享窗口/scope/policy和原构建，禁止混用。三真实源未升级，隔离schema升级提案未授权且不属于本方案。执行入口先核R/P原字节及交叉字段，再允许Docker/source。最终冻结包独立报告须PASS且remaining_blockers=[]。完整审批引用附录为 `candidate22-planning01/approval-reference-manifest01.json`，其最终静态audit plan由同一固定入口核验；不在文档中写入其自身哈希以制造引用环。未来实际授权、批准模板、完整reference manifest/envelope和后续调度事实另存，准备NOT_RECEIVED快照不改写。
+
+执行前依次核精确发布HEAD与全部必要PR CI/评审线程、#332 Draft/#307 OPEN及全部批准字节；固定完整入口新鲜检查case/window、全部拓扑/预算、Core/native/IAM/17版本、全部备份，入口finally关闭后先Host.check核新授权及停止状态。只有固定窗口内全部前置通过才允许有限启用。每份send→disable-send→选定Outbox→既有Asynq只读recover→Core immutable absence→下一份；每sender/wire/recovery前≤1分钟fresh实际host proof，wire context≤3分钟且逐target刷新。H0/H1零send，H2真实204之后才late hold/revoke/丢响应，M1先A absence，再B UNKNOWN+C-only checkpoint原字节复制核SHA后才B lookup。
+
+SDK无重试，持久target/wire budget先于Core claim，UNKNOWN不重发。失败或到END立即停止新增enable/wire/sender并逐组固定seal；归档失败仍继续全部disable-all/物理停止，缺fresh关闭读回即UNCONFIRMED。11份保留版本、其他环境、全部备份、旧pins、新旧预算、原失败/UNKNOWN/attempt/成本事实全部保留；cleanup=0、hold-release=0、bypass=0。不延长、平移、重开、补发、退款或释放旧pins。完整步骤见[v32手册](issue307-d1-v32-window-runbook.md)，实际状态见[v32矩阵](issue307-d1-v32-preparation.md)。PR CI、main CI、运行证据与人类授权分别核对；完整D1仍NOT_ACCEPTED。
+
+
+## 执行前条件与当前验收
+
+准备阶段已实际完成三组原生非删除备份/分离恢复/副本重跑、固定完整17版本只读、独立冻结评审和最终静态同入口audit。独立报告remaining_blockers=[]。1085已知CID均stopped/PID0/noports/norestart、30permission=false；30旧预算及3独立新空预算、66旧+9新备份原字节保留。当前新授权及schedule均不存在；这些准备证明不能替代未来授权窗口内的新鲜核验。
+
+未来若授权，先核最新真实人类消息/UTC/本execution terminal，再核全部审批原字节、精确锁后HEAD/ruleID/完整保护/必要CI/评审线程/#332 Draft/#307 OPEN。固定入口新鲜核case/window、全拓扑与预算、三源Core/native/17版本/完整库存保护/IAM及全部备份，自动关闭后先Host.check，再允许窗口内有限启用。每份严格send→disable-send→选定Outbox→既有Asynq只读recover→Core immutable absence→下一份。每sender/wire/recovery有各自≤1分钟fresh host proof，wire context≤3分钟且逐target刷新，预算先于Core claim，SDK无重试。H0/H1零send，H2及M1有限顺序、checkpoint先于B lookup等全部沿冻结手册。
+
+任一非预期失败或10:40Z到时即停止新增enable/wire/sender，逐组固定seal；归档或inspect失败仍继续已知CID的全部关闭。无fresh身份读回/enabler未闭合/归档不完整为UNCONFIRMED，不报整轮PASS。无cleanup/hold-release/bypass/release/退款，不覆盖旧失败/UNKNOWN/attempt/成本/预算/pins；不重发UNKNOWN、不延长/平移/重开窗口。只读恢复截止12:40Z不授予重新启用身份或发送。

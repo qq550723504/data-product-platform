@@ -1,0 +1,139 @@
+{
+  "status": "PASS_INDEPENDENT_C18_FROZEN_FILES",
+  "source_head": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "packet_commit": "baa1555dab9b4fcaf058109b53a81e49ac13ccda",
+  "candidate_sha256": "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+  "bindings_sha256": "8d021af81d905cc6de255bf84e460fc0b416d5af5bacc8388cfbb2b423a60624",
+  "template_sha256": "5cd148132b380b4a3361ae7210c8cc02fe6932fee3824ae77b4fec0cc2523a90",
+  "source_freeze_sha256": "3e5e8a28621d18ae41c82fe32105b092e64fbb5623d2ae3d3a00f0b3e72104f0",
+  "source_files": 2129,
+  "original_build_members": 12,
+  "zip_sha256": "4f1a7f8fd0c8a6df4a35136be98667033e2f69aa6b3aaa7d9a96ce2c60a2d9ad",
+  "targets": [
+    {
+      "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/p2.csv",
+      "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+      "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "ByteSize": 232
+    },
+    {
+      "ID": "f48755f1-976b-4f47-98da-70ead936a4c3",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/t1.csv",
+      "ProviderVersion": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+      "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "ByteSize": 129328
+    },
+    {
+      "ID": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/t2.csv",
+      "ProviderVersion": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+      "ContentSHA256": "a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c",
+      "ByteSize": 49
+    },
+    {
+      "ID": "c05307db-cb81-4220-b42e-be23f85821e3",
+      "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+      "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+      "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+      "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/h2-a.csv",
+      "ProviderVersion": "453c6f42-fbb2-4fdf-9f86-00a20a54b7bc",
+      "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+      "ByteSize": 44
+    },
+    {
+      "ID": "5e712426-2109-4f0b-8791-df0a2be3a9f7",
+      "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+      "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+      "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/m1-a.csv",
+      "ProviderVersion": "e8a8418e-c515-464e-99e5-10bc4c64fa8d",
+      "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "ByteSize": 40
+    },
+    {
+      "ID": "ad08947a-4c4d-4b0f-8c7e-2d89f287819f",
+      "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+      "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+      "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/m1-b.csv",
+      "ProviderVersion": "54900849-d59d-459e-90bb-275a5975d0a6",
+      "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "ByteSize": 40
+    }
+  ],
+  "survivor_count": 11,
+  "present_version_count": 17,
+  "P1_permanently_excluded": true,
+  "permission_files_false": 30,
+  "worker_root_credential_absent": true,
+  "wire_key_only_wire": true,
+  "wire_recovery_delete_secret_absent": true,
+  "windows": {
+    "status": "PASS_CURRENT_CROSS_FIELD_WINDOWS",
+    "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+    "candidate_use_until": "2026-10-21T14:40:00Z",
+    "recovery_until": "2026-10-21T16:40:00Z",
+    "cases": 6,
+    "recoveries": 6,
+    "provider_io": 0,
+    "current_policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8"
+  },
+  "preparation_audit_plan": {
+    "status": "PASS_EXPLICIT_EVIDENCE_INDEX_AUDIT",
+    "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+    "plan_sha256": "2398e1924a1f65ded666a09b26d9754e2af8144de7a19f6e27069445e965d543",
+    "candidate_sha256": "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+    "indexes": [
+      {
+        "id": "source-review",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/candidate18-source-review01/evidence-index.json",
+        "sha256": "8994847872b0c232ade5809da5afc0c70076b4b15d53545225a6133bd37e9f55",
+        "members_verified": 180
+      },
+      {
+        "id": "nondelete-preparation",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/non-delete-evidence-index.json",
+        "sha256": "337158214ffdf7d5c18f133878bc767d11ed406987f59f2be19aafdf3acccc4e",
+        "members_verified": 1274
+      },
+      {
+        "id": "source-review-report-binding",
+        "format": "files-map-v1",
+        "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate18/source-review-binding-index.json",
+        "sha256": "91b4ff10db4fc34cc76e10eb4c5bef4594dd554442ed33b81d436a3b2e09035e",
+        "members_verified": 2
+      }
+    ],
+    "members_verified": 1456,
+    "source_provider_io": 0,
+    "native_delete": 0,
+    "execution_authority": false
+  },
+  "reviewer_native_calls": 0,
+  "real_DELETE": 0,
+  "limits": "Host descriptors and stopped state require the separate complete-entry and final physical closure receipts. No human authorization or schedule is created by this analysis."
+}

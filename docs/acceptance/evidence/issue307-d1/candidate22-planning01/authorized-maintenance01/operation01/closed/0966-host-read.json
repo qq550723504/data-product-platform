@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "docker",
+    "ps",
+    "-aq",
+    "--no-trunc",
+    "--filter",
+    "volume=dpp-lifecycle307-754ea8f0-candidate21-rehearsal-core"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:20:55.674170+00:00",
+  "stdout_sha256": "e3a3bd53d8b38836ebf2cea95004a9b26b128cca64bc1cf8980cedb816412896",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

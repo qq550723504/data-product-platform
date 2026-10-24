@@ -1,0 +1,2 @@
+# Preserve the real counterexample junction locally; do not traverse or publish it.
+/terminal-parent-junction-counterexample01/control/authorized-execution01

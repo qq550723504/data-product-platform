@@ -1,0 +1,21 @@
+{
+  "source": "514843da1a143fba537c1668483fe95800ddd992",
+  "base_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "profile": "candidate21/v31",
+  "not_before": "2026-10-22T14:00:00Z",
+  "not_after": "2026-10-22T14:40:00Z",
+  "archive_sha256": "148efd92fe1e1261e044425ffecadbfab837414c9bbc00bac4bca78280855fd9",
+  "archive_bytes": 6427821,
+  "runtime_delta_files": [
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go"
+  ],
+  "schema": {
+    "max_version": 69,
+    "migration_members": 66,
+    "protected_identity": false
+  }
+}

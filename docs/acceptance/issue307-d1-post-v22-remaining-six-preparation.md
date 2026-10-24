@@ -1,6 +1,6 @@
 # #307 D1 剩余六份方案的准备边界
 
-状态：范围草案，**未冻结、无新删除execution、无窗口、未授权**。不是candidate12/v22的续跑，也不是精确确认文本。#323保持Draft、不合并；#307 OPEN。
+当前状态：旧dispatch闭合及17版本实际只读验收已完成；candidate13/v23仍**未冻结、未获新删除授权**。proposal execution为`4e524c04-2376-4bc9-9e85-452909d3dba4`，人类选择的方案窗口为2026-10-20新加坡14:00–14:40（UTC06:00–06:40），只用于准备；未安排调度。不是旧candidate12/v22的续跑。#332保持Draft、不合并；#307 OPEN。#323已按另外直接人类授权合并，旧Draft检查点原文保留。
 
 原v22已经一次DELETE P1，原204/CONFIRMED ACCEPTED不可改写。P1仅通过独立新的只读切片追加absence及plan completion；原失败终态、旧预算、旧pins、旧授权及所有备份保留。P1无论后续对账结果如何均不能放回删除目标。
 
@@ -58,3 +58,84 @@
 ## 最新准备检查点
 
 P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:17Z实际闭合：absence b2d74d75-ed07-4b0a-b530-6c5d308cf1b8、completion16562b28-3896-49c0-933e-a6e73059bddc；24项新的instrumented读取及Cost、原旧行保留和完整封存另见P1验收矩阵。本轮未新DELETE。其余门禁保持，尤其旧P2/T1/T2占用未做新Core逐项查询或可信NOT_SENT闭合，17版本全量bytes/SHA/IAM三源刷新尚未做；没有新删除候选、execution、窗口或授权。
+
+后续检查点：新的只读 audit `23587686-0a95-4eaa-a010-a8c896c9735b` 已逐项核实 P2/T1/T2 各有一个未释放旧 dispatch、无 claim/observation/release/absence，三项旧批准尚未撤销。全 Core 指纹和旧控制/预算/备份保持一致，Core 已重新停止。此结果尚不是可信 NOT_SENT；后续新鲜宿主/IAM proof、Command 闭合、17 版本全量刷新及新候选均仍 NOT_RUN/NOT_FROZEN，详见旧 dispatch 闭合验收矩阵。旧检查点原文保留为当时状态。
+
+最新实际结果：非删除audit `94f28318-cfd4-4c62-ba1a-bec9f35836c8` 已对原P2/T1/T2各追加旧批准撤销、可信NOT_SENT及dispatch release，三项unresolved=0；旧attempt/approval/pins/预算/成本保留，87唯一CID已停止，真实DELETE=0。执行终态 SHA `3ce05b24b298718b63dcd2c553c993b6f40a387c3a0eb26e13fda695ed5692cc`，独立实际结果终评 SHA `33bcf7eb3fd742d932996f5378cfa9870cca2e9009245f5b815152d485b7c80b`，均PASS且剩余阻断为空。8次真实技术IAM GET/观测单独保留，amount NOT_ASSESSED，不冒充零外部调用。详见旧dispatch闭合验收矩阵的最新追加。#323已按另一次直接人类授权合并，实际f22587d及其push/main CI39250314443全绿；当前后续代码在Draft #332，#307 OPEN。17版本全量刷新及新的六份候选仍NOT_RUN/NOT_FROZEN，没有新删除execution、窗口或授权。
+
+
+### 17版本入口实现检查点（2026-10-19，尚未运行原生17核验）
+
+旧P2/T1/T2已按可信终止、identity/gateway闭锁证明追加NOT_SENT及dispatch release，原预算/pins/失败事实保留。新只读合同见 `issue307-d1-post-v22-seventeen-contract.md`；当前实现分离原18-policy、唯一P1真实provider错误码HEAD absence及显式present17。维护profile不含业务Token/DB/删除权限/预算，Root凭据仍有provider root权限，只读由冻结GET/HEAD helper强制。
+
+新Go读取器/文件聚合器及全部既有两包回归共114个PASS test事件、0 FAIL（source-local01原日志）；host完整成功组合、10种失败组合、budget归属/挂载5反例及未知inspect关闭，normal/-O各4方法通过，统一audit55分钟截止的补充回执见source-local02。source-local01的host输出是统一截止接线前快照，不伪称最终字节；原始评审harness/失败日志保留，当前source终复评仍待同一冻结HEAD。
+
+17份原生读取仍NOT_RUN，六份新候选仍NOT_FROZEN；不创建新删除窗口/授权，不复用旧v22批准，不将mock视为native/IAM/Core事实。#332继续Draft，#307保持OPEN。
+
+
+最新17版本结果（原检查点不覆盖）：audit f4330324-98de-4fc4-ae3d-e1feab7adaae 已实际PASS_COMPLETE_POST_V22_SEVENTEEN_READONLY，74次技术GET/HEAD、17份全部bytes/SHA/保护/P1精确缺失、三源Core不变及最终封存通过；独立结果终评SHA c6508108d16f6095889b7dce66bb26d4940073faf1934a8b9b1fed9ec69ab616，remaining_blockers=[]。详见issue307-d1-post-v22-seventeen-acceptance.md。人类另选新方案窗口2026-10-20新加坡14:00–14:40，仅用于准备，不构成新删除授权；六份contract见issue307-d1-post-v22-six-contract.md。六候选尚NOT_FROZEN；原预算/pins/失败/所有备份保留。
+
+### 六份候选源码准备检查点（尚未分配或运行新原生环境）
+
+| 有限工作 | 当前结果 | 证据边界 |
+| --- | --- | --- |
+| 旧P2/T1/T2可信NOT_SENT/release | PASS | 真实原源与独立结果复评，旧行/预算/pins保留 |
+| 17版本及P1精确缺失 | PASS | 真实74次GET/HEAD；与新一代IAM/备份验收区分 |
+| 新批准/旧dispatch阻断 | PASS | 真实隔离PG三方法；无真实provider删除 |
+| 六份SDK→wire→关发送→恢复组合 | PASS_LOCAL | loopback/double，无保留Native DELETE |
+| 当前Go源码回归 | 218 PASS、1 SKIP | 缺DSN的旧adapter测试明确skip，不冒充PG结果 |
+| 准备入口 H1–H4 独立评审 | PASS_BOUNDED_SOURCE | report `host-source-final-review02.json` SHA37e575297ce74367fba2734ced5e05998a5fc3dba73261e403db3500303ced07；排除最终新三入口/native |
+| 新冻结/完整只读/H1封存入口 | PASS_BOUNDED_SOURCE | `new-entry-source-final-review02.json` SHA1d0d9f0bbff1fce4c82e05adaa54e52e1b9b135bc10a3544058b60180dfa918c；原E1/E2失败模型保留；完整collect、H1真实本地签名和103步seal模型正常/-O通过，不冒充actual |
+| 新IAM、九新备份、分离恢复及业务重跑 | NOT_RUN | 新allocation尚0；Source发送权限未开启 |
+| candidate13冻结及完整精确文本 | NOT_FROZEN | proposal execution/窗口不是授权，完整D1仍NOT_ACCEPTED |
+
+当前实现/权威入口和非目标见`issue307-d1-post-v22-six-contract.md`。所有早期NOT_RUN/无窗口等段落是当时检查点，不覆盖上方最新状态，不据此否认后续单独留证的真实结果。
+
+### 冷态分配前检查点
+
+本代运行源码已提交为`a0f938943a7b396ecfed354ee4294506bd3d632e`；精确该HEAD的PR CI39286329231及required汇总均SUCCESS。原始API读回单独保留于`post-v22-six-preparation01/source-pr-ci01*`：13项中12项摘要SUCCESS，web-console全部步骤（含Complete job）SUCCESS而其单项摘要暂未更新，故不将该次读回写成13/13摘要通过，更不称为main CI。
+
+窗口准备手册的独立一致性评审已PASS，报告SHA`53987dc760b2059f1524e74fac201b278936a23c8fea3bfefecb2407e8cf74d0`，手册SHA`e2507fcf21459c6f9bfa1b2a666f6bdd6630d64a3283fd2f064f9bfaeaead6a2`；仅关闭角色前置措辞问题，86项已评审源码无漂移。该结果不是actual allocation、Native、候选冻结或授权证明。
+
+现在只启动一次性冷态分配：编译精确源码并创建停止资源，原源/身份未启动或开启。实际CID/卷/挂载及预算初始化结果须另存并独立核对，三组非删除原生验收仍NOT_RUN；候选尚未冻结、授权NOT_RECEIVED、调度NOT_CREATED、完整D1 NOT_ACCEPTED。
+
+### 实际冷态分配与前置失败（后续追加，不覆盖原记录）
+
+新allocation已实际创建86个停止owner、15个新卷及三个独立internal恢复网络。原始allocation SHA`91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7`；nonce `d54522c4-20db-4be6-9bb7-f2f8ed9b3aa3`。原初四份构建来自a0f938，完整CID/descriptor/map/关闭回执均保留于`remaining-candidate13-preparation01`。
+
+首次materialize在任何profile写入或owner启动之前被冷态门禁拒绝：从未启动的恢复容器只有创建配置中的精确network ID，runtime endpoint的NetworkID为空。独立实际冷态评审另外发现initializer的Docker实际cap值为CAP_CHOWN，与原字符串CHOWN检查不符。原失败`materialize-failure01.json`及原BLOCKED独立报告SHA`09613e8bf682a8b4bb51fc36564c547383e2728a0439b8afc437e7f28b549e3a`保持不变。86个新owner均created/PID0，六个原source Core/Native保持关闭；56个受限worker、15卷完整挂载图、三网络及六处旧卷只读挂载实际核对通过。预算尚未初始化、Source/IAM/restore仍NOT_RUN，真实DELETE=0。
+
+修复严格区分created/PID0/零StartedAt且完全空endpoint的网络预绑定与已启动endpoint；两者都要求固定HostConfig网络ID及唯一批准网络名，foreign/extra/未知/曾启动后空endpoint拒绝。initializer只接受实际canonical CAP_CHOWN，不扩大cap集合。当前新增实际Docker投影正例、网络/状态/额外endpoint、cap扩张及source跨绑定反例；四组相关Python入口正常/-O均通过。这是本地回归，尚不是实际冷态终复评或Native验收。
+
+原设计把allocation时的构建源与后续宿主driver变更绑成同一个可变快照，不能为修复而回写旧allocation。当前改为单一mandatory追加source checkpoint：明确保留initial_build_source，绑定effective reviewed commit、原allocation SHA/86CID/nonce、原四binary、原失败SHA和独立目录四份重编译证明。apps/platform及migrations必须逐字节不变，只有已评审五个host Python/测试路径允许变更；四份重编译SHA必须完全等于原活跃binary，原文件不替换。缺checkpoint无旧source fallback，任何差异拒绝继续。checkpoint及重编译尚未实际执行，独立终评后才绑定；不是新授权或候选冻结。
+
+后续独立终复评`cold-source-independent-final-review03.json` SHA`107837f89bac730d7d9e81f7093badab00fe8e129213cb16850d4ee9cf286da2`已PASS、remaining_blockers=[]：COLD1/COLD2均闭合，实际冷态入口于16:57:28Z对86原CID通过。追加SOURCE1反例（重算receipt/checkpoint后省略编译通道）已修复为四binary+八原编译通道固定12成员、实际目录全集/regular/无链接、完整SHA map及跨字段校验；原BLOCKED报告SHA`70fe77016c02d9903b187751a8e94bd7102fa7a1d14caaa0b2c643aa63c0ad45`不覆盖。最新受影响runtime正常/-O各10方法独立通过，其他三套已通过且源码未变。下一步提交精确已评审修复、追加实际相同字节重编译/source checkpoint及cold profiles验收；这些实际步骤仍NOT_RUN，不将源码/冷态PASS当成Native或授权。
+
+### 相同字节重编译、profiles及预算前置失败
+
+已实际从355717重编译四份binary，与初始a0f938活跃字节完全相同，原文件未替换。原checkpoint01 SHA`03596768d01cec5793319fcbc94e2fbf93dcc6ab390c3331c6c9755719e0e649`，rebuild01 receipt SHA`c7a8c2f51382bcae496e29467c57f5b8b912f8157cd4ee7859a89257b203411a`；15个maintenance、6个source case、4个trial及30个false占位permission独立读回PASS，报告SHA`97c613dea59734f31225385019061cf58fe48d244ccec80831a3421a674f780b`。source case冻结Base.Enabled=true是有限业务描述，不是本轮已启动；六个case owner均未启动，不能把它误报成全部profile false。
+
+首次预算步骤business initializer已exit0/PID0并读到UID/GID10001空目录；随后因聚合漏Helpers被共享校验器拒绝，late/mixed仍created、零StartedAt。原失败SHA`163d41af4b95addb52bb0507527ecd20d131ebc426faa886a35a27583fe15378`和原partial receipt/业务tar/日志保留。新增真实Docker TAR与完整聚合成功组合、missing/extra Helpers、旧checkpoint失联、类型/归属/非空/链接、已运行initializer及最终关闭未知反例。当前正常/-O各14个runtime方法及1个freeze组合PASS；尚待本切片独立终评和实际有限续接。Source/IAM/restore仍NOT_RUN，真实DELETE=0。
+
+355717精确HEAD的PR CI39291709408失败，demo镜像构建npm ETARGET，原raw log和失败CI读回保留。确定缺口是Web无锁文件、构建时重新解析浮动传递依赖；版本发布传播差异仅为推断，不作为已证实原因。采用标准package-lock v3/npm ci，manifest及测试不变，实际隔离Web镜像构建成功、8套204项测试通过，独立文件评审PASS；新精确HEAD的PR CI仍需重新通过。这些是Web/CI事实，不是D1 Native或main CI结果。
+
+计划追加checkpoint02绑定原01、预算失败、原86CID/nonce和新的相同字节重编译证明；只读确认已完成business，再首次初始化late/mixed，随后才做三组原生非删除准备。新execution/拟窗口仅为准备，授权NOT_RECEIVED、调度NOT_CREATED、candidate仍NOT_FROZEN，完整D1 NOT_ACCEPTED。
+
+### checkpoint02及三预算实际结果（原记录不覆盖）
+
+预算修复源码独立终评SHA`695c077f1bb774774e99822731e891877606ef35d31391152298c40ed984b87f`，0阻断；已提交为`c72930430d1aeaf89f6af9be49881391405d9efa`。同一源码实际追加checkpoint02 SHA`4572d3f02c3294864390eda43d6407ede603f10be1820fa5bbdade5f6b939218`、rebuild02 SHA`08bc31ad669addc3f34b25da3e27b4167fb4f01bdaffed638693d4446d847f0b`，四新构建字节等于原活跃binary，原01/冷态失败/预算失败均仍强制校验。独立实际文件复评SHA`e1af2862659887e4289160fd91a3a64f4a7cd8b028a72f7f4c584e65dee4beaf`已PASS；其省略历史live Docker门禁，不能声称该复评独立完成新物理核验。
+
+固定finish-budget-initialization实际exit0，追加receipt SHA`a6eea4b0c792563b40a1b1b85cb73a220b3881c817668306b735f95f906dcf9f`。business只读核验、原开始/结束时间及tar未变；late/mixed各首次运行固定无网络initializer。三个新预算均实际UID/GID10001、files=[]，三个initializer关闭/PID0。原partial receipt、失败和原业务tar保留；旧预算和pins未改。原生Source/IAM/backup/restore仍NOT_RUN，下一步等待实际预算独立核验及精确新HEAD CI通过，再运行一次固定非删除入口。
+
+
+### c13 原生准备失败与当前 c14 有限修复（追加事实）
+
+c729304 精确 HEAD 的 PR CI39296105088 已13项成功，Draft/Open、未解决线程0、Issue307 OPEN。实际预算独立核验报告 `budget-actual-independent-review07.json` SHA`c62b6639060d9f4a6e49eb560761af80064069495266606f46a1358b9eb7ed66`通过；随后固定非删除入口首次运行失败，不能冻结 c13。business 新 inspector 的 disabled 创建与读回成功，AttachPolicy 返回 NoSuchUser；仅六次真实 IAM 技术请求，3GET/2PUT/1POST、3×200/3×404，amount=NOT_ASSESSED。Source reader/17版本、九新备份、restore/trial 均未运行，Core-after NOT_RUN；不能声称本次 Source Core 全程不变。全部92新及source CID已关闭/PID0/noports/norestart；DELETE/object PUT=0、旧预算/pins/全部失败证据保留。
+
+原终态 SHA`7db97768426c0616e0e28b36b03e3cccd602545f2e4491d0ac0f26b194f886e4`及独立失败束 `remaining-candidate13-preparation-failure01/failure.json` SHA`0ece4d5e2e5ced1acd0f60b3ca6f6ff8359bbf2c113c0bb10b1d364edc2537f9`不可覆盖。原 preparation index 早于外层 CLI traceback 最后追加，不能视为最终 stderr 全字节索引；失败束另绑最终原 stderr。后续外层 CLI 通道放 active preparation 目录之外。
+
+固定 MinIO 的 disabled 用户在 AttachPolicy/旧 SetPolicy 路径被有效身份过滤；不是用户不存在。复用官方 ImportIAMV2 的单 user mapping，标准 archive/zip + 官方 policy parser/Equals，不启用 Source 身份。隔离 API可行性独立评审 SHA`c159c910926067cabdfe4e65162a97f3d240f6df487e98b3d76c5374b5711c41`通过。生产 adapter 的 native02 先完成一个用户8次真实请求，故意重放被 transport 阻止但 SDK 仍本地退避，测试超时；原失败 SHA`070a1b356ed6fbe4108a159b89a95b2e7b7bff82053e61fa9d972adee4bfafc1`与两停止 scratch 保留。单次工具改用 SDK MaxRetry=1，guard仍独立拒绝重放。新的隔离 native03 实际16次请求、两个用户全流程 PASS、均disabled/sole-policy/no-groups，重放0新增HTTP，终态 SHA`1e5343bb904ff4760c34dd28ac087cc5201a16503f2406ed9982b908a83e16c0`；两个新 scratch PID0，无 Source/object PUT/DELETE。这仍不是 Source 实际验收。
+
+当前提案 candidate14/v24，execution `afc0e66c-535b-426e-a937-964d0c9ca0d6`，沿用人类所选2026-10-20新加坡14:00–14:40（UTC06:00–06:40），只读上限08:40Z。完整设计见 [v24 finite bootstrap contract](issue307-d1-v24-bootstrap-contract.md)。原c13 partial inspector 保持disabled/no-policy/no-groups，其unassigned canned policy单独核；五个未创建c13用户需fresh NoSuchUser。新六身份均使用独立secret；共15已知身份，只有本代精确用户可enable。旧c13全链从current运行入口移除，仅作为不可变失败历史；新代只接受本代完整12成员构建、精确源码和新allocation，不设兼容fallback。
+
+本地 Go 回归已通过；新的完整入口/原生结果独立评审、精确新HEAD CI、86新CID/15卷分配、三新空预算、Source17版本/15身份/5absent及九备份restore/trial、冻结与完整只读终复评仍需完成。删除授权 NOT_RECEIVED、调度 NOT_CREATED、候选 NOT_FROZEN，完整D1 NOT_ACCEPTED。#332保持Draft、不合并，#307保持OPEN；#323已按历史独立授权合并，不重新声称Draft。

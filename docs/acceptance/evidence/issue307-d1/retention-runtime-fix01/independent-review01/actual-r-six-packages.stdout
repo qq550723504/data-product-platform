@@ -1,0 +1,230 @@
+--- FAIL: TestCurrentPolicyCheckpointMatchesActualReadOnlyReceipt (0.00s)
+    remaining_policy_heads_test.go:18: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\post-v22-policy-heads01\policy-heads.json: The system cannot find the path specified.
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.542s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	3.146s
+--- FAIL: TestCurrentSixCandidatePositiveAndNoP1OrRestoreSourceSubstitution (0.00s)
+    main_test.go:21: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\candidate.json: The system cannot find the path specified.
+--- FAIL: TestPreviousExecutionCannotBeReauthorizedByNewBinary (0.00s)
+    --- FAIL: TestPreviousExecutionCannotBeReauthorizedByNewBinary/remaining-candidate07 (0.00s)
+        main_test.go:94: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\candidate.json: The system cannot find the path specified.
+    --- FAIL: TestPreviousExecutionCannotBeReauthorizedByNewBinary/remaining-candidate09 (0.00s)
+        main_test.go:94: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate09\candidate.json: The system cannot find the path specified.
+    --- FAIL: TestPreviousExecutionCannotBeReauthorizedByNewBinary/remaining-candidate10 (0.00s)
+        main_test.go:94: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate10\candidate.json: The system cannot find the path specified.
+    --- FAIL: TestPreviousExecutionCannotBeReauthorizedByNewBinary/remaining-candidate11 (0.00s)
+        main_test.go:94: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate11\candidate.json: The system cannot find the path specified.
+    --- FAIL: TestPreviousExecutionCannotBeReauthorizedByNewBinary/remaining-candidate12 (0.00s)
+        main_test.go:94: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\candidate.json: The system cannot find the path specified.
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	3.706s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	1.091s
+--- FAIL: TestCompleteAggregationRecordedReorderingAndAllGroups (0.00s)
+    --- FAIL: TestCompleteAggregationRecordedReorderingAndAllGroups/business-races (0.00s)
+        main_test.go:70: full receipt rejected: {Status: Group:business-races Copies:0 Policies:[] ProviderIO:0 Delete:0} open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly\native-verification.json: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRecordedReorderingAndAllGroups/late-hold (0.00s)
+        main_test.go:70: full receipt rejected: {Status: Group:late-hold Copies:0 Policies:[] ProviderIO:0 Delete:0} open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\late-hold\readonly\native-verification.json: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRecordedReorderingAndAllGroups/mixed (0.00s)
+        main_test.go:70: full receipt rejected: {Status: Group:mixed Copies:0 Policies:[] ProviderIO:0 Delete:0} open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\mixed\readonly\native-verification.json: The system cannot find the path specified.
+--- FAIL: TestCompleteAggregationRejectsChangedAuthorization (0.01s)
+    --- FAIL: TestCompleteAggregationRejectsChangedAuthorization/wildcard-resource (0.00s)
+        main_test.go:99: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsChangedAuthorization/foreign-resource (0.00s)
+        main_test.go:99: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsChangedAuthorization/foreign-version (0.00s)
+        main_test.go:99: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsChangedAuthorization/removed-condition (0.00s)
+        main_test.go:99: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsChangedAuthorization/changed-effect (0.00s)
+        main_test.go:99: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsChangedAuthorization/extra-action (0.00s)
+        main_test.go:99: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts (0.02s)
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/inventory (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/user-policy (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/identity-removed (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/hold (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/version (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/size (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/delete (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/status (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/foreign-group (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/policy-substituted (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/missing-delete (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/mutation (0.00s)
+        main_test.go:136: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/missing-policy (0.00s)
+        main_test.go:145: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/extra-policy (0.00s)
+        main_test.go:145: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/malformed-policy (0.00s)
+        main_test.go:145: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/trailing-policy (0.00s)
+        main_test.go:145: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestExactSizeComparisonDoesNotRoundLargeIntegers (0.00s)
+    main_test.go:167: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate07\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestPostV22FileCompositionAndPolicyReordering (0.00s)
+    --- FAIL: TestPostV22FileCompositionAndPolicyReordering/business-races (0.00s)
+        post_v22_test.go:87: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileCompositionAndPolicyReordering/late-hold (0.00s)
+        post_v22_test.go:87: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\late-hold\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileCompositionAndPolicyReordering/mixed (0.00s)
+        post_v22_test.go:87: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+--- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions (0.03s)
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-present (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/audit (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/generic404 (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/presentP1 (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-version (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-user (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/unknown (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/binary (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/profile (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/core (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/outside-window (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/delete (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/hold (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-absence (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-copy (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-zero (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/size (0.00s)
+        post_v22_test.go:148: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion (0.01s)
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/version (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/selector-missing (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/GET (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/foreign-path (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/transport-failure (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/status (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/generic-provider404 (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/missing-request-id (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/absent-journal (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/policy-expanded (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsHEADSelectorAndPolicyExpansion/present-inventory-drift (0.00s)
+        post_v22_test.go:159: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal (0.01s)
+    --- FAIL: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/old-start (0.00s)
+        post_v22_test.go:199: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/future-observation (0.00s)
+        post_v22_test.go:199: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/foreign-audit (0.00s)
+        post_v22_test.go:199: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/missing-observation (0.00s)
+        post_v22_test.go:199: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/orphan-observation (0.00s)
+        post_v22_test.go:199: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/mixed-old-generation (0.00s)
+        post_v22_test.go:199: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+--- FAIL: TestRetentionWholeFileAllSeventeenBothPhases (0.00s)
+    retention_test.go:44: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift (0.01s)
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/wrong-phase (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/foreign-new-id (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/missing-identity (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/old-id (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/source-alias (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/hold (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/version (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/unrelated-expiry (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/journal (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/missing-user (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestRetentionWholeFileRejectsIdentityProtectionPhaseAndJournalDrift/history (0.00s)
+        retention_test.go:60: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestRetentionLateHoldPhaseCannotBeRelabelled (0.00s)
+    retention_test.go:111: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\late-hold\readonly: The system cannot find the path specified.
+--- FAIL: TestSixWholeFileSourceRestoreAndNewPolicyRejection (0.01s)
+    --- FAIL: TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/SOURCE (0.00s)
+        six_test.go:118: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/RESTORE (0.00s)
+        six_test.go:118: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/SOURCE (0.00s)
+        six_test.go:118: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\late-hold\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/RESTORE (0.00s)
+        six_test.go:118: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\late-hold\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/SOURCE (0.00s)
+        six_test.go:118: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/RESTORE (0.00s)
+        six_test.go:118: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+--- FAIL: TestSixWholeFileRejectsAliasedRestoreAndForeignExecution (0.00s)
+    six_test.go:143: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory (0.00s)
+    six_test.go:154: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestSixUncreatedIdentityAndDormantEvidenceFailClosed (0.01s)
+    --- FAIL: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/missing-file (0.00s)
+        six_test.go:196: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/unknown-user (0.00s)
+        six_test.go:196: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/wrong-status (0.00s)
+        six_test.go:196: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/dormant-policy (0.00s)
+        six_test.go:196: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+--- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence (0.01s)
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/business-races/missing-c20 (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/business-races/denied-is-not-absent (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/business-races/foreign-attempt (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\business-races\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/late-hold/missing-c20 (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\late-hold\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/late-hold/denied-is-not-absent (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\late-hold\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/late-hold/foreign-attempt (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\late-hold\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/mixed/missing-c20 (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/mixed/denied-is-not-absent (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+    --- FAIL: TestSixC20UncreatedProofCannotOmitOrRelabelRealAbsence/mixed/foreign-attempt (0.00s)
+        six_test.go:225: open C:\Users\Henry\AppData\Local\Temp\d1-review-retention-r215-9vrgpl_d\docs\acceptance\evidence\issue307-d1\remaining-candidate12\mixed\readonly: The system cannot find the path specified.
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	0.910s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-retention	6.008s
+FAIL

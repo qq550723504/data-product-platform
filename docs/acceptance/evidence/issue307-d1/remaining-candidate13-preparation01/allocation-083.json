@@ -1,0 +1,29 @@
+{
+  "role": "checkpoint-archive",
+  "group": "mixed",
+  "cid": "5c73ed225219e2ef6baeca51bc0052b5f5fcf45f8bbd91d99c3c4ccd252c5f45",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate13-archive",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-dfda43b4-objects,target=/source,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\mixed\\checkpoint,target=/backup",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-ec",
+    "test ! -e /backup/native.tar; exec tar -C /source -cpf /backup/native.tar ."
+  ]
+}

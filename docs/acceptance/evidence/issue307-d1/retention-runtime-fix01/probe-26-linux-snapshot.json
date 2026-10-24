@@ -1,0 +1,15 @@
+{
+  "command": [
+    "wsl",
+    "-d",
+    "docker-desktop",
+    "--",
+    "stat",
+    "-c",
+    "%u:%g:%a:%h:%F",
+    "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-output-4b5c79dde33b/_data/synthetic-fsync.json"
+  ],
+  "started_at": "2026-10-24T08:40:08.946821+00:00",
+  "finished_at": "2026-10-24T08:40:09.051498+00:00",
+  "returncode": 0
+}

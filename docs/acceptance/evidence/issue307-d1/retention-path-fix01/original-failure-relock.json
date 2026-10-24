@@ -1,0 +1,14 @@
+{
+  "status": "PASS_CI_FAILURE_LOCKBRANCH_ONLY_RELOCK",
+  "at": "2026-10-23T15:41:17.486458+00:00",
+  "head": "f2dbe4106ff5c27ff6b250091bbf9f9d79d71665",
+  "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "lockBranch": true,
+  "other_protection": "FULL_EXACT_MATCH",
+  "CI": "FAILED_WINDOWS_JOB_RUN39979325471_REMAINING_JOBS_PENDING",
+  "CI_success": false,
+  "source_start": 0,
+  "retention_hold_IAM_write": 0,
+  "DELETE": 0,
+  "new_source_push_after_failure": 0
+}

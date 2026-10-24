@@ -1,0 +1,160 @@
+{
+  "audit_id": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+  "native_delete": 0,
+  "budgets_refunded": 0,
+  "pins_released": 0,
+  "old_execution_resumed": false,
+  "observer": {
+    "audit_id": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+    "budgets_refunded": 0,
+    "cases": [
+      {
+        "NOT_SENT": {
+          "ID": "92521ce8-2486-4b91-80ac-a14202de8786",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "73d9251e-a128-47b1-8f5a-eaa35603c233",
+        "case": "P2",
+        "new_approval_revocation": {
+          "ID": "25d63b01-82ec-4e81-8808-3885ced01c78",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false
+      },
+      {
+        "NOT_SENT": {
+          "ID": "ac82beb2-cccd-4c82-ab90-2a941a0f7294",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "bb6ecab6-53f1-4a9c-a333-f0cf6f4edd4a",
+        "case": "T1",
+        "new_approval_revocation": {
+          "ID": "59cc1a3f-c7e5-4811-ac0a-af23a79f1cfb",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false
+      },
+      {
+        "NOT_SENT": {
+          "ID": "7f7dc79d-28fc-4ca1-944a-8e4a5e76860c",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "933462ae-04d6-4da4-97de-067b62863e0a",
+        "case": "T2",
+        "new_approval_revocation": {
+          "ID": "3d7802fe-ac55-4cb4-a640-273bc52e0bad",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false
+      }
+    ],
+    "completed": true,
+    "native_delete": 0,
+    "pins_released": 0
+  },
+  "Core_delta": {
+    "changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_approval_revocation",
+      "lifecycle_dispatch_release",
+      "lifecycle_provider_observation",
+      "outbox_event"
+    ],
+    "new_row_counts": {
+      "lifecycle_approval_revocation": 3,
+      "lifecycle_provider_observation": 3,
+      "lifecycle_dispatch_release": 3,
+      "command_idempotency": 6,
+      "audit_event": 9,
+      "evidence": 9,
+      "evidence_relation": 9,
+      "outbox_event": 9
+    },
+    "old_rows_preserved": true,
+    "new_provider_Cost": 0,
+    "pins_released": 0
+  },
+  "final_observer_result": {
+    "status": "OBSERVED",
+    "sha256": "15b4d38c6ca66a1ec5dc53b3366bae171229ddf39ed243d226585d426a919a49"
+  },
+  "final_Core_rows": {
+    "status": "OBSERVED",
+    "sha256": "8a940fba619352973ee5a6920eb25fed8677b6bdd4dcdee4a233f3d42321e46b"
+  },
+  "final_Core_fingerprint": {
+    "status": "OBSERVED",
+    "sha256": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8"
+  },
+  "final_Core_anchors": {
+    "status": "OBSERVED",
+    "sha256": "c156f728734649a600a12209a419e72c65ec6724389da0a70ff9f1785d2cd2e6"
+  },
+  "final_observer_stopped_before_Core": true,
+  "final_Core_delta": {
+    "changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_approval_revocation",
+      "lifecycle_dispatch_release",
+      "lifecycle_provider_observation",
+      "outbox_event"
+    ],
+    "new_row_counts": {
+      "lifecycle_approval_revocation": 3,
+      "lifecycle_provider_observation": 3,
+      "lifecycle_dispatch_release": 3,
+      "command_idempotency": 6,
+      "audit_event": 9,
+      "evidence": 9,
+      "evidence_relation": 9,
+      "outbox_event": 9
+    },
+    "old_rows_preserved": true,
+    "new_provider_Cost": 0,
+    "pins_released": 0
+  },
+  "closure": {
+    "profile_disabled": true,
+    "identity": "UNCHANGED_NO_ENABLE_PATH",
+    "owners": [
+      {
+        "cid": "5fcd0581355d90932c23e86ae5bc5807f76c94d0f132e25f8e5e3b8a6d4af9ac",
+        "stopped_PID0": true
+      },
+      {
+        "cid": "9821171f34a1cb5b24cdfde8093c9f7dadb2b9b73c08d3f4fe60e406b3842a0d",
+        "stopped_PID0": true
+      },
+      {
+        "cid": "1b532b9de7a48ad961a0c44e35a944fae2c659f75b50d4deda9fa77c64d834db",
+        "stopped_PID0": true
+      },
+      {
+        "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+        "stopped_PID0": true
+      },
+      {
+        "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "stopped_PID0": true
+      }
+    ],
+    "observer_stopped": true
+  },
+  "retained_unchanged": true,
+  "failure": null,
+  "status": "PASS_TRUSTED_OLD_DISPATCH_NOT_SENT_SEALED"
+}

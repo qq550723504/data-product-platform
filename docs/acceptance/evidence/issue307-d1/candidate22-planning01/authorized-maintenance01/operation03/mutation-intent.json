@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-23T04:32:45.991694+00:00",
+  "operation": "updateBranchProtectionRule",
+  "input": {
+    "branchProtectionRuleId": "BPR_kwDOUdQLBs4FE_7b",
+    "lockBranch": false
+  },
+  "expected_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "expected_rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "other_fields": "PRESERVE",
+  "atomic_CAS": false,
+  "automatic_retry": false
+}

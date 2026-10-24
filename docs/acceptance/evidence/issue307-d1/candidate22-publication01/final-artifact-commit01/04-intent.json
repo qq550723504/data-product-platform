@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "rev-parse",
+    "HEAD"
+  ],
+  "at": "2026-10-23T06:12:19.583081+00:00"
+}

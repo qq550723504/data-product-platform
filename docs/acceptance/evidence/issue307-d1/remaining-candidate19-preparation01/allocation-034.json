@@ -1,0 +1,22 @@
+{
+  "role": "source-gateway",
+  "group": "late-hold",
+  "cid": "e9e989acd159d8c40c287fb843e7c4f26b118edb2ad4cf7c2b5d1b45ec7f9e36",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate19-gateway",
+    "--network",
+    "e27a29ee55732447bff932d15bcb83339784089c00f03b9139232417fe1a8847",
+    "--tmpfs",
+    "/config",
+    "--tmpfs",
+    "/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\gateway.Caddyfile,target=/etc/caddy/Caddyfile,readonly",
+    "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "caddy",
+    "run",
+    "--config",
+    "/etc/caddy/Caddyfile"
+  ]
+}

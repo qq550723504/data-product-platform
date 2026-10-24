@@ -1,0 +1,693 @@
+{
+  "status": "PASS_LOCAL_WORKFLOW_PYTHON_NONDELETE_REGRESSION",
+  "HEAD": "b2ea34cfab49d445b27d239278cb5a4f9fbc053a",
+  "observed_at": "2026-10-24T05:57:51.252949+00:00",
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "files_per_mode": 25,
+  "tests_by_mode": {
+    "normal": 177,
+    "optimized": 177
+  },
+  "runs": [
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_evidence_indexes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "exit_code": 0,
+      "tests": 12,
+      "seconds": 0.682,
+      "tail": "...........s\r\n----------------------------------------------------------------------\r\nRan 12 tests in 0.478s\r\n\r\nOK (skipped=1)\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_six_native_entry.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "exit_code": 0,
+      "tests": 9,
+      "seconds": 1.559,
+      "tail": ".........\r\n----------------------------------------------------------------------\r\nRan 9 tests in 1.123s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retired_resources.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retired_resources.py"
+      ],
+      "exit_code": 0,
+      "tests": 20,
+      "seconds": 1.303,
+      "tail": "....................\r\n----------------------------------------------------------------------\r\nRan 20 tests in 1.115s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retired_volumes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retired_volumes.py"
+      ],
+      "exit_code": 0,
+      "tests": 6,
+      "seconds": 0.326,
+      "tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.190s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retired_budget_bytes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retired_budget_bytes.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 0.132,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.001s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_successor_dependencies.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_successor_dependencies.py"
+      ],
+      "exit_code": 0,
+      "tests": 16,
+      "seconds": 2.394,
+      "tail": "................\r\n----------------------------------------------------------------------\r\nRan 16 tests in 2.202s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retained_v26.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "exit_code": 0,
+      "tests": 5,
+      "seconds": 0.536,
+      "tail": ".....\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.249s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retained_v29.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 28.345,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 28.150s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retained_v30.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v30.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 5.045,
+      "tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 4.807s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retained_v31.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v31.py"
+      ],
+      "exit_code": 0,
+      "tests": 2,
+      "seconds": 3.595,
+      "tail": "..\r\n----------------------------------------------------------------------\r\nRan 2 tests in 3.345s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retained_v32.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v32.py"
+      ],
+      "exit_code": 0,
+      "tests": 6,
+      "seconds": 2.459,
+      "tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 2.254s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_receipt_bytes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_receipt_bytes.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 2.565,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 2.410s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_fixture_artifacts.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 3.646,
+      "tail": ".C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\zipfile\\__init__.py:1730: UserWarning: Duplicate name: 'apps/platform/a'\r\n  return self._open_to_write(zinfo, force_zip64=force_zip64)\r\n.fatal: git cat-file: could not get object info\n..\r\n----------------------------------------------------------------------\r\nRan 4 tests in 3.406s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_preallocation_ci.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_preallocation_ci.py"
+      ],
+      "exit_code": 0,
+      "tests": 6,
+      "seconds": 0.646,
+      "tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.392s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_six_candidate_runtime.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "exit_code": 0,
+      "tests": 16,
+      "seconds": 1.049,
+      "tail": "................\r\n----------------------------------------------------------------------\r\nRan 16 tests in 0.737s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_native_protection.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_native_protection.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 0.116,
+      "tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 0.006s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retention_renewal.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_renewal.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 0.136,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.012s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_retention_maintenance.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_maintenance.py"
+      ],
+      "exit_code": 0,
+      "tests": 8,
+      "seconds": 1.001,
+      "tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.785s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_execution_freeze.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "exit_code": 0,
+      "tests": 13,
+      "seconds": 0.573,
+      "tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.376s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_freeze_six_candidate.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "exit_code": 0,
+      "tests": 1,
+      "seconds": 1.032,
+      "tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.725s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_window_six_support.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "exit_code": 0,
+      "tests": 7,
+      "seconds": 0.775,
+      "tail": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.485s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_attest_remaining_executable.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 3.998,
+      "tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 3.668s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_verify_remaining_native.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_verify_remaining_native.py"
+      ],
+      "exit_code": 0,
+      "tests": 5,
+      "seconds": 7.947,
+      "tail": "test_actual_sort_changes_pass_complete_entry (__main__.CompleteEntryTests.test_actual_sort_changes_pass_complete_entry) ... ok\r\ntest_baseline_file_anchor_is_required (__main__.CompleteEntryTests.test_baseline_file_anchor_is_required) ... ok\r\ntest_cli_normalizes_relative_paths_before_any_source_io (__main__.CompleteEntryTests.test_cli_normalizes_relative_paths_before_any_source_io) ... ok\r\ntest_expansion_fails_and_closes_every_started_source (__main__.CompleteEntryTests.test_expansion_fails_and_closes_every_started_source) ... ok\r\ntest_malformed_policy_fails_and_retains_failure (__main__.CompleteEntryTests.test_malformed_policy_fails_and_retains_failure) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 5 tests in 7.702s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_complete_remaining_preflight.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit_code": 0,
+      "tests": 15,
+      "seconds": 16.651,
+      "tail": "ng_mount_member_fails (__main__.CompleteCLI.test_missing_mount_member_fails) ... ok\r\ntest_nonempty_budget_fails (__main__.CompleteCLI.test_nonempty_budget_fails) ... ok\r\ntest_offline_checker_requires_complete_exact_members_and_invocation (__main__.CompleteCLI.test_offline_checker_requires_complete_exact_members_and_invocation) ... ok\r\ntest_recovery_private_host_key_fails (__main__.CompleteCLI.test_recovery_private_host_key_fails) ... ok\r\ntest_success_combines_all_host_gates_and_three_real_file_aggregations (__main__.CompleteCLI.test_success_combines_all_host_gates_and_three_real_file_aggregations) ... ok\r\ntest_wrong_budget_execution_owner_fails (__main__.CompleteCLI.test_wrong_budget_execution_owner_fails) ... ok\r\ntest_wrong_output_type_fails_before_any_source_start (__main__.CompleteCLI.test_wrong_output_type_fails_before_any_source_start) ... ok\r\ntest_explicit_text_boundary_rejects_str_and_invalid_utf8 (__main__.DockerOutputContract.test_explicit_text_boundary_rejects_str_and_invalid_utf8) ... ok\r\ntest_real_wrapper_rejects_str_including_empty_str (__main__.DockerOutputContract.test_real_wrapper_rejects_str_including_empty_str) ... ok\r\ntest_real_wrapper_returns_bytes_and_explicit_text (__main__.DockerOutputContract.test_real_wrapper_returns_bytes_and_explicit_text) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 15 tests in 16.361s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "normal",
+      "path": "examples/lifecycle-d1/test_freeze_remaining_executable.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_remaining_executable.py"
+      ],
+      "exit_code": 0,
+      "tests": 2,
+      "seconds": 0.357,
+      "tail": "test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics (__main__.PreparationClosureTests.test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics) ... ok\r\ntest_stop_or_inspect_failure_continues_every_other_owner (__main__.PreparationClosureTests.test_stop_or_inspect_failure_continues_every_other_owner) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.023s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_evidence_indexes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "exit_code": 0,
+      "tests": 12,
+      "seconds": 0.797,
+      "tail": "...........s\r\n----------------------------------------------------------------------\r\nRan 12 tests in 0.591s\r\n\r\nOK (skipped=1)\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_six_native_entry.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "exit_code": 0,
+      "tests": 9,
+      "seconds": 1.577,
+      "tail": ".........\r\n----------------------------------------------------------------------\r\nRan 9 tests in 1.258s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retired_resources.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retired_resources.py"
+      ],
+      "exit_code": 0,
+      "tests": 20,
+      "seconds": 1.655,
+      "tail": "....................\r\n----------------------------------------------------------------------\r\nRan 20 tests in 1.363s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retired_volumes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retired_volumes.py"
+      ],
+      "exit_code": 0,
+      "tests": 6,
+      "seconds": 0.436,
+      "tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.269s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retired_budget_bytes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retired_budget_bytes.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 0.154,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.001s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_successor_dependencies.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_successor_dependencies.py"
+      ],
+      "exit_code": 0,
+      "tests": 16,
+      "seconds": 2.808,
+      "tail": "................\r\n----------------------------------------------------------------------\r\nRan 16 tests in 2.569s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retained_v26.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "exit_code": 0,
+      "tests": 5,
+      "seconds": 0.599,
+      "tail": ".....\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.272s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retained_v29.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v29.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 28.31,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 28.089s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retained_v30.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v30.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 4.313,
+      "tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 4.138s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retained_v31.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v31.py"
+      ],
+      "exit_code": 0,
+      "tests": 2,
+      "seconds": 3.228,
+      "tail": "..\r\n----------------------------------------------------------------------\r\nRan 2 tests in 3.063s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retained_v32.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retained_v32.py"
+      ],
+      "exit_code": 0,
+      "tests": 6,
+      "seconds": 2.183,
+      "tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 1.977s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_receipt_bytes.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_receipt_bytes.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 1.928,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 1.817s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_fixture_artifacts.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 3.234,
+      "tail": ".C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\zipfile\\__init__.py:1730: UserWarning: Duplicate name: 'apps/platform/a'\r\n  return self._open_to_write(zinfo, force_zip64=force_zip64)\r\n.fatal: git cat-file: could not get object info\n..\r\n----------------------------------------------------------------------\r\nRan 4 tests in 3.053s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_preallocation_ci.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_preallocation_ci.py"
+      ],
+      "exit_code": 0,
+      "tests": 6,
+      "seconds": 0.648,
+      "tail": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.402s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_six_candidate_runtime.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "exit_code": 0,
+      "tests": 16,
+      "seconds": 1.115,
+      "tail": "................\r\n----------------------------------------------------------------------\r\nRan 16 tests in 0.848s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_native_protection.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_native_protection.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 0.115,
+      "tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 0.005s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retention_renewal.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retention_renewal.py"
+      ],
+      "exit_code": 0,
+      "tests": 3,
+      "seconds": 0.109,
+      "tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.008s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_retention_maintenance.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_retention_maintenance.py"
+      ],
+      "exit_code": 0,
+      "tests": 8,
+      "seconds": 0.924,
+      "tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.722s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_execution_freeze.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_execution_freeze.py"
+      ],
+      "exit_code": 0,
+      "tests": 13,
+      "seconds": 0.515,
+      "tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.323s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_freeze_six_candidate.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "exit_code": 0,
+      "tests": 1,
+      "seconds": 0.852,
+      "tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.582s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_window_six_support.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "exit_code": 0,
+      "tests": 7,
+      "seconds": 0.644,
+      "tail": ".......\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.390s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_attest_remaining_executable.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_attest_remaining_executable.py"
+      ],
+      "exit_code": 0,
+      "tests": 4,
+      "seconds": 3.536,
+      "tail": "....\r\n----------------------------------------------------------------------\r\nRan 4 tests in 3.294s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_verify_remaining_native.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_verify_remaining_native.py"
+      ],
+      "exit_code": 0,
+      "tests": 5,
+      "seconds": 2.413,
+      "tail": "test_actual_sort_changes_pass_complete_entry (__main__.CompleteEntryTests.test_actual_sort_changes_pass_complete_entry) ... ok\r\ntest_baseline_file_anchor_is_required (__main__.CompleteEntryTests.test_baseline_file_anchor_is_required) ... ok\r\ntest_cli_normalizes_relative_paths_before_any_source_io (__main__.CompleteEntryTests.test_cli_normalizes_relative_paths_before_any_source_io) ... ok\r\ntest_expansion_fails_and_closes_every_started_source (__main__.CompleteEntryTests.test_expansion_fails_and_closes_every_started_source) ... ok\r\ntest_malformed_policy_fails_and_retains_failure (__main__.CompleteEntryTests.test_malformed_policy_fails_and_retains_failure) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 5 tests in 2.224s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_complete_remaining_preflight.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit_code": 0,
+      "tests": 15,
+      "seconds": 11.411,
+      "tail": "ng_mount_member_fails (__main__.CompleteCLI.test_missing_mount_member_fails) ... ok\r\ntest_nonempty_budget_fails (__main__.CompleteCLI.test_nonempty_budget_fails) ... ok\r\ntest_offline_checker_requires_complete_exact_members_and_invocation (__main__.CompleteCLI.test_offline_checker_requires_complete_exact_members_and_invocation) ... ok\r\ntest_recovery_private_host_key_fails (__main__.CompleteCLI.test_recovery_private_host_key_fails) ... ok\r\ntest_success_combines_all_host_gates_and_three_real_file_aggregations (__main__.CompleteCLI.test_success_combines_all_host_gates_and_three_real_file_aggregations) ... ok\r\ntest_wrong_budget_execution_owner_fails (__main__.CompleteCLI.test_wrong_budget_execution_owner_fails) ... ok\r\ntest_wrong_output_type_fails_before_any_source_start (__main__.CompleteCLI.test_wrong_output_type_fails_before_any_source_start) ... ok\r\ntest_explicit_text_boundary_rejects_str_and_invalid_utf8 (__main__.DockerOutputContract.test_explicit_text_boundary_rejects_str_and_invalid_utf8) ... ok\r\ntest_real_wrapper_rejects_str_including_empty_str (__main__.DockerOutputContract.test_real_wrapper_rejects_str_including_empty_str) ... ok\r\ntest_real_wrapper_returns_bytes_and_explicit_text (__main__.DockerOutputContract.test_real_wrapper_returns_bytes_and_explicit_text) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 15 tests in 11.217s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "path": "examples/lifecycle-d1/test_freeze_remaining_executable.py",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "examples/lifecycle-d1/test_freeze_remaining_executable.py"
+      ],
+      "exit_code": 0,
+      "tests": 2,
+      "seconds": 0.233,
+      "tail": "test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics (__main__.PreparationClosureTests.test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics) ... ok\r\ntest_stop_or_inspect_failure_continues_every_other_owner (__main__.PreparationClosureTests.test_stop_or_inspect_failure_continues_every_other_owner) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.028s\r\n\r\nOK\r\n"
+    }
+  ],
+  "remote_CI": "NOT_RUN",
+  "source_started": 0,
+  "provider_calls": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

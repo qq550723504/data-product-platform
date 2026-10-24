@@ -1,0 +1,82 @@
+{
+  "at": "2026-10-19T16:23:17.521773+00:00",
+  "source_before": {
+    "verify-six-native.py": "70f7e04e07af498b5641c8ec88c26493b964b3fcdf47b24f10446843296b6da4",
+    "freeze-six-candidate.py": "6de4396d3dafbdb095f91930a5ecb77f68930c6b200511511dcb85abd174c2b1",
+    "window_six_support.py": "700c789e70b65101150397528c42b84eb443b218b87113cd333722020aad07ae",
+    "test_freeze_six_candidate.py": "3f5c6bd1d8e6922cd0652169f866f652e7f058bf0bc0fc5d18cf1d07629d5c18",
+    "test_window_six_support.py": "c65453745a95b5ab1b3f5da4b31dcf0bc1918801ef5ad8bb19b226e5049287c5"
+  },
+  "source_after": {
+    "verify-six-native.py": "70f7e04e07af498b5641c8ec88c26493b964b3fcdf47b24f10446843296b6da4",
+    "freeze-six-candidate.py": "6de4396d3dafbdb095f91930a5ecb77f68930c6b200511511dcb85abd174c2b1",
+    "window_six_support.py": "700c789e70b65101150397528c42b84eb443b218b87113cd333722020aad07ae",
+    "test_freeze_six_candidate.py": "3f5c6bd1d8e6922cd0652169f866f652e7f058bf0bc0fc5d18cf1d07629d5c18",
+    "test_window_six_support.py": "c65453745a95b5ab1b3f5da4b31dcf0bc1918801ef5ad8bb19b226e5049287c5"
+  },
+  "stable": true,
+  "tests": [
+    {
+      "name": "test_freeze_six_candidate.py",
+      "mode": "normal",
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-normal01-stdout.txt",
+          "sha256": "9ac42bf1123286697517aa26e7b387164396a08fa6852fb0394a0d7fde762b4a"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-normal01-stderr.txt",
+          "sha256": "fb2e513c9c7101d12a2d4a0b56b7ff8fbe29dc84c6dbb43d36e6e95f7fd0fb4a"
+        }
+      }
+    },
+    {
+      "name": "test_freeze_six_candidate.py",
+      "mode": "optimized",
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-optimized01-stdout.txt",
+          "sha256": "771b534240e49f891a9fdedfe138072492a07916a88df8b4ebc8ad26d7e3c115"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-optimized01-stderr.txt",
+          "sha256": "3adad6bedbb3315911ec3e34ee4488e032d70bcdf747770f02d25c4156db9efa"
+        }
+      }
+    },
+    {
+      "name": "test_window_six_support.py",
+      "mode": "normal",
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_window_six_support-normal01-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_window_six_support-normal01-stderr.txt",
+          "sha256": "b03844fe17c94a6e8d966cfb63cf1195569d4f14fb1d004bc3d8a3915129e89c"
+        }
+      }
+    },
+    {
+      "name": "test_window_six_support.py",
+      "mode": "optimized",
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_window_six_support-optimized01-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_window_six_support-optimized01-stderr.txt",
+          "sha256": "46d9be2b4c6235ed3d3152958f4969c164f550e690ebdc95ba026c8d31ae6418"
+        }
+      }
+    }
+  ],
+  "guard_sha256": "6cd4c50a1fa346f63ad7ecb1cf478199f56c3861d8a39d9c9625a85ea3e181cb",
+  "scope": "Model-only Linux/PG/provider doubles; actual Docker/source/provider0"
+}

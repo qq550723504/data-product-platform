@@ -1,0 +1,10 @@
+{
+  "status": "PASS_TWO_NORMAL_FF_SOURCE_PUBLICATIONS_PENDING_NEW_HEAD_CI",
+  "host_source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "old_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "native_delete": 0,
+  "delete_authorization": false,
+  "review": "PENDING_INDEPENDENT_RESULT",
+  "at": "2026-10-23T04:39:34.671259+00:00"
+}

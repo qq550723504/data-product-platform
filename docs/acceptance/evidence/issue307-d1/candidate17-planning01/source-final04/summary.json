@@ -1,0 +1,111 @@
+[
+  {
+    "mode": "normal",
+    "test": "test_remaining_sequence.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_remaining_six_window.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_six_candidate_runtime.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_freeze_six_candidate.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_window_six_support.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_verify_six_native.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_evidence_indexes.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_six_native_entry.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "test": "test_retained_v26.py",
+    "exit": 0
+  },
+  {
+    "mode": "normal",
+    "methods": 57,
+    "skips": 1
+  },
+  {
+    "mode": "optimized",
+    "test": "test_remaining_sequence.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_remaining_six_window.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_six_candidate_runtime.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_freeze_six_candidate.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_window_six_support.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_verify_six_native.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_evidence_indexes.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_six_native_entry.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "test": "test_retained_v26.py",
+    "exit": 0
+  },
+  {
+    "mode": "optimized",
+    "methods": 57,
+    "skips": 1
+  },
+  {
+    "mode": "go",
+    "exit": 0,
+    "tests": {
+      "pass": 274,
+      "fail": 0,
+      "skip": 2
+    }
+  }
+]

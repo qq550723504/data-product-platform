@@ -1,0 +1,9 @@
+{
+  "source_thread": "01a16786-bcae-77a1-aab6-942e4204628d",
+  "human_message_id": "01a1698f-b855-7aa1-a5aa-8b60893c7656",
+  "human_text": "让 #307 原会话继续把清理收口，解决预算集合不匹配的问题，清掉确认不用的旧容器和测试卷，别一直只做新候选准备。保留必要数据、预算和验收记录，别影响当前任务和其他会话。\n",
+  "source": "fresh trusted Codex read_thread actual human userMessage",
+  "readback_is_not_claimed_session_raw_bytes": true,
+  "scope": "Prioritize exact proven-unneeded Docker test container and volume retirement; preserve source data, budgets, pins, necessary recovery materials and all evidence; preserve current and other sessions; no provider/object DELETE, protection writes, merge, deployment, Docker stop or VHD compaction",
+  "old_authorization_is_not_provider_authority": true
+}

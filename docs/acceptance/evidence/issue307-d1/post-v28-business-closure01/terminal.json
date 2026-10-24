@@ -1,0 +1,137 @@
+{
+  "native_delete": 0,
+  "pins_released": 0,
+  "budgets_refunded": 0,
+  "old_authorization_reused": false,
+  "observer": {
+    "audit_id": "0372f9d1-3924-40a3-bb87-93ae916a80ef",
+    "budgets_refunded": 0,
+    "cases": [
+      {
+        "DENIED_release": {
+          "ID": "eacd910a-3ecd-448e-9c87-13bdf14d8817",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "4d930776-fd98-4a86-8ed2-0a1eaad7dd34",
+        "case": "P2",
+        "exact_presence": {
+          "Copy": {
+            "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/p2.csv",
+            "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+            "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+            "ByteSize": 232
+          },
+          "ObservedAt": "2026-10-22T01:25:23.259446722Z",
+          "CallID": "7dfe1958-7094-4f77-9d9b-91df35e09725"
+        },
+        "new_approval_revocation": {
+          "ID": "1d4db7c7-0439-4b74-bdc9-a6b6926a7679",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false,
+        "preserved_original": "CONFIRMED DENIED"
+      },
+      {
+        "NOT_SENT": {
+          "ID": "ea5bfba1-5ad6-49f1-a3aa-ab29fef7b183",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "4d5b1b64-fd97-4626-877f-09195725f11b",
+        "case": "T1",
+        "new_approval_revocation": {
+          "ID": "b720b21e-ee8c-4347-9982-37a02e13658d",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false
+      },
+      {
+        "NOT_SENT": {
+          "ID": "5befdbb1-09d3-424c-9315-bcc27247113b",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "fc9aca0e-dd87-40cc-8cbc-b629a8c9e2c4",
+        "case": "T2",
+        "new_approval_revocation": {
+          "ID": "6a4e554e-d2d7-422b-bc2a-ab264a2cd563",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false
+      }
+    ],
+    "completed": true,
+    "native_delete": 0,
+    "pins_released": 0
+  },
+  "delta": {
+    "old_rows_preserved": true,
+    "changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "cost_allocation",
+      "cost_event",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_approval_revocation",
+      "lifecycle_dispatch_release",
+      "lifecycle_provider_observation",
+      "lifecycle_storage_call",
+      "lifecycle_storage_observation",
+      "outbox_event"
+    ],
+    "new_row_counts": {
+      "audit_event": 10,
+      "command_idempotency": 6,
+      "cost_allocation": 1,
+      "cost_event": 1,
+      "delivery_authorization_fence": 0,
+      "evidence": 10,
+      "evidence_relation": 10,
+      "lifecycle_approval_revocation": 3,
+      "lifecycle_dispatch_release": 3,
+      "lifecycle_provider_observation": 2,
+      "lifecycle_storage_call": 1,
+      "lifecycle_storage_observation": 1,
+      "outbox_event": 10
+    }
+  },
+  "profile_disabled": true,
+  "identity_containment": "FRESH_DISABLED_READBACK",
+  "closure": [
+    {
+      "cid": "a157a78b6b8186e4b047363c5787172b0277f6a9753ce37aafe64631752c9162",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "3e1c3616778cfbfc64efd9a931abeb33c1927d35c6b9307549caad1341e5d7de",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "b710f24de51f1f6a7395c647fd255020efc71c19d0a547d647a54c8168a7226d",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "stopped_PID0": true
+    }
+  ],
+  "retained_unchanged": true,
+  "failure": null,
+  "status": "PASS_V28_MIXED_CLOSURE_APPEND_ONLY_SEALED"
+}

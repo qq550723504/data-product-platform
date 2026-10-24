@@ -1,0 +1,59 @@
+[
+  {
+    "name": "python-host-normal",
+    "command": [
+      "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "-B",
+      "examples/lifecycle-d1/test_retention_maintenance.py"
+    ],
+    "started_at": "2026-10-24T08:38:57.514012+00:00",
+    "finished_at": "2026-10-24T08:38:58.457801+00:00",
+    "returncode": 0
+  },
+  {
+    "name": "python-host-optimized",
+    "command": [
+      "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "-O",
+      "-B",
+      "examples/lifecycle-d1/test_retention_maintenance.py"
+    ],
+    "started_at": "2026-10-24T08:38:58.457840+00:00",
+    "finished_at": "2026-10-24T08:38:59.451544+00:00",
+    "returncode": 0
+  },
+  {
+    "name": "python-staging-normal",
+    "command": [
+      "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "-B",
+      "examples/lifecycle-d1/test_retention_staging.py"
+    ],
+    "started_at": "2026-10-24T08:38:59.451574+00:00",
+    "finished_at": "2026-10-24T08:38:59.604543+00:00",
+    "returncode": 0
+  },
+  {
+    "name": "python-staging-optimized",
+    "command": [
+      "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "-O",
+      "-B",
+      "examples/lifecycle-d1/test_retention_staging.py"
+    ],
+    "started_at": "2026-10-24T08:38:59.604580+00:00",
+    "finished_at": "2026-10-24T08:38:59.745513+00:00",
+    "returncode": 0
+  },
+  {
+    "name": "runtime-successor-ci-local",
+    "command": [
+      "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+      "-B",
+      "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+    ],
+    "started_at": "2026-10-24T08:38:59.745549+00:00",
+    "finished_at": "2026-10-24T08:39:24.945935+00:00",
+    "returncode": 0
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "status": "PASS_EXPLICIT_EVIDENCE_INDEX_AUDIT",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "plan_sha256": "8ad738b77b28f02c8c034fe88b6780608e30bf68ac78335f97e9a28b3936cd19",
+  "candidate_sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643",
+  "indexes": [
+    {
+      "id": "independent",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate16-review01/independent-evidence-index01.json",
+      "sha256": "81c0fc49eebd4caed754072ce50b76e70ef30e06cc9e956f2afa56e0096f80a6",
+      "members_verified": 53
+    },
+    {
+      "id": "authorization",
+      "format": "members-list-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/authorization-evidence-index01.json",
+      "sha256": "6d946f93a2c48e2c41bb1774732133c32ae19e508f277216444eeb0b64c3da36",
+      "members_verified": 19
+    },
+    {
+      "id": "schedule",
+      "format": "members-list-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-evidence-index01.json",
+      "sha256": "332e833387d71f6cde672f537833c06e2f2ac480e0065e5c9f8e7fa20c587c24",
+      "members_verified": 12
+    }
+  ],
+  "members_verified": 84,
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "execution_authority": false
+}

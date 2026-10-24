@@ -1,0 +1,11 @@
+{
+  "command": [
+    "docker",
+    "volume",
+    "inspect",
+    "d1-retention-probe-output-aebd4fd2f790"
+  ],
+  "started_at": "2026-10-24T11:06:02.870754+00:00",
+  "finished_at": "2026-10-24T11:06:03.092921+00:00",
+  "returncode": 0
+}

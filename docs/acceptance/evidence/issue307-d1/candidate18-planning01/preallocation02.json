@@ -1,0 +1,12 @@
+{
+  "status": "PASS_RETAINED_623_AND_NEW_SUBNETS_NO_ALLOCATION",
+  "retained_CIDs": 623,
+  "future_subnets": [
+    "10.246.212.0/28",
+    "10.246.213.0/28",
+    "10.246.214.0/28"
+  ],
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0
+}

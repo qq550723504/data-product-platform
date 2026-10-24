@@ -1,0 +1,40 @@
+{
+  "status": "C21_RETENTION_SUBSLICE_REVIEW_EVIDENCE_INDEX",
+  "format": "files-map-v1",
+  "member_root": "docs/acceptance/evidence/issue307-d1/candidate21-source-review01",
+  "count": 8,
+  "files": {
+    "independent-retained-v30-normal01.stderr.txt": {
+      "sha256": "f59f39e940a6edb38aede0d493abd59a1e53d906916e1f7b81d0eae2ebe222c2",
+      "bytes": 106
+    },
+    "independent-retained-v30-normal01.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "independent-retained-v30-optimized01.stderr.txt": {
+      "sha256": "f07f775a185cebc2e5e57f457d4fd840f161ed35b01712e4edb473d113c2af3a",
+      "bytes": 106
+    },
+    "independent-retained-v30-optimized01.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "independent-retention-input-audit01.json": {
+      "sha256": "5500a809ca36a5c030cee3b0c857eac4e27077943181b58e284289a3a4733583",
+      "bytes": 14395
+    },
+    "independent-retention-offline01.json": {
+      "sha256": "22f57d4e453498008f40ded69ef4bc98c185703d2f3707f4bbd57e75d89b9c0d",
+      "bytes": 2054
+    },
+    "independent-retention-review01.json": {
+      "sha256": "d8c3369d963b43a7ace8422566e2ae4ec6a40555ed581a93e7f2ad5314781082",
+      "bytes": 3343
+    },
+    "independent-retention-reviewed-inputs01.json": {
+      "sha256": "13524190fa670d3910933596eba597e4c830fbfd5ae0541a9c86b9a959d083a6",
+      "bytes": 2304
+    }
+  }
+}

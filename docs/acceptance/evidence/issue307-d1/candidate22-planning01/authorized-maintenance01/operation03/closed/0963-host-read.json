@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "docker",
+    "volume",
+    "inspect",
+    "dpp-lifecycle307-754ea8f0-candidate21-checkpoint-core"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:32:09.991313+00:00",
+  "stdout_sha256": "55ba2f8f6952d64a8d3aa5db262fd59a57b58caaa5340064f0557d8e9aa3f117",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
@@ -40,7 +41,7 @@ func (s selectedEnqueuer) EnqueueRecovery(ctx context.Context, w, id uuid.UUID) 
 	return s.inner.EnqueueRecovery(ctx, w, id)
 }
 func recoverThroughQueue(ctx context.Context, pool *pgxpool.Pool, l loaded, stage string, work uuid.UUID, exact *lc.ExactExecution, inspector lc.StorageInspector) error {
-	expected := "dpp-lifecycle307-" + l.Scope.Run.String()[:8] + "-remaining-recovery-redis:6379"
+	expected := "dpp-lifecycle307-" + l.Scope.Run.String()[:8] + "-" + strings.Split(profile, "/")[0] + "-recovery-redis:6379"
 	if l.F.RedisAddr != expected {
 		return errDenied
 	}
@@ -54,7 +55,14 @@ func recoverThroughQueue(ctx context.Context, pool *pgxpool.Pool, l loaded, stag
 		return e
 	}
 	unsupported := func(context.Context, outbox.PublishedEvent) error { return lc.ErrStorageUnsupported }
-	dispatcher, e := outbox.NewDispatcher(pool, outbox.Config{ConsumerName: execution + ":" + stage, Logger: slog.New(slog.DiscardHandler)}, router,
+	var event uuid.UUID
+	if e = pool.QueryRow(ctx, `SELECT id FROM outbox_event WHERE aggregate_id=$1 AND event_type=$2`, work, lc.ReconciliationRequestedEvent).Scan(&event); e != nil || event == uuid.Nil {
+		if e != nil {
+			return e
+		}
+		return lc.ErrStorageScope
+	}
+	dispatcher, e := outbox.NewDispatcher(pool, outbox.Config{ConsumerName: execution + ":" + stage, OnlyEventID: event, Logger: slog.New(slog.DiscardHandler)}, router,
 		outbox.HandlerRegistration{Name: routing.HandlerExecutionQueue, Handle: unsupported},
 		outbox.HandlerRegistration{Name: routing.HandlerExternalPublicationQueue, Handle: unsupported},
 		outbox.HandlerRegistration{Name: routing.HandlerLifecycleRecoveryQueue, Handle: lifecyclequeue.OutboxHandler(selectedEnqueuer{l.Scope.Workspace, work, queue})})

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "go",
+    "test",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-readonly-check",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-remaining-iam"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:06:51.110368+00:00",
+  "kind": "LOCAL_SOURCE_TEST_NOT_NATIVE_NOT_PUBLISHED_BINARY_BUILD",
+  "native_delete": 0
+}

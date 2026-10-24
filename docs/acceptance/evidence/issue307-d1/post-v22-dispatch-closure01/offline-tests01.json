@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-19T11:32:38.190670+00:00",
+  "tests_per_mode": 11,
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "Docker": "MOCKED",
+      "Core": "MOCKED",
+      "real_delete": 0
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "Docker": "MOCKED",
+      "Core": "MOCKED",
+      "real_delete": 0
+    }
+  ]
+}

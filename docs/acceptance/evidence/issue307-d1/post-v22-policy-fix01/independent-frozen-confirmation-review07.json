@@ -1,0 +1,438 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_FROZEN_CONFIRMATION_REVIEW",
+  "review": "candidate15/v25 final frozen packet and exact confirmation bounded review07",
+  "at": "2026-10-19T20:36:12.959052+00:00",
+  "remaining_blockers": [],
+  "source_head": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "packet_commit": "dcf6f4f50939090144d8299ab841b3b30d8eff34",
+  "observed_publication_checkout_head": "dcf6f4f50939090144d8299ab841b3b30d8eff34",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "candidate_sha256": "0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99",
+  "bindings_sha256": "d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0",
+  "confirmation_template_sha256": "492a83604d1c32589d5dbb3aa97d4f40a618e5a6bf86e9c0123c80fc67f3609a",
+  "confirmation_document_sha256": "1a2aacb75a405867dce8d5c2255c70afd205515f4030a07185f58b26b5269340",
+  "runbook_sha256": "843b3a23269cb3c7c808f2c4658426fa44d32131f6d469c5456b9bca2ce9def2",
+  "review_basis": {
+    "contract": "AGENTS.md section17 finite scope and already independently accepted policy repair/source-restore contracts",
+    "goal": "Exact frozen six-target preparation/confirmation plus immutable native read-only result/containment evidence. No execution, new permission, schedule or merge authority.",
+    "current_blocker_categories": [
+      "authorization/credential bypass",
+      "historical or accounting fact loss",
+      "conflicting authoritative semantics",
+      "current required path/build/check failure",
+      "current concurrency/idempotency invariant violation"
+    ],
+    "out_of_scope": [
+      "future live six-target send/recovery/H1/H2/M1 acceptance",
+      "new general platform features or speculative hardening",
+      "merging PR332 or closing Issue307",
+      "repeating accepted native Source/restore preparation"
+    ]
+  },
+  "reviewed_files": {
+    "AGENTS.md": {
+      "sha256": "aa6f2bae5d755a582d124d02fe1d4f0776cf93f4bf693a6194d06d7d9bbd4f4f",
+      "bytes": 37394
+    },
+    "docs/acceptance/issue307-d1-post-v22-six-contract.md": {
+      "sha256": "f5bbf32530d5f55b1a82b6795d418ccf9cb9915474f81ae557ed81eeddf36f8f",
+      "bytes": 13803
+    },
+    "docs/acceptance/issue307-d1-v24-bootstrap-contract.md": {
+      "sha256": "e22865348f94f897c02a35c428955beae6126ccad9f956b6a489952ee5edb807",
+      "bytes": 7409
+    },
+    "docs/acceptance/issue307-d1-v25-window-runbook.md": {
+      "sha256": "843b3a23269cb3c7c808f2c4658426fa44d32131f6d469c5456b9bca2ce9def2",
+      "bytes": 12311
+    },
+    "docs/acceptance/issue307-d1-candidate15-confirmation.md": {
+      "sha256": "1a2aacb75a405867dce8d5c2255c70afd205515f4030a07185f58b26b5269340",
+      "bytes": 36353
+    },
+    ".gitattributes": {
+      "sha256": "999e0d64e7d0c18421e6b7616d32f67e0940c58bc603a79a1fddd99bda2cb86c",
+      "bytes": 15256
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/candidate.json": {
+      "sha256": "0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99",
+      "bytes": 20540
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/bindings.json": {
+      "sha256": "d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0",
+      "bytes": 274170
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/source-freeze.json": {
+      "sha256": "db12be33765b0d392d2fc9f3331ec1813b3af6c6fb1d9da1d06fc4e0642a3fac",
+      "bytes": 593984
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/profile-windows.json": {
+      "sha256": "c8b3f64761408118dc1574440ddd729a1724e2474d1a381da0b42ccf047379b1",
+      "bytes": 3527
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/confirmation-template.txt": {
+      "sha256": "492a83604d1c32589d5dbb3aa97d4f40a618e5a6bf86e9c0123c80fc67f3609a",
+      "bytes": 26764
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/status.json": {
+      "sha256": "896bbe55f258d8c6516fc08e65a2b0be3f8eb1619bceb10f93c6480082f705d3",
+      "bytes": 738
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/offline-validator/owner.json": {
+      "sha256": "bd3b76d2da681a8275b3920e07f6901f3d2983a100b2875a2556bde65d652541",
+      "bytes": 302
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15/offline-validator/stdout.txt": {
+      "sha256": "bae077fbd34f4cff09b12d68e3ccf73a069b814a0efbc7d9dfef8181e61ddd1f",
+      "bytes": 55
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15-readonly01/complete.json": {
+      "sha256": "e2129d7abae7e3de937b801b952d31dd35516e096306f0311f89573358aff325",
+      "bytes": 6906
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/frozen-complete-parent-readback01.json": {
+      "sha256": "83da3642290f0b38cd3243b4fb39b2d43a7b910f740736439c0516987bcf55cb",
+      "bytes": 40707
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/host-anchor-readback01.json": {
+      "sha256": "97e20c37c3b479457623a71c073c9ab463947d43bb69481ad25d8113f25dc3f6",
+      "bytes": 728
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/confirmation-parent-audit01.json": {
+      "sha256": "c4dc0f9379df832ac1320015763d10340a4c05d9347a5fcf4a0cf6ed1ac7025c",
+      "bytes": 3302
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent-policy-checkpoint-review05.json": {
+      "sha256": "7b8b5e63663d90acdc1d5b512c18349daf0f454ac904e65f99258dd47241325e",
+      "bytes": 16850
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent-source-restore-review06.json": {
+      "sha256": "a59f23dc692ea8f4adfccf529284633f58939c7a94d27f8de12ed2085b640728",
+      "bytes": 38379
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/failure.json": {
+      "sha256": "51f40145c340f491b2c86770fdd53aceab85290f08f668fa316cb48fb01aa652",
+      "bytes": 4289
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/zero-output-readback.json": {
+      "sha256": "16d0d30063edd0be36927f05267ed388702e8e36efa7546868eb1a42f67c4e5b",
+      "bytes": 915
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/scoped-host-repair02.json": {
+      "sha256": "39175d01bf199ec76af7b80d046f661bb4e4133b093a48e880f249b0ad3853c0",
+      "bytes": 852
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "0d1e25bd2b4e3e465abb7187da614fd61441d536eca316f32f1b2d4124279c8a",
+      "bytes": 31620
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "0736a80b400b998016604c9aa710e0e2a5705af5f5b2b3f172e133ca1d3e256c",
+      "bytes": 42862
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "101f2412466921cf349a7ea01be511af61c05ebd71540b1ef8d0788a9287adbc",
+      "bytes": 20240
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "6a595020fb0c5b248b5a09d4eb0f18ade1b5e31da2dc1bec19797ff61a1c7f04",
+      "bytes": 14571
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+      "bytes": 12745
+    },
+    "examples/lifecycle-d1/remaining_sequence.py": {
+      "sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "bytes": 7093
+    },
+    "examples/lifecycle-d1/remaining_six_window.py": {
+      "sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "bytes": 1931
+    },
+    "examples/lifecycle-d1/remaining_window.py": {
+      "sha256": "e2dd0f4efcf84cc26e7a5977c4a336051849926949eaf373a13e4253262b6cc0",
+      "bytes": 6470
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "sha256": "9472bf1be278fca84a70a0211ef0ecabea713b84ac202a389b7dcd3d45c92259",
+      "bytes": 11354
+    }
+  },
+  "independent_raw_evidence": {
+    "index": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/frozen-independent07/independent-evidence-index07.json",
+    "index_sha256": "487d0d202088df49a85aabd1127c0bc50995d2ac14bf48cfb10d72fae6d8b1e4",
+    "members": 14,
+    "source_template_anchor": {
+      "sha256": "94c5d43d44603b309992911fac699f8f30ad9c060c61b8809ac9a271ffe21160",
+      "bytes": 1054760
+    },
+    "complete_native": {
+      "sha256": "2781c87fda22daa521b2722f9393158aba347b9e911d065ae7fbfd573d5d68b1",
+      "bytes": 74292
+    },
+    "physical_bindings": {
+      "sha256": "b694bf9382142103384a33232eec170bcd24ae0f7f5527fc8d2c5f70dfffcfa6",
+      "bytes": 146462
+    },
+    "document_scope": {
+      "sha256": "27cc3941911d170fc9108e98a59ec91d3426f3ece301d6a677d6c01417fc3081",
+      "bytes": 24546
+    },
+    "sealed_gate": {
+      "sha256": "3e35fced389f3a2b0b3c7fbad7b4b1aab25504f2382a7a9ced5eac10919ba024",
+      "bytes": 393
+    },
+    "process_trace": {
+      "sha256": "4efd5780ca20d7b522deba668efa6eddc4843c5c305098aa8efd5f0599afab87",
+      "bytes": 98677
+    }
+  },
+  "scope_and_machine_text": {
+    "machine_lines": 102,
+    "raw_UTF8_block_exact_including_final_LF": true,
+    "replacement_characters": 0,
+    "relative_links_existing": 19,
+    "attachment_table_raw_sha_matches": 17,
+    "registered_historical_copies": 18,
+    "actually_present_versions": 17,
+    "targets": 6,
+    "survivors": 11,
+    "target_digest": "2a3b9c31e27de4bdf0185c3500600093356410b2f87ea0e4809863b78c2dacf4",
+    "ordered_targets": [
+      {
+        "group": "business-races",
+        "stage": "P2",
+        "copy": "6fabf3b5-76b8-4245-8f5d-01e64f610146"
+      },
+      {
+        "group": "business-races",
+        "stage": "T1",
+        "copy": "f48755f1-976b-4f47-98da-70ead936a4c3"
+      },
+      {
+        "group": "business-races",
+        "stage": "T2",
+        "copy": "e09fd433-54cf-4e82-b8c4-098472505fa2"
+      },
+      {
+        "group": "late-hold",
+        "stage": "H2",
+        "copy": "c05307db-cb81-4220-b42e-be23f85821e3"
+      },
+      {
+        "group": "mixed",
+        "stage": "M1A",
+        "copy": "5e712426-2109-4f0b-8791-df0a2be3a9f7"
+      },
+      {
+        "group": "mixed",
+        "stage": "M1B",
+        "copy": "ad08947a-4c4d-4b0f-8c7e-2d89f287819f"
+      }
+    ],
+    "all_seventeen_exact_namespace_key_version_copy_DV_bytes_SHA_hold_retention_until_match_machine_text_and_packet": true,
+    "P1": "Previously accepted typed exact-version absence; historical predecessor only, excluded from six targets and budgets.",
+    "policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+    "five_actual_successor_heads_exact": {
+      "4219373a-07a0-4c66-a666-305675304b14": "4a9220c3-0a45-4af4-a7fc-9fd2a9abec1f",
+      "699b8292-7fdb-4c22-af04-41f2eba761d4": "546332ee-6e70-45d8-98b0-66d5531333fe",
+      "70d9185e-5ee7-4d79-9853-64e8e8db3630": "49161aa4-9799-428f-acda-01b3fdd2cc52",
+      "8cb255aa-a842-4aa5-a4ff-871798aeed0b": "3322f6bb-c5db-42de-b94d-ba8018a1e96c",
+      "a26216b5-95f6-4dbb-8359-c98f5f873be1": "1d4804a8-3726-49ee-8822-ede4bf10443e"
+    },
+    "no_Renew_or_new_rights_or_production_replay": true,
+    "effective_document_attributes": "All three current confirmation/runbook/preparation paths text set,eol lf; actual bytes LF. Attribute-only publishing fix does not alter runtime source."
+  },
+  "source_archive_and_build": {
+    "source_selected_files": 2111,
+    "all_selected_current_raw_match_frozen_raw": true,
+    "all_selected_normalized_LF_match_Git_and_ZIP": true,
+    "zip_total_nondirectory_members": 2166,
+    "selected_ZIP_raw_different_from_Git_members": 1736,
+    "zip_raw_sha256": "61c0742f54a8db286d02fa4133fba5ef74fef3a4ad0ca329608a9686de17d712",
+    "zip_bytes": 3516525,
+    "interpretation": "Git archive under current core.autocrlf=true materializes CRLF for ordinary text. Actual archive SHA/raw members and normalized-LF source relationships are distinct evidence. No claim that ZIP member raw bytes equal Git blobs; no archive or frozen source rewrite needed.",
+    "initial_build_members": 12,
+    "four_actual_binaries_and_eight_original_compiler_channels_bound": true,
+    "linux_recipe": "linux/amd64 CGO_ENABLED=0 go build -trimpath -buildvcs=false",
+    "windows_checker": "Actual Windows native file-only build, CGO value not conflated with Linux recipe.",
+    "embedded_vcs_revision": "NOT_CLAIMED",
+    "host_anchor_sha256": "71a685d7974928aae98a1bd53f0fc3a5bbd89e540251605d90a8e6340f0b6883",
+    "anchor_git_candidate_bindings_template_raw_equal": true,
+    "anchor_purpose": "Known-CID containment only; no authorization or scheduling."
+  },
+  "native_results_and_actual_checks": {
+    "prior_source_restore_review06": {
+      "sha256": "a59f23dc692ea8f4adfccf529284633f58939c7a94d27f8de12ed2085b640728",
+      "accepted_actual_three_source_and_clean_rehearsal_restore": true,
+      "not_rerun_by_reviewer07": true
+    },
+    "frozen_offline_validator": {
+      "actual_owner_PID0_exit0_PASS": true,
+      "network": "none",
+      "mode": "file only; no provider/DB I/O",
+      "no_rerun_by_reviewer07": true
+    },
+    "frozen_complete_entry": {
+      "complete_sha256": "e2129d7abae7e3de937b801b952d31dd35516e096306f0311f89573358aff325",
+      "status": "PASS_COMPLETE_SIX_NATIVE_ENTRY",
+      "exact_raw_member_set": 265,
+      "actual_three_source_Core_full_relations_roles_ACL_before_after_equal_to_frozen_baselines": true,
+      "actual_versions_by_group": {
+        "business-races": 7,
+        "late-hold": 6,
+        "mixed": 4
+      },
+      "known_IAM_total": 17,
+      "disabled_sole_policy_no_groups": 16,
+      "exact_dormant_c13_disabled_NONE_no_groups": 1,
+      "fresh_absent_usernames": 9,
+      "official_policy_ParseConfig_Equals_not_raw_ordering": true,
+      "P1_exact_HEAD404_NoSuchVersion_with_actual_error_header_requestID": true,
+      "additional_real_technical_HTTP_starts": 101,
+      "additional_real_technical_HTTP_observations": 101,
+      "by_group": {
+        "business-races": 43,
+        "late-hold": 32,
+        "mixed": 26
+      },
+      "methods": [
+        "GET",
+        "HEAD"
+      ],
+      "native_delete": 0,
+      "identity_enable": 0,
+      "business_mutation": 0,
+      "amount": "NOT_ASSESSED",
+      "nine_source_or_temporary_owners_closed": true
+    },
+    "independent_file_only_checks": {
+      "actual_existing_three_groups_reaggregated": true,
+      "results": "PASS 7/6/4 and official IAM semantics",
+      "provider_I_O_by_these_checker_reaggregations": 0,
+      "does_not_replace_actual_101_SDK_requests": true
+    },
+    "independent_actual_sealed_gate": {
+      "status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+      "read_only_processes": 894,
+      "unapproved_processes": [],
+      "case_profiles": 6,
+      "recovery_profiles": 6,
+      "operator_root_permissions_false": 30,
+      "new_descriptor_owners_closed": 86,
+      "new_budgets_owned_empty_UID_GID10001": 3,
+      "new_backup_SHA_retained": 9,
+      "old_backup_SHA_retained": 9,
+      "full_mount_ownership_and_network_contracts_checked": true
+    },
+    "independent_batch_physical_inspect": {
+      "known_unique_CIDs": 359,
+      "retained": 270,
+      "candidate15_owners": 86,
+      "frozen_complete_new_temporary_read_helpers": 3,
+      "all_stopped_PID0_noports_norestart": true,
+      "exact_temporary_helper_UID10001_threebind_two_tmpfs_CapDropALL_NNP_ReadOnlyRoot_netns_contracts": true,
+      "host_private_key_contents_read": false,
+      "host_private_key_mounted_any_known_owner": false,
+      "raw_Config_Env_not_saved_or_exposed": true
+    },
+    "accounting_boundaries": {
+      "preparation_helper_file_journal_pairs": 268,
+      "preparation_business_rehearsal_CostEvent_net_additions_by_group": [
+        9,
+        12,
+        6
+      ],
+      "frozen_complete_extra_helper_journal_pairs": 101,
+      "whole_provider_HTTP_total": "NOT_INFERRED from helper files plus hashed rehearsal Core deltas",
+      "amount": "NOT_ASSESSED",
+      "preserve_original_failed_unknown_attempt_cost_facts": true
+    }
+  },
+  "longpath_zero_output_host_repair": {
+    "classification": "ACCEPTED_BOUNDED_PREOUTPUT_HOST_REPAIR",
+    "original_failure_sha256": "51f40145c340f491b2c86770fdd53aceab85290f08f668fa316cb48fb01aa652",
+    "original_zero_output_readback_sha256": "16d0d30063edd0be36927f05267ed388702e8e36efa7546868eb1a42f67c4e5b",
+    "scoped_repair_receipt_sha256": "39175d01bf199ec76af7b80d046f661bb4e4133b093a48e880f249b0ad3853c0",
+    "original_empty_packet_directory_retained": true,
+    "first_attempt": "FAILED before source-freeze file, archive, key, anchor, operator/root configuration or offline-validator run; immutable failure retained.",
+    "second_attempt": "Original fixed freezer, task-child GIT_CONFIG_COUNT appended core.longpaths=true; parent process/repository local/global Git configuration unchanged.",
+    "source_binary_candidate_bytes_modified": false,
+    "Source_native_preparation_replayed": false,
+    "frozen_packet_overwrite": false,
+    "old_authorization_reused": false,
+    "interpretation": "The one-shot no-overwrite invariant applies to an existing frozen packet. The first attempt had zero packet outputs and no keys/authority, retained as failure; preserving that empty directory and retrying the same immutable freezer under task-scoped Git path support does not replace a packet or resume an authorized execution."
+  },
+  "execution_boundaries": {
+    "state": "FROZEN_NOT_AUTHORIZED",
+    "human_confirmation": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "old_authorization_reused": false,
+    "start_UTC": "2026-10-20T06:00:00Z",
+    "end_UTC_exclusive": "2026-10-20T06:40:00Z",
+    "SGT_window": "2026-10-20 14:00-14:40",
+    "read_only_recovery_deadline_UTC": "2026-10-20T08:40:00Z",
+    "max_per_target": 1,
+    "max_total": 6,
+    "UNKNOWN_resend": false,
+    "cleanup": 0,
+    "hold_release": 0,
+    "bypass": 0,
+    "PR332": "DRAFT_OPEN; no Ready/merge action",
+    "Issue307": "OPEN",
+    "full_D1": "NOT_ACCEPTED",
+    "actual_six_target_delete": "NOT_RUN",
+    "future_H1_H2_M1_live_outcomes": "NOT_RUN",
+    "runbook_order_and_failure_containment": "Current source and doc agree strict each send-disable-selectedOutbox-Asynq-Core absence-next. H1 trusted closure and sealed-gateway order; H2 upstream204 before witness/holds/revoke/loss; M1A absence before M1B mixed checkpoint copied and SHA-checked before lookup; stop new enable/send at06:40. Readonly08:40 cannot reopen identity. Seal continues all groups after individual failure.",
+    "fresh_before_future_execution": [
+      "new exact human authorization with actual verbatim distinct from approved machine template",
+      "exact final publication HEAD PR CI and review thread checks",
+      "new complete native read-only result using fresh O_EXCL outputs",
+      "all frozen hashes, per-role actual topology, IAM/protection, budgets and backups",
+      "per sender/wire/recovery independent fresh topology proofs and persistent once budgets before Core claim"
+    ]
+  },
+  "CI_and_publication_limits": {
+    "runtime_source_PR_CI": {
+      "run_id": 39311610413,
+      "head": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+      "reported_parent_result": "13/13 SUCCESS",
+      "event": "pull_request",
+      "not_main_CI": true
+    },
+    "final_docs_publication_HEAD_CI": "PENDING separate parent push/exact-HEAD verification; not claimed by this review",
+    "report_does_not_authorize_Ready_merge_or_delete": true
+  },
+  "diagnostics_and_nonblockers": [
+    {
+      "classification": "INVALID_REVIEW_ASSUMPTION",
+      "detail": "Initial archive raw==Git raw assertion rejected known core.autocrlf CRLF conversion. All2111 selected normalized-LF contents match Git and frozen source; archive actual raw SHA retained."
+    },
+    {
+      "classification": "REVIEW_TOOL_ONLY",
+      "detail": "Two diagnostics initially expected object/status schema while immutable files use three-item binding list and explicit authority fields; corrected file-only read. One PowerShell brace-path syntax rejected before command execution. No implementation/frozen bytes changed."
+    },
+    {
+      "classification": "REVIEW_CONSOLE_ONLY",
+      "detail": "Default CP936 diagnostic display differed from UTF8 tool display; strict UTF8 document/template raw bytes exact, no U+FFFD. ASCII-escaped JSON used subsequently."
+    }
+  ],
+  "reviewer_actions": {
+    "runtime_source_packet_private_control_writes": 0,
+    "Docker_start_stop_exec": 0,
+    "Source_HTTP_SDK_calls": 0,
+    "permission_enable_or_mutation": 0,
+    "proof_signing": 0,
+    "delete": 0,
+    "only_output_writes": "O_EXCL independent raw evidence/index/final report in assigned review07 paths",
+    "allowed_actual_read_only": "Git/file and Docker inspect/ps/volume/network inspect/cp-to-stdout budget; existing Windows file-only checker"
+  },
+  "limitations": [
+    "Point-in-time actual containment checks do not replace required fresh window checks.",
+    "No live six-target sender/recovery/H2/M1 acceptance or deletion executed by this reviewer.",
+    "Already accepted source/restore native and historical failures are preserved, not rerun.",
+    "Independent full original business Core raw activity-attempt totals cannot be reconstructed from public hashed deltas alone; no whole-provider total claimed.",
+    "Runtime source/packet anchor/current docs publication HEAD and their CI are separate facts."
+  ]
+}

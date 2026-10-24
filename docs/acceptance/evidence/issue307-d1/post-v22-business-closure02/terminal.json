@@ -1,0 +1,129 @@
+{
+  "status": "FAILED_PREPARATION_UNEXPECTED_IMAGE_VOLUME_BEFORE_ANY_SOURCE_OR_PROOF",
+  "at": "2026-10-19T12:49:12.430494+00:00",
+  "audit_id": "bdb9e494-b7e7-4214-a9d4-dffa78df301c",
+  "owners": [
+    {
+      "kind": "observer",
+      "cid": "03162d7ed2ac66d402adc1b78b87e9d04c7178c2ec883fb77e8fd3cb7aaa7290",
+      "stopped_PID0": true,
+      "actual_command": [
+        "post-v22-close"
+      ],
+      "expected_command": [
+        "post-v22-close"
+      ],
+      "mounts": [
+        {
+          "Type": "bind",
+          "Destination": "/run/executor",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/output",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/private",
+          "RW": false
+        },
+        {
+          "Type": "volume",
+          "Name": "e2b3ccd5bed87ac7bb37a32f5a66c0178605fe7e3fdc307d7bb0247076c9231c",
+          "Destination": "/var/lib/postgresql/data",
+          "RW": true
+        }
+      ],
+      "anonymous_volumes_preserved": [
+        "e2b3ccd5bed87ac7bb37a32f5a66c0178605fe7e3fdc307d7bb0247076c9231c"
+      ]
+    },
+    {
+      "kind": "check-disabled",
+      "cid": "09dc5f1ac450d8af3539d7efa7caa23981009fa6c7ccbd2c24af4169e6c379b5",
+      "stopped_PID0": true,
+      "actual_command": [
+        "-action",
+        "check-disabled"
+      ],
+      "expected_command": [
+        "-action",
+        "check-disabled"
+      ],
+      "mounts": [
+        {
+          "Type": "bind",
+          "Destination": "/run/executor",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/output",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/private",
+          "RW": false
+        },
+        {
+          "Type": "volume",
+          "Name": "d9160b37a20439a179955f94fb360382ab056d492fb5987c2c936a4804c54251",
+          "Destination": "/var/lib/postgresql/data",
+          "RW": true
+        }
+      ],
+      "anonymous_volumes_preserved": [
+        "d9160b37a20439a179955f94fb360382ab056d492fb5987c2c936a4804c54251"
+      ]
+    },
+    {
+      "kind": "disable-all",
+      "cid": "dc6ca7d1a33a1f45593c53a4fecf22fc6947de12372e3fcfcdee92d6e4b8fe89",
+      "stopped_PID0": true,
+      "actual_command": [
+        "-action",
+        "disable-all"
+      ],
+      "expected_command": [
+        "-action",
+        "disable-all"
+      ],
+      "mounts": [
+        {
+          "Type": "bind",
+          "Destination": "/run/executor",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/output",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/private",
+          "RW": false
+        },
+        {
+          "Type": "volume",
+          "Name": "e91899f55e313788f0bb6ce099c7a73bba5c3062ea8cdded9ec3fba0560c5ee8",
+          "Destination": "/var/lib/postgresql/data",
+          "RW": true
+        }
+      ],
+      "anonymous_volumes_preserved": [
+        "e91899f55e313788f0bb6ce099c7a73bba5c3062ea8cdded9ec3fba0560c5ee8"
+      ]
+    }
+  ],
+  "source_started": 0,
+  "profile_enabled": false,
+  "proof_exists": false,
+  "provider_calls": 0,
+  "business_mutations": 0,
+  "DELETE": 0,
+  "root_cause": "New allocator omitted the already validated P1 helper tmpfs override for the PostgreSQL image VOLUME /var/lib/postgresql/data. Exact mount-set check correctly rejected all three created helpers. Explicit argv is correct in this attempt. Preserve all CIDs and anonymous volumes."
+}

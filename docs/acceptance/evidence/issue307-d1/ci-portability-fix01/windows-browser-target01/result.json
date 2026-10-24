@@ -1,0 +1,16 @@
+{
+  "started_at": "2026-10-24T12:31:10.423552+00:00",
+  "finished_at": "2026-10-24T12:31:28.205987+00:00",
+  "command": [
+    "node",
+    "node_modules/playwright/cli.js",
+    "test",
+    "schema-requests.spec.mjs",
+    "--retries=0"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

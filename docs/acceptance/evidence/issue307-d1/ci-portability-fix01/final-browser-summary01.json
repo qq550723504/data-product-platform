@@ -1,0 +1,25 @@
+{
+  "status": "PASS_WINDOWS_LINUX_UNINSTRUMENTED_COMPLETE_BROWSER_COLLECTION",
+  "rows": [
+    {
+      "os": "windows",
+      "node": "24.18.1",
+      "playwright": "1.63.0",
+      "tests": 105,
+      "retries": 0,
+      "status": "PASS",
+      "command_receipt": "docs\\acceptance\\evidence\\issue307-d1\\ci-portability-fix01\\windows-browser-full04\\result.json"
+    },
+    {
+      "os": "linux",
+      "node": "22.23.4",
+      "playwright": "1.63.0",
+      "tests": 105,
+      "retries": 0,
+      "status": "PASS",
+      "command_receipt": "docs\\acceptance\\evidence\\issue307-d1\\ci-portability-fix01\\linux-browser-full04\\result.json"
+    }
+  ],
+  "application": "Real Next production build against loopback mocks; not live Core/native acceptance",
+  "prior_failures_retained": true
+}

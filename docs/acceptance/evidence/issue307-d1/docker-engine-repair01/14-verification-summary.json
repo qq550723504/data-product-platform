@@ -1,0 +1,47 @@
+{
+  "observed_at_utc": "2026-10-24T08:59:35.0061284Z",
+  "status": "PASS_LINUX_ENGINE_RESTORED_SOURCES_STOPPED",
+  "docker_version_exit_code": 0,
+  "docker_info_exit_code": 0,
+  "engine_id": "d8e3cb9f-adc6-4df6-b5de-eb23d57bb00f",
+  "engine_version": "29.8.2",
+  "os_type": "linux",
+  "host_counts": {
+    "containers": 1077,
+    "running": 25,
+    "stopped": 1052,
+    "images": 107
+  },
+  "sources": [
+    {
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "exists": true,
+      "stopped_PID0": true,
+      "restart_policy_no": true,
+      "started_at_unchanged": true,
+      "finished_at_unchanged": true,
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6"
+    },
+    {
+      "id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "exists": true,
+      "stopped_PID0": true,
+      "restart_policy_no": true,
+      "started_at_unchanged": true,
+      "finished_at_unchanged": true,
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6"
+    }
+  ],
+  "direct_cause": "Docker Desktop/backend processes absent and docker-desktop WSL distro Stopped, so desktop-linux named pipe absent",
+  "exit_trigger": "UNKNOWN: logs stop after 08:44:10Z without a captured shutdown/crash cause",
+  "actions": [
+    "Launch installed Docker Desktop.exe with Start-Process -WindowStyle Hidden"
+  ],
+  "no_explicit_container_start_stop": true,
+  "no_reset_prune_delete": true,
+  "no_wsl_shutdown_unregister": true,
+  "no_business_config_iam_metadata_mutation": true,
+  "no_provider_delete": true,
+  "full_resource_content_integrity": "NOT_RUN: only daemon metadata and exact retained-source state checked",
+  "other_sessions": "Docker daemon restored its existing runtime; docker info reports 25 running containers. No container start/stop or restart-policy change was issued by this repair."
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "suite": "test_fixture_artifacts.py",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "suite": "test_fixture_artifacts.py",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "suite": "test_remaining_six_window.py",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "suite": "test_remaining_six_window.py",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "suite": "test_freeze_six_candidate.py",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "suite": "test_freeze_six_candidate.py",
+    "mode": "optimized",
+    "exit": 0
+  }
+]

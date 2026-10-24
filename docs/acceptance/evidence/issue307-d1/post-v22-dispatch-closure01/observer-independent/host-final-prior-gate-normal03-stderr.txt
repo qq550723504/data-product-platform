@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\docs\acceptance\evidence\issue307-d1\post-v22-dispatch-closure01\observer-independent\test_prior_preparation_gate01.py", line 11, in <module>
+    m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+                                            ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 892, in get_code
+  File "<frozen importlib._bootstrap_external>", line 950, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\examples\\lifecycle-d1\\close-old-business-dispatches.py'

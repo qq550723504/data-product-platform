@@ -1,0 +1,190 @@
+{
+  "stages": [
+    {
+      "stage": "maintenance-provision",
+      "requests": 16,
+      "observations": 16,
+      "methods": {
+        "PUT": 6,
+        "GET": 10
+      },
+      "statuses": {
+        "200": 12,
+        "404": 4
+      },
+      "channels_sha256": {
+        "business-races/maintenance-provision/files/prepare-observation-2cfbe4bb-9c22-4c20-a185-f3c400a283db.json": "57688d7e757c87665296935bfbc5b91c6f969f7c7f875def07d472f786c9b32c",
+        "business-races/maintenance-provision/files/prepare-observation-45b68199-71ef-4ca2-849e-2620ddd2131d.json": "9ac80649bacaa7f380dda7f77b47fba6d816e9e20bc86bc581bb5ce31f7b5d88",
+        "business-races/maintenance-provision/files/prepare-observation-45b8874f-c94a-4b2b-bfef-09812b5fd2fb.json": "a60e0ed374a685ade18b9b34f64d70609051e08f50f2040784e4432a0274a253",
+        "business-races/maintenance-provision/files/prepare-observation-482cc3fb-47e4-4ae7-bbf8-6bd87513f430.json": "e9131e392dfecb9630cdd411a7ee5e8447eef244c278fcbbed7e740deb0e612e",
+        "business-races/maintenance-provision/files/prepare-observation-534ea00e-fe7c-4667-aa8b-b3dd3ca8ef6c.json": "234a04472c699daafb62d59ab17f29b57ccb74d818d2e40d5fac7781b71885ff",
+        "business-races/maintenance-provision/files/prepare-observation-5fbef9ab-6814-4a90-b77b-6cadfbc35094.json": "608af11778517c2fbc62fc54e4bd384e14bfe6a88e773680febb87c3910d248c",
+        "business-races/maintenance-provision/files/prepare-observation-64432265-05c8-480a-83b1-535f96dacece.json": "adc76a2639c0c6cd78a3e1ac4413838b863b4819ebfeda1a0c4cf672f5ee67e7",
+        "business-races/maintenance-provision/files/prepare-observation-78765764-5bfd-481b-a53f-e8e7296399c6.json": "c12cdbde3ac809f2fd2a25ae59b92ea18f0bcbede3b071d10525a7a710ceafef",
+        "business-races/maintenance-provision/files/prepare-observation-8ac12677-df8d-4475-89fd-00ac4a9112cb.json": "0281f804193a8a9a05b3f234a5290b669f9c52cf04f98a408b63f884be99dcd6",
+        "business-races/maintenance-provision/files/prepare-observation-93403f4c-6c0e-4f3e-85da-8c74d7ea1840.json": "410ed34ee4aa0fe740630e58b0bfdae8d5849d1cc6d1b94b1dd8690a75219ff0",
+        "business-races/maintenance-provision/files/prepare-observation-97905d42-d102-4a25-827d-dc5bf1d47f5b.json": "64849dd173f5dcf0319bb7e0872b45756d98287b2e7f761efc054e34f580eee5",
+        "business-races/maintenance-provision/files/prepare-observation-a1c1c227-4b61-4136-aea4-e37ef88dcdc9.json": "ebaa6df095f20cb39ea8f29b4a65ce06f8af2bd8bca3517f9f53a53604fac8d3",
+        "business-races/maintenance-provision/files/prepare-observation-b29e860c-5238-4a8f-8657-2d628c490643.json": "18d311390fe15f560a133ba98a92a79577ddc69a224c12f914901b86d617170d",
+        "business-races/maintenance-provision/files/prepare-observation-b5ee90bb-af7b-485f-a4a5-126a1b1ee83b.json": "5316504897660bd71ea3d20e98102fa0f61da9fe2cb476a6fc8ea1bc28700f90",
+        "business-races/maintenance-provision/files/prepare-observation-d9b6760b-83d1-474f-9715-2526f396ed1b.json": "1ef2702ca2eed3a131d9ddd1fddf5792ac750e50176245e0be78ecfa15f54372",
+        "business-races/maintenance-provision/files/prepare-observation-fcc69c68-a81d-46f0-ae01-531cb4daf5a5.json": "e5f407d70903695ca130ee1f464d827695ddf95de9264a2416c84b4be3cb4bf0",
+        "business-races/maintenance-provision/files/prepare-response-5fbef9ab-6814-4a90-b77b-6cadfbc35094.json": "22f20a4df82f2058744bd23ea2f6a34a6c5fc528065fa04f1e7dd5ffb4280da3",
+        "business-races/maintenance-provision/files/prepare-response-fcc69c68-a81d-46f0-ae01-531cb4daf5a5.json": "f33751e624d6feda7b9d75a042bcad5bdf7a9ae15d2b5cf3546562126fe712bd",
+        "business-races/maintenance-provision/files/prepare-start-2cfbe4bb-9c22-4c20-a185-f3c400a283db.json": "f0378b44cd5f940a074642dc6782ff25161eb582f00be63e76e8a0547da25622",
+        "business-races/maintenance-provision/files/prepare-start-45b68199-71ef-4ca2-849e-2620ddd2131d.json": "49f24b3eaa80d91568b7a0e920d640c0656c9d88575ed29e7d29caa5190da3c7",
+        "business-races/maintenance-provision/files/prepare-start-45b8874f-c94a-4b2b-bfef-09812b5fd2fb.json": "a6d10ff30bedb19529fa773d008b9022ba0a087bdcca27922f4e9518a01582b9",
+        "business-races/maintenance-provision/files/prepare-start-482cc3fb-47e4-4ae7-bbf8-6bd87513f430.json": "776df2049df56a5e8eed7cecf02f74b1340f8818fdd79c2b765ed6a81200d11d",
+        "business-races/maintenance-provision/files/prepare-start-534ea00e-fe7c-4667-aa8b-b3dd3ca8ef6c.json": "644c74264bf642db7f19c6a007715a73e39be929a2be061b731240a328017e5e",
+        "business-races/maintenance-provision/files/prepare-start-5fbef9ab-6814-4a90-b77b-6cadfbc35094.json": "793bca35bf2c21768d6457e56c0586b9937d5c6d5f9073ca41a3fe389762f012",
+        "business-races/maintenance-provision/files/prepare-start-64432265-05c8-480a-83b1-535f96dacece.json": "1e7b2c4fb240f551898ccded6fad407ea35a38896c22e1da7b0ed67ac3ee71a9",
+        "business-races/maintenance-provision/files/prepare-start-78765764-5bfd-481b-a53f-e8e7296399c6.json": "1413fdef7669e577d104b9b971d1be5409f33eb10c25c55f2c08e2b03aee2b13",
+        "business-races/maintenance-provision/files/prepare-start-8ac12677-df8d-4475-89fd-00ac4a9112cb.json": "d426a983a8e9147c19b2d03468739d9ce916106bff72d2efb9822388d13d08e9",
+        "business-races/maintenance-provision/files/prepare-start-93403f4c-6c0e-4f3e-85da-8c74d7ea1840.json": "e5bd5fbf4c0f93bb0949ff72a51445d84c301345f56ccfe75ab26fb1c8ec8b6b",
+        "business-races/maintenance-provision/files/prepare-start-97905d42-d102-4a25-827d-dc5bf1d47f5b.json": "089f831f573f8c34ad0a1fee1d2365fe37dcbac2924b721703a0b5222c0208ec",
+        "business-races/maintenance-provision/files/prepare-start-a1c1c227-4b61-4136-aea4-e37ef88dcdc9.json": "742fdf4db3e3a58ea139d49ff36edbedbedf5bd9d71f849eba7cd42cb83f0ce0",
+        "business-races/maintenance-provision/files/prepare-start-b29e860c-5238-4a8f-8657-2d628c490643.json": "fd1b540b08bf4f2bd763dc0fb40ab996fba8d66e78d6f334161a918ab4addd91",
+        "business-races/maintenance-provision/files/prepare-start-b5ee90bb-af7b-485f-a4a5-126a1b1ee83b.json": "8128959d0de0f6f8f86e73e3e99048a76912aefb18009f7389ab459fbbd7a984",
+        "business-races/maintenance-provision/files/prepare-start-d9b6760b-83d1-474f-9715-2526f396ed1b.json": "2776cca8bec4c1780ed26bf3a09d3df0266a02d50110601836c7874a5fd6fa7e",
+        "business-races/maintenance-provision/files/prepare-start-fcc69c68-a81d-46f0-ae01-531cb4daf5a5.json": "e67bee8ccada1d0fbd5ea5f1d7f92ccd6345dc6e1fb1a83e9a55ef73be19a7b2"
+      }
+    },
+    {
+      "stage": "maintenance-source",
+      "requests": 39,
+      "observations": 39,
+      "methods": {
+        "GET": 38,
+        "HEAD": 1
+      },
+      "statuses": {
+        "200": 25,
+        "400": 12,
+        "404": 2
+      },
+      "channels_sha256": {
+        "business-races/maintenance-source/files/readonly-observation-0681b28f-e9d8-47ea-8201-69afed2334b0.json": "6870bb4e2537e697693000117d878bb6e33883f04533ebea212cc7ccf8279340",
+        "business-races/maintenance-source/files/readonly-observation-0fc75130-c6d7-4fdb-a770-837acaf61212.json": "ff152cc593eee8d5dfb0244e0d2ab860210687b533fc7d9daa6b3a4791bd6c2d",
+        "business-races/maintenance-source/files/readonly-observation-148f5fd4-0b92-41dd-b699-ca6584f222ab.json": "4991f3748a4cf1a3eb7894a89f0adc664b4c581d57ede60baf4b7ad3f971722c",
+        "business-races/maintenance-source/files/readonly-observation-185e8ca6-0bec-4cea-b8b0-738386170440.json": "9cfac25ff176586d17f92b4f31396a1d7611b4eb646a6efb80c2c7db01bb2b81",
+        "business-races/maintenance-source/files/readonly-observation-1c929f3b-8b50-41d7-8e04-da76b5dfe15a.json": "99eb176475a964ef2c8cfe3c41ee4187b860afbc4b755c2eded8740f1da2b8a0",
+        "business-races/maintenance-source/files/readonly-observation-226f3b2f-5bd5-41e4-815c-da110e614544.json": "aa828f0217ca4acfc45b7ddd1df673b8eb9ed500e414ec2595cfb247695bb250",
+        "business-races/maintenance-source/files/readonly-observation-2456eb2c-f129-4d8a-b5e9-61d89f51eedc.json": "0952086f2117046621bc5789315a070827b111c6b9783320253b1b85d1da7d79",
+        "business-races/maintenance-source/files/readonly-observation-2c5b8dd4-a440-428e-b012-13d6d80339d3.json": "da8bf3d91ec33195d4a4e8d4cb1cd404bfe5ac12807f7061b17505549fc5a5a2",
+        "business-races/maintenance-source/files/readonly-observation-2fc2b431-c8b2-4049-b075-32253901520b.json": "8ec40468691e747f52fd7361fe1b11d301b703fe85c0407cada954c755db8296",
+        "business-races/maintenance-source/files/readonly-observation-410483a0-3c8a-4b15-94af-903e7f2f93f9.json": "55711a795198d9bdb144666e6e8866179eb55f081ab5eb58227ec15147ac3528",
+        "business-races/maintenance-source/files/readonly-observation-5056cd22-0318-4074-99f5-ada09f2c0b73.json": "ed7a56c91a02e82335f252047f6e72e3e4ae9c8d7b6c91eed175ae4ac7670802",
+        "business-races/maintenance-source/files/readonly-observation-52070560-d73d-4236-8eeb-fc2e08a97cb0.json": "c71a2a79d9457f479e958765013a6c9258bebf624bb10b55988c9c1bb203624a",
+        "business-races/maintenance-source/files/readonly-observation-55dcd66b-85da-4a8f-8fde-b8fdd6516b5b.json": "45740b757e84f91fbbd947381a3e78182835a5cb53e21f7ad65cb916ff93d51b",
+        "business-races/maintenance-source/files/readonly-observation-6eafd27f-b251-4207-9e7e-29e581728cac.json": "c7152a6c02a7624868533385986a313cd3a0457706509462c86ecd5539f15080",
+        "business-races/maintenance-source/files/readonly-observation-71714b07-7f31-4d28-99e5-bd85091be3b6.json": "45cf340d674c65c8aaaeda4af93d211b1abc6e8e499eeee51c76dd175d33a8e0",
+        "business-races/maintenance-source/files/readonly-observation-74e47332-34e8-41a3-ba44-f5ffad7bc8c0.json": "3774b4a11d829372cecc3bdf203aebd66a8be59e9a075f47a8969cb86cda6b7b",
+        "business-races/maintenance-source/files/readonly-observation-756e82a7-36ef-4101-b553-95c6406417f0.json": "6a4565e579942188cfcf97875f4109026e66499c9dc7df080c55eb2401987247",
+        "business-races/maintenance-source/files/readonly-observation-77148cca-48db-44bd-aeb8-d0a6930a3bae.json": "c9ce1d1c0411e241ea52cc3c54059e575b47c2a3f9dedbbbfc7a27541788c886",
+        "business-races/maintenance-source/files/readonly-observation-782a93c3-2cc4-46e9-b4c8-a0aeb608d58e.json": "0b8eb97732f8710abfe68f89e929e10ce2399a6f566f79527773e2c5aa48a93c",
+        "business-races/maintenance-source/files/readonly-observation-8565514e-a25c-49eb-9c8c-c4987d38e538.json": "b2b13e4f8702e0ae67d1f234be1ade348e5f84501ff5bb430fc60ea09e87b924",
+        "business-races/maintenance-source/files/readonly-observation-88bbad59-e8d2-4ab0-8cae-42d8918ea86c.json": "7ca901974db6315c1f95c35ac8f8db795890cc496e39210d0568c65a38211987",
+        "business-races/maintenance-source/files/readonly-observation-8f294c3e-06a1-4e16-b14c-afb7f48f17a1.json": "318da8346fb4b46d33d57c698fb2474f2887396ab754cb5ac13ca73ed84f3a7f",
+        "business-races/maintenance-source/files/readonly-observation-8f2efbc3-d0bc-4ab8-9427-2b5422b2a231.json": "ef2710ec64dc976964c5b2be9cd5ec93630852f3edcf955eccb00b991b0c61eb",
+        "business-races/maintenance-source/files/readonly-observation-91786dbb-7603-4bc6-8414-49e74954c30b.json": "83443bed19678028905559a4fcb2928cbe6e1264565aed241d85ed43af304b83",
+        "business-races/maintenance-source/files/readonly-observation-96156c43-7c1b-4d25-ba67-8e2ce6c4ca71.json": "1bb1275271414cda6f03bb901f692be804f78aaa5c4539a6d0133289b326b392",
+        "business-races/maintenance-source/files/readonly-observation-a328eafc-ca45-430e-93ea-abcb98b81e43.json": "96ab2dd55af35706bd098dd70adb4502ba06236c37491646c8a341303b505df3",
+        "business-races/maintenance-source/files/readonly-observation-a32f8afa-14b5-4345-a6fd-415440153ad9.json": "efa2ef1a672432d4aee9977d81b6799f8396866db2d337c90d30cd2e1c639155",
+        "business-races/maintenance-source/files/readonly-observation-b9e32520-b1af-4707-adbb-9dc898b3b466.json": "17cf0b93dbb1b38f3c21afb722fd0a66863930513bbf63f1a1dcd90fe1d27bbf",
+        "business-races/maintenance-source/files/readonly-observation-bd644b92-4e09-4cd5-99eb-e7c03d52b676.json": "058ede934f846258b6e37fdb98d8657241e7cee605d9b9ad38e3935d6c551997",
+        "business-races/maintenance-source/files/readonly-observation-c3a47f86-c81d-4840-857e-db4e8875e77d.json": "3bc0212763d100da255c227eeb64b74108080870391fc4c0b693e779d935426b",
+        "business-races/maintenance-source/files/readonly-observation-c560aaca-2a8e-4254-9dab-9f3e007d330d.json": "84e5a0e216d49ee7e8a080942c0340292ea9b675325eb22bdf303e4224a739fc",
+        "business-races/maintenance-source/files/readonly-observation-c89045b1-1641-49f9-9f56-f9fb92310735.json": "206e3b342a74fbabbd1138b12291bd3a05c61494e23488267d920aa8bd1ebbad",
+        "business-races/maintenance-source/files/readonly-observation-c8d809f1-bf30-4ace-a3bd-1743d7b46240.json": "2ac97de9a19d25f2c0f4d8fe903be5e268625bb170d98d46a489e0d96119bfd4",
+        "business-races/maintenance-source/files/readonly-observation-d01da720-db45-4b08-93fb-ec161af714d0.json": "3378fc1e33569cffed47b62a13125f8365feee2bfaa847406e8222450d7c9253",
+        "business-races/maintenance-source/files/readonly-observation-e9d566e8-77c6-41f0-8f0c-25b3c26d1f2f.json": "837c3883e3bb29b328a4e754468cf685b14c05e19aa48e3bfa0778d2ff62bcab",
+        "business-races/maintenance-source/files/readonly-observation-f4aebd19-973c-419a-88d8-d5b98e414a39.json": "aba291b07a79034f8c1c201c247563a304acc5f727977193b6b1b4a1de5798cf",
+        "business-races/maintenance-source/files/readonly-observation-f854afea-5030-4b58-8a92-afc201d054e2.json": "1e5e319a35eed1d09c9605839d86e92b236a5026d0a80d469a458a844dc6c72f",
+        "business-races/maintenance-source/files/readonly-observation-fa433244-1590-45d9-87f3-2921fc2d34cb.json": "58920e73ba043cb43af2f6a9a08e33a45d6d1fbf9dfef094d13198e1dc39d216",
+        "business-races/maintenance-source/files/readonly-observation-fc514117-44ea-4c38-a3ea-2b6203148ae9.json": "02679ccda4635ab99341f8e2d97738e3a3949c296494b4f2c91bcf43a788bd1c",
+        "business-races/maintenance-source/files/readonly-start-0681b28f-e9d8-47ea-8201-69afed2334b0.json": "b09fb9cbbc6dddb8744fd7aebc878c60c9e773072b5ae84b557b45d78b0bfd56",
+        "business-races/maintenance-source/files/readonly-start-0fc75130-c6d7-4fdb-a770-837acaf61212.json": "ff22bcbedbafa3eea7e02df5167094733d9fcaf7702258b372e59c21ba206837",
+        "business-races/maintenance-source/files/readonly-start-148f5fd4-0b92-41dd-b699-ca6584f222ab.json": "997c2079045fddf5f0be0f88c2e105bf82ef5a79e18f41461140ceaa5b81a2af",
+        "business-races/maintenance-source/files/readonly-start-185e8ca6-0bec-4cea-b8b0-738386170440.json": "c368620c32f37ea4664735b3e2585ddb830dc6c102eca887e0d99a338a4621e5",
+        "business-races/maintenance-source/files/readonly-start-1c929f3b-8b50-41d7-8e04-da76b5dfe15a.json": "6f198ee8554ac490f897ea3458ac6f2522952ae9753444f790bc3f315dca1037",
+        "business-races/maintenance-source/files/readonly-start-226f3b2f-5bd5-41e4-815c-da110e614544.json": "e512718f2b06a8806b6642ac9b9d79add65d126168bdc91b97c88ef0a939ae7e",
+        "business-races/maintenance-source/files/readonly-start-2456eb2c-f129-4d8a-b5e9-61d89f51eedc.json": "a042a62dc2bb13397b4b509719f2e813df6a1886f4dfca9add01536c34db42b4",
+        "business-races/maintenance-source/files/readonly-start-2c5b8dd4-a440-428e-b012-13d6d80339d3.json": "a1e4ca6288b897ed6a5d03fb1f9703c15e8e8292f03f6380a411237766d9c7fe",
+        "business-races/maintenance-source/files/readonly-start-2fc2b431-c8b2-4049-b075-32253901520b.json": "690d973f6380491b885de3d157b37b69d51689a0126f3c04833e2ea2b2b200d1",
+        "business-races/maintenance-source/files/readonly-start-410483a0-3c8a-4b15-94af-903e7f2f93f9.json": "02a42f3779049a331f01ef4a2b0d607edc3fc9430b9bc06e1a92511680fc750a",
+        "business-races/maintenance-source/files/readonly-start-5056cd22-0318-4074-99f5-ada09f2c0b73.json": "3bab3cf682530056e4f6a43ccc7be649a18ec78889cf02f48a037541f7931a01",
+        "business-races/maintenance-source/files/readonly-start-52070560-d73d-4236-8eeb-fc2e08a97cb0.json": "4a0e0b9e80b1d24b26cec045f91f07a72c29fb5fed23c1b8e6d4d96429c69797",
+        "business-races/maintenance-source/files/readonly-start-55dcd66b-85da-4a8f-8fde-b8fdd6516b5b.json": "64539dc36ac255dd42150b03f19884dd40a5020e212843d43374c4a7c23a2188",
+        "business-races/maintenance-source/files/readonly-start-6eafd27f-b251-4207-9e7e-29e581728cac.json": "e267efa2961a05b5cbc5b2bb64a5ccec9f365af8702837d44511024232528667",
+        "business-races/maintenance-source/files/readonly-start-71714b07-7f31-4d28-99e5-bd85091be3b6.json": "7eca6e3be3999e9e351e657b10ec70d43ca9dbace5f9c2775e84e3bbf9ae2544",
+        "business-races/maintenance-source/files/readonly-start-74e47332-34e8-41a3-ba44-f5ffad7bc8c0.json": "eaf350eaefc406961daaaef7e7c139483288a4138ad8fdf10dab3e5de54286c6",
+        "business-races/maintenance-source/files/readonly-start-756e82a7-36ef-4101-b553-95c6406417f0.json": "24a39a8c7cb22551e4b2d1cfaf961a14be0b820135a6c40d435b697805b0c90b",
+        "business-races/maintenance-source/files/readonly-start-77148cca-48db-44bd-aeb8-d0a6930a3bae.json": "b76f77da48e35048e3e8859c0677546203f2d267eeebc51c9761270cdc0ceffb",
+        "business-races/maintenance-source/files/readonly-start-782a93c3-2cc4-46e9-b4c8-a0aeb608d58e.json": "19778e82fa0e5c1aaf3f3a9af7db804dbc12bbb1e30a53443becd2be67a0b574",
+        "business-races/maintenance-source/files/readonly-start-8565514e-a25c-49eb-9c8c-c4987d38e538.json": "3c3122243436350cce594b09875eae864536ec695aa65464ad21e53b365af5c4",
+        "business-races/maintenance-source/files/readonly-start-88bbad59-e8d2-4ab0-8cae-42d8918ea86c.json": "8e16706b9de4e188959fb649c0f1c66b24143d83f0610c0adcd1a9e86be1574f",
+        "business-races/maintenance-source/files/readonly-start-8f294c3e-06a1-4e16-b14c-afb7f48f17a1.json": "4ad475008aa62c4e48e816ebdc2a6ad5de2985d93a8ccf4bd919c4255958ded8",
+        "business-races/maintenance-source/files/readonly-start-8f2efbc3-d0bc-4ab8-9427-2b5422b2a231.json": "84f658db98a1232339df01514bbaf19f8ad5be14dc3ee7942c52f3af061c4b61",
+        "business-races/maintenance-source/files/readonly-start-91786dbb-7603-4bc6-8414-49e74954c30b.json": "b62d495f17b11c9df7cb0fa81819bc652bad9d24b63ef7496ca974eb36ea0c93",
+        "business-races/maintenance-source/files/readonly-start-96156c43-7c1b-4d25-ba67-8e2ce6c4ca71.json": "293e56b252499cf7edbdde5354f2402d6e071cd463acca50a2db60bcd19b0487",
+        "business-races/maintenance-source/files/readonly-start-a328eafc-ca45-430e-93ea-abcb98b81e43.json": "676a26dccb9320afc3d6eb546fb18edb35d21854f1154c812b7b89ac207e1406",
+        "business-races/maintenance-source/files/readonly-start-a32f8afa-14b5-4345-a6fd-415440153ad9.json": "1ce963fbc8f2d4308cddacb53ad422903a9a24c8eeefed95591733dc6eaada0c",
+        "business-races/maintenance-source/files/readonly-start-b9e32520-b1af-4707-adbb-9dc898b3b466.json": "44689869fe9cbf52258cb91e5252ffd33c131d119b5623e5c0045f51e1660659",
+        "business-races/maintenance-source/files/readonly-start-bd644b92-4e09-4cd5-99eb-e7c03d52b676.json": "86d1b34154259c989a7e7814c7c16b30bd358dc8ce52fda36b6ffff72d7d8a8d",
+        "business-races/maintenance-source/files/readonly-start-c3a47f86-c81d-4840-857e-db4e8875e77d.json": "ca3b4a8d150979540150640297704e35cfd7c341f3f9a780b86efa7e249f0c65",
+        "business-races/maintenance-source/files/readonly-start-c560aaca-2a8e-4254-9dab-9f3e007d330d.json": "d9d3df93a37fa9e52377ba7fc06aad36ba887a43340d72913e13f62f1e50643b",
+        "business-races/maintenance-source/files/readonly-start-c89045b1-1641-49f9-9f56-f9fb92310735.json": "e70e6fd247daf08a99fd4ffd00de820fc7be9f45a5bdfa7a7034c1cc7b3a3948",
+        "business-races/maintenance-source/files/readonly-start-c8d809f1-bf30-4ace-a3bd-1743d7b46240.json": "5e1c90c474c3fb4c1a8af00c64e21aaff562ab31dc43e5facb7dac5243d9ca3c",
+        "business-races/maintenance-source/files/readonly-start-d01da720-db45-4b08-93fb-ec161af714d0.json": "593fc4f9e7b3c91058e8b15c41584e3db2035aa4ea40ad41e4555ef5dcf35c05",
+        "business-races/maintenance-source/files/readonly-start-e9d566e8-77c6-41f0-8f0c-25b3c26d1f2f.json": "5c5f19002e320634034f7de3dca75346d4da18aa424c41aa2c9a1fab47d0b011",
+        "business-races/maintenance-source/files/readonly-start-f4aebd19-973c-419a-88d8-d5b98e414a39.json": "58f27d341b64c4cb8d76a37bca228ce6fab46751e9f4b06fd613657c4858b726",
+        "business-races/maintenance-source/files/readonly-start-f854afea-5030-4b58-8a92-afc201d054e2.json": "933f2ff48da774d3166fbe675b6c029575334e9194868f466890e240d5357dfb",
+        "business-races/maintenance-source/files/readonly-start-fa433244-1590-45d9-87f3-2921fc2d34cb.json": "fc00d61eba1c02cacb7478f8bdc864e750f3f9b99c8de9268dfada960a6edbea",
+        "business-races/maintenance-source/files/readonly-start-fc514117-44ea-4c38-a3ea-2b6203148ae9.json": "3d191e883feac20bb80806659cb22cbcc8f454512433e936c962c8e6cae3c75f"
+      }
+    },
+    {
+      "stage": "restore-inspect-enable",
+      "requests": 4,
+      "observations": 4,
+      "methods": {
+        "GET": 3,
+        "PUT": 1
+      },
+      "statuses": {
+        "200": 4
+      },
+      "channels_sha256": {
+        "business-races/restore-inspect-enable/files/prepare-observation-05980ae3-93e0-45f2-b6e8-10b46e33e081.json": "49ab4e01d09454d843b0013c440fbd21895928c1b1f7fcde9798da5dc1309eb6",
+        "business-races/restore-inspect-enable/files/prepare-observation-5b9bb311-fa89-4c1d-9394-0a28b1457df1.json": "e2dbf8e8c3c313b88629f168c7b68f2692ff55785e1f0fe56b73dbad383a978e",
+        "business-races/restore-inspect-enable/files/prepare-observation-94690f78-1a18-4a4c-b925-e9a7317bbaf3.json": "f780a3074f510494b5230b6f3c1189a6f9aded15443e0136b172109311a0ba4e",
+        "business-races/restore-inspect-enable/files/prepare-observation-befaca5b-c5d4-463e-9092-22cd5f5e6757.json": "a4b5303e78d731af45915fae2020bca0ea6acec47cc02784b1eb579cfb67d258",
+        "business-races/restore-inspect-enable/files/prepare-start-05980ae3-93e0-45f2-b6e8-10b46e33e081.json": "4efadc7f746ada9dcfbe3fe93ba0213027e1320e232a263310222d83a335ac75",
+        "business-races/restore-inspect-enable/files/prepare-start-5b9bb311-fa89-4c1d-9394-0a28b1457df1.json": "e66f39781266cd449f11a63a0f95e300d492b1424575b87d41800340eb6adedd",
+        "business-races/restore-inspect-enable/files/prepare-start-94690f78-1a18-4a4c-b925-e9a7317bbaf3.json": "09dfa02a8bd35af53a24a817ffffee4fc8938bbb17ae1fc8861105ae79274391",
+        "business-races/restore-inspect-enable/files/prepare-start-befaca5b-c5d4-463e-9092-22cd5f5e6757.json": "c657e7d1ae1de2ab4b1582d824e4e91b0566d402c7ad34892d25a8ca327e1235"
+      }
+    },
+    {
+      "stage": "restore-inspect-disable",
+      "requests": 2,
+      "observations": 2,
+      "methods": {
+        "GET": 1,
+        "PUT": 1
+      },
+      "statuses": {
+        "200": 2
+      },
+      "channels_sha256": {
+        "business-races/restore-inspect-disable/files/prepare-observation-68644f55-2723-458d-a8c6-871616957bc4.json": "d6cee7f3833a44244e66da2ca11b6a78312980893b61481c975a8c311e353bbb",
+        "business-races/restore-inspect-disable/files/prepare-observation-92369be0-482f-4436-b6c9-cf04123222a6.json": "734a2a31aa07e8ebd1652c7167993476b9c427b888078474f36b41461efa64a7",
+        "business-races/restore-inspect-disable/files/prepare-start-68644f55-2723-458d-a8c6-871616957bc4.json": "3a477c6ccb777604bef86ffe1b9735f02b312e217f160b9030f8cad3c792c32d",
+        "business-races/restore-inspect-disable/files/prepare-start-92369be0-482f-4436-b6c9-cf04123222a6.json": "5a1d9f45d82cd9ceba8c97c6d9f065b146f66859901751ec7870fb64ac10afcf"
+      }
+    }
+  ],
+  "total_requests": 61,
+  "total_observations": 61,
+  "amount": "NOT_ASSESSED"
+}

@@ -1,0 +1,14 @@
+{
+	"Path": "github.com/minio/minio",
+	"Version": "v0.0.0-20251015172955-9e49d5e7a648",
+	"Info": "C:\\Users\\Henry\\go\\pkg\\mod\\cache\\download\\github.com\\minio\\minio\\@v\\v0.0.0-20251015172955-9e49d5e7a648.info",
+	"GoMod": "C:\\Users\\Henry\\go\\pkg\\mod\\cache\\download\\github.com\\minio\\minio\\@v\\v0.0.0-20251015172955-9e49d5e7a648.mod",
+	"Zip": "C:\\Users\\Henry\\go\\pkg\\mod\\cache\\download\\github.com\\minio\\minio\\@v\\v0.0.0-20251015172955-9e49d5e7a648.zip",
+	"Dir": "C:\\Users\\Henry\\go\\pkg\\mod\\github.com\\minio\\minio@v0.0.0-20251015172955-9e49d5e7a648",
+	"Sum": "h1:6TdolSCLSs2nwm8i0PpWDqf9iX2Ty9WQK8wmr7dCnUM=",
+	"GoModSum": "h1:yCWDkwWO9IWpGsT4mreDDN/B/QVmK2zC666uInRAcqE=",
+	"Origin": {
+		"VCS": "git",
+		"Hash": "9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a"
+	}
+}

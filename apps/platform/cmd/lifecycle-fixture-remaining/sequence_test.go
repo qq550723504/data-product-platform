@@ -59,14 +59,14 @@ func (s *absenceStore) QueryRow(_ context.Context, _ string, args ...any) pgx.Ro
 
 func TestPredecessorReceiptsRejectWrongWorkspaceMissingVersionAndLookupFailure(t *testing.T) {
 	scope, _ := pilot.RemainingScopeFor("business-races")
-	p1, _ := fixedTarget(scope.Group, "P1")
+	p1, _ := historicalCopy(scope.Group, "P1")
 	foreign := uuid.New()
 	store := &absenceStore{receipts: map[uuid.UUID]map[uuid.UUID]bool{
 		foreign:         {p1.ID: true},
 		scope.Workspace: {uuid.New(): true},
 	}}
-	if err := requirePriorAbsences(context.Background(), store, scope, "P1"); err != nil || store.queries != 0 {
-		t.Fatal("first target unexpectedly read predecessor facts", err)
+	if err := requirePriorAbsences(context.Background(), store, scope, "P1"); !errors.Is(err, lc.ErrStorageScope) || store.queries != 0 {
+		t.Fatal("historical P1 became an executable stage", err)
 	}
 	if err := requirePriorAbsences(context.Background(), store, scope, "P2"); !errors.Is(err, lc.ErrStorageDenied) {
 		t.Fatal("foreign tenant or another exact copy counted as predecessor absence", err)
@@ -106,10 +106,16 @@ func (s *sequenceReadJournal) ObserveStorageCall(context.Context, lc.StorageCall
 // Real SDK + real wire + SDK LIST, against a loopback simulated provider only.
 // The receipt store below is a fake Core; PostgreSQL receipt invariants have a
 // separate application integration test. This never calls a retained MinIO.
-func TestBusinessSendRecoveryCompositionCannotBatchPastUnreconciledDeletion(t *testing.T) {
+func TestSixSendDisableRecoveryCompositionCannotBatchPastUnreconciledDeletion(t *testing.T) {
+	for _, group := range []string{"business-races", "late-hold", "mixed"} {
+		t.Run(group, func(t *testing.T) {
+			testGroupSendDisableRecovery(t, group, map[string][]string{"business-races": {"P2", "T1", "T2"}, "late-hold": {"H2"}, "mixed": {"M1A", "M1B"}}[group])
+		})
+	}
+}
+func testGroupSendDisableRecovery(t *testing.T, group string, stages []string) {
 	ctx := context.Background()
-	scope, _ := pilot.RemainingScopeFor("business-races")
-	stages := []string{"P1", "P2", "T1", "T2"}
+	scope, _ := pilot.RemainingScopeFor(group)
 	var targets []domain.Copy
 	attempts := map[uuid.UUID]domain.ProviderAttempt{}
 	remaining := map[uuid.UUID]domain.Copy{}
@@ -122,27 +128,30 @@ func TestBusinessSendRecoveryCompositionCannotBatchPastUnreconciledDeletion(t *t
 	// must retain these, rather than passing after the target namespace empties.
 	survivors := map[uuid.UUID]domain.Copy{}
 	for _, cp := range scope.Copies {
-		if _, target := attempts[cp.ID]; !target {
+		if _, target := attempts[cp.ID]; !target && cp.Key != "fixture/p1.csv" {
 			survivors[cp.ID], remaining[cp.ID] = cp, cp
 		}
 	}
 	// Exact immutable produced copies from candidate12/bindings.json, group
 	// business-races. They supplement the six original RemainingScope copies.
-	raw, err := os.ReadFile(filepath.Join("testdata", "business-produced-copies.json"))
-	var produced []domain.Copy
-	if err != nil || json.Unmarshal(raw, &produced) != nil || len(produced) != 2 {
-		t.Fatal("produced survivor fixture invalid", err)
-	}
-	for _, cp := range produced {
-		if cp.WorkspaceID != scope.Workspace || cp.ProviderInstanceID != scope.Provider || cp.IncarnationID != scope.Incarnation || cp.ProviderVersion == "" || cp.ByteSize <= 0 {
-			t.Fatal("produced survivor scope invalid")
+	var err error
+	if group == "business-races" {
+		raw, err := os.ReadFile(filepath.Join("testdata", "business-produced-copies.json"))
+		var produced []domain.Copy
+		if err != nil || json.Unmarshal(raw, &produced) != nil || len(produced) != 2 {
+			t.Fatal("produced survivor fixture invalid", err)
 		}
-		if _, exists := remaining[cp.ID]; exists {
-			t.Fatal("produced survivor duplicates a target or control")
+		for _, cp := range produced {
+			if cp.WorkspaceID != scope.Workspace || cp.ProviderInstanceID != scope.Provider || cp.IncarnationID != scope.Incarnation || cp.ProviderVersion == "" || cp.ByteSize <= 0 {
+				t.Fatal("produced survivor scope invalid")
+			}
+			if _, exists := remaining[cp.ID]; exists {
+				t.Fatal("produced survivor duplicates a target or control")
+			}
+			survivors[cp.ID], remaining[cp.ID] = cp, cp
 		}
-		survivors[cp.ID], remaining[cp.ID] = cp, cp
 	}
-	if len(survivors) != 4 {
+	if len(survivors) != map[string]int{"business-races": 4, "late-hold": 5, "mixed": 2}[group] {
 		t.Fatal("business survivor fixture changed")
 	}
 	var mu sync.Mutex
@@ -197,12 +206,31 @@ func TestBusinessSendRecoveryCompositionCannotBatchPastUnreconciledDeletion(t *t
 	backend, _ := url.Parse(provider.URL)
 	_, key, _ := ed25519.GenerateKey(rand.Reader)
 	budget, wireOutput := t.TempDir(), t.TempDir()
+	sendEnabled := true
+	witnessedLate := 0
 	wire := httptest.NewServer(&wireHandler{scope: targets, access: "test-delete", key: key,
 		backend: backend, transport: &http.Transport{Proxy: nil, DisableKeepAlives: true},
-		output: wireOutput, budget: budget, fresh: func() error { return nil },
+		output: wireOutput, budget: budget, fresh: func() error {
+			if !sendEnabled {
+				return errDenied
+			}
+			return nil
+		},
+		after: func(_ context.Context, p signed) error {
+			var w wireWitness
+			if json.Unmarshal(p.Body, &w) != nil || w.UpstreamStatus != 204 || w.Copy.Key != "fixture/h2-a.csv" {
+				return errDenied
+			}
+			witnessedLate++
+			return nil
+		},
 		attempt: func(_ context.Context, cp domain.Copy) (domain.ProviderAttempt, error) { return attempts[cp.ID], nil }})
 	defer wire.Close()
+	p1, _ := historicalCopy(scope.Group, "P1")
 	store := &absenceStore{receipts: map[uuid.UUID]map[uuid.UUID]bool{scope.Workspace: {}}}
+	if group == "business-races" {
+		store.receipts[scope.Workspace][p1.ID] = true
+	}
 	readJournal := &sequenceReadJournal{}
 	inspector, err := storage.NewLifecycleInspector(storage.LifecycleInspectionConfig{
 		Endpoint: strings.TrimPrefix(provider.URL, "http://"), AccessKey: "test-inspector", SecretKey: "test-only",
@@ -213,6 +241,7 @@ func TestBusinessSendRecoveryCompositionCannotBatchPastUnreconciledDeletion(t *t
 	}
 	var trace []string
 	for i, stage := range stages {
+		sendEnabled = true
 		cp := targets[i]
 		if err = requirePriorAbsences(ctx, store, scope, stage); err != nil {
 			t.Fatal(err)
@@ -224,6 +253,12 @@ func TestBusinessSendRecoveryCompositionCannotBatchPastUnreconciledDeletion(t *t
 			t.Fatal(err)
 		}
 		trace = append(trace, "send-"+stage)
+		sendEnabled = false
+		trace = append(trace, "disable-"+stage)
+		retry := &journal{exact: &returnTestJournal{}, authorize: func() error { return errDenied }, budget: budget}
+		if e := testDeleter(t, wire.URL, cp, retry).DeleteExactCopy(ctx, attempts[cp.ID], cp); e == nil {
+			t.Fatal("disabled sender replay admitted")
+		}
 		if i+1 < len(stages) {
 			next := targets[i+1]
 			if err = requirePriorAbsences(ctx, store, scope, stages[i+1]); !errors.Is(err, lc.ErrStorageDenied) {
@@ -257,16 +292,19 @@ func TestBusinessSendRecoveryCompositionCannotBatchPastUnreconciledDeletion(t *t
 	}
 	var want []string
 	for _, stage := range stages {
-		want = append(want, "send-"+stage, "recover-"+stage)
+		want = append(want, "send-"+stage, "disable-"+stage, "recover-"+stage)
 	}
 	mu.Lock()
 	defer mu.Unlock()
-	if !reflect.DeepEqual(trace, want) || deletes != 4 || lookups != 4 || !reflect.DeepEqual(remaining, survivors) || readJournal.starts != 4 || readJournal.observations != 4 {
+	if !reflect.DeepEqual(trace, want) || deletes != len(stages) || lookups != len(stages) || !reflect.DeepEqual(remaining, survivors) || readJournal.starts != len(stages) || readJournal.observations != len(stages) {
 		t.Fatalf("composition incomplete: trace=%v deletes=%d lookups=%d remaining=%d", trace, deletes, lookups, len(remaining))
+	}
+	if (group == "late-hold" && witnessedLate != 1) || (group != "late-hold" && witnessedLate != 0) {
+		t.Fatal("late witness order invalid")
 	}
 	files, _ := filepath.Glob(filepath.Join(budget, "*.json"))
 	sort.Strings(files)
-	if len(files) != 8 {
-		t.Fatal(fmt.Sprintf("expected four target and four wire slots, got %v", files))
+	if len(files) != 2*len(stages) {
+		t.Fatal(fmt.Sprintf("expected one target and one wire slot per stage, got %v", files))
 	}
 }

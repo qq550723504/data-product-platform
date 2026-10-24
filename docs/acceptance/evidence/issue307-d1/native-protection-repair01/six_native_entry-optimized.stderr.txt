@@ -1,0 +1,25 @@
+....E....
+======================================================================
+ERROR: test_main_complete_entry_rejects_actual_mixed_expiry_and_closes (__main__.SixNativeEntryTests.test_main_complete_entry_rejects_actual_mixed_expiry_and_closes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-protect\examples\lifecycle-d1\test_six_native_entry.py", line 299, in test_main_complete_entry_rejects_actual_mixed_expiry_and_closes
+    self.composition(fault='mixed-protection-expired')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-protect\examples\lifecycle-d1\test_six_native_entry.py", line 247, in composition
+    result = r.load(output / 'complete.json')
+  File "C:\Users\Henry\.codex\worktrees\d1-protect\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpu4r8vu70\\docs\\acceptance\\evidence\\issue307-d1\\fresh-output\\complete.json'
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.207s
+
+FAILED (errors=1)

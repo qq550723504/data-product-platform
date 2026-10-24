@@ -1,0 +1,14 @@
+{
+  "cid": "5fcd0581355d90932c23e86ae5bc5807f76c94d0f132e25f8e5e3b8a6d4af9ac",
+  "closed": true,
+  "failure_channels": [],
+  "log_sha256": {
+    "wait-stdout": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "wait-stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "exit": 0,
+  "started_at": "2026-10-19T13:00:40.371119811Z",
+  "finished_at": "2026-10-19T13:00:40.799798698Z"
+}

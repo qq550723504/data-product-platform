@@ -1,0 +1,158 @@
+{
+  "status": "PASS_BOUNDED_C17_FREEZE_RECOVERY_AND_RETAINED_INVENTORY_REVIEW",
+  "reviewed_at": "2026-10-20T11:45:35.867284+00:00",
+  "source_head": "8cca345525af828a8c9461e75f2dc5bf5f1fb428",
+  "remaining_blockers": [],
+  "classification": [
+    {
+      "topic": "Windows Git path failure",
+      "classification": "BOUNDED_HOST_ENVIRONMENT_RECOVERY_ACCEPTED",
+      "basis": "Original source_freeze git-show loop failed before archive/source-freeze/key/candidate/operator/permission writes. Reviewer observed empty packet before retry; parent pinned12build/6case/9backup/30false readback. The identical failed Git path succeeds read-only with core.longpaths=true and byte-equals working source.",
+      "allowed_action": "Preserve original stderr and checked empty packet under failure01; use unchanged fixed freezer once with appended task-child GIT_CONFIG_COUNT core.longpaths=true. No local/global Git configuration, source/binary/gate edits, native replay or old authority reuse.",
+      "scope_note": "This review accepts the zero-output recovery boundary, not a frozen packet/native/full CLI result."
+    },
+    {
+      "topic": "Three old technical readers outside fixed445 allocation gate",
+      "classification": "NONBLOCKING_FIXED_RETAINED_INVENTORY_ADDENDUM",
+      "basis": "All three CIDs match original public allocated and closed receipts; parent fresh readback records PID0/no-restart and fixed six-verify-native mode. Disabled/maxDELETE0 profile current hashes agree across receipts, with only Enabled revoked and original enabled SHA exactly matching allocated-owner. No sender or mutation capability is selected.",
+      "required_accounting": "Retain original445 gate report unchanged. Describe445 fixed gate members plus3 technical readers=448 retained inventory. Bind this additional readback in final physical/inventory evidence and use actual set unions for later totals.",
+      "scope_note": "No source-gate expansion or recompilation is required to accept this finite preparation slice; this is not a fresh IAM closure or deletion authorization."
+    }
+  ],
+  "reviewed_files": {
+    "phase-freeze01/intent.json": {
+      "sha256": "9300e821dac6bf7e20e7c9e6044659e033c31d29f6c983796fa39873533f6b1c",
+      "bytes": 255
+    },
+    "phase-freeze01/result.json": {
+      "sha256": "e5361b6d72b920ea804cfe6903443abd15ce3f30135e847184dd408d3fa7906e",
+      "bytes": 218
+    },
+    "phase-freeze01/stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "phase-freeze01/stderr.txt": {
+      "sha256": "ecc48ebc4561737c10e29d5fe51dc6186e3bfb784d382747c7121712e0e264d7",
+      "bytes": 1849
+    },
+    "freeze-failure01/zero-output-readback.json": {
+      "sha256": "c4ecea90e3fa84e2b6c220800c9cb8db434ab42b359b380f68c481c62a64492b",
+      "bytes": 6073
+    },
+    "recover-freeze-longpaths02.py": {
+      "sha256": "a70f030bfc5c75afcca2f420b17c17d667a36f70ba8e024bf4470b1c2ac11c38",
+      "bytes": 3817
+    },
+    "phase-freeze02/intent.json": {
+      "sha256": "b7020701b1559a40b33b2be59cdd99531c7e639315fefc635b0226ce6f16b51d",
+      "bytes": 802
+    },
+    "retained-v26-extra-readers01.json": {
+      "sha256": "b702ba219ccb004596a200e46e87c292f6b549464fee292f2e43f4513895a52b",
+      "bytes": 2838
+    },
+    "retained-v26-extra-reader-profiles02.json": {
+      "sha256": "48d0f25d6a0ab4caaab79bbf593fe11bcded36ecddbfd2d03e83a66f0ccc6316",
+      "bytes": 1640
+    }
+  },
+  "scoped_git_read": {
+    "sha256": "05408b6a1f54ec539d425175c767a820c0e89d25179bde0c361556ec309e4c27",
+    "bytes": 636
+  },
+  "old_reader_original_public_receipts": {
+    "business-races": {
+      "allocated-owner.json": {
+        "sha256": "09470993fed3c004e0d3057f22548fc38df5cb4823f6540acae72b1a52ffa53f",
+        "bytes": 256
+      },
+      "closure.json": {
+        "sha256": "c78491cb7d87bba869eb5fdbf1ffa9bb0e5cde94e735f87814d9ccff6685f135",
+        "bytes": 665
+      }
+    },
+    "late-hold": {
+      "allocated-owner.json": {
+        "sha256": "2bf00b63c1198310f72e3748f99fd191777e68d1c5a9d6529e7fce0f87e005ba",
+        "bytes": 256
+      },
+      "closure.json": {
+        "sha256": "11b5da4d06fb157907f6e770d67e336ed6e9bc32223bec42cf7a4cb8269cd4d8",
+        "bytes": 665
+      }
+    },
+    "mixed": {
+      "allocated-owner.json": {
+        "sha256": "06e939aaa9a80cc2428c4c075ef4933570c2c2dfb2baffae0c209fc96891e9fe",
+        "bytes": 256
+      },
+      "closure.json": {
+        "sha256": "8be4998970c716d1d96f8e8c2664e66933cce851b4e00f8d31eee4db2a408782",
+        "bytes": 665
+      }
+    }
+  },
+  "old_reader_fresh_author_projection": [
+    {
+      "group": "business-races",
+      "cid": "13b0c8f156289347f1de32dc9e8b282c714dfe88a510462f4dc407fc6a128055",
+      "PID": 0,
+      "restart": "no",
+      "mode": [
+        "-mode",
+        "six-verify-native"
+      ],
+      "profile_enabled": false,
+      "max_provider_deletes": 0,
+      "profile_sha256": "b201f0c2c97413b14e73d6f1bf585c807fcf2df4fbcd86a54d9a4bc00fa08911",
+      "binary_sha256": "7f8b11954e681970018c9c15da458afce07acec9234f1970e43dec98881805ff"
+    },
+    {
+      "group": "late-hold",
+      "cid": "3ffcdfe2c7b17bec1107a6dbfc8815acf3575c0e7ba793df02636d8e63869d58",
+      "PID": 0,
+      "restart": "no",
+      "mode": [
+        "-mode",
+        "six-verify-native"
+      ],
+      "profile_enabled": false,
+      "max_provider_deletes": 0,
+      "profile_sha256": "d7351e91fd29e60c2389a8768988fda2f185e9e86c044ff0f1e56660536fff75",
+      "binary_sha256": "7f8b11954e681970018c9c15da458afce07acec9234f1970e43dec98881805ff"
+    },
+    {
+      "group": "mixed",
+      "cid": "5dda981ac8c5efaf7d399ea9aebac572c7d51bf49bd90d625f4c237ce3c9722b",
+      "PID": 0,
+      "restart": "no",
+      "mode": [
+        "-mode",
+        "six-verify-native"
+      ],
+      "profile_enabled": false,
+      "max_provider_deletes": 0,
+      "profile_sha256": "6fb0599e9380669bc641754fadc31c8897394655b34fbfdd2e4cf32ddc79d7f5",
+      "binary_sha256": "7f8b11954e681970018c9c15da458afce07acec9234f1970e43dec98881805ff"
+    }
+  ],
+  "preserved_empty_packet": "candidate17-planning01/freeze-failure01/partial-packet",
+  "preserved_partial_packet_empty_at_review": true,
+  "original_report_and_index_preserved": {
+    "report_sha256": "c6e849b83ea710eaa0fd4cc577400ec3bcb0f13792de09a63aa328c0ae1f30c9",
+    "index_sha256": "778f80089c8a34f086c18736e195b8069a2dd4161fec55308db563572566507e",
+    "original_index_members": 30
+  },
+  "limits": {
+    "reviewer_Docker_Source_Core_provider_enable_send_delete": 0,
+    "reviewer_freeze_or_native_run": false,
+    "private_profile_or_secret_read_by_reviewer": false,
+    "fresh_inspection_profile_proof": "Parent-produced live readback; reviewer independently checked public CID/SHA/projection consistency only.",
+    "freeze_retry_result": "IN_PROGRESS_NOT_CERTIFIED_THIS_ADDENDUM",
+    "later_full_native_and_packet_review": "SEPARATE_REQUIRED_PHASE",
+    "source_review_scope": "Unchanged original source PASS; this append does not replace or expand its immutable30-member index.",
+    "original_v26_IAM_UNCONFIRMED": "PRESERVED",
+    "full_D1": "NOT_ACCEPTED"
+  }
+}

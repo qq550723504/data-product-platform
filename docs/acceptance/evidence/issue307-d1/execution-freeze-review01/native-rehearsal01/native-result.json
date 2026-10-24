@@ -1,0 +1,29 @@
+{
+  "status": "PASS_NATIVE_GITHUB_LOCK_REJECTS_VALID_FAST_FORWARD",
+  "at": "2026-10-22T06:29:55.798380+00:00",
+  "scope": "NONDELETE_REHEARSAL_NOT_EXECUTION_AUTHORITY",
+  "repository": "qq550723504/data-product-platform",
+  "branch": "codex/issue307-freeze-rehearsal-4047394d6311",
+  "locked_head": "17c5248a868376603ae9c3951123c545f2f7e56f",
+  "rule_id": "BPR_kwDOUdQLBs4FE9K1",
+  "lock_flags": {
+    "lockBranch": true,
+    "isAdminEnforced": true,
+    "lockAllowsFetchAndMerge": false,
+    "allowsForcePushes": false,
+    "allowsDeletions": false
+  },
+  "marker_commit": "4b715a197ab49056f24c2013937c4761c72cecc3",
+  "marker_same_tree": true,
+  "actual_update_attempts": 1,
+  "actual_update_rejected": true,
+  "head_preserved": true,
+  "locked_branch_retained": true,
+  "candidate_created": false,
+  "provider_io": 0,
+  "native_delete": 0,
+  "source_start": 0,
+  "budget_consumption": 0,
+  "pin_release": 0,
+  "original_PR_branch_changed": false
+}

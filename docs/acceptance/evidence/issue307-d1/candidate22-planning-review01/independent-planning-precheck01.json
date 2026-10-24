@@ -1,0 +1,56 @@
+{
+  "status": "PASS_BOUNDED_C22_STATIC_PLANNING_WIRING_PRECHECK_ONLY_NOT_NATIVE",
+  "at": "2026-10-23T05:22:45.254978+00:00",
+  "source_head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "source_review": "candidate22-source-review02",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "window": {
+    "UTC_not_before": "2026-10-23T10:00:00Z",
+    "UTC_not_after": "2026-10-23T10:40:00Z",
+    "UTC_readonly_not_after": "2026-10-23T12:40:00Z",
+    "SGT": "2026-10-23 18:00-18:40"
+  },
+  "remaining_blockers": [],
+  "reviewed_scripts": [
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/run-preparation-phase.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/run-bounded-preparation01.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/run-complete-entry01.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/observe-host-bindings01.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/observe-final-cold01.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/observe-backups75.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/write-frozen-documents01.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/finalize-static-bindings01.py",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/write-postlock-confirmation01.py"
+  ],
+  "verified_static_contracts": [
+    "Phase wrapper requires the exact a50 P and source-review02 PASS before canonical entry invocation. Canonical allocate still enforces complete exact-source CI; wrapper does not supply authority or bypass the gate. Sequential wrapper uses allocate, materialize, initialize-budgets, run-non-delete, freeze, then complete native; nonzero exit stops the sequence.",
+    "Complete wrapper binds candidate, bindings, checker and typed plan SHA. Native and audit modes have distinct O_EXCL output locations; audit mode adds --audit-only. Future authorized entry still requires the separate exact execution-binding SHA as specified in the generated runbook.",
+    "Host anchor compares packet commit Git blobs for candidate/bindings/template. Host/readback, cold inventory and document writers consume the canonical current native-complete receipt and current preparation facts in the planned sequence. Generated future PASS text is not treated as a present observation by this precheck.",
+    "IAM text is consistent with current R/P tests: 21+16+16=53 known identities, 52 sole-policy and the unique dormant partial with NONE/no-groups; fresh absent identity counts 3+6+6=15.",
+    "Cold union is 996 retained + 86 current allocation + 3 distinct technical readers =1085. The observer requires exact cardinality, stopped/noports and existing sealed/retained gates. Old 30 budgets plus three current empty independent budgets remain separate.",
+    "Backup composer rechecks the prior actual 66 file rows and nine current candidate-bound originals. The old 66 decomposes into 63 complete checkpoint members and three historical failed partial members; total75 is consistent.",
+    "Static finalizer selects source-review02, requires the future artifact review status plus current execution/R/host P, and appends typed indexes without adding itself, future authorization/schedule or a mutable matrix to the approval manifest. Postlock final confirmation appends actual locked HEAD, exact complete 13-job PR CI and public/private binding bytes without advancing HEAD.",
+    "All nine scripts parse/compile in normal and optimized modes. Source files remained byte-identical during this precheck."
+  ],
+  "file_only_simulation": {
+    "method": "Only AST-extracted functions from finalize-static-bindings01.py ran against a newly created private scratch fixture; no live phase/Docker entry was executed.",
+    "normal_and_optimized": "Both generated typed plans with 8 indexes and 31 simulated member checks, kept manifest self/authority/schedule exclusions, selected review02 and rejected a foreign host before any finalizer output.",
+    "data_boundary": "All native/PASS-looking inputs inside this simulation were explicit synthetic fixture doubles. They prove composer wiring only and are not issued or native acceptance facts."
+  },
+  "actual_observation_boundaries": {
+    "allocation": "NOT_RUN_BY_THIS_REVIEW; task input NOT_RUN",
+    "native_acceptance": "NOT_RUN",
+    "packet_artifact_review": "STILL_REQUIRED_AFTER_REAL_PACKET_EXISTS",
+    "exact_PR_CI": "NOT_ASSESSED_BY_THIS_REVIEW; root monitors separately",
+    "final_static_real_audit": "NOT_RUN",
+    "branch_lock": "NOT_RUN",
+    "delete_authority": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "actual_phase_entry_executions": 0,
+    "actual_Docker_Core_provider_io": 0,
+    "source_or_script_edits": 0,
+    "refs_or_permission_changes": 0
+  },
+  "forbidden_actions_performed": []
+}

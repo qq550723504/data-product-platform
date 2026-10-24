@@ -1,0 +1,52 @@
+
+Running 7 tests using 1 worker
+
+  ok 1 schema-attempts.spec.mjs:19:1 › observed-request attempts page independently and retain exact selected identity after observation arrival (2.3s)
+  x  2 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (11.3s)
+  ok 3 schema-attempts.spec.mjs:69:1 › attempt failures and invalid scope stay local on both pages (3.7s)
+  ok 4 schema-attempts.spec.mjs:77:38 › / streams independent facts while attempt GET stays held (977ms)
+  ok 5 schema-attempts.spec.mjs:77:38 › /attention streams independent facts while attempt GET stays held (827ms)
+  ok 6 schema-attempts.spec.mjs:90:1 › successful empty attempt collection differs from unavailable and recovers on refresh (800ms)
+  ok 7 schema-attempts.spec.mjs:98:1 › wrong selected identities and unlisted evidence origins fail without provider fallback (672ms)
+
+
+  1) schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /schemaAttemptOffset=25#schema-unobserved-attempts$/
+    Received string:  "http://127.0.0.1:3100/attention#schema-unobserved-attempts"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 10000ms
+        23 × locator resolved to <html lang="zh-CN">…</html>
+           - unexpected value "http://127.0.0.1:3100/attention#schema-unobserved-attempts"
+
+
+      59 |     await expect(next).toHaveAttribute("href",`/attention?schemaAttemptOffset=${offset}#schema-unobserved-attempts`);
+      60 |     await next.click();
+    > 61 |     await expect(page).toHaveURL(new RegExp(`schemaAttemptOffset=${offset}#schema-unobserved-attempts$`));
+         |                        ^
+      62 |     await expect(panel.getByRole("navigation",{name:"无观察 attempt 分页"})).toContainText(`${offset+1}–${Math.min(offset+25,105)} / 105`);
+      63 |   }
+      64 |   await expect(panel.locator("tbody tr")).toHaveCount(5);
+        at C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\tests\browser\schema-attempts.spec.mjs:61:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-browser-final03\test-results\schema-attempts-compact-an-0b6f6-arate-and-preserve-its-page\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-browser-final03\test-results\schema-attempts-compact-an-0b6f6-arate-and-preserve-its-page\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-browser-final03\test-results\schema-attempts-compact-an-0b6f6-arate-and-preserve-its-page\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-browser-final03\test-results\schema-attempts-compact-an-0b6f6-arate-and-preserve-its-page\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page 
+  6 passed (27.7s)

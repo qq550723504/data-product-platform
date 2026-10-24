@@ -1,0 +1,24 @@
+{
+  "status": "PASS_R_PILOT_OFFLINE",
+  "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "argv": [
+    "go",
+    "test",
+    "./internal/lifecycle/pilot",
+    "-run",
+    "TestRemaining",
+    "-count=1"
+  ],
+  "exit": 0,
+  "outputs": {
+    "stdout": {
+      "sha256": "45008025eed0e9d1c07283bf6d038c35cc6ea7dde54d69c8b3fa177f3ff5d514",
+      "bytes": 96
+    },
+    "stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "native_provider_actions": 0
+}
