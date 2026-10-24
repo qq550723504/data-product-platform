@@ -1,0 +1,14 @@
+{
+  "name": "test_evidence_indexes-normal",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/test_evidence_indexes.py"
+  ],
+  "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+  "started_at": "2026-10-24T08:42:33.010038+00:00",
+  "finished_at": "2026-10-24T08:42:33.719876+00:00",
+  "returncode": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e7aa81a5a18f6c122cec2b1edabffd6df4c828757dddc8d8c1d30c542e9fe4dc"
+}

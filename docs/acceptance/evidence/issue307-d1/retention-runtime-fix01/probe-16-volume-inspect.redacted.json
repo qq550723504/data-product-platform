@@ -1,0 +1,17 @@
+{
+  "status": "REDACTED_INSPECT_NOT_RAW_BYTES",
+  "original_sha256": "188992ffa566b49cec0cd58780525dd82737bf7c1ccb2720f807f8ddb2fed27e",
+  "inspect": [
+    {
+      "CreatedAt": "2026-10-24T08:40:01Z",
+      "Driver": "local",
+      "Labels": {
+        "dpp.retention-maintenance": "preparation-only"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/d1-retention-probe-budget-8a7e167fc5f3/_data",
+      "Name": "d1-retention-probe-budget-8a7e167fc5f3",
+      "Options": null,
+      "Scope": "local"
+    }
+  ]
+}

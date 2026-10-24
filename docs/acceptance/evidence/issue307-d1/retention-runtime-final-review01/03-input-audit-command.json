@@ -1,0 +1,11 @@
+{
+  "started_at_utc": "2026-10-24T09:15:43.5841715Z",
+  "finished_at_utc": "2026-10-24T09:15:44.0908011Z",
+  "command": [
+    "python",
+    "-B",
+    "audit_inputs.py"
+  ],
+  "exit_code": 1,
+  "docker_wsl_provider_commands": 0
+}

@@ -1,0 +1,13 @@
+[
+    {
+        "CreatedAt": "2026-10-24T09:01:19Z",
+        "Driver": "local",
+        "Labels": {
+            "dpp.retention-maintenance": "preparation-only"
+        },
+        "Mountpoint": "/var/lib/docker/volumes/d1-retention-probe-budget-975765abf52d/_data",
+        "Name": "d1-retention-probe-budget-975765abf52d",
+        "Options": null,
+        "Scope": "local"
+    }
+]

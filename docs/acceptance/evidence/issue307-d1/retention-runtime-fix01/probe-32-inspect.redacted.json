@@ -1,0 +1,266 @@
+{
+  "status": "REDACTED_INSPECT_NOT_RAW_BYTES",
+  "original_sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+  "inspect": [
+    {
+      "Id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "Created": "2026-10-16T06:25:35.144606937Z",
+      "Path": "/bin/sh",
+      "Args": [
+        "/run/credentials/start.sh"
+      ],
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:40:14.119884474Z",
+        "FinishedAt": "2026-10-23T12:40:23.051952637Z"
+      },
+      "Image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "ResolvConfPath": "/var/lib/docker/containers/f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce/resolv.conf",
+      "HostnamePath": "/var/lib/docker/containers/f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce/hostname",
+      "HostsPath": "/var/lib/docker/containers/f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce/hosts",
+      "LogPath": "",
+      "Name": "/dpp-lifecycle307-808a6960-minio",
+      "RestartCount": 0,
+      "Driver": "overlayfs",
+      "Platform": "linux",
+      "MountLabel": "",
+      "ProcessLabel": "",
+      "AppArmorProfile": "",
+      "ExecIDs": null,
+      "HostConfig": {
+        "Binds": null,
+        "ContainerIDFile": "",
+        "LogConfig": {
+          "Type": "local",
+          "Config": {}
+        },
+        "NetworkMode": "dpp-lifecycle307-808a6960-private",
+        "PortBindings": {},
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "AutoRemove": false,
+        "VolumeDriver": "",
+        "VolumesFrom": null,
+        "ConsoleSize": [
+          0,
+          0
+        ],
+        "CapAdd": null,
+        "CapDrop": null,
+        "CgroupnsMode": "private",
+        "Dns": [],
+        "DnsOptions": [],
+        "DnsSearch": [],
+        "ExtraHosts": null,
+        "GroupAdd": null,
+        "IpcMode": "private",
+        "Cgroup": "",
+        "Links": null,
+        "OomScoreAdj": 0,
+        "PidMode": "",
+        "Privileged": false,
+        "PublishAllPorts": false,
+        "ReadonlyRootfs": false,
+        "SecurityOpt": null,
+        "UTSMode": "",
+        "UsernsMode": "",
+        "ShmSize": 67108864,
+        "Runtime": "runc",
+        "Isolation": "",
+        "CpuShares": 0,
+        "Memory": 0,
+        "NanoCpus": 0,
+        "CgroupParent": "",
+        "BlkioWeight": 0,
+        "BlkioWeightDevice": [],
+        "BlkioDeviceReadBps": [],
+        "BlkioDeviceWriteBps": [],
+        "BlkioDeviceReadIOps": [],
+        "BlkioDeviceWriteIOps": [],
+        "CpuPeriod": 0,
+        "CpuQuota": 0,
+        "CpuRealtimePeriod": 0,
+        "CpuRealtimeRuntime": 0,
+        "CpusetCpus": "",
+        "CpusetMems": "",
+        "Devices": [],
+        "DeviceCgroupRules": null,
+        "DeviceRequests": null,
+        "MemoryReservation": 0,
+        "MemorySwap": 0,
+        "MemorySwappiness": null,
+        "OomKillDisable": null,
+        "PidsLimit": null,
+        "Ulimits": null,
+        "CpuCount": 0,
+        "CpuPercent": 0,
+        "IOMaximumIOps": 0,
+        "IOMaximumBandwidth": 0,
+        "Mounts": [
+          {
+            "Type": "volume",
+            "Source": "dpp-lifecycle307-808a6960-objects",
+            "Target": "/data"
+          },
+          {
+            "Type": "bind",
+            "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/access",
+            "Target": "/run/credentials/access",
+            "ReadOnly": true
+          },
+          {
+            "Type": "bind",
+            "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/secret",
+            "Target": "/run/credentials/secret",
+            "ReadOnly": true
+          },
+          {
+            "Type": "bind",
+            "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/start.sh",
+            "Target": "/run/credentials/start.sh",
+            "ReadOnly": true
+          }
+        ],
+        "MaskedPaths": [
+          "/proc/acpi",
+          "/proc/asound",
+          "/proc/interrupts",
+          "/proc/kcore",
+          "/proc/keys",
+          "/proc/latency_stats",
+          "/proc/sched_debug",
+          "/proc/scsi",
+          "/proc/timer_list",
+          "/proc/timer_stats",
+          "/sys/devices/virtual/powercap",
+          "/sys/firmware"
+        ],
+        "ReadonlyPaths": [
+          "/proc/bus",
+          "/proc/fs",
+          "/proc/irq",
+          "/proc/sys",
+          "/proc/sysrq-trigger"
+        ]
+      },
+      "Storage": {
+        "RootFS": {
+          "Snapshot": {
+            "Name": "overlayfs"
+          }
+        }
+      },
+      "Mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/access",
+          "Destination": "/run/credentials/access",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/secret",
+          "Destination": "/run/credentials/secret",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "Config": {
+        "Hostname": "f16efe4cfa33",
+        "Domainname": "",
+        "User": "",
+        "AttachStdin": false,
+        "AttachStdout": true,
+        "AttachStderr": true,
+        "Tty": false,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Env": [
+          "PATH=<REDACTED_PRIVATE_VALUE>"
+        ],
+        "Cmd": [
+          "/run/credentials/start.sh"
+        ],
+        "Image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+        "Volumes": null,
+        "WorkingDir": "/",
+        "Entrypoint": [
+          "/bin/sh"
+        ],
+        "Labels": {
+          "lifecycle307.run": "808a6960-6c36-4200-ae98-f18a68472fe5"
+        }
+      },
+      "NetworkSettings": {
+        "SandboxID": "",
+        "SandboxKey": "",
+        "Ports": {},
+        "Networks": {
+          "dpp-lifecycle307-808a6960-private": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": [
+              "minio"
+            ],
+            "DriverOpts": null,
+            "GwPriority": 0,
+            "NetworkID": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+            "EndpointID": "",
+            "Gateway": "",
+            "IPAddress": "",
+            "MacAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DNSNames": [
+              "dpp-lifecycle307-808a6960-minio",
+              "minio",
+              "f16efe4cfa33"
+            ]
+          }
+        }
+      },
+      "ImageManifestDescriptor": {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "digest": "sha256:2b05eb4a800a0e5d335fd7bb1fb146dfcec5c62e0312a637dbde1c2eac3932e3",
+        "size": 674,
+        "platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        }
+      }
+    }
+  ]
+}

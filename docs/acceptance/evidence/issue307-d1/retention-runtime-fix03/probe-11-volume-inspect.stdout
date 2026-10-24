@@ -1,0 +1,13 @@
+[
+    {
+        "CreatedAt": "2026-10-24T09:01:19Z",
+        "Driver": "local",
+        "Labels": {
+            "dpp.retention-maintenance": "preparation-only"
+        },
+        "Mountpoint": "/var/lib/docker/volumes/d1-retention-probe-output-ecdeafad1652/_data",
+        "Name": "d1-retention-probe-output-ecdeafad1652",
+        "Options": null,
+        "Scope": "local"
+    }
+]

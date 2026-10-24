@@ -1,0 +1,8 @@
+R_ARCHIVE expected=1f9462c13204dddd6f8fc475b2cf21830d094aba14e1677d03848c8d70906557 observed=1f9462c13204dddd6f8fc475b2cf21830d094aba14e1677d03848c8d70906557 bytes=6504490
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.130s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	3.381s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	3.260s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	0.980s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	13.767s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-retention	5.894s
+PASS_SEPARATE_R_ARCHIVE_BUILD_AND_OFFLINE_CONTRACTS; no source/provider I/O

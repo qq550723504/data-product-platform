@@ -1,0 +1,11 @@
+{
+  "status": "PASS_PUBLISHED_BASE_EVIDENCE_OBJECTS_RETAINED",
+  "base": "8249b55dec8fcf20de2d378887b9aff66047961f",
+  "source_head": "d8b782183d49f201c105e90e4c5215c1b8d7d3f4",
+  "base_paths": 37687,
+  "old_evidence_paths_unchanged": 34873,
+  "deleted_paths": 0,
+  "new_or_modified_source_paths": 19,
+  "runtime_data_integrity": "NOT_INFERRED_FROM_GIT; only two source State facts and isolated new-resource operations were observed",
+  "old_budget_pin_mutations_performed": 0
+}

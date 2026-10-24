@@ -1,0 +1,132 @@
+{
+  "observed_at_utc": "2026-10-24T08:59:35.0361036Z",
+  "processes": [
+    {
+      "Id": 34596,
+      "ProcessName": "com.docker.backend",
+      "StartTime": "2026-10-24T16:57:58.9476922+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\resources\\com.docker.backend.exe"
+    },
+    {
+      "Id": 35248,
+      "ProcessName": "com.docker.backend",
+      "StartTime": "2026-10-24T16:57:58.7979018+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\resources\\com.docker.backend.exe"
+    },
+    {
+      "Id": 14000,
+      "ProcessName": "com.docker.build",
+      "StartTime": "2026-10-24T16:58:00.3844849+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\resources\\com.docker.build.exe"
+    },
+    {
+      "Id": 6156,
+      "ProcessName": "Docker Desktop",
+      "StartTime": "2026-10-24T16:57:58.7644647+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\Docker Desktop.exe"
+    },
+    {
+      "Id": 10504,
+      "ProcessName": "Docker Desktop",
+      "StartTime": "2026-10-24T16:58:00.4018718+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\frontend\\Docker Desktop.exe"
+    },
+    {
+      "Id": 36312,
+      "ProcessName": "Docker Desktop",
+      "StartTime": "2026-10-24T16:58:00.7867511+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\frontend\\Docker Desktop.exe"
+    },
+    {
+      "Id": 38128,
+      "ProcessName": "Docker Desktop",
+      "StartTime": "2026-10-24T16:58:01.3700192+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\frontend\\Docker Desktop.exe"
+    },
+    {
+      "Id": 41244,
+      "ProcessName": "Docker Desktop",
+      "StartTime": "2026-10-24T16:58:00.7793713+08:00",
+      "Path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\frontend\\Docker Desktop.exe"
+    },
+    {
+      "Id": 32360,
+      "ProcessName": "docker-agent",
+      "StartTime": "2026-10-24T16:58:17.1589266+08:00",
+      "Path": "C:\\Users\\Henry\\.docker\\cli-plugins\\docker-agent.exe"
+    },
+    {
+      "Id": 44336,
+      "ProcessName": "vmmemWSL",
+      "StartTime": null,
+      "Path": null
+    },
+    {
+      "Id": 15664,
+      "ProcessName": "wsl",
+      "StartTime": "2026-10-24T16:58:01.1623512+08:00",
+      "Path": "C:\\WINDOWS\\System32\\wsl.exe"
+    },
+    {
+      "Id": 17440,
+      "ProcessName": "wsl",
+      "StartTime": "2026-10-24T16:58:01.1629453+08:00",
+      "Path": "C:\\WINDOWS\\System32\\wsl.exe"
+    },
+    {
+      "Id": 37700,
+      "ProcessName": "wsl",
+      "StartTime": "2026-10-24T16:58:01.1849627+08:00",
+      "Path": "C:\\Program Files\\WSL\\wsl.exe"
+    },
+    {
+      "Id": 39232,
+      "ProcessName": "wsl",
+      "StartTime": "2026-10-24T16:58:01.1849714+08:00",
+      "Path": "C:\\Program Files\\WSL\\wsl.exe"
+    },
+    {
+      "Id": 8716,
+      "ProcessName": "wslhost",
+      "StartTime": "2026-10-24T16:58:03.006014+08:00",
+      "Path": "C:\\Program Files\\WSL\\wslhost.exe"
+    },
+    {
+      "Id": 11656,
+      "ProcessName": "wslhost",
+      "StartTime": "2026-10-24T16:58:02.9679244+08:00",
+      "Path": "C:\\Program Files\\WSL\\wslhost.exe"
+    },
+    {
+      "Id": 37012,
+      "ProcessName": "wslhost",
+      "StartTime": "2026-10-24T16:58:03.002488+08:00",
+      "Path": "C:\\Program Files\\WSL\\wslhost.exe"
+    },
+    {
+      "Id": 42248,
+      "ProcessName": "wslhost",
+      "StartTime": "2026-10-24T16:58:02.9912255+08:00",
+      "Path": "C:\\Program Files\\WSL\\wslhost.exe"
+    },
+    {
+      "Id": 20524,
+      "ProcessName": "wslrelay",
+      "StartTime": "2026-10-24T16:58:02.4590559+08:00",
+      "Path": "C:\\Program Files\\WSL\\wslrelay.exe"
+    },
+    {
+      "Id": 4108,
+      "ProcessName": "wslservice",
+      "StartTime": null,
+      "Path": null
+    }
+  ],
+  "services": [
+    {
+      "Name": "WslService",
+      "Status": 4,
+      "StartType": 2
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "docs\\acceptance\\issue307-d1-retention-runtime-fix01.md": {
+    "sha256": "772be5404ee309c5451bbe9bb83e9bdab780343333fda4d1baa20849931ec2fc",
+    "bytes": 8174
+  },
+  "examples\\lifecycle-d1\\fixture-runtime-artifact.json": {
+    "sha256": "683b2acf58328ce4d1bb199c4ead9b203f81c00c9cd8710f03398a9d82210859",
+    "bytes": 108733
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\main.go": {
+    "sha256": "37e051ac5a4a9543ceba9bdd54430b5ae0d32bfc1da328e3a2ef00a9ce037d47",
+    "bytes": 26691
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\post_v22_verify.go": {
+    "sha256": "510985287fb311b5a9c9f23e326dc145eaaeb870b6a65a80a56de470854dcd01",
+    "bytes": 11061
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\remaining_business.go": {
+    "sha256": "138eedb66b829991b83639a51591c4196b18a820c6c8e4d216f7eb5dc14bb261",
+    "bytes": 16323
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\remaining_cases.go": {
+    "sha256": "1ccf7eb9db81054a07b64d1e4dce86226873b7acaa8ba3ec2100dc5500d65aa2",
+    "bytes": 10221
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\remaining_protection.go": {
+    "sha256": "c773d1a16fead8465240dc5a0dd48183524482a958280a3d0e013199158e4519",
+    "bytes": 4585
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\remaining_protection_test.go": {
+    "sha256": "ccd9d8539248b20c9d36f02f574842a7e0c1a15830f773e8e94d16316779149d",
+    "bytes": 7149
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\remaining_verify.go": {
+    "sha256": "bd70a76025f77bcca5c5005155419493ffbe03eb7436e67a7262c7aee69aa3a1",
+    "bytes": 11075
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\retention_verify.go": {
+    "sha256": "a08af3fa5d3e145bb91f9794d3768f41f75a5ac8df21ff9c227334a930df765e",
+    "bytes": 2843
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-reader\\retention_verify_test.go": {
+    "sha256": "0c72ce50d4a22ab727bd85b34c71f8dc184e2c279f7b95bdd0376ce4bb36efd9",
+    "bytes": 2567
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-readonly-check\\main.go": {
+    "sha256": "aab931a866a4999b6c202e30ea04b95169d3d3f9523a8b6c76544cbdbf016ef5",
+    "bytes": 8503
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-readonly-check\\post_v22.go": {
+    "sha256": "a51a3a67ae77e1d7adce72e286b92b446c1bf81a0236c7507dab13a1b8d7f367",
+    "bytes": 12116
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-readonly-check\\retention.go": {
+    "sha256": "88ec84db5fe3903fbda4d4f52d4faecf579999dba1245615d62c55cb5a041ffb",
+    "bytes": 4016
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-readonly-check\\retention_test.go": {
+    "sha256": "9592da1d16b924eec7468b0ef0a6d79d9bdcafb62ec4b0c9eb0e04913141644b",
+    "bytes": 3872
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-retention\\main.go": {
+    "sha256": "233d696fd46afa021a9e553a305282afcedf40095d158a5c2b280a3acea4ddb3",
+    "bytes": 21324
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-retention\\main_test.go": {
+    "sha256": "d2d242b57e9fda79033f1054334dd247ee3efb5cc7872e635f6274c3f8b9e219",
+    "bytes": 16186
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-retention\\testdata\\approved-proposal.json": {
+    "sha256": "085ea63794446d65de2ede8d3a320e7182abdad0f18f4fde71c0cf625a2e0d52",
+    "bytes": 3221
+  },
+  "apps\\platform\\cmd\\lifecycle-fixture-retention\\wait_test.go": {
+    "sha256": "8647f807ba2a7a56df4e54952d24937be9dfcf3d4802a5b24d2f5b00476515a6",
+    "bytes": 3988
+  },
+  "apps\\platform\\internal\\lifecycle\\pilot\\remaining_policies.go": {
+    "sha256": "2f68bbf0d678aad22d3253daf56cf1af437db49ee2c5eb01764b7ed107dda83a",
+    "bytes": 7222
+  },
+  "apps\\platform\\internal\\lifecycle\\pilot\\remaining_policy_heads.go": {
+    "sha256": "e294a0ba58f649e122bf1fb0858c04d89da12611160a9c7732b208834e2f9990",
+    "bytes": 1506
+  },
+  "apps\\platform\\internal\\lifecycle\\pilot\\remaining_scope.go": {
+    "sha256": "5282ba7e3190bde8d9f07ae5afb3150b37405dd687c3119d51ae59ca466457af",
+    "bytes": 2438
+  },
+  "apps\\platform\\internal\\lifecycle\\pilot\\remaining_scope.json": {
+    "sha256": "d5758dd1082e6191a508d6ab9ad9db1d9e8ea8ecd2b2b7a61b5d0d1c38ae447c",
+    "bytes": 13485
+  },
+  "apps\\platform\\internal\\lifecycle\\pilot\\retention_maintenance.go": {
+    "sha256": "d22adced9a39b5b0f866123ea683c5d8e10acf97769053615a14a9a347067d5e",
+    "bytes": 1877
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\approved-runtime-source.zip": {
+    "sha256": "1f9462c13204dddd6f8fc475b2cf21830d094aba14e1677d03848c8d70906557",
+    "bytes": 6504490
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\retention-test-linux": {
+    "sha256": "0ee3127e981c15a3540504bf3eb42c6d06b1cb4eba96cd89226ef11190e65cec",
+    "bytes": 13963098
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\linux-probe01.json": {
+    "sha256": "1095c30e2932ae105c8a842044545e12c8ba30d4c9ae8517821e27cc21462faa",
+    "bytes": 5045
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-01-inspect.redacted.json": {
+    "sha256": "d7011c0bda7d45b35087d5ff7999d77f539c675fead890c461ae4eaf65b98875",
+    "bytes": 8507
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\raw-inspect\\probe-01-inspect.stdout": {
+    "sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+    "bytes": 9252
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-02-inspect.redacted.json": {
+    "sha256": "dc933520eebb0dd43e272649fc53122221211cb92e27e23d3dc93375e067e8c4",
+    "bytes": 8506
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\raw-inspect\\probe-02-inspect.stdout": {
+    "sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+    "bytes": 9251
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-32-inspect.redacted.json": {
+    "sha256": "c76609d8e4dfee4dc615456f12815da584ba65a58a4cbce282ddaa8045ebc9ab",
+    "bytes": 8507
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\raw-inspect\\probe-32-inspect.stdout": {
+    "sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+    "bytes": 9252
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-33-inspect.redacted.json": {
+    "sha256": "f38bdb1a2572f8308360cfee251f7d0f67a9c0409b2bed430238704128747964",
+    "bytes": 8506
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\raw-inspect\\probe-33-inspect.stdout": {
+    "sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+    "bytes": 9251
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-31-inspect.redacted.json": {
+    "sha256": "c50f6f75f4297e50b871ab5d3df24257318be2cc0f58387f2055c800d52cfbc7",
+    "bytes": 9701
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\raw-inspect\\probe-31-inspect.stdout": {
+    "sha256": "0365c13e8fc741e0b4c800e013f391b2727a7df809b90d565c02b07c9b52d5af",
+    "bytes": 10530
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-03-compile.json": {
+    "sha256": "ad9151ca5cd0f46c232f6cdea99cf1d637e5a5408d719d595d57bdc438bdf31f",
+    "bytes": 336
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-21-start-test.json": {
+    "sha256": "84025034639bd035259d9c83340a433ced65e3fee5c32b84815f324272e0682e",
+    "bytes": 264
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-21-start-test.stdout": {
+    "sha256": "3e4d524349106eda9f6ddf928fa14d145a922a1f4394037bc93d4f3a9a3832cf",
+    "bytes": 8887
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-08-linux-snapshot.json": {
+    "sha256": "ecd83045e9709b921f0447b631efb477d262fec9a12e7a774f473dc8c8bbd81a",
+    "bytes": 363
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-09-linux-snapshot.json": {
+    "sha256": "9e79fd83a327edd7e9bb81d21436c435d29c367da4bf6e798f95b04f0835bf66",
+    "bytes": 367
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-09-linux-snapshot.stdout": {
+    "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+    "bytes": 31
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-14-linux-snapshot.json": {
+    "sha256": "17e3bb21997edf05cbd8e37d7b83f76d5168c56812124ecad3b83b54329e26ab",
+    "bytes": 362
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-19-linux-snapshot.json": {
+    "sha256": "2ec66daee8fc329c66ea9ff7eb5e8706fdc0e722cee8038bcc6fc071deb1b602",
+    "bytes": 362
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-23-linux-snapshot.json": {
+    "sha256": "f725c0ad7d5d7953aaa1adef6c5a32e6d3f8644ea7244178bdc446ff3d04efee",
+    "bytes": 363
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-24-linux-snapshot.json": {
+    "sha256": "1ff0acca2cfbbb06e32ea8d214496a03e50a3bc85e98c0edaea3370ae7ffeeee",
+    "bytes": 367
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-24-linux-snapshot.stdout": {
+    "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+    "bytes": 31
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-25-linux-snapshot.json": {
+    "sha256": "71b4368c17c1573060e8cc397023bd3ba73c26735a4a94854872c918458c87c2",
+    "bytes": 362
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-26-linux-snapshot.json": {
+    "sha256": "2c2976fe51d903fac8b0bd5c4153cd118b58ba5a6e7fed6f1041eea65fd4cb5f",
+    "bytes": 374
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-26-linux-snapshot.stdout": {
+    "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+    "bytes": 31
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-27-linux-snapshot.json": {
+    "sha256": "002a012905de754d460a7431f1c498980077e7d63846612d96a0b872ab0de16b",
+    "bytes": 362
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-28-linux-snapshot.json": {
+    "sha256": "755d66415bf399b631cfe1aabd2a51dac526622ae298a8ce7840c60838163de3",
+    "bytes": 374
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-28-linux-snapshot.stdout": {
+    "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+    "bytes": 31
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-29-linux-snapshot.json": {
+    "sha256": "110868e26d75e75408341a7bc2aaf5f2cf19301846dcde99af26ef1f5d8c05cc",
+    "bytes": 363
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-30-linux-snapshot.json": {
+    "sha256": "30a82d79724d16a1dca6cc7fdbe4e6ad3169bd826769612c8e09033f6766a2fa",
+    "bytes": 367
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix03\\probe-30-linux-snapshot.stdout": {
+    "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+    "bytes": 31
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\inspect-private-custody01.json": {
+    "sha256": "ddf3734026e7d6cddea6382aa7d87fdd530e54a125401e90e5352b480826f0b6",
+    "bytes": 6248
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-01-inspect.stdout": {
+    "sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+    "bytes": 9252
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-01-inspect.redacted.json": {
+    "sha256": "5bad155e09fc6e9aa1110442f22fa47789860d76761551ef8330521c25ec7653",
+    "bytes": 8112
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-02-inspect.stdout": {
+    "sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+    "bytes": 9251
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-02-inspect.redacted.json": {
+    "sha256": "4eef71f5d072cd9e568cbef108ac1fa3b3a58a69a79ce8582f8bd564d2a84dd3",
+    "bytes": 8111
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-05-volume-inspect.stdout": {
+    "sha256": "56287fc77bb69fcce361060760f9d143ac1e5a8d25fdc09c11dc03f1893a44db",
+    "bytes": 383
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-05-volume-inspect.redacted.json": {
+    "sha256": "c683b8447a68d2504a9955b358c73e89eb44bb2d074ea0f3d8803ffbc679c20b",
+    "bytes": 517
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-11-volume-inspect.stdout": {
+    "sha256": "2d1e78e59d9d2b9bce070ebc79e5f8f9e6419f7ec27e4d77d3491a50a28856ed",
+    "bytes": 381
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-11-volume-inspect.redacted.json": {
+    "sha256": "daf07b8c9c80a1d362daae002392245377392fd37186a631bbea75b95c135bb6",
+    "bytes": 515
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-16-volume-inspect.stdout": {
+    "sha256": "188992ffa566b49cec0cd58780525dd82737bf7c1ccb2720f807f8ddb2fed27e",
+    "bytes": 381
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-16-volume-inspect.redacted.json": {
+    "sha256": "82c523f662106c4b71fd27f9cd6569ffa439512e258602cbc677eb21ddce7850",
+    "bytes": 515
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-22-inspect.stdout": {
+    "sha256": "e0e54c301293012aec06c04945c70c1416d5ed2d9283bc67822e43746ab23f6f",
+    "bytes": 10532
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-22-inspect.redacted.json": {
+    "sha256": "5fd8b26eea79f4dd6e3d98e5132a5163ddd2138f1fee079e6cb21a770619058d",
+    "bytes": 9281
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-31-inspect.stdout": {
+    "sha256": "e0e54c301293012aec06c04945c70c1416d5ed2d9283bc67822e43746ab23f6f",
+    "bytes": 10532
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-31-inspect.redacted.json": {
+    "sha256": "5fd8b26eea79f4dd6e3d98e5132a5163ddd2138f1fee079e6cb21a770619058d",
+    "bytes": 9281
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-32-inspect.stdout": {
+    "sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+    "bytes": 9252
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-32-inspect.redacted.json": {
+    "sha256": "5bad155e09fc6e9aa1110442f22fa47789860d76761551ef8330521c25ec7653",
+    "bytes": 8112
+  },
+  "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-33-inspect.stdout": {
+    "sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+    "bytes": 9251
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix01\\probe-33-inspect.redacted.json": {
+    "sha256": "4eef71f5d072cd9e568cbef108ac1fa3b3a58a69a79ce8582f8bd564d2a84dd3",
+    "bytes": 8111
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix02\\probe-01-inspect.json": {
+    "sha256": "850b7a54bff2d1d26727f710eeadaa74089f093225085ed46412052219a8ef93",
+    "bytes": 255
+  },
+  "docs\\acceptance\\evidence\\issue307-d1\\retention-runtime-fix02\\probe-01-inspect.stderr": {
+    "sha256": "e9133cf10b02b0b91c8b119848513db0ac541e7c3c19681266939e4b9952f7cc",
+    "bytes": 224
+  }
+}

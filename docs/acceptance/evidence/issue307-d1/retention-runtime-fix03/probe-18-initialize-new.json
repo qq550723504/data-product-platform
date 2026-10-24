@@ -1,0 +1,16 @@
+{
+  "command": [
+    "wsl",
+    "-d",
+    "docker-desktop",
+    "--",
+    "tar",
+    "-xpf",
+    "-",
+    "-C",
+    "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-budget-975765abf52d/_data"
+  ],
+  "started_at": "2026-10-24T09:01:19.925250+00:00",
+  "finished_at": "2026-10-24T09:01:20.072161+00:00",
+  "returncode": 0
+}

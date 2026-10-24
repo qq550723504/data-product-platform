@@ -1,0 +1,13 @@
+{
+  "command": [
+    "go",
+    "test",
+    "-c",
+    "-o",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix03\\retention-test-linux",
+    "./cmd/lifecycle-fixture-retention"
+  ],
+  "started_at": "2026-10-24T09:01:04.955989+00:00",
+  "finished_at": "2026-10-24T09:01:18.362492+00:00",
+  "returncode": 0
+}

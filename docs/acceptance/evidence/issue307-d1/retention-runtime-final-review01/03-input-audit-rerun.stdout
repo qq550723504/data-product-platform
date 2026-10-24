@@ -1,0 +1,50 @@
+{
+  "status": "PASS_FILE_ONLY_R3_ARCHIVE_AND_LINUX_EVIDENCE_AUDIT",
+  "head": "d8b782183d49f201c105e90e4c5215c1b8d7d3f4",
+  "parents": [
+    "8249b55dec8fcf20de2d378887b9aff66047961f",
+    "53f6f8a6e69c17fa6896a40293d323f6ee9d0958"
+  ],
+  "documentation_working_differences": [
+    "docs/acceptance/issue307-d1-retention-runtime-fix01.md"
+  ],
+  "archive_sha256": "1f9462c13204dddd6f8fc475b2cf21830d094aba14e1677d03848c8d70906557",
+  "archive_bytes": 6504490,
+  "file_members": 780,
+  "actual_probe_archive_matches": true,
+  "all_actual_probe_source_members_match": true,
+  "test_binary_sha256": "0ee3127e981c15a3540504bf3eb42c6d06b1cb4eba96cd89226ef11190e65cec",
+  "actual_linux_stat_nlink_checks": 5,
+  "test_cid": "a2c0aeedd29f76a5b9cfde7f0a562c25926688f7ea4654736b18e5dec4466b0c",
+  "exact_source_states_unchanged": true,
+  "custody_verified": [
+    {
+      "evidence": "probe-01",
+      "sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+      "verified": true
+    },
+    {
+      "evidence": "probe-02",
+      "sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+      "verified": true
+    },
+    {
+      "evidence": "probe-32",
+      "sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+      "verified": true
+    },
+    {
+      "evidence": "probe-33",
+      "sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+      "verified": true
+    },
+    {
+      "evidence": "probe-31",
+      "sha256": "0365c13e8fc741e0b4c800e013f391b2727a7df809b90d565c02b07c9b52d5af",
+      "verified": true
+    }
+  ],
+  "R2_raw_custody_verified": 9,
+  "Docker_WSL_provider_commands_issued": 0,
+  "scope": "File-only audit of existing isolated tests; not retained native acceptance, full orchestration, publication, or execution authority"
+}

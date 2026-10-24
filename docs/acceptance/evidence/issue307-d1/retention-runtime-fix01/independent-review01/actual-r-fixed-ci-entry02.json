@@ -1,0 +1,19 @@
+{
+  "status": "PASS_ACTUAL_R_FIXED_CI_ENTRY",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+  ],
+  "source": "215098f0bc36a7d88eb19d0f24ed148ef0fe238f",
+  "started_at": "2026-10-24T08:43:05.034210+00:00",
+  "finished_at": "2026-10-24T08:43:30.581879+00:00",
+  "returncode": 0,
+  "stdout_sha256": "1c5626e2d783fca5500f04687234385a89ffd315675ff7ad3d49cc6ed6f09430",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "Docker": 0,
+  "WSL": 0,
+  "real_provider": 0,
+  "metadata_write": 0,
+  "DELETE": 0
+}

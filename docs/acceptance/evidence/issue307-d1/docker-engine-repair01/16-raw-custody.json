@@ -1,0 +1,70 @@
+{
+  "recorded_at_utc": "2026-10-24T09:00:47.8757610Z",
+  "scope": "Only files newly created by this repair",
+  "raw_secret_policy": "Full Docker logs and full docker info stored privately; public evidence uses selected safe fields and excerpts",
+  "custody": [
+    {
+      "original_public_name": "before-com.docker.backend.exe.log",
+      "private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw\\before-com.docker.backend.exe.log",
+      "sha256": "001C9D389D5B7C1910DE87FCECB8CB0F8E8721704B1DDE56258DD3DB4BECD672",
+      "bytes": 65217,
+      "exclusive_create": true,
+      "sha256_verified": true,
+      "public_raw_removed": true
+    },
+    {
+      "original_public_name": "before-monitor.log",
+      "private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw\\before-monitor.log",
+      "sha256": "717F64F39BFBA07893365870E327F1F699A1858D1A3E6D3F07138A0CBBAB4084",
+      "bytes": 333863,
+      "exclusive_create": true,
+      "sha256_verified": true,
+      "public_raw_removed": true
+    },
+    {
+      "original_public_name": "before-electron-2026-10-24.log",
+      "private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw\\before-electron-2026-10-24.log",
+      "sha256": "4E3379E9804D90066CD52042ED69AC6B50EBB98D5B9B239A89BDE5A0CF5D4997",
+      "bytes": 4835,
+      "exclusive_create": true,
+      "sha256_verified": true,
+      "public_raw_removed": true
+    },
+    {
+      "original_public_name": "before-docker-desktop.exe.log",
+      "private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw\\before-docker-desktop.exe.log",
+      "sha256": "D16936E60495A081F287FC6D5D97B0931B1622BCEC4BD081C9E9F484FBD72D00",
+      "bytes": 99254,
+      "exclusive_create": true,
+      "sha256_verified": true,
+      "public_raw_removed": true
+    },
+    {
+      "original_public_name": "after-com.docker.backend.exe.log",
+      "private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw\\after-com.docker.backend.exe.log",
+      "sha256": "F3E78F0320E3972F7AB5A1E92AC724E5614A697A91C9693551DB79CED87BED4F",
+      "bytes": 302065,
+      "exclusive_create": true,
+      "sha256_verified": true,
+      "public_raw_removed": true
+    },
+    {
+      "original_public_name": "after-monitor.log",
+      "private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw\\after-monitor.log",
+      "sha256": "B4C1D6D5EBB711F929055B3AA8200DBFC610047E469B564C4908FC480221E8DE",
+      "bytes": 924553,
+      "exclusive_create": true,
+      "sha256_verified": true,
+      "public_raw_removed": true
+    },
+    {
+      "original_public_name": "11-after-info.json",
+      "private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\docker-engine-repair01\\raw\\11-after-info.json",
+      "sha256": "44A145786A01C5915863F22B38E89F461E9058A34AB1B801492C300BBF168BB7",
+      "bytes": 17038,
+      "exclusive_create": true,
+      "sha256_verified": true,
+      "public_raw_removed": true
+    }
+  ]
+}

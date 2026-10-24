@@ -1,0 +1,28 @@
+{
+  "status": "LOCAL_R_SUCCESSOR_CREATED_NOT_PUBLISHED_NOT_AUTHORIZED",
+  "base": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d",
+  "source": "215098f0bc36a7d88eb19d0f24ed148ef0fe238f",
+  "tree": "c3b599d976b25907c4d8a23cb2e14e8c991ed572",
+  "changed": [
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/retention_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/retention_verify_test.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/retention.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/retention_test.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/wait_test.go",
+    "apps/platform/internal/lifecycle/pilot/retention_maintenance.go"
+  ],
+  "archive_sha256": "6194b094b3727ee4d4bd569532ad51e6827f95f9fc42457ec5c77512f9718f30",
+  "archive_bytes": 6503726,
+  "members": 780,
+  "spec_sha256": "21f2e616024dba45c14217b13a7f9f52cec3eae6187b90595d0c1398ab095759",
+  "old_spec_source": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d",
+  "source_started": 0,
+  "provider_io": 0,
+  "delete": 0
+}

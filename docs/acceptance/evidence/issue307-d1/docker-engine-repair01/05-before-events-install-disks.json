@@ -1,0 +1,29 @@
+{
+  "observed_at_utc": "2026-10-24T08:57:28.8206545Z",
+  "application_error_wer_matches": [],
+  "system_matches": [
+    {
+      "TimeCreated": "2026-10-24T16:45:44.0803353+08:00",
+      "ProviderName": "Microsoft-Windows-Hyper-V-VmSwitch",
+      "Id": 69,
+      "Message": "端口 B6866AB5-6EE7-48B0-895C-3B16C270AD92 (易记名称: B6866AB5-6EE7-48B0-895C-3B16C270AD92)已成功删除–交换机 790E58B4-7939-4434-9358-89AE7DDBE87E (易记名称: WSL (Hyper-V firewall))。"
+    }
+  ],
+  "disk_metadata": [
+    {
+      "FullName": "C:\\Users\\Henry\\AppData\\Local\\Docker\\wsl\\disk\\docker_data.vhdx",
+      "Length": 137134866432,
+      "LastWriteTimeUtc": "2026-10-24T08:45:44.0866897Z"
+    },
+    {
+      "FullName": "C:\\Users\\Henry\\AppData\\Local\\Docker\\wsl\\main\\ext4.vhdx",
+      "Length": 100663296,
+      "LastWriteTimeUtc": "2026-10-24T08:44:36.2404985Z"
+    }
+  ],
+  "installed_desktop": {
+    "FullName": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\Docker Desktop.exe",
+    "Length": 15701424,
+    "Version": "4.95.0.242831"
+  }
+}

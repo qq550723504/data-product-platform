@@ -1,0 +1,14 @@
+{
+  "command": [
+    "wsl",
+    "-d",
+    "docker-desktop",
+    "--",
+    "ls",
+    "-A",
+    "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-output-ecdeafad1652/_data"
+  ],
+  "started_at": "2026-10-24T09:01:19.281239+00:00",
+  "finished_at": "2026-10-24T09:01:19.402719+00:00",
+  "returncode": 0
+}

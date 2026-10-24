@@ -1,0 +1,15 @@
+{
+  "name": "test_evidence_indexes-optimized",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-O",
+    "-B",
+    "examples/lifecycle-d1/test_evidence_indexes.py"
+  ],
+  "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+  "started_at": "2026-10-24T08:42:33.720758+00:00",
+  "finished_at": "2026-10-24T08:42:34.116126+00:00",
+  "returncode": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "c4b267ae63aa3786989314092bf12b25a5707ef0f0bd296403fa534fc7df8b19"
+}
