@@ -29,7 +29,10 @@ test("unobserved pagination and exact attempt remain readable after observation 
 });
 test("independent counts and filters survive other queue navigation",async({page,request})=>{
   await page.goto("/core/workbench");await expect(page.getByTestId("schema-requests")).toContainText("105 个无观察请求");await expect(page.getByTestId("needs-attention")).not.toContainText("105");
-  await page.getByRole("link",{name:"查看无观察请求",exact:true}).click();await page.getByRole("navigation",{name:"无观察请求筛选"}).getByRole("link",{name:"尚未登记 attempt",exact:true}).click();
+  await page.getByRole("link",{name:"查看无观察请求",exact:true}).click();
+  const noAttempt=page.getByRole("navigation",{name:"无观察请求筛选"}).getByRole("link",{name:"尚未登记 attempt",exact:true});
+  await noAttempt.click();await expect(page).toHaveURL(/schemaRequestView=NO_ATTEMPT/);
+  await expect(noAttempt).toHaveAttribute("aria-current","page");
   const panel=page.getByTestId("schema-requests");await expect(panel.locator("tbody tr")).toHaveCount(25);await panel.getByRole("link",{name:"下一页",exact:true}).click();
   // Both pages contain 25 rows. Count alone can pass on the old page and
   // clicking its sibling filter would cancel the still-pending navigation.
