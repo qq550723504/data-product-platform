@@ -86,6 +86,8 @@
 
 ## 6. 复用与待定项
 
+两条候选接纳路径、M01–M08最小资料包和一笔仅文稿内的合成推演见[来源接纳评审稿](../product/business-receipt-source-paths-review-20261024.md)。它提供G1的选择材料，不改变本文T01–T12判定、当前v1 DTO或写门禁；A的只读见证与未来Core接纳写入分开，B也不以人工方式豁免写入授权。真实来源仍未选定。
+
 继续复用现有 OIDC/RP、完整责任判定、ContractVersion、Evidence/hash、安全投影、transaction/Audit/Outbox。成熟身份和存储能力仍由已有 Adapter/OSS 承担，不引入第二套 IAM、RBAC、目录、上传或审批平台；平台拥有收到声明和准入的业务语义。普通文件上传和签章产品不能替代这套业务判定，具体产品选型待真实来源明确后再做必要评估。
 
 当前待定：真实系统及责任人、原件取得/验证与保留方式、接纳事实的强类型模型、远端撤销窗口、正式人员映射、真实只读试点对象。以上均是未来写入前 blocker，不是待用户现在提供密码或手工操作的事项。入口和完成条件见[写入启用清单](../product/business-receipt-write-enablement-checklist-20261024.md)；本次不解决这些运行依赖。
