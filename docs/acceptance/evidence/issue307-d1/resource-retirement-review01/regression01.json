@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "base_commit": "81c8a1130d83379c8614d3b3082b237fd2073f73",
+  "runs": [
+    {
+      "mode": "normal",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_retired_resources",
+        "test_retired_volumes",
+        "test_retired_budget_bytes",
+        "test_preallocation_ci",
+        "test_six_candidate_runtime",
+        "test_six_native_entry",
+        "test_verify_six_native"
+      ],
+      "started_at": "2026-10-24T03:30:17.972335+00:00",
+      "observed_at": "2026-10-24T03:30:22.719249+00:00",
+      "exit_code": 0,
+      "summary": "terminal_execution) ... ok\r\ntest_main_index_binding_format_bytes_cli_terminal_and_host_rejections (test_six_native_entry.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) ... ok\r\ntest_main_real_audit_three_real_collects_and_finally_success (test_six_native_entry.SixNativeEntryTests.test_main_real_audit_three_real_collects_and_finally_success) ... ok\r\ntest_main_second_group_failure_closes_and_does_not_collect_third (test_six_native_entry.SixNativeEntryTests.test_main_second_group_failure_closes_and_does_not_collect_third) ... ok\r\ntest_unreadable_terminal_is_not_absence (test_six_native_entry.SixNativeEntryTests.test_unreadable_terminal_is_not_absence) ... ok\r\ntest_new_read_audit_uses_post_closure_checkpoint_and_still_rejects_drift (test_verify_six_native.SixCompleteTests.test_new_read_audit_uses_post_closure_checkpoint_and_still_rejects_drift) ... ok\r\ntest_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close (test_verify_six_native.SixCompleteTests.test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close) ... ok\r\ntest_three_source_groups_use_current_six_checker_and_close (test_verify_six_native.SixCompleteTests.test_three_source_groups_use_current_six_checker_and_close) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 60 tests in 4.016s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-O",
+        "-m",
+        "unittest",
+        "-v",
+        "test_retired_resources",
+        "test_retired_volumes",
+        "test_retired_budget_bytes",
+        "test_preallocation_ci",
+        "test_six_candidate_runtime",
+        "test_six_native_entry",
+        "test_verify_six_native"
+      ],
+      "started_at": "2026-10-24T03:30:22.719277+00:00",
+      "observed_at": "2026-10-24T03:30:26.759119+00:00",
+      "exit_code": 0,
+      "summary": "terminal_execution) ... ok\r\ntest_main_index_binding_format_bytes_cli_terminal_and_host_rejections (test_six_native_entry.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) ... ok\r\ntest_main_real_audit_three_real_collects_and_finally_success (test_six_native_entry.SixNativeEntryTests.test_main_real_audit_three_real_collects_and_finally_success) ... ok\r\ntest_main_second_group_failure_closes_and_does_not_collect_third (test_six_native_entry.SixNativeEntryTests.test_main_second_group_failure_closes_and_does_not_collect_third) ... ok\r\ntest_unreadable_terminal_is_not_absence (test_six_native_entry.SixNativeEntryTests.test_unreadable_terminal_is_not_absence) ... ok\r\ntest_new_read_audit_uses_post_closure_checkpoint_and_still_rejects_drift (test_verify_six_native.SixCompleteTests.test_new_read_audit_uses_post_closure_checkpoint_and_still_rejects_drift) ... ok\r\ntest_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close (test_verify_six_native.SixCompleteTests.test_source_start_helper_namespace_create_wait_logs_checker_core_revoke_failures_close) ... ok\r\ntest_three_source_groups_use_current_six_checker_and_close (test_verify_six_native.SixCompleteTests.test_three_source_groups_use_current_six_checker_and_close) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 60 tests in 3.526s\r\n\r\nOK\r\n"
+    }
+  ],
+  "source_started": 0,
+  "provider_calls": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}
