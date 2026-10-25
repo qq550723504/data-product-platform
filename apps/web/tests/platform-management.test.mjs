@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fixture,MemoryStore} from './helpers/oidc-fixture.mjs';
 const require=createRequire(import.meta.url);
-const {managementSelection,managementQuery,validManagement}=require('../.iam-tests/platform-management.js');
+const {managementSelection,managementQuery,managementMemberListHref,managementMemberDetailHref,validManagement}=require('../.iam-tests/platform-management.js');
 test('management RP is disjoint and transport allows only exact readonly workspace queries',async t=>{
  const f=await fixture(t,new MemoryStore(),'platform-management'),start=await f.iam.start(),session=await f.iam.callback(f.callback(start),start.key),client=await f.iam.managementClient(session.key);
  assert.deepEqual(client.principal.capabilities,['PLATFORM_MANAGEMENT_READ']);await assert.rejects(f.iam.acceptanceClient(session.key));
@@ -35,4 +35,19 @@ test('management permission allowlist rejects inherited Object property names',(
   const raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:new Date().toISOString(),source:'SYNTHETIC_FIXTURE',writeEnabled:false,data:{items:[{id:'viewer',name:'查询员',permissions:[permission]}],policySource:'APPLICATION_CATALOG'}};
   assert.equal(validManagement(raw,p,'roles',{offset:0}),false,permission);
  }
+});
+
+test('role member navigation restores explicit conditions page and row without arbitrary return targets',()=>{
+ const selection={offset:25,q:'空间甲 & 成员',role:'management_viewer',state:'active',memberId:'old',cursor:'unrelated'};
+ const detail=new URL(managementMemberDetailHref(selection,'grant:a-055'),'https://console.example.invalid');
+ assert.equal(detail.pathname,'/settings/members');assert.equal(detail.searchParams.has('cursor'),false);
+ const parsed=managementSelection('members',Object.fromEntries(detail.searchParams));
+ assert.deepEqual(parsed,{offset:25,q:selection.q,role:selection.role,state:selection.state,memberId:'grant:a-055'});
+ const list=new URL(managementMemberListHref(parsed,parsed.memberId),detail);
+ assert.equal(list.origin,detail.origin);assert.equal(list.searchParams.has('memberId'),false);assert.equal(list.searchParams.has('cursor'),false);
+ assert.equal(decodeURIComponent(list.hash),'#member-grant:a-055');
+ assert.deepEqual(managementSelection('members',Object.fromEntries(list.searchParams)),{offset:25,q:selection.q,role:selection.role,state:selection.state});
+ assert.equal(managementMemberListHref({offset:0,role:'audit_viewer'}),'/settings/members?role=audit_viewer');
+ for(const member of ['//other.invalid','../member','grant#fragment'])assert.throws(()=>managementMemberDetailHref(selection,member));
+ assert.throws(()=>managementSelection('members',{returnTo:'https://other.invalid'}));
 });

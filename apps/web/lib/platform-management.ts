@@ -25,6 +25,15 @@ export function managementSelection(section:ManagementSection,q:Record<string,st
  return s;
 }
 export function managementQuery(s:ManagementSelection){const q=new URLSearchParams();if(s.offset)q.set('offset',String(s.offset));for(const k of ['q','role','state','memberId','cursor']as const)if(s[k])q.set(k,s[k]!);return q.size?'?'+q:'';}
+function memberListSelection(s:ManagementSelection):ManagementSelection{return {offset:s.offset,q:s.q,role:s.role,state:s.state};}
+export function managementMemberListHref(s:ManagementSelection,focusMemberId?:string){
+ if(focusMemberId&&!id(focusMemberId))throw Error('INVALID_QUERY');
+ return '/settings/members'+managementQuery(memberListSelection(s))+(focusMemberId?'#member-'+encodeURIComponent(focusMemberId):'');
+}
+export function managementMemberDetailHref(s:ManagementSelection,memberId:string){
+ if(!id(memberId))throw Error('INVALID_QUERY');
+ return '/settings/members'+managementQuery({...memberListSelection(s),memberId});
+}
 export function validManagement(raw:ManagementResult,p:Principal,kind:ManagementSection,s:ManagementSelection):boolean{
  try{
   if(!raw||!exact(raw,'profileVersion,workspaceId,principalId,authorityRevision,evaluatedAt,source,writeEnabled,data')||raw.profileVersion!=='platform-management.v1'||raw.workspaceId!==p.workspace_id||raw.principalId!==p.principal_id||raw.authorityRevision!==p.revision||!time(raw.evaluatedAt)||!['SYNTHETIC_FIXTURE','CONFIGURED'].includes(raw.source)||raw.writeEnabled!==false||!raw.data||!Array.isArray(raw.data.items))return false;

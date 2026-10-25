@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-10-25T10:49:02.729873+00:00",
+  "reviewBase": "f99889f8249ff8539fe13bba7da1ab466e32cbfd",
+  "captureScope": "Modified worktree local evidence; hashes do not attest runtime compilation or CI",
+  "runtimeDist": ".next-acceptance-identity-management-role-members-final-20261025",
+  "browser": "Microsoft Edge, independent contexts",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "files": {
+    "browser-results.json": "644a54f64a40870ec32f280164b67874bf068ee80acf527696096b79370e04b1",
+    "role-members-list.png": "0a0ac496e9922b2c86e85cf7b869efbf7a53bd911df9dbb36683b0b528e6151f",
+    "role-member-detail.png": "5fc6d4b18292f926238d2007be93e2187f3ac0f9a7ad8c3cb5b24849b75f5ea5",
+    "role-members-return.png": "2f1cf6d2ee72e89510ce9797f0fb97e621cd961ea66b279e00505fba0c872769"
+  },
+  "sourceHashes": {
+    "apps/web/components/management-page.tsx": "283df8f6f2d27f0fcfe5f3af37817125e70cc91bb7e91d2b0a6553c65fe9bdae",
+    "apps/web/components/management-members.tsx": "14b79153b1d61fddde3e9e677f7f5835e8dfd0a4fefb9c0ca876a31fa9216be7",
+    "apps/web/lib/platform-management.ts": "a5f61d79dadddfe7a1c0ea6492799034f6eb2d38708645254c2460d4fee792e4",
+    "apps/web/components/governance-demo/styles.css": "af787246530bc5bd52e95c869dcce61d49ebdde1fe9cf546eef83d79a4d1e337",
+    "tests/platform-management/browser.mjs": "68fe200109f9d8711d3dbfbaf8f01ce622c91183acc7910b75f0ec57b3a6ad7f"
+  }
+}

@@ -184,6 +184,13 @@
 .governance-demo .management-page .pagination{display:flex;justify-content:space-between;gap:20px;margin:24px 0;color:var(--muted)}
 .governance-demo .management-source{font-size:12px;color:#8b713b;margin:18px 0}
 .governance-demo .management-detail{border-top:1px solid var(--line);padding-top:30px;margin-top:30px;line-height:1.9}
+.governance-demo .management-role-context{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px;color:var(--muted)}
+.governance-demo .management-back{display:block;width:fit-content;margin:0 0 24px}
+.governance-demo .management-member-view{margin-top:24px;padding-top:22px}
+.governance-demo .management-member-facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:14px 28px;margin:24px 0;overflow-wrap:anywhere}
+.governance-demo .management-member-facts dt{color:var(--muted)}
+.governance-demo .management-member-facts dd{margin:0}
+.governance-demo .management-page tr:target{outline:2px solid var(--green);outline-offset:-2px;background:#edf5ef;scroll-margin-top:100px}
 .governance-demo .management-evidence{margin-top:28px;font-size:12px;line-height:1.9;color:var(--muted)}
 .governance-demo .management-page details{overflow-wrap:anywhere}
 .governance-demo .management-page summary{cursor:pointer;color:var(--green)}
