@@ -20,7 +20,7 @@ const routes=new Set(['home','develop','ingestion','processing','manage','assets
 test('every registered demo page renders a nonempty main and its heading or Core handoff',()=>{
  for(const route of routes){globalThis.location={hash:'#'+route};const html=renderToStaticMarkup(React.createElement(App,{liveAgent:false}));
   assert.match(html,/<main[^>]*id="main"/,route);
-  assert.match(html,route.startsWith('agent-')?/打开已连接 Core 的 Agent 工作台/:/<h1>/,route);
+  assert.match(html,route.startsWith('agent-')?/打开 Agent 工作台/:/<h1>/,route);
   assert.doesNotMatch(html,/原业务对象链接/,route);
  }
  assert.equal(routes.size,56);
@@ -33,7 +33,7 @@ test('Core catalog renders server facts without synthetic asset content or reset
  globalThis.location={hash:'#assets'};
  const html=renderToStaticMarkup(React.createElement(App,{liveAgent:false,liveCatalog:true},React.createElement('h1',null,'CORE_FACT_SENTINEL')));
  assert.match(html,/CORE_FACT_SENTINEL/);
- assert.match(html,/Core 只读/);
+ assert.match(html,/资产目录/);assert.match(html,/待办工作台/);
  assert.doesNotMatch(html,/重置演示|当前成果 · VER-|合成数据演示/);
 });
 

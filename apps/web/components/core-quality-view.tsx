@@ -98,12 +98,12 @@ export default async function CoreQualityView({
   return (
     <div className="agent-page">
       <BackLink href="/agent">Agent 工作台</BackLink>
-      {catalog && <nav className="capability-links" aria-label="Core 只读导航"><a href="/core/assets">资产目录</a><a href="/core/releases">发布历史</a></nav>}
+      {catalog && <nav className="capability-links" aria-label="相关业务导航"><a href="/core/assets">资产目录</a><a href="/core/releases">发布历史</a></nav>}
       <PageHeader
-        eyebrow="QUALITY CONTEXT"
-        title={catalog ? "Core 资产目录" : "质量上下文"}
-        description="读取 Core 记录，核实版本、评测与证据。报告始终对应所选评测。"
-        action={<Badge value="READ ONLY" tone="info" />}
+        eyebrow="质量管理"
+        title={catalog ? "资产目录" : "质量上下文"}
+        description="查看资产版本、质量评测与证据，报告对应当前选定的评测记录。"
+        action={<Badge value="只读" tone="info" />}
       />
       <div className="agent-scope">
         <span>
@@ -121,8 +121,7 @@ export default async function CoreQualityView({
       </div>
       {!context ? (
         <Unknown>
-          数据来源或权限暂时无法确认。请检查部署端工作空间、可信凭据和 Core
-          服务；此处不会按匿名身份重试。
+          暂时无法读取数据，请确认当前工作空间与访问权限，或联系管理员。
           <a className="text-link" href={href(selection)}>
             {" "}
             重新读取 →
@@ -528,7 +527,7 @@ export default async function CoreQualityView({
                       </ul>
                     </>
                   ) : (
-                    <p>Core 尚未配置经验证的修复模板。</p>
+                    <p>尚未配置已验证的修复模板。</p>
                   )}
                 </section>
                 <section className="card">

@@ -48,9 +48,9 @@ function gateHint(gate: string, status: string): string {
     case "PENDING":
       return "先执行 Release Validation；此 Gate 尚未评估";
     case "FAIL":
-      return gateActions[gate] ?? "根据 Core blocker 处理失败条件";
+      return gateActions[gate] ?? "请按阻断原因处理未通过项";
     default:
-      return "查看 Core Readiness 详情，确认该 Gate 的当前状态";
+      return "请查看发布检查详情，确认各项检查状态";
   }
 }
 
@@ -67,9 +67,9 @@ function PublishForm({ productId, item, enabled }: { productId: string; item: Re
       <button type="submit" disabled={!publishable || locked}>
         {pending ? "正在发布，请勿重复操作…" : item.release.status === "PUBLISHED" ? "已发布" : "发布 Release"}
       </button>
-      {!enabled ? <small style={{ display: "block", marginTop: 8 }}>发布写入默认关闭；受信任 POC 可由服务端启用。</small> : null}
+      {!enabled ? <small style={{ display: "block", marginTop: 8 }}>当前环境未开放发布提交。</small> : null}
       {enabled && !publishable && item.release.status !== "PUBLISHED" ? (
-        <small style={{ display: "block", marginTop: 8 }}>只有 Core 同时返回 Release=READY、Readiness=READY、全部 Gate=PASS 且没有阻塞原因时才能发布。</small>
+        <small style={{ display: "block", marginTop: 8 }}>发布准备和检查均须就绪，所有必需检查通过且无阻断项，才能发布。</small>
       ) : null}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
       {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button> : null}
@@ -78,7 +78,7 @@ function PublishForm({ productId, item, enabled }: { productId: string; item: Re
 }
 
 export function ProductReleasePanel({ productId, items, actionsEnabled }: { productId: string; items: ReleasePanelItem[]; actionsEnabled: boolean }) {
-  if (items.length === 0) return <div className="empty-state"><strong>暂无 Release</strong><p>先由 Core 创建冻结了 ProductVersion 与 DatasetVersion 的 Release。</p></div>;
+  if (items.length === 0) return <div className="empty-state"><strong>暂无 Release</strong><p>请先创建发布记录，固定产品版本和所含成果版本。</p></div>;
   return (
     <div style={{ display: "grid", gap: 18 }}>
       {items.map((item) => {

@@ -5,7 +5,7 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 export default async function ProductionPage({ searchParams }: { searchParams: Promise<{ offset?: string }> }) {
   if (!configuredWorkspaceId()) {
-    return <><PageHeader eyebrow="Production" title="数据生产" description="Core Workflow 与 Execution 运行历史。" /><SetupRequired /></>;
+    return <><PageHeader eyebrow="Production" title="数据生产" description="查看工作流及其任务运行历史。" /><SetupRequired /></>;
   }
 
   const offset = parsePageOffset((await searchParams).offset);

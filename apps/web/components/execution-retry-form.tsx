@@ -39,7 +39,7 @@ export function ExecutionRetryForm({
       </button>
       {!enabled ? (
         <small style={{ display: "block", marginTop: 8 }}>
-          Execution 写入默认关闭；受信任 POC 可由服务端启用。
+          当前环境未开放任务重试。
         </small>
       ) : (
         <small style={{ display: "block", marginTop: 8 }}>

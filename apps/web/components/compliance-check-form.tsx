@@ -101,7 +101,7 @@ export function ComplianceCheckForm({
               value={policyRef}
               onChange={(event) => setPolicyRef(event.target.value)}
               maxLength={1024}
-              placeholder="留空使用 Core 默认合规策略"
+              placeholder="留空使用默认合规策略"
             />
           </dd>
         </div>
@@ -121,8 +121,8 @@ export function ComplianceCheckForm({
           开始新的 Compliance Check
         </button>
       ) : null}
-      {!enabled ? <small style={{ display: "block", marginTop: 8 }}>Compliance 写入默认关闭；受信任 POC 可由服务端启用。</small> : null}
-      {enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>Core 只允许 READY / SUPERSEDED DatasetVersion 运行 Compliance Check。</small> : null}
+      {!enabled ? <small style={{ display: "block", marginTop: 8 }}>当前环境未开放合规检查提交。</small> : null}
+      {enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>仅可用或已被替代的成果版本可执行合规检查。</small> : null}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
       {state.ok ? <button type="button" onClick={() => window.location.reload()}>刷新合规结果</button> : null}
       {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>刷新并核对 attempt 状态</button> : null}

@@ -71,7 +71,7 @@ async function ResourceConnection({ id, m }: { id: string; m: MetadataObservatio
           { label: "目录分类", value: g?.classifications?.join("、") || missing },
           { label: "目录术语", value: g?.terms?.join("、") || missing },
         ]} />
-        <p>目录注释只读展示；上方 Core 归属和当前授权由平台管理。治理目录不授予认证或交付权限。</p>
+        <p>目录注释仅供查看，资产归属和当前授权由平台管理；目录记录不授予认证或交付权限。</p>
         <CommandButton label="刷新治理绑定" action={refreshMetadata.bind(null, id, `dpp_source.${s.database}.${table?.Schema}.${table?.Name}`)} />
         <h3>同一事实链</h3>
         {linked.map(b => <p key={b.id}>
@@ -81,6 +81,6 @@ async function ResourceConnection({ id, m }: { id: string; m: MetadataObservatio
       </section></>
     );
   } catch {
-    return <section className="callout callout-warn"><h2>来源信息 UNKNOWN</h2><p>来源/治理信息暂不可用，请刷新；Core 历史事实仍保留。</p></section>;
+    return <section className="callout callout-warn"><h2>来源信息 UNKNOWN</h2><p>来源和治理信息暂不可用，请重新读取；已有历史记录仍保留。</p></section>;
   }
 }

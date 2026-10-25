@@ -45,7 +45,7 @@ function ReviewForm({ review, onResult }: { review: EntityReview; onResult: (res
         {pending ? <span role="status">正在提交，请勿重复操作…</span> : null}
       </div>
       {!review.candidateEntityId && review.alternatives.length === 0 ? <small>没有可选择的冻结候选实体，不能确认；拒绝也不会自动新建实体。</small> : null}
-      {!review.candidateEntityId && review.alternatives.length > 0 ? <small>只能从本次匹配时冻结的候选集合中选择；提交时 Core 会再次验证实体仍为当前工作区同类型的 ACTIVE 实体。</small> : null}
+      {!review.candidateEntityId && review.alternatives.length > 0 ? <small>仅可从本次匹配保留的候选中选择；提交时将重新核实候选是否仍为当前工作空间中同类型的有效实体。</small> : null}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
       {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button> : null}
     </form>

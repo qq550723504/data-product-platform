@@ -7,19 +7,19 @@ import { batchEnabled, core } from "@/lib/batches";
 function executionGuidance(status: string): string {
   switch (status) {
     case "FAILED":
-      return "该 Execution 是不可变失败事实。Core Retry 会基于同一冻结输入创建新的 Execution，不会改写本记录。";
+      return "本次失败记录会保留。重试将沿用相同的固定输入并创建新的运行记录。";
     case "CANCELLED":
-      return "该 Execution 已取消且历史事实保持不变。Core Retry 会基于同一冻结输入创建新的 Execution。";
+      return "本次运行已取消，历史记录会保留。重试将沿用相同的固定输入并创建新的运行记录。";
     case "QUEUED":
       return "Execution 已进入队列，等待 worker 认领；当前记录不需要人工修改状态。";
     case "SUBMITTING":
-      return "Core 正在向托管执行引擎提交任务；提交结果由 reconciliation 更新。";
+      return "正在提交任务，提交结果将由后续核实更新。";
     case "RUNNING":
-      return "Execution 正在运行；输出 DatasetVersion 只有在 Core 成功完成并冻结后才会出现。";
+      return "任务正在运行，成功完成并确认输出后才会生成成果版本。";
     case "SUCCEEDED":
       return "Execution 已成功完成；输出 DatasetVersion 是本次执行冻结的结果事实。";
     default:
-      return "Execution 状态由 Core 状态机维护；UI 仅展示当前不可变/受控事实。";
+      return "当前运行状态由系统维护，历史结果会保留。";
   }
 }
 
@@ -33,7 +33,7 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
   try {
     const execution = await platform.execution(id);
     if (execution.workspaceId !== workspaceId) {
-      throw new Error("Execution 不属于当前 POC Workspace");
+      throw new Error("本次运行不属于当前工作空间");
     }
     const quarantine = batchEnabled() ? await core<{items:Array<{id:string;inputName:string;sourceKey:string;reasonCode:string;reasonMessage:string;payload:Record<string,unknown>}>;page:{total:number;offset:number;limit:number}}>(`/workspaces/${workspaceId}/executions/${execution.id}/quarantine`, "GET", undefined, undefined, true) : null;
     return (
@@ -42,7 +42,7 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
         <PageHeader
           eyebrow={`Execution · ${shortId(execution.id)}`}
           title={`生产执行 ${execution.targetPeriod}`}
-          description="Core 冻结本次执行的 WorkflowVersion、输入 DatasetVersion 和最终输出；外部执行 ID 只是运行时引用。"
+          description="本次运行固定工作流版本、输入版本和最终输出；外部运行编号仅用于追溯。"
           action={<Badge value={execution.status} />}
         />
 

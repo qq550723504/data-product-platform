@@ -658,7 +658,7 @@ export default async function DatasetVersionDetailPage({
           <section className="detail-card" style={{ marginBottom: 24 }} data-testid="gold-production-chain">
             <div className="panel-header">
               <h2>Gold Production Chain</h2>
-              <span className="eyebrow">Core frozen facts</span>
+              <span className="eyebrow">冻结业务记录</span>
             </div>
             <DefinitionList items={[
               { label: "Input DatasetVersion", value: <span className="mono">{goldExplanation.inputDatasetVersionId}</span> },

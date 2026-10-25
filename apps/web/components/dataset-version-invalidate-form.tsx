@@ -40,7 +40,7 @@ export function DatasetVersionInvalidateForm({
       <div className="panel-header">
         <div>
           <h2>作废当前版本</h2>
-          <p>Core 只允许 READY → INVALID。内容和历史不会被覆盖；作废原因会成为版本事实。</p>
+          <p>仅可用版本允许作废。原内容和历史会保留，并追加作废原因。</p>
         </div>
       </div>
       <label style={{ display: "grid", gap: 8 }}>
@@ -59,11 +59,11 @@ export function DatasetVersionInvalidateForm({
       </button>
       {!enabled ? (
         <small style={{ display: "block", marginTop: 8 }}>
-          DatasetVersion 写入默认关闭；受信任 POC 可由服务端启用。
+          当前环境未开放版本作废。
         </small>
       ) : (
         <small style={{ display: "block", marginTop: 8 }}>
-          此操作不会删除或改写版本内容，只会调用 Core 的显式 invalidate 命令。
+          作废会追加一条处置记录，保留原版本内容和历史。
         </small>
       )}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}

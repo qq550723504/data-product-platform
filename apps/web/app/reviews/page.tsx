@@ -22,9 +22,9 @@ export default async function ReviewsPage({ searchParams }: { searchParams: Prom
     return (
       <>
         <PageHeader eyebrow="Entity Resolution" title="实体审核"
-          description="核对来源、规则和候选实体后，填写理由并确认或拒绝。任务状态、映射和证据由 Core 命令维护。"
+          description="核对来源、规则和候选实体后，填写理由并确认或拒绝。系统会保留任务状态、映射决定和依据。"
           action={<Badge value={reviews.page.total ? "PENDING" : "NO_PENDING"} />} />
-        {configurationError ? <div className="callout callout-warn"><strong>当前为只读审核队列</strong><p>{configurationError}</p></div> : <div className="callout callout-warn"><strong>POC 审核模式</strong><p>当前使用服务端配置的演示审核人；此配置不是登录认证或角色授权，请勿开放至不可信网络。</p></div>}
+        {configurationError ? <div className="callout callout-warn"><strong>当前为只读审核队列</strong><p>{configurationError}</p></div> : <div className="callout callout-warn"><strong>人工审核</strong><p>当前使用服务端配置的演示审核人；此配置不是登录认证或角色授权，请勿开放至不可信网络。</p></div>}
         <ReviewQueue items={reviews.items} actionsEnabled={!configurationError} />
         <nav aria-label="审核队列分页" className="badge-row" style={{ marginTop: 16 }}>
           {offset > 0 ? <Link href={`/reviews?offset=${Math.max(0, offset - 25)}`}>上一页</Link> : null}

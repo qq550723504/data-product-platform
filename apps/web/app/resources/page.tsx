@@ -19,7 +19,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
           description="管理可被数据产品生产链引用的业务资源，并观察权利、质量与敏感级别状态。"
         />
         {resources.page.total === 0 ? (
-          <EmptyState title="暂无数据资源" description="资源接入后会在这里作为业务语义对象出现，技术绑定仍保持在 Core 边界内。" />
+          <EmptyState title="暂无数据资源" description="接入完成后，可在这里查看资源及其业务信息。" />
         ) : (
           <>
             {resources.items.length === 0 ? (

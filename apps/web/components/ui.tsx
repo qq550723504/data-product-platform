@@ -94,16 +94,16 @@ export function EmptyState({ title, description }: { title: string; description:
 export function SetupRequired() {
   return (
     <div className="callout callout-warn">
-      <strong>尚未配置 POC Workspace</strong>
+      <strong>工作空间尚未配置</strong>
       <p>
-        在 <code>apps/web/.env.local</code> 设置 <code>POC_WORKSPACE_ID</code>，控制台就能从 Core Read Model 自动发现资源、数据集、执行记录与数据产品。
+        请联系管理员完成工作空间接入，以查询资源、数据集、执行记录和数据产品。
       </p>
     </div>
   );
 }
 
 export function LoadError({ error }: { error: unknown }) {
-  const message = error instanceof Error ? error.message : "加载 Core 数据失败";
+  const message = error instanceof Error ? error.message : "加载数据失败";
   return (
     <div className="callout callout-bad">
       <strong>读取失败</strong>

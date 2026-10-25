@@ -74,7 +74,7 @@ export function ProductReleaseCreateForm({
         <div>
           <span className="eyebrow">Explicit frozen bindings</span>
           <h2>创建 Release Draft</h2>
-          <p>显式选择 DatasetVersion 和 Role；Core 会再次校验 ProductVersion、Workspace 与版本可用性。</p>
+          <p>请选择明确的成果版本及其用途；提交时将重新校验产品版本、工作空间和成果可用性。</p>
         </div>
       </div>
 
@@ -145,7 +145,7 @@ export function ProductReleaseCreateForm({
       {selected.length > 0 && productionTargets !== 1 ? (
         <div className="callout callout-warn" style={{ marginTop: 12 }}>
           <strong>需要且只能有一个生产目标</strong>
-          <p>Core 要求全部 bindings 中恰好一个 Role 为 PRIMARY 或 OUTPUT。</p>
+          <p>发布绑定中须恰好指定一个主成果或输出成果。</p>
         </div>
       ) : null}
 
@@ -153,7 +153,7 @@ export function ProductReleaseCreateForm({
         {pending ? "正在创建，请勿重复操作…" : state.ok ? "Release 已创建" : "创建 Release Draft"}
       </button>
       {!enabled ? (
-        <small style={{ display: "block", marginTop: 8 }}>Release 写入默认关闭；受信任 POC 可由服务端启用。</small>
+        <small style={{ display: "block", marginTop: 8 }}>当前环境未开放发布准备提交。</small>
       ) : (
         <small style={{ display: "block", marginTop: 8 }}>
           如果响应不确定，请保留相同 Release No；下一次提交会先核对是否已存在同一冻结 Release。

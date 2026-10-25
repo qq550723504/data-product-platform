@@ -150,7 +150,7 @@ export default async function ProductDetailPage({
             { label: "Contract Version", value: <span className="mono">{version.contractVersionId ?? "—"}</span> },
             { label: "Entity Policy", value: version.entityPolicyRef || "—" },
             { label: "Indicator Set", value: version.indicatorSetRef || "—" },
-          ]} /> : <EmptyState title="暂无 ProductVersion" description="先由 Core 创建不可变 ProductVersion，再准备 Release。" />}
+          ]} /> : <EmptyState title="暂无 ProductVersion" description="请先创建固定的产品版本，再准备发布。" />}
           <p style={{ marginTop: 12 }}>Rights、Quality、Compliance 与 Evidence 以每个 Release 的冻结引用和独立 Readiness Gate 为准，不由浏览器推导。</p>
         </section>
 
@@ -165,7 +165,7 @@ export default async function ProductDetailPage({
           ) : version ? (
             <div className="callout" style={{ marginBottom: 18 }}>
               <strong>Release 创建写入未启用</strong>
-              <p>当前运行时保持只读，因此不会加载 DatasetVersion 候选历史。受信任 POC 可由服务端启用 Release actions。</p>
+              <p>当前环境仅供查看，未开放发布准备，也不会加载候选成果版本。</p>
             </div>
           ) : null}
           <div className="panel-header">

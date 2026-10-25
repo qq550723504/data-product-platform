@@ -18,7 +18,7 @@ export async function SchemaExceptions({ compact = false, query = {} }: { compac
         <div><h2>源端 schema 扫描异常历史</h2><span className="panel-meta">UNAVAILABLE {unavailableCount} 条 · DENIED {deniedCount} 条 · INTERRUPTED {interruptedCount} 条</span></div>
         {compact ? <a href={schemaExceptionsHref({}, "ALL", 0)}>查看扫描异常历史</a> : null}
       </div>
-      <p>按 Core 已记录的异常观察计数，不是当前未恢复待办数。后续扫描成功仍保留旧异常；没有记录不代表来源健康。尚无观察的请求或 attempt 不在本历史范围内。</p>
+      <p>按已登记的异常记录计数，不等于当前未恢复数量。后续扫描成功仍保留旧异常；没有记录不代表来源健康。尚无观察结果的请求不在本历史范围内。</p>
       {compact ? <p>已记录 {unavailableCount + deniedCount + interruptedCount} 条扫描异常历史。</p> : <>
         {/* Reuse QualityAttention's document navigation boundary for query-only
             reads; an unfinished client transition must not retain the old page. */}

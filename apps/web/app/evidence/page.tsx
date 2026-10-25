@@ -27,7 +27,7 @@ export default async function EvidencePage() {
           description="证据不是附件文件夹，而是对权利、来源、加工、质量、合规、成本与发布事实的可追溯证明。"
         />
         <section className="detail-card" style={{ marginBottom: 18 }}>
-          <h2>POC 证据链</h2>
+          <h2>成果证据链</h2>
           <div className="flow" style={{ marginTop: 16 }}>
             {["ProductRelease", "DatasetVersion", "Execution", "Input DatasetVersion", "Data Resource", "Evidence / Cost / Audit"].map((step, index, steps) => (
               <span key={step} className="flow">

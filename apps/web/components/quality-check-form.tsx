@@ -54,7 +54,7 @@ export function QualityCheckForm({
     if (!attempt) return null;
     if (attempt.outcome === "SUCCEEDED") return "SUCCEEDED · Assessment " + (attempt.assessmentId?.slice(0, 8) ?? "—");
     if (attempt.outcome === "FAILED") return "FAILED · 该 attempt 已终止；重新评测会创建新的 attempt";
-    if (attempt.outcome === "IN_PROGRESS" && attempt.leaseExpired) return "IN_PROGRESS · lease 已过期，可用同一 attemptId 让 Core reconcile";
+    if (attempt.outcome === "IN_PROGRESS" && attempt.leaseExpired) return "本次评测等待时间已结束，可核实原评测进度。";
     if (attempt.outcome === "IN_PROGRESS") return "IN_PROGRESS · 正在运行，不会重复提交";
     return attempt.outcome;
   }, [attempt]);
@@ -90,7 +90,7 @@ export function QualityCheckForm({
         <div>
           <span className="eyebrow">Recoverable assessment attempt</span>
           <h3>运行 Quality Check</h3>
-          <p>attemptId 会在提交前写入当前 URL；刷新后继续查询同一个 Core attempt，不会盲目重跑。</p>
+          <p>提交前会保存本次评测编号；刷新后继续查询同一次评测，避免重复运行。</p>
         </div>
       </div>
 
@@ -105,7 +105,7 @@ export function QualityCheckForm({
               value={ruleSetRef}
               onChange={(event) => setRuleSetRef(event.target.value)}
               maxLength={512}
-              placeholder="留空使用 Core 默认规则集"
+              placeholder="留空使用默认规则集"
             />
           </dd>
         </div>
@@ -118,7 +118,7 @@ export function QualityCheckForm({
               value={engineName}
               onChange={(event) => setEngineName(event.target.value)}
               maxLength={128}
-              placeholder="留空使用 Core 默认引擎"
+              placeholder="留空使用默认评测引擎"
             />
           </dd>
         </div>
@@ -133,8 +133,8 @@ export function QualityCheckForm({
           开始新的 Quality Check
         </button>
       ) : null}
-      {!enabled ? <small style={{ display: "block", marginTop: 8 }}>Quality 写入默认关闭；受信任 POC 可由服务端启用。</small> : null}
-      {enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>Core 只允许 READY / SUPERSEDED DatasetVersion 运行 Quality Check。</small> : null}
+      {!enabled ? <small style={{ display: "block", marginTop: 8 }}>当前环境未开放质量评测提交。</small> : null}
+      {enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>仅可用或已被替代的成果版本可执行质量评测。</small> : null}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
       {state.ok ? <button type="button" onClick={() => window.location.reload()}>刷新评测结果</button> : null}
       {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>刷新并核对 attempt 状态</button> : null}

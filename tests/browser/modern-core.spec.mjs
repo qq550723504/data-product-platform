@@ -58,7 +58,7 @@ test('prototype root stays synthetic; Core workbench uses server facts in the sa
  await expect(page.getByText('本地预览',{exact:true})).toBeVisible();
  await expect(page.getByRole('button',{name:'重置演示',exact:true})).toBeVisible();
  expect(await calls(request)).toHaveLength(0);
- await page.getByRole('button',{name:'Core 待办',exact:true}).click();
+ await page.getByRole('button',{name:'待办工作台',exact:true}).click();
  await expect(page).toHaveURL('/core/workbench');
  await expect(page.getByTestId('workbench-attention-total')).toBeVisible();
  await expect(page.getByRole('button',{name:'重置演示',exact:true})).toHaveCount(0);
