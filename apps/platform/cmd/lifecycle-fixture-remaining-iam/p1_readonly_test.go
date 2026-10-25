@@ -43,7 +43,7 @@ func TestReadOnlyBootstrapCannotEnableDeleteOrBusinessUsers(t *testing.T) {
 	for _, user := range []string{"delete808a6960", "remainread808a6960", "remainput808a6960", "foreign", "inspect808a69606c36"} {
 		r, _ := http.NewRequest("PUT", "http://127.0.0.1:9000/minio/admin/v3/set-user-status?accessKey="+user+"&status=enabled", nil)
 		// Even inspector cannot pass without the separate fresh host permission.
-		if _, err := (transport{shouldNotCall{t}, map[string]string{user: "policy"}, true, true}).RoundTrip(r); err == nil {
+		if _, err := (transport{base: shouldNotCall{t}, users: map[string]string{user: "policy"}, enable: true, inspectOnly: true, group: "business-races"}).RoundTrip(r); err == nil {
 			t.Fatal("unconfirmed or non-inspector enable admitted", user)
 		}
 	}

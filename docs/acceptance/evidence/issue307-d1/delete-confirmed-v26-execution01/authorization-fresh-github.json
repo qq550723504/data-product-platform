@@ -1,0 +1,104 @@
+{
+  "observed_at": "2026-10-20T06:05:29.629Z",
+  "pr": {
+    "head": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+    "draft": true,
+    "state": "open",
+    "merged": false
+  },
+  "run": {
+    "id": 39359998615,
+    "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615"
+  },
+  "jobs": {
+    "total": 13,
+    "jobs": [
+      {
+        "id": 118423709538,
+        "name": "classify-changes",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753208,
+        "name": "temporary-container-contracts (windows-latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753214,
+        "name": "temporary-container-contracts (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753215,
+        "name": "hop-smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753219,
+        "name": "go-platform",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753282,
+        "name": "label-studio-smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753297,
+        "name": "splink-smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753346,
+        "name": "web-console",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753403,
+        "name": "gx-smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753739,
+        "name": "live-core / live-core-browser",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753744,
+        "name": "browser-contracts / web-browser-contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118423753875,
+        "name": "demo / demo-lifecycle",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 118426208484,
+        "name": "required",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "issue": {
+    "number": 307,
+    "state": "open"
+  }
+}

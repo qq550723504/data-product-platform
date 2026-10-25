@@ -1,0 +1,18 @@
+{
+  "status": "PASS_ORIGINAL_C23_FILE_PRESERVATION",
+  "audit": {
+    "id": "original-c23-failed-preparation",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/candidate23-planning01/failed-preparation-evidence-index01.json",
+    "sha256": "c7093afdfdacb71416df2eb1bf44240d00919d6d4ebb162efb744acdda5a7d1a",
+    "members_verified": 5954
+  },
+  "terminal_sha256": "6bf40cca760fdf81532ba52dd2677d77180f49c80efac97db5fb03f85103c8b2",
+  "original_tracked_diff": [],
+  "boundary": "Current file audit only. Does not refresh old physical containment, IAM, budget inventory or source protection observations.",
+  "source_start": 0,
+  "provider_calls": 0,
+  "metadata_write": 0,
+  "delete": 0,
+  "private_terminal_sha256": "6bf40cca760fdf81532ba52dd2677d77180f49c80efac97db5fb03f85103c8b2"
+}

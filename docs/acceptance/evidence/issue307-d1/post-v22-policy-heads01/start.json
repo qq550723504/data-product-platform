@@ -1,0 +1,9 @@
+{
+  "audit": "5292b721-6b17-4fbd-849b-49685f044f1d",
+  "core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+  "at": "2026-10-19T19:15:15.855741+00:00",
+  "transaction": "REPEATABLE READ READ ONLY ROLLBACK",
+  "source": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "native_delete": 0,
+  "provider_requests": 0
+}

@@ -1,0 +1,13 @@
+{
+  "status": "PREWRITE_AUTHORIZATION_RECORDING_HARNESS_SCHEMA_FAILURE_RETAINED",
+  "at": "2026-10-20T06:08:48.841269+00:00",
+  "error": "No preceding assistant reference because recorder checked channel=final; source schema uses phase=final_answer",
+  "failed_script_sha256": "b566c4361957c5f272273fc18addb8e0757d222ef5262586a27cf168771dd87b",
+  "corrected_script_sha256": "578071d3653803e076ed829245796734bb2c299b247af535cf8406023efbcc0a",
+  "only_change": "match actual phase field; no identity/hash/reference/window predicate relaxed",
+  "diagnostic_recovery_probe": "first lookup expected nested exec_command function_call; actual command receipt is event_msg.item_completed CommandExecution; no files written by probe",
+  "authorization_directories_absent_before_correction": true,
+  "source_provider_io": 0,
+  "permission_enable": 0,
+  "native_delete": 0
+}

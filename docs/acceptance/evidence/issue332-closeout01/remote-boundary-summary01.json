@@ -1,0 +1,20 @@
+{
+  "status": "PASS_CURRENT_PUBLISHED_HEAD_BOUNDARY_ONLY",
+  "observed_at": "2026-10-24T16:19:01.959216+00:00",
+  "head": "1d142fa332b639144c232bb686be214521b9f352",
+  "ci_run": 40103985438,
+  "event": "pull_request",
+  "jobs": 13,
+  "all_success": true,
+  "unresolved_threads": 0,
+  "locked": true,
+  "draft": true,
+  "merged": false,
+  "issue307": "open",
+  "full_policy_sha256": "5d0546ee5d181e57fc924155bfb7783ec4578bbd8f0189bec954496fc630b6f7",
+  "local_DNS_fix_published": false,
+  "local_fix_PR_CI": "NOT_RUN",
+  "unlock": 0,
+  "push": 0,
+  "merge": 0
+}

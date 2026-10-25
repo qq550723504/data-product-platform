@@ -1,0 +1,265 @@
+diff --git a/apps/platform/cmd/lifecycle-fixture-reader/remaining.go b/apps/platform/cmd/lifecycle-fixture-reader/remaining.go
+index d97274ef..a8328de6 100644
+--- a/apps/platform/cmd/lifecycle-fixture-reader/remaining.go
++++ b/apps/platform/cmd/lifecycle-fixture-reader/remaining.go
+@@ -209,6 +209,9 @@ func remainingStep(ctx context.Context, mode string) error {
+ 		return err
+ 	}
+ 	defer pool.Close()
++	if err := pilot.ValidateRemainingFixtureSchema(ctx, pool); err != nil {
++		return err
++	}
+ 	router, err := routing.NewRouter(false)
+ 	if err != nil {
+ 		return err
+diff --git a/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go b/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go
+index af3c33f7..f058021d 100644
+--- a/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go
++++ b/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go
+@@ -165,7 +165,7 @@ func TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory(t *test
+ 		if e != nil {
+ 			t.Fatal(e)
+ 		}
+-		if len(expected.Users) != map[string]int{"business-races": 17, "late-hold": 12, "mixed": 12}[group] {
++		if len(expected.Users) != map[string]int{"business-races": 19, "late-hold": 14, "mixed": 14}[group] {
+ 			t.Fatal("new IAM expectation incomplete")
+ 		}
+ 		for user, policy := range pilot.RemainingRetainedIdentities(group) {
+diff --git a/apps/platform/cmd/lifecycle-fixture-remaining/main.go b/apps/platform/cmd/lifecycle-fixture-remaining/main.go
+index df0b8f12..4033f2c1 100644
+--- a/apps/platform/cmd/lifecycle-fixture-remaining/main.go
++++ b/apps/platform/cmd/lifecycle-fixture-remaining/main.go
+@@ -432,6 +432,9 @@ func send(ctx context.Context, stage string) error {
+ 		return e
+ 	}
+ 	defer pool.Close()
++	if err := pilot.ValidateRemainingFixtureSchema(ctx, pool); err != nil {
++		return err
++	}
+ 	router, e := routing.NewRouter(false)
+ 	if e != nil {
+ 		return e
+diff --git a/apps/platform/cmd/lifecycle-fixture-remaining/recovery.go b/apps/platform/cmd/lifecycle-fixture-remaining/recovery.go
+index 886f1be7..02750122 100644
+--- a/apps/platform/cmd/lifecycle-fixture-remaining/recovery.go
++++ b/apps/platform/cmd/lifecycle-fixture-remaining/recovery.go
+@@ -85,6 +85,9 @@ func recoverExact(ctx context.Context, stage string) error {
+ 		return e
+ 	}
+ 	defer pool.Close()
++	if err := pilot.ValidateRemainingFixtureSchema(ctx, pool); err != nil {
++		return err
++	}
+ 	router, e := routing.NewRouter(false)
+ 	if e != nil {
+ 		return e
+diff --git a/apps/platform/cmd/lifecycle-fixture-remaining/wire.go b/apps/platform/cmd/lifecycle-fixture-remaining/wire.go
+index 7bdd9dee..8801d747 100644
+--- a/apps/platform/cmd/lifecycle-fixture-remaining/wire.go
++++ b/apps/platform/cmd/lifecycle-fixture-remaining/wire.go
+@@ -221,6 +221,9 @@ func wire(ctx context.Context) error {
+ 		return e
+ 	}
+ 	defer pool.Close()
++	if err := pilot.ValidateRemainingFixtureSchema(ctx, pool); err != nil {
++		return err
++	}
+ 	router, e := routing.NewRouter(false)
+ 	if e != nil {
+ 		return e
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go b/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
+index 301a4a28..ba1baaab 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
+@@ -4,6 +4,7 @@ import (
+ 	"bytes"
+ 	"encoding/json"
+ 	"os"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/minio/pkg/v3/policy"
+@@ -59,8 +60,14 @@ func TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope(t *tes
+ 				t.Fatal(e)
+ 			}
+ 			for _, cp := range present {
+-				if p.IsAllowed(policy.Args{Action: policy.DeleteObjectAction, BucketName: cp.Namespace, ObjectName: cp.Key, ConditionValues: map[string][]string{"versionid": {cp.ProviderVersion}}}) {
+-					t.Fatal("retained frozen policy widened")
++				target := cp.Key == "fixture/p2.csv" || cp.Key == "fixture/t1.csv" || cp.Key == "fixture/t2.csv" || cp.Key == "fixture/h2-a.csv" || cp.Key == "fixture/m1-a.csv" || cp.Key == "fixture/m1-b.csv"
++				for _, action := range []policy.Action{policy.DeleteObjectAction, policy.DeleteObjectVersionAction} {
++					for _, version := range []string{cp.ProviderVersion, "", "foreign"} {
++						allowed := target && version == cp.ProviderVersion && (action == policy.DeleteObjectVersionAction || strings.HasPrefix(user, "da5d1e569"))
++						if p.IsAllowed(policy.Args{Action: action, BucketName: cp.Namespace, ObjectName: cp.Key, ConditionValues: map[string][]string{"versionid": {version}}}) != allowed {
++							t.Fatal("actual retained policy/version semantics changed")
++						}
++					}
+ 				}
+ 			}
+ 		}
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_fixture_schema.go b/apps/platform/internal/lifecycle/pilot/remaining_fixture_schema.go
+new file mode 100644
+index 00000000..1271dc08
+--- /dev/null
++++ b/apps/platform/internal/lifecycle/pilot/remaining_fixture_schema.go
+@@ -0,0 +1,27 @@
++package pilot
++
++// This gate belongs only to the retained D1 fixture artifact, not to product P.
++// R has one fixed schema contract. It never chooses a repository by schema.
++import (
++	"context"
++	"errors"
++
++	"github.com/jackc/pgx/v5"
++)
++
++type remainingSchemaReader interface {
++	QueryRow(context.Context, string, ...any) pgx.Row
++}
++
++func ValidateRemainingFixtureSchema(ctx context.Context, db remainingSchemaReader) error {
++	var maxVersion, members int
++	var protectedIdentity bool
++	err := db.QueryRow(ctx, `SELECT COALESCE(MAX(version),0), COUNT(*),
++ EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public'
++ AND table_name='lifecycle_fixture_copy' AND column_name='identity_kind')
++ FROM schema_migration`).Scan(&maxVersion, &members, &protectedIdentity)
++	if err != nil || maxVersion != 69 || members != 66 || protectedIdentity {
++		return errors.New("retained D1 fixture requires exact schema 69/66 without protected identity model; no business or provider operation permitted")
++	}
++	return nil
++}
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_fixture_schema_test.go b/apps/platform/internal/lifecycle/pilot/remaining_fixture_schema_test.go
+new file mode 100644
+index 00000000..d5912225
+--- /dev/null
++++ b/apps/platform/internal/lifecycle/pilot/remaining_fixture_schema_test.go
+@@ -0,0 +1,55 @@
++package pilot
++
++import (
++	"context"
++	"errors"
++	"os"
++	"testing"
++
++	"github.com/jackc/pgx/v5"
++	"github.com/jackc/pgx/v5/pgxpool"
++)
++
++type schemaRow struct {
++	max, count int
++	protected  bool
++	err        error
++}
++
++func (r schemaRow) Scan(dst ...any) error {
++	if r.err != nil {
++		return r.err
++	}
++	*dst[0].(*int), *dst[1].(*int), *dst[2].(*bool) = r.max, r.count, r.protected
++	return nil
++}
++
++type schemaReader struct{ row schemaRow }
++
++func (r schemaReader) QueryRow(context.Context, string, ...any) pgx.Row { return r.row }
++func TestRemainingFixtureSchemaSingleContract(t *testing.T) {
++	for _, row := range []schemaRow{{69, 66, false, nil}, {68, 65, false, nil}, {70, 67, true, nil}, {71, 68, true, nil}, {69, 66, true, nil}, {69, 65, false, nil}, {69, 66, false, errors.New("unreadable")}} {
++		err := ValidateRemainingFixtureSchema(context.Background(), schemaReader{row})
++		want := row.max == 69 && row.count == 66 && !row.protected && row.err == nil
++		if (err == nil) != want {
++			t.Fatalf("schema %+v accepted=%v", row, err == nil)
++		}
++	}
++}
++func TestRemainingFixtureSchemaNativePostgres(t *testing.T) {
++	dsn := os.Getenv("D1_SCHEMA_TEST_DSN")
++	if dsn == "" {
++		t.Skip("isolated retained-schema clone only")
++	}
++	ctx := context.Background()
++	pool, err := pgxpool.New(ctx, dsn)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer pool.Close()
++	err = ValidateRemainingFixtureSchema(ctx, pool)
++	want := os.Getenv("D1_SCHEMA_EXPECT") == "ALLOW"
++	if (err == nil) != want {
++		t.Fatalf("schema gate allowed=%v expected=%v error=%v", err == nil, want, err)
++	}
++}
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_policies.go b/apps/platform/internal/lifecycle/pilot/remaining_policies.go
+index 483527c0..79871e74 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_policies.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_policies.go
+@@ -85,7 +85,7 @@ func RemainingUncreatedIdentities(group string) []string {
+ 	return []string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}
+ }
+ 
+-// These actual c14/c15/c16/c17/c18 users remain disabled with a sole policy and no groups.
++// These actual c14/c15/c16/c17/c18/c19 users remain disabled with a sole policy and no groups.
+ // Current workers and enable paths select only the new execution's identities.
+ func RemainingRetainedIdentities(group string) map[string]string {
+ 	result := map[string]string{}
+@@ -96,7 +96,7 @@ func RemainingRetainedIdentities(group string) map[string]string {
+ 		}
+ 	}
+ 	if scope, err := RemainingScopeFor(group); err == nil {
+-		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7"} {
++		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7", "a5d1e569"} {
+ 			for _, prefix := range []string{"i", "d"} {
+ 				user := prefix + execution + scope.Run.String()[:8]
+ 				result[user] = "lifecycle307-six-" + user
+@@ -125,7 +125,13 @@ func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]str
+ 		if user[0] == 'i' {
+ 			kind = "inspect"
+ 		}
+-		policies[name] = append([]byte(nil), retained[RemainingPolicyName(group, kind)]...)
++		frozen := retained[RemainingPolicyName(group, kind)]
++		// The real retained c19 policy already had the exact-version action
++		// pair. Audit its actual frozen semantics; never rewrite old IAM.
++		if scope, scopeErr := RemainingScopeFor(group); scopeErr == nil && user == map[string]string{"inspect": "i", "delete": "d"}[kind]+"a5d1e569"+scope.Run.String()[:8] {
++			frozen = policies[RemainingPolicyName(group, kind)]
++		}
++		policies[name] = append([]byte(nil), frozen...)
+ 	}
+ 	if user, name := RemainingDormantIdentity(group); user != "" {
+ 		users[user] = ""
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go b/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
+index 97e39ffe..04e437c6 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
+@@ -7,9 +7,9 @@ import (
+ 
+ func TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users(t *testing.T) {
+ 	want := map[string][]string{
+-		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960", "iaa2605a5808a6960", "daa2605a5808a6960", "i6f40bca9808a6960", "d6f40bca9808a6960", "i4fd5a7e7808a6960", "d4fd5a7e7808a6960"},
+-		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0", "iaa2605a5754ea8f0", "daa2605a5754ea8f0", "i6f40bca9754ea8f0", "d6f40bca9754ea8f0", "i4fd5a7e7754ea8f0", "d4fd5a7e7754ea8f0"},
+-		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4", "iaa2605a5dfda43b4", "daa2605a5dfda43b4", "i6f40bca9dfda43b4", "d6f40bca9dfda43b4", "i4fd5a7e7dfda43b4", "d4fd5a7e7dfda43b4"},
++		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960", "iaa2605a5808a6960", "daa2605a5808a6960", "i6f40bca9808a6960", "d6f40bca9808a6960", "i4fd5a7e7808a6960", "d4fd5a7e7808a6960", "ia5d1e569808a6960", "da5d1e569808a6960"},
++		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0", "iaa2605a5754ea8f0", "daa2605a5754ea8f0", "i6f40bca9754ea8f0", "d6f40bca9754ea8f0", "i4fd5a7e7754ea8f0", "d4fd5a7e7754ea8f0", "ia5d1e569754ea8f0", "da5d1e569754ea8f0"},
++		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4", "iaa2605a5dfda43b4", "daa2605a5dfda43b4", "i6f40bca9dfda43b4", "d6f40bca9dfda43b4", "i4fd5a7e7dfda43b4", "d4fd5a7e7dfda43b4", "ia5d1e569dfda43b4", "da5d1e569dfda43b4"},
+ 	}
+ 	for group, names := range want {
+ 		t.Run(group, func(t *testing.T) {
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_scope.go b/apps/platform/internal/lifecycle/pilot/remaining_scope.go
+index 0ceeb7d3..a9ec4f07 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_scope.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_scope.go
+@@ -18,10 +18,10 @@ var remainingScopes []byte
+ 
+ // A different UTC slot requires a new frozen candidate/confirmation. It cannot
+ // be opened by editing a permission file or replaying an old confirmation text.
+-const RemainingExecution = "a5d1e569-f80e-4b38-8f32-d8139a30a077"
+-const RemainingProfile = "candidate19/v29"
+-const RemainingNotBefore = "2026-10-22T06:00:00Z"
+-const RemainingNotAfter = "2026-10-22T06:40:00Z"
++const RemainingExecution = "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6"
++const RemainingProfile = "candidate20/v30"
++const RemainingNotBefore = "2026-10-22T10:00:00Z"
++const RemainingNotAfter = "2026-10-22T10:40:00Z"
+ 
+ // New execution-owned identities never reuse the retained v22 users. Policy
+ // construction and the root status owner share this one naming contract.

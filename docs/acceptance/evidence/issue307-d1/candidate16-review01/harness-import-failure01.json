@@ -1,0 +1,12 @@
+{
+  "status": "REVIEW_HARNESS_ONLY_IMPORT_PATH_FAILURE",
+  "first_script_sha256": "f005e188ac65d55e36c273a2037832b829db7236dc75f7209b1a023834708ae9",
+  "modes": [
+    "normal",
+    "optimized"
+  ],
+  "actual_error": "ModuleNotFoundError: No module named remaining_six_window",
+  "stage": "test module import before any test/native/external subprocess",
+  "fix": "Second independent runner adds examples/lifecycle-d1 to sys.path; repository code unchanged",
+  "Source_provider_Docker_mutation": 0
+}

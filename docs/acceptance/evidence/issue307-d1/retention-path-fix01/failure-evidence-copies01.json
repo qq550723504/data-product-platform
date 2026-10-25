@@ -1,0 +1,31 @@
+{
+  "status": "ORIGINAL_FAILED_CI_AND_RELOCK_RETAINED",
+  "files": {
+    "original-publication-result.json": {
+      "original_absolute_path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\docs\\acceptance\\evidence\\issue307-d1\\retention-maintenance-publication01\\operation01\\result.json",
+      "sha256": "4ddbcd62cba7197746719ac60cbe099c0768e82fb60a4a61cba585cb88ee7213",
+      "bytes": 405
+    },
+    "original-failure-relock.json": {
+      "original_absolute_path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\docs\\acceptance\\evidence\\issue307-d1\\retention-maintenance-publication01\\failure-relock01\\result.json",
+      "sha256": "9ada1ef3a3eed1c4a741ed702cc00a019abe1354f19f031dca7c77a498593d54",
+      "bytes": 454
+    },
+    "original-windows-job.json": {
+      "original_absolute_path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\docs\\acceptance\\evidence\\issue307-d1\\retention-maintenance-publication01\\windows-ci-failure02\\job.json",
+      "sha256": "a774b9d75fe5214143f79574c4a1ff1cf13a3ccf0e3372996b2f5ca3da3cbcd3",
+      "bytes": 3755
+    },
+    "original-path-reproduction.json": {
+      "original_absolute_path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\docs\\acceptance\\evidence\\issue307-d1\\retention-maintenance-publication01\\path-alias-reproduction01.json",
+      "sha256": "b658d61f9440a8865416a09a5a3a45fdc5f84b7c2e21ffd076faadd173f5b57d",
+      "bytes": 1359
+    },
+    "original-windows-log-base64.json": {
+      "original_absolute_path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\docs\\acceptance\\evidence\\issue307-d1\\retention-maintenance-publication01\\windows-ci-failure02\\job-log.stdout",
+      "raw_sha256": "a26cf384cc918e0db3e67f6a0ee513772399b853aa3ff0ab49365893204d64f1",
+      "raw_bytes": 36308
+    }
+  },
+  "original_evidence_overwritten": false
+}

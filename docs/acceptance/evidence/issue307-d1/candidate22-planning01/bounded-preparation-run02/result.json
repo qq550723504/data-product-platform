@@ -1,0 +1,39 @@
+{
+  "status": "PASS_FIXED_C22_NONDELETE_PREPARATION_AND_COMPLETE_NATIVE",
+  "results": [
+    {
+      "phase": "allocate",
+      "exit": 0,
+      "at": "2026-10-23T05:34:49.287126+00:00"
+    },
+    {
+      "phase": "materialize",
+      "exit": 0,
+      "at": "2026-10-23T05:37:24.583062+00:00"
+    },
+    {
+      "phase": "initialize-budgets",
+      "exit": 0,
+      "at": "2026-10-23T05:40:21.985648+00:00"
+    },
+    {
+      "phase": "run-non-delete",
+      "exit": 0,
+      "at": "2026-10-23T05:45:14.412718+00:00"
+    },
+    {
+      "phase": "freeze",
+      "exit": 0,
+      "at": "2026-10-23T05:47:48.525386+00:00"
+    },
+    {
+      "phase": "native",
+      "exit": 0,
+      "at": "2026-10-23T05:50:43.466450+00:00"
+    }
+  ],
+  "delete_authority": false,
+  "full_D1": "NOT_ACCEPTED",
+  "PR332": "DRAFT_UNMERGED",
+  "Issue307": "OPEN"
+}

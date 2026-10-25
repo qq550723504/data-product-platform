@@ -1,0 +1,318 @@
+{
+  "status": "PASS_ISOLATED_HOST_COMPOSITION_NO_DELETE",
+  "failure": null,
+  "execution": "f9cf91b7-df7d-4276-a8d3-e7657039f393",
+  "test_context_only": true,
+  "source_resources_started": 0,
+  "real_delete": 0,
+  "full_source_native_preflight": "NOT_RUN",
+  "facts": [
+    {
+      "phase": "actual_PostgreSQL_adapter",
+      "status": "PASS",
+      "test_binary_sha256": "c8c68e41aaaaf98bedb6f8dadf6bdf0fbdd75ee98ea52d412db291e9b83deb2d"
+    },
+    {
+      "phase": "actual_Docker_sign_verify",
+      "stage": "wire",
+      "body": {
+        "Execution": "f9cf91b7-df7d-4276-a8d3-e7657039f393",
+        "CandidateSHA256": "745a2cd75789f28495b0472c1d6fbac20676466f6f1738ee18bdecd43823c1ca",
+        "Group": "business-races",
+        "Stage": "wire",
+        "Helper": "fc3ab4f84f71f216644840a61de46f985935acc381db6c01841c1a2a0752aef5",
+        "Core": "7e46440202096033c28cea75f11db401176b1d58209f335ce40adaae8266dfdd",
+        "Native": "ffdaeebc1516276cfd8efc7212f5e77e3de9b55f50da59b2e7ec25beaabdd07c",
+        "Gateway": "ce60ccbc2b5e86190749c732bdee13a2854d0f2fcd8f72cf45dc5927c0e93e0e",
+        "Network": "2ec90ebb36bc70aabb3bc757015e40903b4f9c006c17c519c9f67d2d3ac177c0",
+        "BinarySHA256": "1aca04da8b33227da69b350b61520f983bf2fff730ffcf4c8b6ea0ac7e4965d0",
+        "ConfigSHA256": "c4c8762375071867f7d663ec97d4dbc1cbf0d0ca54b11788808fe4f4a6397409",
+        "At": "2026-10-21T06:41:47.062694+00:00",
+        "NoPorts": true,
+        "NoRoot": true,
+        "NoSocket": true,
+        "ReadOnly": true,
+        "NoRestart": true,
+        "Internal": true,
+        "Sequence": {
+          "status": "PASS_SIX_GLOBAL_SEQUENCE",
+          "slot": 0,
+          "group": "business-races",
+          "stage": "wire",
+          "completed": 0,
+          "prior_absence_copy_ids": [],
+          "all_senders_closed_for_recovery": false,
+          "native_delete": 0
+        }
+      },
+      "proof_sha256": "509a0d671a44206c2e4fcace2585c02ce4083e9f3837ae16a6ad11711ef720af"
+    },
+    {
+      "phase": "actual_Docker_sign_verify",
+      "stage": "P2",
+      "body": {
+        "Execution": "f9cf91b7-df7d-4276-a8d3-e7657039f393",
+        "CandidateSHA256": "745a2cd75789f28495b0472c1d6fbac20676466f6f1738ee18bdecd43823c1ca",
+        "Group": "business-races",
+        "Stage": "P2",
+        "Helper": "cfd69c790db08cea3ae9e16c1e91ae69b2e1ec692b00b7a39b1d3a551fd25792",
+        "Core": "7e46440202096033c28cea75f11db401176b1d58209f335ce40adaae8266dfdd",
+        "Native": "ffdaeebc1516276cfd8efc7212f5e77e3de9b55f50da59b2e7ec25beaabdd07c",
+        "Gateway": "ce60ccbc2b5e86190749c732bdee13a2854d0f2fcd8f72cf45dc5927c0e93e0e",
+        "Network": "2ec90ebb36bc70aabb3bc757015e40903b4f9c006c17c519c9f67d2d3ac177c0",
+        "BinarySHA256": "1aca04da8b33227da69b350b61520f983bf2fff730ffcf4c8b6ea0ac7e4965d0",
+        "ConfigSHA256": "c4c8762375071867f7d663ec97d4dbc1cbf0d0ca54b11788808fe4f4a6397409",
+        "At": "2026-10-21T06:41:48.616871+00:00",
+        "NoPorts": true,
+        "NoRoot": true,
+        "NoSocket": true,
+        "ReadOnly": true,
+        "NoRestart": true,
+        "Internal": true,
+        "Sequence": {
+          "status": "PASS_SIX_GLOBAL_SEQUENCE",
+          "slot": 0,
+          "group": "business-races",
+          "stage": "P2",
+          "completed": 0,
+          "prior_absence_copy_ids": [],
+          "all_senders_closed_for_recovery": false,
+          "native_delete": 0
+        }
+      },
+      "proof_sha256": "fdf1f06de96a715a3ec0d4565e500efa62beecc16798c276f1857dce0fee20b5"
+    },
+    {
+      "phase": "actual_Docker_sign_verify",
+      "stage": "recover-P2",
+      "body": {
+        "Execution": "f9cf91b7-df7d-4276-a8d3-e7657039f393",
+        "CandidateSHA256": "745a2cd75789f28495b0472c1d6fbac20676466f6f1738ee18bdecd43823c1ca",
+        "Group": "business-races",
+        "Stage": "recover-P2",
+        "Helper": "6a94ae0ff42c97cc42688835442644a6eb313667021882e6aeb45ef15229a2dc",
+        "Core": "7e46440202096033c28cea75f11db401176b1d58209f335ce40adaae8266dfdd",
+        "Native": "ffdaeebc1516276cfd8efc7212f5e77e3de9b55f50da59b2e7ec25beaabdd07c",
+        "Gateway": "ce60ccbc2b5e86190749c732bdee13a2854d0f2fcd8f72cf45dc5927c0e93e0e",
+        "Network": "2ec90ebb36bc70aabb3bc757015e40903b4f9c006c17c519c9f67d2d3ac177c0",
+        "BinarySHA256": "1aca04da8b33227da69b350b61520f983bf2fff730ffcf4c8b6ea0ac7e4965d0",
+        "ConfigSHA256": "c4c8762375071867f7d663ec97d4dbc1cbf0d0ca54b11788808fe4f4a6397409",
+        "At": "2026-10-21T06:41:50.096256+00:00",
+        "NoPorts": true,
+        "NoRoot": true,
+        "NoSocket": true,
+        "ReadOnly": true,
+        "NoRestart": true,
+        "Internal": true,
+        "Sequence": {
+          "status": "PASS_SIX_GLOBAL_SEQUENCE",
+          "slot": 0,
+          "group": "business-races",
+          "stage": "recover-P2",
+          "completed": 0,
+          "prior_absence_copy_ids": [],
+          "all_senders_closed_for_recovery": true,
+          "native_delete": 0
+        }
+      },
+      "proof_sha256": "da3f1b354b4b3e1557df7c5fb23dce7f5eaffe57fe7eecd7490138ff0775bf2e"
+    },
+    {
+      "phase": "actual_Docker_reject",
+      "stage": "T1",
+      "reason": "unexpected private file, missing member, directory or symlink"
+    },
+    {
+      "phase": "actual_operator_pre_provider_rejection",
+      "exit": "1",
+      "source_access": false,
+      "provider_delete": 0
+    }
+  ],
+  "closure": [
+    {
+      "cid": "dffbe36bc8937c4d689295e865158c6b8908ddda2bd51613788b433b9dfee795",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "37115155acfc336761334b3949a87e1ad7b3451fe1362fbc1823f6bd5ef5838a",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "7a8b44dbc23fc83de067d94fd8394b10b8c2b4ee716e7c1c0507a6b76162352e",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "7ff6cdb3b5cff1b5d4b45b85050150df11c38dfad499de504439efba02b977a4",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "d923bc42725a9e4f0212b783da787d672b5f678c774ee3444370fe029d1268f7",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "bc6fc120bc57d5d72c6876b39942aae9b5e93f5b57369c05646f42d59f63313b",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "e99268242986fec541f5453dafbd89df39c33bc93dee6e6e6d7fb0abe81f1118",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "9d6fc69939d2af493e5476f2a76db91101306fbba1fbbcd06e8f2a6513441b6c",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "54d4752b7026a0a0a84d8af2b7141485764caa50cafa9282559ae7439a4b1b5f",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "d94b379962d6a50ffb91712951fe8e28ac9296cf5732f2af1fea6252912dee05",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "10aab551c57e2d65e18116ebb36b45564b80e5f2ac651755a9c37faf09009f10",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "3bdc0ecc8b82c2a2f9f5340b8ac9ef881121412425d64bc360b80cad1519d5cf",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "6519714d2e2b21a1884a353f5d186349f95142365493e662bf4b607f6c0c4dec",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "171b567b2cb682ed55dcb0c0f242dcd12cacbcf08b2b796de12811e4d61ce2fb",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "697c47d353ea0f086096d983fcd016778bd4dd9a1b4761740bcfe73828c2d7be",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "5dc85e17e78c74eff59ca4fd8fc09dc9a28f57c084534a9ffd479b0167ab069c",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "95528e98ade91b88257fa8cc40c4e0fe876bfa2bc5482ca8517fd5afac5452d7",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "6e52186080b2fba2e715a18ee71ae7c616b93d0e5a554a3ecc51d3db7222cf83",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "02170302487a9be4e8a0d5c0da00649e231d48a9f6bee505ee5a12c74c659997",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "d60770084b3138bff043d79044029081dde0479e0c90f8d76e8fb3a5cef8dc37",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "3965117bfce39e747a2d699b034826662c2eb9fc7230d5e8504c428acecb0e17",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "6a94ae0ff42c97cc42688835442644a6eb313667021882e6aeb45ef15229a2dc",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "cfd69c790db08cea3ae9e16c1e91ae69b2e1ec692b00b7a39b1d3a551fd25792",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "fc3ab4f84f71f216644840a61de46f985935acc381db6c01841c1a2a0752aef5",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "9cc65d8ac753793dd5dae102c4db0be2db8052096c9f7ce8aadb95044d56fc23",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "ce60ccbc2b5e86190749c732bdee13a2854d0f2fcd8f72cf45dc5927c0e93e0e",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "ffdaeebc1516276cfd8efc7212f5e77e3de9b55f50da59b2e7ec25beaabdd07c",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "7e46440202096033c28cea75f11db401176b1d58209f335ce40adaae8266dfdd",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    }
+  ],
+  "retained_volumes": [
+    "dpp307-path04-business-races-pg",
+    "dpp307-path04-business-races-native",
+    "dpp-lifecycle307-808a6960-host-path-rehearsal04-budget",
+    "dpp307-path04-late-hold-pg",
+    "dpp307-path04-late-hold-native",
+    "dpp-lifecycle307-754ea8f0-host-path-rehearsal04-budget",
+    "dpp307-path04-mixed-pg",
+    "dpp307-path04-mixed-native",
+    "dpp-lifecycle307-dfda43b4-host-path-rehearsal04-budget"
+  ],
+  "retained_networks": [
+    "2ec90ebb36bc70aabb3bc757015e40903b4f9c006c17c519c9f67d2d3ac177c0",
+    "839922c2e5db3b036fce540a92dedbbe7d5a9c8d126e2212c4205ef3e46cda03",
+    "e3498ede2e19bfffae7992c7bac0ef1855c88d2a6b8e06a055d38dc35fd9ead4"
+  ]
+}

@@ -66,10 +66,7 @@ def inspect(cid):return json.loads(docker('inspect',cid))[0]
 def closed(x):
     h=x['HostConfig']
     return not x['State']['Running'] and x['State']['Pid']==0 and not h.get('PortBindings') and not any(x['NetworkSettings']['Ports'].values()) and h['RestartPolicy']['Name']=='no'
-def hostpath(value):
-    prefix='/run/desktop/mnt/host/'
-    if value.startswith(prefix):value=value[len(prefix):];value=value[0].upper()+':/'+value[2:]
-    return Path(value).resolve()
+from docker_host_paths import hostpath
 
 def core_connection_binding(base,group):
     u=urlsplit(base['PostgresDSN']);source=inspect(group['Core'])

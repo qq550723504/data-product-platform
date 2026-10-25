@@ -1,0 +1,40 @@
+{
+  "status": "PASS_INDEPENDENT_SAVED_C20_CLOSURE_IMMUTABILITY_AUDIT",
+  "at": "2026-10-22T09:20:47.023109+00:00",
+  "execution": "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6",
+  "original_host_source": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "original_runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "closed_owners": 86,
+  "permission_false": 30,
+  "revoked_profiles": 19,
+  "new_empty_budget_groups": 3,
+  "old_retained_snapshot_exact": true,
+  "old_actual_build_twelve_preserved": true,
+  "old_archive_preserved_sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea",
+  "source_provider_delete": 0,
+  "old_authorization_reused": false,
+  "reviewer_Docker_DB_provider_calls": 0,
+  "scope": "Saved terminal/actual control files audit only; no fresh native/provider claim. Historical readback is preserved as issued.",
+  "private_artifacts": {
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\allocation.json": {
+      "sha256": "e952f7c83eaf5af25dcf3878dd88a515ffe3766eb938170117327fa475a448c6",
+      "bytes": 1814153
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\preparation-terminal.json": {
+      "sha256": "1aff9d0c516b4be3247e276e9b6a9ab2f9bb05af48e62f7f1dbe0cdcce28e9ae",
+      "bytes": 1154081
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\ci-blocked-closure01\\terminal.json": {
+      "sha256": "1aff9d0c516b4be3247e276e9b6a9ab2f9bb05af48e62f7f1dbe0cdcce28e9ae",
+      "bytes": 1154081
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\approved-runtime-source.zip": {
+      "sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea",
+      "bytes": 1821417
+    }
+  },
+  "public_terminal": {
+    "sha256": "1aff9d0c516b4be3247e276e9b6a9ab2f9bb05af48e62f7f1dbe0cdcce28e9ae",
+    "bytes": 1154081
+  }
+}

@@ -1,0 +1,1 @@
+{"at": "2026-10-24T12:56:01.537864+00:00", "command": ["docker", "build", "--pull=false", "--network", "none", "-t", "dpp307-ci-browser:portability03", "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/browser-image03"], "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform", "retained_source_start": 0}

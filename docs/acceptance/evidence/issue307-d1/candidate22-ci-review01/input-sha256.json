@@ -1,0 +1,86 @@
+{
+  "at": "2026-10-23T04:54:04.115508+00:00",
+  "reviewed_head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "source_inputs": {
+    "apps/platform/internal/ingestion/pilot/live_test.go": {
+      "sha256": "3001b828d17599be92d48249c16e98b4ded7227881d2c2e193fbcd2caab454c0",
+      "bytes": 54453,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    },
+    "apps/platform/internal/ingestion/hop/adapter.go": {
+      "sha256": "6e30e6e9948895ed56f07841494823c3b85b201ff23bb3ba8df5d48b9a41fe34",
+      "bytes": 14031,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    },
+    "apps/platform/internal/workflow/hop/client.go": {
+      "sha256": "1435f72eaf7acac653f088f77d6e792e22a754f20e09ec9097e4a3461336956d",
+      "bytes": 17309,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    },
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": {
+      "sha256": "94df4ad092e376fdf2f3139f28aa9ad8e72f049a5218e04cfb0f73d4dc3c5c6a",
+      "bytes": 39753,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    },
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": {
+      "sha256": "53383fb63e2b2e7f9d3f40e0bb4a32bdf75918251e51eb92c8da049cb2af9ceb",
+      "bytes": 15106,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "d8c422814af7db4508d0e7d895b00128b6ccce11e823ffd367c9a2cf2857c72a",
+      "bytes": 39741,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    },
+    "examples/lifecycle-d1/prepare-remaining-runner.py": {
+      "sha256": "78414341fea8225b66c9e934c82337a3d424b449415ccbc9246f8808defe3a18",
+      "bytes": 19860,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "e1afc03edd50c3445400f6d8175dead50127d24f7a064bde74957477781d2189",
+      "bytes": 32961,
+      "source": "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+    }
+  },
+  "related_paths": [
+    "apps/platform/internal/ingestion",
+    "apps/platform/cmd/ingestion-pilot",
+    "apps/platform/internal/workflow/hop",
+    "examples/enterprise-activity/postgres-ingestion",
+    "apps/platform/internal/platform/storage",
+    "apps/platform/internal/platform/routing",
+    "migrations",
+    "apps/platform/go.mod",
+    "apps/platform/go.sum"
+  ],
+  "related_diff_from_f4f27c_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "related_diff_from_cef8a7f_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "workflow_delta_sha256": "6f2929e9e6b1e2b6cd37dd2f4249c7a6ae94dfab317130d94c4683f3a5eb3100",
+  "external_inputs": {
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/source-ci-hop-failure02/stdout.txt": {
+      "sha256": "02fa74ec59f0b6da1d5b636e91e6f97b408ec9eb60de1ed969fe4b224bcfc006",
+      "bytes": 84249
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/source-ci-hop-failure02/result.json": {
+      "sha256": "b96c3e056b321df4e5b1ece0fe2c991a24353e92eccaa91dd10f05a4cc246721",
+      "bytes": 340
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/source-ci-watch01/final-run.json": {
+      "sha256": "51973fe127dbaa931308784a0e36d256316e0f38829bd2abcca1ec618efd75d6",
+      "bytes": 47009
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/retained-candidate21-anchor02.json": {
+      "sha256": "aedf37a6544077b06aad4053c8cdece559197c0431c75ad00678024d2b47d982",
+      "bytes": 1118438
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/subnet-preparation01.json": {
+      "sha256": "ac451227ec1272c512aed77e0063abb7b52417410fe1d26e6e404fe1f8025efe",
+      "bytes": 326
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-source-review01/independent-final-review01.json": {
+      "sha256": "d5c8203c1b93375882281888819bbefedee26d9fb3f028ed099c4830e9cbfd48",
+      "bytes": 5124
+    }
+  }
+}

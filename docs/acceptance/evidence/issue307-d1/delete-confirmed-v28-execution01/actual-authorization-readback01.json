@@ -1,0 +1,21 @@
+{
+  "status": "PASS_ACTUAL_HUMAN_AUTHORIZATION_REFERENCE_BYTES_AND_SCOPE",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "checks": {
+    "actual_user_raw": true,
+    "envelope": true,
+    "approved_refs": true,
+    "private_manifest": true,
+    "host_bindings": true,
+    "scope_execution": true,
+    "scope_window": true,
+    "template": true,
+    "not_retyped": true,
+    "schedule_not_created": true
+  },
+  "user_message_bytes": 432,
+  "approved_references": 1062,
+  "user_retyped_template": false,
+  "schedule": "NOT_CREATED",
+  "native_delete": 0
+}

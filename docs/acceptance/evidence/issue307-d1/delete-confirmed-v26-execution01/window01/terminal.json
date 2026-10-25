@@ -1,0 +1,75 @@
+{
+  "status": "FAILED_OFFLINE_AUDIT_SEALED_NO_DELETE",
+  "at": "2026-10-20T10:05:42.697567+00:00",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "profile": "candidate16/v26",
+  "head": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+  "actual_deletion_execution_terminal": true,
+  "failure": "Extra host audit KeyError members: independent evidence index uses files map.",
+  "failure_receipt_sha256": "b21d5c002f1db813cad63b758113fe17f7a8e40eff2b51b069959162bef54031",
+  "physical_delete_attempts": 0,
+  "targets": [
+    {
+      "slot": "P2",
+      "status": "NOT_RUN",
+      "attempts": 0
+    },
+    {
+      "slot": "T1",
+      "status": "NOT_RUN",
+      "attempts": 0
+    },
+    {
+      "slot": "T2",
+      "status": "NOT_RUN",
+      "attempts": 0
+    },
+    {
+      "slot": "H2A",
+      "status": "NOT_RUN",
+      "attempts": 0
+    },
+    {
+      "slot": "M1A",
+      "status": "NOT_RUN",
+      "attempts": 0
+    },
+    {
+      "slot": "M1B",
+      "status": "NOT_RUN",
+      "attempts": 0
+    }
+  ],
+  "full_fresh_readonly_entry": "NOT_RUN",
+  "source_start": 0,
+  "provider_invocations": 0,
+  "provider_amount": "NOT_ASSESSED",
+  "identity_enable": 0,
+  "worker_confirmation_materialized": false,
+  "case_sender_wire_recovery_starts": 0,
+  "proof_signing": 0,
+  "fixed_seal_steps": 103,
+  "fixed_seal_all_steps_confirmed": false,
+  "fresh_identity_disable": "UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START",
+  "physical_containment": "PASS_PHYSICAL_AND_LOCAL_CONTAINMENT_READBACK_ONLY",
+  "inspected_cids": 445,
+  "permissions_false": 30,
+  "cases_revoked": 6,
+  "recoveries_revoked": 6,
+  "gateways_stopped_sealed": 3,
+  "new_budgets_empty": 3,
+  "new_backups_match": 9,
+  "old_budgets_pins_backups_failure_evidence": "PRESERVED_NO_CLEANUP_OR_RELEASE",
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "scheduler": "PAUSED",
+  "next_run_at": null,
+  "authorization_reusable": false,
+  "no_automatic_retry_or_new_candidate": true,
+  "all_runtime_source_candidate_public_freeze_bytes_changed": false,
+  "case_recovery_mutations": "Only authorized fail-closure revocations; original private bytes in seal-history",
+  "PR332": "DRAFT_OPEN_UNMERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

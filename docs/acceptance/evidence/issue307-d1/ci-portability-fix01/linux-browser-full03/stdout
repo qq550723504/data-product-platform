@@ -1,0 +1,465 @@
+v22.23.4
+11.19.0
+
+> test:fixture
+> node --test fixture-server.test.mjs
+
+TAP version 13
+# Subtest: Quality fault injection rejects one exact read and preserves the other authenticated report
+ok 1 - Quality fault injection rejects one exact read and preserves the other authenticated report
+  ---
+  duration_ms: 45.435039
+  type: 'test'
+  ...
+# Subtest: observed request fixture counts attempts once and keeps selected identity after its observation arrives
+ok 2 - observed request fixture counts attempts once and keeps selected identity after its observation arrives
+  ---
+  duration_ms: 28.773555
+  type: 'test'
+  ...
+# Subtest: unobserved request fixture separates registered facts and retains exact identity after arrival
+ok 3 - unobserved request fixture separates registered facts and retains exact identity after arrival
+  ---
+  duration_ms: 21.160898
+  type: 'test'
+  ...
+# Subtest: exception history fixture preserves classification counts and exact nullable evidence
+ok 4 - exception history fixture preserves classification counts and exact nullable evidence
+  ---
+  duration_ms: 18.957719
+  type: 'test'
+  ...
+# Subtest: control routes require a token
+ok 5 - control routes require a token
+  ---
+  duration_ms: 5.910755
+  type: 'test'
+  ...
+# Subtest: read faults are explicit token-controlled fixed routes and leave independent data readable
+ok 6 - read faults are explicit token-controlled fixed routes and leave independent data readable
+  ---
+  duration_ms: 10.306017
+  type: 'test'
+  ...
+# Subtest: unknown scenario is rejected rather than silently returning ready
+ok 7 - unknown scenario is rejected rather than silently returning ready
+  ---
+  duration_ms: 3.44128
+  type: 'test'
+  ...
+# Subtest: unknown API routes fail explicitly
+ok 8 - unknown API routes fail explicitly
+  ---
+  duration_ms: 4.800069
+  type: 'test'
+  ...
+# Subtest: targeted candidate lookup returns one candidate, not a job queue
+ok 9 - targeted candidate lookup returns one candidate, not a job queue
+  ---
+  duration_ms: 5.776414
+  type: 'test'
+  ...
+# Subtest: review needs trusted credential and reason
+ok 10 - review needs trusted credential and reason
+  ---
+  duration_ms: 5.424822
+  type: 'test'
+  ...
+# Subtest: review mutates only the fixture state and is not accepted twice
+ok 11 - review mutates only the fixture state and is not accepted twice
+  ---
+  duration_ms: 4.703331
+  type: 'test'
+  ...
+# Subtest: review refuses a stale or absent decision token instead of overwriting
+ok 12 - review refuses a stale or absent decision token instead of overwriting
+  ---
+  duration_ms: 3.44701
+  type: 'test'
+  ...
+# Subtest: changing scenario preserves request history
+ok 13 - changing scenario preserves request history
+  ---
+  duration_ms: 4.452517
+  type: 'test'
+  ...
+# Subtest: paginated resource list slices by server-side offset
+ok 14 - paginated resource list slices by server-side offset
+  ---
+  duration_ms: 4.016414
+  type: 'test'
+  ...
+# Subtest: default resource list stays empty so write tests see no phantom rows
+ok 15 - default resource list stays empty so write tests see no phantom rows
+  ---
+  duration_ms: 2.181102
+  type: 'test'
+  ...
+# Subtest: publish requires idempotency header and stores observed command headers
+ok 16 - publish requires idempotency header and stores observed command headers
+  ---
+  duration_ms: 5.959218
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 258.927385
+TAP version 13
+# Subtest: empty checks: shared guard and Server Action boundary fail closed
+ok 1 - empty checks: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 19.445496
+  type: 'test'
+  ...
+# Subtest: missing checks: shared guard and Server Action boundary fail closed
+ok 2 - missing checks: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 1.058948
+  type: 'test'
+  ...
+# Subtest: null checks: shared guard and Server Action boundary fail closed
+ok 3 - null checks: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 1.204571
+  type: 'test'
+  ...
+# Subtest: array checks: shared guard and Server Action boundary fail closed
+ok 4 - array checks: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.640047
+  type: 'test'
+  ...
+# Subtest: missing blockers: shared guard and Server Action boundary fail closed
+ok 5 - missing blockers: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.591323
+  type: 'test'
+  ...
+# Subtest: null blockers: shared guard and Server Action boundary fail closed
+ok 6 - null blockers: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.417357
+  type: 'test'
+  ...
+# Subtest: string blockers: shared guard and Server Action boundary fail closed
+ok 7 - string blockers: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.567861
+  type: 'test'
+  ...
+# Subtest: invalid blocker: shared guard and Server Action boundary fail closed
+ok 8 - invalid blocker: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 1.438729
+  type: 'test'
+  ...
+# Subtest: remaining blocker: shared guard and Server Action boundary fail closed
+ok 9 - remaining blocker: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.646548
+  type: 'test'
+  ...
+# Subtest: blank blocker: shared guard and Server Action boundary fail closed
+ok 10 - blank blocker: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.611367
+  type: 'test'
+  ...
+# Subtest: unknown gate pending: shared guard and Server Action boundary fail closed
+ok 11 - unknown gate pending: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.451325
+  type: 'test'
+  ...
+# Subtest: extra gate FAIL: shared guard and Server Action boundary fail closed
+ok 12 - extra gate FAIL: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.433373
+  type: 'test'
+  ...
+# Subtest: extra gate REVIEW: shared guard and Server Action boundary fail closed
+ok 13 - extra gate REVIEW: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.335612
+  type: 'test'
+  ...
+# Subtest: extra gate null: shared guard and Server Action boundary fail closed
+ok 14 - extra gate null: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.427635
+  type: 'test'
+  ...
+# Subtest: extra gate true: shared guard and Server Action boundary fail closed
+ok 15 - extra gate true: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.314477
+  type: 'test'
+  ...
+# Subtest: missing production: shared guard and Server Action boundary fail closed
+ok 16 - missing production: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.409016
+  type: 'test'
+  ...
+# Subtest: failed production: shared guard and Server Action boundary fail closed
+ok 17 - failed production: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.465792
+  type: 'test'
+  ...
+# Subtest: missing dataset: shared guard and Server Action boundary fail closed
+ok 18 - missing dataset: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.823413
+  type: 'test'
+  ...
+# Subtest: failed dataset: shared guard and Server Action boundary fail closed
+ok 19 - failed dataset: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.337543
+  type: 'test'
+  ...
+# Subtest: missing rights: shared guard and Server Action boundary fail closed
+ok 20 - missing rights: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.347956
+  type: 'test'
+  ...
+# Subtest: failed rights: shared guard and Server Action boundary fail closed
+ok 21 - failed rights: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 1.415218
+  type: 'test'
+  ...
+# Subtest: missing quality: shared guard and Server Action boundary fail closed
+ok 22 - missing quality: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.561677
+  type: 'test'
+  ...
+# Subtest: failed quality: shared guard and Server Action boundary fail closed
+ok 23 - failed quality: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.885412
+  type: 'test'
+  ...
+# Subtest: missing compliance: shared guard and Server Action boundary fail closed
+ok 24 - missing compliance: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.57784
+  type: 'test'
+  ...
+# Subtest: failed compliance: shared guard and Server Action boundary fail closed
+ok 25 - failed compliance: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.546408
+  type: 'test'
+  ...
+# Subtest: missing contract: shared guard and Server Action boundary fail closed
+ok 26 - missing contract: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.526721
+  type: 'test'
+  ...
+# Subtest: failed contract: shared guard and Server Action boundary fail closed
+ok 27 - failed contract: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.275439
+  type: 'test'
+  ...
+# Subtest: missing evidence: shared guard and Server Action boundary fail closed
+ok 28 - missing evidence: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.225088
+  type: 'test'
+  ...
+# Subtest: failed evidence: shared guard and Server Action boundary fail closed
+ok 29 - failed evidence: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.210769
+  type: 'test'
+  ...
+# Subtest: missing delivery: shared guard and Server Action boundary fail closed
+ok 30 - missing delivery: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.197174
+  type: 'test'
+  ...
+# Subtest: failed delivery: shared guard and Server Action boundary fail closed
+ok 31 - failed delivery: shared guard and Server Action boundary fail closed
+  ---
+  duration_ms: 0.216
+  type: 'test'
+  ...
+# Subtest: complete READY response is accepted
+ok 32 - complete READY response is accepted
+  ---
+  duration_ms: 0.094153
+  type: 'test'
+  ...
+# Subtest: new passing Core gate is not rejected
+ok 33 - new passing Core gate is not rejected
+  ---
+  duration_ms: 0.046847
+  type: 'test'
+  ...
+# Subtest: inherited gates cannot satisfy required fields
+ok 34 - inherited gates cannot satisfy required fields
+  ---
+  duration_ms: 0.039971
+  type: 'test'
+  ...
+# Subtest: invalid/not-ready response null
+ok 35 - invalid/not-ready response null
+  ---
+  duration_ms: 0.091476
+  type: 'test'
+  ...
+# Subtest: invalid/not-ready response undefined
+ok 36 - invalid/not-ready response undefined
+  ---
+  duration_ms: 0.031773
+  type: 'test'
+  ...
+# Subtest: invalid/not-ready response []
+ok 37 - invalid/not-ready response []
+  ---
+  duration_ms: 0.021125
+  type: 'test'
+  ...
+# Subtest: invalid/not-ready response "READY"
+ok 38 - invalid/not-ready response "READY"
+  ---
+  duration_ms: 0.01931
+  type: 'test'
+  ...
+# Subtest: invalid/not-ready response {"overall":"NOT_READY","checks":{"production":"PASS","dataset":"PASS","rights":"PASS","quality":"PASS","compliance":"PASS","contract":"PASS","evidence":"PASS","delivery":"PASS"},"blockers":[]}
+ok 39 - invalid/not-ready response {"overall":"NOT_READY","checks":{"production":"PASS","dataset":"PASS","rights":"PASS","quality":"PASS","compliance":"PASS","contract":"PASS","evidence":"PASS","delivery":"PASS"},"blockers":[]}
+  ---
+  duration_ms: 0.01948
+  type: 'test'
+  ...
+1..39
+# tests 39
+# suites 0
+# pass 39
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 112.842655
+
+Running 104 tests using 1 worker
+
+  ✓    1 actions.spec.mjs:19:1 › Registered batch resumes the same operation after a pre-start crash (503ms)
+  ✓    2 actions.spec.mjs:31:1 › Registering batch can query its uncertain outcome without a second start (375ms)
+  ✓    3 actions.spec.mjs:43:1 › Certification profile selection reloads that profile's evidence before prepare and evaluate (681ms)
+  ✓    4 actions.spec.mjs:64:1 › workbench surfaces actionable review and release items (746ms)
+  ✓    5 actions.spec.mjs:81:1 › attention center lists current actionable work (735ms)
+  ✓    6 actions.spec.mjs:99:1 › Product detail creates a DRAFT Release from explicit DatasetVersion bindings (530ms)
+  ✓    7 actions.spec.mjs:123:1 › readonly runtime never enables review or publishing (549ms)
+  ✓    8 actions.spec.mjs:140:3 › review confirm: mandatory reason, server actor and refreshed queue (607ms)
+  ✓    9 actions.spec.mjs:140:3 › review reject: mandatory reason, server actor and refreshed queue (820ms)
+  ✓   10 actions.spec.mjs:163:1 › ambiguous entity review requires explicit frozen alternative selection (641ms)
+  ✓   11 actions.spec.mjs:188:1 › Dataset detail links Core source resource and current version facts (285ms)
+  ✓   12 actions.spec.mjs:201:1 › execution detail exposes navigable frozen lineage and retry semantics (284ms)
+  ✓   13 actions.spec.mjs:213:1 › failed Execution retry creates and opens a new immutable Execution (500ms)
+  ✓   14 actions.spec.mjs:228:1 › readonly runtime does not enable Execution retry (321ms)
+  ✓   15 actions.spec.mjs:234:1 › Evidence Center uses workspace release read model without per-product release fan-out (325ms)
+  ✓   16 actions.spec.mjs:249:1 › Quality Check preserves attempt identity across refresh and does not duplicate execution (1.5s)
+  ✓   17 actions.spec.mjs:296:1 › Compliance Check preserves attempt identity across refresh and does not duplicate result (1.8s)
+  ✓   18 actions.spec.mjs:339:1 › Compliance Check preserves a custom policy with the recoverable attempt (946ms)
+  ✓   19 actions.spec.mjs:366:1 › readonly runtime never enables Compliance Check (416ms)
+  ✓   20 actions.spec.mjs:376:1 › readonly runtime never enables Quality Check (440ms)
+  ✓   21 actions.spec.mjs:386:1 › Direct Data delivery freezes identity, recovers after refresh, and creates a linked retry (1.2s)
+  ✓   22 actions.spec.mjs:455:1 › Direct Data proxy rejects callers outside the trusted web gateway (46ms)
+  ✓   23 actions.spec.mjs:464:1 › Direct Data recovery accepts Core-normalized purpose and action (847ms)
+  ✓   24 actions.spec.mjs:485:1 › Direct Data delivery stays disabled for Core-unsupported explicit scopes (544ms)
+  ✓   25 actions.spec.mjs:497:1 › readonly runtime never enables Direct Data delivery (352ms)
+  ✓   26 actions.spec.mjs:507:1 › READY DatasetVersion can be invalidated through the Core command (407ms)
+  ✓   27 actions.spec.mjs:528:1 › readonly runtime never enables DatasetVersion invalidation (292ms)
+  ✓   28 actions.spec.mjs:536:1 › Gold DatasetVersion explains frozen production proof and current delivery (1.1s)
+  ✓   29 actions.spec.mjs:608:1 › populated eight-gate readiness publishes once with a server idempotency key (1.2s)
+  ✓   30 actions.spec.mjs:627:3 › empty-checks: no false success banner or enabled publish button (441ms)
+  ✓   31 actions.spec.mjs:627:3 › missing-evidence: no false success banner or enabled publish button (324ms)
+  ✓   32 actions.spec.mjs:627:3 › null-checks: no false success banner or enabled publish button (326ms)
+  ✓   33 actions.spec.mjs:627:3 › blocker: no false success banner or enabled publish button (328ms)
+  ✓   34 actions.spec.mjs:627:3 › future-gate: no false success banner or enabled publish button (325ms)
+  ✓   35 actions.spec.mjs:627:3 › failed-rights: no false success banner or enabled publish button (308ms)
+  ✓   36 actions.spec.mjs:641:1 › pending readiness gates ask for validation before remediation (375ms)
+  ✓   37 actions.spec.mjs:653:1 › readiness changes after render: Server Action rechecks and never posts publish (419ms)
+  ✓   38 actions.spec.mjs:664:3 › review-conflict: one attempt and explicit refresh, without automatic retry (530ms)
+  ✓   39 actions.spec.mjs:664:3 › publish-conflict: one attempt and explicit refresh, without automatic retry (493ms)
+  ✓   40 actions.spec.mjs:675:1 › product detail paginates release history before loading readiness (1.1s)
+  ✓   41 actions.spec.mjs:700:1 › list pages paginate on the server with explicit controls (955ms)
+  ✓   42 ingest-readonly.spec.mjs:4:1 › CSV ingestion is read-only by default even after local preview (975ms)
+  ✓   43 ingest-readonly.spec.mjs:22:1 › readonly ingest downloads the shipped template and previews it without a Core write (602ms)
+  ✓   44 quality-attention.spec.mjs:18:3 › quality-history failure preserves successful exact historical evidence (468ms)
+  ✓   45 quality-attention.spec.mjs:18:3 › quality-latest-summary failure preserves successful exact historical evidence (636ms)
+  ✓   46 quality-attention.spec.mjs:18:3 › quality-attempt failure preserves successful exact historical evidence (1.0s)
+  ✓   47 quality-attention.spec.mjs:18:3 › quality-latest-report failure preserves successful exact historical evidence (1.0s)
+  ✓   48 quality-attention.spec.mjs:44:3 › selected historical report fail stays UNKNOWN without a latest substitute (972ms)
+  ✓   49 quality-attention.spec.mjs:44:3 › selected historical report denied stays UNKNOWN without a latest substitute (547ms)
+  ✓   50 quality-attention.spec.mjs:44:3 › selected historical report notfound stays UNKNOWN without a latest substitute (522ms)
+  ✓   51 quality-attention.spec.mjs:44:3 › selected historical report invalid stays UNKNOWN without a latest substitute (482ms)
+  ✓   52 quality-attention.spec.mjs:60:1 › default latest report failure preserves the known latest summary and history (301ms)
+  ✓   53 quality-attention.spec.mjs:70:1 › Quality credentials stay server-side and denied evidence remains local UNKNOWN with the exact historical link (560ms)
+  ✓   54 quality-attention.spec.mjs:88:1 › quality attention pages past 100 without fetching case details, then focuses one case read-only (1.8s)
+  ✓   55 quality-attention.spec.mjs:117:1 › original evidence opens the exact historical assessment and preserves latest quality (793ms)
+  ✓   56 quality-attention.spec.mjs:129:1 › workbench enters follow-up view and recheck evidence opens its output version (2.3s)
+  ✓   57 quality-attention.spec.mjs:159:1 › failed quality read stays UNKNOWN while existing attention remains visible (1.0s)
+  ✓   58 quality-attention.spec.mjs:170:1 › foreign case or assessment scope fails without a latest-result fallback (386ms)
+  ✓   59 schema-attempts.spec.mjs:19:1 › observed-request attempts page independently and retain exact selected identity after observation arrival (3.7s)
+  ✓   60 schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (2.6s)
+  ✓   61 schema-attempts.spec.mjs:69:1 › attempt failures and invalid scope stay local on both pages (13.1s)
+  ✓   62 schema-attempts.spec.mjs:77:38 › / streams independent facts while attempt GET stays held (1.6s)
+  ✓   63 schema-attempts.spec.mjs:77:38 › /attention streams independent facts while attempt GET stays held (4.3s)
+  ✓   64 schema-attempts.spec.mjs:90:1 › successful empty attempt collection differs from unavailable and recovers on refresh (1.2s)
+  ✓   65 schema-attempts.spec.mjs:98:1 › wrong selected identities and unlisted evidence origins fail without provider fallback (548ms)
+  ✓   66 schema-attention.spec.mjs:13:1 › schema attention paginates past 100 without detail fanout then opens exact historical evidence (1.5s)
+  ✓   67 schema-attention.spec.mjs:44:1 › workbench enters unhandled observations and filters preserve quality queue selection (1.7s)
+  ✓   68 schema-attention.spec.mjs:56:1 › schema unavailability and foreign summary stay UNKNOWN while original queues remain visible (773ms)
+  ✓   69 schema-attention.spec.mjs:66:1 › exact mode rejects request mismatch and incomplete IDs without falling back to live resource (389ms)
+  ✓   70 schema-exceptions.spec.mjs:12:1 › exception history paginates past 100 and binds exact nullable historical evidence (1.3s)
+  ✓   71 schema-exceptions.spec.mjs:45:1 › workbench keeps history separate from current queues and filters survive other queue navigation (2.0s)
+  ✓   72 schema-exceptions.spec.mjs:67:1 › history failures, foreign data and successful empty reads never assert current health (1.3s)
+  ✓   73 schema-exceptions.spec.mjs:82:1 › exception exact mode rejects a wrong request without live fallback (295ms)
+  ✓   74 schema-requests.spec.mjs:25:1 › unobserved pagination and exact attempt remain readable after observation arrives (1.9s)
+  ✓   75 schema-requests.spec.mjs:47:1 › independent counts and filters survive other queue navigation (1.3s)
+  ✓   76 schema-requests.spec.mjs:55:1 › delayed filter response cannot make an old 25-row page navigation-ready (1.1s)
+  ✓   77 schema-requests.spec.mjs:82:1 › request detail pages all attempts and observations without replacing selected attempt (336ms)
+  ✓   78 schema-requests.spec.mjs:87:1 › unavailable, foreign and mismatched request data fail locally without fallback (1.2s)
+  ✓   79 workbench-isolation.spec.mjs:24:3 › workbench isolates summary failure without hiding independent evidence (597ms)
+  ✓   80 workbench-isolation.spec.mjs:24:3 › workbench isolates executions failure without hiding independent evidence (686ms)
+  ✓   81 workbench-isolation.spec.mjs:24:3 › workbench isolates failures failure without hiding independent evidence (756ms)
+  ✓   82 workbench-isolation.spec.mjs:24:3 › workbench isolates products failure without hiding independent evidence (942ms)
+  ✓   83 workbench-isolation.spec.mjs:24:3 › workbench isolates releases failure without hiding independent evidence (342ms)
+  ✓   84 workbench-isolation.spec.mjs:37:3 › attention isolates reviews failure and keeps usable queues (863ms)
+  ✓   85 workbench-isolation.spec.mjs:37:3 › attention isolates failures failure and keeps usable queues (897ms)
+  ✓   86 workbench-isolation.spec.mjs:37:3 › attention isolates products failure and keeps usable queues (1.0s)
+  ✓   87 workbench-isolation.spec.mjs:37:3 › attention isolates releases failure and keeps usable queues (1.1s)
+  ✓   88 workbench-isolation.spec.mjs:47:1 › denied and malformed host reads fail closed locally on both pages (2.5s)
+  ✓   89 workbench-isolation.spec.mjs:57:1 › each governance failure remains local while original queues stay readable (5.0s)
+  ✓   90 workbench-isolation.spec.mjs:70:1 › all read failures preserve page identity without invented clear results (1.2s)
+  ✓   91 workbench-isolation.spec.mjs:82:1 › successful empty reads remain distinct from unavailable totals and recover on reload (1.4s)
+  ✓   92 workbench-isolation.spec.mjs:94:1 › a failed selected release page retains snapshot count and bounded return navigation (698ms)
+  ✓   93 workbench-isolation.spec.mjs:105:1 › selected release pages remain independent of a failed shared snapshot (706ms)
+  ✓   94 workbench-isolation.spec.mjs:114:1 › readiness failure keeps the known release and its exact navigation (627ms)
+  ✓   95 workbench-isolation.spec.mjs:122:1 › pending product labels do not block independent facts or evidence (1.7s)
+  ✓   96 workbench-isolation.spec.mjs:147:5 › / isolates pending quality governance GET before it resolves (848ms)
+  ✓   97 workbench-isolation.spec.mjs:147:5 › / isolates pending schema governance GET before it resolves (1.1s)
+  ✓   98 workbench-isolation.spec.mjs:147:5 › / isolates pending exceptions governance GET before it resolves (920ms)
+  ✓   99 workbench-isolation.spec.mjs:147:5 › / isolates pending requests governance GET before it resolves (1.2s)
+  ✓  100 workbench-isolation.spec.mjs:147:5 › /attention isolates pending quality governance GET before it resolves (1.9s)
+  ✓  101 workbench-isolation.spec.mjs:147:5 › /attention isolates pending schema governance GET before it resolves (1.5s)
+  ✓  102 workbench-isolation.spec.mjs:147:5 › /attention isolates pending exceptions governance GET before it resolves (1.6s)
+  ✓  103 workbench-isolation.spec.mjs:147:5 › /attention isolates pending requests governance GET before it resolves (978ms)
+  ✓  104 workbench-isolation.spec.mjs:180:1 › precise attempt and arriving observation round trip survives an unrelated release failure (1.5s)
+
+  104 passed (2.0m)

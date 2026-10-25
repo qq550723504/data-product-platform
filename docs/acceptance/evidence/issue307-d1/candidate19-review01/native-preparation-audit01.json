@@ -1,0 +1,101 @@
+{
+  "status": "PASS_BOUNDED_C19_NONDELETE_PREPARATION_RECEIPT_AUDIT",
+  "remaining_blockers": [],
+  "source_head": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "at": "2026-10-22T01:53:18.788219+00:00",
+  "initial_build_members": {
+    "reader": "5d169277d6f459ab0dcc07349b6bdfced44f4950f8120133b20a7e8eaba20071",
+    "operator": "6138eb135a5bde050819b86081a3b1c275358e179a90b9184460bd782e34daed",
+    "owner": "368ca58f3750b23ea9581757dd9823d9e3c7472da8223ccf429d70a321e4e3b4",
+    "readonly-check.exe": "b4f6f240101df39c7dddf68fd1734a3bbbb32049736e94032d0dfdfbac26176e",
+    "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_build_logs_empty": 8,
+  "independent_frozen_checker_replays": [
+    {
+      "group": "business-races",
+      "role": "SOURCE",
+      "copies": 7,
+      "disabled_users": 17,
+      "request_pairs": 59,
+      "checker_stdout_sha256": "823ac2ffc43fe6698fe7ce33a32e622f1cfec82e097c5777643f2c5fc6107188"
+    },
+    {
+      "group": "business-races",
+      "role": "RESTORE",
+      "copies": 7,
+      "disabled_users": 17,
+      "request_pairs": 59,
+      "checker_stdout_sha256": "c035d7fb2db203c0bbad7f81bfa9f388c0908dc9887b2dd36669d4237d61f56f"
+    },
+    {
+      "group": "late-hold",
+      "role": "SOURCE",
+      "copies": 6,
+      "disabled_users": 12,
+      "request_pairs": 48,
+      "checker_stdout_sha256": "ac3169ed8d450faee4a7f585368c811468da26e122960e33a64b8ba15183c088"
+    },
+    {
+      "group": "late-hold",
+      "role": "RESTORE",
+      "copies": 6,
+      "disabled_users": 12,
+      "request_pairs": 48,
+      "checker_stdout_sha256": "d7c9987edc69b34e57bbb7073d9949f929b32045afbd6120d845c9337caf8164"
+    },
+    {
+      "group": "mixed",
+      "role": "SOURCE",
+      "copies": 4,
+      "disabled_users": 12,
+      "request_pairs": 42,
+      "checker_stdout_sha256": "1e4b698b31c27ff67feb78efa62eabf00b59a0e71d48d7d79ad20d9d914687fb"
+    },
+    {
+      "group": "mixed",
+      "role": "RESTORE",
+      "copies": 4,
+      "disabled_users": 12,
+      "request_pairs": 42,
+      "checker_stdout_sha256": "6102650cc2931a60ef41bd8f98fcbacd1d9dc3ead31957a5b6e1cf9d771552e3"
+    }
+  ],
+  "native_summary": {
+    "source_versions": 17,
+    "restored_versions": 17,
+    "source_disabled_users": 41,
+    "source_restored_Core_equal_all_groups": true,
+    "clean_rehearsal_Core_distinct": true,
+    "old_clone_rows_multisets_preserved": true,
+    "source_business_mutations": 0,
+    "native_delete": 0,
+    "full_mixed_outcomes": "NOT_RUN",
+    "budget_initializers": 3,
+    "new_budget_UID_GID": 10001,
+    "new_budgets_empty": true,
+    "resources_closed": 92,
+    "maintenance_rehearsal_profiles_revoked": 19
+  },
+  "nondelete_evidence_index_sha256": "0f9adc090e07a6c47dd09758850016def766de3cfda68b2f510ada045bc08927",
+  "audited_index_members": 1340,
+  "allocation_sha256": "232409f09247252a8526ee23f59f4a8ea00bb6b592f8985e2ba3ffdb0fe0bec8",
+  "terminal_sha256": "8e7958b918c90f717a3cd8e85bad38b9995f5539918f75cdf0654ef0b05677e6",
+  "budget_completion_sha256": "66616addb741f9c8f8e1abf5373ff2e25bc3bc855277b7d0045bde1e11765765",
+  "not_accepted": [
+    "final frozen candidate/confirmation/host/static bindings",
+    "fixed complete CLI receipt",
+    "final physical cold-state inventory",
+    "new deletion authorization/schedule",
+    "actual six deletes",
+    "complete D1"
+  ]
+}

@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c22\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 479, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c22\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 476, in main
+    allocate()
+    ~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c22\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 355, in allocate
+    retained=historical_gate()
+  File "C:\Users\Henry\.codex\worktrees\d1-c22\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 145, in historical_gate
+    c19=retained_v29.verify(ROOT,inspect,closed,project_owner,docker,ids,p1.PRIVATE,p1.hostpath)
+  File "C:\Users\Henry\.codex\worktrees\d1-c22\data-product-platform\examples\lifecycle-d1\retained_v29.py", line 54, in verify
+    need(a.read_bytes()==b.read_bytes() and sha(a)==row['sha256'] and a.stat().st_size==row['bytes'],'original v29 receipt byte drift')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c22\data-product-platform\examples\lifecycle-d1\retained_v29.py", line 19, in need
+    if not ok:raise ValueError('retained v29: '+message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: retained v29: original v29 receipt byte drift

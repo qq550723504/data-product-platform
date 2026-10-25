@@ -1,0 +1,266 @@
+{
+  "at": "2026-10-19T11:56:24.790908+00:00",
+  "scratch_cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "source_started": false,
+  "native_provider_calls": 0,
+  "DELETE": 0,
+  "tests": [
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/other-host",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/dsn-options",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/window-extension",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/workspace",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/other-database",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/other-user",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/fallback",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/TLS",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/expired",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/future",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/disabled",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/old-execution",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/Core",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment/delete-budget",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": "TestOldDispatchObserverScopeAndPrincipalContainment",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch",
+      "test": null,
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/candidate",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/Core",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/gateway",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/target-expansion",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/target-substitution",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/evidence",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/running-owner",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/old-execution",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/bindings",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/owner-expansion",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/future",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/restart",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/audit",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/nonce",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/owner-loss",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/stale",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/permission",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence/IAM",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsStaleForeignExpandedAndTamperedEvidence",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22ClosedProofRejectsForeignAttemptBeforeDatabase",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/success",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/unrevoked",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/claim",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/UNKNOWN",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/released",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/absence",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/new-attempt",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/new-dispatch",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility/wrong-approval-hash",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": null,
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application",
+      "test": "TestDispositionStartUnknownObservationCostAndReplayAreSeparateFacts",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application",
+      "test": "TestDispositionFreshApprovalMissingDependenciesAndNotSentRelease",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application",
+      "test": "TestProviderObservationBatchRollsBackBothAndReplaysStableProof",
+      "action": "pass"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application",
+      "test": null,
+      "action": "pass"
+    }
+  ],
+  "exit": 0,
+  "scratch_stopped_PID0": true
+}

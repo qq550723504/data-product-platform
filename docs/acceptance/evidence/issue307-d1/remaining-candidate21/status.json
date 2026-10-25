@@ -1,0 +1,20 @@
+{
+  "candidate": "candidate21/v31",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "candidate_sha256": "813b941ff3d1be0d9b83f81bcd5dd532bd1f6da4df81181d2a1d1ecae7d34867",
+  "bindings_sha256": "e47174bddd358850896e85d270b9a65bcf144cb783a862e14b772077d4314ca9",
+  "confirmation_sha256": "960d08299c6f06aa0b8528fd6aec28ea8c31c2b8ab7cd587fc74ca8e5d6b7691",
+  "source": "514843da1a143fba537c1668483fe95800ddd992",
+  "historical_copies": 18,
+  "present_versions": 17,
+  "targets": 6,
+  "survivors": 11,
+  "human_confirmation": "NOT_RECEIVED",
+  "permission_enabled": false,
+  "native_delete": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "Issue307": "OPEN",
+  "PR332": "DRAFT",
+  "old_authorization_reused": false,
+  "schedule": "NOT_CREATED"
+}

@@ -1,0 +1,89 @@
+{
+  "status": "C21_FROZEN_PREPARATION_REVIEW_EVIDENCE_INDEX",
+  "format": "files-map-v1",
+  "member_root": "docs/acceptance/evidence/issue307-d1/candidate21-artifacts-review01",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "count": 20,
+  "files": {
+    "independent-build-scope-audit01.json": {
+      "sha256": "07002c32f192afc7d75ebba785cfbdf69ee68d737570cec10bb90308a0b6d6c4",
+      "bytes": 17594
+    },
+    "independent-checker-replay01/business-races.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "independent-checker-replay01/business-races.stdout.txt": {
+      "sha256": "bd7109fa50fe50b29e44dd4f061a641bd51a48146aa01acf39163bbba07bebc5",
+      "bytes": 4927
+    },
+    "independent-checker-replay01/late-hold.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "independent-checker-replay01/late-hold.stdout.txt": {
+      "sha256": "519ea2e5edb83ad1d04665a46810f335a102f0cd69b4aef2770c262a36ebd87b",
+      "bytes": 3651
+    },
+    "independent-checker-replay01/mixed.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "independent-checker-replay01/mixed.stdout.txt": {
+      "sha256": "74e89968701c023384892228cfefadd6b367b1af1083deb55c981fced0997924",
+      "bytes": 3647
+    },
+    "independent-checker-replay01/result.json": {
+      "sha256": "ea6fd5cbb93dbbf82aa6adb2d753dcb7c9098788813df4537adf1c7a2c69da21",
+      "bytes": 17995
+    },
+    "independent-child-attributes-blocker01.json": {
+      "sha256": "a80a786991149fe7697111e26d63ccdb7619e5da4d3288f4469d1ce3ecd76b6d",
+      "bytes": 728
+    },
+    "independent-child-attributes-model03.json": {
+      "sha256": "afb3d9d28558cf4ca0289a89244d29d1b2255f933da85c6f88c053db3eea37bf",
+      "bytes": 1309
+    },
+    "independent-composer-model01.json": {
+      "sha256": "049a8f7ae4b8019bd0053f67327df9aa2590d7f65fd11ea455b6e9ae333afd5f",
+      "bytes": 3426
+    },
+    "independent-documents-host-cold-audit01.json": {
+      "sha256": "ccbf8570a6891cc15c6701c2cc7c460081c9dfd0b0fbf4535befb1c43eb0e607",
+      "bytes": 1759
+    },
+    "independent-final-review01.json": {
+      "sha256": "44410ec104478164e422661dabae95c5fc4c25db2b7cb83fb4ec677c9f7697ff",
+      "bytes": 10460
+    },
+    "independent-helper-addendum02.json": {
+      "sha256": "3721cb73e0d9dd41139ef48f20837f68eb35f19d48d2002850fd858283acc253",
+      "bytes": 1230
+    },
+    "independent-helper-addendum03.json": {
+      "sha256": "56a3266704c56d83aabce4e55c40e4b366d919060ed44b5994a6bd55151aadd3",
+      "bytes": 894
+    },
+    "independent-helper-inputs01.json": {
+      "sha256": "7b8673c2b7899fae2709afbc4331ea71d065d3844f91cac46518cc2de2fcd2da",
+      "bytes": 1577
+    },
+    "independent-helper-static-review01.json": {
+      "sha256": "00d9caec077da737ba89fad521cf2b5eb4b6701ade6327b089b8af34144daae3",
+      "bytes": 4867
+    },
+    "independent-late-composer-static-review01.json": {
+      "sha256": "47fd6976351c40556309e548b19e6dd8903a1d10b0ee4aa5744bd165fb5ab28b",
+      "bytes": 2049
+    },
+    "independent-native-receipt-audit01.json": {
+      "sha256": "4bfcf7a0b8d5269cab2d70be67a80b35ec8df570f10bb5e47f669a1ed69034dc",
+      "bytes": 15582
+    },
+    "reviewed-artifacts01.json": {
+      "sha256": "b8e5043d5938f00b78660150eb96443da6dbe999ceaf07d5209221b3f14f5b4a",
+      "bytes": 665131
+    }
+  }
+}

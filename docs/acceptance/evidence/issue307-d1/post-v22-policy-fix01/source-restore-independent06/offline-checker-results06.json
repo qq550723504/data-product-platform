@@ -1,0 +1,68 @@
+{
+  "status": "PASS_SIX_INDEPENDENT_FILE_ONLY_AGGREGATIONS",
+  "binary_sha256": "871fd13c6a5f16c614dff199f5b00c744a30a1b40fd894035bbd172b5cd46057",
+  "real_provider_io": 0,
+  "scope": "Existing immutable native journals; no native worker/Source/provider replay",
+  "results": [
+    {
+      "group": "business-races",
+      "role": "source",
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 7,
+      "policies": 9,
+      "official_equals": true,
+      "stdout_sha256": "8ba73f979b25e0bf609d09e97053ecd2895dcd96a65892e38ea2a83b4f83014c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "group": "business-races",
+      "role": "restore",
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 7,
+      "policies": 9,
+      "official_equals": true,
+      "stdout_sha256": "3bddd7ed8bc334d4a146ecd42d66402733bad3cdc0895fbc9b4eaab1121aa0e6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "group": "late-hold",
+      "role": "source",
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 6,
+      "policies": 4,
+      "official_equals": true,
+      "stdout_sha256": "601a2bcf8f67ebfafc7a83cc73d1e0d611c329d7728a142a81d55451a69f995d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "group": "late-hold",
+      "role": "restore",
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 6,
+      "policies": 4,
+      "official_equals": true,
+      "stdout_sha256": "eef9244b1878c8fed58d010eed23412788d89d7791ebe4469e62f2acc2d15db0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "group": "mixed",
+      "role": "source",
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 4,
+      "policies": 4,
+      "official_equals": true,
+      "stdout_sha256": "d4f3231eb60882725cecbec36ba81029f9b8c89f476d39f2cc30f8ab63b3b8bd",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "group": "mixed",
+      "role": "restore",
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 4,
+      "policies": 4,
+      "official_equals": true,
+      "stdout_sha256": "cc5a3ced6906bb571b7b1982f78f72420b5901b121034ad2ea19abb9fa5cb53f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

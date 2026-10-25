@@ -1,0 +1,26 @@
+{
+  "status": "PASS_EXPECTED_OLD_TERMINAL_REJECTION",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "examples/lifecycle-d1/verify-six-native.py",
+    "--candidate-sha256",
+    "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643",
+    "--bindings-sha256",
+    "ba4be219a0a567579684afbb9ced23d7fdec556654d746b7b86c254d35e4e580",
+    "--checker-sha256",
+    "2bbd3f37903b553459ebc709cc59b36bde04f7dca832c9b72631a22241c5d90e",
+    "--evidence-audit-plan",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-index-audit\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\index-audit-repair01\\historical-evidence-audit-plan.json",
+    "--evidence-audit-plan-sha256",
+    "8ad738b77b28f02c8c034fe88b6780608e30bf68ac78335f97e9a28b3936cd19",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-index-audit\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\index-audit-repair01\\terminal-must-not-create-output"
+  ],
+  "exit_code": 1,
+  "output_created": false,
+  "source_Docker_provider_DELETE": 0,
+  "execution_resumed": false
+}

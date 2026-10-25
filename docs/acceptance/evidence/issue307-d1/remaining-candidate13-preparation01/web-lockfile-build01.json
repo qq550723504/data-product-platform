@@ -1,0 +1,42 @@
+{
+  "command": [
+    "docker",
+    "build",
+    "--progress",
+    "plain",
+    "--file",
+    "deploy/demo/Dockerfile.web",
+    "--tag",
+    "dpp307-ci-web:4e524c04-87fc873e",
+    "."
+  ],
+  "started_at": "2026-10-19T17:18:45.337611+00:00",
+  "completed_at": "2026-10-19T17:19:46.883643+00:00",
+  "exit": 0,
+  "tag": "dpp307-ci-web:4e524c04-87fc873e",
+  "lock_sha256": "87fc873e9a7f05d530667dba54abdbf3cc2739a7327aa58d4f45feb5f88b8b50",
+  "raw_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "raw_stderr_sha256": "2ce01d7a766d950704375b4400279f5ec59d1fb7a13ad3b4428f974d1031d4b0",
+  "scope": "Isolated web image build only, no Compose up/source/fixture/provider calls; no images or cache pruned",
+  "native_delete": 0,
+  "image_id": "sha256:bb993a2ec5074a4f3e9a95e2b828b80976b52b7a495f1a1ef660e8ee66f1d3d6",
+  "tap": {
+    "tests": 204,
+    "pass": 204,
+    "fail": 0,
+    "suites": 8
+  },
+  "receipt_private_sha256": "fc58fce0157a1d47cd2ca5611bda6ef08d466ee9df8e8d1218ec97e9818be501",
+  "original_failure": {
+    "run_id": 39291709408,
+    "job_id": 118193819314,
+    "source": "355717c022fe36052dcf8b3cc37ceeef901286f7",
+    "error": "npm ETARGET: @typescript-eslint/parser@^8.72.0 unavailable at install observation",
+    "private_raw_log_sha256": "0cb15ae1207b451dd12567cd6c806688de4330e00fbb286d3eec907448233542",
+    "gap": "No lockfile; npm install selected transitive ranges at build time",
+    "publication_propagation": "Inference, not proven",
+    "all_original_failure_bytes_retained": true
+  },
+  "standard_reuse": "npm package-lock v3 + npm ci; official https://docs.npmjs.com/cli/commands/npm-ci/",
+  "head_ci": "New exact-head PR CI required; prior run failed; no main CI claimed"
+}

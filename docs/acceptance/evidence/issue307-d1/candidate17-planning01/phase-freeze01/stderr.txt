@@ -1,0 +1,20 @@
+fatal: failed to stat '8cca345525af828a8c9461e75f2dc5bf5f1fb428:examples/lifecycle-d1/results/7cd53b0e-44d9-4f3a-9eb7-041f496ff277/credential-admin/reader-helper-dpp-lifecycle307-7cd53b0e-reader-credential-provision-56e021.json': Filename too long
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 227, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 90, in main
+    source_freeze(a)
+    ~~~~~~~~~~~~~^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\freeze-six-candidate.py", line 69, in source_freeze
+    raw=path.read_bytes();git=subprocess.check_output(['git','show',a['source']+':'+name],cwd=r.ROOT)
+                              ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'show', '8cca345525af828a8c9461e75f2dc5bf5f1fb428:examples/lifecycle-d1/results/7cd53b0e-44d9-4f3a-9eb7-041f496ff277/credential-admin/reader-helper-dpp-lifecycle307-7cd53b0e-reader-credential-provision-56e021.json']' returned non-zero exit status 128.

@@ -1,0 +1,10 @@
+{
+  "volume": "dpp-lifecycle307-754ea8f0-candidate13-rehearsal-core",
+  "driver": "local",
+  "scope": "local",
+  "labels": {
+    "lifecycle307.allocation": "d54522c4-20db-4be6-9bb7-f2f8ed9b3aa3",
+    "lifecycle307.remaining": "4e524c04-2376-4bc9-9e85-452909d3dba4"
+  },
+  "mounted_cids": []
+}

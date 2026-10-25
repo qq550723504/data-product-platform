@@ -1,0 +1,1024 @@
+355306Z ----------------------------------------------------------------------
+2026-10-24T11:41:54.4355615Z Ran 16 tests in 0.070s
+2026-10-24T11:41:54.4355739Z 
+2026-10-24T11:41:54.4355811Z OK
+2026-10-24T11:41:54.5092971Z ....
+2026-10-24T11:41:54.5093302Z ----------------------------------------------------------------------
+2026-10-24T11:41:54.5093627Z Ran 4 tests in 0.003s
+2026-10-24T11:41:54.5093751Z 
+2026-10-24T11:41:54.5094062Z OK
+2026-10-24T11:41:54.7103139Z ....
+2026-10-24T11:41:54.7103488Z ----------------------------------------------------------------------
+2026-10-24T11:41:54.7104461Z Ran 4 tests in 0.003s
+2026-10-24T11:41:54.7104586Z 
+2026-10-24T11:41:54.7104656Z OK
+2026-10-24T11:41:54.7797723Z ....
+2026-10-24T11:41:54.7798071Z ----------------------------------------------------------------------
+2026-10-24T11:41:54.7798393Z Ran 4 tests in 0.006s
+2026-10-24T11:41:54.7798524Z 
+2026-10-24T11:41:54.7798592Z OK
+2026-10-24T11:41:54.9851564Z ....
+2026-10-24T11:41:54.9851919Z ----------------------------------------------------------------------
+2026-10-24T11:41:54.9852250Z Ran 4 tests in 0.006s
+2026-10-24T11:41:54.9852371Z 
+2026-10-24T11:41:54.9852439Z OK
+2026-10-24T11:41:55.2439332Z .........
+2026-10-24T11:41:55.2439671Z ----------------------------------------------------------------------
+2026-10-24T11:41:55.2440009Z Ran 9 tests in 0.104s
+2026-10-24T11:41:55.2440138Z 
+2026-10-24T11:41:55.2440207Z OK
+2026-10-24T11:41:55.2440774Z {"action": "check", "output_sha256": "7c2c8e5d1eef3145f7228ea57c343f4814e4b5ce62e5e6185ad6fb58cb62b027", "authority": "NO_ENABLE_NO_START_NO_DELETE"}
+2026-10-24T11:41:55.7661101Z .........
+2026-10-24T11:41:55.7661349Z ----------------------------------------------------------------------
+2026-10-24T11:41:55.7661566Z Ran 9 tests in 0.114s
+2026-10-24T11:41:55.7661653Z 
+2026-10-24T11:41:55.7661709Z OK
+2026-10-24T11:41:55.7662025Z {"action": "check", "output_sha256": "7c2c8e5d1eef3145f7228ea57c343f4814e4b5ce62e5e6185ad6fb58cb62b027", "authority": "NO_ENABLE_NO_START_NO_DELETE"}
+2026-10-24T11:41:56.1005581Z EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+2026-10-24T11:41:56.1006015Z ======================================================================
+2026-10-24T11:41:56.1006622Z ERROR: test_absent_unstarted_reader_facts_are_absent_not_unconfirmed (__main__.CompositionTests.test_absent_unstarted_reader_facts_are_absent_not_unconfirmed)
+2026-10-24T11:41:56.1007555Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1007882Z Traceback (most recent call last):
+2026-10-24T11:41:56.1015351Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 248, in test_absent_unstarted_reader_facts_are_absent_not_unconfirmed
+2026-10-24T11:41:56.1016008Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T11:41:56.1016177Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1016570Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1016942Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1017116Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1017472Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1017938Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1018238Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1018622Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1018960Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1019215Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1019476Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1019621Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1019862Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1020153Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1020358Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1020819Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1021381Z 
+2026-10-24T11:41:56.1021445Z ======================================================================
+2026-10-24T11:41:56.1021872Z ERROR: test_complete_before_seventeen_two_ordered_workers_after_seventeen_and_closure (__main__.CompositionTests.test_complete_before_seventeen_two_ordered_workers_after_seventeen_and_closure)
+2026-10-24T11:41:56.1022309Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1022501Z Traceback (most recent call last):
+2026-10-24T11:41:56.1022981Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 155, in test_complete_before_seventeen_two_ordered_workers_after_seventeen_and_closure
+2026-10-24T11:41:56.1023477Z     entry,ops,args,*_=self.fixture(Path(d));entry.run(*args)
+2026-10-24T11:41:56.1023666Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1024266Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1024810Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1024980Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1025336Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1025775Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1026074Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1026570Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1026897Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1027154Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1027412Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1027556Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1027794Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1028079Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1028281Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1028711Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1029079Z 
+2026-10-24T11:41:56.1029143Z ======================================================================
+2026-10-24T11:41:56.1029578Z ERROR: test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass (__main__.CompositionTests.test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass) (fault='reader-stop')
+2026-10-24T11:41:56.1030031Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1030216Z Traceback (most recent call last):
+2026-10-24T11:41:56.1030676Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 217, in test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass
+2026-10-24T11:41:56.1031134Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1031304Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1031664Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1032015Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1032180Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1032519Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1033062Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1033351Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1033724Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1034201Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1034448Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1034702Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1034845Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1035081Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1035369Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1035594Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1036096Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1036458Z 
+2026-10-24T11:41:56.1036521Z ======================================================================
+2026-10-24T11:41:56.1036985Z ERROR: test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass (__main__.CompositionTests.test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass) (fault='reader-missing-registration')
+2026-10-24T11:41:56.1037461Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1037749Z Traceback (most recent call last):
+2026-10-24T11:41:56.1038203Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 217, in test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass
+2026-10-24T11:41:56.1038656Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1038826Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1039172Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1039522Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1039692Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1040031Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1058664Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1058984Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1059436Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1059781Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1060049Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1060312Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1060469Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1060714Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1061014Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1061223Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1061670Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1062184Z 
+2026-10-24T11:41:56.1062249Z ======================================================================
+2026-10-24T11:41:56.1062672Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='HEAD')
+2026-10-24T11:41:56.1063106Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1063302Z Traceback (most recent call last):
+2026-10-24T11:41:56.1063766Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1064369Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1064547Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1064900Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1065259Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1065436Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1065783Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1066230Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1066527Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1066903Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1067340Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1067597Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1067856Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1068000Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1068235Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1068522Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1068725Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1069154Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1069523Z 
+2026-10-24T11:41:56.1069589Z ======================================================================
+2026-10-24T11:41:56.1070014Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='old-budget')
+2026-10-24T11:41:56.1070452Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1070639Z Traceback (most recent call last):
+2026-10-24T11:41:56.1071095Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1071553Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1071721Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1072063Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1072413Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1072582Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1072925Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1073490Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1073781Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1074396Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1074720Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1074968Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1075223Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1075363Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1075603Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1075893Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1076101Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1076527Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1076894Z 
+2026-10-24T11:41:56.1076955Z ======================================================================
+2026-10-24T11:41:56.1077406Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='before-business-races')
+2026-10-24T11:41:56.1077866Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1078053Z Traceback (most recent call last):
+2026-10-24T11:41:56.1078609Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1079061Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1079229Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1079578Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1079929Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1080094Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1080432Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1080875Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1081171Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1081541Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1081867Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1082113Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1082366Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1082508Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1082745Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1083029Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1083231Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1083657Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1084198Z 
+2026-10-24T11:41:56.1084260Z ======================================================================
+2026-10-24T11:41:56.1084789Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='before-late-hold')
+2026-10-24T11:41:56.1085233Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1085417Z Traceback (most recent call last):
+2026-10-24T11:41:56.1085871Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1086319Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1086486Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1086828Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1087181Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1087345Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1087686Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1088123Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1088411Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1088781Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1089104Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1089437Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1089688Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1089830Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1090063Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1090351Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1090557Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1090980Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1091341Z 
+2026-10-24T11:41:56.1091403Z ======================================================================
+2026-10-24T11:41:56.1091829Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='before-mixed')
+2026-10-24T11:41:56.1092266Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1092455Z Traceback (most recent call last):
+2026-10-24T11:41:56.1092903Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1093350Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1093514Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1093935Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1094282Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1094446Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1094781Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1095220Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1095598Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1095969Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1096297Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1096541Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1096806Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1096951Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1097187Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1097475Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1097677Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1098103Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1098464Z 
+2026-10-24T11:41:56.1098525Z ======================================================================
+2026-10-24T11:41:56.1098949Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='phase-alias')
+2026-10-24T11:41:56.1099385Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1099569Z Traceback (most recent call last):
+2026-10-24T11:41:56.1100162Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1100611Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1100782Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1101125Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1101472Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1101636Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1101971Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1102412Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1102704Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1103073Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1103396Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1103642Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1103970Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1104109Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1104348Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1104632Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1104833Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1105258Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1105616Z 
+2026-10-24T11:41:56.1105677Z ======================================================================
+2026-10-24T11:41:56.1106189Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='new-budget')
+2026-10-24T11:41:56.1106622Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1106807Z Traceback (most recent call last):
+2026-10-24T11:41:56.1107256Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1107702Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1107868Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1108212Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1108562Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1108728Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1109064Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1109501Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1109789Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1110163Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1110485Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1110813Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1111095Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1111235Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1111470Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1111761Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1111964Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1112387Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1112748Z 
+2026-10-24T11:41:56.1112810Z ======================================================================
+2026-10-24T11:41:56.1113236Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='start-unknown')
+2026-10-24T11:41:56.1113671Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1114007Z Traceback (most recent call last):
+2026-10-24T11:41:56.1114459Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1114904Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1115069Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1115413Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1115759Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1115921Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1116260Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1116697Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1117083Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1117454Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1117777Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1118020Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1118271Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1118410Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1118644Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1118934Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1119136Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1119560Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1119920Z 
+2026-10-24T11:41:56.1119983Z ======================================================================
+2026-10-24T11:41:56.1120404Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='ready-missing')
+2026-10-24T11:41:56.1120837Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1121023Z Traceback (most recent call last):
+2026-10-24T11:41:56.1121551Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1122001Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1122170Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1122508Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1122858Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1123021Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1123357Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1123792Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1124219Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1124591Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1124921Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1125167Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1125419Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1125558Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1125790Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1126074Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1126280Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1126703Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1127061Z 
+2026-10-24T11:41:56.1127126Z ======================================================================
+2026-10-24T11:41:56.1127547Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='ready-foreign')
+2026-10-24T11:41:56.1128075Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1128258Z Traceback (most recent call last):
+2026-10-24T11:41:56.1128714Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1129160Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1129328Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1129676Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1130028Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1130192Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1130536Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1130980Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1131271Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1131643Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1131969Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1132221Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1132563Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1132710Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1132945Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1133233Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1133434Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1133938Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1134297Z 
+2026-10-24T11:41:56.1134362Z ======================================================================
+2026-10-24T11:41:56.1134879Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='ready-replayed')
+2026-10-24T11:41:56.1135319Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1135502Z Traceback (most recent call last):
+2026-10-24T11:41:56.1136031Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1136489Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1136652Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1137226Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1137805Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1137986Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1138332Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1138773Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1139064Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1139559Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1139909Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1140160Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1140412Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1140554Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1140788Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1141073Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1141281Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1141709Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1142069Z 
+2026-10-24T11:41:56.1142134Z ======================================================================
+2026-10-24T11:41:56.1142568Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='window-after-proof')
+2026-10-24T11:41:56.1143024Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1143208Z Traceback (most recent call last):
+2026-10-24T11:41:56.1143742Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1144327Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1144492Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1144836Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1145182Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1145344Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1145685Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1146122Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1146410Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1146781Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1147102Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1147348Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1147601Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1147739Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1147971Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1148255Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1148457Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1148887Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1149241Z 
+2026-10-24T11:41:56.1149307Z ======================================================================
+2026-10-24T11:41:56.1149730Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='first-UNKNOWN')
+2026-10-24T11:41:56.1150257Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1150439Z Traceback (most recent call last):
+2026-10-24T11:41:56.1150885Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1151337Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1151501Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1151844Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1152191Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1152352Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1152690Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1153132Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1153425Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1153794Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1154209Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1154454Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1154707Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1154937Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1155170Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1155456Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1155655Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1156077Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1156437Z 
+2026-10-24T11:41:56.1156499Z ======================================================================
+2026-10-24T11:41:56.1156918Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='durability')
+2026-10-24T11:41:56.1157353Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1157535Z Traceback (most recent call last):
+2026-10-24T11:41:56.1157985Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1158430Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1158595Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1158935Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1159283Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1159444Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1159776Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1160212Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1160499Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1160952Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1161275Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1161519Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1161770Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1161909Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1162142Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1162429Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1162632Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1163056Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1163416Z 
+2026-10-24T11:41:56.1163478Z ======================================================================
+2026-10-24T11:41:56.1164044Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='unconfirmed')
+2026-10-24T11:41:56.1164478Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1164661Z Traceback (most recent call last):
+2026-10-24T11:41:56.1165110Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1165640Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1165807Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1166144Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1166497Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1166661Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1166998Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1167435Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1167723Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1168091Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1168415Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1168659Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1168913Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1169052Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1169283Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1169565Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1169770Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1170192Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1170547Z 
+2026-10-24T11:41:56.1170612Z ======================================================================
+2026-10-24T11:41:56.1171052Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='after-business-races')
+2026-10-24T11:41:56.1171587Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1171769Z Traceback (most recent call last):
+2026-10-24T11:41:56.1172219Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1172664Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1172829Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1173165Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1173513Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1173678Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1174087Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1174533Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1174818Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1175184Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1175503Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1175746Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1175998Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1176136Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1176459Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1176743Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1176947Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1177370Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1177728Z 
+2026-10-24T11:41:56.1177792Z ======================================================================
+2026-10-24T11:41:56.1178214Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='after-mixed')
+2026-10-24T11:41:56.1178649Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1178835Z Traceback (most recent call last):
+2026-10-24T11:41:56.1179280Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1179732Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1179895Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1180235Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1180582Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1180746Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1181085Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1181526Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1181813Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1182184Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1182586Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1182829Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1183081Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1183221Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1183452Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1183734Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1184019Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1184441Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1184799Z 
+2026-10-24T11:41:56.1184866Z ======================================================================
+2026-10-24T11:41:56.1185278Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='closure')
+2026-10-24T11:41:56.1185704Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1185886Z Traceback (most recent call last):
+2026-10-24T11:41:56.1186333Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 168, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T11:41:56.1186780Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T11:41:56.1187074Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1187412Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1187762Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1187924Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1188262Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1188705Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1188994Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1189361Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1189681Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1189926Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1190175Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1190317Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1190548Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1190830Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1191029Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1191447Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1191803Z 
+2026-10-24T11:41:56.1191865Z ======================================================================
+2026-10-24T11:41:56.1192292Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='reader')
+2026-10-24T11:41:56.1192725Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1192990Z Traceback (most recent call last):
+2026-10-24T11:41:56.1193449Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 207, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T11:41:56.1194049Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T11:41:56.1194207Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1194546Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1194893Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1195055Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1195392Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1195831Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1196122Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1196489Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1196810Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1197055Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1197305Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1197446Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1197766Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1198051Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1198253Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1198681Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1199043Z 
+2026-10-24T11:41:56.1199104Z ======================================================================
+2026-10-24T11:41:56.1199527Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='config')
+2026-10-24T11:41:56.1199969Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1200153Z Traceback (most recent call last):
+2026-10-24T11:41:56.1200611Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 207, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T11:41:56.1201060Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T11:41:56.1201211Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1201552Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1201950Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1202198Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1202712Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1203160Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1203450Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1203978Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1204403Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1204649Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1204899Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1205036Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1205269Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1205560Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1205759Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1206188Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1206548Z 
+2026-10-24T11:41:56.1206609Z ======================================================================
+2026-10-24T11:41:56.1207035Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='baseline')
+2026-10-24T11:41:56.1207471Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1207659Z Traceback (most recent call last):
+2026-10-24T11:41:56.1208109Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 207, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T11:41:56.1208549Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T11:41:56.1208704Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1209121Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1209471Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1209639Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1209973Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1210411Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1210699Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1211088Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1211410Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1211654Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1211906Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1212046Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1212278Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1212567Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1212769Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1213190Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1213546Z 
+2026-10-24T11:41:56.1213611Z ======================================================================
+2026-10-24T11:41:56.1214200Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='private-key')
+2026-10-24T11:41:56.1214644Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1214827Z Traceback (most recent call last):
+2026-10-24T11:41:56.1215373Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 207, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T11:41:56.1215817Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T11:41:56.1215969Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1216302Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1216649Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1216811Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1217153Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1217623Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1217918Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1218287Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1218610Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1218856Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1219107Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1219245Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1219477Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1219843Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1220047Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1220473Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1220831Z 
+2026-10-24T11:41:56.1220897Z ======================================================================
+2026-10-24T11:41:56.1221344Z ERROR: test_sha_pinned_anchor_closes_all_after_packet_drift_archive_failure_and_inspect_failure (__main__.CompositionTests.test_sha_pinned_anchor_closes_all_after_packet_drift_archive_failure_and_inspect_failure)
+2026-10-24T11:41:56.1221807Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1221992Z Traceback (most recent call last):
+2026-10-24T11:41:56.1222479Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 192, in test_sha_pinned_anchor_closes_all_after_packet_drift_archive_failure_and_inspect_failure
+2026-10-24T11:41:56.1223011Z     entry,ops,args,*_=self.fixture(Path(d),'closure')
+2026-10-24T11:41:56.1223190Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1223533Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1224001Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1224165Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1224502Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1224944Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1225234Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1225604Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1226017Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1226261Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1226514Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1226654Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1226887Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1227171Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1227373Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1227797Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1228155Z 
+2026-10-24T11:41:56.1228220Z ======================================================================
+2026-10-24T11:41:56.1228712Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='MaxProviderDeletes')
+2026-10-24T11:41:56.1229229Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1229412Z Traceback (most recent call last):
+2026-10-24T11:41:56.1229882Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1230479Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1230861Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1231207Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1231554Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1231719Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1232057Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1232501Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1232796Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1233167Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1233488Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1233735Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1234109Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1234251Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1234485Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1234769Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1234971Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1235393Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1235752Z 
+2026-10-24T11:41:56.1235812Z ======================================================================
+2026-10-24T11:41:56.1236312Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='MaxProtectionWrites')
+2026-10-24T11:41:56.1236911Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1237097Z Traceback (most recent call last):
+2026-10-24T11:41:56.1237567Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1238158Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1238456Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1238803Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1239152Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1239316Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1239651Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1240089Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1240376Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1240741Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1241062Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1241305Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1241555Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1241780Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1242014Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1242296Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1242498Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1242921Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1243279Z 
+2026-10-24T11:41:56.1243340Z ======================================================================
+2026-10-24T11:41:56.1243952Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='SourceStart')
+2026-10-24T11:41:56.1244489Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1244671Z Traceback (most recent call last):
+2026-10-24T11:41:56.1245142Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1245732Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1246027Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1246377Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1246725Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1246890Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1247224Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1247663Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1248047Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1248419Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1248739Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1248982Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1249231Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1249370Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1249605Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1249890Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1250092Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1250512Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1250872Z 
+2026-10-24T11:41:56.1250933Z ======================================================================
+2026-10-24T11:41:56.1251406Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='Phases')
+2026-10-24T11:41:56.1251894Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1252075Z Traceback (most recent call last):
+2026-10-24T11:41:56.1252622Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1253212Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1253509Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1253988Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1254336Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1254500Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1254838Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1255281Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1255573Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1255945Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1256270Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1256518Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1256771Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1256912Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1257151Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1257439Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1257641Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1258065Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1258427Z 
+2026-10-24T11:41:56.1258489Z ======================================================================
+2026-10-24T11:41:56.1259057Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='ManifestSHA256')
+2026-10-24T11:41:56.1259560Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1259748Z Traceback (most recent call last):
+2026-10-24T11:41:56.1260603Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1261301Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1261713Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1262131Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1262542Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1262861Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1263305Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1263981Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1264345Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1264900Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1265347Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1265694Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1266056Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1266275Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1266610Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1267009Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1267285Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1267849Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1268219Z 
+2026-10-24T11:41:56.1277534Z ======================================================================
+2026-10-24T11:41:56.1278078Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='OldAuthorizationReused')
+2026-10-24T11:41:56.1278596Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1278787Z Traceback (most recent call last):
+2026-10-24T11:41:56.1279276Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1279875Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1280173Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1280528Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1280876Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1281045Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1281500Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1281939Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1282227Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1282595Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1282915Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1283163Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1283418Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1283557Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1283791Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1284219Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1284420Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1284850Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1285213Z 
+2026-10-24T11:41:56.1285280Z ======================================================================
+2026-10-24T11:41:56.1285853Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='RetainUntil')
+2026-10-24T11:41:56.1286349Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1286531Z Traceback (most recent call last):
+2026-10-24T11:41:56.1287005Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1287590Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1287886Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1288234Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1288579Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1288743Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1289081Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1289518Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1289808Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1290175Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1290495Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1290742Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1290995Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1291135Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1291368Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1291653Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1291857Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1292365Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1292721Z 
+2026-10-24T11:41:56.1292785Z ======================================================================
+2026-10-24T11:41:56.1293262Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='MaxTotal')
+2026-10-24T11:41:56.1293750Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1294047Z Traceback (most recent call last):
+2026-10-24T11:41:56.1294516Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1295108Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1295400Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1295740Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1296083Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1296246Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1296583Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1297184Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1297471Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1297838Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1298156Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1298399Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1298654Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1298795Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1299027Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1299311Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1299511Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1299933Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1300296Z 
+2026-10-24T11:41:56.1300361Z ======================================================================
+2026-10-24T11:41:56.1300838Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='MaxPerTarget')
+2026-10-24T11:41:56.1301332Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1301516Z Traceback (most recent call last):
+2026-10-24T11:41:56.1301983Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1302578Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1302873Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1303304Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1303649Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1303922Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1304287Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1304723Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1305008Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1305378Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1305698Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1305939Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1306195Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1306332Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1306562Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1306846Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1307048Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1307468Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1307826Z 
+2026-10-24T11:41:56.1307977Z ======================================================================
+2026-10-24T11:41:56.1308441Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='Kind')
+2026-10-24T11:41:56.1308924Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1309108Z Traceback (most recent call last):
+2026-10-24T11:41:56.1309578Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1310165Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1310460Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1310806Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1311175Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1311340Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1311673Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1312112Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1312399Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1312773Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1313096Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1313340Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1313590Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1313732Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1314179Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1314463Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1314664Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1315083Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1315438Z 
+2026-10-24T11:41:56.1315499Z ======================================================================
+2026-10-24T11:41:56.1316004Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='OldAuthorizationReused')
+2026-10-24T11:41:56.1316518Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1316704Z Traceback (most recent call last):
+2026-10-24T11:41:56.1317171Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1317753Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1318051Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1318395Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1318742Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1318987Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1319322Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1319759Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1320048Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1320420Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1320742Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1320986Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1321236Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1321372Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1321607Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1321890Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1322097Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1322513Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1322868Z 
+2026-10-24T11:41:56.1322934Z ======================================================================
+2026-10-24T11:41:56.1323416Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='BindingsSHA256')
+2026-10-24T11:41:56.1324040Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1324223Z Traceback (most recent call last):
+2026-10-24T11:41:56.1324691Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1325364Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1325658Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1326004Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1326355Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1326519Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1326858Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1327298Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1327586Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1327956Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1328280Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1328524Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1328776Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1328915Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1329148Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1329430Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1329716Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1330138Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1330493Z 
+2026-10-24T11:41:56.1330558Z ======================================================================
+2026-10-24T11:41:56.1331051Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='HumanMessageSHA256')
+2026-10-24T11:41:56.1331559Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1331741Z Traceback (most recent call last):
+2026-10-24T11:41:56.1332210Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 184, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T11:41:56.1332798Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T11:41:56.1333097Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T11:41:56.1333441Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1333787Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1334069Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1334407Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1334841Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1335128Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1335490Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1335904Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1336145Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1336394Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1336533Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1336763Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1337043Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1337243Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1337664Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1338023Z 
+2026-10-24T11:41:56.1338087Z ======================================================================
+2026-10-24T11:41:56.1338543Z ERROR: test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost (__main__.CompositionTests.test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost) (fault='intent-missing')
+2026-10-24T11:41:56.1339012Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1339195Z Traceback (most recent call last):
+2026-10-24T11:41:56.1339669Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 234, in test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost
+2026-10-24T11:41:56.1340152Z     entry,ops,args,*_=self.fixture(Path(d),'reader-stop')
+2026-10-24T11:41:56.1340336Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1340761Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1341114Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1341278Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1341612Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1342049Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1342335Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1342703Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1343025Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1343271Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1343522Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1343660Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1344007Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1344290Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1344492Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1344914Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1345273Z 
+2026-10-24T11:41:56.1345335Z ======================================================================
+2026-10-24T11:41:56.1345793Z ERROR: test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost (__main__.CompositionTests.test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost) (fault='intent-corrupt')
+2026-10-24T11:41:56.1346261Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1346534Z Traceback (most recent call last):
+2026-10-24T11:41:56.1347000Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 234, in test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost
+2026-10-24T11:41:56.1347474Z     entry,ops,args,*_=self.fixture(Path(d),'reader-stop')
+2026-10-24T11:41:56.1347660Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1348001Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_retention_composition.py", line 119, in fixture
+2026-10-24T11:41:56.1348344Z     for group,source in c.known_sources().items():
+2026-10-24T11:41:56.1348505Z                         ~~~~~~~~~~~~~~~^^
+2026-10-24T11:41:56.1348839Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/retention_composition.py", line 186, in known_sources
+2026-10-24T11:41:56.1349275Z     document=indexes.decode(indexes.checked_bytes(history.SOURCE_PACKET,history.SOURCE_PACKET_SHA256))
+2026-10-24T11:41:56.1349566Z                             ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1349933Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/evidence_indexes.py", line 88, in checked_bytes
+2026-10-24T11:41:56.1350252Z     raw = path.read_bytes()
+2026-10-24T11:41:56.1350491Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+2026-10-24T11:41:56.1350740Z     with self.open(mode='rb') as f:
+2026-10-24T11:41:56.1350876Z          ~~~~~~~~~^^^^^^^^^^^
+2026-10-24T11:41:56.1351109Z   File "/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/pathlib/_local.py", line 537, in open
+2026-10-24T11:41:56.1351471Z     return io.open(self, mode, buffering, encoding, errors, newline)
+2026-10-24T11:41:56.1351673Z            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T11:41:56.1352103Z FileNotFoundError: [Errno 2] No such file or directory: 'C:/Users/Henry/.codex/worktrees/d1-c22/data-product-platform/docs/acceptance/evidence/issue307-d1/remaining-candidate22/candidate.json'
+2026-10-24T11:41:56.1352458Z 
+2026-10-24T11:41:56.1352537Z ----------------------------------------------------------------------
+2026-10-24T11:41:56.1352714Z Ran 8 tests in 0.147s
+2026-10-24T11:41:56.1352793Z 
+2026-10-24T11:41:56.1352842Z FAILED (errors=42)
+2026-10-24T11:41:56.1362311Z ##[error]Process completed with exit code 1.
+2026-10-24T11:41:56.1464918Z Post job cleanup.
+2026-10-24T11:41:56.2022099Z [command]/usr/bin/git version
+2026-10-24T11:41:56.2055339Z git version 2.55.0
+2026-10-24T11:41:56.2078448Z Temporarily overriding HOME='/home/runner/work/_temp/0eef1ac9-af66-4881-b137-6980f1e7fd24' before making global git config changes
+2026-10-24T11:41:56.2079138Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-24T11:41:56.2081679Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/data-product-platform/data-product-platform
+2026-10-24T11:41:56.2113660Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-24T11:41:56.2153526Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-24T11:41:56.2379240Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-24T11:41:56.2407915Z http.https://github.com/.extraheader
+2026-10-24T11:41:56.2416486Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-24T11:41:56.2450228Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-24T11:41:56.2668187Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-24T11:41:56.2699241Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-24T11:41:56.3017418Z Cleaning up orphan processes
+2026-10-24T11:41:56.3250837Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

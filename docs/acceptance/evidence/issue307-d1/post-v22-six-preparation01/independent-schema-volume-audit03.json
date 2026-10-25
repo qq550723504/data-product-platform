@@ -1,0 +1,184 @@
+{
+  "at": "2026-10-19T16:17:56.904530+00:00",
+  "scope": "AST-extracted actual production cold-topology prefix, synthetic 15-volume descriptor/mount graph; no production import or subprocess",
+  "runtime_sha256": "a97a84d68adcc1378a4bd0ab15c3f103089cdb471a74707aa633860e060544fe",
+  "extracted_sha256": "74522a938282d17b48128ee082e27e7404ea59d814ffb86f5434c12ee61d5b7e",
+  "schema_baseline_sha256": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8",
+  "fixed_immutable_relations": [
+    "lifecycle_fixture_copy",
+    "lifecycle_copy_policy",
+    "lifecycle_provider_attempt",
+    "lifecycle_provider_observation",
+    "lifecycle_provider_send_claim",
+    "lifecycle_reader_pin",
+    "lifecycle_reader_termination",
+    "lifecycle_fixture_reference_release",
+    "lifecycle_disposition_approval",
+    "lifecycle_approval_revocation",
+    "lifecycle_disposition_dispatch",
+    "lifecycle_dispatch_release",
+    "lifecycle_copy_absence_receipt",
+    "dataset_version",
+    "cost_event",
+    "cost_allocation",
+    "audit_event",
+    "evidence",
+    "evidence_relation",
+    "outbox_event"
+  ],
+  "all_20_exist_in_accepted_full_schema": true,
+  "H4_positive": true,
+  "H4_rejected_counterexamples": [
+    {
+      "fault": "label",
+      "volume": "business-races-checkpoint",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-rehearsal",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-objects",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-queue",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "business-races-budget",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-checkpoint",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-rehearsal",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-objects",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-queue",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "late-hold-budget",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-checkpoint",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-rehearsal",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-objects",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-queue",
+      "rejected": true
+    },
+    {
+      "fault": "label",
+      "volume": "mixed-budget",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-checkpoint",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-rehearsal",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-objects",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-queue",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "business-races-budget",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-checkpoint",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-rehearsal",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-objects",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-queue",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "late-hold-budget",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-checkpoint",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-rehearsal",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-objects",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-queue",
+      "rejected": true
+    },
+    {
+      "fault": "foreign-mount",
+      "volume": "mixed-budget",
+      "rejected": true
+    }
+  ],
+  "new_source_allocation_native_provider": "NOT_RUN"
+}

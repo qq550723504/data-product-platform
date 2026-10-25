@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 339, in run_owner
+    need(waited.returncode==0 and waited.stdout.strip()==b'0','non-delete helper failed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: non-delete helper failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 689, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 685, in main
+    elif args.action=='run-non-delete':run_non_delete()
+                                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 620, in run_non_delete
+    maintenance(g,'PROVISION')
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 507, in maintenance
+    run_owner(g['maintenance'][role],target/'operation')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 360, in run_owner
+    need(result['closed'] and failure is None,'non-delete owner failure or physical closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: non-delete owner failure or physical closure unconfirmed

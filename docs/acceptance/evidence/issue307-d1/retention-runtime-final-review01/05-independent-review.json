@@ -1,0 +1,143 @@
+{
+  "schema": "INDEPENDENT_BOUNDED_RETENTION_RUNTIME_FINAL_REVIEW_V1",
+  "status": "PASS_BOUNDED_SOURCE_AND_EXISTING_ACCEPTANCE",
+  "reviewed_at_utc": "2026-10-24T09:18:31.8925487Z",
+  "reviewer_role": "Independent reviewer in reused Docker-repair subagent; no source edits or new runtime actions during review",
+  "source_head": "d8b782183d49f201c105e90e4c5215c1b8d7d3f4",
+  "parents": [
+    "8249b55dec8fcf20de2d378887b9aff66047961f",
+    "53f6f8a6e69c17fa6896a40293d323f6ee9d0958"
+  ],
+  "runtime_source": "53f6f8a6e69c17fa6896a40293d323f6ee9d0958",
+  "runtime_archive": {
+    "sha256": "1f9462c13204dddd6f8fc475b2cf21830d094aba14e1677d03848c8d70906557",
+    "bytes": 6504490,
+    "file_members": 780,
+    "actual_Linux_probe_archive_matches": true,
+    "actual_Linux_probe_build_source_members_match": true
+  },
+  "merge_contract": {
+    "goal": "Prepare finite exact-two retention extension components with Linux custody, explicit permission transition, and independent before/after reader/checker contracts",
+    "authoritative_sources": [
+      "AGENTS.md",
+      "docs/acceptance/issue307-d1-retention-runtime-fix01.md",
+      "examples/lifecycle-d1/fixture-runtime-artifact.json",
+      "examples/lifecycle-d1/prepare-retention-renewal.py",
+      "apps/platform/cmd/lifecycle-fixture-retention/testdata/approved-proposal.json"
+    ],
+    "not_authorized": [
+      "full maintenance execution",
+      "retained source start",
+      "retention PUT",
+      "DELETE",
+      "unlock",
+      "publication",
+      "push",
+      "merge"
+    ]
+  },
+  "blockers": [],
+  "blocker_count": 0,
+  "invariants": [
+    {
+      "name": "Explicit wait and complete authorization",
+      "status": "PASS",
+      "code": [
+        "apps/platform/cmd/lifecycle-fixture-retention/main.go:172",
+        "apps/platform/cmd/lifecycle-fixture-retention/main.go:511",
+        "apps/platform/cmd/lifecycle-fixture-retention/main.go:564"
+      ],
+      "finding": "readPermission rejects missing/null Enabled and duplicate/unknown JSON. -wait observes false then true for unchanged bindings/hash within the window before loadEngine/run. It creates no provider client or budget in the wait stage; full grant/key/binary/config/topology/budget authorization remains on the provider path."
+    },
+    {
+      "name": "Linux/UNC custody and full mount ownership",
+      "status": "PASS_BOUNDED",
+      "code": [
+        "examples/lifecycle-d1/retention_staging.py:17",
+        "examples/lifecycle-d1/retention_staging.py:34",
+        "examples/lifecycle-d1/retention_staging.py:44",
+        "examples/lifecycle-d1/retention_maintenance.py:77"
+      ],
+      "finding": "Reuses Docker/WSL tar/stat and existing contents/unlinked_absolute. Verifies plain labelled local volumes, exact Linux/UNC identity, UID/GID10001, 0700 roots, 0600 regular files, nlink1, membership/bytes and complete owner/mount sets; rejects aliases, extra mounts/owners and metadata drift. Full production two-owner host composition remains a later gate."
+    },
+    {
+      "name": "Independent before/after reader expectation",
+      "status": "PASS",
+      "code": [
+        "apps/platform/internal/lifecycle/pilot/retention_maintenance.go:20",
+        "apps/platform/cmd/lifecycle-fixture-reader/retention_verify.go:22",
+        "apps/platform/cmd/lifecycle-fixture-reader/retention_verify.go:38"
+      ],
+      "finding": "Both phases start with existing frozen inventory/P1 validation. Only two complete fixed Copy identities can change RetainUntil to the fixed deadline; legal holds, content/version and other protection remain exact. Effective expectation hash is separate. Existing SDK collector, journal and official IAM policy semantics are reused; historical receipt bytes are not overwritten."
+    },
+    {
+      "name": "Actual maintenance receipt identity",
+      "status": "PASS",
+      "code": [
+        "apps/platform/cmd/lifecycle-fixture-readonly-check/retention.go:51",
+        "apps/platform/cmd/lifecycle-fixture-readonly-check/retention.go:67",
+        "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go:135"
+      ],
+      "finding": "Checker parses actual maintenance receipt with18 members and compares MaintenanceID, phase and bindings SHA to expected. Common checks still bind profile/binary/candidate/source/window/inventory and journals; old modes retain15 members. Foreign new UUID, absent identity and late-hold phase-only relabel regression cases are present and passed."
+    }
+  ],
+  "independent_validation": [
+    {
+      "test": "Actual R3 archive CI entry",
+      "status": "PASS_LOCAL_OFFLINE",
+      "evidence": "01-r3-offline-ci.json",
+      "details": "GOPROXY/GOSUMDB=off, GOTOOLCHAIN=local; exact archive SHA/bytes; pilot filter plus reader/remaining/remaining-iam/readonly-check/retention package tests all passed."
+    },
+    {
+      "test": "Host/staging tests normal and -O",
+      "status": "PASS_OFFLINE",
+      "evidence": "02-python-offline.json",
+      "details": "10 methods each run: host8+staging2, with Docker/WSL inspection mocked. No new live host attestation claimed."
+    },
+    {
+      "test": "Existing actual R3 Linux probe evidence audit",
+      "status": "PASS_FILE_AUDIT_OF_REAL_ISOLATED_LINUX_RUN",
+      "evidence": "03-input-audit.json",
+      "details": "Actual private ZIP and all780 extracted source members match R3; test binary SHA recorded; actual Linux fsync/mounted custody/wait tests PASS; five independent Linux stat nlink checks; network-none, UID10001, full five-mount set; test container stopped/PID0; exact two source State records unchanged."
+    },
+    {
+      "test": "Raw custody",
+      "status": "PASS_FILE_HASH_AUDIT",
+      "evidence": "03-input-audit.json",
+      "details": "R2 raw9 custody mappings and R3 source/test inspect raw SHA checked privately. Review emits no credential bytes and does not republish raw inspect."
+    }
+  ],
+  "preserved_failures": [
+    "fix02 original engine-unavailable inspect remains preserved; failed before allocation",
+    "review 03-input-audit-command.json records initial overbroad all-tracked clean-tree failure caused by contemporaneous acceptance documentation update; source-scoped rerun passed; failure logs retained"
+  ],
+  "non_blocking_documentation_note": "RESOLVED by parent documentation closeout after the audited snapshot: stale Linux-blocked tail removed, fix03 PASS stated, bounded independent review distinguished from full operation/native17. Source anchor remains d8b782183d49f201c105e90e4c5215c1b8d7d3f4; earlier input hash records its actual review-time documentation snapshot.",
+  "remaining_gates": [
+    "Complete maintenance-specific host before/after orchestration with actual Core/topology/finally-close composition",
+    "Allocate/freeze actual MaintenanceID, owners, host key, budget, anchored binary, profiles and permission; placeholders are not execution inputs",
+    "New explicit human source-read and exact-two retention-write authority",
+    "Fresh retained Core/17-version/native/IAM observations and independent actual packet cross-check",
+    "Separate publication authority and actual exact-HEAD remote CI; local tests are not remote CI"
+  ],
+  "not_claimed": {
+    "complete_maintenance_packet_executable": false,
+    "actual_retained_17_native_pass": "NOT_RUN",
+    "production_host_composition_acceptance": "NOT_RUN",
+    "runtime_R3_published": false,
+    "remote_CI_pass": "NOT_VERIFIED",
+    "real_provider_retention_write": 0,
+    "provider_DELETE": 0,
+    "issue332": "Locked Draft per supplied scope; no remote mutation/read in review",
+    "issue307": "OPEN per supplied scope; no remote mutation/read in review"
+  },
+  "review_actions": {
+    "source_edits": 0,
+    "git_HEAD_branch_changes": 0,
+    "docker_wsl_invocations": 0,
+    "source_container_start_stop": 0,
+    "provider_actions": 0,
+    "push": 0,
+    "new_files_only": "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/"
+  },
+  "evidence_limit": "Existing Linux run uses loopback SDK test doubles in network-none isolation; it demonstrates real filesystem/fsync/wait behavior and cannot be presented as actual retained-provider or17-version native acceptance."
+}

@@ -1,0 +1,22 @@
+{
+  "status": "PASS_OFFLINE_WHOLE_ENTRY_MOCK_ONLY",
+  "at": "2026-10-19T12:50:59.259459+00:00",
+  "tests_per_mode": 20,
+  "records": [
+    {
+      "exit": 0,
+      "stdout_sha256": "46acb1109c7a2eeea7373284a81281927dbe98475a8c75076a838255b7462d18",
+      "stderr_sha256": "98aeb39e56121f56fced2c464a0c3cf74074708c6dc985f543c492e5c0144481"
+    },
+    {
+      "exit": 0,
+      "stdout_sha256": "27bb7fb64fd5b9d04e2812edaf60e16300c86421920bf8db1d63a382228c2675",
+      "stderr_sha256": "4a46a34a0d8823286dadfddd8f16b70b0ecfc14180270b56633ec6ce47f4672a"
+    }
+  ],
+  "host_sha256": "ec6e33d82999a43d7a286b118f1d736ae20802453e41f47da49fca88825deeb8",
+  "tests_sha256": "27c71751c01c4ada633b395a2921172950f602474fb70ad631d6b0f05c1baac7",
+  "source_start": 0,
+  "provider": 0,
+  "DELETE": 0
+}

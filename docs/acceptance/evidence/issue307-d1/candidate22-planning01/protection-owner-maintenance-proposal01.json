@@ -1,0 +1,49 @@
+{
+  "status": "PROPOSED_REQUIRE_EXPLICIT_HUMAN_PROTECTION_OWNER_AUTHORITY_AND_FRESH_ADMIN_READ",
+  "repository": "qq550723504/data-product-platform",
+  "pr": 332,
+  "branch": "codex/issue307-post-v22-dispatch-closure",
+  "expected_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "expected_rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "old_execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "old_terminal_sha256": "5568708e62c4ad37f8765aba667697de547d83fe0e598d59d7d4341a84b4b188",
+  "old_execution_binding_sha256": "f27a617f278fcbaf64db29ddf536d5816d88acaba8a0d760280eb23bbe55d0de",
+  "proposal_operation": "GitHub updateBranchProtectionRule",
+  "proposed_input": {
+    "branchProtectionRuleId": "BPR_kwDOUdQLBs4FE_7b",
+    "lockBranch": false
+  },
+  "all_unmentioned_protection_fields": "PRESERVE_AND_COMPARE_FULL_READBACK",
+  "explicitly_retained": {
+    "isAdminEnforced": true,
+    "lockAllowsFetchAndMerge": false,
+    "allowsForcePushes": false,
+    "allowsDeletions": false
+  },
+  "preconditions": [
+    "New explicit human authority for this protection maintenance only",
+    "Fresh authenticated protection-owner read: exact HEAD, ruleID and full protection equal old execution-binding",
+    "Old public/private terminal bytes equal pinned SHA; old preparation cannot resume",
+    "Fresh closed gate for known owners, permissions, budgets and retained backups",
+    "No old or new schedule/authorization/owner activity introduced",
+    "PR332 remains Draft/open/unmerged and Issue307 remains open"
+  ],
+  "after_mutation": [
+    "Read back same HEAD/ruleID and entire protection; only lockBranch may change",
+    "No source resources allocated before exact new-source PR CI succeeds",
+    "New candidate must be fully prepared, independently reviewed and final-head CI verified before native relock",
+    "New execution-binding written after relock and readback; then present complete precise confirmation"
+  ],
+  "atomic_CAS": false,
+  "automatic_unlock": false,
+  "mutation_performed": false,
+  "new_profile": "candidate22/v32",
+  "new_execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "new_Singapore_window": "2026-10-23 18:00-18:40 +08:00",
+  "delete_authorization": false,
+  "schedule_authorization": false,
+  "native_delete": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0
+}

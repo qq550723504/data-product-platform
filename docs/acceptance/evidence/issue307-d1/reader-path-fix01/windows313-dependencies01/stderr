@@ -1,0 +1,5 @@
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+google-genai 2.17.0 requires websockets<17.0,>=13.0.0, but you have websockets 17.0.1 which is incompatible.
+
+[notice] A new release of pip is available: 24.3.1 -> 26.2.2
+[notice] To update, run: C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip install --upgrade pip

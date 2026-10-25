@@ -1,0 +1,91 @@
+{
+  "status": "PASS_BOUNDED_NATIVE_PROTECTION_REPAIR_PREPARATION_REVIEW",
+  "remaining_blockers": [],
+  "provenance": {
+    "assessment_by": "/root/c23_preparation_boundary_review",
+    "review_mode": "human-authorized readonly independent agent",
+    "serialization_by": "/root",
+    "serialization_note": "Parent saved the agent's final assessment and exact reviewed hashes; this is not an independent review performed by the parent."
+  },
+  "scope": "仅限保护前置检查、拒绝原因留证、非删除入口排序、exact-two 延期方案及 P/R 运行产物绑定的源码准备切片；不代表实际源保护已修复、新候选已冻结或具备写入授权。",
+  "reviewed_source": {
+    "P_worktree": "C:\\Users\\Henry\\.codex\\worktrees\\d1-protect",
+    "P_base": "1841d39d9ab5a08a823f83ab8e9a625b619727e2",
+    "P_review_binding": "当前修复文件的实际 SHA256；尚非远端提交",
+    "R_worktree": "C:\\Users\\Henry\\.codex\\worktrees\\d1-protect-r",
+    "R_commit": "8e53ea564f9b81bdebf7c31d6a99060d1ec3b7db",
+    "R_direct_parent": "92b9801dfb7e46295e17165e7762907cb6e87be2",
+    "R_archive_sha256": "a57c946610b968a8eaaa1414e85367af43938784c973d723a28a1f7355a5c0f5",
+    "R_archive_bytes": 6440579,
+    "R_archive_files": 771,
+    "shared_contract_members_verified": 8,
+    "artifact_spec_sha256": "89d38d616f00c013631d8d69a7a5652aba7409391fb847f4da3f6b4104223f7e"
+  },
+  "reviewed_code_sha256": {
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "0169d981c9ebcae68dcc6bcbbf4592d884aadae9998190b8a854ef392f2ddc0a",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go": "c35e9563274a48d0a2d0aad5a67438f0143d87b36c0fb5cc4c75e933e0698f8e",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go": "9523a02f91f07c994085c5cac9fd997b63075fcdb50553248c12a38632cfde4e",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go": "f5b6b3ac64ffde6789d475ef3254a152c4cb995f3c14094c2a5aa131d682fb4e",
+    "examples/lifecycle-d1/native_protection.py": "158fd8dd956c595b742a6f69bd6fbef205ecec2898daa90f40dadc62655c7293",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "bc14c6cf52dd6269587fcdbcaf5446f29abe12d1cb103762460fe9f20a26b561",
+    "examples/lifecycle-d1/verify-six-native.py": "7c8c632ad89a0053ffd8719424bfaaca19e2431f0e45618c0a91140b06e6bf4a",
+    "examples/lifecycle-d1/prepare-retention-renewal.py": "ce74ff4d22d03e035c51776c549eb098163e78eb19b8b3a9cbc7953016ff2cda",
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/contract.md": "ce61219892fa2cf56abed7c9198fb0422eb2ea8d33384fbdce920f3005883dc0",
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/exact-two-proposal01.json": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f",
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/renewal-runbook01.md": "07f5f5b69aaf056b78ca76bfc5330fec080621bb72355507c3292bc08bbe2cfc"
+  },
+  "closed_findings": [
+    {
+      "id": "PROTECTION-CURRENT-AND-HORIZON",
+      "result": "当前有效、精确 GOVERNANCE、LegalHold=false、实际观察新鲜，且覆盖固定恢复截止；短 rehearsal 不缩短要求期限。未改变领域过期语义。"
+    },
+    {
+      "id": "REQUIRED-ENTRY-ORDER",
+      "result": "三组 SOURCE 保护检查全部先于任一备份或业务 rehearsal；RESTORE 检查先于 inspector enable；完整入口失败保持关闭及失败留证。"
+    },
+    {
+      "id": "ACTUAL-C-PROTECTION",
+      "result": "按固定 C CopyID 路由保护门禁，再比较完整 Copy；实际 inspector 观察中同 ID 错 version 不能绕过。wrong-expected-copy 反例独立通过。"
+    },
+    {
+      "id": "DISPATCH-DIAGNOSTICS",
+      "result": "dispatch_error/admitted/attempt_present 独立留证，先保存再判断；原 generic 错误不证明 admission，不输出任意原始错误秘密。"
+    },
+    {
+      "id": "EXACT-TWO-PREPARATION",
+      "result": "两份固定 survivor 的 expiry-only 延期至2026-10-24T12:40:00Z；typed contract、完整 Copy/旧保护、max1/max2、UNKNOWN 不重发均校验；无 apply 入口。"
+    },
+    {
+      "id": "DUAL-ARTIFACT",
+      "result": "R commit/直接父/两文件增量/Git ZIP 771 文件原字节与 P spec 一致，8 shared contract 成员 LF 一致。"
+    }
+  ],
+  "independent_validation": {
+    "python": {
+      "normal_methods_pass": 35,
+      "optimized_methods_pass": 35,
+      "boundary": "文件和依赖 double；不是原生验收"
+    },
+    "go_final_P_and_R": {
+      "result": "两树各4顶层测试 PASS；保护组合各15子案例",
+      "command": "GOPROXY=off go test ./cmd/lifecycle-fixture-reader -run '^(TestProtectedRemaining|TestProtectedDispatch|TestProtectionDeadline)' -count=1 -v",
+      "boundary": "现有 inspector 的 httptest loopback GET；无真实 provider 或 mutation"
+    },
+    "archive": "最终 R Git ZIP、771文件清单、直接父/增量及8 shared contract 独立核验 PASS",
+    "author_validation_is_separate": "作者 normal/-O 各45方法、宿主三包及实际R归档五包不冒称本审查独立重跑全部"
+  },
+  "historical_retention": {
+    "original_terminal_sha256": "6bf40cca760fdf81532ba52dd2677d77180f49c80efac97db5fb03f85103c8b2",
+    "author_audit": "5954成员0漂移、public/private terminal一致、原C23 tracked_diff=[]；该全量重哈希为作者回执",
+    "original_facts": "原失败、预算、pins、终态及冻结原件保留，不回写旧事实"
+  },
+  "operational_blockers": [
+    {"id": "SOURCE-PROTECTION-NOT-REPAIRED", "state": "OPEN", "detail": "两份实际源保留期尚未延期"},
+    {"id": "WRITE-ENTRY", "state": "NOT_IMPLEMENTED", "detail": "一次性写入口、独立持久预算、physical start/outcome/cost、精确owner/profile/source/binary/topology、传输白名单及封存需实现与非删除审查；不能据纯方案申请立即写入"},
+    {"id": "WRITE-AUTHORITY", "state": "NOT_AUTHORIZED", "detail": "仅有延期方向准备授权，无源保护写入/分支解锁发布/DELETE/调度授权；旧授权不复用"},
+    {"id": "LIVE-ACCEPTANCE-AND-SUCCESSOR", "state": "NOT_RUN", "detail": "修复后的17版本完整原生入口、源保护读回、新期望profiles、完整非删除验收未跑；未建立新候选/execution/预算/冻结/执行授权"},
+    {"id": "PUBLICATION-CI", "state": "NOT_RUN", "detail": "未远端发布或取得对应PR CI；本地回归不是PR/main CI或产品验收"}
+  ],
+  "reviewer_actions": {"files_modified": 0, "docker_calls": 0, "github_calls": 0, "real_provider_calls": 0, "native_writes": 0, "deletes": 0},
+  "required_state": {"PR332": "Draft，不合并", "Issue307": "OPEN", "old_authorization": "不复用"}
+}

@@ -1,0 +1,24 @@
+{
+  "status": "PASS_FIXED_124_INDEX_AND_79_ORIGINAL_RAW_RESTORATIONS",
+  "source_head": "4420957157ac818cbed719d8a6b8d9c6ccc4b646",
+  "index_sha256": "5c5c9ef750d90d1a70597797b71fea6b02c3f3a2a17695556bf852e173ec708d",
+  "members": 124,
+  "repairs": 79,
+  "effective_git_text": "unset_for_all_124",
+  "prior_Git_blob_interpretation": "Git blob SHA1 calculated from original checkout bytes; not necessarily an object stored in the repository",
+  "old_failure_preserved": {
+    "status": "FAILED_HISTORY_READ_RETAINED",
+    "at": "2026-10-22T10:20:59.062270+00:00",
+    "error_type": "ValueError",
+    "error": "retained v29: pinned old fact changed: delete-confirmed-v29-execution01/window01/terminal.json",
+    "host_read_processes": 840,
+    "source_provider_actions": 0,
+    "new_resource_allocation": 0,
+    "native_delete": 0
+  },
+  "original_roots_read_only": [
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-lock\\data-product-platform",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c19\\data-product-platform"
+  ],
+  "native_provider_actions": 0
+}

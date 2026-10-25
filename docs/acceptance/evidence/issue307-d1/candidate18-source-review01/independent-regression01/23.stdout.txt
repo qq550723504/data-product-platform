@@ -1,0 +1,10 @@
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users/business-races
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users/late-hold
+=== RUN   TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users/mixed
+--- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users (0.00s)
+    --- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users/business-races (0.00s)
+    --- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users/late-hold (0.00s)
+    --- PASS: TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users/mixed (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.057s

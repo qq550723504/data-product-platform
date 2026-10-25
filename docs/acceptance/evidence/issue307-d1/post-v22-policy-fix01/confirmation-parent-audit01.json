@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-19T20:21:59.540321+00:00",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "confirmation_sha256": "1a2aacb75a405867dce8d5c2255c70afd205515f4030a07185f58b26b5269340",
+  "template_bytes_equal": true,
+  "template_sha256": "492a83604d1c32589d5dbb3aa97d4f40a618e5a6bf86e9c0123c80fc67f3609a",
+  "utf8_replacement_characters": 0,
+  "target_count": 6,
+  "survivor_count": 11,
+  "relative_file_links": [
+    {
+      "label": "`candidate.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/candidate.json"
+    },
+    {
+      "label": "`bindings.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/bindings.json"
+    },
+    {
+      "label": "`confirmation-template.txt`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/confirmation-template.txt"
+    },
+    {
+      "label": "`source-freeze.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/source-freeze.json"
+    },
+    {
+      "label": "`profile-windows.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/profile-windows.json"
+    },
+    {
+      "label": "`stdout.txt`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/offline-validator/stdout.txt"
+    },
+    {
+      "label": "`verify-six-native.py`",
+      "path": "examples/lifecycle-d1/verify-six-native.py"
+    },
+    {
+      "label": "`window_six_support.py`",
+      "path": "examples/lifecycle-d1/window_six_support.py"
+    },
+    {
+      "label": "`attest-remaining-executable.py`",
+      "path": "examples/lifecycle-d1/attest-remaining-executable.py"
+    },
+    {
+      "label": "`remaining_six_window.py`",
+      "path": "examples/lifecycle-d1/remaining_six_window.py"
+    },
+    {
+      "label": "`remaining_window.py`",
+      "path": "examples/lifecycle-d1/remaining_window.py"
+    },
+    {
+      "label": "`independent-policy-checkpoint-review05.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent-policy-checkpoint-review05.json"
+    },
+    {
+      "label": "`independent-source-restore-review06.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent-source-restore-review06.json"
+    },
+    {
+      "label": "`host-anchor-readback01.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/host-anchor-readback01.json"
+    },
+    {
+      "label": "`complete.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-readonly01/complete.json"
+    },
+    {
+      "label": "`failure.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/failure.json"
+    },
+    {
+      "label": "`scoped-host-repair02.json`",
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/scoped-host-repair02.json"
+    },
+    {
+      "label": "窗口手册",
+      "path": "docs/acceptance/issue307-d1-v25-window-runbook.md"
+    },
+    {
+      "label": "准备矩阵",
+      "path": "docs/acceptance/issue307-d1-v25-preparation.md"
+    }
+  ],
+  "runtime_diff_since_f6ac": [],
+  "docs_or_attributes_changed_count": 1780,
+  "native_delete": 0,
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED"
+}

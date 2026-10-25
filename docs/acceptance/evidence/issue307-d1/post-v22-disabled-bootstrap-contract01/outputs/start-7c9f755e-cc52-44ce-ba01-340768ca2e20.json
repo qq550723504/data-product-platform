@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-19T18:07:48.739720787Z",
+  "id": "7c9f755e-cc52-44ce-ba01-340768ca2e20",
+  "method": "PUT",
+  "path": "/minio/admin/v3/set-user-or-group-policy",
+  "query": "isGroup=false\u0026policyName=dpp307-contract-readonly\u0026userOrGroup=dpp307-contract-disabled"
+}

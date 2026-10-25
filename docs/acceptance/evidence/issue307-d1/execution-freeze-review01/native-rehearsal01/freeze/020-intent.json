@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-22T06:29:50.221864+00:00",
+  "method": "POST",
+  "endpoint": "graphql",
+  "body": {
+    "query": "query($ref:String!){repository(owner:\"qq550723504\",name:\"data-product-platform\"){id nameWithOwner ref(qualifiedName:$ref){target{oid} branchProtectionRule{id pattern lockBranch isAdminEnforced lockAllowsFetchAndMerge allowsForcePushes allowsDeletions}}}}",
+    "variables": {
+      "ref": "refs/heads/codex/issue307-freeze-rehearsal-4047394d6311"
+    }
+  }
+}

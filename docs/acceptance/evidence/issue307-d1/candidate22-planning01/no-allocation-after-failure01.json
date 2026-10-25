@@ -1,0 +1,12 @@
+{
+  "status": "CONFIRMED_PREALLOCATION_FAILURE_NO_C22_ALLOCATION_OR_PACKET",
+  "at": "2026-10-23T05:28:08.571807+00:00",
+  "control_exists": false,
+  "preparation_exists": false,
+  "packet_exists": false,
+  "source_head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "native_delete": 0,
+  "source_start": 0,
+  "failure_receipt": "phase-allocate01/result.json",
+  "reason": "historical_gate raised before CONTROL.mkdir/build/Allocation constructor"
+}

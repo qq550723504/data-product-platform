@@ -1,0 +1,84 @@
+{
+  "status": "CONFIRMED_THREE_FROZEN_CORE_DUMPS_LACK_CURRENT_REQUIRED_COLUMN",
+  "at": "2026-10-22T07:21:54.019898+00:00",
+  "source_head": "955e98a2338b7d22a0686866683fb4413bf8dcdd",
+  "groups": [
+    {
+      "group": "business-races",
+      "dump_path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\business-races\\checkpoint\\core.dump",
+      "sha256": "f9255090e65f441f03240c493256263d423ec0ea7720348d3c3478687c21d218",
+      "bytes": 1407183,
+      "checkpoint_path": "docs/acceptance/evidence/issue307-d1/remaining-candidate19-preparation01/business-races/checkpoint.json",
+      "checkpoint_sha256": "12676257ae1f26994c53be4433c2b188b67425c74da5166fbdc3065d7b0124bc",
+      "dump_hash_matches_frozen_checkpoint": true,
+      "lifecycle_fixture_copy_ddl": "CREATE TABLE public.lifecycle_fixture_copy (\n    id uuid NOT NULL,\n    workspace_id uuid NOT NULL,\n    namespace_id uuid NOT NULL,\n    dataset_version_id uuid NOT NULL,\n    object_key character varying(1024) NOT NULL,\n    provider_version character varying(1024) NOT NULL,\n    content_sha256 character varying(64) NOT NULL,\n    byte_size bigint NOT NULL,\n    registered_at timestamp with time zone DEFAULT now() NOT NULL,\n    CONSTRAINT lifecycle_fixture_copy_byte_size_check CHECK (((byte_size >= 1) AND (byte_size <= 134217728))),\n    CONSTRAINT lifecycle_fixture_copy_content_sha256_check CHECK (((content_sha256)::text ~ '^[0-9a-f]{64}$'::text)),\n    CONSTRAINT lifecycle_fixture_copy_id_check CHECK ((id <> '00000000-0000-0000-0000-000000000000'::uuid)),\n    CONSTRAINT lifecycle_fixture_copy_object_key_check CHECK ((((object_key)::text <> ''::text) AND ((object_key)::text = btrim((object_key)::text)))),\n    CONSTRAINT lifecycle_fixture_copy_provider_version_check CHECK ((((provider_version)::text <> ALL ((ARRAY[''::character varying, 'null'::character varying])::text[])) AND ((provider_version)::text = btrim((provider_version)::text))))\n);",
+      "ddl_sha256": "e2ba4f2f30e7ab6f833e1665758efda664122a03646e1e56a60cf5bb39fa55c8",
+      "identity_kind_column_present": false,
+      "full_dump_identity_kind_markers": 0,
+      "schema_migration_fingerprint": {
+        "relation": "schema_migration",
+        "rows": 66,
+        "sha256": "2d325320137a15b52e64f5fc272759cfbd31861a062bc06257441763fc133d0a"
+      },
+      "migration_version_set": "NOT_YET_READ; rows=66 is row count, not MAX(version) or proof that 67-69 are absent",
+      "existing_ddl_markers": {
+        "supersedes_policy_id": 11,
+        "lifecycle_current_copy_policy_view": 1,
+        "lifecycle_copy_policy_renewal_guard": 4,
+        "lifecycle_reference_admission_guard": 30
+      }
+    },
+    {
+      "group": "late-hold",
+      "dump_path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\checkpoint\\core.dump",
+      "sha256": "15241ad90215843014acaa69f6b67767009dae1fb34d71cdc682e36053d10e73",
+      "bytes": 1166712,
+      "checkpoint_path": "docs/acceptance/evidence/issue307-d1/remaining-candidate19-preparation01/late-hold/checkpoint.json",
+      "checkpoint_sha256": "8987de27289b04c93a5c9dbad1f0635f91a35e0d4e282a72229b9e1419c1b9e0",
+      "dump_hash_matches_frozen_checkpoint": true,
+      "lifecycle_fixture_copy_ddl": "CREATE TABLE public.lifecycle_fixture_copy (\n    id uuid NOT NULL,\n    workspace_id uuid NOT NULL,\n    namespace_id uuid NOT NULL,\n    dataset_version_id uuid NOT NULL,\n    object_key character varying(1024) NOT NULL,\n    provider_version character varying(1024) NOT NULL,\n    content_sha256 character varying(64) NOT NULL,\n    byte_size bigint NOT NULL,\n    registered_at timestamp with time zone DEFAULT now() NOT NULL,\n    CONSTRAINT lifecycle_fixture_copy_byte_size_check CHECK (((byte_size >= 1) AND (byte_size <= 134217728))),\n    CONSTRAINT lifecycle_fixture_copy_content_sha256_check CHECK (((content_sha256)::text ~ '^[0-9a-f]{64}$'::text)),\n    CONSTRAINT lifecycle_fixture_copy_id_check CHECK ((id <> '00000000-0000-0000-0000-000000000000'::uuid)),\n    CONSTRAINT lifecycle_fixture_copy_object_key_check CHECK ((((object_key)::text <> ''::text) AND ((object_key)::text = btrim((object_key)::text)))),\n    CONSTRAINT lifecycle_fixture_copy_provider_version_check CHECK ((((provider_version)::text <> ALL ((ARRAY[''::character varying, 'null'::character varying])::text[])) AND ((provider_version)::text = btrim((provider_version)::text))))\n);",
+      "ddl_sha256": "e2ba4f2f30e7ab6f833e1665758efda664122a03646e1e56a60cf5bb39fa55c8",
+      "identity_kind_column_present": false,
+      "full_dump_identity_kind_markers": 0,
+      "schema_migration_fingerprint": {
+        "relation": "schema_migration",
+        "rows": 66,
+        "sha256": "38a458dc4a24a37691f5c8b02f5d1d16d02d43d5151e938a4bc08199ecd06dc8"
+      },
+      "migration_version_set": "NOT_YET_READ; rows=66 is row count, not MAX(version) or proof that 67-69 are absent",
+      "existing_ddl_markers": {
+        "supersedes_policy_id": 11,
+        "lifecycle_current_copy_policy_view": 1,
+        "lifecycle_copy_policy_renewal_guard": 4,
+        "lifecycle_reference_admission_guard": 30
+      }
+    },
+    {
+      "group": "mixed",
+      "dump_path": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\mixed\\checkpoint\\core.dump",
+      "sha256": "aef0cd7121a315510cac8e9cd89e65436922f66d0ae220588522962b0d8a2503",
+      "bytes": 1158775,
+      "checkpoint_path": "docs/acceptance/evidence/issue307-d1/remaining-candidate19-preparation01/mixed/checkpoint.json",
+      "checkpoint_sha256": "de7968e9fae921ff95b9eb4589f2964bc975a996f9217da1f92cfe0aec356946",
+      "dump_hash_matches_frozen_checkpoint": true,
+      "lifecycle_fixture_copy_ddl": "CREATE TABLE public.lifecycle_fixture_copy (\n    id uuid NOT NULL,\n    workspace_id uuid NOT NULL,\n    namespace_id uuid NOT NULL,\n    dataset_version_id uuid NOT NULL,\n    object_key character varying(1024) NOT NULL,\n    provider_version character varying(1024) NOT NULL,\n    content_sha256 character varying(64) NOT NULL,\n    byte_size bigint NOT NULL,\n    registered_at timestamp with time zone DEFAULT now() NOT NULL,\n    CONSTRAINT lifecycle_fixture_copy_byte_size_check CHECK (((byte_size >= 1) AND (byte_size <= 134217728))),\n    CONSTRAINT lifecycle_fixture_copy_content_sha256_check CHECK (((content_sha256)::text ~ '^[0-9a-f]{64}$'::text)),\n    CONSTRAINT lifecycle_fixture_copy_id_check CHECK ((id <> '00000000-0000-0000-0000-000000000000'::uuid)),\n    CONSTRAINT lifecycle_fixture_copy_object_key_check CHECK ((((object_key)::text <> ''::text) AND ((object_key)::text = btrim((object_key)::text)))),\n    CONSTRAINT lifecycle_fixture_copy_provider_version_check CHECK ((((provider_version)::text <> ALL ((ARRAY[''::character varying, 'null'::character varying])::text[])) AND ((provider_version)::text = btrim((provider_version)::text))))\n);",
+      "ddl_sha256": "e2ba4f2f30e7ab6f833e1665758efda664122a03646e1e56a60cf5bb39fa55c8",
+      "identity_kind_column_present": false,
+      "full_dump_identity_kind_markers": 0,
+      "schema_migration_fingerprint": {
+        "relation": "schema_migration",
+        "rows": 66,
+        "sha256": "881ff723bc3ace6b9b5dd8b6096eb3221efef94be4b520a80f7c548e35ef36d8"
+      },
+      "migration_version_set": "NOT_YET_READ; rows=66 is row count, not MAX(version) or proof that 67-69 are absent",
+      "existing_ddl_markers": {
+        "supersedes_policy_id": 11,
+        "lifecycle_current_copy_policy_view": 1,
+        "lifecycle_copy_policy_renewal_guard": 4,
+        "lifecycle_reference_admission_guard": 30
+      }
+    }
+  ],
+  "method": "File-only extraction of unique plaintext pg_dump pre-data table DDL and hash-bound public fingerprints; no pg_restore, DB, Docker or provider I/O",
+  "SQLSTATE_42703": "EXPECTED_FROM_QUERY_AND_SCHEMA; actual PostgreSQL error observation pending separate isolated restore receipt"
+}

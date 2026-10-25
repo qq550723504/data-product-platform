@@ -1,0 +1,350 @@
+{
+  "status": "PASS",
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+  "python": "3.13.16 (main, Oct 21 2026, 01:08:44) [GCC 14.2.0]",
+  "root": "/work",
+  "collection": [
+    "test_evidence_indexes.py",
+    "test_six_native_entry.py",
+    "test_retired_resources.py",
+    "test_retired_volumes.py",
+    "test_retired_budget_bytes.py",
+    "test_successor_dependencies.py",
+    "test_retained_v26.py",
+    "test_retained_v29.py",
+    "test_retained_v30.py",
+    "test_retained_v31.py",
+    "test_retained_v32.py",
+    "test_receipt_bytes.py",
+    "test_fixture_artifacts.py",
+    "test_preallocation_ci.py",
+    "test_six_candidate_runtime.py",
+    "test_native_protection.py",
+    "test_retention_renewal.py",
+    "test_retention_maintenance.py",
+    "test_retention_composition.py",
+    "test_verify_six_native.py",
+    "test_retention_staging.py",
+    "test_execution_freeze.py",
+    "test_freeze_six_candidate.py",
+    "test_window_six_support.py",
+    "test_attest_remaining_executable.py",
+    "../temporary_containers_test.py"
+  ],
+  "results": [
+    {
+      "name": "test_evidence_indexes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:10:58.909782+00:00"
+    },
+    {
+      "name": "test_evidence_indexes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:10:58.910392+00:00"
+    },
+    {
+      "name": "test_six_native_entry-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:10:58.911033+00:00"
+    },
+    {
+      "name": "test_six_native_entry-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:10:58.911553+00:00"
+    },
+    {
+      "name": "test_retired_resources-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:10:59.669681+00:00"
+    },
+    {
+      "name": "test_retired_resources-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:10:59.872356+00:00"
+    },
+    {
+      "name": "test_retired_volumes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.038151+00:00"
+    },
+    {
+      "name": "test_retired_volumes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.096049+00:00"
+    },
+    {
+      "name": "test_retired_budget_bytes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.292572+00:00"
+    },
+    {
+      "name": "test_retired_budget_bytes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.345758+00:00"
+    },
+    {
+      "name": "test_successor_dependencies-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.486313+00:00"
+    },
+    {
+      "name": "test_successor_dependencies-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.564913+00:00"
+    },
+    {
+      "name": "test_retained_v26-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.593388+00:00"
+    },
+    {
+      "name": "test_retained_v26-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:01.731420+00:00"
+    },
+    {
+      "name": "test_retained_v29-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:02.347397+00:00"
+    },
+    {
+      "name": "test_retained_v29-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:02.768207+00:00"
+    },
+    {
+      "name": "test_retained_v30-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:04.217327+00:00"
+    },
+    {
+      "name": "test_retained_v30-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:04.511022+00:00"
+    },
+    {
+      "name": "test_retained_v31-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:11.200416+00:00"
+    },
+    {
+      "name": "test_retained_v31-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:11.561239+00:00"
+    },
+    {
+      "name": "test_retained_v32-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:15.526576+00:00"
+    },
+    {
+      "name": "test_retained_v32-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:16.384954+00:00"
+    },
+    {
+      "name": "test_receipt_bytes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:19.090787+00:00"
+    },
+    {
+      "name": "test_receipt_bytes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:19.776294+00:00"
+    },
+    {
+      "name": "test_fixture_artifacts-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:19.987428+00:00"
+    },
+    {
+      "name": "test_fixture_artifacts-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:20.806957+00:00"
+    },
+    {
+      "name": "test_preallocation_ci-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:21.101554+00:00"
+    },
+    {
+      "name": "test_preallocation_ci-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:21.748623+00:00"
+    },
+    {
+      "name": "test_six_candidate_runtime-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:22.044325+00:00"
+    },
+    {
+      "name": "test_six_candidate_runtime-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:22.633184+00:00"
+    },
+    {
+      "name": "test_native_protection-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:23.535005+00:00"
+    },
+    {
+      "name": "test_native_protection-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:23.860422+00:00"
+    },
+    {
+      "name": "test_retention_renewal-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:24.359660+00:00"
+    },
+    {
+      "name": "test_retention_renewal-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:24.463363+00:00"
+    },
+    {
+      "name": "test_retention_maintenance-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:25.039333+00:00"
+    },
+    {
+      "name": "test_retention_maintenance-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:25.663146+00:00"
+    },
+    {
+      "name": "test_retention_composition-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:27.858831+00:00"
+    },
+    {
+      "name": "test_retention_composition-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:28.378438+00:00"
+    },
+    {
+      "name": "test_verify_six_native-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:41.311966+00:00"
+    },
+    {
+      "name": "test_verify_six_native-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:41.750499+00:00"
+    },
+    {
+      "name": "test_retention_staging-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:41.935887+00:00"
+    },
+    {
+      "name": "test_retention_staging-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:42.174692+00:00"
+    },
+    {
+      "name": "test_execution_freeze-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:42.584888+00:00"
+    },
+    {
+      "name": "test_execution_freeze-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:42.603194+00:00"
+    },
+    {
+      "name": "test_freeze_six_candidate-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:43.408724+00:00"
+    },
+    {
+      "name": "test_freeze_six_candidate-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:43.498959+00:00"
+    },
+    {
+      "name": "test_window_six_support-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:43.783412+00:00"
+    },
+    {
+      "name": "test_window_six_support-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:44.178872+00:00"
+    },
+    {
+      "name": "test_attest_remaining_executable-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:44.772817+00:00"
+    },
+    {
+      "name": "test_attest_remaining_executable-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:44.990458+00:00"
+    },
+    {
+      "name": "temporary_containers_test-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:45.676561+00:00"
+    },
+    {
+      "name": "temporary_containers_test-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T14:11:46.334111+00:00"
+    }
+  ],
+  "retained_source_start": 0,
+  "business_provider_io": 0
+}

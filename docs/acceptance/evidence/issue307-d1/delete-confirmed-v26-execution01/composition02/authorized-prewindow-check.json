@@ -1,0 +1,27 @@
+{
+  "status": "PASS_PREWINDOW_CLOSED",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "host_gate": {
+    "status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+    "cases": 6,
+    "recoveries": 6,
+    "permissions_false": 30,
+    "owners_closed": 86,
+    "backup_hashes": 9,
+    "old_backups_retained": 18,
+    "budgets_empty": 3,
+    "native_delete": 0,
+    "source_provider_io": 0
+  },
+  "containment_anchor": "729ba2e881bc9f19a6dcdd634bcc8ea74d5907b2",
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "observed_at": "2026-10-20T06:20:11.631785+00:00",
+  "read_only_processes": 994,
+  "unapproved_processes": [],
+  "permission_enable": 0,
+  "proof_signing": 0,
+  "source_start_or_exec": 0,
+  "schedule": "NOT_CREATED",
+  "future_window_fresh_preconditions": "REQUIRED"
+}

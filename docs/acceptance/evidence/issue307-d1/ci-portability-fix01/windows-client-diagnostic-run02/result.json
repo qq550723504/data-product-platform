@@ -1,0 +1,21 @@
+{
+  "started_at": "2026-10-24T13:09:04.565380+00:00",
+  "finished_at": "2026-10-24T13:09:25.673658+00:00",
+  "command": [
+    "node",
+    "node_modules/playwright/cli.js",
+    "test",
+    "--config",
+    "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/windows-client-diagnostic01/playwright02.config.mjs",
+    "-g",
+    "compact",
+    "--repeat-each=8",
+    "--retries=0",
+    "--output=C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/windows-client-diagnostic-output02/test-results"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_FRESH_ADMISSION_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T14:34:06.735944+00:00",
+  "reviewer": "existing independent reviewer /root/v20_independent_review",
+  "checkout_head": "f00d64328cc9489256143e87060a30e249cc406b",
+  "dirty_slice": "One new SQL integration test appended in old_dispatch_closure_integration_test.go. Runtime source unchanged at this review.",
+  "remaining_blockers": [],
+  "read_bindings": {
+    "docs/acceptance/issue307-d1-post-v22-six-contract.md": "030fcb8d7f65f4c95e36209685b903ab632d672ad74e35db7250f84db59f6fe6",
+    "apps/platform/internal/lifecycle/application/old_dispatch_closure_integration_test.go": "2a75a2057f666f584bdda6a89b576f32d613668139cd6afbc7dcafc636288041",
+    "apps/platform/internal/lifecycle/application/disposition_integration_test.go": "2927c5742241f7460649f1db35221713d0b62867fcc96b8de45b178919d67b72",
+    "apps/platform/internal/lifecycle/application/prepare_plan_integration_test.go": "e9219ac480eb7fe4681e8107fe808b84f80f3304dad471e9b7e16fcd1b6bee23",
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence.go": "27e2427f611d35666ad15d2a21b3715b919df0d1c2eb32e5a57fb89f10603682",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": "ff3f45bd37566efedda5947a019cd2e40e79e516b612b83a1887567567184fc0",
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire.go": "afa24beec2baada39102e176d1b4f1cb0d934fae6963b6a49a517f580153dbdc",
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return.go": "48c2aba351651f8a99df359e3ca6f12ec1b863eaa6c55bbfbbb34ee0c309621b",
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": "293beed7bd5b087e12664a7aa163073adc0aea43e4c1ad983344d25e25a026af",
+    "apps/platform/internal/lifecycle/pilot/remaining_dependencies.go": "89eda8a80489b139612c6ab1a4516aa13bf5b4d37aaafcc1f31bc886f2514152"
+  },
+  "reviewed_test": "TestOldDispatchClosureAllowsOnlyFreshApprovalAndAttempt",
+  "test_semantics_confirmed": [
+    "Uses planDatabase new isolated template0 database and complete current migrations; does not target retained pilot Core.",
+    "Creates original admitted dispatch/attempt and snapshots immutable old approval/dispatch/attempt row before new work.",
+    "Creates separate approval and proves new approval cannot bypass old unresolved dispatch.",
+    "Appends revocation for exact old approval and synthetic verified NOT_SENT for exact old attempt; the release uses existing Command behavior.",
+    "Proves revoked old approval remains invalid after closure.",
+    "Admits distinct fresh dispatch and attempt under new approval; old IDs and complete old JSON rows remain.",
+    "Asserts no provider send claim and no cost_event/cost_allocation produced by admission-only composition.",
+    "Checks exactly one old dispatch release and one NOT_SENT observation."
+  ],
+  "scope_limit": "The existing disposalFixture provides synthetic dependency/approver/observation verifier facts. This test proves application/DB lifecycle and preservation semantics once trusted observation is supplied. It does not independently prove live host owner closure, signature verification, disabled IAM, provider invocation absence or original P2/T1/T2 runtime mutation. Those accepted old closure receipts remain separate.",
+  "test_evidence": {
+    "reviewer_executed": "NONE_READ_ONLY_SOURCE_REVIEW",
+    "PostgreSQL": "NOT_RUN_BY_REVIEWER_PARENT_OWNED_SCRATCH_RECEIPT_PENDING",
+    "Docker_operations": 0,
+    "provider_calls": 0,
+    "credentials_read": 0,
+    "DELETE": 0
+  },
+  "minimal_six_target_runtime_boundaries": [
+    {
+      "path": "cmd/lifecycle-fixture-remaining/sequence.go + fixed host",
+      "required": "Keep committed exact P1 absence as historical precondition to P2, remove P1 from any dispatch/slot/wire scope. Existing sequence is per-group; strict host must enforce P2/T1/T2 then H2A then M1A/M1B, each next durable slot after prior send-off + committed exact namespace/Core absence.",
+      "current_implementation": "NOT_CHANGED_OR_ACCEPTED_BY_THIS_TEST"
+    },
+    {
+      "path": "internal/lifecycle/pilot/remaining_dependencies.go",
+      "required": "Keep per-workspace historical All size8/6/4, present7/6/4 and six target3/1/2 separately. Existing inventory subtracts committed exact absence; references count must still see full historical register. Preserve Core fence/current policy heads.",
+      "current_implementation": "EXISTING_SEMANTICS_READ_ONLY_REVIEWED"
+    },
+    {
+      "path": "cmd/lifecycle-fixture-remaining/wire.go + main.go",
+      "required": "New strict candidate, execution, approval basis/principal and independent disabled identity scopes; no old P1 target, old seven budget/key/permission reuse. SDK/wire no resend, slot before claim remains O_EXCL. Keep H2 witness/upstream204/late hold/revoke/lost response and M1 UNKNOWN checkpoint-before-lookup ordering.",
+      "current_implementation": "EXISTING_OLD_GENERATION_NOT_SIX_RUNTIME_PASS"
+    },
+    {
+      "path": "cmd/lifecycle-fixture-remaining/send_return.go",
+      "required": "Preserve actual transport observation and original claim/observation errors; do not infer NOT_SENT from missing Core row and do not refund budget or retry UNKNOWN.",
+      "current_implementation": "PREVIOUSLY_ACCEPTED_BEHAVIOR_MUST_BE_REUSED"
+    },
+    {
+      "path": "cmd/lifecycle-fixture-recovery/main.go + p1_post_v22.go",
+      "required": "Reuse RecoveryService/Outbox/Asynq and BuildRecoveryInspector routing bootstrap. Fresh per-case recovery identities/work/profile scopes; inspect full namespace plus exact target then append immutable absence. Only selected new outbox event may be claimed using existing OnlyEventID mechanism; unrelated old obligations must remain unchanged. Generic global drain with unsupported handlers is not a substitute for this selection.",
+      "current_implementation": "P1_SCOPED_PATH_AVAILABLE_GENERIC_DRAIN_GLOBAL_NO_NEW_SIX_WIRING_YET"
+    },
+    {
+      "path": "generator/checker/host/docs/history",
+      "required": "Freeze one strict current six candidate only after nondelete composition/PG/SDKloopback and new backup/actual-restore validation; preserve accepted17/source9708/archive/old source objects and exact native facts without rerunning or rewriting.",
+      "current_implementation": "NOT_FROZEN"
+    }
+  ],
+  "classification": {
+    "BLOCKER": [],
+    "FOLLOWUP": [
+      "Run the new test on explicitly owned scratch PostgreSQL and preserve raw pass/failure/skip and scratch final stopped evidence.",
+      "Implement and separately review the bounded six-target sequence/wire/recovery integration and failure combinations."
+    ],
+    "INVALID_OR_OUT_OF_SCOPE": [
+      "Demand live original-source deletion to pass an application synthetic regression.",
+      "Treat new test or new window preference as deletion authority.",
+      "Reopen already accepted old closure/17 result scope."
+    ]
+  },
+  "six_nondelete_runtime_acceptance": "NOT_RUN",
+  "six_candidate": "NOT_FROZEN",
+  "window": "2026-10-20 SGT14:00-14:40 preference only",
+  "new_delete_authorization": "NONE",
+  "PR332": "Draft",
+  "Issue307": "OPEN",
+  "D1": "NOT_ACCEPTED"
+}

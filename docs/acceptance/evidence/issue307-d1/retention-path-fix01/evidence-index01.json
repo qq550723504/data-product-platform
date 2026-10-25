@@ -1,0 +1,83 @@
+{
+  "status": "PASS_LOCAL_WINDOWS_PATH_FIX_SOURCE_AND_EVIDENCE",
+  "format": "files-map-v1",
+  "count": 19,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/failure-evidence-copies01.json": {
+      "sha256": "4afa5614dd2b4ac55bcf70c9cd78e920dc038475a5342e8e9ab9a9d944767491",
+      "bytes": 1830
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/independent-review01.json": {
+      "sha256": "0c0f5a30ba841b313ce37a4607733d56cadfcfcd52710a3d7100d99a60bc8abc",
+      "bytes": 2210
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/local-regression01.json": {
+      "sha256": "110f8c32d8565fa5e885f631925e2f1bfa007fb6cc12e57e1d31c46fa7c9bcee",
+      "bytes": 1473
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/original-failure-relock.json": {
+      "sha256": "9ada1ef3a3eed1c4a741ed702cc00a019abe1354f19f031dca7c77a498593d54",
+      "bytes": 454
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/original-path-reproduction.json": {
+      "sha256": "b658d61f9440a8865416a09a5a3a45fdc5f84b7c2e21ffd076faadd173f5b57d",
+      "bytes": 1359
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/original-publication-result.json": {
+      "sha256": "4ddbcd62cba7197746719ac60cbe099c0768e82fb60a4a61cba585cb88ee7213",
+      "bytes": 405
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/original-windows-job.json": {
+      "sha256": "a774b9d75fe5214143f79574c4a1ff1cf13a3ccf0e3372996b2f5ca3da3cbcd3",
+      "bytes": 3755
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/original-windows-log-base64.json": {
+      "sha256": "04ca0f2ccedd9f596c5d6b220280abeaa09810d7b9c3b5b31d07defbe894a12e",
+      "bytes": 48886
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_evidence_indexes-normal.stderr": {
+      "sha256": "fc4cfedec5192330241a88a0257cabbd4dd5f3d1af3a7d7bf404cb1065d96435",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_evidence_indexes-optimized.stderr": {
+      "sha256": "946d8a768d52c22fcf0270668608db66fbba804591a550a7cfad20b3de285f13",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_evidence_indexes-optimized.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_retention_maintenance-normal.stderr": {
+      "sha256": "fb75a9a6453957cd6a7fb74808c1845efc2308d598c01b81156439345351492e",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_retention_maintenance-optimized.stderr": {
+      "sha256": "72c077bdad155d5d810184d34159c0d5b996eb78001bfea3492b2328e92852ec",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-path-fix01/test_retention_maintenance-optimized.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/issue307-d1-retention-path-fix01.md": {
+      "sha256": "05404903f2857af87def7af4361a5aa6774c468df75c925fc4ea05efaa30a161",
+      "bytes": 3483
+    },
+    "examples/lifecycle-d1/retention_maintenance.py": {
+      "sha256": "542d1f9380b9498ca2a38f6617e3270139664f7a7e3c1b51e5e52cb4602d1951",
+      "bytes": 13332
+    },
+    "examples/lifecycle-d1/test_retention_maintenance.py": {
+      "sha256": "bb1c17945a3a6121977e9841c353d950f4a124813c90646a55bf0325b34083b0",
+      "bytes": 13766
+    }
+  }
+}

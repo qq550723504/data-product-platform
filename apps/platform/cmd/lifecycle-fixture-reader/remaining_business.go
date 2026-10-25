@@ -58,6 +58,9 @@ func newRemainingDisposition(ctx context.Context, r remainingConfig, pool *pgxpo
 	}
 	scope, _ := pilot.RemainingScopeFor(r.Group)
 	for _, p := range scope.Plans {
+		if r.Group == "business-races" && p.Case == "P1" {
+			continue // immutable old absence, never a new disposal basis
+		}
 		d.plans[p.Case] = p
 		if _, err = lc.NewExactExecution(d.service).RegisterFixtureDisposalBasis(ctx, lc.FixtureDisposalBasisCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "remaining-basis:" + r.Batch.String() + ":" + p.Case}, RunID: pilot.RemainingBasisRun(r.Batch, p.ID), InventoryPlanID: inventory.ID, ApprovedPlanID: p.ID, InventoryHash: inventory.ContentHash, ApprovedHash: p.Hash, BasisRef: "REMAINING_NON_DELETE_REHEARSAL:" + r.Batch.String()}); err != nil {
 			return nil, err
@@ -66,12 +69,12 @@ func newRemainingDisposition(ctx context.Context, r remainingConfig, pool *pgxpo
 	return d, nil
 }
 func (d *remainingDisposition) restrict(ctx context.Context, cp domain.Copy) error {
-	_, err := d.o.RestrictContentUse(ctx, lc.RestrictContentUseCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-restrict:" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, BasisRef: "REMAINING_NON_DELETE_REHEARSAL:" + d.r.Batch.String()})
+	_, err := d.o.RestrictContentUse(ctx, lc.RestrictContentUseCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-restrict:" + d.r.Batch.String() + ":" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, BasisRef: "REMAINING_NON_DELETE_REHEARSAL:" + d.r.Batch.String()})
 	return err
 }
 func (d *remainingDisposition) approve(ctx context.Context, name string) error {
 	p := d.plans[name]
-	a, err := d.service.ApproveContentDisposition(ctx, lc.ApproveContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-approve:" + name}, PlanID: p.ID, BasisRef: "REMAINING_NON_DELETE_REHEARSAL:" + d.r.Batch.String(), ExpiresAt: d.r.Base.ExpiresAt})
+	a, err := d.service.ApproveContentDisposition(ctx, lc.ApproveContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-approve:" + d.r.Batch.String() + ":" + name}, PlanID: p.ID, BasisRef: "REMAINING_NON_DELETE_REHEARSAL:" + d.r.Batch.String(), ExpiresAt: d.r.Base.ExpiresAt})
 	if err == nil {
 		d.approvals[name] = a.ID
 	}
@@ -80,6 +83,15 @@ func (d *remainingDisposition) approve(ctx context.Context, name string) error {
 func (d *remainingDisposition) dispatch(ctx context.Context, name, key string, cp domain.Copy) (lc.DispatchResult, error) {
 	if err := d.refresh(ctx, cp); err != nil {
 		return lc.DispatchResult{}, err
+	}
+	if remainingProtectedCopy(cp) {
+		until, err := remainingProtectionDeadline(d.r)
+		if err != nil {
+			return lc.DispatchResult{}, err
+		}
+		return protectedRemainingCommand(ctx, cp, until,
+			func(context.Context, domain.Copy) (lc.CopyProtection, error) { return d.deps.Protection[cp.ID], nil },
+			func() (lc.DispatchResult, error) { return d.commandDispatch(ctx, name, key, cp) }, time.Now)
 	}
 	return d.commandDispatch(ctx, name, key, cp)
 }
@@ -98,7 +110,64 @@ func (d *remainingDisposition) refresh(ctx context.Context, cp domain.Copy) erro
 	return nil
 }
 func (d *remainingDisposition) commandDispatch(ctx context.Context, name, key string, cp domain.Copy) (lc.DispatchResult, error) {
-	return d.service.DispatchContentDisposition(ctx, lc.DispatchContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-dispatch:" + key}, PlanID: d.plans[name].ID, ApprovalID: d.approvals[name], CopyID: cp.ID})
+	return d.service.DispatchContentDisposition(ctx, lc.DispatchContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-dispatch:" + d.r.Batch.String() + ":" + key}, PlanID: d.plans[name].ID, ApprovalID: d.approvals[name], CopyID: cp.ID})
+}
+
+// Continue the three closed old business cases without running the old engine,
+// HTTP transfer or publication again. All old outputs, pins and attempts remain.
+func remainingResumeBusiness(ctx context.Context, r remainingConfig, pool *pgxpool.Pool) error {
+	if r.Group != "business-races" || r.Batch.String() != pilot.RemainingExecution {
+		return lc.ErrStorageScope
+	}
+	if pilot.ValidateRemainingPolicyHeads(r.Group, r.ExpectedPolicyHeads) != nil {
+		return lc.ErrStorageScope
+	}
+	cs, err := planeCopies(ctx, r.Base, pool)
+	if err != nil {
+		return err
+	}
+	for _, cp := range cs {
+		if cp.Key == "fixture/p1.csv" || cp.Key == "fixture/control-hold.csv" || cp.Key == "fixture/control-retention.csv" {
+			continue
+		}
+		var head uuid.UUID
+		if err = pool.QueryRow(ctx, `SELECT id FROM lifecycle_current_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, cp.WorkspaceID, cp.DatasetVersionID).Scan(&head); err != nil || head != r.ExpectedPolicyHeads[cp.DatasetVersionID.String()] {
+			return fmt.Errorf("frozen current policy head differs for %s: actual=%s expected=%s query_error=%v", cp.DatasetVersionID, head, r.ExpectedPolicyHeads[cp.DatasetVersionID.String()], err)
+		}
+	}
+	var p1Absent bool
+	if err = pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE workspace_id=$1 AND copy_id=$2)`, r.Base.WorkspaceID, uuid.MustParse(absentP1)).Scan(&p1Absent); err != nil || !p1Absent {
+		return errors.New("old P1 committed absence missing")
+	}
+	o, _, _, _, err := remainingServices(r, pool, cs)
+	if err != nil {
+		return err
+	}
+	d, err := newRemainingDisposition(ctx, r, pool, cs, o)
+	if err != nil {
+		return err
+	}
+	admitted := map[string]lc.DispatchResult{}
+	for _, name := range []string{"P2", "T1", "T2"} {
+		key := map[string]string{"P2": "fixture/p2.csv", "T1": "fixture/t1.csv", "T2": "fixture/t2.csv"}[name]
+		cp, e := remainingCopyKey(cs, key)
+		if e != nil {
+			return e
+		}
+		var unresolved int
+		if e = pool.QueryRow(ctx, `SELECT count(*) FROM lifecycle_disposition_dispatch d WHERE d.workspace_id=$1 AND d.copy_id=$2 AND NOT EXISTS(SELECT 1 FROM lifecycle_dispatch_release r WHERE r.dispatch_id=d.id)`, cp.WorkspaceID, cp.ID).Scan(&unresolved); e != nil || unresolved != 0 {
+			return fmt.Errorf("%s still has an unresolved dispatch", name)
+		}
+		if e = d.approve(ctx, name); e != nil {
+			return e
+		}
+		result, e := d.dispatch(ctx, name, name+"-new-execution", cp)
+		if e != nil || !result.Admitted {
+			return fmt.Errorf("%s fresh admission: %+v %v", name, result, e)
+		}
+		admitted[name] = result
+	}
+	return write(r.Base, "six-business-admission.json", map[string]any{"execution": r.Batch, "admitted": admitted, "old_business_owners_replayed": false, "new_outputs": 0, "send_claims": 0, "native_delete": 0})
 }
 func remainingNoIO(ctx context.Context, pool *pgxpool.Pool) (int, error) {
 	return count(ctx, pool, `SELECT count(*) FROM lifecycle_storage_call WHERE operation IN('READ_PINNED','PROCESSING_PUT')`)

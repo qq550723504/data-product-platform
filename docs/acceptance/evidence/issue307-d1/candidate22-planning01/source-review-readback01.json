@@ -1,0 +1,24 @@
+{
+  "status": "PASS_ROOT_READBACK_INDEPENDENT_SOURCE_REVIEW",
+  "at": "2026-10-23T04:46:42.676681+00:00",
+  "report_sha256": "d5c8203c1b93375882281888819bbefedee26d9fb3f028ed099c4830e9cbfd48",
+  "indexes": [
+    {
+      "id": "evidence-index.json",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-source-review01/evidence-index.json",
+      "sha256": "80a70490206aeccb141cb37c8acfd53ed6a7ac38ed60400a8eede7028dd4b749",
+      "members_verified": 16
+    },
+    {
+      "id": "reviewed-artifacts01.json",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate22-source-review01/reviewed-artifacts01.json",
+      "sha256": "f807bb5d419ad402077ff5d5361d8d62271a3967c6296b2b1570acbaf5cf4a20",
+      "members_verified": 2307
+    }
+  ],
+  "remaining_blockers": [],
+  "native_delete": 0,
+  "execution_authority": false
+}

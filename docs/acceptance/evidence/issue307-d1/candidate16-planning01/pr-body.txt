@@ -1,0 +1,11 @@
+#307 D1 closes old dispatches and prepares a new six-target candidate after the host CLI fix. The old candidate15/v25 execution stays BLOCKED_PREWINDOW_REVIEW and its heartbeat stays PAUSED; its authorization, failure evidence, budgets and pins are retained.
+
+The fixed host CLI resolves `--group` through `Host.group` before `archive_root` or `revoke_case`. Candidate16/v26 uses a new execution `aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a`, new disabled identities, independent restore resources and budgets, and a proposed 2026-10-20 18:00–18:40 Singapore window (read-only recovery ends 20:40). It covers P2→T1→T2→H2A→M1A→M1B; P1 stays excluded and all 11 survivors stay protected.
+
+Validation: Python normal/-O each 34 methods; Go 274 PASS / 2 explicit SKIP. Actual three-source Core fingerprints and ACLs remain unchanged; 17 versions, 23 known IAM identities plus 9 absent names, 9 new backups and independent clean/rehearsal/native restores pass. Four business rehearsals preserve the 20 old fact multisets. The frozen offline validator and complete read-only entry pass; the latter records 113 technical request pairs and closes its owners. Technical helper requests and rehearsal CostEvents are recorded separately; amount remains NOT_ASSESSED.
+
+The source commit `5472a583f86838df42a5ffd86bc366c166036efb` has exact-head PR CI run 39356719557, 13/13 success. Final publication-head CI and the bounded independent review are recorded separately. This is PR CI, not main CI or runtime acceptance.
+
+The full confirmation and finite runbook are `docs/acceptance/issue307-d1-candidate16-confirmation.md` and `docs/acceptance/issue307-d1-v26-window-runbook.md`; results and remaining NOT_RUN items are in `docs/acceptance/issue307-d1-v26-preparation.md`.
+
+Candidate16 remains NOT_AUTHORIZED, no new schedule exists, all 30 permissions remain false, and this preparation issued zero DELETEs. A fresh precise human authorization is required. #332 remains Draft and unmerged; #307 remains OPEN. Full D1 acceptance is NOT_ACCEPTED.

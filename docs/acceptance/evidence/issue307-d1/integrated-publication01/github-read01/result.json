@@ -1,0 +1,28 @@
+{
+  "status": "PASS_FRESH_LOCKED_PUBLISHED_BASE",
+  "observed_at": "2026-10-24T05:57:02.691944+00:00",
+  "head": "e54967e822847e97316e703ee413ffc1298cb627",
+  "rule": {
+    "id": "BPR_kwDOUdQLBs4FE_7b",
+    "pattern": "codex/issue307-post-v22-dispatch-closure",
+    "lockBranch": true,
+    "isAdminEnforced": true,
+    "lockAllowsFetchAndMerge": false,
+    "allowsForcePushes": false,
+    "allowsDeletions": false
+  },
+  "PR332": "OPEN_DRAFT_UNMERGED",
+  "Issue307": "OPEN",
+  "CI": {
+    "id": 39983308178,
+    "attempt": 1,
+    "event": "pull_request",
+    "jobs": 13,
+    "conclusion": "success"
+  },
+  "unresolved_threads": 0,
+  "nonlock_policy_sha256": "77b0679be0f70f7858a864fd66c90aec78e63dbd387029919ad7a1693c6fc6ab",
+  "mutations": 0,
+  "pushes": 0,
+  "new_integrated_HEAD_CI": "NOT_RUN"
+}

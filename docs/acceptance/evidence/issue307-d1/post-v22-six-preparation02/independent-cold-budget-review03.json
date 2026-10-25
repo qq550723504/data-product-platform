@@ -1,0 +1,198 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_C14_COLD_PROFILE_BUDGET_REVIEW",
+  "remaining_blockers": [],
+  "reviewed_at": "2026-10-19T19:01:00.225039+00:00",
+  "source_head": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "execution": "afc0e66c-535b-426e-a937-964d0c9ca0d6",
+  "profile": "candidate14/v24",
+  "allocation_nonce": "ee2b7752-5a69-46f2-ba44-6a5a10db7278",
+  "allocation_sha256": "ba37a45ccc83dc21584bbfb929fc560f5da89e6bc397f96ad8cb00daba4a76b2",
+  "public_input_sha256": {
+    "allocation.json": "ba37a45ccc83dc21584bbfb929fc560f5da89e6bc397f96ad8cb00daba4a76b2",
+    "allocation-closed.json": "34067b072190f10b0af7bcc19ca40eaa0421b1ad118bd9fdd751d2fd917ea369",
+    "owner-descriptors.json": "fdbdef99d17f6e183309cfc937caf3b8cbed606dfa84fcce4d6e2470a329f71a",
+    "six-map.json": "cf5eb439276a35e6d58638f5084e3896e27675b2ea0a64edc7eb611a0689a3bb",
+    "profiles.json": "b1ec735f7e04ab670c2d43867dfa9c391decd6eacb4c5e5c5d194c484ee90f07",
+    "budget-initialization-start.json": "9544f4eef4cbc87658d62669e3465b1ab03c285a73b0aacb3c082ffe4fc25877",
+    "budget-initialization.json": "c4061f5c1e2212ef96eed3e6b4fa9726e0ada68749b3bddeaf77b37eb1159f1b"
+  },
+  "source_files_sha256": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "7bdea9e030c1d44c84d4faceb6a29635aece6247bdce25657d78d8ee07de538b",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "b3b221aaf873d943932e423f12d9d20a09a2fbf3fe412bdc7e579ce108f0e61a",
+    "examples/lifecycle-d1/verify-six-native.py": "2b67ea1dd4e68b0e685ca58e86b2242dc88b0a49c784ce38b2d817562097d04e",
+    "examples/lifecycle-d1/window_six_support.py": "8cb5beece5c91ebb460f742f0a62143cb3b6eb08bf8e8ad272ae528e483ceedd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "01ada23ee6caf95c364b6944af79dc237f0b0f4713e36132ea31316007e29c3d",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "c7f25c406f78c4823306d1bdb3a51e628ea9f6de240313633e81f82c73d2f057",
+    "examples/lifecycle-d1/test_verify_six_native.py": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+    "examples/lifecycle-d1/test_window_six_support.py": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+    "examples/lifecycle-d1/remaining_six_window.py": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef",
+    "examples/lifecycle-d1/test_remaining_six_window.py": "aa9db82c728aebbd0b742b80f3d30183062ecb711d40bd152a8cf7cc6f63c95d",
+    "examples/lifecycle-d1/remaining_sequence.py": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+    "examples/lifecycle-d1/test_remaining_sequence.py": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5"
+  },
+  "independent_evidence_index_sha256": "cb236e08627f0857bb6d2aa320b7eff89a9162005370dc34b7ccba7282e9bccd",
+  "independent_evidence_members": 39,
+  "actual_readonly_checks": {
+    "fixed_cli_check": {
+      "exit_code": 0,
+      "status": "PASS_COMPLETE_PREPARATION_BEFORE_SOURCE_IO",
+      "stdout_sha256": "fd06169527aa81ce56f335911a3c066270b4fce66ae21adcd633e52b559c7695",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "retained": {
+      "unique_old_owners": 184,
+      "status": "PASS_RETAINED_184_CLOSED",
+      "old_c13_budgets": 3,
+      "old_backup_files": 9,
+      "original_pins_and_failure_controls": "Reused frozen retained gate; no Core/provider execution"
+    },
+    "new_allocation": {
+      "new_owners": 86,
+      "new_volumes": 15,
+      "new_internal_networks": 3,
+      "original_source_core_native_closed": 6,
+      "physical_projection_sha256": "fcfdcf49ba1574a8ba6532c10ba33ef122bf74d3f7541718711f07ffd57a045a",
+      "role_image_partition": {
+        "helpers": 15,
+        "cases": 6,
+        "root_owners": 15,
+        "maintenance": 15,
+        "rehearsals": 4,
+        "utilities": 9,
+        "budget_initializer": 3,
+        "restore_core": 3,
+        "rehearsal_core": 3,
+        "restore_native": 3,
+        "gateway": 3,
+        "restore_gateway": 3,
+        "recovery_redis": 3,
+        "offline_validator": 1
+      },
+      "uid10001_workers": 56,
+      "new_never_started": 83,
+      "initializers_exited_zero": 3,
+      "all_new_and_original_source_PID0": true,
+      "descriptors_and_complete_volume_mount_graph": "ACTUAL_FIXED_CHECK_PASSED",
+      "old_source_volume_exception": "/source read-only on three exact old source volumes; no other old writable mount"
+    },
+    "profiles": {
+      "maintenance_false": 15,
+      "rehearsal_false": 4,
+      "source_cases": 6,
+      "source_case_base_enabled": true,
+      "source_case_meaning": "Frozen time-bound non-delete case profile; all case owners never started and sending/root permissions false",
+      "case_batch": "afc0e66c-535b-426e-a937-964d0c9ca0d6",
+      "case_start": "2026-10-20T06:00:00Z",
+      "case_end": "2026-10-20T06:40:00Z",
+      "candidate_use_until": "2026-10-20T06:40:00Z",
+      "permissions_false": 30,
+      "root_and_producer_credentials_absent_from_cases_and_trials": true,
+      "rehearsal_dsn_only_new_rehearsal_core": true,
+      "profile_projection_sha256": "42455d231446678e65effdc1bdc8eb4ce0654116d1f5bd3a68be406250152275"
+    },
+    "build": {
+      "source": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+      "members": 12,
+      "binary_count": 4,
+      "linux_amd64_cgo0": 3,
+      "windows_amd64_file_checker": 1,
+      "raw_build_members_all_regular_unaliased": true,
+      "buildinfo_summary_sha256": "4f7f64cceec8f5033f326f3d5fafab8a51e3536797506df157ffed8c2b629af2",
+      "embedded_vcs_revision": "NOT_CLAIMED; external exact source/build member binding"
+    },
+    "budgets": {
+      "new_budget_count": 3,
+      "uid": 10001,
+      "gid": 10001,
+      "files": [],
+      "fresh_tar_equals_original_initial": [
+        true,
+        true,
+        true
+      ],
+      "tar_sha256": {
+        "business-races": "adcbdd3891a8487730d8d6fe27e366de025766bb2f4a38132d2ddbb29f8ad89e",
+        "late-hold": "ef4b14d79b67cac460b22998e49577d9ece43ca84c9e6fe12b7a748d6c9b2f2e",
+        "mixed": "728866fc3b4383f0e9a866e5f9f85a6e12715cd9ed6c71d8acd99d5bae3b4884"
+      },
+      "initializer_once_evidence": "Single O_EXCL start marker for exact three CID IDs, bound original exit0/logs/immutable TAR; live exited/PID0/RestartCount0. No full Docker event-history claim.",
+      "initializers": {
+        "business-races": {
+          "script_sha256": "42c20d231a42bc66977b0a0351b59c029a94438a18211db96ddc089593a5098f",
+          "original_channels_sha256": {
+            "stdout.txt": "1762b14a2605a95dba386423447ae68600b09a16348b1764cbe190c60043fc02",
+            "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "wait-stdout.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+            "wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "owner.json": "79c1a8b9a5bc25b9846c33ffa2d14cf5bf192a240fa76ca62d83ea1fa193636c"
+          }
+        },
+        "late-hold": {
+          "script_sha256": "42c20d231a42bc66977b0a0351b59c029a94438a18211db96ddc089593a5098f",
+          "original_channels_sha256": {
+            "stdout.txt": "1762b14a2605a95dba386423447ae68600b09a16348b1764cbe190c60043fc02",
+            "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "wait-stdout.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+            "wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "owner.json": "1b9103c802cd1e39f79777378253fc58813d10d6a070ab6109be69797dd14362"
+          }
+        },
+        "mixed": {
+          "script_sha256": "42c20d231a42bc66977b0a0351b59c029a94438a18211db96ddc089593a5098f",
+          "original_channels_sha256": {
+            "stdout.txt": "1762b14a2605a95dba386423447ae68600b09a16348b1764cbe190c60043fc02",
+            "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "wait-stdout.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+            "wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "owner.json": "e164ea2c10e689c602560782ba1f43e8b57d4d7d3eb34a1bf5b7143156923571"
+          }
+        }
+      }
+    },
+    "ci": {
+      "run_id": 39303939210,
+      "event": "pull_request",
+      "source": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+      "jobs": 13,
+      "conclusion": "success",
+      "raw_sha256": "31c7a1953d506acd64fd7dc2fe8cfb60d23ba2997632a92f39058797179208dc",
+      "verification": "LOCAL_RAW_RECEIPT_READBACK_NOT_LIVE_GITHUB_FETCH_OR_MAIN_CI"
+    }
+  },
+  "review_harness_events": [
+    {
+      "round": "01",
+      "classification": "INVALID_REVIEW_HARNESS_ALLOWLIST_GAP",
+      "detail": "Additional reviewer allowlist omitted the already-authorized old budget read CID:/run/budget/.. Only that read was blocked; 141 allowed inspect calls occurred. Raw exit1/trace/harness retained. No implementation or evidence changed."
+    },
+    {
+      "round": "02",
+      "classification": "CLOSED",
+      "detail": "Only the fixed equivalent /run/budget/. source TAR path added; exact check passed. Raw trace writer used a literal backslash-n trailer; original bytes preserved and valid decoded wrapper separately indexed. No product gate relaxed."
+    }
+  ],
+  "boundaries": {
+    "new_source_iam_or_native_sdk_calls": 0,
+    "source_start_stop_exec_calls": 0,
+    "identity_enable": 0,
+    "native_delete": 0,
+    "source_core_fresh_queries": "NOT_RUN",
+    "new_six_iam_created": "NOT_RUN; fifteen-known and five-absent are compiled expectations pending actual Source provisioning/readback",
+    "full_candidate14_source_restore": "NOT_RUN",
+    "candidate_frozen": false,
+    "human_delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "reviewer_actions": {
+    "source_or_active_packet_edits": 0,
+    "allowed_readonly_docker_cli_calls": 938,
+    "go_buildinfo_readonly_calls": 4,
+    "config_env_or_root_secret_or_token_or_dsn_values_output": 0,
+    "proof_signing": 0,
+    "git_github_writes": 0,
+    "all_report_writes": "O_EXCL in independent stage evidence directory only"
+  },
+  "required_next": "Parent may proceed through its separately authorized one-shot non-delete Source/Restore gates using this exact source and allocation; this report gives no deletion authorization."
+}

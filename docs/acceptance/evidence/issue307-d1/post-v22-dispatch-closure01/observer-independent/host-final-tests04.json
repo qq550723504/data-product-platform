@@ -1,0 +1,113 @@
+{
+  "status": "PASS_OFFLINE_WHOLE_ENTRY_AND_ACTUAL_PRIOR_GATE_MOCK_ONLY",
+  "at": "2026-10-19T12:46:14.510757+00:00",
+  "whole_entry_successful_records_reused_unchanged_source": [
+    {
+      "mode": "normal",
+      "scope": "whole",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-whole-normal03-stdout.txt",
+          "sha256": "5a5c26c69bc89471d8f2383a8fcf91841d520749ee6d753ad161c3c0d86ffa6c",
+          "bytes": 507
+        },
+        "stderr": {
+          "file": "host-final-whole-normal03-stderr.txt",
+          "sha256": "181f90cf982a630cea9829f79a3a0bafad4ccb2a79e1f067a1cfc8e07ba28832",
+          "bytes": 3470
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "scope": "whole",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-whole-optimized03-stdout.txt",
+          "sha256": "c4939a6b2e1ff8ad0abe5cbbf90faddc0e98ac8e1e84749aed0159e8c5d8d35b",
+          "bytes": 507
+        },
+        "stderr": {
+          "file": "host-final-whole-optimized03-stderr.txt",
+          "sha256": "675e801a5fef0534bc82ebd85345e31df31d472ee78b9df419cd0a0939cd1249",
+          "bytes": 3470
+        }
+      }
+    }
+  ],
+  "whole_methods_per_mode": 20,
+  "actual_prior_gate_independent_methods_per_mode": 2,
+  "prior_drift_subcombinations": 5,
+  "prior_gate_records": [
+    {
+      "mode": "normal",
+      "scope": "prior-gate",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-closure01\\observer-independent\\test_prior_preparation_gate02.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-prior-gate-normal04-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "host-final-prior-gate-normal04-stderr.txt",
+          "sha256": "c7da96b3c7605f76526ebd7fa774200223324602d984b6e528744e7b880db2d4",
+          "bytes": 385
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "scope": "prior-gate",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-closure01\\observer-independent\\test_prior_preparation_gate02.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-prior-gate-optimized04-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "host-final-prior-gate-optimized04-stderr.txt",
+          "sha256": "a992f3e83adbf368c2461af74cd21a7d8863bd4657554bf174d036d75ac8a00a",
+          "bytes": 385
+        }
+      }
+    }
+  ],
+  "preserved_reviewer_harness_failure": "test_prior_preparation_gate01.py used parents[7], one directory above actual checkout; failed before importing host with zero runtime calls. Original script/logs and host-final-tests03.json preserved; new02 uses correct parents[6].",
+  "source_start": 0,
+  "provider": 0,
+  "DELETE": 0
+}

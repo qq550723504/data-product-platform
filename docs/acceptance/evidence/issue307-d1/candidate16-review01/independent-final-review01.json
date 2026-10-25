@@ -1,0 +1,433 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_C16_FROZEN_NONDELETE_PREPARATION_REVIEW",
+  "at": "2026-10-20T02:35:11.689403+00:00",
+  "remaining_blockers": [],
+  "profile": "candidate16/v26",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "source_head": "5472a583f86838df42a5ffd86bc366c166036efb",
+  "packet_containment_anchor": "729ba2e881bc9f19a6dcdd634bcc8ea74d5907b2",
+  "observed_checkout_HEAD": "729ba2e881bc9f19a6dcdd634bcc8ea74d5907b2",
+  "candidate_sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643",
+  "bindings_sha256": "ba4be219a0a567579684afbb9ced23d7fdec556654d746b7b86c254d35e4e580",
+  "confirmation_template_sha256": "cd06672e3992c3888d9d765082747f073250dcdb33d499d3f0210d1fdb786f7c",
+  "source_freeze_sha256": "2a1f4aa1f206b84d74e9045731816dc67f8f992b07d4e39b99e8dc9559127cdc",
+  "complete_native_entry_sha256": "2988e66ff47c40a8725845fa336910b56bba1cf19e347a9b729ac1fb52f7d4ca",
+  "review_scope": "AGENTS17 finite contract: new execution/window retains independently fixed host CLI, immutable old authorization/failure resources, real non-delete Source/restore, frozen six exact targets/eleven survivors, sole complete readonly entry, bounded docs and actual closure. No execution authority or future deletion acceptance.",
+  "reviewed_packet_receipts": {
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/candidate.json": {
+      "sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643",
+      "bytes": 20540
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/bindings.json": {
+      "sha256": "ba4be219a0a567579684afbb9ced23d7fdec556654d746b7b86c254d35e4e580",
+      "bytes": 309687
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/confirmation-template.txt": {
+      "sha256": "cd06672e3992c3888d9d765082747f073250dcdb33d499d3f0210d1fdb786f7c",
+      "bytes": 27898
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/source-freeze.json": {
+      "sha256": "2a1f4aa1f206b84d74e9045731816dc67f8f992b07d4e39b99e8dc9559127cdc",
+      "bytes": 594272
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/profile-windows.json": {
+      "sha256": "24272f1f3b53d332956d1e88297775361bb21944566df7c3739f3f9950f47f21",
+      "bytes": 3527
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/cross-field-windows.json": {
+      "sha256": "b5c5fc43a262cfe6a4eec4476fae5885e98bb1ccadfb9186f50d3f04e95198ae",
+      "bytes": 358
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/status.json": {
+      "sha256": "1f1732c9df3393667a093596544a6d8a738d3a46aa50f3752e059ce01a5c7d62",
+      "bytes": 738
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/offline-validator/owner.json": {
+      "sha256": "958c8fac6be569e01b2055b817e9dd9087c425770c89e90d3a7830037cb2d4d6",
+      "bytes": 302
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16/offline-validator/stdout.txt": {
+      "sha256": "bae077fbd34f4cff09b12d68e3ccf73a069b814a0efbc7d9dfef8181e61ddd1f",
+      "bytes": 55
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01/allocation.json": {
+      "sha256": "60855ee4859ba33dc7ebb12bc757aaece6d7abd6799679d0cb65873df8bbd8a4",
+      "bytes": 123999
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01/owner-descriptors.json": {
+      "sha256": "6d8b358fc8106d5d57d8584b37414081b786e49af478ed895eb122b725f09ba7",
+      "bytes": 141269
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01/budget-initialization.json": {
+      "sha256": "3cd755f5e6410ac0ec103229855e9b1d938156005293fc23da585f1e9c7d12ce",
+      "bytes": 2353
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01/non-delete-terminal.json": {
+      "sha256": "f57db89dfbd1c231ed6ea8080dec726d0817de1996a5ab17c051018cea3e38e3",
+      "bytes": 19163
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01/non-delete-evidence-index.json": {
+      "sha256": "037e1343958de0f547b1a892bbaeff7ee3d2044673df8e55d8bdc4acf1031273",
+      "bytes": 167248
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate16-readonly01/complete.json": {
+      "sha256": "2988e66ff47c40a8725845fa336910b56bba1cf19e347a9b729ac1fb52f7d4ca",
+      "bytes": 8791
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate16-planning01/source-ci-readback01.json": {
+      "sha256": "67ade16be2ddb3dd9da7eb3c71ba5fe2886a13d8fa9231909a2b7ac2e1c269bd",
+      "bytes": 28706
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate16-planning01/host-anchor-readback01.json": {
+      "sha256": "bc50bb3eb8a1e93b0afb836fb7ed279986fb1f61f6f843fe88ed5ae4d16ed59b",
+      "bytes": 763
+    }
+  },
+  "reviewed_document_snapshots": {
+    "docs/acceptance/issue307-d1-candidate16-confirmation.md": {
+      "sha256": "50c834ff1872697276ceccb6184d5e2f5be919d571e2390a3a690bb685ac7f8b",
+      "bytes": 38013
+    },
+    "docs/acceptance/issue307-d1-v26-window-runbook.md": {
+      "sha256": "2bc1e09bdd8235d28d81073a9c613d66d515fac6cd3f203db750a674f905fccd",
+      "bytes": 13401
+    },
+    "docs/acceptance/issue307-d1-v26-preparation.md": {
+      "sha256": "077b0270f6b4887a94980a9e80c743feb38f6eff01fc588d1fd9219bd35c8f29",
+      "bytes": 6102
+    }
+  },
+  "independent_raw_evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate16-review01/independent-evidence-index01.json",
+    "sha256": "81c0fc49eebd4caed754072ce50b76e70ef30e06cc9e956f2afa56e0096f80a6",
+    "members": 53
+  },
+  "independent_audits": {
+    "source-increment-review01.json": {
+      "sha256": "b41554e7449f41572f04b12aedb9595e1a82bea27281b0c3f13b8ad9fd26fcdf",
+      "bytes": 13167
+    },
+    "actual-source-restore-audit01.json": {
+      "sha256": "c6211d07f6b9c3e79381f8e64f9496d4e6c3a40a4b2fd817dfadc19da7a7fee5",
+      "bytes": 34048
+    },
+    "actual-build-bindings01.json": {
+      "sha256": "7f0c7f185ad6715db2e3ea4daad1aa25c18dcadb20086484da36076c7744ce63",
+      "bytes": 17829
+    },
+    "source-template-packet-audit01.json": {
+      "sha256": "23b34783cc08476a04f4b1f4cc1c840b124dd767cbd0885e743650adbbeceb7a",
+      "bytes": 999683
+    },
+    "actual-frozen-complete-audit01.json": {
+      "sha256": "a57e2fbde6ff6f8e3663941ecb4e76c7fde5282466d27c4899e3638513651435",
+      "bytes": 61063
+    },
+    "actual-final-sealed-gate01.json": {
+      "sha256": "7854c6fd20246be0c3e8431443d12f0ce239ac18df7a9684fc667187ef168ff4",
+      "bytes": 522
+    },
+    "actual-final-gate-processes01.json": {
+      "sha256": "ab7075a1c9796e0de471a848177ac52c964efb4b9e05cecad6ad6a75e63374a6",
+      "bytes": 119767
+    },
+    "actual-physical-frozen-bindings01.json": {
+      "sha256": "4795af2324ca04ac8204d702f511b8f05bf9bd552c8a1fdde366b08f7f500e9f",
+      "bytes": 146390
+    },
+    "document-scope-audit01.json": {
+      "sha256": "86af7853c6c9d013d48058b4d9ca054475ef5b51f94962c82bc764c641e42905",
+      "bytes": 41691
+    }
+  },
+  "CLI_and_generation_contract": {
+    "main_group_resolution_fix": "Preserved actual Host.group before inherited archive_root/revoke_case. Both real main compositions independently pass in recorded temporary filesystem; current scope guards and dispatch unchanged.",
+    "new_authority_path": "delete-confirmed-v26-execution01/human-authorization.json; no v25 authority fallback",
+    "single_compiled_window": {
+      "start_UTC": "2026-10-20T10:00:00Z",
+      "end_UTC_exclusive": "2026-10-20T10:40:00Z",
+      "SGT": "2026-10-20 18:00-18:40",
+      "readonly_recovery_end_UTC": "2026-10-20T12:40:00Z",
+      "CandidateUseUntil": "2026-10-20T10:40:00Z",
+      "all_six_case_and_recovery_cross_fields": "PASS actual frozen gate"
+    },
+    "source_root_scope": "18 historical registered copies,17 present versions,6 exact targets and11 survivors remain distinct; P1 prior accepted absence is historical predecessor only, never new target/budget.",
+    "policy_heads": "Unchanged actual5 successor checkpoint aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8; generation/full preflight/Go file-only/current reader share it. No Renew/newRights/new production or transfer replay.",
+    "new_resource_identity": "86 new descriptor owners,15 owned volumes,3 distinct internal restore networks and execution+allocation nonce;3 new once-initialized budgets. No old budget/adoption/fallback.",
+    "IAM": {
+      "actual_known_by_group": [
+        11,
+        6,
+        6
+      ],
+      "actual_known_total": 23,
+      "sole_policy_no_groups": 22,
+      "exact_c13_dormant_NONE_no_groups": 1,
+      "fresh_absent_by_group": [
+        1,
+        4,
+        4
+      ],
+      "fresh_absent_total": 9,
+      "policy_comparisons_by_group": [
+        11,
+        6,
+        6
+      ],
+      "policy_semantics": "Official ParseConfig/Equals, including dormant unassigned canned policy, accepts order-only raw JSON differences and rejects expansion. Not29 policies.",
+      "old_c15_actual_six_users": "Retained disabled sole-policy, never selected for current enable. Root transport.selected only matches new execution identities."
+    }
+  },
+  "immutable_old_state": {
+    "actual_retained_CIDs": 359,
+    "c15_original_root": "C:/Users/Henry/.codex/worktrees/d1-six/data-product-platform",
+    "c15_original_HEAD": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+    "c15_approved_artifacts": 56,
+    "c15_original_authorization_and_BLOCKED_PREWINDOW_REVIEW": "Pinned original SHA, original private verbatim/envelope and preserved failure/repair reports/indexes verified by actual read-only retained gate. No rewrite or replay.",
+    "c15_heartbeat": "PAUSED",
+    "old_budgets_backup_pins_failure_unknown_attempt_cost_facts": "Preserved via existing history and new retained_c15 contract; full actual graph/empty budget checks passed.",
+    "old_authorization_reused": false
+  },
+  "actual_nondelete_Source_restore": {
+    "status": "PASS_ACTUAL_C16_NONDELETE_SOURCE_RESTORE_RAW_AUDIT",
+    "raw_preparation_members_exact": 1142,
+    "raw_index_sha256": "037e1343958de0f547b1a892bbaeff7ee3d2044673df8e55d8bdc4acf1031273",
+    "terminal_sha256": "f57db89dfbd1c231ed6ea8080dec726d0817de1996a5ab17c051018cea3e38e3",
+    "source_Core_full_relations_roles_ACL": "Original actual before/after fingerprints equal immutable accepted baselines; clean restore/rehearsal restore/clean-after-business equal exact baseline. Reviewer read immutable receipts, did not requery live DB.",
+    "actual_present_versions_by_group": [
+      7,
+      6,
+      4
+    ],
+    "P1": "Exact HEAD version404 NoSuchVersion with actual provider error header and requestID plus namespace inventory; independent file-only aggregation passed.",
+    "new_backups": 9,
+    "all_new_actual_private_backup_SHA_verified": true,
+    "separate_clean_rehearsal_and_native_full_file_restore": "PASS actual records with closed operation owners, distinct CIDs and SDK exact versions.",
+    "four_real_rehearsal_business_runs": "PASS non-delete with restore-only restricted inspector, fresh disabled finally. Source business facts unchanged.",
+    "twenty_old_fact_digest_multisets": "Independently recomputed subset preservation over public before/after multisets, no old row loss/overwrite.",
+    "Source_identity_enable": 0,
+    "restored_inspector_enable": "Actual bounded restore-only enable/disable occurred as allowed non-delete preparation; not misreported as total zero IAM mutation.",
+    "actual_helper_technical_start_observation_pairs": 292,
+    "CostEvent_net_additions_in_separate_rehearsal_Core": [
+      9,
+      12,
+      6
+    ],
+    "amount": "NOT_ASSESSED",
+    "whole_provider_HTTP_total": "Not inferred from helper journals plus hashed Core deltas",
+    "object_PUT_DELETE": 0,
+    "source_business_mutations": 0,
+    "terminal_closed_owners": 92,
+    "temporary_preparation_profiles_revoked": 19,
+    "independent_reaggregation": "6 actual Source/restore files through frozen Windows file-only checker, no provider I/O by checker."
+  },
+  "source_archive_build_offline": {
+    "source_selected_members": 2112,
+    "zip_all_nondirectory_members": 2167,
+    "raw_archive_sha256": "f94df38f68d839dd3f35b6422d40f58b7de1ed183996ad4ba8c15c916384ef19",
+    "archive_bytes": 3520360,
+    "selected_zip_raw_different_from_Git": 1737,
+    "raw_LF_Git_relation": "Every actual working raw SHA equals frozen raw, and normalized LF contents equal Git and archive. Raw ZIP CRLF bytes and Git raw blobs remain separately recorded; not claimed identical.",
+    "source_freeze_or_archive_modified": false,
+    "actual_build_members": 12,
+    "actual_binary_buildinfo": "Three Linux amd64/CGO0 and native Windows checker; frozen source recipe -trimpath -buildvcs=false. Embedded vcs.revision NOT_CLAIMED.",
+    "actual_offline_owner": "Frozen network-none Go file-only validation exit0/closed; actual owner/stdout receipts bound. Not Native acceptance and not rerun by reviewer.",
+    "packet_Git_candidate_bindings_template": "Raw byte exact at729ba2e; immutable containment only, no authorization.",
+    "host_anchor_sha256": "6327b640443d52179f20664a287bdd31ba2b8bdc09918d38752b85b5f9d10bbd"
+  },
+  "actual_frozen_complete_entry": {
+    "status": "PASS_COMPLETE_SIX_NATIVE_ENTRY",
+    "raw_members": 295,
+    "actual_native_start_observation_pairs": 113,
+    "by_group": [
+      47,
+      36,
+      30
+    ],
+    "methods": [
+      "GET",
+      "HEAD"
+    ],
+    "all_pairs_UUID_audit_and_time_matched": true,
+    "exact_IAM_and_policy_semantics": "23 known disabled22sole+1NONE,9 typed absent, official Equals per raw actual receipt",
+    "Core_before_after_and_frozen": "Three full fingerprint/rolesACL receipts exact",
+    "all_source_temporary_finally_closures": 9,
+    "unknown_temporary_owners": 0,
+    "business_mutation_object_DELETE_identity_enable": 0,
+    "amount": "NOT_ASSESSED",
+    "independent_file_only_reaggregations": 3,
+    "source_native_entry_replayed_by_reviewer": false,
+    "provider_io_zero_labels": "Only file-only checker aggregations have provider_io=0. Actual entry113 real technical SDK requests are explicitly accounted."
+  },
+  "independent_final_physical_and_budget": {
+    "actual_read_only_guarded_gate_status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+    "actual_guarded_subprocesses": 992,
+    "unapproved_subprocesses": [],
+    "case_profiles": 6,
+    "recovery_profiles": 6,
+    "operator_root_permissions_false": 30,
+    "current_new_descriptor_owners_closed": 86,
+    "new_budgets_actual_owned_UID_GID10001_empty_and_full_mount_set": 3,
+    "new_backups_verified": 9,
+    "explicitly_counted_old_full_backups_verified": 18,
+    "other_historical_failure_backup_bytes": "Separately retained by history gates, not erased or excluded by18 count.",
+    "actual_batch_inspect_known_unique_CIDs": 448,
+    "retained_CIDs": 359,
+    "new_CIDs": 86,
+    "new_complete_temporary_read_helpers": 3,
+    "all_stopped_PID0_noports_norestart": true,
+    "actual_readhelper_security": "UID10001/read-only root/CapDropALL/NNP/two fixed tmpfs/three exact binds/source-native netns; exact4 private files; profile disabled/maxDELETE0/no business credential fields.",
+    "host_private_key_read": false,
+    "host_private_key_mounted_any448owner": false,
+    "raw_Env_secret_values_exposed": false
+  },
+  "confirmation_runbook": {
+    "confirmation_machine_block_exact_UTF8_LF": true,
+    "machine_lines": 108,
+    "current_raw_attachment_SHA_rows": 19,
+    "relative_links_existing": 21,
+    "ordered_exact_targets": [
+      {
+        "group": "business-races",
+        "stage": "P2",
+        "copy": {
+          "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/p2.csv",
+          "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+          "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+          "ByteSize": 232
+        }
+      },
+      {
+        "group": "business-races",
+        "stage": "T1",
+        "copy": {
+          "ID": "f48755f1-976b-4f47-98da-70ead936a4c3",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/t1.csv",
+          "ProviderVersion": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+          "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+          "ByteSize": 129328
+        }
+      },
+      {
+        "group": "business-races",
+        "stage": "T2",
+        "copy": {
+          "ID": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/t2.csv",
+          "ProviderVersion": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+          "ContentSHA256": "a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c",
+          "ByteSize": 49
+        }
+      },
+      {
+        "group": "late-hold",
+        "stage": "H2A",
+        "copy": {
+          "ID": "c05307db-cb81-4220-b42e-be23f85821e3",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/h2-a.csv",
+          "ProviderVersion": "453c6f42-fbb2-4fdf-9f86-00a20a54b7bc",
+          "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+          "ByteSize": 44
+        }
+      },
+      {
+        "group": "mixed",
+        "stage": "M1A",
+        "copy": {
+          "ID": "5e712426-2109-4f0b-8791-df0a2be3a9f7",
+          "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+          "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+          "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+          "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/m1-a.csv",
+          "ProviderVersion": "e8a8418e-c515-464e-99e5-10bc4c64fa8d",
+          "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+          "ByteSize": 40
+        }
+      },
+      {
+        "group": "mixed",
+        "stage": "M1B",
+        "copy": {
+          "ID": "ad08947a-4c4d-4b0f-8c7e-2d89f287819f",
+          "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+          "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+          "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+          "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/m1-b.csv",
+          "ProviderVersion": "54900849-d59d-459e-90bb-275a5975d0a6",
+          "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+          "ByteSize": 40
+        }
+      }
+    ],
+    "survivor_count": 11,
+    "all_target_and_survivor_id_content_protection_fields": "Exact rows in source-template-packet-audit01 bind namespace/key/version/copy/DV/SHA/bytes/hold/retention/until to actual/frozen receipts.",
+    "finite_execution_order": "Each send-disable-selectedOnlyEventID Outbox-Asynq-Core immutable absence-next; all3 Core readable for global order. H1 stop+onefield revoke+freshdisabled+sealed before onceproof; H2 true204 before latehold/revoke/loss; M1A absence then B unknown+C-only protected checkpoint raw copied/SHA checked before B lookup; no forbidden B/C send.",
+    "limits": "Max1 per target,6 global,UNKNOWN no resend. Every sender/wire/recovery fresh proof, budget before Coreclaim. No extend/shift/reopen window. Readonly12:40 cannot reopen IAM or send beyond10:40.",
+    "failure_containment": "Known fullCID stop attempted despite initial inspect error; continue all groups after individual failure; archive failure still tries fixed disable-all; no startsource/enabler/sender/wire; insufficient physical/fresh IAM/archive remainsUNCONFIRMED.",
+    "documents_authority": "Preparation proposal only, NOT an authorization or scheduling request."
+  },
+  "tests": {
+    "independent_Python": "normal/-O34 methods each, no external subprocess allowed",
+    "independent_Go": "pilot+file-only checker2 packages129 PASS/0FAIL/1 PostgreSQL skip withoutDSN; no claim of livePG/native execution",
+    "parent_full_source_local": "274PASS/2 explicitSKIP preserved; earlier stale expectation failure retained",
+    "current_required_main_CLI_composition": "Archive/revoke real inherited methods+temporary files, live/failed/drift/unbound/missing context and dispatch checks pass in current7-method suite.",
+    "harness_diagnostics": "Initial runner missing import path corrected in second independent script with first failure preserved. Native audit initially used wrong checker dict key; diagnostic serialization fixed; no runtime action. Buildinfo diagnostic initially expected -buildvcs=false literal output; corrected to frozen source recipe plus actual build fields; no binary/source changes."
+  },
+  "future_required_preconditions_not_blockers_to_preparation": {
+    "new_exact_human_authorization": "NOT_RECEIVED",
+    "new_schedule": "NOT_CREATED",
+    "new_authorized_Host_check": "NOT_RUN",
+    "window_fresh_complete_native_and_six_live_slots": "NOT_RUN",
+    "actual_candidate16_six_DELETE": "NOT_RUN",
+    "future_live_H1_H2_M1_success_outcomes": "NOT_RUN",
+    "final_publication_exact_HEAD_PR_CI": "Parent must verify after final docs/evidence push; source CI does not substitute.",
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "source_CI_boundary": {
+    "run_id": 39356719557,
+    "head": "5472a583f86838df42a5ffd86bc366c166036efb",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": 13,
+    "verification": "Parent official GitHub run/jobs raw readback checked for exact source/head; two Code Review backend failures preserved. Reviewer did not requery remote.",
+    "not_main_CI": true
+  },
+  "reviewer_actions": {
+    "Source_HTTP_real_provider_calls": 0,
+    "Docker_start_stop_exec_seal_enable": 0,
+    "actual_hostproof_sign_or_DELETE": 0,
+    "runtime_candidate_authorization_oldevidence_matrix_writes": 0,
+    "actual_read_only_Docker_Git_and_local_file_checker": "Only approved read calls, one final batch inspect and guarded actual sealed gate; existing frozen Windows file-only aggregations9 total.",
+    "O_EXCL_outputs": "Own candidate16-review01 evidence/index/final only"
+  },
+  "PR332": "DRAFT_NO_MERGE",
+  "Issue307": "OPEN",
+  "publication_note": "This report binds current three reviewed document snapshots. Parent agreed keep confirmation/runbook exact, append final facts to matrix and produce approval index; no execution semantics/machine block or runtime hash change.",
+  "followups": []
+}

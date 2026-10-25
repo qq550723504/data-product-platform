@@ -1,0 +1,35 @@
+{
+  "status": "NEW_PREPARATION_PLAN_NOT_FROZEN_NOT_AUTHORIZED",
+  "at": "2026-10-20T10:47:30.663053+00:00",
+  "profile": "candidate17/v27",
+  "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+  "source_repair_commit": "c1dd1b61495fd3150052744d6ba91e096a428b99",
+  "independent_repair_report_sha256": "b8e09798480023618c5af0451b67ea8c17e859d52e4fe26449f8ec661cfc5183",
+  "window_preference_human": {
+    "turn_id": "01a158d4-3504-77f0-abbb-07335b6f3d8d",
+    "message_id": "01a158e8-9f2c-77f1-a0a2-d386293d5737",
+    "content": [
+      {
+        "type": "text",
+        "text": "<send_user_message_question_reply>\n[{\"questionItemId\":\"[\\\"request_user_input_async\\\",\\\"call_3638d89555a44abfbdaf9dcd636cf1b6\\\",0]\",\"question\":\"索引修复已独立复评通过。后续新方案需要一个新的固定窗口，你方便核对哪个时间（新加坡时间）？本轮仅准备方案，之后仍需重新授权。\",\"answer\":\"10月21日14:00–14:40（推荐）\"}]\n</send_user_message_question_reply>\n"
+      }
+    ]
+  },
+  "not_before": "2026-10-21T06:00:00Z",
+  "not_after": "2026-10-21T06:40:00Z",
+  "readonly_recovery_not_after": "2026-10-21T08:40:00Z",
+  "targets": 6,
+  "survivors": 11,
+  "old_authorization_reused": false,
+  "human_deletion_authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "required_preparation": [
+    "new compiled generation/window/identity bindings",
+    "retained v26 terminal/revoked cases/recoveries/closed owners/budget/backup contract",
+    "all old IAM identities included in new full audit",
+    "new source/binary/Core/IAM/gateway/budget/backup freeze",
+    "fixed typed audit plan and complete non-delete preflight",
+    "new exact confirmation after independent final packet review"
+  ],
+  "source_provider_DELETE_this_repair": 0
+}

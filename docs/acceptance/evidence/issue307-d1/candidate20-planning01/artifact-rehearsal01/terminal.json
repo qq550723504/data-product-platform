@@ -1,0 +1,35 @@
+{
+  "runtime_source": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "host_source": "a23316fec0e3085475ee84b5de956ab9123b298c",
+  "schema_test_sha256": "0fd893c0f787939caaebd4d350eb066e16860e91771fcc31b3fe38e3c39c5bf1",
+  "groups": [
+    {
+      "group": "business-races",
+      "schema69_allow": true,
+      "protected71_rejected": true,
+      "exact_copies": 3,
+      "original_relations_unchanged": 194
+    },
+    {
+      "group": "late-hold",
+      "schema69_allow": true,
+      "protected71_rejected": true,
+      "exact_copies": 1,
+      "original_relations_unchanged": 194
+    },
+    {
+      "group": "mixed",
+      "schema69_allow": true,
+      "protected71_rejected": true,
+      "exact_copies": 2,
+      "original_relations_unchanged": 194
+    }
+  ],
+  "source_started": false,
+  "source_migration": false,
+  "native_delete": 0,
+  "status": "PASS_ISOLATED_R_P_ARTIFACT_AND_SCHEMA_CONTRACT",
+  "failure": null,
+  "clone_closed": true,
+  "sources_remained_closed": true
+}

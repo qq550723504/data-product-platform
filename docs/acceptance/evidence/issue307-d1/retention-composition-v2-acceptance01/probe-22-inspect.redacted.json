@@ -1,0 +1,294 @@
+{
+  "status": "REDACTED_INSPECT_NOT_RAW_BYTES",
+  "original_sha256": "0c744fd755ccfc06b41bc45f8859225d826e419fae670c4297a616119b10ca2d",
+  "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-composition-v2-acceptance01\\raw-inspect\\probe-22-inspect.stdout",
+  "inspect": [
+    {
+      "Id": "a3713c4afecc9a1d6a9b77c7a902ce89ffdd15f1abf9e7f1b669689d4b0aae06",
+      "Created": "2026-10-24T11:06:06.577270988Z",
+      "Path": "/runtime/test",
+      "Args": [
+        "-test.v",
+        "-test.count=1"
+      ],
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-24T11:06:09.136192457Z",
+        "FinishedAt": "2026-10-24T11:06:49.09843484Z"
+      },
+      "Image": "sha256:5291449c3df73caf6ed85e649dec1b9e818b39a5d8c871e97afc13e9cd5e8fa8",
+      "ResolvConfPath": "/var/lib/docker/containers/a3713c4afecc9a1d6a9b77c7a902ce89ffdd15f1abf9e7f1b669689d4b0aae06/resolv.conf",
+      "HostnamePath": "/var/lib/docker/containers/a3713c4afecc9a1d6a9b77c7a902ce89ffdd15f1abf9e7f1b669689d4b0aae06/hostname",
+      "HostsPath": "/var/lib/docker/containers/a3713c4afecc9a1d6a9b77c7a902ce89ffdd15f1abf9e7f1b669689d4b0aae06/hosts",
+      "LogPath": "",
+      "Name": "/d1-retention-probe-5e365c6c8dbb",
+      "RestartCount": 0,
+      "Driver": "overlayfs",
+      "Platform": "linux",
+      "MountLabel": "",
+      "ProcessLabel": "",
+      "AppArmorProfile": "",
+      "ExecIDs": null,
+      "HostConfig": {
+        "Binds": null,
+        "ContainerIDFile": "",
+        "LogConfig": {
+          "Type": "local",
+          "Config": {}
+        },
+        "NetworkMode": "none",
+        "PortBindings": {},
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "AutoRemove": false,
+        "VolumeDriver": "",
+        "VolumesFrom": null,
+        "ConsoleSize": [
+          0,
+          0
+        ],
+        "CapAdd": null,
+        "CapDrop": [
+          "ALL"
+        ],
+        "CgroupnsMode": "private",
+        "Dns": null,
+        "DnsOptions": [],
+        "DnsSearch": [],
+        "ExtraHosts": null,
+        "GroupAdd": null,
+        "IpcMode": "private",
+        "Cgroup": "",
+        "Links": null,
+        "OomScoreAdj": 0,
+        "PidMode": "",
+        "Privileged": false,
+        "PublishAllPorts": false,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges:true"
+        ],
+        "Tmpfs": {
+          "/tmp": "rw,noexec,nosuid,size=32m"
+        },
+        "UTSMode": "",
+        "UsernsMode": "",
+        "ShmSize": 67108864,
+        "Runtime": "runc",
+        "Isolation": "",
+        "CpuShares": 0,
+        "Memory": 0,
+        "NanoCpus": 0,
+        "CgroupParent": "",
+        "BlkioWeight": 0,
+        "BlkioWeightDevice": [],
+        "BlkioDeviceReadBps": [],
+        "BlkioDeviceWriteBps": [],
+        "BlkioDeviceReadIOps": [],
+        "BlkioDeviceWriteIOps": [],
+        "CpuPeriod": 0,
+        "CpuQuota": 0,
+        "CpuRealtimePeriod": 0,
+        "CpuRealtimeRuntime": 0,
+        "CpusetCpus": "",
+        "CpusetMems": "",
+        "Devices": [],
+        "DeviceCgroupRules": null,
+        "DeviceRequests": null,
+        "MemoryReservation": 0,
+        "MemorySwap": 0,
+        "MemorySwappiness": null,
+        "OomKillDisable": null,
+        "PidsLimit": null,
+        "Ulimits": null,
+        "CpuCount": 0,
+        "CpuPercent": 0,
+        "IOMaximumIOps": 0,
+        "IOMaximumBandwidth": 0,
+        "Mounts": [
+          {
+            "Type": "volume",
+            "Source": "d1-retention-probe-private-4598c8c87879",
+            "Target": "/run/private",
+            "ReadOnly": true
+          },
+          {
+            "Type": "volume",
+            "Source": "d1-retention-probe-output-aebd4fd2f790",
+            "Target": "/run/output"
+          },
+          {
+            "Type": "volume",
+            "Source": "d1-retention-probe-budget-71a5cc1d7143",
+            "Target": "/run/budget"
+          },
+          {
+            "Type": "bind",
+            "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/retention-composition-v2-acceptance01/retention-test-linux",
+            "Target": "/runtime/test",
+            "ReadOnly": true
+          },
+          {
+            "Type": "bind",
+            "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/retention-composition-v2-acceptance01/linux-probe-source/apps/platform/cmd/lifecycle-fixture-retention/testdata",
+            "Target": "/testdata",
+            "ReadOnly": true
+          }
+        ],
+        "MaskedPaths": [
+          "/proc/acpi",
+          "/proc/asound",
+          "/proc/interrupts",
+          "/proc/kcore",
+          "/proc/keys",
+          "/proc/latency_stats",
+          "/proc/sched_debug",
+          "/proc/scsi",
+          "/proc/timer_list",
+          "/proc/timer_stats",
+          "/sys/devices/virtual/powercap",
+          "/sys/firmware"
+        ],
+        "ReadonlyPaths": [
+          "/proc/bus",
+          "/proc/fs",
+          "/proc/irq",
+          "/proc/sys",
+          "/proc/sysrq-trigger"
+        ]
+      },
+      "Storage": {
+        "RootFS": {
+          "Snapshot": {
+            "Name": "overlayfs"
+          }
+        }
+      },
+      "Mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/retention-composition-v2-acceptance01/linux-probe-source/apps/platform/cmd/lifecycle-fixture-retention/testdata",
+          "Destination": "/testdata",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "d1-retention-probe-budget-71a5cc1d7143",
+          "Source": "/var/lib/docker/volumes/d1-retention-probe-budget-71a5cc1d7143/_data",
+          "Destination": "/run/budget",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "d1-retention-probe-output-aebd4fd2f790",
+          "Source": "/var/lib/docker/volumes/d1-retention-probe-output-aebd4fd2f790/_data",
+          "Destination": "/run/output",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "volume",
+          "Name": "d1-retention-probe-private-4598c8c87879",
+          "Source": "/var/lib/docker/volumes/d1-retention-probe-private-4598c8c87879/_data",
+          "Destination": "/run/private",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": false,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/retention-composition-v2-acceptance01/retention-test-linux",
+          "Destination": "/runtime/test",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "Config": {
+        "Hostname": "a3713c4afecc",
+        "Domainname": "",
+        "User": "10001:10001",
+        "AttachStdin": false,
+        "AttachStdout": true,
+        "AttachStderr": true,
+        "Tty": false,
+        "OpenStdin": false,
+        "StdinOnce": false,
+        "Env": [
+          "D1_RETENTION_VOLUME_PROBE=<REDACTED_PRIVATE_VALUE>",
+          "PATH=<REDACTED_PRIVATE_VALUE>"
+        ],
+        "Cmd": [
+          "/runtime/test",
+          "-test.v",
+          "-test.count=1"
+        ],
+        "Image": "sha256:5291449c3df73caf6ed85e649dec1b9e818b39a5d8c871e97afc13e9cd5e8fa8",
+        "Volumes": null,
+        "WorkingDir": "/",
+        "Entrypoint": null,
+        "Labels": {}
+      },
+      "NetworkSettings": {
+        "SandboxID": "",
+        "SandboxKey": "",
+        "Ports": {},
+        "Networks": {
+          "none": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": null,
+            "DriverOpts": null,
+            "GwPriority": 0,
+            "NetworkID": "9041ed4da560100f15a43e800aff28d0fdd9f64fb6073312342fbe0f524a89b7",
+            "EndpointID": "",
+            "Gateway": "",
+            "IPAddress": "",
+            "MacAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DNSNames": null
+          }
+        }
+      },
+      "ImageManifestDescriptor": {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "digest": "sha256:3e9b4b680bfc9fb5269227cffbd6d42be39fbf7c0b908123913864aa4447e764",
+        "size": 1022,
+        "annotations": {
+          "com.docker.official-images.bashbrew.arch": "amd64",
+          "org.opencontainers.image.base.name": "scratch",
+          "org.opencontainers.image.created": "2026-09-17T20:37:41Z",
+          "org.opencontainers.image.revision": "32cb3f1f45f4fee15882936c06a264eb9e5130fe",
+          "org.opencontainers.image.source": "https://github.com/alpinelinux/docker-alpine.git#32cb3f1f45f4fee15882936c06a264eb9e5130fe:x86_64",
+          "org.opencontainers.image.url": "https://hub.docker.com/_/alpine",
+          "org.opencontainers.image.version": "3.22.6"
+        },
+        "platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        }
+      }
+    }
+  ]
+}

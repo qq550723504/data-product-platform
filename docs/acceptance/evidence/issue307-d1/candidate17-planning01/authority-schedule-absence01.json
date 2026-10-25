@@ -1,0 +1,42 @@
+{
+  "status": "PASS_NO_NEW_AUTHORIZATION_OR_SCHEDULE",
+  "at": "2026-10-20T12:07:16.512903+00:00",
+  "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+  "current_public_authorization_exists": false,
+  "current_private_authorization_exists": false,
+  "current_schedule_exists": false,
+  "retained_schedules": [
+    {
+      "id": "307-d1-candidate07-v17",
+      "status": "PAUSED",
+      "name": "#307 D1 candidate07/v17 固定窗口执行"
+    },
+    {
+      "id": "307-d1-candidate10-v20",
+      "status": "PAUSED",
+      "name": "#307 D1 candidate10/v20 固定窗口执行"
+    },
+    {
+      "id": "307-d1-candidate11-v21",
+      "status": "PAUSED",
+      "name": "#307 D1 candidate11/v21 固定窗口执行"
+    },
+    {
+      "id": "307-d1-candidate12-v22",
+      "status": "PAUSED",
+      "name": "#307 D1 candidate12/v22 固定窗口续跑"
+    },
+    {
+      "id": "307-d1-candidate15-v25",
+      "status": "PAUSED",
+      "name": "#307 D1 candidate15/v25 固定窗口续跑"
+    },
+    {
+      "id": "307-d1-candidate16-v26",
+      "status": "PAUSED",
+      "name": "#307 D1 candidate16/v26 固定窗口续跑"
+    }
+  ],
+  "native_delete": 0,
+  "execution_authority": false
+}

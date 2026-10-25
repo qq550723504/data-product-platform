@@ -1,0 +1,14 @@
+{
+  "source": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "phase": "run-non-delete",
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/six_candidate_runtime.py",
+    "run-non-delete"
+  ],
+  "at": "2026-10-22T11:20:15.498619+00:00",
+  "delete_authority": false
+}

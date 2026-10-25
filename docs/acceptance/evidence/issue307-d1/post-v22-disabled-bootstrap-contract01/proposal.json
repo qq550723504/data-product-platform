@@ -1,0 +1,16 @@
+{
+  "profile": "candidate14/v24",
+  "execution": "afc0e66c-535b-426e-a937-964d0c9ca0d6",
+  "not_before": "2026-10-20T06:00:00Z",
+  "not_after": "2026-10-20T06:40:00Z",
+  "recovery_end": "2026-10-20T08:40:00Z",
+  "targets": 6,
+  "survivors": 11,
+  "preference_authority": "Human chose window only; no deletion or schedule authorization",
+  "old_candidate13": "FAILED_NOT_FROZEN_RETAINED",
+  "retained_dormant_user": "i4e524c04808a6960",
+  "retained_dormant_policy_mode": "NONE; disabled and no groups required; no mutation or worker use",
+  "native_api_probe": "PASS; production guarded adapter pending",
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED"
+}

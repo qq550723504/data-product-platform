@@ -1,0 +1,102 @@
+{
+  "phase": "prepublish",
+  "at": "2026-10-22T02:02:50.853811+00:00",
+  "head": "4d126c60687830416b2697ab4b120e4323682eda",
+  "draft": true,
+  "PR_state": "OPEN",
+  "merged_at": null,
+  "Issue307": "OPEN",
+  "unresolved_threads": 0,
+  "runs": [
+    {
+      "id": 39621771495,
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "checks": [
+    {
+      "name": "required",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "live-core / live-core-browser",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "browser-contracts / web-browser-contracts",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "demo / demo-lifecycle",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "splink-smoke",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "gx-smoke",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "web-console",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "temporary-container-contracts (windows-latest)",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "label-studio-smoke",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "hop-smoke",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "go-platform",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "classify-changes",
+      "head": "4d126c60687830416b2697ab4b120e4323682eda",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "main_ci_claimed": false,
+  "native_delete": 0,
+  "execution_authority": false
+}

@@ -1,0 +1,38 @@
+{
+  "status": "PASS_ACTUAL_DOCKER_STOPPED_ALLOCATION_CONTRACT",
+  "at": "2026-10-19T12:50:38.731071+00:00",
+  "owner": {
+    "kind": "observer",
+    "cid": "39cf3079786230c50f25c51062fdb12fbec9860f6957bd690466cc03ce3cd578",
+    "binary": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure02\\observer",
+    "binary_sha256": "144465d5dd398eeefb5dc28dd28f581a91d0d6de2ea164227f21f87ce18ec865",
+    "private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-allocation-contract01\\private",
+    "output": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-allocation-contract01\\output",
+    "network_source": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+    "arguments": [
+      "post-v22-close"
+    ]
+  },
+  "profile_sha256": "c3dde3d83a81a72b73ce31294e93fdcd9fc1ec75fdc2dd8a956cfc4f7c5f53b1",
+  "actual_command": [
+    "post-v22-close"
+  ],
+  "actual_tmpfs": {
+    "/tmp": "",
+    "/var/lib/postgresql/data": "size=1m"
+  },
+  "actual_mount_destinations": [
+    "/run/executor",
+    "/run/output",
+    "/run/private"
+  ],
+  "anonymous_volumes": [],
+  "source_started": 0,
+  "helper_started": 0,
+  "provider_calls": 0,
+  "Core_business_writes": 0,
+  "DELETE": 0,
+  "profile_enabled": false,
+  "proof_exists": false,
+  "stopped_PID0": true
+}

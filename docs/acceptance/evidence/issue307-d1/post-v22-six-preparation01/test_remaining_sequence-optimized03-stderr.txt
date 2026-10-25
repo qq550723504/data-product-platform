@@ -1,0 +1,11 @@
+test_actual_budget_owner_empty_and_burned_slot_contract (test_remaining_sequence.SixSequence.test_actual_budget_owner_empty_and_burned_slot_contract) ... ok
+test_budget_wrong_type_root_owner_foreign_execution_and_p1_reject (test_remaining_sequence.SixSequence.test_budget_wrong_type_root_owner_foreign_execution_and_p1_reject) ... ok
+test_no_skip_cross_group_or_receipt_hole (test_remaining_sequence.SixSequence.test_no_skip_cross_group_or_receipt_hole) ... ok
+test_p1_foreign_workspace_substitution_and_unknown_helper_reject (test_remaining_sequence.SixSequence.test_p1_foreign_workspace_substitution_and_unknown_helper_reject) ... ok
+test_sender_or_permission_not_closed_blocks_recovery_and_next_group (test_remaining_sequence.SixSequence.test_sender_or_permission_not_closed_blocks_recovery_and_next_group) ... ok
+test_six_complete_send_disable_recover_commit_composition (test_remaining_sequence.SixSequence.test_six_complete_send_disable_recover_commit_composition) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.012s
+
+OK

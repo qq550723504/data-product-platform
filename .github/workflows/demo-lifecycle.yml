@@ -55,6 +55,40 @@ jobs:
           python3 -O -B examples/lifecycle-d1/test_complete_remaining_preflight.py
           python3 -B examples/lifecycle-d1/test_p1_post_v22_readonly.py
           python3 -O -B examples/lifecycle-d1/test_p1_post_v22_readonly.py
+          python3 -B examples/lifecycle-d1/test_old_business_dispatch_closure.py
+          python3 -O -B examples/lifecycle-d1/test_old_business_dispatch_closure.py
+          python3 -B examples/lifecycle-d1/test_post_v22_seventeen.py
+          python3 -O -B examples/lifecycle-d1/test_post_v22_seventeen.py
+          python3 -B examples/lifecycle-d1/test_remaining_sequence.py
+          python3 -O -B examples/lifecycle-d1/test_remaining_sequence.py
+          python3 -B examples/lifecycle-d1/test_remaining_six_window.py
+          python3 -O -B examples/lifecycle-d1/test_remaining_six_window.py
+          python3 -B examples/lifecycle-d1/test_six_candidate_runtime.py
+          python3 -O -B examples/lifecycle-d1/test_six_candidate_runtime.py
+          python3 -B examples/lifecycle-d1/test_freeze_six_candidate.py
+          python3 -O -B examples/lifecycle-d1/test_freeze_six_candidate.py
+          python3 -B examples/lifecycle-d1/test_window_six_support.py
+          python3 -O -B examples/lifecycle-d1/test_window_six_support.py
+          python3 -B examples/lifecycle-d1/test_verify_six_native.py
+          python3 -O -B examples/lifecycle-d1/test_verify_six_native.py
+          python3 -B examples/lifecycle-d1/test_evidence_indexes.py
+          python3 -O -B examples/lifecycle-d1/test_evidence_indexes.py
+          python3 -B examples/lifecycle-d1/test_six_native_entry.py
+          python3 -O -B examples/lifecycle-d1/test_six_native_entry.py
+          python3 -B examples/lifecycle-d1/test_retained_v30.py
+          python3 -O -B examples/lifecycle-d1/test_retained_v30.py
+          python3 -B examples/lifecycle-d1/test_receipt_bytes.py
+          python3 -O -B examples/lifecycle-d1/test_receipt_bytes.py
+          python3 -B examples/lifecycle-d1/test_retained_v26.py
+          python3 -O -B examples/lifecycle-d1/test_retained_v26.py
+          python3 -B examples/lifecycle-d1/test_retained_v27.py
+          python3 -O -B examples/lifecycle-d1/test_retained_v27.py
+          python3 -B examples/lifecycle-d1/test_attest_remaining_executable.py
+          python3 -O -B examples/lifecycle-d1/test_attest_remaining_executable.py
+          python3 -B examples/lifecycle-d1/test_v27_dispatch_closure.py
+          python3 -O -B examples/lifecycle-d1/test_v27_dispatch_closure.py
+          python3 -B examples/lifecycle-d1/test_post_v27_seventeen_refresh.py
+          python3 -O -B examples/lifecycle-d1/test_post_v27_seventeen_refresh.py
       - name: Check archived candidate04 with its frozen runtime (no provider I/O)
         run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner

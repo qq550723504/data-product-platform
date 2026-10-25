@@ -1,0 +1,10 @@
+{
+  "status": "PASS_UNCHANGED_PR_SOURCE_PUBLICATION_BOUNDARY",
+  "P": "e54967e822847e97316e703ee413ffc1298cb627",
+  "PR332": "OPEN/Draft/unmerged",
+  "Issue307": "OPEN",
+  "lockBranch": true,
+  "CI_run": 39983308178,
+  "CI_jobs": 13,
+  "cleanup_did_not_publish": true
+}

@@ -25,6 +25,10 @@ import (
 
 const execution = pilot.RemainingExecution
 
+// A fixed bootstrap invocation records each actual request once. SDK backoff
+// must not delay containment or retry a request with an unknown observation.
+func init() { madmin.MaxRetry = 1 }
+
 type rootConfig struct{ Group, Endpoint, RootAccess, RootSecret string }
 type candidate struct {
 	Profile, Execution, OwnerBinarySHA256 string
@@ -76,7 +80,7 @@ func authorized() error {
 	if read("/run/private/status.json", &frozen) != nil || frozen.CandidateSHA256 != digest(b) || frozen.ConfirmationSHA256 != digest(expected) {
 		return errors.New("trusted confirmation template binding differs")
 	}
-	if e != nil || e2 != nil || len(h) == 0 || !bytes.Contains(h, []byte(execution)) || !bytes.Contains(h, []byte(digest(b))) || !bytes.Equal(h, expected) || !p.Enabled || p.Execution != execution || c.Execution != execution || c.Profile != pilot.RemainingProfile || digest(b) != p.CandidateSHA256 || digest(h) != p.ConfirmationSHA256 || c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter || now.Before(c.NotBefore) || !now.Before(c.NotAfter) || !p.NotBefore.Equal(c.NotBefore) || !p.ExpiresAt.Equal(c.NotAfter) || p.ConfirmedAt.IsZero() || now.Before(p.ConfirmedAt) || p.MaxPerTarget != 1 || p.MaxTotal != 7 {
+	if e != nil || e2 != nil || len(h) == 0 || !bytes.Contains(h, []byte(execution)) || !bytes.Contains(h, []byte(digest(b))) || !bytes.Equal(h, expected) || !p.Enabled || p.Execution != execution || c.Execution != execution || c.Profile != pilot.RemainingProfile || digest(b) != p.CandidateSHA256 || digest(h) != p.ConfirmationSHA256 || c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter || now.Before(c.NotBefore) || !now.Before(c.NotAfter) || !p.NotBefore.Equal(c.NotBefore) || !p.ExpiresAt.Equal(c.NotAfter) || p.ConfirmedAt.IsZero() || now.Before(p.ConfirmedAt) || p.MaxPerTarget != 1 || p.MaxTotal != 6 {
 		return errors.New("new exact IAM enable authority denied")
 	}
 	return nil
@@ -87,6 +91,19 @@ type transport struct {
 	users       map[string]string
 	enable      bool
 	inspectOnly bool
+	group       string
+}
+
+func (t transport) selected(user string) bool {
+	return user != "" && (user == pilot.RemainingIdentity(t.group, "inspect") || (!t.inspectOnly && user == pilot.RemainingIdentity(t.group, "delete")))
+}
+
+func exactAssociation(group, user, name string, info madmin.UserInfo) bool {
+	dormant, _ := pilot.RemainingDormantIdentity(group)
+	if user == dormant && dormant != "" {
+		return name == "" && info.Status == madmin.AccountDisabled && info.PolicyName == "" && len(info.MemberOf) == 0
+	}
+	return name != "" && info.PolicyName == name && len(info.MemberOf) == 0
 }
 
 func (t transport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -98,7 +115,7 @@ func (t transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		if t.inspectOnly {
 			grant = authorizedReadOnly
 		}
-		selected := !t.inspectOnly || req.URL.Query().Get("accessKey") == "inspect808a69606c36"
+		selected := t.selected(req.URL.Query().Get("accessKey"))
 		allowed = known && (status == "disabled" || (selected && t.enable && status == "enabled" && grant() == nil))
 	}
 	if req.URL.Scheme != "http" || req.URL.Host != "127.0.0.1:9000" || !allowed {
@@ -160,15 +177,23 @@ func run(ctx context.Context, action string) error {
 		return errors.New("unknown bounded IAM action")
 	}
 	run := s.Run.String()
-	inspection := "inspect" + strings.ReplaceAll(run, "-", "")[:12]
-	deletion := "delete" + run[:8]
-	users := map[string]string{inspection: "lifecycle307-inspection-" + run, deletion: "lifecycle307-remaining-delete-" + run}
+	inspection := pilot.RemainingIdentity(c.Group, "inspect")
+	deletion := pilot.RemainingIdentity(c.Group, "delete")
+	oldInspection := "inspect" + strings.ReplaceAll(run, "-", "")[:12]
+	users := map[string]string{inspection: pilot.RemainingPolicyName(c.Group, "inspect"), deletion: pilot.RemainingPolicyName(c.Group, "delete"), oldInspection: "lifecycle307-inspection-" + run, "delete" + run[:8]: "lifecycle307-remaining-delete-" + run}
 	if c.Group == "business-races" {
 		for _, user := range []string{"remainread808a6960", "remainput808a6960"} {
 			users[user] = "lifecycle307-remaining-business-" + user
 		}
 	}
-	admin, e := madmin.NewWithOptions(c.Endpoint, &madmin.Options{Creds: credentials.NewStaticV4(c.RootAccess, c.RootSecret, ""), Transport: transport{&http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 8 * time.Second}, users, enable, inspectOnly}})
+	for user, name := range pilot.RemainingRetainedIdentities(c.Group) {
+		users[user] = name
+	}
+	dormant, unassigned := pilot.RemainingDormantIdentity(c.Group)
+	if dormant != "" {
+		users[dormant] = ""
+	}
+	admin, e := madmin.NewWithOptions(c.Endpoint, &madmin.Options{Creds: credentials.NewStaticV4(c.RootAccess, c.RootSecret, ""), Transport: transport{base: &http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 8 * time.Second}, users: users, enable: enable, inspectOnly: inspectOnly, group: c.Group}})
 	if e != nil {
 		return e
 	}
@@ -214,19 +239,24 @@ func run(ctx context.Context, action string) error {
 	if digest(iamRaw) != bound || json.Unmarshal(iamRaw, &iam) != nil || len(iam.PolicyFiles) != len(users) {
 		return errors.New("frozen IAM manifest differs; containment status is retained separately")
 	}
-	before := map[string]string{}
-	for user, name := range users {
-		info, e := admin.GetUserInfo(ctx, user)
-		if e != nil {
-			return e
+	expectedPolicies := map[string]bool{}
+	for _, name := range users {
+		if name != "" {
+			expectedPolicies[name] = true
 		}
-		set := map[string]bool{}
-		for _, p := range strings.Split(info.PolicyName, ",") {
-			set[strings.TrimSpace(p)] = true
+	}
+	if unassigned != "" {
+		expectedPolicies[unassigned] = true
+	}
+	if len(expectedPolicies) != len(iam.PolicyFiles) {
+		return errors.New("IAM policy membership differs")
+	}
+	for name := range iam.PolicyFiles {
+		if !expectedPolicies[name] {
+			return errors.New("unexpected IAM policy member")
 		}
-		if len(info.MemberOf) != 0 || len(set) != 1 || !set[name] {
-			return errors.New("IAM effective policy association drift")
-		}
+	}
+	verifyPolicy := func(name string) error {
 		raw, e := admin.InfoCannedPolicy(ctx, name)
 		if e != nil {
 			return e
@@ -243,14 +273,42 @@ func run(ctx context.Context, action string) error {
 		if e != nil || !a.Equals(*b) {
 			return errors.New("frozen IAM policy content drift")
 		}
+		return nil
+	}
+	before := map[string]string{}
+	for user, name := range users {
+		info, e := admin.GetUserInfo(ctx, user)
+		if e != nil {
+			return e
+		}
+		if !exactAssociation(c.Group, user, name, info) {
+			return errors.New("IAM effective policy association drift")
+		}
+		if name != "" {
+			if e = verifyPolicy(name); e != nil {
+				return e
+			}
+		}
 		if (action == "check-disabled" || inspectOnly) && info.Status != madmin.AccountDisabled {
 			return errors.New("IAM identity not disabled")
 		}
 		before[user] = string(info.Status)
 	}
+	if unassigned != "" {
+		if e = verifyPolicy(unassigned); e != nil {
+			return e
+		}
+	}
+	for _, user := range pilot.RemainingUncreatedIdentities(c.Group) {
+		_, e := admin.GetUserInfo(ctx, user)
+		var provider madmin.ErrorResponse
+		if !errors.As(e, &provider) || provider.Code != "XMinioAdminNoSuchUser" {
+			return errors.New("retained uncreated identity unexpectedly exists or absence unconfirmed")
+		}
+	}
 	if enable {
 		for user := range users {
-			selected := (inspectOnly && user == inspection) || action == "disable-all" || (action == "enable-read" && user != deletion) || ((action == "enable-send" || action == "disable-send") && user == deletion)
+			selected := (inspectOnly && user == inspection) || action == "disable-all" || (action == "enable-read" && user == inspection) || ((action == "enable-send" || action == "disable-send") && user == deletion)
 			if !selected {
 				continue
 			}

@@ -1,0 +1,25 @@
+{
+  "status": "BOUNDED_INDEPENDENT_REVIEW_SCOPE",
+  "base_commit": "81c8a1130d83379c8614d3b3082b237fd2073f73",
+  "recorded_at": "2026-10-24T03:33:00.274676+00:00",
+  "authority": "Latest direct human request: independent review, scoped blockers, acceptance matrix; no business object DELETE or protection writes.",
+  "authoritative_sources": [
+    "docs/acceptance/issue307-d1-resource-retirement-contract.md",
+    "docs/acceptance/issue307-d1-resource-retirement-result01.md"
+  ],
+  "invariants": [
+    "Historical evidence, starts, outcomes, budgets, pins and failures remain immutable",
+    "Only fixed exact retired CID/volume receipts can justify missing resources; present state must come from fresh successful reads",
+    "Budget original identity union, complete mounted CID graph and current bytes retained",
+    "Physical current PG copy archives and frozen logical reconstruction evidence retained",
+    "Unrelated and current resources preserved under the bounded maintenance contract",
+    "No publication, merge, new execution/candidate/window, runtime start, provider invocation or protection-state write"
+  ],
+  "non_goals": [
+    "Future executable candidate preparation and real native 17-version verification",
+    "S3/provider object deletion or retention/hold/IAM writes",
+    "Reclaiming host VHD space or additional Docker resource removal",
+    "General performance work or replacement infrastructure"
+  ],
+  "prior_attempt_failure": "fresh-catalog-failure01.json records a root review wrapper omitted expected_status; strict audit rejected it before catalog/Docker I/O; old source/gates unchanged; corrected spec is in original-index-audit02.json"
+}

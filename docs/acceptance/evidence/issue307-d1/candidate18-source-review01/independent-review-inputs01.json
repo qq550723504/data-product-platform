@@ -1,0 +1,173 @@
+{
+  "status": "RECORDED_C18_INDEPENDENT_SOURCE_REVIEW_INPUTS",
+  "source_head": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "source_files": {
+    ".gitattributes": {
+      "sha256": "b43203be86ad7181e1a2da5476f03a2b508840fa45a012f0a5d7ffeadbe09c3c",
+      "bytes": 20672,
+      "git_blob_sha256": "ec52b4ab9d1d0f17f34b4d182789f4e43c3b66d7006bc421fcc8647d6113debb",
+      "lf_sha256": "ec52b4ab9d1d0f17f34b4d182789f4e43c3b66d7006bc421fcc8647d6113debb"
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "1bf281d6a7102ddc2d0e8cb9ad923a5d3f9cfaee18dbd8e36dbddd85c748c043",
+      "bytes": 7224,
+      "git_blob_sha256": "15ab1190dd66abef3ab408fe9618c72628f29fb839ab323e601c5dd5e1fcc06b",
+      "lf_sha256": "15ab1190dd66abef3ab408fe9618c72628f29fb839ab323e601c5dd5e1fcc06b"
+    },
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": {
+      "sha256": "b2b4e774875babd055b3fd6cadecc50b24b2d13c1252a668b225deb5bbb821a8",
+      "bytes": 8886,
+      "git_blob_sha256": "b2b4e774875babd055b3fd6cadecc50b24b2d13c1252a668b225deb5bbb821a8",
+      "lf_sha256": "b2b4e774875babd055b3fd6cadecc50b24b2d13c1252a668b225deb5bbb821a8"
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": {
+      "sha256": "ef2d41681ee618afde183f8c2d4917d62a7a5a9490d699d535a97c19196d68ca",
+      "bytes": 3457,
+      "git_blob_sha256": "ef2d41681ee618afde183f8c2d4917d62a7a5a9490d699d535a97c19196d68ca",
+      "lf_sha256": "ef2d41681ee618afde183f8c2d4917d62a7a5a9490d699d535a97c19196d68ca"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "sha256": "f14480d0a8ea19a29571937f44cd1adfdc0dc4b5232f4f844c840f2e2df4fdad",
+      "bytes": 5524,
+      "git_blob_sha256": "f14480d0a8ea19a29571937f44cd1adfdc0dc4b5232f4f844c840f2e2df4fdad",
+      "lf_sha256": "f14480d0a8ea19a29571937f44cd1adfdc0dc4b5232f4f844c840f2e2df4fdad"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go": {
+      "sha256": "1eb6490f3480a993d58cfdc91338d21f344ee9408258fc2cd3766f2c3ee49d01",
+      "bytes": 1321,
+      "git_blob_sha256": "1eb6490f3480a993d58cfdc91338d21f344ee9408258fc2cd3766f2c3ee49d01",
+      "lf_sha256": "1eb6490f3480a993d58cfdc91338d21f344ee9408258fc2cd3766f2c3ee49d01"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "sha256": "786ca14c4bdf3eedbed2035b2c8379e62bcc41648af9e3e07361944f3f240f6b",
+      "bytes": 2366,
+      "git_blob_sha256": "786ca14c4bdf3eedbed2035b2c8379e62bcc41648af9e3e07361944f3f240f6b",
+      "lf_sha256": "786ca14c4bdf3eedbed2035b2c8379e62bcc41648af9e3e07361944f3f240f6b"
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate18-source-review01/merge-contract.md": {
+      "sha256": "fc760f8a1e1ff937911816b91aab476b2eeaf8a69799162c2fb567f20fdcfd32",
+      "bytes": 2656,
+      "git_blob_sha256": "fc760f8a1e1ff937911816b91aab476b2eeaf8a69799162c2fb567f20fdcfd32",
+      "lf_sha256": "fc760f8a1e1ff937911816b91aab476b2eeaf8a69799162c2fb567f20fdcfd32"
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "2586e3f5cacf441cff3d9c57efc7a9cbb631ed256139500bb4727e758cda6b2c",
+      "bytes": 22977,
+      "git_blob_sha256": "2586e3f5cacf441cff3d9c57efc7a9cbb631ed256139500bb4727e758cda6b2c",
+      "lf_sha256": "2586e3f5cacf441cff3d9c57efc7a9cbb631ed256139500bb4727e758cda6b2c"
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "fe443cb5eb3d85786e5ff305c65f76ee03eb4c850f6f8b524f747da4d66fc54e",
+      "bytes": 38677,
+      "git_blob_sha256": "fe443cb5eb3d85786e5ff305c65f76ee03eb4c850f6f8b524f747da4d66fc54e",
+      "lf_sha256": "fe443cb5eb3d85786e5ff305c65f76ee03eb4c850f6f8b524f747da4d66fc54e"
+    },
+    "examples/lifecycle-d1/retained_v27.py": {
+      "sha256": "ebe742049d0ab2c145cee24f90ecb2f41f5be840995343a445e19d4685606c76",
+      "bytes": 12502,
+      "git_blob_sha256": "ebe742049d0ab2c145cee24f90ecb2f41f5be840995343a445e19d4685606c76",
+      "lf_sha256": "ebe742049d0ab2c145cee24f90ecb2f41f5be840995343a445e19d4685606c76"
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "050c3651dde81f87fd123e672d66514cef2e3812c4289cf5d0ad16c416ce965c",
+      "bytes": 43116,
+      "git_blob_sha256": "050c3651dde81f87fd123e672d66514cef2e3812c4289cf5d0ad16c416ce965c",
+      "lf_sha256": "050c3651dde81f87fd123e672d66514cef2e3812c4289cf5d0ad16c416ce965c"
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "969abeb8ebb87eaf4c09d6e79a738a46782aeedc283e71268a1718feba03f7e5",
+      "bytes": 7172,
+      "git_blob_sha256": "969abeb8ebb87eaf4c09d6e79a738a46782aeedc283e71268a1718feba03f7e5",
+      "lf_sha256": "969abeb8ebb87eaf4c09d6e79a738a46782aeedc283e71268a1718feba03f7e5"
+    },
+    "examples/lifecycle-d1/test_remaining_six_window.py": {
+      "sha256": "a9313bfe457d1019bb06ef774b6e679a16965705b35508c105bb89226aabd90c",
+      "bytes": 6472,
+      "git_blob_sha256": "a9313bfe457d1019bb06ef774b6e679a16965705b35508c105bb89226aabd90c",
+      "lf_sha256": "a9313bfe457d1019bb06ef774b6e679a16965705b35508c105bb89226aabd90c"
+    },
+    "examples/lifecycle-d1/test_retained_v26.py": {
+      "sha256": "ee4134481bcb899f2752747da54df201527d42072a34b40eeac467bc10411755",
+      "bytes": 6447,
+      "git_blob_sha256": "ee4134481bcb899f2752747da54df201527d42072a34b40eeac467bc10411755",
+      "lf_sha256": "ee4134481bcb899f2752747da54df201527d42072a34b40eeac467bc10411755"
+    },
+    "examples/lifecycle-d1/test_retained_v27.py": {
+      "sha256": "18f62bee9261503d8d5ebca4052c025fa38344c11815e247cdc26726514ed976",
+      "bytes": 4663,
+      "git_blob_sha256": "18f62bee9261503d8d5ebca4052c025fa38344c11815e247cdc26726514ed976",
+      "lf_sha256": "18f62bee9261503d8d5ebca4052c025fa38344c11815e247cdc26726514ed976"
+    },
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": {
+      "sha256": "e98df55738c1655bc9742248c9dc34fd78a76a56d6a514f84db8c252242a90c7",
+      "bytes": 24535,
+      "git_blob_sha256": "e98df55738c1655bc9742248c9dc34fd78a76a56d6a514f84db8c252242a90c7",
+      "lf_sha256": "e98df55738c1655bc9742248c9dc34fd78a76a56d6a514f84db8c252242a90c7"
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "67b8a6904b336d2c82f29f7c896f69e7d42d1fa4bdcc0eeaf1d8627ad6c99a2c",
+      "bytes": 16372,
+      "git_blob_sha256": "67b8a6904b336d2c82f29f7c896f69e7d42d1fa4bdcc0eeaf1d8627ad6c99a2c",
+      "lf_sha256": "bf9dbfd2348aa046b1e38327ea830461a6fcd611ca6f088e54cd997a28acfa7c"
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "add5e5e18f9d2d6d936ac16eaad4e14ad7eccf4f1e0122fa283f4cc7be14a005",
+      "bytes": 12772,
+      "git_blob_sha256": "add5e5e18f9d2d6d936ac16eaad4e14ad7eccf4f1e0122fa283f4cc7be14a005",
+      "lf_sha256": "add5e5e18f9d2d6d936ac16eaad4e14ad7eccf4f1e0122fa283f4cc7be14a005"
+    }
+  },
+  "author_preallocation_receipt": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate18-planning01/preallocation02.json",
+    "sha256": "1080efd5efca202d51f949ed542c58829fa3ddc21fa6b926afcad09f9cef8cf4",
+    "bytes": 248,
+    "reported": {
+      "status": "PASS_RETAINED_623_AND_NEW_SUBNETS_NO_ALLOCATION",
+      "retained_CIDs": 623,
+      "future_subnets": [
+        "10.246.212.0/28",
+        "10.246.213.0/28",
+        "10.246.214.0/28"
+      ],
+      "source_start": 0,
+      "provider_io": 0,
+      "native_delete": 0
+    }
+  },
+  "author_regression": {
+    "sha256": "4cace71e7183a108ea9c69a1f9ca130ef55809a6b85172564a59967971751457",
+    "bytes": 18673,
+    "status": "FAIL",
+    "commands": 61,
+    "passed_commands": 59,
+    "failed_commands": [
+      {
+        "index": 56,
+        "command": [
+          "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+          "-B",
+          "examples/lifecycle-d1/test_attest_remaining_executable.py"
+        ],
+        "exit_code": 1
+      },
+      {
+        "index": 57,
+        "command": [
+          "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+          "-O",
+          "-B",
+          "examples/lifecycle-d1/test_attest_remaining_executable.py"
+        ],
+        "exit_code": 1
+      }
+    ]
+  },
+  "author_go_stdout": {
+    "sha256": "8d6717200251ad02656ab323d5cb25a312cd0668cc3b34734135e00c0f119e9b",
+    "bytes": 514
+  },
+  "author_go_stderr": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  }
+}

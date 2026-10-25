@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "candidate_sha256": "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+  "indexes": [
+    {
+      "id": "source-review",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate18-source-review01/evidence-index.json",
+      "sha256": "8994847872b0c232ade5809da5afc0c70076b4b15d53545225a6133bd37e9f55",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/candidate18-source-review01",
+      "expected_count": 180,
+      "expected_status": "C18_SOURCE_REVIEW_EVIDENCE_INDEX"
+    },
+    {
+      "id": "nondelete-preparation",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01/non-delete-evidence-index.json",
+      "sha256": "337158214ffdf7d5c18f133878bc767d11ed406987f59f2be19aafdf3acccc4e",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/remaining-candidate18-preparation01",
+      "expected_count": 1274,
+      "expected_status": "SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX"
+    },
+    {
+      "id": "source-review-report-binding",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate18/source-review-binding-index.json",
+      "sha256": "91b4ff10db4fc34cc76e10eb4c5bef4594dd554442ed33b81d436a3b2e09035e",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 2,
+      "expected_status": "SIX_SOURCE_REVIEW_BINDING_INDEX"
+    },
+    {
+      "id": "frozen-host-bindings",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate18-planning01/candidate18-host-bindings01.json",
+      "sha256": "56f232069c597a09cdb7808556ea31c4e122a8ad3393f04fc411c2e47bc292c6",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 35,
+      "expected_status": "FROZEN_V28_HOST_AND_PREPARATION_BINDINGS"
+    },
+    {
+      "id": "packet-independent-review",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate18-review01/evidence-index.json",
+      "sha256": "a9a764a15e934fb900b6d05175baafed98db073b11d354de804345e0d1c99238",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/candidate18-review01",
+      "expected_count": 34,
+      "expected_status": "C18_FROZEN_REVIEW_EVIDENCE_INDEX"
+    },
+    {
+      "id": "independent-reviewed-external-artifacts",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate18-review01/reviewed-artifacts01.json",
+      "sha256": "787366bbceb7f9409bad6aa42381f097447885177116720be6e38611ad5d0ba3",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 808,
+      "expected_status": "C18_FROZEN_REVIEWED_EXTERNAL_ARTIFACTS"
+    },
+    {
+      "id": "final-static-references",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate18-planning01/final-static-reference-index01.json",
+      "sha256": "de3c9426b01fcb6d6b6493d960b8b5435048cc4bce72f05dd650669f62f8d06d",
+      "format": "files-map-v1",
+      "member_root": ".",
+      "expected_count": 1015,
+      "expected_status": "C18_FINAL_STATIC_PREPARATION_REFERENCE_INDEX"
+    },
+    {
+      "id": "actual-authorization-approved-artifacts",
+      "index": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/approved-artifacts-index01.json",
+      "sha256": "9cc1fc5a238343506fffcef7a4bd345c2591e743473bce731da842b7ca1b2478",
+      "format": "members-list-v1",
+      "member_root": ".",
+      "expected_count": 1062,
+      "expected_status": "C18_V28_ACTUAL_AUTHORIZATION_APPROVED_ARTIFACTS"
+    },
+    {
+      "id": "actual-direct-human-authorization",
+      "index": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/authorization-evidence-index01.json",
+      "sha256": "b0cdab61094ac7f9dd8660cf635fed9afbe8d675e617eaa4d02e62ada915b7d4",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01",
+      "expected_count": 5,
+      "expected_status": "C18_V28_ACTUAL_AUTHORIZATION_EVIDENCE_INDEX"
+    },
+    {
+      "id": "actual-separate-human-schedule-authority",
+      "index": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/schedule-authority-index01.json",
+      "sha256": "d32a71ede0c39c3e5bf5fac4e13a09afd157902632ef9759d75d3d7604d77ef2",
+      "format": "files-map-v1",
+      "member_root": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01",
+      "expected_count": 3,
+      "expected_status": "C18_V28_SEPARATE_HUMAN_SCHEDULE_AUTHORITY_INDEX"
+    }
+  ]
+}

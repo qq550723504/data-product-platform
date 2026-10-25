@@ -1,0 +1,10 @@
+{
+  "status": "DIRECT_HUMAN_MAINTENANCE_AUTHORITY_RECEIVED",
+  "text_as_visible_in_current_user_message": "可以，授权在实时保护核验通过后仅解除 #332 的分支冻结位，继续准备 candidate22/v32，最终 CI 通过后重新锁定。其他保护保留，#332保持Draft、不合并，#307保持OPEN，暂不执行真实删除。",
+  "scope": "CONDITIONAL_EXACT_LOCKBRANCH_FALSE_ONLY_THEN_RELOCK_AFTER_FINAL_CI",
+  "proposal_sha256": "bb607f309b9940a31209cf324e696584a5bcbd915c5c010cd05e1b1b0785d050",
+  "at": "2026-10-23T03:47:41.443701+00:00",
+  "delete_authorization": false,
+  "schedule_authorization": false,
+  "native_delete": 0
+}

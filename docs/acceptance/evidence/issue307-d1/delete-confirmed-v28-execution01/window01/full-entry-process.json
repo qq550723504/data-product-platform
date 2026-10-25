@@ -1,0 +1,9 @@
+{
+  "started_at": "2026-10-21T14:02:52.004529+00:00",
+  "finished_at": "2026-10-21T14:05:23.009553+00:00",
+  "exit_code": 0,
+  "native_delete": 0,
+  "permissions_enabled": 0,
+  "stdout_sha256": "b46d2007500c17950bf2e8379b0e202ee7c34e0f73e759344ee3e9da7d820c58",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

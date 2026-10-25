@@ -1,0 +1,16 @@
+{
+  "status": "PASS_EXISTING_TYPED_INDEX_AND_REVIEWED_BYTES",
+  "audit": {
+    "id": "native-protection-repair01",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/native-protection-repair01/evidence-index01.json",
+    "sha256": "739f8a8d9deac67fc86f3961f1358ee230d7d0b430b93fb51291077b728de892",
+    "members_verified": 78
+  },
+  "reviewed_code_members": 11,
+  "independent_assessment_by": "/root/c23_preparation_boundary_review",
+  "receipt_validation_by": "author/root",
+  "source_provider_io": 0,
+  "metadata_write": 0,
+  "delete": 0
+}

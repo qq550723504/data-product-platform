@@ -1,0 +1,57 @@
+{
+  "status": "PASS_OFFLINE_WHOLE_ENTRY_MOCK_ONLY",
+  "at": "2026-10-19T12:40:01.826304+00:00",
+  "tests_per_mode": 17,
+  "records": [
+    {
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-normal02-stdout.txt",
+          "sha256": "7b3479f4634257451dbdc397ccf944183e909d21f1d99550db6c1bf399929001",
+          "bytes": 507
+        },
+        "stderr": {
+          "file": "host-final-normal02-stderr.txt",
+          "sha256": "822fa2a79b71061ec723b2fd75afcb1be8b7781443ece7a5a19f63398d4d0701",
+          "bytes": 2936
+        }
+      }
+    },
+    {
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-final-optimized02-stdout.txt",
+          "sha256": "7e46d6de642381d650a9f25553b6d458ae7741d7a72b32509509ef88962591e5",
+          "bytes": 507
+        },
+        "stderr": {
+          "file": "host-final-optimized02-stderr.txt",
+          "sha256": "678ae53b6d7dd33945ae4405a8cbf33e89619d047831585a5e3a43f6aa2e0e28",
+          "bytes": 2936
+        }
+      }
+    }
+  ],
+  "source_start": 0,
+  "provider": 0,
+  "DELETE": 0
+}

@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "at": "2026-10-20T10:39:44.694833+00:00",
+  "source_head": "c1dd1b61",
+  "optimized": true,
+  "methods": 52,
+  "skips": 1,
+  "tests": [
+    {
+      "test": "test_evidence_indexes.py",
+      "exit_code": 0,
+      "methods": 12,
+      "skips": 1
+    },
+    {
+      "test": "test_six_native_entry.py",
+      "exit_code": 0,
+      "methods": 6,
+      "skips": 0
+    },
+    {
+      "test": "test_verify_six_native.py",
+      "exit_code": 0,
+      "methods": 2,
+      "skips": 0
+    },
+    {
+      "test": "test_window_six_support.py",
+      "exit_code": 0,
+      "methods": 7,
+      "skips": 0
+    },
+    {
+      "test": "test_remaining_six_window.py",
+      "exit_code": 0,
+      "methods": 5,
+      "skips": 0
+    },
+    {
+      "test": "test_remaining_sequence.py",
+      "exit_code": 0,
+      "methods": 6,
+      "skips": 0
+    },
+    {
+      "test": "test_six_candidate_runtime.py",
+      "exit_code": 0,
+      "methods": 13,
+      "skips": 0
+    },
+    {
+      "test": "test_freeze_six_candidate.py",
+      "exit_code": 0,
+      "methods": 1,
+      "skips": 0
+    }
+  ],
+  "real_Source_Docker_provider_DELETE": 0
+}

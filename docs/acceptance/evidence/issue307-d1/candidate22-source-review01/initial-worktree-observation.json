@@ -1,0 +1,7 @@
+{
+  "host_head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "runtime_head": "81a083751c01a281d42df594f6e91012255081f1",
+  "host_status": " M docs/acceptance/issue307-d1-v31-preparation.md\n?? docs/acceptance/evidence/issue307-d1/candidate22-planning01/authorized-maintenance01/\n?? docs/acceptance/evidence/issue307-d1/candidate22-planning01/publish-source01.py\n?? docs/acceptance/evidence/issue307-d1/candidate22-planning01/source-publication01/\n?? docs/acceptance/evidence/issue307-d1/candidate22-source-review01/\n",
+  "runtime_status": "",
+  "source_changes_lf_match": true
+}

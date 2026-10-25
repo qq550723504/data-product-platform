@@ -1,0 +1,1 @@
+{"scope": "REVIEW_HARNESS_ONLY", "failure": "KeyError checker; actual allocation key differs. Subsequent diagnostic tried serializing dict_keys, also no runtime action.", "stage": "immutable raw index verified, before any file-only checker/native actions", "actual_Docker_Source_HTTP_mutations": 0}

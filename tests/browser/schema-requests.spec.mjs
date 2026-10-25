@@ -4,6 +4,23 @@ const control="http://127.0.0.1:4400/__control",headers={"x-fixture-token":fixtu
 async function reset(request,scenario="schema-requests"){expect((await request.post(`${control}/reset`,{headers,data:{scenario}})).ok()).toBeTruthy();}
 async function calls(request){return(await(await request.get(`${control}/state`,{headers})).json()).requests;}
 function pure(list){expect(list.some(c=>c.method!=="GET")).toBe(false);expect(list.some(c=>/metadata-observation|metadata-bindings|ingestion-source|\/ingestions|\/schema-observations$/.test(c.path))).toBe(false);}
+
+async function requestPageReady(page,offset=0,view="NO_ATTEMPT"){
+  const suffix=offset?`&schemaRequestOffset=${offset}`:"";
+  await expect(page).toHaveURL(new RegExp(`/attention\\?schemaRequestView=${view}${suffix}#schema-unobserved-requests$`));
+  const panel=page.getByTestId("schema-requests");
+  await expect(page.getByRole("navigation",{name:"无观察请求筛选"}).getByRole("link",{name:view==="ALL"?"全部无观察请求":"尚未登记 attempt",exact:true})).toHaveAttribute("aria-current","page");
+  await expect(panel.locator("tbody tr")).toHaveCount(25);
+  // Both the old ALL page and the new filtered page have 25 rows. Require the
+  // committed pagination/context href before continuing to another section.
+  await expect(panel.getByRole("link",{name:"下一页",exact:true})).toHaveAttribute("href",new RegExp(`schemaRequestView=${view}&schemaRequestOffset=${offset+25}#`));
+  await expect(page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true})).toHaveAttribute("href",new RegExp(`schemaRequestView=${view}${suffix}&schemaExceptionStatus=DENIED#`));
+  return panel;
+}
+async function selectNoAttempt(page){
+  await page.getByRole("navigation",{name:"无观察请求筛选"}).getByRole("link",{name:"尚未登记 attempt",exact:true}).click();
+  return requestPageReady(page);
+}
 test.beforeEach(async({request})=>reset(request));
 test("unobserved pagination and exact attempt remain readable after observation arrives",async({page,request},info)=>{
   await page.goto("/attention?schemaRequestView=ALL&schemaRequestOffset=100");
@@ -29,10 +46,38 @@ test("unobserved pagination and exact attempt remain readable after observation 
 });
 test("independent counts and filters survive other queue navigation",async({page,request})=>{
   await page.goto("/");await expect(page.getByTestId("schema-requests")).toContainText("105 个无观察请求");await expect(page.getByTestId("needs-attention")).not.toContainText("105");
-  await page.getByRole("link",{name:"查看无观察请求",exact:true}).click();await page.getByRole("navigation",{name:"无观察请求筛选"}).getByRole("link",{name:"尚未登记 attempt",exact:true}).click();
-  const panel=page.getByTestId("schema-requests");await expect(panel.locator("tbody tr")).toHaveCount(25);await panel.getByRole("link",{name:"下一页",exact:true}).click();
-  await expect(panel.locator("tbody tr")).toHaveCount(25);await page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true}).click();
+  await page.getByRole("link",{name:"查看无观察请求",exact:true}).click();
+  await requestPageReady(page,0,"ALL");
+  const panel=await selectNoAttempt(page);await panel.getByRole("link",{name:"下一页",exact:true}).click();
+  await requestPageReady(page,25);await page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true}).click();
   await expect(page).toHaveURL(/schemaRequestView=NO_ATTEMPT&schemaRequestOffset=25/);await expect(panel.locator("tbody tr")).toHaveCount(25);pure(await calls(request));
+});
+test("delayed filter response cannot make an old 25-row page navigation-ready",async({page,request})=>{
+  await page.goto("/attention?schemaRequestView=ALL#schema-unobserved-requests");
+  const panel=page.getByTestId("schema-requests");await expect(panel.locator("tbody tr")).toHaveCount(25);
+  let release;const barrier=new Promise(resolve=>{release=resolve;});let held=false,ready=false,selection;
+  const target=url=>url.pathname==="/attention"&&url.searchParams.get("schemaRequestView")==="NO_ATTEMPT"&&!url.searchParams.has("schemaRequestOffset");
+  const handler=async route=>{
+    if(route.request().headers()["rsc"]!=="1")return route.continue();
+    const response=await route.fetch();held=true;await barrier;await route.fulfill({response});
+  };
+  await page.route(target,handler);
+  try{
+    selection=selectNoAttempt(page).then(value=>{ready=true;return value;});selection.catch(()=>{});
+    await expect.poll(()=>held).toBe(true);
+    await expect(page).toHaveURL(/schemaRequestView=ALL#schema-unobserved-requests$/);
+    await expect(page.getByRole("navigation",{name:"无观察请求筛选"}).getByRole("link",{name:"全部无观察请求",exact:true})).toHaveAttribute("aria-current","page");
+    await expect(panel.locator("tbody tr")).toHaveCount(25);
+    await expect(panel.getByRole("link",{name:"下一页",exact:true})).toHaveAttribute("href",/schemaRequestView=ALL&schemaRequestOffset=25#/);
+    expect(ready).toBe(false);
+    release();await selection;
+    await panel.getByRole("link",{name:"下一页",exact:true}).click();await requestPageReady(page,25);
+    await page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true}).click();
+    await expect(page).toHaveURL(/schemaRequestView=NO_ATTEMPT&schemaRequestOffset=25&schemaExceptionStatus=DENIED/);
+    await expect(panel.locator("tbody tr")).toHaveCount(25);pure(await calls(request));
+  }finally{
+    release();if(selection)await selection.catch(()=>{});await page.unroute(target,handler);
+  }
 });
 test("request detail pages all attempts and observations without replacing selected attempt",async({page,request})=>{
   await page.goto(`/resources/${ids.sourceResource}?view=source-schema-request&requestId=${unobservedRequestId(106)}&attemptId=${requestAttemptId(106000)}&attemptOffset=25&observationOffset=25`);

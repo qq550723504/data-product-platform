@@ -1,0 +1,13 @@
+{
+  "account_status": "disabled",
+  "amount": "NOT_ASSESSED",
+  "attach_policy_error": "XMinioAdminNoSuchUser",
+  "groups": null,
+  "native_delete": 0,
+  "native_object_put": 0,
+  "production_adapter_contract": "NOT_YET_VALIDATED",
+  "set_policy_error": "XMinioAdminNoSuchUser",
+  "sole_policy": "dpp307-contract-readonly",
+  "source_calls": 0,
+  "status": "PASS_SAME_IMAGE_DISABLED_MAPPING_API_PROBE"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "test_retention_staging-optimized",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-O",
+    "-B",
+    "examples/lifecycle-d1/test_retention_staging.py"
+  ],
+  "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+  "started_at": "2026-10-24T08:42:32.870102+00:00",
+  "finished_at": "2026-10-24T08:42:33.009496+00:00",
+  "returncode": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "db147cb6a9d4a07fa6279f3e36eb2717b1561eeda9c69dcbfc3fcb81e767bdd4"
+}

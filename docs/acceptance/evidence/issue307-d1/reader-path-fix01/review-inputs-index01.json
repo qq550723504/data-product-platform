@@ -1,0 +1,1635 @@
+{
+  "format": "files-map-v1",
+  "status": "FROZEN_LOCAL_REVIEW_INPUTS_NOT_AUTHORITY",
+  "count": 407,
+  "files": {
+    ".gitattributes": {
+      "sha256": "42cb54bd26b7c4b0846c3098267ef9bff2a39f31638b7a97a1185c420fe5a669",
+      "bytes": 25864
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/capture_command01.py": {
+      "sha256": "6865d8b14c34f9cb355fa05a3ac3c2659de7ab44529b724c373da56040108fe9",
+      "bytes": 2278
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/collect_results01.py": {
+      "sha256": "cd688c7a6d6f8e8f19f2682e8cfb739b8b405b2bb26abacb0a1e522b319d9828",
+      "bytes": 4441
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/freeze_review_inputs01.py": {
+      "sha256": "1ed137bfd5187b62cc1539c22ac6fce0fdac37ce72d313295fe90f91ca323665",
+      "bytes": 2456
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/independent-export-manifest01.json": {
+      "sha256": "21dba2d5dd9d657aa7c4bb28dfb87c682228e63f6f099b0a3f67f7c1f0f0b4e9",
+      "bytes": 36693
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-Dockerfile": {
+      "sha256": "e435917a2762f93929068d5677b2ca4229957e5f64c8cc19df9fdce212fa8cb5",
+      "bytes": 370
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/result.json": {
+      "sha256": "96694360f7368edd14bed30f51986b3936a3404c1505b516d5d6254f09abc35b",
+      "bytes": 9239
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/temporary_containers_test-O-audit.json": {
+      "sha256": "ce952445d66e3e378d6f07569b4b3c81c43e3427f5f2ceb45ecab11c4f551b6a",
+      "bytes": 282
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/temporary_containers_test-O.stderr": {
+      "sha256": "a21b85187d4fe2e28b3a2fdb4d6412d3ec3075cac0f5f73ba546db541320f903",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/temporary_containers_test-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/temporary_containers_test-normal-audit.json": {
+      "sha256": "0f6d74b46f397b28fe13e5b34b1119ed70d635805664babdff803242a8d078c5",
+      "bytes": 276
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/temporary_containers_test-normal.stderr": {
+      "sha256": "1783913c6ad2650e17271e4460fdd8c2ea74ea6c66201f9ee108929c4b126ce4",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/temporary_containers_test-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_attest_remaining_executable-O-audit.json": {
+      "sha256": "1e90dd7e8ba3697a932041d9d9685c282e85990556d3684f0574bfde0c230489",
+      "bytes": 1522
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_attest_remaining_executable-O.stderr": {
+      "sha256": "7559eceaa8cc37f02ca54e7af117d4e2ab5c54b4dd12dcd2ed975f2ee1956bc0",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_attest_remaining_executable-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_attest_remaining_executable-normal-audit.json": {
+      "sha256": "40f583c67e08c3fc3ca9b09e8bb6e8a24af96fc613129237600d518613d483f0",
+      "bytes": 1474
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_attest_remaining_executable-normal.stderr": {
+      "sha256": "4b2255fbf44ef0414199e577f787fba636dce9111a4b1248d4552b445f77685a",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_attest_remaining_executable-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_evidence_indexes-O-audit.json": {
+      "sha256": "857880fb258ad7234226855ffdd8500a6a673cd585d318b5f4d273504dff9e97",
+      "bytes": 302
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_evidence_indexes-O.stderr": {
+      "sha256": "810cc7ec289a95d47499ed339fb243aad8443512b316a6491cceee01fb536878",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_evidence_indexes-normal-audit.json": {
+      "sha256": "76ee5b8ac88a3b27d03a7636a1692e5e39ee2bb2046cce4236be6e060063c638",
+      "bytes": 296
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_evidence_indexes-normal.stderr": {
+      "sha256": "81b5e209985a993f3fa64d09460e87f83813e88d89c09666058883369a95fb35",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_execution_freeze-O-audit.json": {
+      "sha256": "ce2d8bc452f2acbb497a9b7212bff2e74038a46e52671b412056aad4a25ab051",
+      "bytes": 3090
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_execution_freeze-O.stderr": {
+      "sha256": "b744c4cf6fe8afc4670e955b9b4fb461788ad4be50ddca06e953f60d6867eaf1",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_execution_freeze-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_execution_freeze-normal-audit.json": {
+      "sha256": "11db23cb35436b18996f797c986191ca5d8545cf8039009b8df0f211b9b02e31",
+      "bytes": 2970
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_execution_freeze-normal.stderr": {
+      "sha256": "2fbff99bd5c2a8935eb00819b14f8324afb757b77294cc7264de4d995913f78d",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_execution_freeze-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_fixture_artifacts-O-audit.json": {
+      "sha256": "78fca494a73b3c9f538246136bf040068553354977d44038cc434ba04435e8cd",
+      "bytes": 2728
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_fixture_artifacts-O.stderr": {
+      "sha256": "06d927a57cbc68c32e4e7f8c38a4f8d7b7bfa4bbb2811aae37a3f7c9498e7e52",
+      "bytes": 309
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_fixture_artifacts-normal-audit.json": {
+      "sha256": "53ae8434e83fa087cf3445d78f407b44e1f6e1abd794c9d6c8e47edc0ccd50ef",
+      "bytes": 2620
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_fixture_artifacts-normal.stderr": {
+      "sha256": "c5b736c94721b212042eb284e508fc17814d5121b71ed59a191616365320928b",
+      "bytes": 309
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_freeze_six_candidate-O-audit.json": {
+      "sha256": "e4d3ff148a0c072331c3ec584a654c28eaf36d7ad64b964608ac47c00f683692",
+      "bytes": 4622
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_freeze_six_candidate-O.stderr": {
+      "sha256": "0bb1c0b615937118e3c6f129c11d00b263b3fd60536228f0246f12db3a9988d4",
+      "bytes": 98
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_freeze_six_candidate-O.stdout": {
+      "sha256": "73b3cb01869a2c9181fa3b48781b179ec03d4fdd237734b33cb18710543c99e3",
+      "bytes": 188
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_freeze_six_candidate-normal-audit.json": {
+      "sha256": "c8815190a0aa7624af0985272aa4e8d11830b3011179a7a4877127fbf4223507",
+      "bytes": 4514
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_freeze_six_candidate-normal.stderr": {
+      "sha256": "9f2bb4a16ba860fcc2c15dbfa0201538c642708eb452409e61328556e0b72c4a",
+      "bytes": 98
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_freeze_six_candidate-normal.stdout": {
+      "sha256": "4a4365be2b6233f55809ec4c8a861e3454188326f962a038761eac765f9294fa",
+      "bytes": 188
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_native_protection-O-audit.json": {
+      "sha256": "c4b816065f1a3f478efb52eeb11e5fb130a96dffd5675ec688c550541bc0f978",
+      "bytes": 518
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_native_protection-O.stderr": {
+      "sha256": "1d5bd0da238980ace2f852259054e1122e6781fbb482cfafab449ea35292d406",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_native_protection-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_native_protection-normal-audit.json": {
+      "sha256": "ad94e1233c2344134fc4c9b1c0551cbf109f6e116ec609f3fccacb3fd4b4c64f",
+      "bytes": 506
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_native_protection-normal.stderr": {
+      "sha256": "cda227f833652deab0291d68b6f56ada1416293b36a3d5d2d35e1d0b9b0ae41e",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_native_protection-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_preallocation_ci-O-audit.json": {
+      "sha256": "400384780c103da571df069a71297f1d62aa4835ad7ab1091f0eedb77e610aa3",
+      "bytes": 2335
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_preallocation_ci-O.stderr": {
+      "sha256": "0986db0df1fca760270661131b959dd757a683afd778db74c39d20c8494d0779",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_preallocation_ci-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_preallocation_ci-normal-audit.json": {
+      "sha256": "910910d7038aae38881e536e16128e2a7b389cb573910ab6910eb6165d77ae44",
+      "bytes": 2245
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_preallocation_ci-normal.stderr": {
+      "sha256": "735fc7f2e517f944dc01ededa38b74ac3f68e61944cd289af21d9babd61ebadb",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_preallocation_ci-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_receipt_bytes-O-audit.json": {
+      "sha256": "b66f8ca1da15d0725a4fed5ce6bacdd4a1f862ddebd62a63d6ec4ef3c7f8ff46",
+      "bytes": 494
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_receipt_bytes-O.stderr": {
+      "sha256": "2ef15391614511c2a3aede1192ab588b9c57e79b80d9b99e2feabc8983f75cfd",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_receipt_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_receipt_bytes-normal-audit.json": {
+      "sha256": "b66f8ca1da15d0725a4fed5ce6bacdd4a1f862ddebd62a63d6ec4ef3c7f8ff46",
+      "bytes": 494
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_receipt_bytes-normal.stderr": {
+      "sha256": "4534f64cd9cefe56563c9057944bd79b3c4a2a068adf5d6e21381fcdbdfb5813",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_receipt_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v26-O-audit.json": {
+      "sha256": "75aff20fff2c76c1d849a6254122d2489fb412ff8c8a64652c3d6be9e0ee8c69",
+      "bytes": 2845
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v26-O.stderr": {
+      "sha256": "a11a1237c8ea6a213866d783c6f5164de18766b1752bdabf6715b9c4b389a6b9",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v26-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v26-normal-audit.json": {
+      "sha256": "0c1b8c0ad1ace1bdb7192c07444dfe49854a212515cc21376a04b4f70ffbdb75",
+      "bytes": 2731
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v26-normal.stderr": {
+      "sha256": "430d6f922a39f9bd6d32d454788d47172e7e1999c26d8e69d30b5f1a232771d0",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v26-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v29-O-audit.json": {
+      "sha256": "e012020ac69b1be9bdfd3b90e60aa8d487f076284521bb021c7d490f9441760c",
+      "bytes": 415
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v29-O.stderr": {
+      "sha256": "0f83ada7deefd0272fb00528c03571eb249a53ee84d6b07b833287301cd5c5a4",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v29-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v29-normal-audit.json": {
+      "sha256": "7198fd6dd325fef6cec683c819733d3e8d6e87183634a5e1d3586c772c085144",
+      "bytes": 403
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v29-normal.stderr": {
+      "sha256": "ea79a87616cabb2bd8aa9b5b9f27049283c5ec77c5491261b31334a946a22aa4",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v29-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v30-O-audit.json": {
+      "sha256": "281282b35c3dbb125d37c4210df32ce7b0b8f279b21f0d95e6ced5ed199b7722",
+      "bytes": 548
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v30-O.stderr": {
+      "sha256": "32b960fcde6706f446587d0c3fbc9537825940ca4d6d468f2aca2585ad2a70b5",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v30-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v30-normal-audit.json": {
+      "sha256": "a0477256f442e55f9f49268004dfb9da0370bba2e331f36bc0436d2d2d9185f0",
+      "bytes": 530
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v30-normal.stderr": {
+      "sha256": "4419562f231b67aa10ebd30e06b96d8dafae481aa7c006f98cd8869eccde010a",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v30-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v31-O-audit.json": {
+      "sha256": "3cbacbe5972f37eacee45bed41da26d25c0a5d058450299bc11981eb2b08b402",
+      "bytes": 669
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v31-O.stderr": {
+      "sha256": "ce6c2540a5cc4d745f7378b055ab961fcf441f7de82724375513d25b33cccecc",
+      "bytes": 100
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v31-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v31-normal-audit.json": {
+      "sha256": "e9177aa5d0262446b4559e2e1bf71c6be2edd9dc8c55d14c44f0f5640d09b819",
+      "bytes": 645
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v31-normal.stderr": {
+      "sha256": "61f17adcac1341ec80f13f01fb904e92f181ebe2da69688bdc8cfb7ed6087e7e",
+      "bytes": 100
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v31-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v32-O-audit.json": {
+      "sha256": "26498d37cf50e62c976b617f1f467427cfbfaafcb152777e5b008dd7c1b675e2",
+      "bytes": 827
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v32-O.stderr": {
+      "sha256": "5e4531881b24e9512647570ea93e3c4ec2ecffed2eae8f8d228fb2804b733a2f",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v32-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v32-normal-audit.json": {
+      "sha256": "6fcd6d540c33fdab2249d0d29bb9136155564e4d881f0ba8a931726c4985c593",
+      "bytes": 803
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v32-normal.stderr": {
+      "sha256": "b7931c43eaa758c5d9b0eb5067e0a270294bd668dcda79977038344afe48d0f4",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retained_v32-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_composition-O-audit.json": {
+      "sha256": "0c8bba3c79c9b5a19838622ed2c8db3afb782b61856226089cd17e7cdbef2231",
+      "bytes": 1957
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_composition-O.stderr": {
+      "sha256": "461653f12b54d16744054e333ef2c7f34be9cca9fbde52397673807108f7760e",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_composition-normal-audit.json": {
+      "sha256": "9c1448c8e2332fc88a81f5319b82c40a883b472dd73a53d0bf84f6f49f8e7267",
+      "bytes": 1885
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_composition-normal.stderr": {
+      "sha256": "011217f66d2da3a94f31f726e3cac500b984127da432278ac676c2ebca10cae0",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_maintenance-O-audit.json": {
+      "sha256": "f94b415b55b051634156bf51222f78ff98035cc04569bb4897832e422be05d97",
+      "bytes": 1195
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_maintenance-O.stderr": {
+      "sha256": "ba193491a0194458d64a954a3022504ba6691e1bef6a08b8fb0db0cbc0f9d50e",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_maintenance-O.stdout": {
+      "sha256": "6acbd090ac49b526cd94d1312dfaa8d9c25addf1fafc50a1380fb84c5ba0d31a",
+      "bytes": 150
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_maintenance-normal-audit.json": {
+      "sha256": "cd7ab3a4bfd1249008c38914734da7526118fef636ff0686a8b2599b4fd65043",
+      "bytes": 1153
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_maintenance-normal.stderr": {
+      "sha256": "543920b89afb6642ac3486c10beda23f3552c9ee27d3b66ed88456779bf722a5",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_maintenance-normal.stdout": {
+      "sha256": "6acbd090ac49b526cd94d1312dfaa8d9c25addf1fafc50a1380fb84c5ba0d31a",
+      "bytes": 150
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_renewal-O-audit.json": {
+      "sha256": "07132c7a5fa1994c22ad0d8eb13b46524a28e474abd108014285edf84cd1c24a",
+      "bytes": 665
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_renewal-O.stderr": {
+      "sha256": "8fd58b5ea373198ba00ea64e68915c9c053951b03dc55c7cadc451af224bb96f",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_renewal-normal-audit.json": {
+      "sha256": "73ff027a75ea20cae418c65d841f0533131a7669b0e77be0583a3318a27bea30",
+      "bytes": 647
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_renewal-normal.stderr": {
+      "sha256": "768164def81551987271a632bf21a1c3ba6b5057525cfb07c9e3e1eae0e5cf92",
+      "bytes": 102
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_staging-O-audit.json": {
+      "sha256": "5b150ae1dc6ba6d6bed1eae4b730bd61d3240072106f82918de8bd4c877ddc2a",
+      "bytes": 703
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_staging-O.stderr": {
+      "sha256": "82e6aa80926086b192e1c363d80225ddd8ee1f1e21f5575a3d491df9fd1b6bfd",
+      "bytes": 100
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_staging-normal-audit.json": {
+      "sha256": "fc0e9778d7c1fd17cee8eaf6f3b248534010e9c9a16bc3588badc9d5c89d1c9f",
+      "bytes": 679
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_staging-normal.stderr": {
+      "sha256": "82e6aa80926086b192e1c363d80225ddd8ee1f1e21f5575a3d491df9fd1b6bfd",
+      "bytes": 100
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_budget_bytes-O-audit.json": {
+      "sha256": "e3272c2ea0536b891bb867486b0b3e24a0a710e02d5fc74c40197793d1b57e0b",
+      "bytes": 578
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_budget_bytes-O.stderr": {
+      "sha256": "921b60a7fd52e978fbb551cacd29df2d6708879400278e1fcc70fceeb0c6f8e0",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_budget_bytes-normal-audit.json": {
+      "sha256": "99d970312eb612a8cf20f518fa46a484d28218c85efed27c160fab9d78533537",
+      "bytes": 560
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_budget_bytes-normal.stderr": {
+      "sha256": "921b60a7fd52e978fbb551cacd29df2d6708879400278e1fcc70fceeb0c6f8e0",
+      "bytes": 101
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_resources-O-audit.json": {
+      "sha256": "8f40f0fc8bd0de157d1236e09552cf9d107bca2ca3a4a030c2dc95d841b61874",
+      "bytes": 435
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_resources-O.stderr": {
+      "sha256": "e11f9c50c493efe6bc14a04b2843beb1552dcb77c6dc3f61b5c914639a95967e",
+      "bytes": 119
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_resources-O.stdout": {
+      "sha256": "b3138ef70f8bb383e5296d4ceb592949f71d4202a5f4b11ae623b2996cda15f9",
+      "bytes": 44
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_resources-normal-audit.json": {
+      "sha256": "9a9e843024c538441019c029844d52403851ae46a536a2b076f7eb97846490ab",
+      "bytes": 423
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_resources-normal.stderr": {
+      "sha256": "98ef678b665fed282f3f819c3bd9022a7ad5d817941ed2f43be6e6944343e9af",
+      "bytes": 119
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_resources-normal.stdout": {
+      "sha256": "b3138ef70f8bb383e5296d4ceb592949f71d4202a5f4b11ae623b2996cda15f9",
+      "bytes": 44
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_volumes-O-audit.json": {
+      "sha256": "cc34a7cde05b6e60b58dc837f88a2896521e48ab226b37502fea26f7c8dcdb02",
+      "bytes": 558
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_volumes-O.stderr": {
+      "sha256": "5236d1f759f72b91dc86450cfe1061834af1e93da65692002e67a337c04979f5",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_volumes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_volumes-normal-audit.json": {
+      "sha256": "3584b562c68b3336b1f9284323bc4e672584276261e00ecf849f1c6a93a2c907",
+      "bytes": 540
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_volumes-normal.stderr": {
+      "sha256": "1cbb1d36dbeffbc9a96e0aded04eb88219e347905ca8351ec85c143bc44f376e",
+      "bytes": 104
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_retired_volumes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_candidate_runtime-O-audit.json": {
+      "sha256": "6ac3699f1e4986158a27b7054e16692cfe4d96597391fddbba4540b982b4b6d6",
+      "bytes": 3805
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_candidate_runtime-O.stderr": {
+      "sha256": "a06d48a52731dc53684a339005ab841e84f48388621f6b34a8094a6cd64e44fc",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_candidate_runtime-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_candidate_runtime-normal-audit.json": {
+      "sha256": "7127a79313c67dff9dfd94d092b6128526a8383b0afebfa6119b15ffb0b3f114",
+      "bytes": 3691
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_candidate_runtime-normal.stderr": {
+      "sha256": "8cfdc3e153e92ffe26397ec64ffbb9db90209b29912db6d701ea50210f215ea7",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_candidate_runtime-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_native_entry-O-audit.json": {
+      "sha256": "12ffb0c4329d3d25e54cc0f085da05b53ce3ed7ca53834b23ec640125879606e",
+      "bytes": 3100
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_native_entry-O.stderr": {
+      "sha256": "29ce88ed2a5e284e414e95870523f3546cbab1ccb62e4a6053d8fb810440eccc",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_native_entry-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_native_entry-normal-audit.json": {
+      "sha256": "8b7e4b95303fefa8e61884621ca5f182a1931b5131e92086a58baf759385b3d0",
+      "bytes": 2986
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_native_entry-normal.stderr": {
+      "sha256": "b7290e9134e64e715018585a8a87889c86d8ff5f82c25193640608ff2754780b",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_six_native_entry-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_successor_dependencies-O-audit.json": {
+      "sha256": "6a3bfed69eec5dc80770fa25e4e639cdfcd913ca4ee300f7f75882aef7ed7ee3",
+      "bytes": 1470
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_successor_dependencies-O.stderr": {
+      "sha256": "1b2e24f12d82bb67b104e25239d337c2ea1a0cdc28f3714a34627c38b0800064",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_successor_dependencies-normal-audit.json": {
+      "sha256": "25eb8448f81d14f80e60c6f0e96974bd992251213429a00af428d541768ac780",
+      "bytes": 1416
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_successor_dependencies-normal.stderr": {
+      "sha256": "62565f75869ca8034b27cfba25b6556ea9134b2f86d4c291d0663692a156f801",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_verify_six_native-O-audit.json": {
+      "sha256": "eca86c6c5ce4ad8327fceb2a5a6c8b9b0bc171c4b72888faced452ab9681a1f4",
+      "bytes": 3706
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_verify_six_native-O.stderr": {
+      "sha256": "bb203648f8f081bdd2d58a04c0c7e7de059e0856482c0419b50df53c79cd1d21",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_verify_six_native-normal-audit.json": {
+      "sha256": "97970bce81be0fae2042862872ac2d1070550525996cf27645c4b2631fd5e1ab",
+      "bytes": 3562
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_verify_six_native-normal.stderr": {
+      "sha256": "55e5cd06ff68c3a9301ae36f8049ca9fa42ec993e8c5565005bee63edf60564e",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_window_six_support-O-audit.json": {
+      "sha256": "fb64e89bbc40b5f6a2389ecc47ae747f63265a410bdd18c70c19b22131592765",
+      "bytes": 3094
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_window_six_support-O.stderr": {
+      "sha256": "3ef75e529bdaa153247247ad33ec40a14a9f7b6911b75e0687899f17c3f2d9e2",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_window_six_support-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_window_six_support-normal-audit.json": {
+      "sha256": "a8b745e7ac31bd65aef9da2a45d35b7821b674e48a10da5e40bfaebb3bcc7ebe",
+      "bytes": 2974
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_window_six_support-normal.stderr": {
+      "sha256": "7d746796561cc152a01e02d073ea93b350813e7410c76cd22c94d2ffe2232029",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-collection01/test_window_six_support-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-container-closure01.json": {
+      "sha256": "6fc92ee577969aae62e458b63570348d63da5934001156062d8f5415adea733e",
+      "bytes": 1108
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-image-build01/result.json": {
+      "sha256": "88702b8fd82203124ae01a023cf1807d5b82ca285a1b3786c8d06a2793fcd816",
+      "bytes": 418
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-image-build01/start.json": {
+      "sha256": "cb8952eb146932cfc46ee1568a14deab24cf1bd24c27682ed3c4b4ca9136c9e7",
+      "bytes": 319
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-image-build01/stderr": {
+      "sha256": "015d25538fac5cbc5c1657ef1ea1dc41c5f71161b9ccef2f02a85d8b69df83df",
+      "bytes": 19555
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-image-build01/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-independent01/result.json": {
+      "sha256": "f6ce12bfffa335439d79df67a6be24167849e6b3aa36085096a3b927affeb123",
+      "bytes": 846
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-independent01/start.json": {
+      "sha256": "a531f394e72c0ef7223bf6a3f56029c3532fdfed232fcf1708c824788bafaea5",
+      "bytes": 687
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-independent01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/linux313-independent01/stdout": {
+      "sha256": "6141ca8348e2d568430e396b734ac28036c6c4c1f00e3da7364ab7081ca99640",
+      "bytes": 49
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/offline_python_runner01.py": {
+      "sha256": "ca6c577075f4c4a8052fa071f14db20cf563a3e411d7232868eda05acd0fc8e6",
+      "bytes": 2043
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/original-failure-binding01.json": {
+      "sha256": "9362f082e60b77e1128c434b7d7031ec9783d71c11b893d8ab714db33e3435d1",
+      "bytes": 988
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/previous-ci-failure01/ci-validation-terminal.json": {
+      "sha256": "344503a3882d6135152b49ec445b54ebd558b563d8fd5ec17407ac413b1cceb8",
+      "bytes": 791
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/previous-ci-failure01/publication-operation-terminal.json": {
+      "sha256": "9a4bcc82f5082ec56718ec6ee4670900b8ca8c9fd034f431126f7afcd132db69",
+      "bytes": 448
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/previous-ci-failure01/windows-job120887885664-decoded.log": {
+      "sha256": "43a769a80760fa5ae0ef6d3454f28309f22f63b70fa3b87d3962a0cec5320e16",
+      "bytes": 146237
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/previous-ci-failure01/windows-job120887885664-log-binding01.json": {
+      "sha256": "42419f17051bf49c1a9cdae94013226b3fb1de837c08f25dfd48925563c8f38b",
+      "bytes": 475
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/previous-ci-failure01/windows-path-gate-analysis01.json": {
+      "sha256": "c9d5b2804fd5ed123275acd48efccf1fdc4e91f3508b70359b1c2bade4ac42ba",
+      "bytes": 1459
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/read_boundary01.py": {
+      "sha256": "43caee8b0549ea74dbdd61fdfeb09df0e47084743031ab53ce8dfedd8e4eceb9",
+      "bytes": 2606
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/001-intent.json": {
+      "sha256": "6314a0033cd0c128aca8f5454024fd2068d8b1ea2de920e6462e1bcb783e92ba",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/001-process.json": {
+      "sha256": "142e0eb27701c4afb754a2b463cc7ea35a658b39a3adf8554037a94e51d220b4",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/001-stdout.json": {
+      "sha256": "8f506688aecc8323061b94034ae85c8b909c6d5a67441ef2fd4e855491c64719",
+      "bytes": 4589
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/002-intent.json": {
+      "sha256": "d30acc8e5c43f9c1d84d82b36f26f59a44f9b3b9512643c790d68bd45ca8df75",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/002-process.json": {
+      "sha256": "9d43ddbfec33d94e38acec36e31e099ee6fbebfcc59661a1d52e98019b56af8d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/002-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/003-intent.json": {
+      "sha256": "50d95fe8d1a8c9d87cc5f1baaf49681b59dbec47e43cbfc2e288ebb06090d0b1",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/003-process.json": {
+      "sha256": "08880c1f0aa8cc5dc0a477bb9cf14861e29349a09f9430be4ca87845ee1ae526",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/003-stdout.json": {
+      "sha256": "3adcb8c8707c3330619bfadb4ca5bafbb78ed38c07fec033d3cdaa6c69da1aab",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/004-intent.json": {
+      "sha256": "0149a1856c9092041fbf1b336290e106687592db4a741ca87e0dbdac07fb782a",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/004-process.json": {
+      "sha256": "e5432e167252f6cd42abe98572f65ee06b1727573efee7d410e0b3f18008af34",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/004-stdout.json": {
+      "sha256": "813a0e44fb218fa53ad3ea15a2d383133afb7c5d9056be23677e2d4db15933cf",
+      "bytes": 21024
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/005-intent.json": {
+      "sha256": "15a2a04f06026aa55b2f50215aa392f5c7b83077ae275f46fea6bbaef4555153",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/005-process.json": {
+      "sha256": "c801bba88dd4c30420cff1ea61d7deb0dd69c8f7fd06a818fb1a029fa29385a7",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/006-intent.json": {
+      "sha256": "24067d37c639c78fe0db2c39fc8701cf27e1452f13800a0df6ce4decb6953ba0",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/006-process.json": {
+      "sha256": "7ace478a0a40d9c204c6faa0495e4ed91cfc0312b5e09c598b0f2ae507ba68cb",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/006-stdout.json": {
+      "sha256": "f864cdd0eb2569e04f0e75fee1d1de807a70ead5de01c9d5913ac0d50aae8358",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/007-intent.json": {
+      "sha256": "5d063fad036fb142eff1ded7e37159defeaa159fecc1f145bedd16575879e24c",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/007-process.json": {
+      "sha256": "899f48993d94329f69ba14b4cfbaad7349783edfcc97641fd946d966913c0b97",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/007-stdout.json": {
+      "sha256": "7e1c73cc1591fe89329c6df6f95f6772ae69613d0ab384f383da82ebbf7c986b",
+      "bytes": 29052
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/008-intent.json": {
+      "sha256": "3c12d7d365b5d40e50736ddf53fb379ec1721d1874ec7a6a039faac8a9c30ed0",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/008-process.json": {
+      "sha256": "a7a802e95d30566fda045071954da7582ce1aa64c2962c4c23f082c3562646ae",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/008-stdout.json": {
+      "sha256": "52a878f4c39d29b63e28b795a5031358a80e2e379161f56c4ff609d3225b4f8e",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/009-intent.json": {
+      "sha256": "163d23495e14dcc9c05a01f506649cc8f3ea30060a5150aa71b07ba6f1e60ef6",
+      "bytes": 397
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/009-process.json": {
+      "sha256": "bfb92bd5db739f9dc2c9bb2fa61ddca99fb76eaeba2fc644a2e99c9f1ef27cfe",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/009-stdout.json": {
+      "sha256": "cfa99e63e5d5e169ebb931b4e2c477ac1458503170fa058dd8f8f912a338af98",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/result.json": {
+      "sha256": "9e163785dc7ed9a9dadbebba89b559ca459ce2f597508979f97e54860a31ec1c",
+      "bytes": 747
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/review-threads.json": {
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/readonly-boundary01/snapshot.json": {
+      "sha256": "570041f987d6bb1626a7f9e846eede2330fca575ad235a52ba0723dd28c93207",
+      "bytes": 9496
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/regression-summary01.json": {
+      "sha256": "e5ae7d19fade9ed2a113823c887afc2b9daa1bef6eafc546c90f0a7c2867959c",
+      "bytes": 1564
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/reproduce_alias01.py": {
+      "sha256": "e665ae5cb7301e459c101c1da0845dff611c28d90396a731605451bb20b7c49c",
+      "bytes": 2957
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/run_python_collection01.py": {
+      "sha256": "0577fd1de143f7df66c54537e8ee607e4b4169d7dfac7315517f2375ded5419d",
+      "bytes": 1961
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/source-boundary01.json": {
+      "sha256": "3434435f4cb896ae37565ff6fcd767c73f2b64985c1e7f9e26e12cc65022cdf4",
+      "bytes": 643
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-baseline01/result.json": {
+      "sha256": "9ce6214bf6800c80afe3613f83a47699c532c2aa96b95f068410dca6a701b6d8",
+      "bytes": 405
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-baseline01/start.json": {
+      "sha256": "482208382b5167de59b6440c03b0288a040ff6f0e7f6e3c871d34a793add06fa",
+      "bytes": 318
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-baseline01/stderr": {
+      "sha256": "339dc0e402121651c9f00821d79f48d4c6d162d868f6e0ea23e6ad2c90282d1e",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-baseline01/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/result.json": {
+      "sha256": "a918ceeaef06d8fe1fcb6524464c47b1bf7dae9cfd00f668e9d9037b95c45914",
+      "bytes": 9307
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/temporary_containers_test-O-audit.json": {
+      "sha256": "377310939ee073e5a10ae9a975e1feade2faf1d020d544691f88b48d2e046d69",
+      "bytes": 354
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/temporary_containers_test-O.stderr": {
+      "sha256": "d48a056c1154a322c81f90705e3ddb44a83720d1e72ad32421b6046071548a43",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/temporary_containers_test-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/temporary_containers_test-normal-audit.json": {
+      "sha256": "f9103c9982d6a7f35a9f132cf517267c8dd284114dafa75b7cb3f2f742bf56aa",
+      "bytes": 348
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/temporary_containers_test-normal.stderr": {
+      "sha256": "dada4f857e7a6cd5029f4f61d45e5bd7f2a8cf2898494ad550887e76ccf7284a",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/temporary_containers_test-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_attest_remaining_executable-O-audit.json": {
+      "sha256": "bd521a8d8f61753b6382dbf25e39b4644c967dbc011051f7f74bd69d64c4457a",
+      "bytes": 1594
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_attest_remaining_executable-O.stderr": {
+      "sha256": "401c0ffb1dec18e337ef811dd5e28bb87404417a3c8b07125ddff7d33da71437",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_attest_remaining_executable-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_attest_remaining_executable-normal-audit.json": {
+      "sha256": "e2666a8a83032494bd1bce2eebe6f9c424a91fe7e76cec96eeed288a2b0f1a5b",
+      "bytes": 1546
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_attest_remaining_executable-normal.stderr": {
+      "sha256": "401c0ffb1dec18e337ef811dd5e28bb87404417a3c8b07125ddff7d33da71437",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_attest_remaining_executable-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_evidence_indexes-O-audit.json": {
+      "sha256": "e23acf53e0d71bb90131d69b9711e9ec3577f4b2d9088c8e96e34e679f3d5964",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_evidence_indexes-O.stderr": {
+      "sha256": "eaeff418bb7096d353bd7d1ec6151029b46564f7b8d403b182a5e8a3af4a7540",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_evidence_indexes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_evidence_indexes-normal-audit.json": {
+      "sha256": "8c82a9c65e7eef414ecf31c5408f131f030bb175793e1c4bd1b8d65e74b5bd7c",
+      "bytes": 368
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_evidence_indexes-normal.stderr": {
+      "sha256": "6804b13c7f857aaa12d953395e2f2aa43422ed0649aa4623ebf3b32cb9a206f5",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_execution_freeze-O-audit.json": {
+      "sha256": "9e22a57dd59ce15e2d10559e751037c189ac49f592f6e15bfa33ac84683d7b3f",
+      "bytes": 3162
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_execution_freeze-O.stderr": {
+      "sha256": "65ceea6a62e7fe1647ae3f4bd249330f5180bb0e9be1a8c5782c939112443f0c",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_execution_freeze-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_execution_freeze-normal-audit.json": {
+      "sha256": "39e20922368d8e6c4718f52499d8c2510f8358c6911f8d4c0d790bb3cba4ba55",
+      "bytes": 3042
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_execution_freeze-normal.stderr": {
+      "sha256": "0f7a9e005637bb53931d22d7954348d7ac5897e7901d75e8c68433c9d7cab781",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_execution_freeze-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_fixture_artifacts-O-audit.json": {
+      "sha256": "2697b5040b68873403208ed56c2c61dcee5b3c764ef52faa4605c24701a8379c",
+      "bytes": 2800
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_fixture_artifacts-O.stderr": {
+      "sha256": "766c9c6816bb2af5bf4a0b2af1e547ff2e58c887d2fe5412ef055a73514d5a4e",
+      "bytes": 228
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_fixture_artifacts-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_fixture_artifacts-normal-audit.json": {
+      "sha256": "b3e3efd373a52b219cb90d9ee265be3b747c4d4dadb1cf0b824e2b0a8eeed63f",
+      "bytes": 2692
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_fixture_artifacts-normal.stderr": {
+      "sha256": "426bb5acc7aac9fef1fac544950036a887832e61877e1caef7f3eba1a0cebea9",
+      "bytes": 228
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_fixture_artifacts-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_freeze_six_candidate-O-audit.json": {
+      "sha256": "c0062535f6fad28451bc5e7ba638d351c87a822c25d1b86911f42578490a5438",
+      "bytes": 4694
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_freeze_six_candidate-O.stderr": {
+      "sha256": "0df899035a28de9d3889c6b0dbbee93f4589baa95ef58481ada94e3204c34fcd",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_freeze_six_candidate-O.stdout": {
+      "sha256": "7a2c27f977ae44f0c26594f3ed94ec7db2aa962949bf8a8188277b8f51e5a9ca",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_freeze_six_candidate-normal-audit.json": {
+      "sha256": "b7569cc80bf690aa14747e23e0c807e0454bb32b7828618ea819ad0b81ef5c75",
+      "bytes": 4586
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_freeze_six_candidate-normal.stderr": {
+      "sha256": "a78778bb94b00b53479cb869ba3537b4b7669f8cae3a77e2c576052df1311f56",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_freeze_six_candidate-normal.stdout": {
+      "sha256": "9325a4647a46e0158da0baffc33de704a731688985fc0f64746d4826c26bc37d",
+      "bytes": 189
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_native_protection-O-audit.json": {
+      "sha256": "1a478f4f47f006bd80a3d7ded6c627c068ccc18d847a077d670444c81be4cc88",
+      "bytes": 590
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_native_protection-O.stderr": {
+      "sha256": "334c48edb7a3221e2e4dbb4bb3142145d51817f8b5e65593f0892532d0f2591c",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_native_protection-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_native_protection-normal-audit.json": {
+      "sha256": "3d7d2869f53561133a1738818c93b010da3f23dfd605382dc410f9d942dc30b3",
+      "bytes": 578
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_native_protection-normal.stderr": {
+      "sha256": "28d4f5f08bdf1f3e856a5967ccf2d2b6455660575684ba603f3ececa776826e8",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_native_protection-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_preallocation_ci-O-audit.json": {
+      "sha256": "fff4c5b817b8f4923bf6a417c0a2e153429ecdb25eeacfbb15b2b6a9c390ffe2",
+      "bytes": 2407
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_preallocation_ci-O.stderr": {
+      "sha256": "cc5a4ac8c41c87621af757a078777b44f089d6fa9ac25e40d899364d7346efd4",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_preallocation_ci-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_preallocation_ci-normal-audit.json": {
+      "sha256": "a3d15865cb1fea6b12bb3e7107df5562a4daaefd3a63171ba9c864ad495f8f98",
+      "bytes": 2317
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_preallocation_ci-normal.stderr": {
+      "sha256": "a22a9ecf3584fd7406eabcba26449218740eac7566a747ac39d61b04e4ffc544",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_preallocation_ci-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_receipt_bytes-O-audit.json": {
+      "sha256": "bdc4f230607305c42cc019c6b2394aff5c7c73041db372354054d17242321fdc",
+      "bytes": 566
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_receipt_bytes-O.stderr": {
+      "sha256": "35b472b7f8a2319d21909cfe3afae1e9ec18d3e6689773c236ff7ec5cc24c75f",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_receipt_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_receipt_bytes-normal-audit.json": {
+      "sha256": "bdc4f230607305c42cc019c6b2394aff5c7c73041db372354054d17242321fdc",
+      "bytes": 566
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_receipt_bytes-normal.stderr": {
+      "sha256": "bdf5a39e2fb3c4463d81db71567af8a685135e62cd02f8af097521ede3ce1aea",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_receipt_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v26-O-audit.json": {
+      "sha256": "199d3c9348ad55e3836eb8f246cb1bc399c4971c625510a91a5b4836b74c4058",
+      "bytes": 2917
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v26-O.stderr": {
+      "sha256": "4cc95feca94d86d1ce73f255e002f8c56b94d995ed9e8eedf8917194663873c2",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v26-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v26-normal-audit.json": {
+      "sha256": "53c2110e548514a2669e41905605a4299b20f419e93837ad7e0c379d975c99c6",
+      "bytes": 2803
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v26-normal.stderr": {
+      "sha256": "b5ca79188649869bb9f126db7f8fe9c8bce2d6325d4784e63d3a6bade308be03",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v26-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v29-O-audit.json": {
+      "sha256": "cdd640b8ba8634f3266693e6d9161cf37d18b61efb39b726928a0f86b31abf30",
+      "bytes": 487
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v29-O.stderr": {
+      "sha256": "d6cd4644bf501d45a45d3362e0bb05ffb5b463da7cf752f4c2755ea2095e26d0",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v29-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v29-normal-audit.json": {
+      "sha256": "62224c23d2bd071e2b59c58a7ff359aac95b0b2a09de43221604e8f0fc13ba25",
+      "bytes": 475
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v29-normal.stderr": {
+      "sha256": "906266f9a7537d09db3c37d36c7f5565ff6dbf337ac1509a4931665c559f0c03",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v29-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v30-O-audit.json": {
+      "sha256": "355ec8241d78df71cf46d3a76d6faedeb005f984876352ba22466448d2fba3c1",
+      "bytes": 620
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v30-O.stderr": {
+      "sha256": "e5c8816f82582d7172272c2a20fea1bb979d70674c1d1ea90d0682dda87bb62d",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v30-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v30-normal-audit.json": {
+      "sha256": "daf2fa783257061c2fdbb6e80d9011cb9cb2e989f0b2954e3ad0dbbb8c856e27",
+      "bytes": 602
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v30-normal.stderr": {
+      "sha256": "e51e279201024083b7a11b2c1414b167743b7f8441ed611449845e58c6dc8e59",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v30-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v31-O-audit.json": {
+      "sha256": "edb3ce996c8ee5b89e857b877e3bb608e7b33152e29e3f076b9338733a510a7f",
+      "bytes": 741
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v31-O.stderr": {
+      "sha256": "cd163bc38fcd6cf146fc168d65e0b8a96bbea7341e15043b6b5f821b03f24f79",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v31-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v31-normal-audit.json": {
+      "sha256": "3792b59b65376915c76839ba305d192870f8f216cf118453891baf0003087149",
+      "bytes": 717
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v31-normal.stderr": {
+      "sha256": "29235004cd6c45cbc98c33e37ba6cd3ee2ca9c3a1a7e5cf545c0b05505927449",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v31-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v32-O-audit.json": {
+      "sha256": "9bafd937a8818faed7f12cd1ac32676d1debcf736dcc85db67638c77e87d688b",
+      "bytes": 899
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v32-O.stderr": {
+      "sha256": "8f232d0a6777039734fb834634603459729cdf35470dd6b4714dec81bee06efd",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v32-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v32-normal-audit.json": {
+      "sha256": "a3ff6ec7e5949abb3faeb9c7155108b225e2ff92c8e3f416836ce4e0f85f4138",
+      "bytes": 875
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v32-normal.stderr": {
+      "sha256": "2c132e62df77927feba7092fb56de5270a799c6552aede4b1a49b1b7a2f38ffd",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retained_v32-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_composition-O-audit.json": {
+      "sha256": "647b0815cdffd6d4282a34d1662b65d00fbb36bad709d5b492f4142621a5543c",
+      "bytes": 2029
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_composition-O.stderr": {
+      "sha256": "18921bc7703efaa2e5dcbf4d18474de4d558b2524c5a903bba265dd5a973121c",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_composition-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_composition-normal-audit.json": {
+      "sha256": "5bb245bf016ebe1da6d7715740db0f9169ac96831b68c518a7953695d2185200",
+      "bytes": 1957
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_composition-normal.stderr": {
+      "sha256": "52e6f0b78ee06e8afeb1f5305e22d5b1111a4bc92c2f2a92ae26597eaaa05917",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_composition-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_maintenance-O-audit.json": {
+      "sha256": "492395218418df5cbc0ffc22433a840b822b5a39f7039371f14c552a770bf41e",
+      "bytes": 1267
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_maintenance-O.stderr": {
+      "sha256": "4b98f3e4ad961289069b5baf06009866ee3c3353c054b530d3e34d14c1d91e74",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_maintenance-O.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_maintenance-normal-audit.json": {
+      "sha256": "de891aea171a777b0eb55c43e54513adac40daf7999fc4c5ee85365f16782409",
+      "bytes": 1225
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_maintenance-normal.stderr": {
+      "sha256": "30aa447849aa3fe490af0cdfc068434313c0418782f29b1a0b8bc145fe7f3f81",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_renewal-O-audit.json": {
+      "sha256": "9c95609100f42ac52b9ccedbfd5ffebc54659ada490a81d4e6a1918de353e9ce",
+      "bytes": 737
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_renewal-O.stderr": {
+      "sha256": "08f7b2806ec4a55caa1e4bcad7a7a6431ab0ad836da619b9161900ac68494dcd",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_renewal-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_renewal-normal-audit.json": {
+      "sha256": "4b3adaa3613032cd784d756d150a5cf7d5ebaff6ee905b16c27d3c999bb288a7",
+      "bytes": 719
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_renewal-normal.stderr": {
+      "sha256": "23892a5c507a67c7a28b1bb3506ed838bdb3a62a1f87d02280016623f4b74a1a",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_renewal-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_staging-O-audit.json": {
+      "sha256": "1c228e487b72a819950ad4332001687093edb047c8d10f52221f54abe3501c52",
+      "bytes": 775
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_staging-O.stderr": {
+      "sha256": "4d155ad3bd596b25a2d0cddc5bd670d1f321f77ced28fe1c6795b6b8899ea2f4",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_staging-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_staging-normal-audit.json": {
+      "sha256": "5581195b833b2c2c89d2ace146ba8f66d794fd7029a8bc45505fb9522213b923",
+      "bytes": 751
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_staging-normal.stderr": {
+      "sha256": "fe833dc1dab030b2d3adb56682d0a6288f77bc282481162a80d08b5481a549d5",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_budget_bytes-O-audit.json": {
+      "sha256": "8222549a8bd2a10af3f7d884872dfc7527b28173a2052d0086b05df9308d4a30",
+      "bytes": 650
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_budget_bytes-O.stderr": {
+      "sha256": "383a12fba9b5b327054a24ce7e5739569c4f0b6621facd981f2d6a4271063b3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_budget_bytes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_budget_bytes-normal-audit.json": {
+      "sha256": "4072423b0b3d2ecfaa2c2abd4626e393b43bb74afdcfe026d99d8a2b59d9485a",
+      "bytes": 632
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_budget_bytes-normal.stderr": {
+      "sha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_budget_bytes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_resources-O-audit.json": {
+      "sha256": "758abf2052c526504c6d0b06659f6d72afe917fd373aada2f9cc3e41ea1442b3",
+      "bytes": 507
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_resources-O.stderr": {
+      "sha256": "b23de1631aab7c9a651e00aea60e08b4a5620d4dd721514f754d310aa64393f0",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_resources-O.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_resources-normal-audit.json": {
+      "sha256": "50f939ef769db3abff0a47e46fd7f3b4503c96e77c1813657e20b087786ce0e8",
+      "bytes": 495
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_resources-normal.stderr": {
+      "sha256": "b23de1631aab7c9a651e00aea60e08b4a5620d4dd721514f754d310aa64393f0",
+      "bytes": 124
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_resources-normal.stdout": {
+      "sha256": "664f9226594b086d0346ed63790be3e010b8b6076c6d801b0c12f208944e448a",
+      "bytes": 45
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_volumes-O-audit.json": {
+      "sha256": "ff4d3142b0c358fa35f20cc890e5dd7726fe70210729f8833f2ac66e16097050",
+      "bytes": 630
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_volumes-O.stderr": {
+      "sha256": "73542f2cc721b98c051591aa908f2aabb908613e612c5b1d57cd9d50bd2240ab",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_volumes-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_volumes-normal-audit.json": {
+      "sha256": "792d8f2263401de7c14be93d05c0dfd761fcca32606dbcb407885ee7f5417232",
+      "bytes": 612
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_volumes-normal.stderr": {
+      "sha256": "4beaca223a9dbfe35a04a099a6c431c4d0e2c8580dcb7685ddd62131fd503bf7",
+      "bytes": 109
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_retired_volumes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_candidate_runtime-O-audit.json": {
+      "sha256": "cfc67d642fb6aa4310ebe2de6d543326fbf23b5b4a03fba67817e8784b2f3051",
+      "bytes": 3877
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_candidate_runtime-O.stderr": {
+      "sha256": "5678f9aebc3c093555f6ac776133b7cc55230158c27bae852465faead168b1f3",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_candidate_runtime-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_candidate_runtime-normal-audit.json": {
+      "sha256": "584660600fa3dc908b2699f013b49c73a946e1516d615dc1b5232bfe398a30db",
+      "bytes": 3763
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_candidate_runtime-normal.stderr": {
+      "sha256": "3cfe36cccff4181e6bc097ea538edfdbb93308172b56f22258d848efeadb102d",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_candidate_runtime-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_native_entry-O-audit.json": {
+      "sha256": "920f2279c7f33788df06d564463944bc65d1fc80e7105f84e6469d34d443523b",
+      "bytes": 3172
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_native_entry-O.stderr": {
+      "sha256": "8d67551a59872e18d129488a9b04eae3143161f4469c589257197a47323668b3",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_native_entry-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_native_entry-normal-audit.json": {
+      "sha256": "010d7c9e62cb0929dd16e3cd0bca3cf465964be5a241e8376af85cc6235550bd",
+      "bytes": 3058
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_native_entry-normal.stderr": {
+      "sha256": "51e2fc7f895c0ba9c59ec146c4c054b02098fb74c44c0556ec9223a67556a215",
+      "bytes": 112
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_six_native_entry-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_successor_dependencies-O-audit.json": {
+      "sha256": "5f92d8be59c0561fdbd37e4a1221bf668da4c57ae3a59c72fcf7fef1b9937af7",
+      "bytes": 1542
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_successor_dependencies-O.stderr": {
+      "sha256": "3c5c861f4dd1736d495fc7b2a76f633e38958b07af3efbef75ce0345bd23b249",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_successor_dependencies-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_successor_dependencies-normal-audit.json": {
+      "sha256": "ffbc973e2a4392a588d7309035a885535b01eddbc5d4e8f2f706badf5df1b22a",
+      "bytes": 1488
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_successor_dependencies-normal.stderr": {
+      "sha256": "507b6151eda1dc720514a24f7c28deb4f3a73247271c7d8fd5bd978167077be4",
+      "bytes": 120
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_successor_dependencies-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_verify_six_native-O-audit.json": {
+      "sha256": "db3fa6d1675873188da7d93a82921460106364ed05fee39fd48b46a447ee6ff3",
+      "bytes": 3778
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_verify_six_native-O.stderr": {
+      "sha256": "255e6f26b56d49579a534d3fc5721fde993ec2c936a4700982242ea246a79c36",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_verify_six_native-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_verify_six_native-normal-audit.json": {
+      "sha256": "cf65ffc1358a42ba6b5735425c2ab3010c6f1386703fe05d70dd01c8d8a4fd71",
+      "bytes": 3634
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_verify_six_native-normal.stderr": {
+      "sha256": "7a4496ff39c04530932d41d0a0150387f6e23b925977fd69296a12cfec317f3c",
+      "bytes": 108
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_verify_six_native-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_window_six_support-O-audit.json": {
+      "sha256": "f94001f410bbf4a34a8e995af99cc94ee7b4f5ffb927b5cccbe958eb8a62f3a8",
+      "bytes": 3166
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_window_six_support-O.stderr": {
+      "sha256": "95c0aefa36122469c5e7bfd8c8e3167af58c038b7b5771dfa7525491a6f53251",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_window_six_support-O.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_window_six_support-normal-audit.json": {
+      "sha256": "45c687d4b2816f976aad5fbafdcd8e09a42c87a466a17b3a0134cdce70ca1f26",
+      "bytes": 3046
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_window_six_support-normal.stderr": {
+      "sha256": "5da61f3efea279db59b611574f59f6d39f7844676ad181aa872a1175bb3f5f6a",
+      "bytes": 110
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-collection01/test_window_six_support-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-dependencies01/result.json": {
+      "sha256": "41d0be2a33fe1e20e2bce0e23d61666c0cc9b237a2f0a1595287771a45c52613",
+      "bytes": 615
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-dependencies01/start.json": {
+      "sha256": "2f73e5ff4bbe776d53263fba5b126c594719a4623d05a56e8587b2e5cc2de100",
+      "bytes": 472
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-dependencies01/stderr": {
+      "sha256": "4c4d9346f942aaebe5af0726abc1b8d4c7f35fec54c34b16f213bce09a2624f0",
+      "bytes": 471
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-dependencies01/stdout": {
+      "sha256": "dbe9caf857d67fabeeb99fc216a6bc2ede9fa7a9180fa90c8922ea1b94151c29",
+      "bytes": 749
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-fixed-normal01/result.json": {
+      "sha256": "ee3bf3043f295c53dd15a9bf192afebf39221430d62488aabca2b6fb1f6937ce",
+      "bytes": 405
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-fixed-normal01/start.json": {
+      "sha256": "1fb3c8c650e7e39461ead229b94f0b77a83c7bd820e180a15b71604727aaadda",
+      "bytes": 318
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-fixed-normal01/stderr": {
+      "sha256": "64977bbc7d869877f9640b960492cb84204c82a651adefb11ba0f97710265332",
+      "bytes": 117
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-fixed-normal01/stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-independent01/result.json": {
+      "sha256": "bfffe22c56890b15c80860bd4d11523a95c966b9e1f2c48d3f808317f68062de",
+      "bytes": 535
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-independent01/start.json": {
+      "sha256": "eb107e010374eab8bdc4ad48eee3c992f56a9dc59f11aad1db871eb3179394b9",
+      "bytes": 444
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-independent01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-independent01/stdout": {
+      "sha256": "50b659dd85c322864d6556592b4a4c56190a4b13a20c645713a28ab984cad198",
+      "bytes": 50
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-real-alias-reproduction01.json": {
+      "sha256": "dc4470e6e4ef0972126e45809cdbca12c8d5da75c981d01c31e7c39cb1d9f0c4",
+      "bytes": 5795
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-real-alias-reproduction01/result.json": {
+      "sha256": "d8cafd1608d029d05d525199e2fb072fc4b5332b21ddbfe925a7bb62db745d28",
+      "bytes": 429
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-real-alias-reproduction01/start.json": {
+      "sha256": "c836710085c889c63fe4c3cc5af6f86816c470d5dc200011a49b832abe5db2ed",
+      "bytes": 342
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-real-alias-reproduction01/stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-real-alias-reproduction01/stdout": {
+      "sha256": "660e9cee32b8530a34ee6b3ee52075cf23049c066b889d01ebba8579d889a8aa",
+      "bytes": 5033
+    },
+    "docs/acceptance/evidence/issue307-d1/reader-path-fix01/windows313-runtime01.json": {
+      "sha256": "458b2069e7e364e3897b181b4672d96521f0c878c38b22404d26ea1a677ba88b",
+      "bytes": 458
+    },
+    "docs/acceptance/issue307-d1-reader-path-matrix01.md": {
+      "sha256": "6a62f4feae0b3ee15320c10a20f5c66a349ab8d15b92cf9b46d05ded2286a0e3",
+      "bytes": 3410
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "bytes": 8053
+    },
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": {
+      "sha256": "7915856584bb83fad50982e2a0c95a6c930de3fbe8e36f842fdbae8bb9f5e0d9",
+      "bytes": 110507
+    },
+    "examples/lifecycle-d1/retention_composition.py": {
+      "sha256": "ef22fdff37c5e7638093de420ee446f14c5c755cede841a56119c81a5032fdda",
+      "bytes": 36037
+    },
+    "examples/lifecycle-d1/test_retention_composition.py": {
+      "sha256": "536667d5d50c439e97b60651c40fe2003c795d4b416816a443b0dfdda677dcc9",
+      "bytes": 26624
+    }
+  }
+}

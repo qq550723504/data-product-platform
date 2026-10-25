@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"crypto/ed25519"
 	"encoding/hex"
@@ -24,6 +25,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
@@ -46,9 +48,26 @@ type wireHandler struct {
 	after                                                func(context.Context, signed) error
 }
 
+// A wire refusal is distinct from a received native response. Both receipts
+// are signed and append-only; neither includes reflected provider messages.
+func (h *wireHandler) reject(w http.ResponseWriter, code string) {
+	at := time.Now().UTC()
+	body, _ := json.Marshal(struct {
+		Execution, CandidateSHA256, Group, Helper, Phase, Code string
+		At                                                     time.Time
+	}{execution, h.candidateHash, h.group, h.helper, "WIRE_BEFORE_UPSTREAM", code, at})
+	if save(filepath.Join(h.output, "wire-rejected-"+uuid.NewString()+".json"), signed{Body: body, Signature: ed25519.Sign(h.key, body)}) != nil {
+		drop(w)
+		return
+	}
+	w.Header().Set("Content-Type", "application/xml")
+	w.WriteHeader(http.StatusForbidden)
+	io.WriteString(w, "<Error><Code>"+code+"</Code></Error>")
+}
+
 func (h *wireHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.fresh() != nil || r.Method != "DELETE" || r.ContentLength != 0 || len(r.TransferEncoding) != 0 || r.URL.RawPath != "" || r.URL.User != nil || r.Header.Get("X-Amz-Bypass-Governance-Retention") != "" || r.Header.Get("X-Amz-Copy-Source") != "" || !strings.Contains(r.Header.Get("Authorization"), "Credential="+h.access+"/") {
-		w.WriteHeader(403)
+		h.reject(w, "DPPWireAdmissionDenied")
 		return
 	}
 	var cp domain.Copy
@@ -58,16 +77,16 @@ func (h *wireHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if cp.ID == uuid.Nil {
-		w.WriteHeader(403)
+		h.reject(w, "DPPWireTargetDenied")
 		return
 	}
 	attempt, e := h.attempt(r.Context(), cp)
 	if e != nil || h.fresh() != nil {
-		w.WriteHeader(403)
+		h.reject(w, "DPPWireAttemptDenied")
 		return
 	}
 	if e = save(filepath.Join(h.budget, "wire-"+cp.ID.String()+".json"), map[string]any{"attempt": attempt, "copy": cp, "execution": execution}); e != nil {
-		w.WriteHeader(403)
+		h.reject(w, "DPPWireBudgetDenied")
 		return
 	}
 	upstream := r.Clone(r.Context())
@@ -82,6 +101,22 @@ func (h *wireHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer response.Body.Close()
+	if response.StatusCode != http.StatusNoContent {
+		body, readErr := io.ReadAll(io.LimitReader(response.Body, (64<<10)+1))
+		detail := storage.InspectExactDeleteResponse(response.StatusCode, body, readErr == nil && len(body) <= 64<<10)
+		receipt, _ := json.Marshal(struct {
+			Execution, CandidateSHA256, Group, Helper, Phase string
+			Attempt                                          domain.ProviderAttempt
+			Copy                                             domain.Copy
+			Response                                         storage.ExactDeleteResponse
+			At                                               time.Time
+		}{execution, h.candidateHash, h.group, h.helper, "UPSTREAM_HTTP_RESPONSE", attempt, cp, detail, time.Now().UTC()})
+		if save(filepath.Join(h.output, "wire-response-"+cp.ID.String()+".json"), signed{Body: receipt, Signature: ed25519.Sign(h.key, receipt)}) != nil || !detail.BodyComplete {
+			drop(w)
+			return
+		}
+		response.Body = io.NopCloser(bytes.NewReader(body))
+	}
 	if response.StatusCode == 204 {
 		witness := wireWitness{Execution: execution, CandidateSHA256: h.candidateHash, Group: h.group, Helper: h.helper, Nonce: uuid.New(), Attempt: attempt, Copy: cp, UpstreamStatus: response.StatusCode, At: time.Now().UTC()}
 		body, _ := json.Marshal(witness)
@@ -193,7 +228,7 @@ func wire(ctx context.Context) error {
 	outbox.ConfigureAppendObligation(router)
 	defer outbox.ConfigureAppendObligation(nil)
 	var targets []domain.Copy
-	for _, stage := range []string{"P1", "P2", "T1", "T2", "H2", "M1A", "M1B"} {
+	for _, stage := range []string{"P2", "T1", "T2", "H2", "M1A", "M1B"} {
 		if cp, e := fixedTarget(l.F.Group, stage); e == nil {
 			targets = append(targets, cp)
 		}

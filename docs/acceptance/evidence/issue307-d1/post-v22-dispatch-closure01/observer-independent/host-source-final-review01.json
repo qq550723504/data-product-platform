@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_OLD_DISPATCH_CLOSURE_HOST_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T12:38:35.425285+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "scope": "Source and public evidence review of the one finite P2/T1/T2 old-v22 non-delete closure host. No preparation, real proof signing, retained Core mutation or runtime acceptance is included.",
+  "checkout": {
+    "path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform",
+    "head_at_final_readback": "0a3ef15a079c97096a047e835132ce379039098b",
+    "source_state": "Host implementation and new tests are not yet committed/frozen. This report binds actual file bytes, not an executable release or future manifest."
+  },
+  "authoritative_contracts": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "aa6f2bae5d755a582d124d02fe1d4f0776cf93f4bf693a6194d06d7d9bbd4f4f",
+      "bytes": 37394
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure.md",
+      "sha256": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+      "bytes": 4519
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure-host.md",
+      "sha256": "1d602eec35d6ade59d2852f83049eca260a599d7c8de96cd3774b3973a4550d3",
+      "bytes": 4510
+    }
+  ],
+  "reviewed_implementation": {
+    "apps/platform/cmd/lifecycle-fixture-old-dispatch/main.go": {
+      "sha256": "1b8dd67e47394716fce28a5a111a4fc2ae00fac10f1cfe7f9eb536b0b99e0692",
+      "bytes": 8136
+    },
+    "apps/platform/cmd/lifecycle-fixture-old-dispatch/main_test.go": {
+      "sha256": "88b985ee3866a4090df279b4ed5914cbacc9856ac54b85d5ae7bcdf245fde98e",
+      "bytes": 3536
+    },
+    "apps/platform/internal/lifecycle/application/old_dispatch_closure_integration_test.go": {
+      "sha256": "fa03b5a2a5410b1b194f390d5815b6319cfd6363721ed852f88ab58cf3400ed8",
+      "bytes": 3513
+    },
+    "apps/platform/internal/lifecycle/pilot/post_v22_no_send.go": {
+      "sha256": "9d5a746839ce755ac025fce875e3ee37e4645d58ea4a1619be1ca5bc6d553826",
+      "bytes": 6936
+    },
+    "apps/platform/internal/lifecycle/pilot/post_v22_no_send_test.go": {
+      "sha256": "0476f117d8cf7f0a39069b39db0cc9bbd2cb4df71b53f4048279f0a5d77e6bac",
+      "bytes": 9672
+    },
+    "examples/lifecycle-d1/audit-old-business-dispatches.py": {
+      "sha256": "7b852560253f911146351dee2180d1c395e706983cdb5471361bfa6779b572af",
+      "bytes": 10888
+    },
+    "examples/lifecycle-d1/close-old-business-dispatches.py": {
+      "sha256": "8958b73498f8aca2fd925e78f0635f4150aed9471ba681236e3adf4d7999c2e2",
+      "bytes": 33934
+    },
+    "examples/lifecycle-d1/complete-lc13-readonly.py": {
+      "sha256": "83165c84826b5a0632d8cd54d6d403096033ef498d15f34798c074089df4d1bf",
+      "bytes": 20703
+    },
+    "examples/lifecycle-d1/prepare-remaining-native.py": {
+      "sha256": "992c2e47239236da70bed97f8dfcda3175232afb7e266dad5d3edd9e046b662f",
+      "bytes": 19545
+    },
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py": {
+      "sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "bytes": 31241
+    },
+    "examples/lifecycle-d1/test_old_business_dispatch_closure.py": {
+      "sha256": "53969487b284fc64461af82f1ef147d006d9c8e290c17570859242d84a8933ef",
+      "bytes": 17986
+    }
+  },
+  "closed_findings": [
+    {
+      "id": "HOST1",
+      "classification": "CLOSED",
+      "original_report": {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-draft-review01.json",
+        "sha256": "b71dd24b869d6674629fc764dbb57d9ab25d6a3de0adf4084b4adc788070a18d",
+        "bytes": 3939
+      },
+      "root": "A preliminary unreadable Native inspect suppressed the fixed disable-all attempt.",
+      "verified_fix": "For this audit attempted-start Native only, inspect-unknown follows the same fixed disable-all attempt as running Native; containment never starts Native or enables identities. Independent stops/fresh closed readback continue for every new helper and attempted source. Failed identity readback stays UNCONFIRMED.",
+      "tests": [
+        "test_whole_entry_Native_inspect_error_still_attempts_disable",
+        "test_whole_entry_disable_failure_still_stops_all",
+        "test_whole_entry_individual_stop_error_does_not_skip_others"
+      ]
+    },
+    {
+      "id": "HOST2",
+      "classification": "CLOSED",
+      "root": "Observer private mount membership allowed path-name aliases/directories.",
+      "verified_fix": "Exact closure.json or closure.json+proof.json membership now requires regular files and rejects symlink, junction and subdirectory entries. Both pre-run and dynamic pre-observer own_contract execute the same gate. Host private key/root input directories remain outside observer mounts.",
+      "tests": [
+        "test_new_owner_private_whitelist_rejects_directory_and_alias"
+      ]
+    }
+  ],
+  "bounded_invariant_review": {
+    "reuse_and_authority": "Host reuses the fixed frozen IAM owner binary, existing audited Core query, Ed25519 implementation and existing RevokeDispositionApproval/RecordProviderObservation Commands. Observer exposes only the two required capabilities; no sender, storage port, queue runtime, DELETE or pin-release path is introduced.",
+    "frozen_ownership": "Old packet digests, operator/root bytes, 39 exact old CID/binary identities, retained owner/control/profile/budget/backup anchors and actual sealed gateway mounts are checked before proof issuance. New owners require fixed image, UID10001, exact private/executor/output mounts, Core/Native container netns, no ports/restart/privilege, cap-drop ALL, no-new-privileges and read-only rootfs.",
+    "case_revocation_comparison": "Old case Base.Enabled must remain false. Only an in-memory copy reverses that field to true and uses the original indent=2/newline serialization to compare the immutable frozen case digest. No write-back occurs; the actual disabled bytes additionally remain constrained by the terminal preservation anchor. Parent reports an actual read-only match of all 39 old helpers; reviewer did not inspect private configurations/live Docker.",
+    "freshness_and_scope": "Actual fixed check-disabled requests/observations are bound to the successful owner start/finish interval and <=45-second freshness. Native is stopped before active owner/gateway/network recheck. The signed scope binds fresh audit/nonce, exact old execution/candidate/bindings/Core, three exact ordered identities, owner/binary map and evidence digest; existing verifier rejects age>1 minute. Profile activation only changes four declared fields with <=40-minute non-delete validity.",
+    "original_facts": "Original attempt/dispatch/approval rows and old pins/claims/cost/UNKNOWN are preserved. Old approval revocation is append-only, followed by existing NOT_SENT observation/release. No claim/observation/release/absence conflict can be replaced by absence or empty cost/budget evidence. Old missing P2 claim error is never reconstructed.",
+    "failure_channels_and_partial_commit": "Wait, original stdout/stderr and inspect are independently attempted and persisted with separate missing/failure states. finally disables the new profile and stops observer before independent partial-result/Core-row/fingerprint/old-anchor readback. Missing readbacks explicitly become UNKNOWN_NOT_ASSESSED and cannot produce PASS. Per-case committed facts are preserved; host never retries the observer or refunds budgets.",
+    "Core_delta": "Success requires full relation/role/ACL comparison, changed-relation allow-list and old append-row hash multisets. Expected deltas are revocation/observation/release each3, idempotency6, audit/evidence/evidence_relation/outbox each9. Unexpected cost/pin/other relation changes reject. Success also requires complete final readbacks and exact post-close retained anchors."
+  },
+  "independently_executed_tests": {
+    "receipt": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-tests01.json",
+      "sha256": "454f96342b81ad50e901f0d48f2f5c753125c317ce875e8fd84ccba6afc06c96",
+      "bytes": 1897
+    },
+    "commands": [
+      "python -B -m unittest test_old_business_dispatch_closure -v",
+      "python -O -B -m unittest test_old_business_dispatch_closure -v"
+    ],
+    "normal": {
+      "exit": 0,
+      "methods": 15
+    },
+    "optimized": {
+      "exit": 0,
+      "methods": 15
+    },
+    "boundary": "All Docker/Core/native/identity calls are mocked. Synthetic ephemeral test signatures are not actual host proofs. These establish success/failure control flow only.",
+    "raw_logs": [
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-normal01-stdout.txt",
+        "sha256": "911991f204cc5e8c9490a84ae2c5471cd6b26f5d18ba932f6f931cd8bc926170",
+        "bytes": 507
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-normal01-stderr.txt",
+        "sha256": "f3acd3b497dffb099ccdc0ceeec78f7c1b5c253703b9a1bc61f8f4323de59de7",
+        "bytes": 2586
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-optimized01-stdout.txt",
+        "sha256": "9dcdfa392403d9e487c93b750ddf7f80fec82c7a19243cec0749a063e4d43d78",
+        "bytes": 507
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-optimized01-stderr.txt",
+        "sha256": "bfdc63a5b429492dc8167a86eab351795ece44a92c8b4330bf1bfc651df9dcff",
+        "bytes": 2586
+      }
+    ]
+  },
+  "parent_real_PG_evidence_independently_read_not_executed": {
+    "new_full_schema_test": {
+      "path": "apps/platform/internal/lifecycle/application/old_dispatch_closure_integration_test.go",
+      "sha256": "fa03b5a2a5410b1b194f390d5815b6319cfd6363721ed852f88ab58cf3400ed8",
+      "bytes": 3513
+    },
+    "receipt": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/postgres-regression04.json",
+      "sha256": "09b42a4add24eef6e704d5b8f33b04881bfdf43fe30875a3bf5d009307bdfa6a",
+      "bytes": 796
+    },
+    "channels": [
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/postgres04-stdout.txt",
+        "sha256": "4588dc930c0a9d6c12e865ad79223d65cc4b880a36afb5165781e11a6f216f0d",
+        "bytes": 1928
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/postgres04-stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "actual_log_result": {
+      "exit": 0,
+      "test_pass_events": 1,
+      "package_pass_events": 1,
+      "skip": 0,
+      "fail": 0
+    },
+    "scope": "Full migrations and actual existing Commands execute three revocations and NOT_SENT/release pairs with same-key replay; exact expected delta and immutable baseline hashes are checked. Synthetic reader termination occurs before closure baseline. The provider verifier is synthetic, so this is not a real host-proof/observer/retained-Core end-to-end run.",
+    "historical_layers": "Prior nine TEMP-table adapter eligibility variants and separate full-schema Command regressions remain as described in observer-pg-addendum01.json. Their original files and four adapter/observer source hashes remain unchanged; this report does not promote TEMP fixtures to full-schema acceptance.",
+    "failure_preservation": {
+      "02": "Original connection-refused failure caused by reading a stopped automatic port as localhost5432; raw stdout/stderr and FAIL receipt retained.",
+      "03": "Synthetic reader was still active, correctly producing READERS_ACTIVE_OR_UNKNOWN; raw channels retained.",
+      "04": "Harness reads actual runtime port; synthetic historical reader termination is established before baseline. No retained pin is changed."
+    },
+    "scratch_state": "Stopped/PID0 and original-environment/provider/DELETE zero are parent receipt assertions; reviewer did not perform live Docker/PG inspection or connections."
+  },
+  "binding_and_evidence_audit": {
+    "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-binding-audit01.json",
+    "sha256": "384a463e2ba43d562111ad736133f97610afe78de0f7820b91b56acfe6758ef0",
+    "bytes": 9715
+  },
+  "reviewer_harness_failure_preserved": {
+    "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-audit-harness-failure01.json",
+    "sha256": "c07bc6abecf21b7cd26ba5c17685ab403f47537b1f3a0d06412574cd93f8f921",
+    "bytes": 417
+  },
+  "matrix_review": {
+    "file": {
+      "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure-acceptance.md",
+      "sha256": "19316a0c2471be2578dd7a1c0438d699fa83cb6b898a62128c02ec94cf715440",
+      "bytes": 4590
+    },
+    "result": "Append-only current section correctly separates mocks/actual PG/source review from NOT_PREPARED manifest, NOT_RUN original closure and NOT_FROZEN six-target candidate. Its source-final-review PENDING row is true at this report snapshot and may be appended/replaced with this actual report result after publication. Historical Draft and unreviewed snapshots are explicitly identified as prior time facts."
+  },
+  "scope_classification": {
+    "BLOCKER": [],
+    "FOLLOWUP_REQUIRED_SEPARATE_GATES": [
+      "Commit reviewed source and only then prepare new stopped owner manifest.",
+      "Independently review actual manifest/source/binary/CID/image/command/mount/netns/private-input/DSN/old-anchor bindings before run.",
+      "Actual trusted NOT_SENT closure, final Core delta/retention/IAM/physical seal and original channels require a separate runtime result review.",
+      "Only after actual closure may 17-version refresh, remaining-six frozen candidate/execution/window and new exact deletion authorization be prepared."
+    ],
+    "INVALID_OR_OUT_OF_SCOPE": [
+      "Treating mock/PG/source PASS as actual old Core closure or complete D1 acceptance.",
+      "Requiring full remaining-six/native deletion acceptance inside this finite host source review.",
+      "Rewriting historical failed packets, lost P2 errors, old authorization, pins or budget facts."
+    ]
+  },
+  "explicit_limits": [
+    "Reviewer read source and public evidence only; no private secret/host key, Docker/PG/provider connection, identity action, live inspection, proof signing, retained mutation or DELETE was performed.",
+    "Parent-reported main merge SHA/CI in appended host contract were not live-reverified in this host source review and are outside this review conclusion.",
+    "Prior reports and failures remain unchanged. No future manifest SHA is known or approved. This source PASS is not the manifest run gate or deletion authorization."
+  ],
+  "manifest": "NOT_PREPARED",
+  "actual_host_proof": "NOT_RUN",
+  "actual_old_Core_closure": "NOT_RUN",
+  "real_DELETE": 0,
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

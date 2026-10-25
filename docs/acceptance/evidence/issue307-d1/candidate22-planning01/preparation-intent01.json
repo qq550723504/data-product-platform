@@ -1,0 +1,20 @@
+{
+  "status": "PLANNED_NOT_ALLOCATED_NOT_FROZEN_NOT_AUTHORIZED",
+  "profile": "candidate22/v32",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "selected_by": "direct human reply in this chat",
+  "Singapore_window": "2026-10-23 18:00-18:40 +08:00",
+  "not_before": "2026-10-23T10:00:00Z",
+  "not_after": "2026-10-23T10:40:00Z",
+  "recovery_until": "2026-10-23T12:40:00Z",
+  "old_execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "old_preparation_terminal_sha256": "5568708e62c4ad37f8765aba667697de547d83fe0e598d59d7d4341a84b4b188",
+  "base_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "branch_unlock": "NOT_AUTHORIZED_NOT_PERFORMED",
+  "new_budget_allocation": "NOT_RUN_REQUIRE_EXACT_NEW_SOURCE_PR_CI",
+  "source_start": 0,
+  "native_delete": 0,
+  "human_confirmation": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "at": "2026-10-23T03:21:56.111486+00:00"
+}

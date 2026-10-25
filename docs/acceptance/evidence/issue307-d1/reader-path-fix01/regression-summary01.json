@@ -1,0 +1,57 @@
+{
+  "status": "PASS_REAL_CPYTHON_31316_WINDOWS_LINUX_OFFLINE",
+  "platforms": {
+    "Windows": {
+      "status": "PASS",
+      "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:17:50) [MSC v.1944 64 bit (AMD64)]",
+      "commands": 52,
+      "modes": {
+        "normal": {
+          "commands": 26,
+          "methods": 185,
+          "skipped": 1,
+          "skip_suites": [
+            "test_evidence_indexes-normal"
+          ]
+        },
+        "O": {
+          "commands": 26,
+          "methods": 185,
+          "skipped": 1,
+          "skip_suites": [
+            "test_evidence_indexes-O"
+          ]
+        }
+      },
+      "forbidden_host_reads": 0,
+      "retained_source_start": 0,
+      "business_provider_io": 0
+    },
+    "Linux": {
+      "status": "PASS",
+      "python": "3.13.16 (main, Oct 21 2026, 01:08:44) [GCC 14.2.0]",
+      "commands": 52,
+      "modes": {
+        "normal": {
+          "commands": 26,
+          "methods": 185,
+          "skipped": 0,
+          "skip_suites": []
+        },
+        "O": {
+          "commands": 26,
+          "methods": 185,
+          "skipped": 0,
+          "skip_suites": []
+        }
+      },
+      "forbidden_host_reads": 0,
+      "retained_source_start": 0,
+      "business_provider_io": 0
+    }
+  },
+  "boundaries": "Tests double provider/Docker business operations. Python open audit is test-only, not an OS sandbox; Linux additionally uses network-none read-only isolated snapshot.",
+  "composition_methods_per_mode": 12,
+  "windows_composition_skips": 0,
+  "new_head_PR_CI": "NOT_RUN"
+}

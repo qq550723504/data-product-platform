@@ -1,0 +1,13 @@
+{
+  "status": "DOC_COMPOSER_ONLY_POST_SOURCE_CORRECTION",
+  "source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "selected_runtime_source_members": 2143,
+  "document_composer_in_frozen_runtime_members": false,
+  "corrections": [
+    "48 retained old backups with partial distinction",
+    "UTC window and recovery text read from frozen candidate/profile-windows"
+  ],
+  "runtime_candidate_binary_config_changed": false,
+  "runtime_source_diff": "",
+  "native_delete": 0
+}

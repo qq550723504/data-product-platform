@@ -1,0 +1,14 @@
+{
+  "source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "phase": "allocate",
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/prepare-six-candidate.py",
+    "allocate"
+  ],
+  "at": "2026-10-22T01:38:05.936839+00:00",
+  "delete_authority": false
+}

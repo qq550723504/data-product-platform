@@ -1,0 +1,37 @@
+{
+  "status": "PASS_IDENTICAL_REBUILD_AFTER_COLD_REPAIR",
+  "initial_build_source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "effective_source": "355717c022fe36052dcf8b3cc37ceeef901286f7",
+  "changed_host_paths": [
+    "examples/lifecycle-d1/freeze-six-candidate.py",
+    "examples/lifecycle-d1/prepare-six-candidate.py",
+    "examples/lifecycle-d1/six_candidate_runtime.py",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py"
+  ],
+  "allocation_sha256": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+  "failure_evidence_sha256": "a43bb7af8beb988e1390ad45da4a4320301e03051cba1225111b0ce13ebd1443",
+  "binaries": {
+    "reader": "4efd3322b8e1423eb55aa6e85b8522e85852eadcf9171a2478b66ae8d0e4a810",
+    "operator": "7a326665c129e9fb9cfefcfdb6af7e07decd1bcf248459d1b30edf5cd918bc0c",
+    "owner": "0682b6260b62e5ddc604fbf509f6e19ada835614813f107df828c44c147cfb92",
+    "readonly-check.exe": "538a8ec129aa57482f75928cabd79dc350ddc06f83b96778fdc0ed7e8c60db4d"
+  },
+  "files": {
+    "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator": "7a326665c129e9fb9cfefcfdb6af7e07decd1bcf248459d1b30edf5cd918bc0c",
+    "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner": "0682b6260b62e5ddc604fbf509f6e19ada835614813f107df828c44c147cfb92",
+    "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reader": "4efd3322b8e1423eb55aa6e85b8522e85852eadcf9171a2478b66ae8d0e4a810",
+    "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "readonly-check.exe": "538a8ec129aa57482f75928cabd79dc350ddc06f83b96778fdc0ed7e8c60db4d"
+  },
+  "active_binary_replaced": false,
+  "source_provider_io": 0,
+  "native_delete": 0
+}

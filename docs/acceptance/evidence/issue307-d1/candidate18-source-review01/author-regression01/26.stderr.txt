@@ -1,0 +1,10 @@
+test_actual_sort_changes_pass_complete_entry (test_verify_remaining_native.CompleteEntryTests.test_actual_sort_changes_pass_complete_entry) ... ok
+test_baseline_file_anchor_is_required (test_verify_remaining_native.CompleteEntryTests.test_baseline_file_anchor_is_required) ... ok
+test_cli_normalizes_relative_paths_before_any_source_io (test_verify_remaining_native.CompleteEntryTests.test_cli_normalizes_relative_paths_before_any_source_io) ... ok
+test_expansion_fails_and_closes_every_started_source (test_verify_remaining_native.CompleteEntryTests.test_expansion_fails_and_closes_every_started_source) ... ok
+test_malformed_policy_fails_and_retains_failure (test_verify_remaining_native.CompleteEntryTests.test_malformed_policy_fails_and_retains_failure) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 2.395s
+
+OK

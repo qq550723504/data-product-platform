@@ -1,0 +1,11 @@
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/adapters/workflow	[no test files]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/infrastructure	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/http	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	(cached)

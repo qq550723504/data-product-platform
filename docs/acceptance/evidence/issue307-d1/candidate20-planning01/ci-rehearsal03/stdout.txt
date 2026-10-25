@@ -1,0 +1,6 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.107s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	2.626s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	3.653s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	0.846s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	7.093s
+PASS_SEPARATE_R_ARCHIVE_BUILD_AND_OFFLINE_CONTRACTS; no source/provider I/O

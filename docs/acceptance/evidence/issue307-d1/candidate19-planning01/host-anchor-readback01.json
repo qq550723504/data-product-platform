@@ -1,0 +1,15 @@
+{
+  "status": "PASS_HOST_ANCHOR_FILE_BINDING_ONLY",
+  "anchor": {
+    "profile": "candidate19/v29",
+    "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+    "candidate_sha256": "af2499793a39b0515001fe11835305b73ef1055b76be2db929aada900e0acb98",
+    "bindings_sha256": "581bd79ce4074f130cd4841d617960078421546c0287d6deaec91af9dc8e55a1",
+    "template_sha256": "2e7090f4f6adedaa0c7693dfa72b660685f376770bc37ca17b3f7eb08107eb15",
+    "packet_commit": "749257f15e13ee7ab64b4b828857e2e88a054fbc"
+  },
+  "private_anchor_sha256": "dad1ac517edab8d0fa40bc27dd975b1aec85f55d1bc403692d4531ba2e22bdb5",
+  "authorization": "NOT_RECEIVED",
+  "Host_check": "NOT_RUN_REQUIRES_NEW_HUMAN_AUTHORIZATION",
+  "source_Docker_provider_DELETE": 0
+}

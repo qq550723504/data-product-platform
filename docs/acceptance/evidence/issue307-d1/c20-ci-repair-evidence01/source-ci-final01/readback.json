@@ -1,0 +1,16 @@
+{
+  "status": "PASS_EXACT_SOURCE_HEAD_PR_CI_AND_REVIEW_READBACK",
+  "at": "2026-10-22T09:43:42.371609+00:00",
+  "head": "923c06722f3099e9049894489006615f0f0e7ce2",
+  "run": 39755999260,
+  "event": "pull_request",
+  "attempt": 1,
+  "jobs": 13,
+  "checks": 13,
+  "unresolved": 0,
+  "snapshot_sha256": "b9d97c2c886c88748bb3aeec1a9f8f546c2347a55a80105d224048ae6debb1fc",
+  "main_CI": false,
+  "branch_locked": false,
+  "new_authorization": false,
+  "native_delete": 0
+}

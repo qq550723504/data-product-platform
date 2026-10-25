@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"path/filepath"
+	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -18,7 +20,7 @@ import (
 )
 
 func TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends(t *testing.T) {
-	for _, caseName := range []string{"H2", "M1B", "P1"} {
+	for _, caseName := range []string{"H2", "M1B", "P2"} {
 		t.Run(caseName, func(t *testing.T) {
 			group := "business-races"
 			if caseName == "H2" {
@@ -76,7 +78,7 @@ func TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends(t *t
 				t.Fatal("foreign version forwarded")
 			}
 			status, e := request("DELETE", "?versionId="+cp.ProviderVersion)
-			if caseName == "P1" {
+			if caseName == "P2" {
 				if e != nil || status != 204 {
 					t.Fatal(status, e)
 				}
@@ -104,7 +106,52 @@ func TestCompiledRemainingTargetsExcludeSurvivorsAndOldProfiles(t *testing.T) {
 			}
 		}
 	}
-	if _, e := fixedTarget("5d2274ee", "P1"); e == nil {
+	if _, e := fixedTarget("5d2274ee", "P2"); e == nil {
 		t.Fatal("old environment accepted")
+	}
+}
+
+func TestWireSignsNativeDenialSeparatelyFromLocalRefusalWithoutSecrets(t *testing.T) {
+	cp, _ := fixedTarget("business-races", "P2")
+	public, key, _ := ed25519.GenerateKey(rand.Reader)
+	calls := 0
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls++
+		w.WriteHeader(403)
+		w.Write([]byte(`<Error><Code>AccessDenied</Code><Message>secret-signature</Message></Error>`))
+	}))
+	defer upstream.Close()
+	backend, _ := url.Parse(upstream.URL)
+	out, budget := t.TempDir(), t.TempDir()
+	h := &wireHandler{scope: []domain.Copy{cp}, access: "test-delete", key: key, backend: backend, transport: http.DefaultTransport, output: out, budget: budget, fresh: func() error { return nil }, attempt: func(context.Context, domain.Copy) (domain.ProviderAttempt, error) {
+		return domain.ProviderAttempt{ID: uuid.New(), CopyID: cp.ID}, nil
+	}}
+	s := httptest.NewServer(h)
+	defer s.Close()
+	for i := 0; i < 2; i++ {
+		req, _ := http.NewRequest("DELETE", s.URL+"/"+cp.Namespace+"/"+cp.Key+"?versionId="+cp.ProviderVersion, nil)
+		req.Header.Set("Authorization", "AWS4-HMAC-SHA256 Credential=test-delete/example")
+		r, e := http.DefaultClient.Do(req)
+		if e != nil {
+			t.Fatal(e)
+		}
+		io.Copy(io.Discard, r.Body)
+		r.Body.Close()
+		if r.StatusCode != 403 {
+			t.Fatal(r.StatusCode)
+		}
+	}
+	if calls != 1 {
+		t.Fatal("wire resent native denial")
+	}
+	files, _ := os.ReadDir(out)
+	if len(files) != 2 {
+		t.Fatal("missing native or local rejection")
+	}
+	for _, f := range files {
+		var s signed
+		if read(filepath.Join(out, f.Name()), &s) != nil || !ed25519.Verify(public, s.Body, s.Signature) || strings.Contains(string(s.Body), "secret-signature") {
+			t.Fatal("unsigned or unsafe diagnostics")
+		}
 	}
 }

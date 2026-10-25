@@ -1,0 +1,1 @@
+Restore-only read-only inspector status confirmed; DELETE=0

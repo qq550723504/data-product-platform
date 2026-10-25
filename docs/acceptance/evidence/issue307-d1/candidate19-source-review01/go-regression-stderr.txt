@@ -1,0 +1,4 @@
+# ./cmd/lifecycle-fixture-owner
+stat C:\Users\Henry\.codex\worktrees\d1-c19\data-product-platform\apps\platform\cmd\lifecycle-fixture-owner: directory not found
+# ./cmd/lifecycle-fixture-readonly
+stat C:\Users\Henry\.codex\worktrees\d1-c19\data-product-platform\apps\platform\cmd\lifecycle-fixture-readonly: directory not found

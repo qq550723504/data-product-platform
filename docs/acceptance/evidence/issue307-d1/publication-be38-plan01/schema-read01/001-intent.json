@@ -1,0 +1,9 @@
+{
+  "started_at": "2026-10-24T05:45:41.181115+00:00",
+  "method": "POST",
+  "endpoint": "graphql",
+  "body": {
+    "query": "query { __type(name:\"UpdateBranchProtectionRuleInput\") { kind name inputFields { name type { kind name ofType { kind name } } } } }",
+    "variables": {}
+  }
+}

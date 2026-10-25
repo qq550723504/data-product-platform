@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-22T11:22:47.101933+00:00",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "gate": {
+    "status": "PASS_COMPLETE_PREPARATION_BEFORE_SOURCE_IO",
+    "cases": 6,
+    "source_provider_io": 0,
+    "native_delete": 0
+  },
+  "authorization": "NONE_NONDELETE_PREPARATION_ONLY"
+}

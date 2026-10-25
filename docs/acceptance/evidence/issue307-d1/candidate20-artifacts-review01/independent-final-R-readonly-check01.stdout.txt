@@ -1,0 +1,170 @@
+=== RUN   TestCompleteAggregationRecordedReorderingAndAllGroups
+=== RUN   TestCompleteAggregationRecordedReorderingAndAllGroups/business-races
+=== RUN   TestCompleteAggregationRecordedReorderingAndAllGroups/late-hold
+=== RUN   TestCompleteAggregationRecordedReorderingAndAllGroups/mixed
+--- PASS: TestCompleteAggregationRecordedReorderingAndAllGroups (0.07s)
+    --- PASS: TestCompleteAggregationRecordedReorderingAndAllGroups/business-races (0.04s)
+    --- PASS: TestCompleteAggregationRecordedReorderingAndAllGroups/late-hold (0.01s)
+    --- PASS: TestCompleteAggregationRecordedReorderingAndAllGroups/mixed (0.02s)
+=== RUN   TestCompleteAggregationRejectsChangedAuthorization
+=== RUN   TestCompleteAggregationRejectsChangedAuthorization/foreign-version
+=== RUN   TestCompleteAggregationRejectsChangedAuthorization/removed-condition
+=== RUN   TestCompleteAggregationRejectsChangedAuthorization/changed-effect
+=== RUN   TestCompleteAggregationRejectsChangedAuthorization/extra-action
+=== RUN   TestCompleteAggregationRejectsChangedAuthorization/wildcard-resource
+=== RUN   TestCompleteAggregationRejectsChangedAuthorization/foreign-resource
+--- PASS: TestCompleteAggregationRejectsChangedAuthorization (0.50s)
+    --- PASS: TestCompleteAggregationRejectsChangedAuthorization/foreign-version (0.26s)
+    --- PASS: TestCompleteAggregationRejectsChangedAuthorization/removed-condition (0.05s)
+    --- PASS: TestCompleteAggregationRejectsChangedAuthorization/changed-effect (0.05s)
+    --- PASS: TestCompleteAggregationRejectsChangedAuthorization/extra-action (0.05s)
+    --- PASS: TestCompleteAggregationRejectsChangedAuthorization/wildcard-resource (0.05s)
+    --- PASS: TestCompleteAggregationRejectsChangedAuthorization/foreign-resource (0.04s)
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/mutation
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/delete
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/status
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/foreign-group
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/user-policy
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/identity-removed
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/hold
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/version
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/missing-delete
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/inventory
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/policy-substituted
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/size
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/missing-policy
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/extra-policy
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/malformed-policy
+=== RUN   TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/trailing-policy
+--- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts (0.61s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/mutation (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/delete (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/status (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/foreign-group (0.03s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/user-policy (0.03s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/identity-removed (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/hold (0.03s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/version (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/missing-delete (0.03s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/inventory (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/policy-substituted (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/size (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/missing-policy (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/extra-policy (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/malformed-policy (0.04s)
+    --- PASS: TestCompleteAggregationRejectsIncompleteAndTamperedReceipts/trailing-policy (0.04s)
+=== RUN   TestExactSizeComparisonDoesNotRoundLargeIntegers
+--- PASS: TestExactSizeComparisonDoesNotRoundLargeIntegers (0.07s)
+=== RUN   TestPostV22FileCompositionAndPolicyReordering
+=== RUN   TestPostV22FileCompositionAndPolicyReordering/business-races
+=== RUN   TestPostV22FileCompositionAndPolicyReordering/late-hold
+=== RUN   TestPostV22FileCompositionAndPolicyReordering/mixed
+--- PASS: TestPostV22FileCompositionAndPolicyReordering (0.65s)
+    --- PASS: TestPostV22FileCompositionAndPolicyReordering/business-races (0.27s)
+    --- PASS: TestPostV22FileCompositionAndPolicyReordering/late-hold (0.21s)
+    --- PASS: TestPostV22FileCompositionAndPolicyReordering/mixed (0.17s)
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/profile
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/outside-window
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-copy
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/core
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/unknown
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/generic404
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-version
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-zero
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/delete
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/size
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/audit
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/binary
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-absence
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/hold
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-present
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-user
+=== RUN   TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/presentP1
+--- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions (1.16s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/profile (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/outside-window (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-copy (0.08s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/core (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/unknown (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/generic404 (0.08s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-version (0.08s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-zero (0.08s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/delete (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/size (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/audit (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/binary (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-absence (0.08s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/hold (0.07s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/missing-present (0.06s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/foreign-user (0.08s)
+    --- PASS: TestPostV22FileRejectsReceiptAndAbsenceSubstitutions/presentP1 (0.08s)
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/version
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/selector-missing
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/GET
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/foreign-path
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/transport-failure
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/status
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/generic-provider404
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/missing-request-id
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/absent-journal
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/policy-expanded
+=== RUN   TestPostV22RejectsHEADSelectorAndPolicyExpansion/present-inventory-drift
+--- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion (0.86s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/version (0.08s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/selector-missing (0.08s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/GET (0.09s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/foreign-path (0.08s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/transport-failure (0.09s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/status (0.09s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/generic-provider404 (0.08s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/missing-request-id (0.08s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/absent-journal (0.06s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/policy-expanded (0.09s)
+    --- PASS: TestPostV22RejectsHEADSelectorAndPolicyExpansion/present-inventory-drift (0.05s)
+=== RUN   TestPostV22RejectsAnyStaleForeignOrIncompleteJournal
+=== RUN   TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/old-start
+=== RUN   TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/future-observation
+=== RUN   TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/foreign-audit
+=== RUN   TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/missing-observation
+=== RUN   TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/orphan-observation
+=== RUN   TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/mixed-old-generation
+--- PASS: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal (0.26s)
+    --- PASS: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/old-start (0.04s)
+    --- PASS: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/future-observation (0.06s)
+    --- PASS: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/foreign-audit (0.05s)
+    --- PASS: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/missing-observation (0.03s)
+    --- PASS: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/orphan-observation (0.04s)
+    --- PASS: TestPostV22RejectsAnyStaleForeignOrIncompleteJournal/mixed-old-generation (0.03s)
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/SOURCE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/RESTORE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/SOURCE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/RESTORE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/SOURCE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/RESTORE
+--- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection (1.30s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/SOURCE (0.26s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/RESTORE (0.22s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/SOURCE (0.22s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/RESTORE (0.20s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/SOURCE (0.21s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/RESTORE (0.19s)
+=== RUN   TestSixWholeFileRejectsAliasedRestoreAndForeignExecution
+--- PASS: TestSixWholeFileRejectsAliasedRestoreAndForeignExecution (0.13s)
+=== RUN   TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory
+--- PASS: TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory (0.16s)
+=== RUN   TestSixUncreatedIdentityAndDormantEvidenceFailClosed
+=== RUN   TestSixUncreatedIdentityAndDormantEvidenceFailClosed/missing-file
+=== RUN   TestSixUncreatedIdentityAndDormantEvidenceFailClosed/unknown-user
+=== RUN   TestSixUncreatedIdentityAndDormantEvidenceFailClosed/wrong-status
+=== RUN   TestSixUncreatedIdentityAndDormantEvidenceFailClosed/dormant-policy
+--- PASS: TestSixUncreatedIdentityAndDormantEvidenceFailClosed (0.51s)
+    --- PASS: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/missing-file (0.13s)
+    --- PASS: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/unknown-user (0.13s)
+    --- PASS: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/wrong-status (0.12s)
+    --- PASS: TestSixUncreatedIdentityAndDormantEvidenceFailClosed/dormant-policy (0.13s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	7.070s

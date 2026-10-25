@@ -1,0 +1,28 @@
+{
+  "test": "test_attest_remaining_executable.py",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\reader-path-fix01\\python-export01",
+  "reads": [
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.json",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate18/candidate.json",
+    "examples/lifecycle-d1/__pycache__/attest-remaining-executable.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/docker_host_paths.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/execution_freeze.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/freeze-remaining-executable.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/prepare-remaining-native.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/prepare-remaining-runner.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/remaining_sequence.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/remaining_window.cpython-313.opt-1.pyc",
+    "examples/lifecycle-d1/attest-remaining-executable.py",
+    "examples/lifecycle-d1/docker_host_paths.py",
+    "examples/lifecycle-d1/execution_freeze.py",
+    "examples/lifecycle-d1/freeze-remaining-executable.py",
+    "examples/lifecycle-d1/prepare-remaining-native.py",
+    "examples/lifecycle-d1/prepare-remaining-runner.py",
+    "examples/lifecycle-d1/remaining_sequence.py",
+    "examples/lifecycle-d1/remaining_window.py",
+    "examples/lifecycle-d1/test_attest_remaining_executable.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

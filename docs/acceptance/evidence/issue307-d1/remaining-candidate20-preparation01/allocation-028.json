@@ -1,0 +1,29 @@
+{
+  "role": "checkpoint-unpack",
+  "group": "business-races",
+  "cid": "4257d7b888a5f5344470894d13a16ffda0ef7f6b6dfb76eb4486170865246e0e",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate20-unpack",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-candidate20-objects,target=/restore",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\checkpoint,target=/backup,readonly",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-ec",
+    "test -z \"$(find /restore -mindepth 1 -print -quit)\"; exec tar -C /restore -xpf /backup/native.tar ."
+  ]
+}

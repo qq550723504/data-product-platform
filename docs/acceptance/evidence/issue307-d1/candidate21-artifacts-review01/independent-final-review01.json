@@ -1,0 +1,122 @@
+{
+  "status": "PASS_BOUNDED_C21_FROZEN_NONDELETE_PREPARATION_REVIEW",
+  "reviewed_at": "2026-10-22T11:48:33.399234+00:00",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "profile": "candidate21/v31",
+  "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "host_source": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "packet_containment_git_anchor": "875c79ad9cd94a8ebac42e453f6f61dd3bf64099",
+  "remaining_blockers": [],
+  "scope": "Independent finite frozen candidate/nondelete preparation evidence review. Saved actual native receipts are file-audited; the exact frozen Windows checker is independently replayed. No real source/provider/Docker commands are issued by this reviewer. This is not six-target deletion acceptance, future final PR CI, native branch lock, authorization or scheduling.",
+  "frozen_bindings": {
+    "candidate_sha256": "813b941ff3d1be0d9b83f81bcd5dd532bd1f6da4df81181d2a1d1ecae7d34867",
+    "bindings_sha256": "e47174bddd358850896e85d270b9a65bcf144cb783a862e14b772077d4314ca9",
+    "template_sha256": "960d08299c6f06aa0b8528fd6aec28ea8c31c2b8ab7cd587fc74ca8e5d6b7691",
+    "template_lines": 137,
+    "source_freeze_sha256": "a38c14fc70114147c514ba97ba21268724614ed8f8df0525e7deb5babbd3d939",
+    "runtime_archive_sha256": "148efd92fe1e1261e044425ffecadbfab837414c9bbc00bac4bca78280855fd9",
+    "runtime_archive_bytes": 6427821,
+    "runtime_archive_members": 769,
+    "initial_build_members": {
+      "reader": "4483059c0028b27868c1d2bf564abb02d23b1a68e2421d6f57a7afa1bbd5c79a",
+      "operator": "21186be6763fc76e56d5e000384dbae1aa2b6e39f2155bfeb1a9d2a03c8821ae",
+      "owner": "e604b4b71fec2e5cb3e66b199b68ab5d7301cf39c8bb8a273226d170e9d06c67",
+      "readonly-check.exe": "d58568453465782591862694172e4f60a5b6babcae18cb4dd280f5b6b3457bcc",
+      "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "target_digest": "2a3b9c31e27de4bdf0185c3500600093356410b2f87ea0e4809863b78c2dacf4",
+    "case_profile_count": 6,
+    "recovery_profile_count": 6,
+    "host_binding_members": 74,
+    "source_ci": {
+      "head": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+      "run": 39766229920,
+      "receipt": "docs/acceptance/evidence/issue307-d1/preallocation-ci-8b1f03af7d3c495dafc49d69f73e7c2a/passed.json",
+      "sha256": "4ce9701b3a829831c888e77e8ce9f3fadfe506cf34700365c49028f4d84eee6f"
+    }
+  },
+  "window": {
+    "not_before": "2026-10-22T14:00:00Z",
+    "not_after": "2026-10-22T14:40:00Z",
+    "SGT": "2026-10-22 22:00-22:40",
+    "readonly_not_after": "2026-10-22T16:40:00Z",
+    "human_selection_only_not_send_authority": true
+  },
+  "verified_facts": [
+    "R514 is the exact schema69/66 fixture artifact; Pcef remains current product source with protected identity. runtime_archive/source/spec/shared scope/policies, actual R build12, private binary SHA and original source CI receipt/snapshot all cross-bind. Source Core was not migrated; no product query predicate weakened.",
+    "Candidate,target digest,bindings,all six actual case Batch/StartedAt/ExpiresAt=CandidateUseUntil and six recovery deadlines agree. P1 permanently excluded. Six exact target tuples and eleven survivor tuples/protection match the137line machine text and frozen candidate; targets currently unheld/no-retention, retained controls unchanged.",
+    "Actual three-group native preparation PASS,92 closure receipts all closed and19 enable profiles revoked. Source/clean restore/rehearsal pre/clean post-trial and fresh full-entry Core fingerprints agree for all194relations plus roles/ACL. Rehearsal old-row multiset membership/counts of20 tables preserved; legitimate new trial facts append. Source business Commands/objectPUT/DELETE0.",
+    "Frozen Windows file-only checker independently replays actual full-entry SOURCE groups7/6/4 to PASS.17 current versions, full inventory/bytes/SHA/protection and P1 exact absence are verified by the checked evidence;47 actual disabled IAM users,46sole-policy/no-groups+fixedNONE,15 genuine absent users including C20 six. Official policy semantic Equals is used, not raw JSON equality.",
+    "Actual full-entry167 technical start/HTTP observation pairs all linked and ordered:166GET+1HEAD,122HTTP200/29HTTP400/16HTTP404,transport errors0. The15NoSuchUser and P1NoSuchVersion are distinct; object-lock400 responses are not object absence. Amount remains NOT_ASSESSED. Checker provider_io0 describes file aggregation, not an assertion that native technical requests did not occur.",
+    "All66 actual retained/new private backup files independently rehashed:57old=54complete+3failed partial plus9new. Three new execution/nonce-owned budgets are independent and empty,27old budgets including v28 used markers preserved. No cleanup/refund/pin release or old-authority reuse.",
+    "Final saved cold proof has exact union907old+86new+3full-entry readers=996unique CIDs,allstopped/PID0/noports/no-restart;30permissions false. Current fixed gates preserve old C20 terminal/86owners/18resources/3original empty budgets and all historical raw receipts/pins/failures/UNKNOWN/cost facts. Saved host-native observations are independently audited as files, not repeated.",
+    "Actual confirmation block equals machine template byte-for-byte. Four actual indexed files (confirmation,runbook,source contract,child attrs itself) independently pass real Git blob/archive/autocrlf true/false checkout. Original root attributes/source1121 inputs and R/P unchanged; child rules are restricted to the explicit current docs and its own metadata.",
+    "74member host index and original typed preparation plan independently audit successfully. Host/doc inputs exclude the later artifact review. Final static plan/manifest will add completed report/index/external inputs after this report, excluding self,mutable matrix,future CI/authorization/schedule; file-only model demonstrates acyclic composition.",
+    "Initial exact P-source CI run39766229920 is the allocation gate only, with recorded complete provenance/head/build checks; it is not final publishing HEAD CI. Final branch-lock execution-binding must be produced after final static HEAD/CI, reviewed separately, and additionally bound in future new human authorization before any sending.",
+    "New authorization and schedule absent; old heartbeat statuses PAUSED/ABSENT. Static documents preserve NOT_RECEIVED/NOT_CREATED as preparation snapshots. P1/H0/H1 no-send, H2/M1 limited ordering, durable target/wire budget before Core claim,UNKNOWN no resend,max1/global6,cleanup/hold-release/bypass0 remain mandatory future conditions."
+  ],
+  "independent_evidence": {
+    "source_review": "../candidate21-source-review01/independent-final-review01.json",
+    "R_P_build_scope_and_typed_plan": "independent-build-scope-audit01.json",
+    "file_only_Windows_checker": "independent-checker-replay01/result.json",
+    "actual_native_and_Core_receipt_audit": "independent-native-receipt-audit01.json",
+    "actual_docs_host_cold_backup_audit": "independent-documents-host-cold-audit01.json",
+    "helper_static_review": "independent-helper-static-review01.json",
+    "helper_metadata_addendum": "independent-helper-addendum03.json",
+    "later_matrix_postlock_composer_static_review": "independent-late-composer-static-review01.json"
+  },
+  "resolved_findings": [
+    {
+      "id": "DOC-CYCLE-R1",
+      "resolution": "Later artifact report/index removed from pre-review document/host inputs; later final-static plan binds completed review. Original static draft retained."
+    },
+    {
+      "id": "DOC-ATTR-R1",
+      "resolution": "Child attrs receives its own exact -text rule; actual4file Git blob/archive/checkout proves all raw bytes. Original counterexample and pending addendum retained."
+    }
+  ],
+  "current_execution_status": {
+    "preparation": "PASS_BOUNDED_FROZEN_NONDELETE_ONLY",
+    "six_source_sends": "NOT_RUN",
+    "readonly_recovery_of_real_sends": "NOT_RUN",
+    "H2_real_late_hold": "NOT_RUN",
+    "M1_real_mixed_outcomes": "NOT_RUN",
+    "native_DELETE": 0,
+    "full_D1": "NOT_ACCEPTED",
+    "new_delete_authorization": "NOT_RECEIVED",
+    "new_schedule": "NOT_CREATED",
+    "old_authorization_reused": false,
+    "final_static_composition_and_audit": "PENDING_AFTER_THIS_REPORT",
+    "final_publishing_HEAD_PR_CI": "PENDING_PUBLICATION; old/source CI not a substitute",
+    "native_branch_freeze_and_execution_binding": "NOT_YET_CREATED",
+    "source_upgrade": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "PR332": "REQUIRED_OPEN_DRAFT_UNMERGED; sourceCI snapshot agrees, later fresh state checks required",
+    "Issue307": "REQUIRED_OPEN",
+    "main_CI_and_merge": "NOT_IN_THIS_PREPARATION"
+  },
+  "future_renderers_scope": "New matrix/postlock composers received static-only review; their future generated output/native lock/protection/CI and byte bindings require separate actual supplement. No future output path/tree is captured as a current immutable input.",
+  "historical_boundaries": "Fresh47 disabled proof does not overwrite earlier IAM UNCONFIRMED or FAILED terminal facts. Old DENIED/UNKNOWN,used budgets,provider attempts/cost,pins and preparation snapshots retain original raw bytes. No old authorization grants this execution.",
+  "reviewed_artifacts_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate21-artifacts-review01/reviewed-artifacts01.json",
+    "sha256": "b8e5043d5938f00b78660150eb96443da6dbe999ceaf07d5209221b3f14f5b4a",
+    "count": 2537
+  },
+  "reviewer_actions": {
+    "Git_and_file_reads": true,
+    "temporary_native_Git_byte_replay": true,
+    "frozen_Windows_file_only_checker": true,
+    "Docker_Core_provider_IO": 0,
+    "enable_or_send": 0,
+    "native_delete": 0,
+    "signing": 0,
+    "GitHub_mutations": 0,
+    "schedule_created": false
+  }
+}

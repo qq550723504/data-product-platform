@@ -1,0 +1,33 @@
+{
+  "role": "remaining-resume-business",
+  "group": "business-races",
+  "cid": "4e1777be8d5c03892a3b8b54e97f380129c52a2f3c5d055edb2ea0f83aec1ea9",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate20-rehearsal-business",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:573eeaa0ab1fd817789ebf0f5e7e95fb8496808ebdf14fea3075ce02493da62d",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\rehearsal-business,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\business-races\\outputs\\rehearsal-business,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "remaining-resume-business"
+  ]
+}

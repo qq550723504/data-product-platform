@@ -1,0 +1,14 @@
+{
+  "status": "AUXILIARY_PUBLICATION_ASSUMPTION_REJECTED_SOURCE_RAW_LF_DISTINCTION",
+  "path": "examples/lifecycle-d1/docker_host_paths.py",
+  "actual_raw_sha256": "218d7b0f0ea51506aa1f93e43937a16d41f94de87fe1d340ec0c40bbe4142a0c",
+  "git_blob_sha256": "59d150e06a21c9b08484ddd1e0f526638174718b6ee90405d15775852a7d60ec",
+  "frozen_source": {
+    "raw_sha256": "218d7b0f0ea51506aa1f93e43937a16d41f94de87fe1d340ec0c40bbe4142a0c",
+    "lf_sha256": "59d150e06a21c9b08484ddd1e0f526638174718b6ee90405d15775852a7d60ec"
+  },
+  "source_or_gate_changed": false,
+  "native_io": 0,
+  "native_delete": 0,
+  "note": "Original auxiliary console assertion retained in chat. The frozen source contract has separate raw and LF hashes and never claims all working raw source equals Git. Evidence/doc bytes still require exact Git raw equality."
+}

@@ -1,0 +1,44 @@
+{
+  "status": "PASS_CURRENT_EXACT_HEAD_DRAFT_OPEN_PR_CI_AND_THREADS",
+  "observed_at": "2026-10-21T10:18:13.218970+00:00",
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "pr": 332,
+  "draft": true,
+  "merged": false,
+  "issue": 307,
+  "issue_state": "OPEN",
+  "run_id": 39577806574,
+  "event": "pull_request",
+  "attempt": 1,
+  "jobs_success": 13,
+  "checks_success": 13,
+  "unresolved_threads": 0,
+  "main_ci": "NOT_CLAIMED",
+  "read_times": {
+    "pr": {
+      "started_at": "2026-10-21T10:18:11.781648+00:00",
+      "finished_at": "2026-10-21T10:18:13.085975+00:00"
+    },
+    "issue": {
+      "started_at": "2026-10-21T10:18:11.781914+00:00",
+      "finished_at": "2026-10-21T10:18:12.659274+00:00"
+    },
+    "ci-run": {
+      "started_at": "2026-10-21T10:18:11.782209+00:00",
+      "finished_at": "2026-10-21T10:18:13.218441+00:00"
+    },
+    "ci-jobs": {
+      "started_at": "2026-10-21T10:18:11.782443+00:00",
+      "finished_at": "2026-10-21T10:18:13.025478+00:00"
+    },
+    "check-runs": {
+      "started_at": "2026-10-21T10:18:11.782677+00:00",
+      "finished_at": "2026-10-21T10:18:12.779683+00:00"
+    },
+    "threads": {
+      "started_at": "2026-10-21T10:18:11.783273+00:00",
+      "finished_at": "2026-10-21T10:18:12.785855+00:00"
+    }
+  },
+  "native_delete": 0
+}

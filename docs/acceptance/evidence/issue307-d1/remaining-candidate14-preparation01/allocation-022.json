@@ -1,0 +1,33 @@
+{
+  "role": "six-verify-native",
+  "group": "business-races",
+  "cid": "1edceaa7503294a7f7ac865d7344ff6a2bbfca10443c2dd487a95c422050a5cc",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate14-maintenance-restore",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:8611e158a8dad73be215e2c17ff090bb1113af9e9fa1c16c117b7be8defc6733",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\business-races\\maintenance-restore,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\business-races\\outputs\\maintenance-restore,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "six-verify-native"
+  ]
+}

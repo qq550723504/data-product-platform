@@ -1,0 +1,16 @@
+{
+  "private_source": "before-com.docker.backend.exe.log",
+  "source_sha256": "001C9D389D5B7C1910DE87FCECB8CB0F8E8721704B1DDE56258DD3DB4BECD672",
+  "selection": "Final captured backend heartbeat only; no settings, Env, credential payload, or request body included",
+  "lines": [
+    {
+      "source_line": 458,
+      "text": "[2026-10-24T08:44:10.485679800Z][com.docker.backend.exe.ipc] (66e75e41-2771) 8efd89a8-BackendAPI S<-C 3a0591fa-time GET /time"
+    },
+    {
+      "source_line": 459,
+      "text": "[2026-10-24T08:44:10.485679800Z][com.docker.backend.exe.ipc] (66e75e41-2771) 8efd89a8-BackendAPI S->C 3a0591fa-time GET /time (0s): 2026-10-24 16:44:10.4856798 +0800 +08 m=+83148.166998601"
+    }
+  ],
+  "explanation": "Last captured successful backend heartbeat at 08:44:10Z. Full private logs contained no later captured quit/crash explanation; exit trigger remains UNKNOWN."
+}

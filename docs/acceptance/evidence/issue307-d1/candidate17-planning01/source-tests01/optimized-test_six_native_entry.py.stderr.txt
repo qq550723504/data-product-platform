@@ -1,0 +1,257 @@
+EEEEEEEEEEEE.
+======================================================================
+ERROR: test_main_audit_only_never_enters_host_or_native (__main__.SixNativeEntryTests.test_main_audit_only_never_enters_host_or_native)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 245, in test_main_audit_only_never_enters_host_or_native
+    self.composition(audit_only=True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_can_only_audit_saved_evidence_of_a_terminal_execution (__main__.SixNativeEntryTests.test_main_can_only_audit_saved_evidence_of_a_terminal_execution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 248, in test_main_can_only_audit_saved_evidence_of_a_terminal_execution
+    self.composition(fault='terminal', audit_only=True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='index-format')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='index-bytes')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='plan-binding')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='missing-plan')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='terminal')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='terminal-parent-alias')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='sealed-gate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_index_binding_format_bytes_cli_terminal_and_host_rejections (__main__.SixNativeEntryTests.test_main_index_binding_format_bytes_cli_terminal_and_host_rejections) (fault='existing-output')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 267, in test_main_index_binding_format_bytes_cli_terminal_and_host_rejections
+    self.composition(fault=fault)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_real_audit_three_real_collects_and_finally_success (__main__.SixNativeEntryTests.test_main_real_audit_three_real_collects_and_finally_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 242, in test_main_real_audit_three_real_collects_and_finally_success
+    self.composition()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+======================================================================
+ERROR: test_main_second_group_failure_closes_and_does_not_collect_third (__main__.SixNativeEntryTests.test_main_second_group_failure_closes_and_does_not_collect_third)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 270, in test_main_second_group_failure_closes_and_does_not_collect_third
+    self.composition(fault='second-group-checker')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 30, in composition
+    groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c17\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17\\candidate.json'
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.010s
+
+FAILED (errors=12)

@@ -1,0 +1,29 @@
+{
+  "role": "checkpoint-archive",
+  "group": "late-hold",
+  "cid": "261925d320a000dea9ad7f071fc1f2eba0bea3b4bc371d3feee56c7c10bd7d20",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate15-archive",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-754ea8f0-objects,target=/source,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate15\\late-hold\\checkpoint,target=/backup",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-ec",
+    "test ! -e /backup/native.tar; exec tar -C /source -cpf /backup/native.tar ."
+  ]
+}

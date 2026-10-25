@@ -1,0 +1,72 @@
+{
+  "status": "PASS_C22_FINAL_SELECTED_LOCAL_SOURCE_REGRESSIONS_NOT_NATIVE",
+  "runs": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "test_retained_v31",
+        "test_retained_v30",
+        "test_retained_v29",
+        "test_retained_v26",
+        "test_retained_v27",
+        "test_remaining_six_window",
+        "test_remaining_window",
+        "test_six_native_entry",
+        "test_six_candidate_runtime",
+        "test_verify_six_native",
+        "test_fixture_artifacts",
+        "test_preallocation_ci",
+        "test_execution_freeze",
+        "test_evidence_indexes",
+        "test_receipt_bytes",
+        "test_freeze_six_candidate",
+        "test_window_six_support",
+        "test_attest_remaining_executable"
+      ],
+      "at": "2026-10-23T04:24:16.740118+00:00"
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-O",
+        "-m",
+        "unittest",
+        "test_retained_v31",
+        "test_retained_v30",
+        "test_retained_v29",
+        "test_retained_v26",
+        "test_retained_v27",
+        "test_remaining_six_window",
+        "test_remaining_window",
+        "test_six_native_entry",
+        "test_six_candidate_runtime",
+        "test_verify_six_native",
+        "test_fixture_artifacts",
+        "test_preallocation_ci",
+        "test_execution_freeze",
+        "test_evidence_indexes",
+        "test_receipt_bytes",
+        "test_freeze_six_candidate",
+        "test_window_six_support",
+        "test_attest_remaining_executable"
+      ],
+      "at": "2026-10-23T04:25:12.605127+00:00"
+    }
+  ],
+  "source_inputs_unchanged": true,
+  "native_delete": 0,
+  "new_resource_allocation": 0,
+  "independent_review": "NOT_CLAIMED"
+}

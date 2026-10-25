@@ -1,0 +1,14 @@
+test_audit_config_preserves_source_and_rejects_wrong_target (test_lc13_readonly.ReadonlyContract.test_audit_config_preserves_source_and_rejects_wrong_target) ... ok
+test_audit_readiness_waits_for_final_tcp_listener (test_lc13_readonly.ReadonlyContract.test_audit_readiness_waits_for_final_tcp_listener) ... ok
+test_cli_does_not_admit_delete_or_arbitrary_target (test_lc13_readonly.ReadonlyContract.test_cli_does_not_admit_delete_or_arbitrary_target) ... ok
+test_failed_helper_creation_still_stops_sources (test_lc13_readonly.ReadonlyContract.test_failed_helper_creation_still_stops_sources) ... ok
+test_inspector_entrypoint_is_existing_env_and_lf (test_lc13_readonly.ReadonlyContract.test_inspector_entrypoint_is_existing_env_and_lf) ... ok
+test_refresh_has_only_eight_fixed_generations (test_lc13_readonly.ReadonlyContract.test_refresh_has_only_eight_fixed_generations) ... ok
+test_six_versions_reject_hash_version_and_protection_drift (test_lc13_readonly.ReadonlyContract.test_six_versions_reject_hash_version_and_protection_drift) ... ok
+test_source_dsn_identity_and_root_fail_closed (test_lc13_readonly.ReadonlyContract.test_source_dsn_identity_and_root_fail_closed) ... ok
+test_stop_failures_do_not_skip_either_source (test_lc13_readonly.ReadonlyContract.test_stop_failures_do_not_skip_either_source) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 2.564s
+
+OK

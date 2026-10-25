@@ -1,0 +1,86 @@
+{
+  "status": "C19_SOURCE_REVIEW_EVIDENCE_INDEX",
+  "count": 20,
+  "files": {
+    "go-regression-stderr.txt": {
+      "sha256": "7c50339c251c1a090e844ccd40b2e0333ade72440afa14d19ee9cb32a29546fa",
+      "bytes": 328
+    },
+    "go-regression-stdout.txt": {
+      "sha256": "2dec614e1134339e349255c961be837de789a5c842588a32aa60d99b2c9007e1",
+      "bytes": 510
+    },
+    "go-regression02-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-regression02-stdout.txt": {
+      "sha256": "f1bbcfc8159ccd056c8f90c3a9d9ff9339cdc06aed15033cf35aa964ce5088e3",
+      "bytes": 873
+    },
+    "go-regression03-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-regression03-stdout.txt": {
+      "sha256": "76b049b551f6fa6ab5e204fedbceeaea4177ae8f4360d2cd8ff6cbbe0e8ddc5a",
+      "bytes": 729
+    },
+    "history-gate01.json": {
+      "sha256": "8329d502dc15d283457e467318b92900f066c1d4cbdb652d3a31d3ca81a6a480",
+      "bytes": 1045316
+    },
+    "independent-final-review01.json": {
+      "sha256": "6eb63b9e07ae45aa0b745e537d97a4d892efde88d7089820bed8de9dcbdcb8d8",
+      "bytes": 5376
+    },
+    "independent-go01-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "independent-go01-stdout.txt": {
+      "sha256": "e9e4afc974ecac19922665ee72ac5e0992b72b55e2b65c42fbe9696d1c40b8d4",
+      "bytes": 819
+    },
+    "independent-python-final-labels01-stderr.txt": {
+      "sha256": "d2e209b7b4ada31899afa5454fd7cc55edd901c5cd4bf7d2867b10e14e956127",
+      "bytes": 1881
+    },
+    "independent-python-final-labels01-stdout.txt": {
+      "sha256": "b669ca7bfe83d2fd0ca8b9ca954e4ecb3ed3f3b5a0f7667b1291df517c4a94fd",
+      "bytes": 189
+    },
+    "independent-python01-stderr.txt": {
+      "sha256": "a6d1908278883338e73f188d09892883b3072e537de858dc6779e7616147b9b1",
+      "bytes": 11673
+    },
+    "independent-python01-stdout.txt": {
+      "sha256": "5d25d10e91cb9d54d0f869c001d019cd7e263c1eabe1247addaf1ea03dcfd022",
+      "bytes": 189
+    },
+    "independent-review-inputs01.json": {
+      "sha256": "56e323a8c4c7ab52920fde03559acaf1dbf4f2e2958ae593a4fc58e43ca598d4",
+      "bytes": 8051
+    },
+    "merge-contract.md": {
+      "sha256": "84a2a8c50db410a93c075c8b28e1025e9d2d298b5b0fa0582663ca14c72ad003",
+      "bytes": 2126
+    },
+    "python-regression03-stderr.txt": {
+      "sha256": "d04ed1b7889e3e5a4cd1053734ec93bf248a3582487d251577cdaf58dbaeebec",
+      "bytes": 82175
+    },
+    "python-regression03-stdout.txt": {
+      "sha256": "26bdae16e5c4f91aa5453e44fd0b9da1d481512f06bdd5ff387409543c1ab8ca",
+      "bytes": 189
+    },
+    "python-regression04-stderr.txt": {
+      "sha256": "c42da1cef7073b9ef04dbf17c169dcde67241458f3fd3c7f3d481e4d73372cfa",
+      "bytes": 183
+    },
+    "python-regression04-stdout.txt": {
+      "sha256": "d99b2050e62a11c7c00d59addcae111bf59fbac400db39d054bb1df97713d602",
+      "bytes": 189
+    }
+  }
+}

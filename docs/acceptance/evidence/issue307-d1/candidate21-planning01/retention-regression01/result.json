@@ -1,0 +1,41 @@
+{
+  "status": "PASS_NORMAL_AND_OPTIMIZED_C20_RETENTION_DOUBLES",
+  "at": "2026-10-22T10:18:05.938163+00:00",
+  "runs": [
+    {
+      "mode": "normal",
+      "argv": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_retained_v30.py",
+        "-v"
+      ],
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "argv": [
+        "python",
+        "-B",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_retained_v30.py",
+        "-v"
+      ],
+      "exit": 0
+    }
+  ],
+  "native_actions": 0,
+  "source_provider_actions": 0
+}

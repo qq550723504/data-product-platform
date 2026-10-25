@@ -1,0 +1,16 @@
+{
+  "status": "PASS_PRE_ALLOCATION_CURRENT_HEAD",
+  "at": "2026-10-19T18:48:22.894083+00:00",
+  "source": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "pr_ci": 39303939210,
+  "ci_event": "pull_request",
+  "jobs": 13,
+  "reviews": {
+    "post-v22-disabled-bootstrap-contract01/independent-production-guard-review02.json": "63f37dfcdea4d8961bdcc8266330a14e29f7224c65f560d0f82dcc123437cc78",
+    "post-v22-disabled-bootstrap-contract01/independent-production-guard-native-review03.json": "ab0d5bed355956952fbb608f4bfdf7ef4cc9068c8b1d131c822251f3d1b3d456",
+    "post-v22-six-preparation02/independent-host-review01.json": "84b1545ad8ec2333537c6487e730e7889fa87840e70ff31d3e61c62ada7e7b24",
+    "post-v22-six-preparation02/independent-host-commit-addendum02.json": "45bf92d2de412ccd5ee6f8bf3625c70b9be3102a1d06c87d62f2ec67d8eb1af0"
+  },
+  "source_calls": 0,
+  "native_delete": 0
+}

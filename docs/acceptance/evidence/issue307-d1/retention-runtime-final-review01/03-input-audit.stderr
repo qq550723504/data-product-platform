@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-runtime\data-product-platform\docs\acceptance\evidence\issue307-d1\retention-runtime-final-review01\audit_inputs.py", line 37, in <module>
+    need(not artifacts.git(ROOT, 'diff', '--name-only', 'HEAD').strip(), 'tracked working source drift')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-retention-runtime\data-product-platform\docs\acceptance\evidence\issue307-d1\retention-runtime-final-review01\audit_inputs.py", line 17, in need
+    raise ValueError(message)
+ValueError: tracked working source drift

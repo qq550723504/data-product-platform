@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "status": "INTERIM_INDEPENDENT_REVIEW_PENDING_FROZEN_HEAD",
+  "at": "2026-10-19T13:41:17.436632+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "scope": "New17-version technical read-only path/shared legacy collector/file-only checker/host composition only. No final source PASS while parent tests and commit are in progress.",
+  "HEAD_at_checkpoint": "198cfbd474dda69c31c3f77c5ec1460d34bb8586",
+  "initial_findings": [
+    {
+      "id": "B1",
+      "root": "Known-CID containment initially skipped stop after failed inspect.",
+      "parent_fix_read": "close_all reuses previously accepted p1.close_known.",
+      "independent_status": "Fixed-source Python counterexample PASS with corrected shared/global mock boundaries."
+    },
+    {
+      "id": "B2",
+      "root": "MinIO SDK synthesizes NoSuchKey for an untyped headerless/bodyless HEAD404, so ToErrorResponse classification alone accepted ordinary404 contrary to the new contract.",
+      "parent_fix_read": "Transport journals actual provider error code/request ID and P1 absence binds them to the SDK result; checker verifies original fields.",
+      "independent_status": "Generic404 rejection passes on late-taken repaired snapshot; do not claim old-source failure reproduction."
+    },
+    {
+      "id": "B3",
+      "root": "Checker timeout overwrote helper wait channels and log timeout lost partial stdout/stderr.",
+      "parent_fix_read": "Separate phase wait/checker channels and partial logs retained.",
+      "independent_status": "Fixed-source independent checker-timeout and logs-timeout combinations pass."
+    },
+    {
+      "id": "B4",
+      "root": "File-only checker did not validate all non-P1 journals against current audit/UUID/time interval; old baseline logs could be mixed under a new envelope.",
+      "parent_fix_read": "checkPostV22Journals validates every start/observation pair, UUID, GETHEAD, audit and actual receipt start/finish interval.",
+      "independent_status": "Negative stale-journal rejection passes, but full positive checker test was failing during concurrent mock update; must rerun both together after exactHEAD freeze."
+    }
+  ],
+  "tests_and_failures_preserved": {
+    "Go": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/go-offline-tests01.json",
+      "sha256": "abb3b2c0bf7d9c184488ae9affc8887b8d0e37a1f7c920d7c21869897f94f5bc",
+      "bytes": 1706
+    },
+    "Go_original_channels": [
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/go-blockers01-stdout.txt",
+        "sha256": "05bb4e9d71ead7a58560fce0f2e7f3b58180a0b708c4989d00c2fcb1987a86fc",
+        "bytes": 3689
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/go-blockers01-stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/go-current-unit01-stdout.txt",
+        "sha256": "fbf8cff3a9e96f5aec1046e2979392e47730ef9a26016ee3fde87031db726166",
+        "bytes": 125697
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/go-current-unit01-stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "actual_unit_snapshot": "Reader package PASS; checker all three full positive groups failed missing post-v22 fields during parent old/new mock transition. Parent later reports the exact test passes after completing audit-field rewiring; not independently reverified yet.",
+    "independent_snapshot_negative_tests": "Both new Go overlay negative methods PASS because snapshot was captured after corresponding source fixes; stale rejection alone is not closure proof until repaired full positive is independently PASS.",
+    "host_corrected": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blocker-tests02.json",
+      "sha256": "2b954294123244c11d2c0f0c77ae8ad18b355d652e1e28a19c2e5c856f0ecf0a",
+      "bytes": 1876
+    },
+    "host_first_harness_error": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blocker-tests01.json",
+      "sha256": "cefc6dcb790b4972335cf830270dbc4cd020ca11c0eba8922721667ec58cc3a8",
+      "bytes": 1776
+    },
+    "host_raw": [
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-normal01-stderr.txt",
+        "sha256": "f1b9aecb93de9aca04de98631943665408928ae2a4258f9dae5843176fe0aa2c",
+        "bytes": 1611
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-normal01-stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-normal02-stderr.txt",
+        "sha256": "28250c47788c214c20da3ca4fa5b0ec008390ffc9347c57a1ea68d5162613d7c",
+        "bytes": 529
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-normal02-stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-optimized01-stderr.txt",
+        "sha256": "fb21fc4cfdae720ee49aa44b0e76fa04f0e14c5762ec8171bd49a8ec50adc5d4",
+        "bytes": 1611
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-optimized01-stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-optimized02-stderr.txt",
+        "sha256": "de258f5151026bbcf81ee911c4313aa0e1ece78181c8faa49a89afafa7e2f63b",
+        "bytes": 529
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-blockers-optimized02-stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ]
+  },
+  "reviewer_harness_isolation_error": {
+    "root": "Initial B1 test patched host inspect/docker aliases only, while repaired source now delegated to p1.close_known. Shared aliases were missed.",
+    "actual_commands": "Two modes issued inspect and failed stop attempts for synthetic one/two names only. Four stop attempts returned stop_failed=true; no approved CID was targeted, no successful resource action/source start/provider occurred.",
+    "retention": "Initial script and all raw output remain. p1.call may have appended failure-*.private diagnostics in old closure03 control directory; parent was immediately notified and nothing is deleted or rewritten.",
+    "repair": "test_host_blockers02 patches both alias sets and refuses real p1.call; future final test harness additionally requires a global nonmodeled subprocess refusal boundary.",
+    "source_report_will_not_claim_zero_Docker_commands_in_this_interim_round": true
+  },
+  "snapshots": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/host-draft-snapshot01.py",
+      "sha256": "f8cf913bad5b50b6b74f3d146e8257fbc0071fa84bb98da5cdd9cb2cf133e626",
+      "bytes": 24153
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/reader-post-v22-draft01.go",
+      "sha256": "b380011e4ec62ae677e1b1cf9c09ca39cb949de849fc6456d8aab7715c65a316",
+      "bytes": 10144
+    }
+  ],
+  "remaining_review_gates": [
+    "Receive final source/test hashes and exact committedHEAD after parent current whole-entry/Go tests finish.",
+    "Run independent full Go package positives and the repaired negative combinations on that same source.",
+    "Run host normal/-O whole-entry tests with full subprocess refusal boundary.",
+    "Review final contract time semantics; no further platform/remaining-six scope."
+  ],
+  "no_final_source_acceptance": true,
+  "prepare_run_original_environment": "NOT_RUN",
+  "real17_native": "NOT_RUN",
+  "remaining_six_candidate": "NOT_FROZEN",
+  "DELETE": 0,
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

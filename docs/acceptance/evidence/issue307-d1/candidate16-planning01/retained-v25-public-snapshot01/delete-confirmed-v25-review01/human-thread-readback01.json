@@ -1,0 +1,31 @@
+{
+  "source": "purpose-built read_thread; independently read actual user items",
+  "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "turns": [
+    {
+      "id": "01a156dd-1652-7023-a8be-e08f86ea7906",
+      "items": [
+        {
+          "type": "userMessage",
+          "id": "01a156dd-1747-7c41-9657-80277d0abccb",
+          "content": [
+            {
+              "type": "text",
+              "text": "\u6388\u6743\u6309\u5df2\u6838\u5bf9\u7684 candidate15/v25 \u5b8c\u6574\u65b9\u6848\u53ca\u5168\u90e8\u51bb\u7ed3\u7ed1\u5b9a\u6267\u884c\uff0cexecution 9f9c67d7-8a09-45a8-897f-9e3077b60980\u3002\u4ec5\u57282026\u5e7410\u670820\u65e5\u65b0\u52a0\u576114:00\u201314:40\u3001\u5168\u90e8\u65b0\u9c9c\u524d\u7f6e\u901a\u8fc7\u540e\u5220\u9664\u6240\u52176\u4efd\u76ee\u6807\uff0c\u6bcf\u4efd\u6700\u591a\u4e00\u6b21\u3001\u5168\u5c40\u6700\u591a6\u6b21\uff0cUNKNOWN\u4e0d\u91cd\u53d1\uff1b\u9075\u5b88\u5168\u90e8\u4fdd\u7559\u9650\u5236\uff0c\u5931\u8d25\u6216\u8fc7\u7a97\u7acb\u5373\u5c01\u5b58\uff0c\u4e0d\u5ef6\u957f\u7a97\u53e3\uff0c\u65e7\u6388\u6743\u4e0d\u590d\u7528\u3002#332\u4fdd\u6301Draft\u3001\u4e0d\u5408\u5e76\uff0c#307\u4fdd\u6301OPEN\u3002\n"
+            }
+          ]
+        },
+        {
+          "type": "userMessage",
+          "id": "01a156e1-1904-7b73-9ac5-906c21d3f804",
+          "content": [
+            {
+              "type": "text",
+              "text": "<send_user_message_question_reply>\n[{\"questionItemId\":\"[\\\"request_user_input_async\\\",\\\"call_ed04bf5c942342fab116743d6d0eb7db\\\",0]\",\"question\":\"\u672c\u4ee3\u5220\u9664\u6388\u6743\u5df2\u8bb0\u5f55\uff0cexecution 9f9c67d7-8a09-45a8-897f-9e3077b60980\u3002\u51bb\u7ed3\u7684 v25 \u624b\u518c\u8981\u6c42\u5b9a\u65f6\u7eed\u8dd1\u53e6\u83b7\u4eba\u7c7b\u6307\u4ee4\u3002\u662f\u5426\u5b89\u63922026\u5e7410\u670820\u65e5\u65b0\u52a0\u576114:00\u7684\u4e00\u6b21\u7eed\u8dd1\uff1f\u4ec5\u572814:00\u201314:40\u5185\u3001\u5168\u90e8\u65b0\u9c9c\u524d\u7f6e\u901a\u8fc7\u540e\u6267\u884c\uff0c\u5b8c\u6210\u3001\u5931\u8d25\u6216\u8fc7\u671f\u5373\u505c\u6b62\u3002\",\"answer\":\"\u5b89\u6392\u56fa\u5b9a\u7a97\u53e3\u7eed\u8dd1\uff08\u63a8\u8350\uff09\"}]\n</send_user_message_question_reply>\n"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

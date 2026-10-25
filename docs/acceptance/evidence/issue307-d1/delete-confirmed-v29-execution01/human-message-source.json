@@ -1,0 +1,22 @@
+{
+  "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "session_message_id": "msg_01a16187-4686-7943-8fa7-a51d8d27bd7d",
+  "app_message_id": "01a16187-4686-7943-8fa7-a526bb53a2d5",
+  "human_turn_id": "01a16187-457a-7a22-88b2-dc486c16571f",
+  "timestamp": "2026-10-22T02:53:37.798Z",
+  "user_message_sha256": "b0c94da7bcacb7c9c0a3863fadfd5faba0418322cb603ed6e26e3ffb0c8993b3",
+  "user_message_utf8_bytes": 432,
+  "original_session_event_sha256": "4c424882eafe011a5e639a8a52f5c65315f7b399d1860d2c9ec320414511338b",
+  "original_session_event_utf8_bytes": 5887,
+  "source_session": "C:\\Users\\Henry\\.codex\\sessions\\2026\\10\\13\\rollout-2026-10-13T23-50-22-01a13579-573d-7a32-b1e1-3297fe78380a_01a135f5-2d3a-7953-8149-c86a26446d07.jsonl",
+  "source": "ACTUAL_CURRENT_CHAT_DIRECT_USER_MESSAGE",
+  "preceding_crosscheck_message_id": "msg_099c3841d45c7835016ad97a2c95dc81998d403eba6281ca59",
+  "preceding_crosscheck_timestamp": "2026-10-22T02:51:32.464Z",
+  "preceding_crosscheck_sha256": "c526d0208900e09358f3240fbc228409de53cfffb4b2f687b7995dab46dc6cb6",
+  "full_confirmation_message_id": "msg_099c3841d45c7835016ad975581020819984a6a4cc19d0cc01",
+  "full_confirmation_app_sha256": "acb4a8e4627cf9371b12fff6cfc36403c116586a4ca0feee51a77f781ddb7183",
+  "full_confirmation_session_sha256": "d202e5eca645d76bc60a3c46225fb6de02b2e8b6c64f5f55a4d36820fde2abe7",
+  "rendering_metadata_difference": "Session additionally retains memory citation; business text/template identical",
+  "approval_mode": "EXPLICIT_SCOPE_BY_REFERENCE_TO_CURRENT_UNIQUE_C19_V29_FULL_PLAN_AND_PASS_CROSSCHECK",
+  "user_retyped_template": false
+}

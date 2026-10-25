@@ -1,0 +1,312 @@
+{
+  "status": "PASS_BOUNDED_C17_SOURCE_PREPARATION_REVIEW",
+  "reviewed_at": "2026-10-20T11:27:13.118639+00:00",
+  "source_head": "8cca345525af828a8c9461e75f2dc5bf5f1fb428",
+  "base_head": "226a94c61ba2670f4dfc33e00b9181e051e33288",
+  "remaining_blockers": [],
+  "reviewer": "existing sole independent reviewer",
+  "scope": "candidate17 source preparation only; no allocation/native/packet/execution authority",
+  "contract": {
+    "path": "docs/acceptance/issue307-d1-candidate17-source-contract.md",
+    "sha256": "cc1a0547bda80a497f6f8e1233e4ce32a166961338b7d02bbc5759c171af24c7",
+    "bytes": 4141
+  },
+  "current_binding": {
+    "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+    "profile": "candidate17/v27",
+    "not_before": "2026-10-21T06:00:00Z",
+    "not_after_exclusive": "2026-10-21T06:40:00Z",
+    "Singapore_window": "2026-10-21 14:00-14:40",
+    "readonly_end": "2026-10-21T08:40:00Z",
+    "candidate_use_until": "same compiled END for all six cases",
+    "recovery_valid_until": "compiled END + 2h",
+    "authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "PR332": "DRAFT",
+    "Issue307": "OPEN"
+  },
+  "source_files": {
+    ".gitattributes": {
+      "sha256": "e5dd8c476d75dcedb1fea749a7e026f0d6dbc5194182dae472c56b2349529a39",
+      "bytes": 17244,
+      "git_sha256": "e5dd8c476d75dcedb1fea749a7e026f0d6dbc5194182dae472c56b2349529a39",
+      "git_bytes": 17244,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "4c88404f60f0be10c226dace1c8936797e37ec7d5c43243fd2fd9638fb7ca9f6",
+      "bytes": 31073,
+      "git_sha256": "4c88404f60f0be10c226dace1c8936797e37ec7d5c43243fd2fd9638fb7ca9f6",
+      "git_bytes": 31073,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "419f1e9dd2920af80111aac6a88c814644de912ddc1f1366b7cc49c93b8946f6",
+      "bytes": 6511,
+      "git_sha256": "419f1e9dd2920af80111aac6a88c814644de912ddc1f1366b7cc49c93b8946f6",
+      "git_bytes": 6511,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": {
+      "sha256": "6f5effdcfbfcab3ce62a9c4683227cbff920895c92bf4ef00ee0da620255028f",
+      "bytes": 8683,
+      "git_sha256": "6f5effdcfbfcab3ce62a9c4683227cbff920895c92bf4ef00ee0da620255028f",
+      "git_bytes": 8683,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "sha256": "ca4280e18c59c371d087d8739ee3aafc8606ed6825749e084b1f60d66c36e461",
+      "bytes": 5508,
+      "git_sha256": "ca4280e18c59c371d087d8739ee3aafc8606ed6825749e084b1f60d66c36e461",
+      "git_bytes": 5508,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go": {
+      "sha256": "f2d6465805cfbf575aa81c9430ce5451a15b6b956692ea94aaf544cdc567af7e",
+      "bytes": 1192,
+      "git_sha256": "f2d6465805cfbf575aa81c9430ce5451a15b6b956692ea94aaf544cdc567af7e",
+      "git_bytes": 1192,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "sha256": "1dab3d36baf5fbe0669c67808953d2621eea4edca7ba5d59459f99f461ae88f2",
+      "bytes": 2366,
+      "git_sha256": "1dab3d36baf5fbe0669c67808953d2621eea4edca7ba5d59459f99f461ae88f2",
+      "git_bytes": 2366,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "docs/acceptance/issue307-d1-candidate17-source-contract.md": {
+      "sha256": "cc1a0547bda80a497f6f8e1233e4ce32a166961338b7d02bbc5759c171af24c7",
+      "bytes": 4141,
+      "git_sha256": "cc1a0547bda80a497f6f8e1233e4ce32a166961338b7d02bbc5759c171af24c7",
+      "git_bytes": 4141,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "bytes": 8053,
+      "git_sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "git_bytes": 7869,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "11a7098bc89bc0b0ed554d414ec0838016f8b4867ba52a3803e2d04146757e3e",
+      "bytes": 23154,
+      "git_sha256": "3113644101f9d822961417b1ccbc901552b7b994cb7f4c2016c586b6ebc83d3d",
+      "git_bytes": 22927,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "0641bb5480c2443d34793dd69ea94c90c380f616caaf58b6a5b504a32bd9d279",
+      "bytes": 38921,
+      "git_sha256": "58151b5cbce279966b2bb316b901ae2f9bf245a790c0fc097bca50a89baf6dc8",
+      "git_bytes": 38489,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/remaining_sequence.py": {
+      "sha256": "0596c039e67cf386cde2b9dd0d870bd5646bb4a3e89553f849ecd70c1a429a1c",
+      "bytes": 7221,
+      "git_sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "git_bytes": 7093,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/remaining_six_window.py": {
+      "sha256": "8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494",
+      "bytes": 1978,
+      "git_sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "git_bytes": 1931,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/retained_v26.py": {
+      "sha256": "b7c973b61f8656fa5d4d730ae3fdd7cc164bc793b8842a7ca7dbf7139223d86b",
+      "bytes": 9795,
+      "git_sha256": "b7c973b61f8656fa5d4d730ae3fdd7cc164bc793b8842a7ca7dbf7139223d86b",
+      "git_bytes": 9795,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "fda88a943c0fa5f6e8d90f7e9a9cd2c5da9a99d012d7dd1db762cc1b5db5070c",
+      "bytes": 43565,
+      "git_sha256": "d8746d98bf1007920adf476dd5aba30f47a97d7c25facd0f05bbbe398e272d0a",
+      "git_bytes": 42996,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "38bf4952f56fa0738a85006833c27dc3b9dfc0c792b69a633cd3fc733f20ad96",
+      "bytes": 7172,
+      "git_sha256": "38bf4952f56fa0738a85006833c27dc3b9dfc0c792b69a633cd3fc733f20ad96",
+      "git_bytes": 7172,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_remaining_six_window.py": {
+      "sha256": "cc572045742504f6afda1f8462ce5557898943644b33229c5bd025dd34e8a07e",
+      "bytes": 6266,
+      "git_sha256": "cc572045742504f6afda1f8462ce5557898943644b33229c5bd025dd34e8a07e",
+      "git_bytes": 6266,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_retained_v26.py": {
+      "sha256": "4c060d5e1bb1526bf134a11b39a6d2a5fcb3f48707096f6b1cf8656682fe3321",
+      "bytes": 6447,
+      "git_sha256": "4c060d5e1bb1526bf134a11b39a6d2a5fcb3f48707096f6b1cf8656682fe3321",
+      "git_bytes": 6447,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "32c8da326e88c78f335ad370c3a9d7a86722e1224435d628037955c0550cea98",
+      "bytes": 15977,
+      "git_sha256": "cd9a647ef5da92c761c9ce482abdb12dbf4adc7e8726217c46a73da97cf6e97f",
+      "git_bytes": 15700,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "f29c13db8a9bb5a99d92a500b3a93c0b55178f52bb1526a9361bf6ddd1fbadd8",
+      "bytes": 16124,
+      "git_sha256": "2c3e51178565b118ca766f610fd8d0082585e36bd67e175363084a8021520e70",
+      "git_bytes": 15935,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "40e392ea463e92dd094e2364e236e1bd4a5539864cde5bbda61a1e29a682c5d2",
+      "bytes": 12925,
+      "git_sha256": "3d9e7efd75f9e9da4070683fa79c0aecc6c006c639156835995bb3562401bd2b",
+      "git_bytes": 12772,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    }
+  },
+  "source_readback": {
+    "sha256": "c3efaa20ea78bbafef2b70805da2cd358e55bb50dd63e582c7e97f0983393585",
+    "bytes": 7571
+  },
+  "in_scope_conclusions": [
+    {
+      "classification": "PASS",
+      "topic": "Execution/window and authority separation",
+      "detail": "Current Go execution/profile/START/END drive Python compiled contract, case and recovery windows, new identity names and v27 AuthPath. Old execution/confirmation cannot satisfy current gates. P1 stays excluded; fixed six order, budgets and UNKNOWN no-resend are unchanged. No Renew or source business replay was added."
+    },
+    {
+      "classification": "PASS",
+      "topic": "Retained v26 facts",
+      "detail": "A fixed old checkout and pinned candidate/bindings/allocation/descriptors/preparation/auth/terminal are checked. All76 approved references, actual human bytes/envelope and25 seal-history files remain pinned. Revocation accepts only the original true-to-false Enabled field with original+disabled SHA and every other semantic field identical.86 old descriptors/PID0, exact budget mounted CID sets and empty TAR contract, nine backups and actual sealed gateway are checked. Old terminal UNKNOWN/IAM UNCONFIRMED is preserved, not upgraded to fresh identity proof."
+    },
+    {
+      "classification": "PASS",
+      "topic": "Complete IAM membership",
+      "detail": "Current six identities are independent from actual retained c14/c15/c16 identities. Expected known users are13/8/8=29, with28sole+1fixed dormant NONE, and9fixed never-created names. The root status transport selects only current execution names for enable; retained names remain read/disable-only. Go contract tests cover the actual expected map without weakening old frozen validators."
+    },
+    {
+      "classification": "PASS",
+      "topic": "Typed metadata writer and required complete audit",
+      "detail": "Current non-delete writer emits status/count/files metadata. Freeze validates its terminal-pinned raw index through the strict shared files-map checker. A real source report gate binds matching source, PASS and no blockers; its index and report are separately pinned in a third index without self-reference. Frozen plan binds current candidate raw SHA/execution. Complete main still requires the explicit plan and SHA and audits before host/native. Real historical digest maps retain their exact pinned old reader and are never coerced into current observations."
+    },
+    {
+      "classification": "PASS",
+      "topic": "Failure and history boundaries",
+      "detail": "Existing CLI parent-junction, short/long path, malformed/rehash and second-group failure contracts remain covered. No prior execution is reopened. Independent evidence is outside active preparation directories, with no source or old evidence edits."
+    }
+  ],
+  "independent_regressions": {
+    "python_normal": {
+      "methods": 57,
+      "pass": 56,
+      "skip": 1,
+      "summary": {
+        "sha256": "1538d1dd30730a28d95842fdbd20c78335ea34157e410e8e4aefc56388eaaba2",
+        "bytes": 3283
+      }
+    },
+    "python_optimized": {
+      "methods": 57,
+      "pass": 56,
+      "skip": 1,
+      "summary": {
+        "sha256": "2fd20f6f111dd3ba03dc6d469a95898080ae9b2e6f3562557efefa504f1738a2",
+        "bytes": 3313
+      }
+    },
+    "python_skip": "This Windows account cannot create a real symlink. The real Windows authorization-parent junction counterexample and non-skipped junction boundary remain exercised.",
+    "python_external_guard": "Global subprocess.Popen rejection; zero unmocked process attempts.",
+    "go": {
+      "packages": 5,
+      "pass": 274,
+      "skip": 2,
+      "fail": 0,
+      "receipt": {
+        "sha256": "0f628ecc1fe823be50c0510a0335f06f7f693a612134ccacc998284c8e6faa29",
+        "bytes": 1907
+      },
+      "skip_reason": "Real PG TEST_POSTGRES_DSN and native opt-in DPP307_SIX_NATIVE_CONTRACT were explicitly unset. Only unit/mock/httptest paths ran."
+    },
+    "writer_freeze_complete_audit_seam": {
+      "receipt": {
+        "sha256": "2fc0a795a945c62412fece495414882b010f498f1902994996afe07d77ce3b47",
+        "bytes": 1781
+      },
+      "result": "PASS_RECORDED_WRITER_FREEZE_COMPLETE_AUDIT_SEAM",
+      "actual_writer_members": 65,
+      "total_verified_members": 68,
+      "boundary": "Actual run_non_delete under process/provider doubles -> actual freeze preparation_audit_plan -> exact shared complete-entry audit function. No native acceptance claimed."
+    }
+  },
+  "author_actual_evidence": {
+    "receipt": {
+      "sha256": "c9cafbe0849fc36c50ef3dee034521ee7ea983940aa2a49cabb5052e0cd170a9",
+      "bytes": 1168
+    },
+    "scope": "Public original result/raw-log hash readback only; author executed live retained cold check, reviewer did not.",
+    "retained_closed_cids": 445,
+    "old_IAM_closure": "UNCONFIRMED preserved",
+    "old_failures": "Original test/Go fixture and count failures are preserved in planning source-tests01/go-tests01. Final source-final04 and independent regressions pass."
+  },
+  "evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate17-source-review01/evidence-index.json",
+    "sha256": "778f80089c8a34f086c18736e195b8069a2dd4161fec55308db563572566507e",
+    "bytes": 4650,
+    "format": "files-map-v1",
+    "count": 30,
+    "excludes": [
+      "evidence-index.json",
+      "independent-final-review01.json"
+    ]
+  },
+  "limits": {
+    "new_allocation_cold_budget_native_archive_restore": "NOT_REVIEWED_THIS_SOURCE_PHASE",
+    "frozen_candidate_packet_and_full_fresh_native_entry": "NOT_RUN_BY_REVIEWER_NOT_ACCEPTED_BY_SOURCE_REPORT",
+    "exact_head_PR_CI": "NOT_CERTIFIED_BY_THIS_REPORT",
+    "source_Docker_Core_native_real_provider_enable_delete_calls_by_reviewer": 0,
+    "production_proof_signing": 0,
+    "Git_GitHub_writes": 0,
+    "source_and_prior_evidence_writes": 0,
+    "reviewer_outputs": "O_EXCL only under candidate17-source-review01; unit temporary fixtures synthetic",
+    "old_authorization_reused": false,
+    "new_delete_authorization": false,
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "followups": [
+    {
+      "classification": "OUT_OF_SCOPE_REQUIRED_LATER_PHASE",
+      "detail": "Cold allocation/budget, actual Source/restore, frozen packet/complete native entry/confirmation, exact HEAD CI and new precise human deletion authority remain separate gates. No general fixture-generation platform work is required to pass this bounded source slice."
+    }
+  ]
+}

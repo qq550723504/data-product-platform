@@ -1,0 +1,33 @@
+{
+  "role": "six-restore-inspect-disable",
+  "group": "late-hold",
+  "cid": "f864356f53808a4450f7a5b70f3a37e4b16553469971871bedeffc24421621b8",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate13-restore-inspect-disable",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:0bc818f797d2943eb3aacd2cfcd93e25ece31ca40b2702e0b342b8f6f2710838",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\late-hold\\restore-inspect-disable,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\late-hold\\outputs\\restore-inspect-disable,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "six-restore-inspect-disable"
+  ]
+}

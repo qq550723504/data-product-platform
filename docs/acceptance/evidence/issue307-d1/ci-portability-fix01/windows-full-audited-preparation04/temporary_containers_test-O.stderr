@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\docs\acceptance\evidence\issue307-d1\ci-portability-fix01\offline_python_runner01.py", line 24, in <module>
+    try:runpy.run_path(sys.argv[0],run_name='__main__')
+        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\..\temporary_containers_test.py", line 10, in <module>
+    import temporary_containers as tc
+ModuleNotFoundError: No module named 'temporary_containers'

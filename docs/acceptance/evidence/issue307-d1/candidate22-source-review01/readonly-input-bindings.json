@@ -1,0 +1,35 @@
+{
+  "at": "2026-10-23T04:40:28.313637+00:00",
+  "native_delete": 0,
+  "provider_calls": 0,
+  "container_or_volume_observation": "NOT_RUN_READONLY_SOURCE_REVIEW",
+  "status": "PASS_READONLY_CURRENT_INPUT_BINDINGS_NOT_NATIVE",
+  "public_count": 6061,
+  "original_public_files_match": true,
+  "private_file_count_in_pinned_anchor": 2257,
+  "owner_count": 86,
+  "technical_owner_count": 3,
+  "retained_owner_union": 996,
+  "resource_volumes": 15,
+  "resource_networks": 3,
+  "budgets": 3,
+  "budget_complete_mount_crossbinding": true,
+  "terminal_sha256": "5568708e62c4ad37f8765aba667697de547d83fe0e598d59d7d4341a84b4b188",
+  "archive_sha256": "aca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698",
+  "archive_bytes": 6428089,
+  "archive_members": 769,
+  "schema": {
+    "max_version": 69,
+    "migration_members": 66,
+    "protected_identity": false
+  },
+  "runtime_delta_files": [
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go"
+  ],
+  "private_live_verification": "NOT_RUN",
+  "environment_live_verification": "NOT_RUN"
+}

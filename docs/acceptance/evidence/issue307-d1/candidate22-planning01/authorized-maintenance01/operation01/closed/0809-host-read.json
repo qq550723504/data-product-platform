@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "docker",
+    "ps",
+    "-aq",
+    "--no-trunc",
+    "--filter",
+    "volume=dpp-lifecycle307-754ea8f0-candidate14-budget"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:19:53.534319+00:00",
+  "stdout_sha256": "f4f0e311cc6d665c6bfb1c4917039ec0a09db866271bf938f0695317bf1f56ba",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

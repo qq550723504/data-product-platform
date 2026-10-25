@@ -1,0 +1,10 @@
+{
+  "status": "PASS_FINAL_FULL_TEXT_TEMPLATE_AND_BINDING_BYTES",
+  "template_lines": 137,
+  "targets": 6,
+  "survivors": 11,
+  "binding_sha256": "f27a617f278fcbaf64db29ddf536d5816d88acaba8a0d760280eb23bbe55d0de",
+  "proposal_sha256": "f51754642b34f738cf6313f520432baaf4d43e71005c78c6f147943dad71b9ea",
+  "human_authority": false,
+  "native_delete": 0
+}

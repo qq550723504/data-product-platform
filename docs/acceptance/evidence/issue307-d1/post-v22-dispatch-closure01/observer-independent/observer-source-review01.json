@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_POST_V22_OBSERVER_ADAPTER_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T12:01:47.427225+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "checkout": "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform",
+  "source_HEAD": "ea869c5c7e2b58a2096805cd5d7bcb682a21b719",
+  "branch": "codex/issue307-post-v22-dispatch-closure",
+  "scope": "Initial bounded source/authority/signature review of fixed P2/T1/T2 PostV22NoSendVerifier and new finite observer. WIP four-file source scope; host proof builder/full execution entry/actual retained mutation are separate and not approved here.",
+  "reviewed_files": {
+    "docs/acceptance/issue307-d1-post-v22-dispatch-closure.md": {
+      "sha256": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+      "lf_sha256": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+      "bytes": 4519
+    },
+    "apps/platform/internal/lifecycle/pilot/post_v22_no_send.go": {
+      "sha256": "9d5a746839ce755ac025fce875e3ee37e4645d58ea4a1619be1ca5bc6d553826",
+      "lf_sha256": "9d5a746839ce755ac025fce875e3ee37e4645d58ea4a1619be1ca5bc6d553826",
+      "bytes": 6936
+    },
+    "apps/platform/internal/lifecycle/pilot/post_v22_no_send_test.go": {
+      "sha256": "0476f117d8cf7f0a39069b39db0cc9bbd2cb4df71b53f4048279f0a5d77e6bac",
+      "lf_sha256": "0476f117d8cf7f0a39069b39db0cc9bbd2cb4df71b53f4048279f0a5d77e6bac",
+      "bytes": 9672
+    },
+    "apps/platform/cmd/lifecycle-fixture-old-dispatch/main.go": {
+      "sha256": "1b8dd67e47394716fce28a5a111a4fc2ae00fac10f1cfe7f9eb536b0b99e0692",
+      "lf_sha256": "1b8dd67e47394716fce28a5a111a4fc2ae00fac10f1cfe7f9eb536b0b99e0692",
+      "bytes": 8136
+    },
+    "apps/platform/cmd/lifecycle-fixture-old-dispatch/main_test.go": {
+      "sha256": "88b985ee3866a4090df279b4ed5914cbacc9856ac54b85d5ae7bcdf245fde98e",
+      "lf_sha256": "88b985ee3866a4090df279b4ed5914cbacc9856ac54b85d5ae7bcdf245fde98e",
+      "bytes": 3536
+    },
+    "apps/platform/internal/lifecycle/application/occupancy.go": {
+      "sha256": "1f4ceb72d21d2f31bcfedf8b04c9d5567729e594c06abc7a8f3041cc9f502816",
+      "lf_sha256": "1f4ceb72d21d2f31bcfedf8b04c9d5567729e594c06abc7a8f3041cc9f502816",
+      "bytes": 22874
+    },
+    "apps/platform/internal/lifecycle/application/disposition.go": {
+      "sha256": "2417b7b4f4a31d4ed3939777dd01252fdbd2ff5baa1bb3e9e0a83e867fd14e6e",
+      "lf_sha256": "2417b7b4f4a31d4ed3939777dd01252fdbd2ff5baa1bb3e9e0a83e867fd14e6e",
+      "bytes": 22466
+    },
+    "apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go": {
+      "sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+      "lf_sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+      "bytes": 678
+    },
+    "apps/platform/internal/lifecycle/pilot/reference_no_send.go": {
+      "sha256": "5b088e723985807cc31fad0b482fdd9a854446e90641d9e2671605c15c78de59",
+      "lf_sha256": "5b088e723985807cc31fad0b482fdd9a854446e90641d9e2671605c15c78de59",
+      "bytes": 4486
+    },
+    "migrations/000060_lifecycle_fixture_plan.up.sql": {
+      "sha256": "0aa69112c2369128519286ed5ee0d641caa10fd29ef548bb16489e52595039bc",
+      "lf_sha256": "0aa69112c2369128519286ed5ee0d641caa10fd29ef548bb16489e52595039bc",
+      "bytes": 42277
+    },
+    "migrations/000061_lifecycle_scoped_completion.up.sql": {
+      "sha256": "71030f44300a690b5575df0592f66f2823675a1eca88f0f7341a80e186caec02",
+      "lf_sha256": "71030f44300a690b5575df0592f66f2823675a1eca88f0f7341a80e186caec02",
+      "bytes": 5891
+    }
+  },
+  "fixed_cases_cross_checked_against_actual_Core_receipt": {
+    "P2": {
+      "plan": "bce1b1b1-d6e2-44fd-8b87-171142350ab9",
+      "copy": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+      "dispatch": "670f5351-103f-472f-aeea-1f29213eda7c",
+      "attempt": "73d9251e-a128-47b1-8f5a-eaa35603c233",
+      "approval": "77b4d18c-8f1d-44e4-8844-696ba44a9a0f",
+      "plan_hash": "d4758d9b64003d92aca60290fee1d2f22e7a857d2fe2be513d4a1ea2755ce6a3"
+    },
+    "T1": {
+      "plan": "247a2ca9-d2f3-4384-bcee-b10add497175",
+      "copy": "f48755f1-976b-4f47-98da-70ead936a4c3",
+      "dispatch": "134315c3-bad8-4fda-a927-3ef71e2cca5e",
+      "attempt": "bb6ecab6-53f1-4a9c-a333-f0cf6f4edd4a",
+      "approval": "16df6254-abd2-419d-bf6d-99a9d1d675d0",
+      "plan_hash": "7c4daf909a375bc21fcf8dd09b14d99960ae1f919ce138eb517ac0593faf1c1c"
+    },
+    "T2": {
+      "plan": "531c7b96-173f-4028-be97-2de9ed6c72f2",
+      "copy": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+      "dispatch": "b9ebd875-8942-4303-8e17-41612dd8100c",
+      "attempt": "933462ae-04d6-4da4-97de-067b62863e0a",
+      "approval": "4a20d7d4-b0a8-4dde-9b20-f133f6355dda",
+      "plan_hash": "84fbafb913dba44e5ceb43d670203e55f0244fad62a2dc2fd9ebb10b87e0cab5"
+    }
+  },
+  "actual_prior_Core_audit_input": {
+    "audit_id": "23587686-0a95-4eaa-a010-a8c896c9735b",
+    "status": "PASS_CORE_READONLY_AUDIT_ONLY",
+    "one_original_dispatch_attempt_each": true,
+    "claims_observations_releases_absences_absent": true,
+    "original_approvals_unrevoked": true,
+    "proof_signed": false,
+    "business_mutations": 0,
+    "fresh_IAM_or_native_verified": false,
+    "source_reclosed": true,
+    "files": {
+      "actual-Core-rows.json": {
+        "sha256": "7dbe74509e395c1febf43c89ba75e52967eef8e267af7e9c4c559e99b1e73117",
+        "lf_sha256": "7dbe74509e395c1febf43c89ba75e52967eef8e267af7e9c4c559e99b1e73117",
+        "bytes": 8064
+      },
+      "terminal.json": {
+        "sha256": "ae389b29d4bcfa8fc0c013d960775dcdc6e9b203c4ed85da1d6bd94e2d6455e2",
+        "lf_sha256": "ae389b29d4bcfa8fc0c013d960775dcdc6e9b203c4ed85da1d6bd94e2d6455e2",
+        "bytes": 1048
+      }
+    }
+  },
+  "source_assessment": {
+    "reuse": "Reuses existing signed-byte envelope/standard ed25519, existing StaticResolver, DispositionService revoke/observation commands, workspace fence/plan/dispatch/attempt locks, transaction manager, canonical routing and immutable Audit/Evidence/Outbox. No second queue, policy runtime or business fact store.",
+    "proof_scope": "Fixed historical execution/candidate/bindings/Core, new nonnil AuditID excluding old execution, nonnil nonce and exact ref, exact ordered target identities incl original approval/hash, server-owned Owners and Evidence digest, closed/PID0/no-restart/config-disabled/delete-identity-disabled/gateway-sealed assertions. Public key/signature, future/stale proof and hex digest sizes are checked; age<=1minute at the service-supplied fresh lock-time authorization.",
+    "locked_revalidation": "Existing RecordProviderObservation acquires workspace fence then plan, dispatch and attempt locks, authorizes again after locks, invokes new verifier and validates the returned fact. Adapter rechecks exact revoked original approval/hash/basis/principal and rejects any claim, observation (including UNKNOWN), release, absence, alternative attempt or dispatch on the exact copy. No network I/O while locked.",
+    "authority": "Observer config binds fixed Core/tenant/Actor, exact DSN URL plus pgx parsed host/port/database/user/nonempty-password/noTLS/noFallback, unique new audit, <=40minute finite interval, MaxProviderDeletes=0 and own executable SHA. Every service authorization rereads strict private config and requires full equality to original before using StaticResolver with only RevokeApproval+ObserveAttempt. No dispatch/approval/hold release/reader termination capability or storage port/MinIO root credential path exists.",
+    "history_and_cost": "New observer only revokes the hardcoded original approvals when needed and records exact NOT_SENT via existing service. It never rewrites attempts, old approval, UNKNOWN, budget, pins or original provider facts. NOT_SENT yields no fictional provider CostEvent; known conflict fails. Per-case committed revocations/observations/releases survive any later failure; no all-three rollback or resend path is introduced.",
+    "idempotency_and_results": "Command keys are new AuditID+fixed case+operation, existing service fingerprint/replay prevents duplicate facts. Result uses O_EXCL and preserves partial case results/original error. This is a one-shot source, not approval for resuming a failed host audit; host lifecycle/replay/containment still needs its own review.",
+    "required_success_path": "Service constructors with nil disposal dependencies/approval grant port are usable for Revoke+Observe only; canonical routing is installed before either command. The worker initializes no sender, Native adapter, IAM helper or queue."
+  },
+  "independent_actual_tests": [
+    {
+      "command": "go test -count=1 -json ./internal/lifecycle/pilot ./cmd/lifecycle-fixture-old-dispatch",
+      "exit_code": 0,
+      "packages": {
+        "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch": "pass",
+        "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot": "pass"
+      },
+      "test_counts": {
+        "pass": 55,
+        "skip": 1,
+        "fail": 0
+      },
+      "scope": "Unit/signature tests use newly generated test-only ephemeral keys and synthetic signed bytes. No real trusted host key/proof. TEST_POSTGRES_DSN and related external addresses removed in child environment; TEMP-table PostgreSQL adapter test intentionally skipped. No retained provider/Docker/Core call."
+    },
+    {
+      "command": "gofmt -l four reviewed Go files",
+      "result": "PASS_EMPTY_LIST",
+      "mode": "READ_ONLY_NO_SOURCE_EDITS"
+    }
+  ],
+  "independent_artifacts": {
+    "go-unit01.jsonl": {
+      "sha256": "c20ca34d02d940322ae0515a031c8b7d4fb68f06d49bd0ccdb585d635b716bd4",
+      "lf_sha256": "c20ca34d02d940322ae0515a031c8b7d4fb68f06d49bd0ccdb585d635b716bd4",
+      "bytes": 67008
+    },
+    "go-unit01.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lf_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "gofmt-readonly01.txt": {
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "lf_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    }
+  },
+  "findings": [],
+  "required_followup_before_any_retained_mutation": [
+    {
+      "classification": "DEFERRED_REQUIRED_VALIDATION_NOT_CLAIMED",
+      "item": "Parent-owned real PG adapter-query regression is still pending at report time; TEMP-table eligibility/SQL tests alone cannot establish full migration/Command/fence/idempotency/event/cost preservation acceptance. Inspect the separate complete service/migration PG results before claiming that acceptance."
+    },
+    {
+      "classification": "EXCLUDED_HOST_ENTRY_SLICE_MUST_BE_REVIEWED",
+      "item": "Actual server-owned observer config/public key/binary/CID/owner set/evidence bindings, signed host proof production, fresh IAM/policy/gateway/owner checks, closed-root isolation, current topology, failure containment and terminal no-repeat policy remain under construction. This source PASS is not a host run gate."
+    },
+    {
+      "classification": "FOLLOW_UP_ISSUE307_NOT_CURRENT_SOURCE_BLOCKER",
+      "item": "Actual trusted NOT_SENT closure, 17-version refresh, six-target preparation/execution/new authority and full D1 acceptance remain separate. No old authorization is reusable."
+    }
+  ],
+  "scope_limits": [
+    "No actual retained observer run, approval revocation, NOT_SENT fact or dispatch release was executed by reviewer; this status does not certify those business results.",
+    "Existing actual Core-only audit is used as an immutable identity input, not as trusted no-send proof. Empty claims/observations/cost/wire data never proves no actual invocation or no cost.",
+    "No private credential values, host private keys or proof signing materials accessed. Synthetic unit signing is not actual host attestation.",
+    "No Docker, provider/native/source start, real PostgreSQL, identity enable, proof production, implementation edits, Git/GitHub writes. Only O_EXCL review logs/report in this isolated observer-independent directory; main checkout untouched.",
+    "PG receipts that arrive later and the host/full execution composition require a separate append-only evidence review; current four-file source SHA must be rechecked if writer changes them."
+  ],
+  "reviewer_operations": {
+    "Docker": 0,
+    "provider": 0,
+    "Native": 0,
+    "PostgreSQL_real": 0,
+    "retained_mutation": 0,
+    "identity_enable": 0,
+    "secret_values_read": 0,
+    "actual_host_proof_signing": 0,
+    "real_DELETE": 0,
+    "implementation_write": 0,
+    "main_checkout_write": 0,
+    "Git_write": 0,
+    "GitHub_write": 0
+  },
+  "adapter_query_PG": "NOT_RUN_BY_REVIEWER_PENDING_PARENT_RECEIPT",
+  "full_Command_PG": "NOT_REVIEWED_THIS_REPORT",
+  "host_proof_entry": "NOT_IMPLEMENTED_OR_REVIEWED_THIS_REPORT",
+  "actual_NOT_SENT_closure": "NOT_RUN",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

@@ -1,0 +1,107 @@
+=== RUN   TestRetentionCompleteTwoOwnerSuccessAndPersistentReplayClosure
+--- PASS: TestRetentionCompleteTwoOwnerSuccessAndPersistentReplayClosure (0.35s)
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/disabled
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/old-purpose
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/bad-signature
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/human-drift
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/stale-proof
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/future-proof
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/window-end
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/foreign-budget
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/expanded-budget
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/sync-failure
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/unknown-key
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/wrong-plan
+=== RUN   TestRetentionGrantAndFreshTopologyDenialsBeforeIO/duplicate-json
+--- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO (1.35s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/disabled (0.10s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/old-purpose (0.11s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/bad-signature (0.10s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/human-drift (0.10s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/stale-proof (0.09s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/future-proof (0.09s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/window-end (0.10s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/foreign-budget (0.10s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/expanded-budget (0.10s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/sync-failure (0.13s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/unknown-key (0.12s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/wrong-plan (0.12s)
+    --- PASS: TestRetentionGrantAndFreshTopologyDenialsBeforeIO/duplicate-json (0.09s)
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/delete
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/content-put
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/hold-put
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-version
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/extra-query
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/duplicate-version
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/bypass
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-xml
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-host
+=== RUN   TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-operation
+--- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider (0.98s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/delete (0.08s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/content-put (0.09s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/hold-put (0.10s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-version (0.10s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/extra-query (0.10s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/duplicate-version (0.10s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/bypass (0.10s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-xml (0.10s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-host (0.10s)
+    --- PASS: TestRetentionWireRejectsExpansionBeforeSlotOrProvider/wrong-operation (0.10s)
+=== RUN   TestRetentionFailureUnknownAndObservationLossNeverResend
+=== RUN   TestRetentionFailureUnknownAndObservationLossNeverResend/403
+=== RUN   TestRetentionFailureUnknownAndObservationLossNeverResend/500
+=== RUN   TestRetentionFailureUnknownAndObservationLossNeverResend/lost-response
+=== RUN   TestRetentionFailureUnknownAndObservationLossNeverResend/post-readback-drift
+=== RUN   TestRetentionFailureUnknownAndObservationLossNeverResend/revoke-after-start
+=== RUN   TestRetentionFailureUnknownAndObservationLossNeverResend/observation-failure
+--- PASS: TestRetentionFailureUnknownAndObservationLossNeverResend (1.65s)
+    --- PASS: TestRetentionFailureUnknownAndObservationLossNeverResend/403 (0.21s)
+    --- PASS: TestRetentionFailureUnknownAndObservationLossNeverResend/500 (0.27s)
+    --- PASS: TestRetentionFailureUnknownAndObservationLossNeverResend/lost-response (0.37s)
+    --- PASS: TestRetentionFailureUnknownAndObservationLossNeverResend/post-readback-drift (0.19s)
+    --- PASS: TestRetentionFailureUnknownAndObservationLossNeverResend/revoke-after-start (0.25s)
+    --- PASS: TestRetentionFailureUnknownAndObservationLossNeverResend/observation-failure (0.37s)
+=== RUN   TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation
+=== RUN   TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/content
+=== RUN   TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/retention
+=== RUN   TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/journal
+=== RUN   TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/response-version
+--- PASS: TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation (0.42s)
+    --- PASS: TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/content (0.09s)
+    --- PASS: TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/retention (0.10s)
+    --- PASS: TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/journal (0.14s)
+    --- PASS: TestRetentionPreflightDriftAndJournalFailurePreserveNoMutation/response-version (0.09s)
+=== RUN   TestRetentionConcurrentInvocationConsumesOneSlot
+--- PASS: TestRetentionConcurrentInvocationConsumesOneSlot (0.11s)
+=== RUN   TestRetentionCheckpointPersistenceFailureCannotMasqueradeAsSuccess
+=== RUN   TestRetentionCheckpointPersistenceFailureCannotMasqueradeAsSuccess/success
+=== RUN   TestRetentionCheckpointPersistenceFailureCannotMasqueradeAsSuccess/terminal
+--- PASS: TestRetentionCheckpointPersistenceFailureCannotMasqueradeAsSuccess (0.30s)
+    --- PASS: TestRetentionCheckpointPersistenceFailureCannotMasqueradeAsSuccess/success (0.15s)
+    --- PASS: TestRetentionCheckpointPersistenceFailureCannotMasqueradeAsSuccess/terminal (0.15s)
+=== RUN   TestRetentionWaitFalseToTrueThenFreshAuthorization
+--- PASS: TestRetentionWaitFalseToTrueThenFreshAuthorization (0.08s)
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/pre-enabled
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/binding
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/permission-hash
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/duplicate
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/expired
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/early
+=== RUN   TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/cancelled
+--- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation (0.38s)
+    --- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/pre-enabled (0.05s)
+    --- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/binding (0.05s)
+    --- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/permission-hash (0.06s)
+    --- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/duplicate (0.05s)
+    --- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/expired (0.05s)
+    --- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/early (0.06s)
+    --- PASS: TestRetentionWaitRejectsPreEnableDriftExpiryAndCancellation/cancelled (0.05s)
+=== RUN   TestRetentionLinuxRealDirectorySyncAndTwoOwnerReadback
+--- PASS: TestRetentionLinuxRealDirectorySyncAndTwoOwnerReadback (0.17s)
+=== RUN   TestRetentionLinuxMountedVolumeCustody
+--- PASS: TestRetentionLinuxMountedVolumeCustody (0.00s)
+PASS

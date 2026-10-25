@@ -1,0 +1,22 @@
+{
+  "skipped": {
+    "policies": null,
+    "users": null
+  },
+  "removed": {
+    "policies": null,
+    "users": null
+  },
+  "added": {
+    "policies": null,
+    "users": null,
+    "userPolicies": [
+      {
+        "dpp307-contract-disabled": [
+          "dpp307-contract-readonly"
+        ]
+      }
+    ]
+  },
+  "failed": {}
+}

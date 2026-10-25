@@ -1,0 +1,10 @@
+{
+  "status": "FAILED_LOCAL_HARNESS_CWD_BEFORE_GO_EXECUTION",
+  "cause": "The initial evidence runner used parents[6] instead of parents[5]; its ROOT was the worktrees parent rather than d1-renew.",
+  "facts": "18 Python commands exited 2 because their paths did not exist under that cwd. Their original stdout/stderr files remain. Go did not start because the incorrect apps/platform cwd did not exist. No product or maintenance invariant was bypassed.",
+  "fix": "Use the resolved repository directory parents[5]; rerun in a new exclusive checks02 directory, preserving checks01.",
+  "source_start": 0,
+  "provider_calls": 0,
+  "retention_write": 0,
+  "delete": 0
+}

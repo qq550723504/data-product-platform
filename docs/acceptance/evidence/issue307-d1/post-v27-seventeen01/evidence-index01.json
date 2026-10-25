@@ -1,0 +1,1398 @@
+{
+  "status": "RECORDED_CURRENT_SEVENTEEN_READONLY_EVIDENCE",
+  "count": 348,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/current-head-ci-15afaac1/result.json": {
+      "sha256": "342788b6d04872a1b76fed65bdbe1878289c3ec9c9feae6b0f7ad340f483aa1b",
+      "bytes": 1980
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/allocated-owner.json": {
+      "sha256": "5264649fef9af4fdc3b8206d35f6175e4b5b0b1d52f43bba48f5021f0d898c9e",
+      "bytes": 256
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/checker-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/checker-stdout.txt": {
+      "sha256": "cf352eda0d9469616c38ca0b4b7d8409e25b8d2dce519e0364130a19e43c5071",
+      "bytes": 3439
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/closure.json": {
+      "sha256": "615a1268d269ffcb03750a0fb4283ed07031924cea1915a16d8827481c554017",
+      "bytes": 665
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/Core-after.json": {
+      "sha256": "ffdf75013a393da6a8444b28284fdfcc47b5a01a346f7fdf25a8c03138cd8a7f",
+      "bytes": 31435
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/Core-before.json": {
+      "sha256": "ffdf75013a393da6a8444b28284fdfcc47b5a01a346f7fdf25a8c03138cd8a7f",
+      "bytes": 31435
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/expectation.json": {
+      "sha256": "c73001f26b32851488ddcd4b13562b3aeb90fee005d8eaa07a00815e9f239e05",
+      "bytes": 950
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5.json": {
+      "sha256": "828bfabea656952d7db8e3cc99c3a64795d04ff702891dcde25b0a7ac77a4f2b",
+      "bytes": 803
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-remaining-business-remainput808a6960.json": {
+      "sha256": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-remaining-business-remainread808a6960.json": {
+      "sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+      "bytes": 1316
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5.json": {
+      "sha256": "78fa626b4d04216ffc71b73b72fbe4c8f0349a26268f83519033494825d8e9bb",
+      "bytes": 951
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-d6f40bca9808a6960.json": {
+      "sha256": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+      "bytes": 670
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-d9f9c67d7808a6960.json": {
+      "sha256": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+      "bytes": 670
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-daa2605a5808a6960.json": {
+      "sha256": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+      "bytes": 670
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-dafc0e66c808a6960.json": {
+      "sha256": "42443533e754974b56f38f43339fa3d0389e9825673265ca12d6f21353efa1ce",
+      "bytes": 670
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-i4e524c04808a6960.json": {
+      "sha256": "ce769b718e2b3d16185cd45aa1025f242a8bdf77bd45f2cc302cfda7d20f4c38",
+      "bytes": 2785
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-i6f40bca9808a6960.json": {
+      "sha256": "ce769b718e2b3d16185cd45aa1025f242a8bdf77bd45f2cc302cfda7d20f4c38",
+      "bytes": 2785
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-i9f9c67d7808a6960.json": {
+      "sha256": "d4dbb19394136f744d7a77d68e55d192749218c222a003b8e26be9675e382788",
+      "bytes": 2785
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-iaa2605a5808a6960.json": {
+      "sha256": "8c52d6812ffb8196f216a4a28c4641173e5b136a16f16bb08a6ae7c59759e859",
+      "bytes": 2785
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/native-policy-lifecycle307-six-iafc0e66c808a6960.json": {
+      "sha256": "8c52d6812ffb8196f216a4a28c4641173e5b136a16f16bb08a6ae7c59759e859",
+      "bytes": 2785
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-07c117d9-eb5d-4e43-a3f5-5de63c9fe0ba.json": {
+      "sha256": "991ae918bd8964a53e5e071a558627e0c54938c529a1efceb4ca7b365213c9d1",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-092d18ab-07d9-44b2-a0cb-dc73d27ca687.json": {
+      "sha256": "31d99ba123ce30ed51e9f7b43d48a8174645fe94e6d405486c8025f3b92e1227",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-0c981bf1-9aab-454d-a51c-d557c83a0066.json": {
+      "sha256": "504a323f550a047499fb00fcdfce23e5a98878d934556dcc00490e5d271d4631",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-13c9bb55-4e2b-4b95-9594-e4d4d72294b5.json": {
+      "sha256": "0e804ee4eb7fa3f7e3c9ad9ba572eb5c713f8df76888513c0d4340d5c6b9886a",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-1ec5ff66-4252-4cbe-935e-f2fa9fc5e014.json": {
+      "sha256": "881d4add43b478b2ed6dbd4da695497650337ff9ea8ab9816ff09ffdf735d4fe",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-1ef680be-72fc-4ace-a959-6ca8d11af88c.json": {
+      "sha256": "3c16009e1454441b0ad3d5a01522fcc9d0a3536bd6c57490f0e4859baf2e0dcf",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-203bbc50-40ee-46a8-89d2-6a7145f8c684.json": {
+      "sha256": "e8cc084b0eadc680177ae628db85636071a6cdc296dcd7ec5a1b892680d66240",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-23775757-5eba-44fe-b96f-19f7cc43bce4.json": {
+      "sha256": "d012f76e08faef45e5522a847abda1c888e5bac473f059c63a4bc3f5e19d6fcf",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-273fa6e7-e635-47b3-aa14-1515660af0ed.json": {
+      "sha256": "fcfb0dee05135299383408d1f72eb00b8cc7907cd1dadcb450b74c0893bf0582",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-28a48670-863b-449c-910f-b3421a0f4d46.json": {
+      "sha256": "4cc632416c7d5e218f1d5ef9afb76ab979635e1de6524da945707669336e4a5a",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-2c261d9b-e884-4903-9166-87e07a33bac0.json": {
+      "sha256": "9f4b6a46b4c51494544795faa8d42e3108ad19caebc9f39ba9db8ba104a73736",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-353bcb1f-a8a9-4490-8add-ef1d39e56dcb.json": {
+      "sha256": "9183fd7867512333682e65e11c7073489757cf3b6c2d4baf0224763c08ac99d8",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-35c83314-3554-4902-b051-bd954174a3b3.json": {
+      "sha256": "c5e275fd291813979fdfad66d34ad3178e523608305e60b5864795a16bf4cfea",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-39e0eadc-80c8-4877-908b-f68974c88b78.json": {
+      "sha256": "86be60747e4a254fe4f722319aec4946220610cebbbf579eb929863af04bcc40",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-425369e6-ae45-44e8-928c-7d99c05923d9.json": {
+      "sha256": "fcd9268c0a68ea91f94d5f5cabc4ccae1e2121b02abe62c396a53b6e1a35696c",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-442c5865-7031-48a7-a856-36ddf41755ae.json": {
+      "sha256": "fb5441ec7e007115495ef417e47001f81eb16391a0457dcbb02b253f6b20ea7a",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-45dee364-5162-43f7-ab51-dde2cb620c13.json": {
+      "sha256": "bfc9796b320b4151ea3490627fde0a4ba62e9d20fa5f52c807b81e19044108bc",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-463a5386-c21a-46b5-a0c7-3ac2b1673ff2.json": {
+      "sha256": "8d305aa121307f967c65c6a5c4057f1ebf53ce15834ab0927a7e0f4c8f9c1690",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-4a185034-0844-4b7e-942c-88354d2c585b.json": {
+      "sha256": "46193e1a8f12426e0ce490192c3087c964c0f37cbf6c235a7e4e3cdd6ec6f8a3",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-4b8a9a25-7ffa-4fd9-ab64-6c3d09c456ff.json": {
+      "sha256": "e737661bfc36e4965334ffa2e13d541f6ec0ab931f4c2866b8fc417740a8ee12",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-596eb96a-a15a-4d22-a3d3-6e1539b4c4a3.json": {
+      "sha256": "f9fe2572c00833fe0dcc5ffe2cf01164a8b8bff2f7d0258a0c4355379ca9a577",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-5d78fe56-09e5-4fd0-a2dc-a0d0346c41e7.json": {
+      "sha256": "c7922fdf288152482d34fe3cddad32503361525dabd5879c47052a4080e485cc",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-6a58e540-48b3-47d2-b4c7-662313303c51.json": {
+      "sha256": "334882389df1419dd2190b5838b930cefe0c20ab4e8dcefd198393b58ec69416",
+      "bytes": 235
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-7a39e704-7629-46e8-91d7-5e7a0a81b8dd.json": {
+      "sha256": "8f3223beea5dfbef485a0db2f877e4b197b31e17ff6ad21fdfe07e92d170f15c",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-7bfe62dd-9298-4452-ab6b-f9085d06245d.json": {
+      "sha256": "600ef25aced2ca4debdc5420721b692a795b05455c8c4e2a58d7e5091da6aec3",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-8727e1ee-37a4-4aca-af6c-7a0c4e1627c7.json": {
+      "sha256": "fa753e137fcff27e32d3504b6799c517278d60f5bdcf09a407124f34225f9725",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-886feac2-19cf-41b5-b4d6-dc9a2a457fe4.json": {
+      "sha256": "b98d67ff188f0036d01ea95d0f9dd4049bb625b0ec12f3aa9bc9d6ed29b80782",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-898c63fd-630c-49e9-b9a0-22d951ca3706.json": {
+      "sha256": "ee7ced6e1e02e3463bae527fe0768f047b4ba17abd0a499df10381c09158606f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-8f800e2a-571e-4eca-a912-f95d951e10a6.json": {
+      "sha256": "e9a34875b9b2d012b5e7e0c421c1c4762f01af77173dec820e24e4db8aaf5142",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-968b4bc8-76e0-4aa2-a1a3-52c2fd2cd8f6.json": {
+      "sha256": "14c5f427b5ed6d46182268532eff34690e0ecbf3b323f2fcb0e6c851a9290ef1",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-96d8c536-8e42-4c03-aafa-6773d2bfcfba.json": {
+      "sha256": "bd0f3d7af0391e65e2b33d031c9c5d1a1b9309c1b9c991850693acb32d89694e",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-9e18c137-d8e7-4652-8eca-f20115f1d027.json": {
+      "sha256": "d4f270b8e56053daf38d278e759187bcf127c0198db442cf52c8c12821b56240",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-a46013d0-7bfe-40e4-960b-b5265dbc06ce.json": {
+      "sha256": "ec0333d7b279a1bfa50f6e508cc926f1b3ac9f5203a9219e48779b4e8dca0ba9",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-a711a4b2-7140-4059-9f2d-79e10a2eb6e1.json": {
+      "sha256": "e439cc838332e38f19ba9941142b8da8cf6d44e2cce5a333f620a33b06f6fe2e",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-aed11ab0-3334-4328-869b-be8970f3a55c.json": {
+      "sha256": "242b1fbc00363307032fde7874996713851cd5f15b761f313125c6420d610944",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-af3b6b32-fad0-44ba-affe-8afc651a92fc.json": {
+      "sha256": "53fd1d8017dd5d4837de482a1186070be4c958680d1fa4b1c399e9013f637a2f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-b5d1bf4b-f5d6-4660-afb0-7396e1495d9f.json": {
+      "sha256": "291a131127537684da4ed1f648c19a81df23c5c21fb3be2bf68bcfa115b0b24f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-b63efd35-8268-4e7e-b133-76e9eff00a66.json": {
+      "sha256": "4525b4c8587b3110c084092d35a1d5f09d305652909f464c21f39fd7e7666cff",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-c160b7d1-4041-4885-9d5e-31fc49fdd445.json": {
+      "sha256": "2f1632bf1468723d75a18a6ce5f2c5d10bc978e03e34835c1213bf92e6c1b074",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-c186aa47-b1d1-4705-a63c-ab7635aa28ac.json": {
+      "sha256": "0c9aef6b926880af96fc49e8d0e1783dcf04c933b64a9073e41f5417c3f18d59",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-c478f9ee-5f50-4b19-9197-4fa115e83868.json": {
+      "sha256": "85ec28c24c5cff5aeeb192bcc12ff0495a384b2300ce02898c872561c7b73534",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-c83a3aa9-d71a-4026-a9ce-56ce46b6d71e.json": {
+      "sha256": "f4af9601f3f3542ed120add0e3a2617b8035fae31e802b2d70840c69bd93027e",
+      "bytes": 250
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-cf2c5087-fa05-4dc0-b166-1e92dc054725.json": {
+      "sha256": "d817685875bb44e1f6af9982dade513faaa253f7cef4d69a7838d2c6000b82fd",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-d8b58a28-3e8c-44f6-84fb-05a16f460d05.json": {
+      "sha256": "53e8e01e28b3651287cb81fc549543dcd15475a6ca10d4bf9557dff79e7f96ab",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-dba68f8b-af47-49b3-9681-dec94a0d9c3e.json": {
+      "sha256": "8ec6b1563834107f228b2706b5a61a1969d19dc23ab3b8b3d54929af1c976569",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-ddf41d7e-3da1-4e93-8e89-adf378e3670c.json": {
+      "sha256": "9879e633fc2838e196a3821ea36e9b8f2fbcdbd1af1109bbe9ce5ce45417b4a7",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-e4f63af1-7260-4550-9280-b672d329b068.json": {
+      "sha256": "5aa1f44074d1c2d9daf0a6090cef1649df58be67c9e0155f730ea430a055b49c",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-ee83511a-c4a9-43ac-bd70-af0314216446.json": {
+      "sha256": "8af99ee48264df7f1597735dab2b2d414cc58ff0dcd410601aeb960bc643370e",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-eeda617d-b5cc-4d71-a0d1-19e2c568795a.json": {
+      "sha256": "10585c4337f3a45a9d4b5a926adb299859a0b47a9b767dc913967b2e912ad7bd",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-ef0fbb06-2dc1-479f-8bef-a2061a741915.json": {
+      "sha256": "c0e0f54b77ee158e75317e810ca314a897a9469e605a9e5c1699fbd8d7666ab6",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-observation-f32ea713-f04a-4b7c-9c99-b142427846b6.json": {
+      "sha256": "5e20891deabffe116460ca24c64074f902c3926926cfa91f7e37ebf00df95aca",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-07c117d9-eb5d-4e43-a3f5-5de63c9fe0ba.json": {
+      "sha256": "101fe188c8541256ae7b6205408009dc4842c3e76b146b8342eae81ae9b2f928",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-092d18ab-07d9-44b2-a0cb-dc73d27ca687.json": {
+      "sha256": "997f880387eebe517b3190cfe604e5358ed41afea7e5f6a397a3485418643ff5",
+      "bytes": 279
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-0c981bf1-9aab-454d-a51c-d557c83a0066.json": {
+      "sha256": "c21b8425ecfcc42d2f1d2250e734558f36ec3dd3657c35639dfbaba13c0c417c",
+      "bytes": 224
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-13c9bb55-4e2b-4b95-9594-e4d4d72294b5.json": {
+      "sha256": "75a1210b50bbd62aa7cf07596a991edc7b2ca9fbeb74a3dbf5aec5cd643599bc",
+      "bytes": 254
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-1ec5ff66-4252-4cbe-935e-f2fa9fc5e014.json": {
+      "sha256": "e6891f40403107efe1657b17d88361677aa49d4930f15cc26d27331f2a25f1a6",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-1ef680be-72fc-4ace-a959-6ca8d11af88c.json": {
+      "sha256": "963b090a949147775a7e2fe03d877ebdd3a1facf3c830b4a715173ee9780a99f",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-203bbc50-40ee-46a8-89d2-6a7145f8c684.json": {
+      "sha256": "fc1e4c3b5485abdcf4d78ba7eb2c58639e73d4ce2b09ba48a24586c17a1799fe",
+      "bytes": 271
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-23775757-5eba-44fe-b96f-19f7cc43bce4.json": {
+      "sha256": "6f1682d3a1653913be9fd3cb2970abb77129f98c396d2346dd4c17f7d9fe21de",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-273fa6e7-e635-47b3-aa14-1515660af0ed.json": {
+      "sha256": "fcd34f1f9341bff7295caf47e92b01deb89c9c5de402260af0c4325c539aa6c2",
+      "bytes": 258
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-28a48670-863b-449c-910f-b3421a0f4d46.json": {
+      "sha256": "80334a965d4e52cd2338eb7ad0959b95561122b51089e5333a974dc7c09898c3",
+      "bytes": 221
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-2c261d9b-e884-4903-9166-87e07a33bac0.json": {
+      "sha256": "161d4e01e562afeb87d6a8c2427f6e3cda84ea5c8a33316f7d9cfcd513a16607",
+      "bytes": 281
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-353bcb1f-a8a9-4490-8add-ef1d39e56dcb.json": {
+      "sha256": "24ac13f8554c4e79bab4df35e2ae4e71a6c06ebb3226c1c7e20544250da92604",
+      "bytes": 274
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-35c83314-3554-4902-b051-bd954174a3b3.json": {
+      "sha256": "2c1dee63155c3ccae2d471f2146b913153a0864dab5592c085c567e26fabb9ba",
+      "bytes": 272
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-39e0eadc-80c8-4877-908b-f68974c88b78.json": {
+      "sha256": "c8373f4169db9fc47e8b3d3949a8134b931599f5c94caba95c173f6005f373cd",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-425369e6-ae45-44e8-928c-7d99c05923d9.json": {
+      "sha256": "dc9a30145a9b123663418d03087aaa5fc1b8faae14a9c12352d36e0c5dc5eb1a",
+      "bytes": 290
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-442c5865-7031-48a7-a856-36ddf41755ae.json": {
+      "sha256": "1e9a008f6d0349c49ebf7f97b46599c1f6619ecbb632ba106bb05a6bd0bb4b9f",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-45dee364-5162-43f7-ab51-dde2cb620c13.json": {
+      "sha256": "4d30db6ca8938c0a117fa494e05ca78d4dd39902b31ebee3452072fac393ff11",
+      "bytes": 290
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-463a5386-c21a-46b5-a0c7-3ac2b1673ff2.json": {
+      "sha256": "63dda815cc2035aaa1106c0a5470612baa8dabcf38ffe61a051a122558be6643",
+      "bytes": 272
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-4a185034-0844-4b7e-942c-88354d2c585b.json": {
+      "sha256": "7befbc6151739de0d4d81d973cfc77bbc97b4c107966040e4d27aa6d0b611199",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-4b8a9a25-7ffa-4fd9-ab64-6c3d09c456ff.json": {
+      "sha256": "67b8de606d5fcc327cc13be0b501ff6045c925578944b606a328ae1dec6e64ed",
+      "bytes": 219
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-596eb96a-a15a-4d22-a3d3-6e1539b4c4a3.json": {
+      "sha256": "bb3932f4acdb2715713a6d81be341d9cbef273214992b8cce167d3579338195d",
+      "bytes": 259
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-5d78fe56-09e5-4fd0-a2dc-a0d0346c41e7.json": {
+      "sha256": "0bca6552f36c90da1cd4ca1299d1304635798dd74cfeb28d85fff27a36dcd110",
+      "bytes": 271
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-6a58e540-48b3-47d2-b4c7-662313303c51.json": {
+      "sha256": "f4bb8614ea27d745158743d61b9244c192287c7fc31a7e27deb9168989fe5c29",
+      "bytes": 265
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-7a39e704-7629-46e8-91d7-5e7a0a81b8dd.json": {
+      "sha256": "182f15413853f8575cae72f6d6206957c75022a5dbccfb8fcf75c9c13428f4df",
+      "bytes": 288
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-7bfe62dd-9298-4452-ab6b-f9085d06245d.json": {
+      "sha256": "878e12ce8b759ec06c23f0288d2f1d63f507b81ef8861866bc7f4c6411496274",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-8727e1ee-37a4-4aca-af6c-7a0c4e1627c7.json": {
+      "sha256": "256f03744f7f37b7544ae40c94025c02125d3ead38b5ba043e519cdfa646d699",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-886feac2-19cf-41b5-b4d6-dc9a2a457fe4.json": {
+      "sha256": "22e6a5415fc812fb12f5480f026f76e65190ded5700c5325a7ffa46152324f70",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-898c63fd-630c-49e9-b9a0-22d951ca3706.json": {
+      "sha256": "b9a3ca8713aecf9bd47dd5e217fd3ef63e76fadcda95794fa7131ed0e1ae9773",
+      "bytes": 259
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-8f800e2a-571e-4eca-a912-f95d951e10a6.json": {
+      "sha256": "4d7a9dbc1c3b04c5d54c22f5825cd2759f174761c17aaef77cbad85b5b1ad688",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-968b4bc8-76e0-4aa2-a1a3-52c2fd2cd8f6.json": {
+      "sha256": "aba7619299100318842ac93c36f93938a9aa0f07929d6603e43eae2f1ea136f9",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-96d8c536-8e42-4c03-aafa-6773d2bfcfba.json": {
+      "sha256": "158ec1b0c9cf539d177e1c8f107721859b4dba1e91d3d9522d027f995f729f85",
+      "bytes": 291
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-9e18c137-d8e7-4652-8eca-f20115f1d027.json": {
+      "sha256": "605e9338d43a45bb0cc9367f4f89f923bc7fe4ef1280f08091c4ea21b578baef",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-a46013d0-7bfe-40e4-960b-b5265dbc06ce.json": {
+      "sha256": "54e747dc29b67515edaa3a3cd0fac4e650105f6622f9c8fe6753ea0db3440a55",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-a711a4b2-7140-4059-9f2d-79e10a2eb6e1.json": {
+      "sha256": "96a5b1178812ea7a34b2c05d2105f2e589cf0d04b4bb7c8ee9dbc1f28645eff8",
+      "bytes": 289
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-aed11ab0-3334-4328-869b-be8970f3a55c.json": {
+      "sha256": "7ed6450402d1b1b933a368607725ff320cafb43d2ac418b9f85e46eef3ef8ef8",
+      "bytes": 268
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-af3b6b32-fad0-44ba-affe-8afc651a92fc.json": {
+      "sha256": "7269bd6b53b17e87d5ca9685243918ad07c0b659a97510824a9eb057e8121be9",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-b5d1bf4b-f5d6-4660-afb0-7396e1495d9f.json": {
+      "sha256": "8ca0fc1aa06b771ef9a1cd9bfbac928f921e36dfa44f68c6fc7f91ccd3a50b01",
+      "bytes": 276
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-b63efd35-8268-4e7e-b133-76e9eff00a66.json": {
+      "sha256": "ee20b4cc3f97eb6d92e1f5a81e62b911b3b13b415ca6cfa8c78fd9fd4040eb9e",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-c160b7d1-4041-4885-9d5e-31fc49fdd445.json": {
+      "sha256": "fa6fb8ad49923c31039a8d6befa23c9a447084c026f5955040849cf36c75d241",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-c186aa47-b1d1-4705-a63c-ab7635aa28ac.json": {
+      "sha256": "4e28eb8d94c43735979bd26c959af71df7924f64ea68d02df46b69da91a4b802",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-c478f9ee-5f50-4b19-9197-4fa115e83868.json": {
+      "sha256": "92e616105a3da0f50d0c4258e1b72274b09038f56fc56fa9070eadcf83e6093e",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-c83a3aa9-d71a-4026-a9ce-56ce46b6d71e.json": {
+      "sha256": "4f38c2ea0cc63df5ae99c158104ca6a65d2b43c32423fde6e897398038cbc98c",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-cf2c5087-fa05-4dc0-b166-1e92dc054725.json": {
+      "sha256": "22c047df2242424bf737b350d4757faaa637e48e36e62dd6fa6dd6913c29cb45",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-d8b58a28-3e8c-44f6-84fb-05a16f460d05.json": {
+      "sha256": "226efd2fe25069520fd7b4df4c802877348a8d9b1ea0d5ea44fa4b6c8c680a2b",
+      "bytes": 282
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-dba68f8b-af47-49b3-9681-dec94a0d9c3e.json": {
+      "sha256": "65685577d25bf7f55c069b3d6510e4fc470790214a07373eb3740a8a27450944",
+      "bytes": 272
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-ddf41d7e-3da1-4e93-8e89-adf378e3670c.json": {
+      "sha256": "a704a08f8c6f6f28f73dce69bc5686f454afc70931ea8997c6e847971c6fd6aa",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-e4f63af1-7260-4550-9280-b672d329b068.json": {
+      "sha256": "479036eb3fe62b2227d74c4c6a5ad6bcb3c9570ab02d859617edcc1f04b3e945",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-ee83511a-c4a9-43ac-bd70-af0314216446.json": {
+      "sha256": "21473410f286d3a9f6c2ccfd6b72aec3f04d9ca9b22977576342d3eb233d3f96",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-eeda617d-b5cc-4d71-a0d1-19e2c568795a.json": {
+      "sha256": "733876f0ad49a45df824d485e5b6838771fc5f1a66da5f7e8b6425f5ccf1dcf8",
+      "bytes": 292
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-ef0fbb06-2dc1-479f-8bef-a2061a741915.json": {
+      "sha256": "920e266c0de59ab6b79ea9606b2274950083de70a1d0de428abbf098cdd18d81",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/readonly-start-f32ea713-f04a-4b7c-9c99-b142427846b6.json": {
+      "sha256": "6dfeda2d9b243a4d24dfc05240988fc2bba083e6b36216f8876e41d567b4786c",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/six-native-verification.json": {
+      "sha256": "22ffa278ff896594de34f432c42ddcb4d968bb0633738faf97ca5f706a360b41",
+      "bytes": 7926
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/files/six-uncreated-users.json": {
+      "sha256": "37543066ea686b5ae6be16c513c952f26a69be90ff7ea7de99ebc041ce129089",
+      "bytes": 180
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/operation/owner.json": {
+      "sha256": "e257dd6425ab766f0cd8285ad8ad1b8e0bcac8bd94a48ae72f55efd487e392b6",
+      "bytes": 302
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/operation/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/operation/stdout.txt": {
+      "sha256": "95eba35d8c93c29175989f15ec32245949fc5f3af2277c4714b3e06ae0b192c1",
+      "bytes": 52
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/operation/wait-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/operation/wait-stdout.txt": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/business-races/result.json": {
+      "sha256": "1f261ed3ebb31694553e87c72b769538acb2768c3c3b7f10015b4a42d16e10bb",
+      "bytes": 4069
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/current-inventory17.json": {
+      "sha256": "f4fb7cc21fd10cfcafa34840e1719062146c9c098fbc2d37e4b3b80d845e8576",
+      "bytes": 13017
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/final-closed-and-history-readback.json": {
+      "sha256": "660c0a5b674607ca3782bbfacf434020e9d2667dbcb09999f42a10011d1788f0",
+      "bytes": 73246
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/allocated-owner.json": {
+      "sha256": "b1f43e8436809edeba7018af2ae03205e93be7596f8dbaaf3fcc1a88bdaad03a",
+      "bytes": 256
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/checker-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/checker-stdout.txt": {
+      "sha256": "b66d7690ab2594bb25bf970d483c6d6fe7fead2646bcdbe25be37a31276217af",
+      "bytes": 2163
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/closure.json": {
+      "sha256": "9bfb6e36a0b3f3388fa54a2ef3fd7c39aaac37ef594cb73325418e62e1f6576e",
+      "bytes": 665
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/Core-after.json": {
+      "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+      "bytes": 31414
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/Core-before.json": {
+      "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+      "bytes": 31414
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/expectation.json": {
+      "sha256": "c52c6a5f520e697852008f9bc870e381eacf8002b09b067825d2af7448fbd36c",
+      "bytes": 950
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-inspection-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b.json": {
+      "sha256": "dab5db10a0fd7d535037674337669f2c0171b642da94dbc6e383362f0d527af0",
+      "bytes": 651
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-remaining-delete-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b.json": {
+      "sha256": "4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0",
+      "bytes": 268
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-six-d6f40bca9754ea8f0.json": {
+      "sha256": "c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d",
+      "bytes": 250
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-six-d9f9c67d7754ea8f0.json": {
+      "sha256": "c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d",
+      "bytes": 250
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-six-daa2605a5754ea8f0.json": {
+      "sha256": "c24d40de827bb7bf45143eda20545a8d305745d6eacbba3516a0602bed1c724d",
+      "bytes": 250
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-six-i6f40bca9754ea8f0.json": {
+      "sha256": "6588861bded1175dd69d6feef783f2e2f590317f46ee1edc48b4b0463b798dce",
+      "bytes": 2346
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-six-i9f9c67d7754ea8f0.json": {
+      "sha256": "71e62f19dfe4c5cf11d822067fea419b2ae37e5b34f1b90540059f1466190636",
+      "bytes": 2346
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/native-policy-lifecycle307-six-iaa2605a5754ea8f0.json": {
+      "sha256": "a1f27370525501ffd482c1021e8be56a77e9a10a8fe7aa37a59201c62093c129",
+      "bytes": 2346
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-013e504d-beb0-4387-864e-e01e0e7b110d.json": {
+      "sha256": "3c844c37b506257e3eabff20880d0da0b65968b73a9320018739b810aa332f2b",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-085fd90a-2868-45ee-86b5-7b3e1076bf8a.json": {
+      "sha256": "bc14ec0900bbc01766726925276f7fefc9f09407677fa3de054b8acb79918be8",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-0ae98ba4-94f5-45c3-8fe7-12ae19f690f1.json": {
+      "sha256": "210073912385afb21b3e63fc68942c6fb6f0ed0854c0cf80fa29175c9fd67abd",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-0f316f3e-be32-45a7-8b2c-4c197ea8d1c5.json": {
+      "sha256": "93fe7d11f7266a02d51e5da05e64bd94c7b80cbaabefdaec3a7735f67dadb800",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-0f9f4eff-e67f-46a2-bd35-0f77f51169af.json": {
+      "sha256": "d07a550792714322f3fba1663d4ba6b71d98459204a23d265478bd695a14dc08",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-100152f4-5f10-46fd-af45-6566e3b4ef6c.json": {
+      "sha256": "eaaf79b001680a2fa484d5538bc06c5ac3408047ad4095c9c03301dc73a8b394",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-152babcf-bbb5-4876-9672-61355bd6d7a9.json": {
+      "sha256": "8aac2da73468af1f003baaaba676243d3effde882a27c779a4ba9a7cecf8ba7f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-2125fe0e-68ce-43a7-a375-72da3749d15e.json": {
+      "sha256": "9483b604952fb7a9e11d0dbfe8d74b9dd621b86747b796d6add9c25e12f65b97",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-2339a2ec-59df-4a91-84e7-1b8f569a78e8.json": {
+      "sha256": "14eec4afe865aa6b9ebb721f92563585ea489213c2f4577ded360b5bcc79fe67",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-37ecec9e-6085-48ce-ba51-c29f7b60fc84.json": {
+      "sha256": "22bccde8f67911798bbe59f2baaaf8cfe98e3d3d8a6e7f38faea825ffd7aabe5",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-3c9e01fe-3cdb-41f8-a199-d904c45848ab.json": {
+      "sha256": "603134fc72d6c685d7aa45664b5c13cc3b75ecb165e69858711bc03831522309",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-417ce07b-9010-430f-b793-089b42b761fd.json": {
+      "sha256": "a0f570559add358ac457e96cf1965f0bffc516aea0b3f734c2f8d0ff3e4079d3",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-48a4d758-b7cf-4fc4-823b-7ca642da65aa.json": {
+      "sha256": "0a06c1b037d2c23ee430cb24762a980eb33e5d1036bdd0dd1b7c54b4a7518480",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-54b5cf2d-fbdf-43ae-b775-abf87b649b65.json": {
+      "sha256": "8b1a8fd1834ea9a6ac0a8a118fa4cf7a93452650d4464d6ab3a52416b6f7d46d",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-57c9df48-bf76-4eb3-bfba-cb566d5ca287.json": {
+      "sha256": "ad2275c51746eee8116178fb4a1cf91bc11a2f94c0c572a7292ee170ea9bc0b4",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-5859e799-dd06-4311-93ca-1c0674a6795f.json": {
+      "sha256": "3baf21427cc998584771576ff62d07355c634d741c548ae4ae894157f932ae1f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-5f2b2082-ead7-409e-a0dc-efec3b05361e.json": {
+      "sha256": "0179ea7558ef704d2a5f90b2f4856e2823526be2b35219f1602188d7ebf33185",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-6be92311-ff9f-4f15-9ee8-06ecfe5f1e38.json": {
+      "sha256": "eb96c34d65c442cfa38e2735d7f62434824c93d2cffbec9cf19e6996343dd6bf",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-6c076d67-e0a7-4c29-bafb-1a1b19e61780.json": {
+      "sha256": "6a3eba8b3b876b10818393447331d33859b3770bd05c03f03c6e5d77744b010f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-7bfbc7e7-f689-4208-9f05-3609a9194bf6.json": {
+      "sha256": "fe780f026a02ff093d92d92dc0e00269634f9474daac3c0cd7221dbaf3436625",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-86fbc959-26b3-4674-addf-bc524de8cbe3.json": {
+      "sha256": "228dbb721b262d2d44040c0c54ae1b80123ed7e37d29cd7e46b4a7de0a5ec606",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-91a65d1b-05d6-4496-aabf-8ceb011f7cec.json": {
+      "sha256": "b4aff3f951cd02a1b32f0a756440529971b64ec09a10869ee94b10070282ee58",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-983244b4-ccc7-4739-8cbe-74d98c5612e0.json": {
+      "sha256": "2cf33addb3daf062bacf591dce795ef93064758585c41fe551afb527001b514f",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-9f3162d6-110f-41e4-a85b-41b63918738e.json": {
+      "sha256": "ae41a6cd3edf27b01a084c0e0f8b1fb90bedb3b3fc14ca23b2925b59f6b04f91",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-a042d826-3871-42e5-94b6-8b0eede27a7c.json": {
+      "sha256": "957605251d26c272026de81ebb399c68318dc532dc2b78ccf235e49caff3e443",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-a2d332fe-6073-49ef-bcf8-e7b6b0da6573.json": {
+      "sha256": "4560c47faac858a04f37f1dc024cba91c4fba1ada0a23e37693bf06580da0cab",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-b4e074e2-fe9f-4d2a-8664-e8760b2fcf97.json": {
+      "sha256": "c591565c6390f6088620c05aa6b8a086470261993b0a117fcbc628ac7d6f1382",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-c005dddd-ab5a-4ae6-a831-018bf0c91166.json": {
+      "sha256": "366b12fb2b95d7c38175f8a398621d5e5c099e6408f32a6736a324bf3cf96c89",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-c29f1fc1-147f-4ec9-a0af-f00c5f48d3fa.json": {
+      "sha256": "0c8e5f54b157e15dcfde00e6b0bd8cae2712e6a9fee27fedcdc9ce0cdef87d33",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-c2e19de4-ad8a-4f3a-8ae2-3d71b3ae3827.json": {
+      "sha256": "588980ca5ef900a49406ea4216544ad313c8a74503aa06d3061cc30b95981b5b",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-ccdb8d42-20fd-44c7-97d1-fc764f425280.json": {
+      "sha256": "e513f0f5b0ddc69d8dc24a09d598e08cfcc2e7f469c51c9f6a33ead7e58b92a6",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-d3b0ae9c-6d30-41d5-a66c-5c2b3a7e05d6.json": {
+      "sha256": "8394e122076465dcb347d577d5bf30352055b5ab3e5afcf3e99693adb7b50a8a",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-d3b683ce-4a9c-4d17-a432-8c51922cc14e.json": {
+      "sha256": "082c0fbeb790db8e389443b1236d3c72989bcafe8c3101254110b1fbaee2b9df",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-e2ee7ad0-b4f3-41d9-8084-cb095eb63422.json": {
+      "sha256": "abd063ab441a639b7dd3a686c20351cb1a80e1c1a56ec7ce7ca442f964d61231",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-e6fb3c95-e762-4af8-a32c-e63b6e401d80.json": {
+      "sha256": "ecb89f75e8f5b396e7df60e2be1ede8840af9b6de5a4cb207785e76a1a9e7c85",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-efa96e95-5d5e-450a-9841-d6367d26bbe6.json": {
+      "sha256": "0e52b851d4ce3bc77d3f4b7d038a7c496465f6a26f95c5c3fd2c74a80f4072a5",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-f3cef1a5-f8f4-4b25-9353-b65def296aa8.json": {
+      "sha256": "9905f87a797d2435c863a92fabedf2433f349bf02acf958e264380ced5ccaf63",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-f780763d-c7d6-4dda-83a0-510e9310c42e.json": {
+      "sha256": "b5b01a634a1ed90940a2fdc34609afe075b08fabaa065cf23076d73a23a1cd2a",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-f85f3fe2-2e75-496e-b12d-7cab6cbcfb3b.json": {
+      "sha256": "704f103caf687f3783ba5eef9abeee93a05ee2baf9b32e83cbbb52aa13ddf93e",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-observation-ffe4e165-107d-4cd0-82f4-4f0ad979160a.json": {
+      "sha256": "24b2c7610ea17e57056ab70bd1064860143ed280cb20132ed8f827b52c44fdd3",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-013e504d-beb0-4387-864e-e01e0e7b110d.json": {
+      "sha256": "b31085095ac4126cf29c7bcaae4a652e2689ee7b6a3bea09d2645674e2afcc69",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-085fd90a-2868-45ee-86b5-7b3e1076bf8a.json": {
+      "sha256": "3bad1ca46c9b50bf9c20eee031a3f317ee485567541889eb80fd312efad761b9",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-0ae98ba4-94f5-45c3-8fe7-12ae19f690f1.json": {
+      "sha256": "b2427365318f1b5f681a612464a2965668250c8ff0a9a9d8874266322820a8b6",
+      "bytes": 219
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-0f316f3e-be32-45a7-8b2c-4c197ea8d1c5.json": {
+      "sha256": "9598e8c6f7b697a60f7d129983e6a61058d2e3c4b6c6c8a9c0d345d89262a933",
+      "bytes": 224
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-0f9f4eff-e67f-46a2-bd35-0f77f51169af.json": {
+      "sha256": "0b6f3018e2fa7d1726115be1aeeaa3842d42a35322914d8171b38af8ca052861",
+      "bytes": 273
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-100152f4-5f10-46fd-af45-6566e3b4ef6c.json": {
+      "sha256": "42905bc69426168a87d5cf40813314de956d81b49fc28dc943462344cc0f9bfe",
+      "bytes": 221
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-152babcf-bbb5-4876-9672-61355bd6d7a9.json": {
+      "sha256": "5bb4dc27570cc4f78ecc4fdf4051db2aa48217e218928bca895697f56aac7365",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-2125fe0e-68ce-43a7-a375-72da3749d15e.json": {
+      "sha256": "a2f0ae2a695047acaa13141f09943f9335c8e4735fa6c839e21fbea052142dfa",
+      "bytes": 282
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-2339a2ec-59df-4a91-84e7-1b8f569a78e8.json": {
+      "sha256": "cbd0f1e2aa3245839cfe21ed588f7f01d8d3255748cf4761570b140b79d4d2e8",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-37ecec9e-6085-48ce-ba51-c29f7b60fc84.json": {
+      "sha256": "16637e476fb6e9b5be9f23f95f6145d34c8f9da3bef37126a51fbe4623a6880f",
+      "bytes": 274
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-3c9e01fe-3cdb-41f8-a199-d904c45848ab.json": {
+      "sha256": "b2104f97bef990262af35e52deb3e7b80c18cde339ac5285cb35fd093cba6ca3",
+      "bytes": 279
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-417ce07b-9010-430f-b793-089b42b761fd.json": {
+      "sha256": "e8991fefc87e832ab4fbd78bfba60d5c0ffa78384dd0e27c5610f9ef4d0a470f",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-48a4d758-b7cf-4fc4-823b-7ca642da65aa.json": {
+      "sha256": "dbc2b9792c1ec0dddc0c3bfe3b0f0ea7488b4efd96223dcdd382fd819805d037",
+      "bytes": 281
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-54b5cf2d-fbdf-43ae-b775-abf87b649b65.json": {
+      "sha256": "4f866188fe4d67a7a985ee599e0a165894a06641e432a4d412d34bc1e0b9ae39",
+      "bytes": 261
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-57c9df48-bf76-4eb3-bfba-cb566d5ca287.json": {
+      "sha256": "426788b2bc41d8ed8bf836e7e2caaac47c160ddc2cffcb0f6c4c6e9058ccdecf",
+      "bytes": 273
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-5859e799-dd06-4311-93ca-1c0674a6795f.json": {
+      "sha256": "e704dc986769c6135bd4ea3fd10a677eca7524f59ec529e936d81984dee48b09",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-5f2b2082-ead7-409e-a0dc-efec3b05361e.json": {
+      "sha256": "8e1c97364833440745221defd2a223f198f9228a139c259e2ca6ac0b21701087",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-6be92311-ff9f-4f15-9ee8-06ecfe5f1e38.json": {
+      "sha256": "8f4485903e5fbd9dec00845736cf06aed45cfc05f7114657b5d0f9af5f53429d",
+      "bytes": 274
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-6c076d67-e0a7-4c29-bafb-1a1b19e61780.json": {
+      "sha256": "ab4edc0ecc08f36baddc83f08d483108f1f257a9e8e121dbbddf437a7195519f",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-7bfbc7e7-f689-4208-9f05-3609a9194bf6.json": {
+      "sha256": "89bb75f6a5a89de3852db3070304277c10915936cad117b4a72aed5ba7d0c716",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-86fbc959-26b3-4674-addf-bc524de8cbe3.json": {
+      "sha256": "7d8666f8b914539fa6284f78f18ea162626799f6d0ca36976d94b9b78a0ec446",
+      "bytes": 261
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-91a65d1b-05d6-4496-aabf-8ceb011f7cec.json": {
+      "sha256": "674b4df85e339281d50159617e16ec5f5465e64c541389ccb0eb741ff59b5b56",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-983244b4-ccc7-4739-8cbe-74d98c5612e0.json": {
+      "sha256": "54e0360a66c1523fc03638937093f205ea2fb3a84217bc4d097febb730f4aa9a",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-9f3162d6-110f-41e4-a85b-41b63918738e.json": {
+      "sha256": "7e07eb5fcc5b8dbca559ed3d53ced73f74b2aae65b25fc9bd32880761282a659",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-a042d826-3871-42e5-94b6-8b0eede27a7c.json": {
+      "sha256": "98cc71e1fde91aecc442d63fc66296d85f9b3601ff34ed5ed4b4e874a7f20254",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-a2d332fe-6073-49ef-bcf8-e7b6b0da6573.json": {
+      "sha256": "8ea8c58174b13150362f1d640db55895e77d643e12f86d07310de05cd4425a10",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-b4e074e2-fe9f-4d2a-8664-e8760b2fcf97.json": {
+      "sha256": "e953b4906a4ddf14abdc128d84f491ab738429d7ec883718efc9ef0ef22c993b",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-c005dddd-ab5a-4ae6-a831-018bf0c91166.json": {
+      "sha256": "12ea986602d6737d78b55565137aed1e5b8bc0259400cf12310cf992b191d8b4",
+      "bytes": 271
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-c29f1fc1-147f-4ec9-a0af-f00c5f48d3fa.json": {
+      "sha256": "764fc082dcde551242371ccd221ea70c99f9c178131e98a42a5d2d90f7f9742f",
+      "bytes": 277
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-c2e19de4-ad8a-4f3a-8ae2-3d71b3ae3827.json": {
+      "sha256": "0e877db5db7e053cf5111fdef88ee26132e56dfb8951f9d34c949221453b9108",
+      "bytes": 272
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-ccdb8d42-20fd-44c7-97d1-fc764f425280.json": {
+      "sha256": "a7662d7422343bd0fd21caac2091db684a77a616a4a58a248dcf20a78fb63f01",
+      "bytes": 278
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-d3b0ae9c-6d30-41d5-a66c-5c2b3a7e05d6.json": {
+      "sha256": "2a9268f066746b17146dd29b4d292fc839f54a70ae973f975e08c40372cbb086",
+      "bytes": 257
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-d3b683ce-4a9c-4d17-a432-8c51922cc14e.json": {
+      "sha256": "dff89ac72f3abb85e15dffab8e8f790f023c916efb6982a54d36257606e1b359",
+      "bytes": 257
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-e2ee7ad0-b4f3-41d9-8084-cb095eb63422.json": {
+      "sha256": "62ed4a4cb4bdda5d08130f8908cbcac9d23ec1a5ad9904439caee3262f1463a5",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-e6fb3c95-e762-4af8-a32c-e63b6e401d80.json": {
+      "sha256": "7ec6ccecf0e88c2c66864afd034b237264726f8f424394e74de8f388b623ede6",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-efa96e95-5d5e-450a-9841-d6367d26bbe6.json": {
+      "sha256": "bdaf218c38a16ffd05b47d981eda1c3cc1f701ee001f6cf24c68b402466a3051",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-f3cef1a5-f8f4-4b25-9353-b65def296aa8.json": {
+      "sha256": "3af9ea9d2147b2ab5ceaaacfb1a4004c3925bf5afce844de0e33c258fb6a48d6",
+      "bytes": 278
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-f780763d-c7d6-4dda-83a0-510e9310c42e.json": {
+      "sha256": "e72c132c4cd7324cfd0ae1ede54963794005bed62d799b905b4c8fd5a5d26b71",
+      "bytes": 269
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-f85f3fe2-2e75-496e-b12d-7cab6cbcfb3b.json": {
+      "sha256": "0e761c8549d866880c6f514452fa8cf320d6a95dc28a573dc9bbd6c0fa800edc",
+      "bytes": 277
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/readonly-start-ffe4e165-107d-4cd0-82f4-4f0ad979160a.json": {
+      "sha256": "ba701cf68d90c3aa6921eaca60f6bf86eec0c6ff53013b790314a0fee354e0f7",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/six-native-verification.json": {
+      "sha256": "c5a62e9d59bf44ff77fb02ff2180d4447d8fe73679b8c369887706be5a9a7fd1",
+      "bytes": 5880
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/files/six-uncreated-users.json": {
+      "sha256": "6ece1978c6736845f9a7bb5d3cb1dc55833badbd63e33f31ffc765d1441653e1",
+      "bytes": 534
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/operation/owner.json": {
+      "sha256": "5e12cdf9ef52c3f995cc6a0a9acee117a52ff507e2012457a4f1f21ac00adddb",
+      "bytes": 302
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/operation/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/operation/stdout.txt": {
+      "sha256": "95eba35d8c93c29175989f15ec32245949fc5f3af2277c4714b3e06ae0b192c1",
+      "bytes": 52
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/operation/wait-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/operation/wait-stdout.txt": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/late-hold/result.json": {
+      "sha256": "b2da324210f37dcb5c4a8a93b3f9c4943fb22fec03d801850a1442c2fdc0b9cd",
+      "bytes": 2583
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/allocated-owner.json": {
+      "sha256": "4bb877a6f586cd3dbf30a0a10515e7ed844b4d1f01688dbc081a23f32d044ae4",
+      "bytes": 256
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/checker-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/checker-stdout.txt": {
+      "sha256": "a996afdace47386aeb602dee86688e193a96ccc6bbe84cf2ef5cd4f229928fd8",
+      "bytes": 2159
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/closure.json": {
+      "sha256": "45a1315851c35bb1a95a8a5ec16dec33507145b57d6fda8861c2890bba50dbcd",
+      "bytes": 665
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/Core-after.json": {
+      "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+      "bytes": 31414
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/Core-before.json": {
+      "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+      "bytes": 31414
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/expectation.json": {
+      "sha256": "8bad1e3243809e5566e276322a789ffe12b356026eb835f1d85bf40bb12bf0da",
+      "bytes": 950
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd.json": {
+      "sha256": "d5681fdf23a7e18204e64ec6233973f6e76b666806793ef1ab9f610f4acce062",
+      "bytes": 541
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd.json": {
+      "sha256": "8984f8693ba1641c977951b64ee5c850c5c0a3b55741c5033b9eaab41b07fa33",
+      "bytes": 501
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-six-d6f40bca9dfda43b4.json": {
+      "sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "bytes": 465
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-six-d9f9c67d7dfda43b4.json": {
+      "sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "bytes": 465
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-six-daa2605a5dfda43b4.json": {
+      "sha256": "2fd4faa8d5ed39eccb3fd9c6994d6241b60fc1a4c82011c1fba3529938de7649",
+      "bytes": 465
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-six-i6f40bca9dfda43b4.json": {
+      "sha256": "9bf917e4c688ea031b3e70db987b9a837da978858cf61b8bbc3138fed99b5753",
+      "bytes": 1640
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-six-i9f9c67d7dfda43b4.json": {
+      "sha256": "158592ce90efccb1d4af638fb7ee5f8dbd0758e8130594f2f76123e09e0ae540",
+      "bytes": 1640
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/native-policy-lifecycle307-six-iaa2605a5dfda43b4.json": {
+      "sha256": "63ff6fc7d1b920b755d81883c73ec67bff85d9c8a788e7d7f776ef10b41871f5",
+      "bytes": 1640
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-0813521b-fe89-454b-bf4a-3eb1ece7424b.json": {
+      "sha256": "2f3405805b0affac4f30e253a588d6cc123fd5a18d1e7b8911af16c2a45a2e61",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-0a179bd9-9adf-4a23-88f0-0442c8f23eb1.json": {
+      "sha256": "4006798b269578c26157d0ddd751f5d21061445e22530433e11cd3a9606f6d45",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-0f73fa22-384a-4362-9eb1-6571a7c953c6.json": {
+      "sha256": "0c31b53c0b55bac54cca2b0568865b40b9c974c8c0ef4539a7e04621eaf9f3dc",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-29077ba9-14c8-4dc7-a39b-debc1514771d.json": {
+      "sha256": "f2c2ee82674a1eafea4c40936b3bc4f9a97c4646b8505e8123e1206c5bec421a",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-290b2658-e687-4a35-89c3-7f351c613736.json": {
+      "sha256": "3ea29bb1d7a6c297e388f29b55cc0deda9df97d6d31ad94e86240cab700e1755",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-2ba8dfe9-64d9-4369-8b3c-0d5473db76f9.json": {
+      "sha256": "382ec60ecc59ba7241dc85db8c5dd4f2696bf991d050f476a5b79af6b93eff77",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-44ccb833-e31b-4a95-992c-1fb7e6d8951c.json": {
+      "sha256": "4ab1678922f248e48a9b1e00265095f3c2d6b8789cb218cede383bdd235c631f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-45d3f1ba-b584-456b-a73e-38b690e95029.json": {
+      "sha256": "815b1e989067d0f57f75caacdcf5b7bef1a53a0666647a78b1c00aecf4395ce6",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-4eb78ce8-d8c6-472e-bab0-ea05d35d36d2.json": {
+      "sha256": "909f708d9aa075a5cd786c04df43990be68adc6f5a1f4462f91bd8a0bcd7276e",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-4eeee48e-4940-4a14-8274-fe8ce122f4c4.json": {
+      "sha256": "c8d71b33ddb8a98acb1fa957fcb871fb3528b10228c065eb1c73dbe127a2c2c7",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-4f0b371a-af17-4f7c-a9d3-cb4b76197c53.json": {
+      "sha256": "31cf04217ae001eb549e49c52a2f1239bcaa3dc2d691ef1207485762d6e52083",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-575b1375-8ee2-4535-9e9b-c3b9ba319e7d.json": {
+      "sha256": "79913cf5ac445310d76586881bd2ad8c6b3e83b80cec506b827c913063cfd3f3",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-583692d2-8f56-42f4-8daa-2247afd527b6.json": {
+      "sha256": "0bfefbd4e87c1dd57968783cded0573ad6ebd47ecfe05427053fb37e008085f6",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-5dc358e5-a146-496b-9b42-75e98327ed13.json": {
+      "sha256": "4b50f8e877773cc2fd7c834711deddb146ae1d791411e0c7224235a1b5134b95",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-615e18b9-f2ac-415d-8a52-d28353e0d858.json": {
+      "sha256": "dad6305fa83217d8dbd43ebd424b62931a5ed739e27c43358c04f96860902e81",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-73ff6d20-5ef6-4f72-b418-f1ba752fb646.json": {
+      "sha256": "8dac94384c279eafc7fc42aedef3bef83cd0c873123270fa57a00e0b12414fc4",
+      "bytes": 236
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-77cbb77c-4fb4-4802-8a0e-fd4580796bed.json": {
+      "sha256": "9b4f21acf149d2b1cf82b2cbc58bfa6f85719af33f1008f81ef16510378d2520",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-7ccf12ac-d14f-47f6-a114-6e516a9c9675.json": {
+      "sha256": "491ce94ed8a65e8dc2eeb9d0bf85084d44b1f64e4b9fd6ecb710e3afd9e8d88c",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-7de185c0-fb8a-401e-92ce-c87ce4594ab7.json": {
+      "sha256": "ae9b37a69a6dda2f80fb470343df4fd8755d3db68bd0b54c1d8aa746b66a00f1",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-81750334-46a2-4a52-9512-8be2b08d3fa4.json": {
+      "sha256": "3498d4195df8c3fa42314c1d96d3326697bfdd67f0b61909250c9837bbc9e8e6",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-9120b4e3-d912-43c6-96b3-a73b9345434a.json": {
+      "sha256": "5b821d6b90f2e5ab45e03013810d203341b80bc41f8b71464e5d4657fb9c3af1",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-a2d2adf3-d34a-444b-9cc1-4ade7a814ca5.json": {
+      "sha256": "7aeb51d400bb42bc172bc62a8e73de8f2efa31b567ca8f249e5930454001d756",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-a876090b-b787-49d0-ac43-45a3183f340b.json": {
+      "sha256": "cbdd343a89703525594082200adac1c7a713048c57fda61f89e0df1b034b3d2a",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-af0ad6f2-79d2-49a2-bf70-921ed44f2db8.json": {
+      "sha256": "33b1e2e919dbe07eaf125511af145045289379262d6e6f0aa7e09f485fab7d6c",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-d2a9f241-fcba-40e8-b3d7-3112106edd9b.json": {
+      "sha256": "5ab942ddad4be7c2b47c968691c4bab028743b7b21b2dcf3c2ba6aa4bb628242",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-d7cb9f68-f2a7-43cb-ab2a-48fed54ab3a3.json": {
+      "sha256": "3e5ef7c8033bc4210c8945f962b1abc1ebe825ddcd9ac5a49f43f82577cecf02",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-de32ba03-1e68-48ec-842a-61c8bb60ceec.json": {
+      "sha256": "63b6e5832e721c211ede2d2814dfaeca29dcfdf9d285f0c01fc38aeacd93699d",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-e993d768-11fa-4087-ac32-862ef29582b7.json": {
+      "sha256": "51402e1142939f2d54eed28c836915c4314702a5b91e22e433f3884a1cca0307",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-eb66614e-dfdf-409c-97bd-4bda1b6e7bc9.json": {
+      "sha256": "fdc39063b12d9c68b902d7c4d74583abc5caab107c6234fa30de694a9d16141b",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-ed6fa307-31cd-4594-ab16-cdd0f5b5462b.json": {
+      "sha256": "addb70216b080a3aef3e711f5ddd4a00fb056d0b25cacc4c46c19906d8e76b3b",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-f07bcb06-a85b-4a75-a33a-07b7cc34d593.json": {
+      "sha256": "ec34b93dfaf9aa0a8f11cfa387ff5d42c40845c6ece9b60c22ade981de343c65",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-f2ce98a1-0adf-422c-b785-2a75ac7a7eee.json": {
+      "sha256": "ea5c4f94490774a03d441f11302eaf1b23c1fcf5902ae298811cd0fc7637632f",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-f4280a85-39b8-4283-b9bf-622aad998c3f.json": {
+      "sha256": "224441af5f83776caefd6ca6afa37d92c2eb7971d87535a2697c3b66d4725d91",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-observation-f81974ab-4667-4fb7-8001-ca49af6657d7.json": {
+      "sha256": "2cd56c1f968efcce78e0a1169a2623354b100648dc2625702b48a9ec0fbc527b",
+      "bytes": 237
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-0813521b-fe89-454b-bf4a-3eb1ece7424b.json": {
+      "sha256": "8cb942d3a78a1223d41152cccfa12079ab39a288ee9c04aea15ce39d126d7e4f",
+      "bytes": 221
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-0a179bd9-9adf-4a23-88f0-0442c8f23eb1.json": {
+      "sha256": "b6f38df87b8b7e6d63e666144ee1e811f9e4761c5dca1000982ce104cb6b7ed6",
+      "bytes": 281
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-0f73fa22-384a-4362-9eb1-6571a7c953c6.json": {
+      "sha256": "1086728b5fed02ced62a14a8164915d648b3f38b6e62735950a95bcee601015f",
+      "bytes": 224
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-29077ba9-14c8-4dc7-a39b-debc1514771d.json": {
+      "sha256": "5a183301cba93361c10022a660236bcac469a445f9d0b041e38f70a7874c5bcb",
+      "bytes": 278
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-290b2658-e687-4a35-89c3-7f351c613736.json": {
+      "sha256": "9e141abe59f52c6c790858b38aca526d5dd29578f2f1e6fdaef5dbc3f425f7c3",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-2ba8dfe9-64d9-4369-8b3c-0d5473db76f9.json": {
+      "sha256": "98d78f794a0b4064e182920fb21233d181390558718fb5ae1f4962365fd1eb18",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-44ccb833-e31b-4a95-992c-1fb7e6d8951c.json": {
+      "sha256": "716f7603962c182b0684ef4c4b78d85f7de9722f3a18b5bcb4692f884422f168",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-45d3f1ba-b584-456b-a73e-38b690e95029.json": {
+      "sha256": "3924c71abeef2b3030574c8ce207f328cb9d4af00ab2188aab4642222f1daa68",
+      "bytes": 282
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-4eb78ce8-d8c6-472e-bab0-ea05d35d36d2.json": {
+      "sha256": "7fe30bc45f6557a5793092ef07ea16cb618fc3871a8b6c88730bbc57444c40ac",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-4eeee48e-4940-4a14-8274-fe8ce122f4c4.json": {
+      "sha256": "567da21af284c79769ababf5643179ce525959006479c284159dfe9a32505333",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-4f0b371a-af17-4f7c-a9d3-cb4b76197c53.json": {
+      "sha256": "e0dbb685ef85769d4bed2b9a7658a0e881cae374e20d85f0ea2eb97ac949aaab",
+      "bytes": 274
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-575b1375-8ee2-4535-9e9b-c3b9ba319e7d.json": {
+      "sha256": "964ec7b2ca1a23a7f403f8597f3d3620412d223a2bd324dff62b83acdac877c0",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-583692d2-8f56-42f4-8daa-2247afd527b6.json": {
+      "sha256": "9d1fbedf269743ac657d91a03092bfc04eb60d4af8f3c018b6f60631fd9371a9",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-5dc358e5-a146-496b-9b42-75e98327ed13.json": {
+      "sha256": "d8f306cce70e9e6adb94eee988c617588f91e2c639b6005f2ba29b6626412b1d",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-615e18b9-f2ac-415d-8a52-d28353e0d858.json": {
+      "sha256": "29d971cae882c6df37202b53affb5e008019627296656e96f982e1a046a282ae",
+      "bytes": 278
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-73ff6d20-5ef6-4f72-b418-f1ba752fb646.json": {
+      "sha256": "3e6c21155f2658eac1e576df872869633c59d0f33c94549f0f14594f20a8f086",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-77cbb77c-4fb4-4802-8a0e-fd4580796bed.json": {
+      "sha256": "fd3491d18f3e9356d65e6016590556b2c47b27f335eb4edfc9f347b83ee05394",
+      "bytes": 273
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-7ccf12ac-d14f-47f6-a114-6e516a9c9675.json": {
+      "sha256": "9ab5ddbbb064ea2bc1c5bc5cbe264d5b2c14dba8de4d449c6f510a59666cb9fd",
+      "bytes": 257
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-7de185c0-fb8a-401e-92ce-c87ce4594ab7.json": {
+      "sha256": "5ec61fe890449366a9701649243e57880cebdf6293019bb38f269e631c38050e",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-81750334-46a2-4a52-9512-8be2b08d3fa4.json": {
+      "sha256": "be469f4887827db2311a81a83e078a522441b6b49fecc2738146bbde0f5401de",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-9120b4e3-d912-43c6-96b3-a73b9345434a.json": {
+      "sha256": "f406751a0075d15e0b2fdb70d17cf4def663c4ad536027280030477e69308a4e",
+      "bytes": 219
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-a2d2adf3-d34a-444b-9cc1-4ade7a814ca5.json": {
+      "sha256": "99f84d20bf61705437535fe32afa31049e1e92f4ee9d9350a6c7b3b20021a6c1",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-a876090b-b787-49d0-ac43-45a3183f340b.json": {
+      "sha256": "0bdbb5f4a9a054da75248f1dcf519db3f2ec7c25223946038a8f4368652d3612",
+      "bytes": 269
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-af0ad6f2-79d2-49a2-bf70-921ed44f2db8.json": {
+      "sha256": "e31ad746dca465463e8eb7d9cef9ff58898fb2c8f59a3efe733a0e47da0658d3",
+      "bytes": 261
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-d2a9f241-fcba-40e8-b3d7-3112106edd9b.json": {
+      "sha256": "145fe39707cfce121baa52182f3b64866a988721114e4bd575bfca61717c122e",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-d7cb9f68-f2a7-43cb-ab2a-48fed54ab3a3.json": {
+      "sha256": "baea38bf8c77ca8fd9dd0ab35d0f0446a6d7bfcc242254d69b37daf858084ea7",
+      "bytes": 261
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-de32ba03-1e68-48ec-842a-61c8bb60ceec.json": {
+      "sha256": "ea3d6703a171803e9de5353120c03d882533b0c6fb1e1d7a3accf9d24c4f71bf",
+      "bytes": 222
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-e993d768-11fa-4087-ac32-862ef29582b7.json": {
+      "sha256": "945c3ffb27c3ee15b5d6ba10b9b27b9b20aa09ddab9a43fb24a1b0b087479bd4",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-eb66614e-dfdf-409c-97bd-4bda1b6e7bc9.json": {
+      "sha256": "29e094d90421f710a25d00dcf422982e4a639eddf7cd19430db1d00e44477e6d",
+      "bytes": 275
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-ed6fa307-31cd-4594-ab16-cdd0f5b5462b.json": {
+      "sha256": "31098ee8079a055a8fae13c5c325fec82bfe8956924cf74a7976e75e004ec965",
+      "bytes": 277
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-f07bcb06-a85b-4a75-a33a-07b7cc34d593.json": {
+      "sha256": "6035a603004fb4c2b4d5e665cd805e91b84f0859ebdf6c273b440ca763367a8c",
+      "bytes": 243
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-f2ce98a1-0adf-422c-b785-2a75ac7a7eee.json": {
+      "sha256": "eaf284f1d3e8a6f4b431fe5329fa1766499b929d50894125d30b5e845bbf6a84",
+      "bytes": 277
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-f4280a85-39b8-4283-b9bf-622aad998c3f.json": {
+      "sha256": "cd53b305a55711d712c0649d6d5d5e38cb609e135757fe47a76d55a2708a7289",
+      "bytes": 277
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/readonly-start-f81974ab-4667-4fb7-8001-ca49af6657d7.json": {
+      "sha256": "1b969b814e04a8a5760d1333ec162a7e9b8aa94d088bc5c099b6777280d38c74",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/six-native-verification.json": {
+      "sha256": "f9c740ad3dbb4fb1a2b4e435ca6dac6477575017b5bcd95600aa9864146e43c6",
+      "bytes": 4794
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/files/six-uncreated-users.json": {
+      "sha256": "4b9189226a6c1bc47ea93df7752cb6744f83c911c2e0be7d65faa3ace8cb5e00",
+      "bytes": 534
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/operation/owner.json": {
+      "sha256": "39d5e3d93d111518469d851515e99d098f0279ef8dc2cacce8fe6ac069bc7ad0",
+      "bytes": 302
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/operation/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/operation/stdout.txt": {
+      "sha256": "95eba35d8c93c29175989f15ec32245949fc5f3af2277c4714b3e06ae0b192c1",
+      "bytes": 52
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/operation/wait-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/operation/wait-stdout.txt": {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/mixed/result.json": {
+      "sha256": "1fdac27d4c5a2eb0c976681f6b132d237a81033d94e875456204cdd6344e83b1",
+      "bytes": 2579
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/plan.json": {
+      "sha256": "26d27adacec543172a7c570ca3a8d174565348e9c424e5a17dea06b286cc1667",
+      "bytes": 294135
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/preservation-after.json": {
+      "sha256": "be53b17b2b2520020d0f4441bc932b5034754b8c48d40fd4e2842ba91a5816b8",
+      "bytes": 277344
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/publication-helper-failure01.json": {
+      "sha256": "7af3b27bbf86f03f41fb1d21dc32c3768ce2602d24d07531d2ab2166b0227850",
+      "bytes": 321
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/publication-helper-failure02.json": {
+      "sha256": "d916bdc4f2391eb2deebfb5d36acbcff8b75e90fcad87cac2f2cd92bd31aeae2",
+      "bytes": 319
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/readonly-lifetime.json": {
+      "sha256": "3ec65efa36e1abf9b5e6b2233340b35e33c4ec7301987a9871227843019a3411",
+      "bytes": 165
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/normal-test_post_v27_seventeen_refresh.stderr.txt": {
+      "sha256": "ac1b6dce29687ac7b5e24d02cb9ac517c913c70757c76965e2dd1e63f95f44cb",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/normal-test_post_v27_seventeen_refresh.stdout.txt": {
+      "sha256": "9228c37459c793e13fd56786aed23f553896c55f6ad6b047ed615654aa2d9a49",
+      "bytes": 479
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/normal-test_verify_six_native.stderr.txt": {
+      "sha256": "267b959b1f1d401b15787dc18324596894cf7f56a838f467df27ee9d1dda130f",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/normal-test_verify_six_native.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/optimized-test_post_v27_seventeen_refresh.stderr.txt": {
+      "sha256": "20ef3d7ca3c147de3908f132a216baa6c4f64e3341827cf2d408bb6e8584fafe",
+      "bytes": 107
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/optimized-test_post_v27_seventeen_refresh.stdout.txt": {
+      "sha256": "9228c37459c793e13fd56786aed23f553896c55f6ad6b047ed615654aa2d9a49",
+      "bytes": 479
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/optimized-test_verify_six_native.stderr.txt": {
+      "sha256": "2266788fb8f17a265bb03548f8ad2aa7adc85ee8451271747541b30339a0b737",
+      "bytes": 106
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/optimized-test_verify_six_native.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/regression01/result.json": {
+      "sha256": "208c9e808ee09df876053b1289b745d52a24f8f459b8fe269e19a0f09cb8bcdf",
+      "bytes": 1071
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/six-target-readiness.json": {
+      "sha256": "3057f2c1d5117e94ef95932e58ac6bd7456f58f6fcbbfd6c096d5e4861510373",
+      "bytes": 13612
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/terminal.json": {
+      "sha256": "74dd235972c266474038c57714511e5b02574a145b68b21d43aef5d528cc76b2",
+      "bytes": 12251
+    },
+    "docs/acceptance/issue307-d1-post-v27-readonly17-and-six-readiness.md": {
+      "sha256": "0bb25d2a871d79ca665043af25fc8ee7548a2fe65bfcb38ff12f24ac4ee58c42",
+      "bytes": 8510
+    },
+    "examples/lifecycle-d1/refresh-post-v27-seventeen.py": {
+      "sha256": "2682c084057ef776d5746ba871f511e61e602e35aed937d55b73cda300056362",
+      "bytes": 9913
+    },
+    "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py": {
+      "sha256": "1f8db6e48ff0df77171dd79484be1c347990a605069adde59b0a9e83b95fa1b9",
+      "bytes": 5144
+    },
+    "examples/lifecycle-d1/test_verify_six_native.py": {
+      "sha256": "f621c1e1b5372eee198d6a412f48fe2de87dc2e21c4fdfa165d220f5ea37920d",
+      "bytes": 9216
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "f1e08fdefd6326e70b13b4e82dbbb2213ecf0cd82d0a6e91fabe6f94aa377410",
+      "bytes": 16376
+    }
+  }
+}

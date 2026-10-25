@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "docker",
+    "volume",
+    "inspect",
+    "dpp307-c20-schema-52774b7ffc14"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T03:18:46.789385+00:00",
+  "stdout_sha256": "0009270deda3ec03f2cacf55933bffcaa877ec9a93480242c21657cdb9d24714",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

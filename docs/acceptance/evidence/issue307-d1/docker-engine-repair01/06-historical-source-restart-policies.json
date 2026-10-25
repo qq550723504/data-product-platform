@@ -1,0 +1,25 @@
+{
+  "source": "candidate18-planning01/engine-service-bindings01.json",
+  "observed_at_utc": "2026-10-21T09:17:39.164979+00:00",
+  "historical_only": true,
+  "entries": [
+    {
+      "group": "business-races",
+      "role": "Native",
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "image_id": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "configured_image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "PID": 0,
+      "restart": "no"
+    },
+    {
+      "group": "mixed",
+      "role": "Native",
+      "cid": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "image_id": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "configured_image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "PID": 0,
+      "restart": "no"
+    }
+  ]
+}

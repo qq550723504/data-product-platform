@@ -1,0 +1,7 @@
+.zipfile\__init__.py:1686: UserWarning: Duplicate name: 'apps/platform/a'
+.fatal: git cat-file: could not get object info
+..
+----------------------------------------------------------------------
+Ran 4 tests in 7.805s
+
+OK

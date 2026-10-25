@@ -1,0 +1,643 @@
+{
+  "status": "PASS_NONDELETE_SOURCE_RESTORE_PREPARATION",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "groups_completed": 3,
+  "failure": null,
+  "closure": [
+    {
+      "cid": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "61f21deb17efac2c20f779bd43b317a657d7a802292ce38796a0c5f7c627d3a1",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "3656397a4675fc17ea485e439de9b3cbd051f823d86a59b9afeeef729d9d733d",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "35dbd268914e507a7fb46f7e08d1e995e8e6a4e49f2b4b950d086dd03e16acba",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "83dc59375540b0e15a741f217748ef69d285dd82b66f876b7604471e57c6265c",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "d030971bf8067861b1e005062753297f5f62195334c7de7ffb38a06388be2180",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "3ee62c99d8424365be4e38242a03345e88ef9cfdab86ff8dde89e84d37b3c4c9",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f4556438e87a15f22391399ebf76b388b9adb81f35cbcb19dd8304dae7cbf892",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "011eb6530a149d2087fbfbbfa73cde7836c21255638dfd05f7fef97e0f68b516",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "2e62fd4f0d43e8390b0fad6d5133b98fc8b25ad17e14440533587fc78f33efe2",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "3cb643d478a83a40091cc60af7f35071897dbe0d8ad2148bfb77dd0d139df4c9",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "ddae6ae645b39d5756f837ec68bf2eaeea726273c8483ee776e79a3aa45c7a8c",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "7d0de0f7d3288bf9cb8f363c1b548a7ca4c8f3354ac0b6db02423b10901c4fdf",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "94e57071bd09228b643cf6e9e2b7fab9dd262ad8622f97f6e3385b209357ec0a",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "88b7c624908ec65f66cde0fcb8e028a9120ebc7d6c35f53e75473bb602c16cf5",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "b77ecc09e87197290196617023261fcaeecf627f493a6f7e8caf44c46da2118b",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "0661289e5bdcf50abbd0701d750a680ba9a23667227932601e5f933c72539daa",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "acd50e967d1fd218ed0b7377f314617de51370b0a043085cf8c8d66d5d917789",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "593783744d8a9ea9326345a4e025118d90558411b16fd13a46e7d8d3a626bdb5",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "c28cd3abcd6c99bbf48509f131abcd1029bae799d7f16c999af9b3fdfc43f3d8",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f1b0e2ebd45d0858a8e252381f9c80475bbb093a2f58764c314bd7aca65e2026",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "9e16ddc30a79057a3c05cf75fa4cfcf0e4211b76d7029ef806b61ee28a3c694d",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "aadd42e3b1dab2d3c9b8a7f8af4c4b03342d7aacb71d772cf269f2b1fe181c91",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "7e5050afe1434923c3a78aea1ac9a366f356d5d77c6684968ced1f79ee841072",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "28421ea0715777cee6e0b2785c74d106b6ca588722b925bacf7ed41ec1fa0e27",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "73ca8634941e6025dda2c5635a2ca513c66a2bbc98462ede1a6fcb30e0522d79",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "354d1f3164f24a00c5eb1b4e130b7c2d45b98c8c3666344882c42b220008b5c3",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "3eed21abaf39eafe3c56fad327e5db1c97905f3d18ccd84658cdb3112bd9ebd5",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "dba2bf1c86f637d86f135b5cbca32f6d58980cfdf7af6bb4c3957e7b1e023145",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "1d3d1c0d522f85c99fb24f51d8b4c064a489b92bbb4a77e1be4a71c688d25c70",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "60578f81316715657ada21a4e7d2b3d66b4d4a2198a8ef40715fe076c073b217",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f3f44b0b48e9194ac31590ab7e28adf21da088355d29e8404e2e2508292e110f",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "c17f1315abb1c8cf2fe0608e3cfc7a80ebdf9ac7f8e550affc8895d27ea6ece5",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "395deb1f4f8d61501b5843ed36f5f8c2d351fe795d8a4c9aedc12be724e6df3a",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "a4ddc7065ecb665df4300b0f44d232908d3c0c525833f2e3d30c0793fed54835",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "ec04d2a8c096256407770047f99619ae8bf494fad07799bc2a71895c24ea0f03",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "68d97214cc7c53f661991f8b4b8a1e20b4df2a6799db6b713776f8aeac68551b",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "466c20a01f885a15e6918441dc137bd76ddd7d9d28a238cd7c342763efee8dbc",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "2c26108466fbc2277a508927bc829b64520ccd1a5a6b634814e66c6f1b92b1d6",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "97ef26d6dd57ad10be8418e648544f4bb3afc7231f1a6448a10597a629b716c2",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "890ac13ee7a64f26d9e42f088a1dbbff993f75cf8729067a95e2eb342534a64c",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "a783b58655beac36e7878c557242540867f37a833f4026aa4c3837f2f7d22f09",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "d88ef492448e63d3c458c00ca69648742ed0e43f5920af780118bb93d2185e3f",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "ad16a040710df43e51b99b4e9258b626c87a89584c7f63faeb60921e82ced5ab",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "60212f3b507c4ab24d259fde6b5de15977e71ee215043d7f152655644c909eab",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "1e7f87d4e61e2cd2efcacbde37d993f5e4cfb6491989d177f37640755ac83143",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "d260dc5e25d79422f18c82d800a97aaef0b1a73720880c9c6e9eef8228608e50",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "c7e6addd5b82b56a89734cc3d920998f40e9c0b9cd0bd11668554c6d1d75d49a",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "29f66938f51f153f377000748b7c43dad290904bb3cf15aec6b45deb730e53a6",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "4157bf062dd7206fa2e4f8878d194ac7cb3de9f21eebd732c438164be88923f5",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "18994fd669b2a3c37656e155174ba090caa4317a7e1866ecea169e81c07b6d3d",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "1caf2e59937034653ec993930c650787ea4e6cc4f7f7b2ae23304945bd7e5d01",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "0679d5ec2ab4d0c1dfe703e39fd355ffbbcbf03424cd56f9aaaad9971f5601be",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "c63be0a585a367b7338741b393ca075cd23682330c679700530c85fb525568fd",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "b8f7a7d62e13f9112972f3f6a27458b812e1b5385b2eb0b8145b5433d430e989",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f102d484028bc947e195afc5de2abaffe086d89bc4b06a2faccda7bd0568e7da",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "fa3a859040e32562fe89367cc854fdac4bbda2f458554d4c91ce210840943577",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "d9b0d4c6e38982867da5eb90eded40039a6359aa243767d222764e9f78148117",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "c389782f397a4b8d183ca17aa0dbd5963b64920afd5d839feb986af9989c3874",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "efa68263257d2db226cc4ba00b619f09cc32b6818d540e0cd07c7b9f9ee0b0fa",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "0f32bb2d6d77c8ca45f25b2253d45a544f0cea69227c4ad91d233d2c6f088a90",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "8503562b73d2501a6212ba7be2bb705eecbbe6df0648c15fe03cbe717caa0262",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "e02541f6872d763d4fc87e7c39729c480edf26df0c60d90566904983f65b2c2f",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "3d0bee5afb54c2ca83239d6af0de1d19d4860b3fc2562ef0e933da0b8ca51cd5",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "c73e88d2b7e1b3018a959bae011dc4c6d9d3226788a8e19c29021d1c4a4d5e5d",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "00f78320e72a0159b54e31778ca2a5421efa6b42626ef7bebe24f1361ce7c8d4",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "2d2b27bb3de529fb8508c0be25cc5787994786b49a05a1eece7ba2b415ac7674",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "5f7e1b413c96610010581a0d0b4a6db77a0ec04b193b0670bb72fe4e7c288018",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "d2f0c8fe4036c75cb206ea7c44bba2684061c6cd0adc1c91b07d7799a1801e6c",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "c73f14c8c304e8bab0acfdec6ff2d7fd00fd0232fd1e94c1a4b802c7810296ab",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "3510682df37548f5c524d951c029db0bd8587a58a16d1acbeedc505875ae55fc",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "1acb4d427cbb9d2ee670a8c3eb51b31ec5ad66d8b19e529529add6473822405e",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "a06b9310692091204568b313ed6e4decfa50c5cc0c1b42c7c812ec2157233a7c",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "7f0f032e783c74ee65120596cea9c874bf6db8c93c8fd3ef27792fe018d4b188",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "86ed991bbbf018faad7719c8b813754cc27c22673beb6ccafda13285867bc995",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "4a2afd07c5c22d7df9e0b6b14f1e126aeda0dae1192c1a51f77e852a1d86b588",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "98fa637b619c75228edea0cf562855d99d0484fd74705e9744e2ec9dd58856ff",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "64353e5f37523a6835a8d3798b99fb1197dd406da44373804a17be91cf5ece74",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "02ad507a6936de7de1ca9b3d19928c6686ddac298d875a0ff835040edb60b280",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "83ecd264ecaef1e83b759eb37b106dac199833359edd35ec8ef0bbb2c1716d59",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "1098181894c3f1dd11a68c19c520cb9ca3e1b19cdf947c219d4ce715b8de73c7",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "62600999ad172dcb91b35075cb30ff100ac01956f5265e08c1f7f486c176ebf4",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "3174531dec6af912b0391741d77f22eac2838b374157a4f955e649671f6c1e69",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "ef1386199b289af8b1d6ed57302619d76455b86a61a3a1a397a1eaf3ab42f3cf",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "fbd2e9c4de35b2a9a9a663196c28260740ff108e222ab280a2164e734990f6d4",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "d712187dbb38fa0db2f6a2503f5d3db2a6ef88cfa2b29faaab780d14faeb2ff3",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "7f9af742ce3cdb566597b88f33d4e92eda55e4430b3dc9968b743b5e89c8bced",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    }
+  ],
+  "native_delete": 0,
+  "old_authorization_reused": false,
+  "all_resources_retained": true,
+  "amount": "NOT_ASSESSED",
+  "profile_revocations": [
+    {
+      "file": "business-races\\maintenance-source\\six-readonly.json",
+      "disabled": true
+    },
+    {
+      "file": "business-races\\maintenance-restore\\six-readonly.json",
+      "disabled": true
+    },
+    {
+      "file": "business-races\\maintenance-provision\\six-provision.json",
+      "disabled": true
+    },
+    {
+      "file": "business-races\\restore-inspect-enable\\restore-inspector.json",
+      "disabled": true
+    },
+    {
+      "file": "business-races\\restore-inspect-disable\\restore-inspector.json",
+      "disabled": true
+    },
+    {
+      "file": "business-races\\rehearsal-business\\remaining.json",
+      "disabled": true
+    },
+    {
+      "file": "late-hold\\maintenance-source\\six-readonly.json",
+      "disabled": true
+    },
+    {
+      "file": "late-hold\\maintenance-restore\\six-readonly.json",
+      "disabled": true
+    },
+    {
+      "file": "late-hold\\maintenance-provision\\six-provision.json",
+      "disabled": true
+    },
+    {
+      "file": "late-hold\\restore-inspect-enable\\restore-inspector.json",
+      "disabled": true
+    },
+    {
+      "file": "late-hold\\restore-inspect-disable\\restore-inspector.json",
+      "disabled": true
+    },
+    {
+      "file": "late-hold\\rehearsal-late\\remaining.json",
+      "disabled": true
+    },
+    {
+      "file": "mixed\\maintenance-source\\six-readonly.json",
+      "disabled": true
+    },
+    {
+      "file": "mixed\\maintenance-restore\\six-readonly.json",
+      "disabled": true
+    },
+    {
+      "file": "mixed\\maintenance-provision\\six-provision.json",
+      "disabled": true
+    },
+    {
+      "file": "mixed\\restore-inspect-enable\\restore-inspector.json",
+      "disabled": true
+    },
+    {
+      "file": "mixed\\restore-inspect-disable\\restore-inspector.json",
+      "disabled": true
+    },
+    {
+      "file": "mixed\\rehearsal-mixed\\remaining.json",
+      "disabled": true
+    },
+    {
+      "file": "mixed\\rehearsal-protected\\remaining.json",
+      "disabled": true
+    }
+  ],
+  "evidence_index_sha256": "c4a047656f5ff5c860aea2d4fbe207bbc755f0c49bfd016759789fc26fc3912e"
+}

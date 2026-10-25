@@ -1,0 +1,8 @@
+{
+  "stage": "author packaging only after index creation and typed index audit",
+  "error": "UnicodeDecodeError: default Windows gbk reading UTF-8 independent review JSON",
+  "correction": "explicit UTF-8 for review input; existing index bytes retained; no source or gate edits",
+  "source_provider_io": 0,
+  "metadata_write": 0,
+  "delete": 0
+}

@@ -1,0 +1,14 @@
+{
+  "status": "PASS_EXACT_FINAL_HEAD_PR_CI_AND_REVIEW_THREADS",
+  "at": "2026-10-22T12:01:47.848525+00:00",
+  "head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "ci_run": 39773563527,
+  "ci_event": "pull_request",
+  "jobs": 13,
+  "unresolved_threads": 0,
+  "Draft": true,
+  "Issue307": "OPEN",
+  "native_delete": 0,
+  "execution_authority": false,
+  "main_CI": "NOT_RUN_NOT_MERGED"
+}

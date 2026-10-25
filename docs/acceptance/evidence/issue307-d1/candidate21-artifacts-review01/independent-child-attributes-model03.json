@@ -1,0 +1,32 @@
+{
+  "status": "PASS_BOUNDED_FIXED_CHILD_METADATA_AND_DOCUMENT_BYTE_RULES",
+  "actual_Docker_Core_provider_actions": 0,
+  "real_Git_blob_archive_and_true_false_checkout": true,
+  "current_child_metadata_sha256": "5663a2d642aaff3b9712742fe62adb176b204fbe827b008af743440de2836a3a",
+  "members": {
+    "docs/acceptance/.gitattributes": {
+      "sha256": "5663a2d642aaff3b9712742fe62adb176b204fbe827b008af743440de2836a3a",
+      "bytes": 227,
+      "production_actual": true
+    },
+    "docs/acceptance/issue307-d1-v31-preparation-contract.md": {
+      "sha256": "0d54e272f87566c753fd844c69002d00982e0b3d8a66ba03deb1ed1ce8b3a365",
+      "bytes": 3118,
+      "production_actual": true
+    },
+    "docs/acceptance/issue307-d1-candidate21-confirmation.md": {
+      "sha256": "08b981ca574e69096941c99cd360200721b9500dd85cf94dece4b6d8edf6d84d",
+      "bytes": 26,
+      "production_actual": false
+    },
+    "docs/acceptance/issue307-d1-v31-window-runbook.md": {
+      "sha256": "ff4bec5ef36b8365cd5902ca255c20dea9ea7ced0d171ce7549379dd3d19dac3",
+      "bytes": 21,
+      "production_actual": false
+    }
+  },
+  "all4_exact_rules_text_unset": true,
+  "unrelated_MD_rule_unchanged": true,
+  "future_confirmation_runbook_fixture_only": true,
+  "production_actual_four_file_receipt": "PENDING_AFTER_DOCUMENT_GENERATION"
+}

@@ -1,0 +1,10 @@
+66:def check_subnet(value):
+67:    subnet=ipaddress.ip_network(value)
+68:    ids=docker('network','ls','-q').decode().split()
+69:    for ident in ids:
+70:        network=json.loads(docker('network','inspect',ident))[0]
+71:        for item in network.get('IPAM',{}).get('Config') or []:
+72:            if item.get('Subnet'):
+73:                existing=ipaddress.ip_network(item['Subnet'])
+74:                require(subnet.version!=existing.version or not subnet.overlaps(existing),'Regression subnet overlaps '+network['Name'])
+75:    return str(subnet)

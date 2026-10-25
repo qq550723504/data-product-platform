@@ -1,0 +1,45 @@
+{
+  "Execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "Profile": "candidate16/v26",
+  "Groups": [
+    {
+      "Group": "business-races",
+      "Source": [
+        "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+        "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942"
+      ],
+      "Restore": [
+        "09b4d706a2956a0f18f20555774371bb869bb0a99b53e691b8af2c3974043b14",
+        "7eedc273fa419d553c273ead3a32094bad772af6fa5eaf8885afd0704c2c117f",
+        "b1e8d29d707ea5fc9b26ab72245c07f4d7979ed8dd694b6dda809076026345ed"
+      ]
+    },
+    {
+      "Group": "late-hold",
+      "Source": [
+        "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+        "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+        "e27a29ee55732447bff932d15bcb83339784089c00f03b9139232417fe1a8847"
+      ],
+      "Restore": [
+        "29afaf61be896131a9ec99734aef57a6e5d01284ce03228b404bfa8126ff31c9",
+        "7e048f427b92b14744019b221473b0766e53479be538794ea09dadced36d82f2",
+        "699a1223a8dcd859413eeec898e5b3c36b77396309905d31bc34be7905451236"
+      ]
+    },
+    {
+      "Group": "mixed",
+      "Source": [
+        "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+        "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+        "77f72e9ef0781527a7e8e5ce4a6cd8d36018e527a9ea853ae72d5f8fff9ea0eb"
+      ],
+      "Restore": [
+        "83ff625e5fdc530ad291a4bef018af91878c1d4073e5b2d89131d0b2be814471",
+        "a7a9547163144042ea72ac931db86fb1782093ac1028ca7e91edbab3e1cf9910",
+        "6de50163e7bb5707225fe4612bc3be0b46e271cc16ae63003acd9abbb2fd14bc"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "source": "8cca345525af828a8c9461e75f2dc5bf5f1fb428",
+  "at": "2026-10-20T11:44:02.670127+00:00",
+  "failure_stderr_sha256": "ecc48ebc4561737c10e29d5fe51dc6186e3bfb784d382747c7121712e0e264d7",
+  "checked_empty_packet": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate17",
+  "preserved_partial_packet": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c17\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate17-planning01\\freeze-failure01\\partial-packet",
+  "git_environment_override": {
+    "key": "core.longpaths",
+    "value": "true",
+    "scope": "child_process_only"
+  },
+  "source_binary_gate_or_budget_changes": false,
+  "native_work_replayed": false,
+  "delete_authority": false
+}

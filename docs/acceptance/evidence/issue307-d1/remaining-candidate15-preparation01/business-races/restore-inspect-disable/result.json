@@ -1,0 +1,9 @@
+{
+  "technical_requests": 2,
+  "actual_methods": {
+    "GET": 1,
+    "PUT": 1
+  },
+  "amount": "NOT_ASSESSED",
+  "native_delete": 0
+}

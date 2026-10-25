@@ -1,0 +1,33 @@
+{
+  "role": "root-enable-send",
+  "group": "mixed",
+  "cid": "88b7c624908ec65f66cde0fcb8e028a9120ebc7d6c35f53e75473bb602c16cf5",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate21-root-enable-send",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate21\\mixed\\root-enable-send,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate21/owner,target=/run/owner,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate21\\mixed\\outputs\\root-enable-send,target=/run/output",
+    "--entrypoint",
+    "/run/owner",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-action",
+    "enable-send"
+  ]
+}

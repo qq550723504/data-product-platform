@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-19T16:28:45.118615+00:00",
+  "source_files": {
+    "verify-six-native.py": "bbddab99c8ca263588e4e2ea4cf0cf58a96b27375c93ceacb3114229daf8bce5",
+    "window_six_support.py": "d4052b640e20406a344cc0653408270a07cb1187fca0580e81b2aa95d6579e8d",
+    "remaining_window.py": "e2dd0f4efcf84cc26e7a5977c4a336051849926949eaf373a13e4253262b6cc0",
+    "remaining_six_window.py": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef"
+  },
+  "rehash_semantic_counterexamples_rejected_before_runtime_state": [
+    "candidate-end",
+    "actual-use-until",
+    "actual-group",
+    "actual-head",
+    "base-end",
+    "recovery-end"
+  ],
+  "positive_reached_only_subsequent_state": true,
+  "seal_model": {
+    "all_steps": 103,
+    "failed_steps": [
+      "disable-all:business-races",
+      "seal-gateway:business-races"
+    ],
+    "all_groups_attempted": true,
+    "all_expected_CIDs_reached": 48,
+    "first_inspect_failure_still_fixed_stop": true,
+    "all_steps_confirmed": false
+  },
+  "actual_Docker_source_provider": 0,
+  "scope": "Synthetic profiles/candidates and full containment methods; no original auth or proof signing"
+}

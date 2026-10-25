@@ -1,0 +1,15 @@
+{
+  "status": "PRESERVED_AUXILIARY_OBSERVATION_FAILURE",
+  "observed_at": "2026-10-21T10:08:38.431450+00:00",
+  "original_tool_chunk": "dc0f90",
+  "exit_code": 1,
+  "original_script_sha256": "e12d7a0643df3806ec17844777734f53550cd30342583f2359c21f790bff3a5f",
+  "original_error": "ValueError: Frozen ZIP/raw/LF source differs: apps/platform/cmd/api/main.go",
+  "cause": "Auxiliary wrapper required actual ZIP member raw bytes to be normalized LF. The frozen source archive contains CRLF bytes and is independently bound by its exact ZIP SHA; source-freeze separately binds raw and normalized LF. The authoritative generator and independent analyze-frozen01.py compare normalized LF semantic source, not universal raw identity.",
+  "correction": "Reuse the reviewed raw/LF/ZIP comparison exactly; keep original observers and both failures. No source, binary, candidate, permission or gate change.",
+  "replacement_observation": "observe-manifest-build03.py",
+  "native_delete": 0,
+  "provider_io": 0,
+  "source_start": 0,
+  "execution_authority": false
+}

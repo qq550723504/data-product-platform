@@ -1,0 +1,34 @@
+{
+  "status": "PASS_ISOLATED_HOST_CLI_REPAIR_NONDELETE",
+  "recorded_at": "2026-10-20T01:31:33.236028+00:00",
+  "repair_worktree": "C:\\Users\\Henry\\.codex\\worktrees\\d1-cli-fix\\data-product-platform",
+  "branch": "codex/issue307-v25-host-cli-fix",
+  "base_HEAD": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+  "test_methods_each_mode": 7,
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "22b6520d8d66d202d1d64ffe677488388c8c2f40b7db35a3b594034761e3e96f",
+      "tail": "t_window_six_support.SixSupportTests.test_unknown_initial_inspect_still_stops_known_cid) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.385s\r\n\r\nOK\r\n"
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "d326452ec9a16f4b97724ef42daa461985f9d2f0117de8900b23e47140c83761",
+      "tail": "t_window_six_support.SixSupportTests.test_unknown_initial_inspect_still_stops_known_cid) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 7 tests in 0.379s\r\n\r\nOK\r\n"
+    }
+  ],
+  "patch_sha256": "b5226ec5f90719454ea3f46da35a497b14203f421e7f55d68bda82c7ddd6cf76",
+  "files": {
+    "examples/lifecycle-d1/window_six_support.py": "2fe83228b0a309badfe2f326eb739e889252c1d7ca9359e1f39e1d9eb23387e2",
+    "examples/lifecycle-d1/test_window_six_support.py": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b"
+  },
+  "frozen_candidate15_edited": false,
+  "original_authorized_checkout_HEAD_changed": false,
+  "original_authorized_host_SHA256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+  "runtime_source_provider_enable_proof_delete": 0,
+  "activation_authority": "NONE; isolated development repair does not authorize changing the frozen candidate or running the prior authorization"
+}

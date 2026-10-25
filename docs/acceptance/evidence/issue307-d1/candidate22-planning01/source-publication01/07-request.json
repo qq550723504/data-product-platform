@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "push",
+    "origin",
+    "81a083751c01a281d42df594f6e91012255081f1:refs/heads/codex/issue307-candidate22-runtime"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:39:15.318162+00:00"
+}

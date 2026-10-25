@@ -1,0 +1,147 @@
+{
+  "status": "PASS_SOURCE_AND_FIXED_EVIDENCE_FILE_CHECK",
+  "source_head": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "source_files": {
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go": "c45e41d7ceaad4fa26ef3c81640628e9fa84c9725d18d691a7c4baf8668839ef",
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.json": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads_test.go": "96e51d2af38ca6f8d54bdd9b00673349e18b76c4fdc1b8d8bbad84f16a2c2592",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": "0c0bec0aec518a3b03a33b89b65de9a3691989c16615bdd9a245815ac00c113d",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "f404bb4d9e5fa4de4a2f99edc47cb223136b67012d000d0e172bd16942c19f65",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "956521917ee5465d87ea0915f8eaa00cc7ef6d06227006f89f3e9b914d162467",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_window_test.go": "d445609c3f975e0ff1845cadf8ecb864c51d62572bd0e584ebbdbe733747834c",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": "05a777b3701a8b6e09f9070d0c60cc47093019d703aedf49183d1ccae171376c",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main_test.go": "9098a98e7a22e3376037e03b5e469238aa3ef7c324946ab67dc9fcacf0766bdb",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": "037233b8325a3e4a2928a37837285783901353639f9a9582a803cdb18d0e4612",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": "1543b11da41de3ec0b98a43ce9037900b95183abe565735bc2d2a0fa62292858",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six.go": "e891e96e0066baba152bf787e5eae23bb2586cafcbff2ee7501872ff8ec90065",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": "277327eca8e1f63ba3a70b80af1637dd7fcead9b10a17c3e4394a88578525c93",
+    "examples/lifecycle-d1/prepare-six-candidate.py": "0d1e25bd2b4e3e465abb7187da614fd61441d536eca316f32f1b2d4124279c8a",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "0736a80b400b998016604c9aa710e0e2a5705af5f5b2b3f172e133ca1d3e256c",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "101f2412466921cf349a7ea01be511af61c05ebd71540b1ef8d0788a9287adbc",
+    "examples/lifecycle-d1/verify-six-native.py": "6a595020fb0c5b248b5a09d4eb0f18ade1b5e31da2dc1bec19797ff61a1c7f04",
+    "examples/lifecycle-d1/window_six_support.py": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+    "examples/lifecycle-d1/remaining_six_window.py": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "485be98f1923ac9be79fe364c35a0393209b693e94e001110878d87bd924d824",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "99947fc8f883917dcbfa664533ac7c76f5a7d04155eead51cbc25217308d9b66",
+    "examples/lifecycle-d1/test_verify_six_native.py": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+    "examples/lifecycle-d1/test_window_six_support.py": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+    "examples/lifecycle-d1/test_remaining_six_window.py": "b55c1daa1f8b352276a1f9ef3df14217cae6c83f40f0d65b2ff8a75df23dc075",
+    "examples/lifecycle-d1/remaining_sequence.py": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+    "examples/lifecycle-d1/test_remaining_sequence.py": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5"
+  },
+  "git_raw_same_as_working": true,
+  "checkpoint": {
+    "sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+    "embedded_raw_equals_actual_snapshot": true,
+    "exact_five_successor_predecessor_rows": [
+      {
+        "id": "4a9220c3-0a45-4af4-a7fc-9fd2a9abec1f",
+        "actor_id": "033a56ad-99c2-43e3-89e0-a749979a8644",
+        "basis_ref": "CONTROLLED_SYNTHETIC_CUSTODY_AND_USE",
+        "use_until": "2026-10-19T06:40:00+00:00",
+        "created_at": "2026-10-19T06:06:43.96256+00:00",
+        "workspace_id": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "principal_ref": "remaining-fixture:8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+        "restore_until": "2026-10-19T06:40:00+00:00",
+        "dataset_version_id": "4219373a-07a0-4c66-a666-305675304b14",
+        "supersedes_policy_id": "1dce673b-2d6c-4932-82a5-3c63be658b27"
+      },
+      {
+        "id": "546332ee-6e70-45d8-98b0-66d5531333fe",
+        "actor_id": "033a56ad-99c2-43e3-89e0-a749979a8644",
+        "basis_ref": "CONTROLLED_SYNTHETIC_CUSTODY_AND_USE",
+        "use_until": "2026-10-19T06:40:00+00:00",
+        "created_at": "2026-10-19T06:06:43.993169+00:00",
+        "workspace_id": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "principal_ref": "remaining-fixture:8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+        "restore_until": "2026-10-19T06:40:00+00:00",
+        "dataset_version_id": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+        "supersedes_policy_id": "e369ebcd-4b7a-4490-a35d-2131fa61faf9"
+      },
+      {
+        "id": "49161aa4-9799-428f-acda-01b3fdd2cc52",
+        "actor_id": "033a56ad-99c2-43e3-89e0-a749979a8644",
+        "basis_ref": "CONTROLLED_SYNTHETIC_CUSTODY_AND_USE",
+        "use_until": "2026-10-19T06:40:00+00:00",
+        "created_at": "2026-10-19T06:06:44.002343+00:00",
+        "workspace_id": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "principal_ref": "remaining-fixture:8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+        "restore_until": "2026-10-19T06:40:00+00:00",
+        "dataset_version_id": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+        "supersedes_policy_id": "105fd8c9-5ab3-4940-a87a-4071f4416fb0"
+      },
+      {
+        "id": "3322f6bb-c5db-42de-b94d-ba8018a1e96c",
+        "actor_id": "033a56ad-99c2-43e3-89e0-a749979a8644",
+        "basis_ref": "CONTROLLED_SYNTHETIC_CUSTODY_AND_USE",
+        "use_until": "2026-10-19T06:40:00+00:00",
+        "created_at": "2026-10-19T06:06:43.983403+00:00",
+        "workspace_id": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "principal_ref": "remaining-fixture:8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+        "restore_until": "2026-10-19T06:40:00+00:00",
+        "dataset_version_id": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+        "supersedes_policy_id": "ec9c4b58-288a-4e0d-a4a3-23bd54c73a90"
+      },
+      {
+        "id": "1d4804a8-3726-49ee-8822-ede4bf10443e",
+        "actor_id": "033a56ad-99c2-43e3-89e0-a749979a8644",
+        "basis_ref": "CONTROLLED_SYNTHETIC_CUSTODY_AND_USE",
+        "use_until": "2026-10-19T06:40:00+00:00",
+        "created_at": "2026-10-19T06:06:43.97331+00:00",
+        "workspace_id": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "principal_ref": "remaining-fixture:8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+        "restore_until": "2026-10-19T06:40:00+00:00",
+        "dataset_version_id": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+        "supersedes_policy_id": "7d5d599b-1965-45b2-9008-8a0cdf0d75f6"
+      }
+    ],
+    "CoreSHA256": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8"
+  },
+  "c14_failure_bundle_sha256": "2e2ebeb0946df534297bb306761cc14b992e50b559871098f2822e4312c3e704",
+  "c14_private_25_members_match": {
+    "reader": "62308664bd72e79bde61225e0e3f122db1e7a8feefc55254108de221983f384d",
+    "operator": "fef94d893a4a0aee85269343d7824e2bd7a3b8f9e1c196fc376f666f39aa412b",
+    "owner": "23f15d918ce0942dcab2fae8da13785c8a386bb4811a533cc04d70f25a1409f2",
+    "readonly-check.exe": "0460e6a812b519840e20e674eb1ef82da08fe7eca188e41de42bf88aaf9ac15a",
+    "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "business-races/checkpoint/core.dump": "88350f7c4d24ce8e8ce148dbe851fe6d8008701e20df7ac9458ac1c2622af66e",
+    "business-races/checkpoint/globals.sql": "d8ca96a7ffe9f4c54f082eff286c89083470a496fbe370b4a464038b1fad2719",
+    "business-races/checkpoint/native.tar": "712cc1a5ead3a84b39c3f1c103e43d853f32d09e3da2def676229fc873beac01",
+    "business-races/case-business/remaining.json": "706d51b5493d17d63408947ecd406f9369b36163b938f8db4718b7e88cb26737",
+    "business-races/rehearsal-business/remaining.json": "388507a13ad5dbe878fdaf6be32b17eb194f447e76e93c9d3e16a9a3a26fb8f4",
+    "late-hold/case-late/remaining.json": "82ee473e265fa212d9c0844511a045447953c76e0808ad526f19471b6f504799",
+    "late-hold/case-close-H1/remaining.json": "82ee473e265fa212d9c0844511a045447953c76e0808ad526f19471b6f504799",
+    "late-hold/rehearsal-late/remaining.json": "e600bf8d88a74a1f29a8bb03b904b1af0ec9327f4eabc43f9b8220105071a703",
+    "mixed/case-mixed/remaining.json": "c2dd6fc38ee33f5b834a06df0f3ee100f37f63bb3e798dd5e46fa0f8cb38ce85",
+    "mixed/case-mixed-b/remaining.json": "c2dd6fc38ee33f5b834a06df0f3ee100f37f63bb3e798dd5e46fa0f8cb38ce85",
+    "mixed/case-mixed-c/remaining.json": "c2dd6fc38ee33f5b834a06df0f3ee100f37f63bb3e798dd5e46fa0f8cb38ce85",
+    "mixed/rehearsal-mixed/remaining.json": "6afd6c0340d1d906779e911f9bf45cdc1c66f2859dd4083cca7e3b8ad08cc975",
+    "mixed/rehearsal-protected/remaining.json": "6afd6c0340d1d906779e911f9bf45cdc1c66f2859dd4083cca7e3b8ad08cc975"
+  },
+  "retained_270_parent_receipt": {
+    "sha256": "2af0c9266d0af1a797462405832dd73248689ba03e985d7edc446acbdb2f9291",
+    "closed_cids": 270,
+    "independently_reexecuted": false,
+    "scope": "File-only readback of parent actual read-only gate; earlier independent04 fresh reads remain historical evidence"
+  },
+  "parent_local_tests_receipt_sha256": "8b94439c3a2e13d0461bf4317da3147978fafcaccf9efcf4f5bc24623e82ca2a",
+  "independent_skipped_go_tests": [
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "test": "TestPostV22NoSendPostgresEligibility"
+    },
+    {
+      "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader",
+      "test": "TestSixNativeDisabledBootstrapContract"
+    }
+  ],
+  "no_native_retest": true,
+  "at": "2026-10-19T19:34:22.638048+00:00"
+}

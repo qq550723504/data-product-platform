@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-10-20 01:47:06 UTC",
+  "pull_request_head": "8a172cade7b5eab2d871fc75ac9d0963f9d27199",
+  "threads": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "review_threads": []
+      },
+      "isError": false
+    }
+  },
+  "issue": {
+    "status": "open",
+    "url": "https://github.com/qq550723504/data-product-platform/issues/307"
+  }
+}

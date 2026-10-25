@@ -1,0 +1,7 @@
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp58j93yab\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\e5d87d7b-f572-4f5d-b904-88eb22df82fc\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp3jfu72o0\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\fec12165-708d-45cf-ab35-3a97d9e28f5b\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpzvrq25q7\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\e8a01ceb-2c61-49f0-a77a-bd401bfff6a0\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpj82omuqo\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\9195bd10-6177-4881-ae85-b107a9bc4a99\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpoo9pv9c0\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\3491cc3e-c648-4d9e-be7f-500a5120d6ab\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpxkadv5m3\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\041b4747-e496-4c1d-9ff4-0839f6af566d\\terminal.json"}
+{"status": "PASS_CORE_READONLY_AUDIT_ONLY", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp5z41g_ek\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\f5c75a97-f01f-4d2f-9b05-e98e563a8f8b\\terminal.json"}

@@ -1,0 +1,33 @@
+{
+  "role": "remaining-close-H1",
+  "group": "late-hold",
+  "cid": "9ce7621e984a8c0d647d6af8975786bef0e55bec839016e045703881eae769b7",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate19-case-close-H1",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:e9e989acd159d8c40c287fb843e7c4f26b118edb2ad4cf7c2b5d1b45ec7f9e36",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\case-close-H1,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\late-hold\\outputs\\case-close-H1,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "remaining-close-H1"
+  ]
+}

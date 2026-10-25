@@ -18,6 +18,9 @@ type rowQuerier interface {
 // Recovery remains the existing Outbox -> Asynq path. A provider 204 or an
 // UNKNOWN observation never satisfies this immutable Core receipt boundary.
 func predecessorCopies(group, stage string) ([]uuid.UUID, error) {
+	if !knownCase(stage) {
+		return nil, lc.ErrStorageScope
+	}
 	stages := map[string][]string{
 		"business-races": {"P1", "P2", "T1", "T2"},
 		"late-hold":      {"H2"},
@@ -28,7 +31,7 @@ func predecessorCopies(group, stage string) ([]uuid.UUID, error) {
 		if name == stage {
 			return copies, nil
 		}
-		cp, err := fixedTarget(group, name)
+		cp, err := historicalCopy(group, name)
 		if err != nil {
 			return nil, err
 		}

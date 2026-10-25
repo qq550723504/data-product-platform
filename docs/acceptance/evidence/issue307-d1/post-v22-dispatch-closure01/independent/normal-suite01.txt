@@ -1,0 +1,24 @@
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpk8erm5ki\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\dd20945d-4a7d-48c3-90fe-01dd12c1d6dc\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpb1zge18e\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\771a5529-2462-4422-bc28-a340d8922f0a\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpbcpgaplg\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\ac178ce2-f430-4610-b537-59d79fa6a796\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp2kv1vq75\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\b7436b8b-f154-49d5-8c45-2cf018db2341\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp3ha0dco9\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\60ea392a-8bcc-4c1f-bce5-c4c55e052534\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpl1x06mwx\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\66ee8a31-b5ca-4dbd-a5e6-460d12078721\\terminal.json"}
+{"status": "PASS_CORE_READONLY_AUDIT_ONLY", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmp7_r6t25h\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\f398e35c-0b10-45de-b54d-fa7f17164740\\terminal.json"}
+
+test_actual_retained_budget_missing_or_modified_rejects_frozen_anchor (__main__.OldDispatchAuditTests.test_actual_retained_budget_missing_or_modified_rejects_frozen_anchor) ... ok
+test_core_mutation_cannot_be_reported_as_pass (__main__.OldDispatchAuditTests.test_core_mutation_cannot_be_reported_as_pass) ... ok
+test_core_no_conflict_is_never_NOT_SENT_authority (__main__.OldDispatchAuditTests.test_core_no_conflict_is_never_NOT_SENT_authority) ... ok
+test_each_actual_conflict_is_retained (__main__.OldDispatchAuditTests.test_each_actual_conflict_is_retained) ... ok
+test_extra_attempt_dispatch_or_foreign_binding_fails_closed (__main__.OldDispatchAuditTests.test_extra_attempt_dispatch_or_foreign_binding_fails_closed) ... ok
+test_failed_stop_and_unreadable_readback_are_unconfirmed (__main__.OldDispatchAuditTests.test_failed_stop_and_unreadable_readback_are_unconfirmed) ... ok
+test_preservation_gate_failure_prevents_all_core_start (__main__.OldDispatchAuditTests.test_preservation_gate_failure_prevents_all_core_start) ... ok
+test_query_failure_still_stops_core_and_keeps_original_error (__main__.OldDispatchAuditTests.test_query_failure_still_stops_core_and_keeps_original_error) ... ok
+test_real_shared_sql_helper_wraps_in_repeatable_read_read_only (__main__.OldDispatchAuditTests.test_real_shared_sql_helper_wraps_in_repeatable_read_read_only) ... ok
+test_success_composition_starts_only_core_and_stops_it (__main__.OldDispatchAuditTests.test_success_composition_starts_only_core_and_stops_it) ... ok
+test_three_exact_historical_identities_exclude_P1 (__main__.OldDispatchAuditTests.test_three_exact_historical_identities_exclude_P1) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.091s
+
+OK

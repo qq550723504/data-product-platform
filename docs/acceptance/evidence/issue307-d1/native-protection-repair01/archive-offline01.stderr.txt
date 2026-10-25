@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-protect\examples\lifecycle-d1\ci-test-fixture-runtime.py", line 49, in <module>
+    try:main()
+        ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-protect\examples\lifecycle-d1\ci-test-fixture-runtime.py", line 20, in main
+    spec=f.specification(root,execution=w['Execution'],profile=w['Profile'],start=w['NotBefore'],end=w['NotAfter'])
+  File "C:\Users\Henry\.codex\worktrees\d1-protect\examples\lifecycle-d1\fixture_artifacts.py", line 60, in specification
+    need(re.fullmatch('[0-9a-f]{40}',spec['source']) is not None
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         and git(root,'cat-file','-t',spec['source']).strip()==b'commit'
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         and git(root,'rev-parse',spec['source']+'^').decode().strip()==spec['base_source'],
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         'runtime source must be the one reviewed direct fixture commit')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-protect\examples\lifecycle-d1\fixture_artifacts.py", line 19, in need
+    if not value: raise ValueError(message)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: runtime source must be the one reviewed direct fixture commit

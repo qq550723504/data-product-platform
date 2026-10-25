@@ -1,0 +1,12 @@
+{
+  "name": "retention_renewal-O",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-O",
+    "-B",
+    "examples/lifecycle-d1/test_retention_renewal.py"
+  ],
+  "started_at": "2026-10-24T11:08:35.286094+00:00",
+  "finished_at": "2026-10-24T11:08:35.420194+00:00",
+  "returncode": 0
+}

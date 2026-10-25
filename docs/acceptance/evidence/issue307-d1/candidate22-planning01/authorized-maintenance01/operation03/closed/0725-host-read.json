@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "docker",
+    "inspect",
+    "d1d973336d0537426950376465eac9a2cf890293177f5d7f41d9c8d5b275a188"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:30:45.833400+00:00",
+  "stdout_sha256": "95ffe03e2a57128880fd47a85b69618ad007e16b546b0c3b6bd68f9903afb3d9",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

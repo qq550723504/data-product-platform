@@ -1,0 +1,12 @@
+{
+  "status": "PASS_COMMENT_UTF8_EXACT_READBACK",
+  "at": "2026-10-22T09:58:51.523132+00:00",
+  "url": "https://github.com/qq550723504/data-product-platform/pull/332#issuecomment-6338003021",
+  "head": "16aa4ec464a1fa14f1aa7ac21624b3855ecb39b3",
+  "body_bytes": 2130,
+  "body_sha256": "736642d7b0b8771e136a9ba7fae3e60d49a58fcb950bf182ae430fa79a93abb1",
+  "post_not_retried": true,
+  "PR332": "DRAFT_OPEN_UNMERGED",
+  "Issue307": "OPEN",
+  "native_delete": 0
+}

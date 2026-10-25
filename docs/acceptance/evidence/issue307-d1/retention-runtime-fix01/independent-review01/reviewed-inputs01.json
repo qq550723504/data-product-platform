@@ -1,0 +1,147 @@
+{
+  ".github/workflows/ci.yml": {
+    "bytes": 35092,
+    "raw_sha256": "dbed605285ea93f5a9871d6847b2c74cd2d172790fa7d98987257220512dae4c",
+    "lf_sha256": "7d965ee5392827aa120008df661cbbe2b8475ce2a3f5d52ac2d3e28cfe2137e9"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/main.go": {
+    "bytes": 26691,
+    "raw_sha256": "37e051ac5a4a9543ceba9bdd54430b5ae0d32bfc1da328e3a2ef00a9ce037d47",
+    "lf_sha256": "37e051ac5a4a9543ceba9bdd54430b5ae0d32bfc1da328e3a2ef00a9ce037d47"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify.go": {
+    "bytes": 11061,
+    "raw_sha256": "510985287fb311b5a9c9f23e326dc145eaaeb870b6a65a80a56de470854dcd01",
+    "lf_sha256": "510985287fb311b5a9c9f23e326dc145eaaeb870b6a65a80a56de470854dcd01"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": {
+    "bytes": 16323,
+    "raw_sha256": "138eedb66b829991b83639a51591c4196b18a820c6c8e4d216f7eb5dc14bb261",
+    "lf_sha256": "0169d981c9ebcae68dcc6bcbbf4592d884aadae9998190b8a854ef392f2ddc0a"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go": {
+    "bytes": 10221,
+    "raw_sha256": "1ccf7eb9db81054a07b64d1e4dce86226873b7acaa8ba3ec2100dc5500d65aa2",
+    "lf_sha256": "c35e9563274a48d0a2d0aad5a67438f0143d87b36c0fb5cc4c75e933e0698f8e"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go": {
+    "bytes": 4585,
+    "raw_sha256": "c773d1a16fead8465240dc5a0dd48183524482a958280a3d0e013199158e4519",
+    "lf_sha256": "9523a02f91f07c994085c5cac9fd997b63075fcdb50553248c12a38632cfde4e"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go": {
+    "bytes": 7149,
+    "raw_sha256": "ccd9d8539248b20c9d36f02f574842a7e0c1a15830f773e8e94d16316779149d",
+    "lf_sha256": "f5b6b3ac64ffde6789d475ef3254a152c4cb995f3c14094c2a5aa131d682fb4e"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify.go": {
+    "bytes": 11075,
+    "raw_sha256": "bd70a76025f77bcca5c5005155419493ffbe03eb7436e67a7262c7aee69aa3a1",
+    "lf_sha256": "bd70a76025f77bcca5c5005155419493ffbe03eb7436e67a7262c7aee69aa3a1"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/retention_verify.go": {
+    "bytes": 2843,
+    "raw_sha256": "a08af3fa5d3e145bb91f9794d3768f41f75a5ac8df21ff9c227334a930df765e",
+    "lf_sha256": "a08af3fa5d3e145bb91f9794d3768f41f75a5ac8df21ff9c227334a930df765e"
+  },
+  "apps/platform/cmd/lifecycle-fixture-reader/retention_verify_test.go": {
+    "bytes": 2567,
+    "raw_sha256": "0c72ce50d4a22ab727bd85b34c71f8dc184e2c279f7b95bdd0376ce4bb36efd9",
+    "lf_sha256": "0c72ce50d4a22ab727bd85b34c71f8dc184e2c279f7b95bdd0376ce4bb36efd9"
+  },
+  "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go": {
+    "bytes": 8503,
+    "raw_sha256": "aab931a866a4999b6c202e30ea04b95169d3d3f9523a8b6c76544cbdbf016ef5",
+    "lf_sha256": "aab931a866a4999b6c202e30ea04b95169d3d3f9523a8b6c76544cbdbf016ef5"
+  },
+  "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go": {
+    "bytes": 12116,
+    "raw_sha256": "a51a3a67ae77e1d7adce72e286b92b446c1bf81a0236c7507dab13a1b8d7f367",
+    "lf_sha256": "a51a3a67ae77e1d7adce72e286b92b446c1bf81a0236c7507dab13a1b8d7f367"
+  },
+  "apps/platform/cmd/lifecycle-fixture-readonly-check/retention.go": {
+    "bytes": 4016,
+    "raw_sha256": "88ec84db5fe3903fbda4d4f52d4faecf579999dba1245615d62c55cb5a041ffb",
+    "lf_sha256": "88ec84db5fe3903fbda4d4f52d4faecf579999dba1245615d62c55cb5a041ffb"
+  },
+  "apps/platform/cmd/lifecycle-fixture-readonly-check/retention_test.go": {
+    "bytes": 3872,
+    "raw_sha256": "9592da1d16b924eec7468b0ef0a6d79d9bdcafb62ec4b0c9eb0e04913141644b",
+    "lf_sha256": "9592da1d16b924eec7468b0ef0a6d79d9bdcafb62ec4b0c9eb0e04913141644b"
+  },
+  "apps/platform/cmd/lifecycle-fixture-retention/main.go": {
+    "bytes": 20899,
+    "raw_sha256": "fc761e75a6fa9a4224ff4b54f281dac1a51bae84a64c2f9d4c586f80bb2e648c",
+    "lf_sha256": "fc761e75a6fa9a4224ff4b54f281dac1a51bae84a64c2f9d4c586f80bb2e648c"
+  },
+  "apps/platform/cmd/lifecycle-fixture-retention/main_test.go": {
+    "bytes": 16186,
+    "raw_sha256": "d2d242b57e9fda79033f1054334dd247ee3efb5cc7872e635f6274c3f8b9e219",
+    "lf_sha256": "3092c6faec6a362cab721eb3ca7296bf175eaa3b09bcbedffac258965c9254e4"
+  },
+  "apps/platform/cmd/lifecycle-fixture-retention/testdata/approved-proposal.json": {
+    "bytes": 3221,
+    "raw_sha256": "085ea63794446d65de2ede8d3a320e7182abdad0f18f4fde71c0cf625a2e0d52",
+    "lf_sha256": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f"
+  },
+  "apps/platform/cmd/lifecycle-fixture-retention/wait_test.go": {
+    "bytes": 3649,
+    "raw_sha256": "42dcb3ece22670fa8aa5b998f3c053e8152fe6177019a0cea0a55d880d0155c8",
+    "lf_sha256": "42dcb3ece22670fa8aa5b998f3c053e8152fe6177019a0cea0a55d880d0155c8"
+  },
+  "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+    "bytes": 7222,
+    "raw_sha256": "2f68bbf0d678aad22d3253daf56cf1af437db49ee2c5eb01764b7ed107dda83a",
+    "lf_sha256": "44b98ddf1f726f316309e68789f6f1576ada080715fb7e404c5fba72663147b5"
+  },
+  "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go": {
+    "bytes": 1506,
+    "raw_sha256": "e294a0ba58f649e122bf1fb0858c04d89da12611160a9c7732b208834e2f9990",
+    "lf_sha256": "c45e41d7ceaad4fa26ef3c81640628e9fa84c9725d18d691a7c4baf8668839ef"
+  },
+  "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+    "bytes": 2438,
+    "raw_sha256": "5282ba7e3190bde8d9f07ae5afb3150b37405dd687c3119d51ae59ca466457af",
+    "lf_sha256": "fb284daaf2344acda651844e79d1c963209429a55b529bd603ae01835db5bb72"
+  },
+  "apps/platform/internal/lifecycle/pilot/remaining_scope.json": {
+    "bytes": 13485,
+    "raw_sha256": "d5758dd1082e6191a508d6ab9ad9db1d9e8ea8ecd2b2b7a61b5d0d1c38ae447c",
+    "lf_sha256": "6814f2e9e26c7f9305f6ebd675de1a9cdc6e70095583bac7d196bde13fe35288"
+  },
+  "apps/platform/internal/lifecycle/pilot/retention_maintenance.go": {
+    "bytes": 1877,
+    "raw_sha256": "d22adced9a39b5b0f866123ea683c5d8e10acf97769053615a14a9a347067d5e",
+    "lf_sha256": "d22adced9a39b5b0f866123ea683c5d8e10acf97769053615a14a9a347067d5e"
+  },
+  "docs/acceptance/issue307-d1-retention-runtime-fix01.md": {
+    "bytes": 3623,
+    "raw_sha256": "3490bf4a30eb7c2741c956497a279c01baedbe4e51fe054952307af10793f2b8",
+    "lf_sha256": "3490bf4a30eb7c2741c956497a279c01baedbe4e51fe054952307af10793f2b8"
+  },
+  "examples/lifecycle-d1/fixture-runtime-artifact.json": {
+    "bytes": 109429,
+    "raw_sha256": "21f2e616024dba45c14217b13a7f9f52cec3eae6187b90595d0c1398ab095759",
+    "lf_sha256": "21f2e616024dba45c14217b13a7f9f52cec3eae6187b90595d0c1398ab095759"
+  },
+  "examples/lifecycle-d1/retention_maintenance.py": {
+    "bytes": 14524,
+    "raw_sha256": "6be28d6553267ba55d712306f345f7832e6084b3cf344d760766ba45c68f1d69",
+    "lf_sha256": "b5d165a626edb9bed0019cec9e258e319528e4d7c5b55d03bb59733a502bc33f"
+  },
+  "examples/lifecycle-d1/retention_staging.py": {
+    "bytes": 3275,
+    "raw_sha256": "f6ae0f0d8b8b08c6596a355e469ee04dbfa37abbbc2c0f55ee51956bf9afa12c",
+    "lf_sha256": "fd897a92e1c3881773405beb4ff5eedf661e2664d1b264aae9b82629f540d5a5"
+  },
+  "examples/lifecycle-d1/test_retention_maintenance.py": {
+    "bytes": 15192,
+    "raw_sha256": "2d3490db92ec16ed05da0254f835e46553203c4901f8e491900527e627224ef3",
+    "lf_sha256": "aede7ad0f8ca94b91ebc53152cece348b702c444d21115a953c3303c44897fb8"
+  },
+  "examples/lifecycle-d1/test_retention_staging.py": {
+    "bytes": 2858,
+    "raw_sha256": "dc8a09900487a96eaefc9b54fb6ceda58ec1dd4c0d1bfdef2330554fddc8519a",
+    "lf_sha256": "dc8a09900487a96eaefc9b54fb6ceda58ec1dd4c0d1bfdef2330554fddc8519a"
+  }
+}

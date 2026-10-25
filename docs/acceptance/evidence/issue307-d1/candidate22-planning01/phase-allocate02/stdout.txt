@@ -1,0 +1,1 @@
+{"status": "STOPPED_ALLOCATION_NOT_NATIVE_ACCEPTANCE", "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f", "owners": 86, "native_delete": 0}

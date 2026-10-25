@@ -1,0 +1,20 @@
+{
+  "candidate": "candidate16/v26",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "candidate_sha256": "6cfb8173b853f45775eac3fd0c55095fc90ed9df50b1313d817040f6edc75643",
+  "bindings_sha256": "ba4be219a0a567579684afbb9ced23d7fdec556654d746b7b86c254d35e4e580",
+  "confirmation_sha256": "cd06672e3992c3888d9d765082747f073250dcdb33d499d3f0210d1fdb786f7c",
+  "source": "5472a583f86838df42a5ffd86bc366c166036efb",
+  "historical_copies": 18,
+  "present_versions": 17,
+  "targets": 6,
+  "survivors": 11,
+  "human_confirmation": "NOT_RECEIVED",
+  "permission_enabled": false,
+  "native_delete": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "Issue307": "OPEN",
+  "PR332": "DRAFT",
+  "old_authorization_reused": false,
+  "schedule": "NOT_CREATED"
+}

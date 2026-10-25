@@ -1,0 +1,9 @@
+{
+  "status": "PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION",
+  "head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "run": 39903332833,
+  "snapshot_sha256": "524daa247acf1f864057153c9fb49b414b6b814853f6bb665175c79a47beb15a",
+  "provider_io": 0,
+  "allocated_resources": 0
+}

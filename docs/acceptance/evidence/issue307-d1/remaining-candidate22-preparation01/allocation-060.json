@@ -1,0 +1,22 @@
+{
+  "role": "source-gateway",
+  "group": "mixed",
+  "cid": "60479b860ca0fe44a93e7c7188f17cdb2d01d1dea9d752c7e1fcc74e20897af3",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate22-gateway",
+    "--network",
+    "77f72e9ef0781527a7e8e5ce4a6cd8d36018e527a9ea853ae72d5f8fff9ea0eb",
+    "--tmpfs",
+    "/config",
+    "--tmpfs",
+    "/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\mixed\\gateway.Caddyfile,target=/etc/caddy/Caddyfile,readonly",
+    "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "caddy",
+    "run",
+    "--config",
+    "/etc/caddy/Caddyfile"
+  ]
+}

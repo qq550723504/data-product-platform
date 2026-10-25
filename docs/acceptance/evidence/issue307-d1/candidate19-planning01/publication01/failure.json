@@ -1,0 +1,14 @@
+{
+  "status": "FAILED_BEFORE_COMMIT_OR_PUSH_STAGED_RAW_AUDIT",
+  "at": "2026-10-22T02:12:44.406846+00:00",
+  "exit": 1,
+  "error_type": "ValueError",
+  "error": "Indexed evidence bytes changed through Git filters",
+  "affected": "docs/acceptance/evidence/issue307-d1/post-v28-restored-core01/address-pool-cause.json",
+  "source_script_sha256": "581f33ec3ce2811a791aedf82d1cc399355d9aff529471e1bacd6fe3b86c0b91",
+  "capture_source": "Tool output transcription; not a captured raw subprocess channel",
+  "runtime_candidate_binary_config_changed": false,
+  "commit_created": false,
+  "push_performed": false,
+  "native_delete": 0
+}

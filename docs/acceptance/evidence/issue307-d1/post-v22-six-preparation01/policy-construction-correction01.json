@@ -1,0 +1,10 @@
+{
+  "status": "FAILURE_RETAINED_AND_CONSTRUCTION_CORRECTED",
+  "at": "2026-10-19T14:59:04.970717+00:00",
+  "original_error": "unsupported condition keys '[s3:versionid]' used for action 's3:GetObjectLegalHold'",
+  "original_channel": "tool transcript; not archived as a separate original raw file",
+  "root_cause": "The official MinIO policy library rejects a version condition on protection metadata actions.",
+  "correction": "GetObjectVersion and DeleteObjectVersion have exact version conditions; GetObjectRetention/LegalHold are exact-key IAM plus frozen gateway/adapter exact-version enforcement.",
+  "real_provider_io": 0,
+  "native_delete": 0
+}

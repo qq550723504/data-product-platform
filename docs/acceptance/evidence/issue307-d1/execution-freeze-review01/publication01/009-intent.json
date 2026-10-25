@@ -1,0 +1,9 @@
+{
+  "started_at": "2026-10-22T06:59:51.722530+00:00",
+  "method": "POST",
+  "endpoint": "graphql",
+  "body": {
+    "query": "query { repository(owner:\"qq550723504\",name:\"data-product-platform\") { pullRequest(number:332) { headRefOid isDraft state merged reviewThreads(first:100) { pageInfo { hasNextPage } nodes { id isResolved isOutdated } } } } }",
+    "variables": {}
+  }
+}

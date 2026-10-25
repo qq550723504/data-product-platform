@@ -1,0 +1,34 @@
+{
+  "status": "PASS_INDEPENDENT_FINAL_R_P_ARTIFACT_EQUIVALENCE_AUDIT",
+  "at": "2026-10-22T08:01:48.065878+00:00",
+  "source_head": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "runtime_spec_sha256": "cb27cdc95aa5b4ddac313008daa6aa27e6ccfe7ffa29c5de52b81352f168b28f",
+  "archive": {
+    "members": 769,
+    "bytes": 1821417,
+    "sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea"
+  },
+  "host_tracked_files": 2243,
+  "twelve_build_members_all_equal": true,
+  "schema_sources_all_equal": true,
+  "schema_native_binary_sha256": "0fd893c0f787939caaebd4d350eb066e16860e91771fcc31b3fe38e3c39c5bf1",
+  "native_witness_source_label_retained": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "equivalence_scope": "New R has only one test expectation delta; all four actual production binaries and eight original build output bytes equal the native-tested prior build; exact schema gate and test sources/program unchanged. No source migration or new native execution claimed.",
+  "source_migration": false,
+  "provider_delete": 0,
+  "reviewer_source_or_docker_io": 0,
+  "reviewer_path_correction": "First in-memory attempt used nonexistent artifact-build02 private path and failed before any I/O other than regular-file check; actual retained private directory is artifact-rehearsal02.",
+  "independent_go_counts": {
+    "independent-final-R-pilot01.stdout.txt": {
+      "top_level_passes": 3,
+      "nested_subcase_passes": 3,
+      "note": "Original regression passed_methods field counts every PASS line including nested subcases; these are separate counts."
+    },
+    "independent-final-R-readonly-check01.stdout.txt": {
+      "top_level_passes": 12,
+      "nested_subcase_passes": 72,
+      "note": "Original regression passed_methods field counts every PASS line including nested subcases; these are separate counts."
+    }
+  }
+}

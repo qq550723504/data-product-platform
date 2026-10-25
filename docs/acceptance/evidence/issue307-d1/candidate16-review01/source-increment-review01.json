@@ -1,0 +1,298 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_C16_SOURCE_INCREMENT_REVIEW",
+  "at": "2026-10-20T02:20:12.940254+00:00",
+  "remaining_blockers": [],
+  "source_head": "5472a583f86838df42a5ffd86bc366c166036efb",
+  "base_repaired_source_head": "8a172cade7b5eab2d871fc75ac9d0963f9d27199",
+  "profile": "candidate16/v26",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "constants": {
+    "RemainingExecution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+    "RemainingProfile": "candidate16/v26",
+    "RemainingNotBefore": "2026-10-20T10:00:00Z",
+    "RemainingNotAfter": "2026-10-20T10:40:00Z"
+  },
+  "compiled_Python_window": {
+    "Execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+    "Profile": "candidate16/v26",
+    "NotBefore": "2026-10-20T10:00:00Z",
+    "NotAfter": "2026-10-20T10:40:00Z",
+    "RecoveryEnd": "2026-10-20T12:40:00Z"
+  },
+  "reviewed_changed_runtime_files": {
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": {
+      "raw_sha256": "24a74ef8bf6e320c6a2bda6ed0fb8c91f8bcb93e96471ca2935b8a61555b434f",
+      "Git_raw_sha256": "9c094649b2ea4d077aca345a04add1bbdd7510f8d8c935e6e094529752e3b364",
+      "bytes": 8897,
+      "LF_equal_Git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "raw_sha256": "befa81e5be4c61501e78a2d6f73f9c40ca271c2bb52b72ce21254e16da2bf1e1",
+      "Git_raw_sha256": "befa81e5be4c61501e78a2d6f73f9c40ca271c2bb52b72ce21254e16da2bf1e1",
+      "bytes": 5434,
+      "LF_equal_Git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go": {
+      "raw_sha256": "de591b8a9a0ad36dfeee8cb8271f5df762beba40fa7f59f22978cee106fa114c",
+      "Git_raw_sha256": "de591b8a9a0ad36dfeee8cb8271f5df762beba40fa7f59f22978cee106fa114c",
+      "bytes": 1062,
+      "LF_equal_Git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "raw_sha256": "384057766e3d2ac27c92f5a98b300076fcbe256001760a1f225cba7568c7a350",
+      "Git_raw_sha256": "384057766e3d2ac27c92f5a98b300076fcbe256001760a1f225cba7568c7a350",
+      "bytes": 2366,
+      "LF_equal_Git": true
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "raw_sha256": "a063ea4915be4d1112ff89ed7134138121ee2d2904168053ec50641559b89892",
+      "Git_raw_sha256": "98f288ac531cb295f7cb3bbdd07ea9abafabcea4333be36e86b61de59fc326b9",
+      "bytes": 20456,
+      "LF_equal_Git": true
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "raw_sha256": "0f7412cba7b5951efee55fcd783f992f168d007b43d944c6da1f4946790adeae",
+      "Git_raw_sha256": "a0c86baeaabc9933d193c4b0481980f34883e5800712be7f6f7fb1c6ff36cc80",
+      "bytes": 38701,
+      "LF_equal_Git": true
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "raw_sha256": "fcbd2aba76fea0783fcab5f68e32439d4c133742fa8a0e4b881aad165140832d",
+      "Git_raw_sha256": "f12343cd8ded43088ce44a1f4fdb9b909ee32cc6629c61662a72b42bf910be77",
+      "bytes": 6888,
+      "LF_equal_Git": true
+    },
+    "examples/lifecycle-d1/test_remaining_six_window.py": {
+      "raw_sha256": "13d2375cf43824c3f2733565668747557a6547a35d30784e8ce2b9bb7fe21aa1",
+      "Git_raw_sha256": "4486363310cb70c15fbe4e83cd198f27b924dd59f17f1df3a6a52d1e9931a472",
+      "bytes": 6365,
+      "LF_equal_Git": true
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "raw_sha256": "d232d50990045a6ab876901eead9807f3b1daa58dfcf77502b0c90d561c2f53d",
+      "Git_raw_sha256": "ebc9ece6676afc388ef16e0ea24e77bcbbbfed5dce0a1b658ebe9ed495e6f0b0",
+      "bytes": 14738,
+      "LF_equal_Git": true
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "raw_sha256": "b0d8cc0d39a535c5e0aa995f435cf2a2e410b2e20103ad544bdf5b6d433d00fd",
+      "Git_raw_sha256": "2becd55dab59861f15b29cf4ae3987dd37c0afe529ec1cda010988a9f96ccd53",
+      "bytes": 12925,
+      "LF_equal_Git": true
+    }
+  },
+  "CLI_main_repair": "Preserved Host.group(args.group) before inherited archive_root/revoke_case. Current seven-method actual main composition suite passed independently in normal and -O.",
+  "current_authority_path": "delete-confirmed-v26-execution01/human-authorization.json; original v25 authority is retained only, not a fallback",
+  "retained_identity_contract": {
+    "retained_actual_c14": 2,
+    "retained_actual_c15": 6,
+    "new_current_execution_users": 6,
+    "known_total_current_expected": 23,
+    "sole_policy_no_groups": 22,
+    "exact_c13_NONE_dormant": 1,
+    "fresh_absent_required": 9,
+    "known_per_group": [
+      11,
+      6,
+      6
+    ],
+    "current_enable_selection": "Root transport.selected compares only pilot.RemainingIdentity(new execution, inspect/delete); retained c14/c15 identities do not pass selected. New SDK secrets remain new, no old secret reuse.",
+    "independent_Go_exact_retained_map_test": "PASS business/late/mixed sets plus no current identity collides; unbound group returns empty."
+  },
+  "retained_c15_contract": "New retained_c15 reads exact original d1-six frozen root; pinned preparation/index, old56 referenced bytes, actual human/envelope, blocked prewindow terminal, original independent failure/repair reports+indexes,86 owner descriptors+3 readonly owners, old cases/build12/backup9/budget UID10001 empty/fullmount. Does not modify old approval or restart old owners.",
+  "resource_generation": "New execution/nonces,86 stopped descriptors,15 independently owned volumes,restore internal subnets10.246.199/200/201; no adoption, no source checkpoint fallback. Old Source Core/native scope and immutable historical18/current17/target6/survivor11 contract unchanged.",
+  "policy_checkpoint": "Unchanged independently accepted actual5 successor checkpoint aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8; no Renew/new Rights/new production replay.",
+  "tests": {
+    "Python_normal": {
+      "mode": "normal",
+      "suites": [
+        {
+          "suite": "test_remaining_six_window",
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "13d2375cf43824c3f2733565668747557a6547a35d30784e8ce2b9bb7fe21aa1",
+          "log_sha256": "a1e70d54e91aab12173118dffa0a7f1552e7173ee861f51ab5c9d111d15515e1"
+        },
+        {
+          "suite": "test_six_candidate_runtime",
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "c12907b8f3eb3eaa575a5e78021c7cf19c3fa3276e1b662ddd363b601344b10f",
+          "log_sha256": "ab93e621b4a83e3e2c0a371faba1a69d1026776d7f9e638f5217eb67a19936ac"
+        },
+        {
+          "suite": "test_freeze_six_candidate",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "fcbd2aba76fea0783fcab5f68e32439d4c133742fa8a0e4b881aad165140832d",
+          "log_sha256": "ab43d181abbedcf854ce7ceb54516c00997b476ae334fdfea2c6ff980116a111"
+        },
+        {
+          "suite": "test_verify_six_native",
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "75c8612818762c22d92ffd1af1fa22f7674ecfd66589592c836446ac9dc968f5",
+          "log_sha256": "35db5387d8659de6a29d68042568405c91e167471b4017e0a99c1d49d4b71f62"
+        },
+        {
+          "suite": "test_window_six_support",
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b",
+          "log_sha256": "8d363c73103b65a2fb9d27be422847eeadc1293d8dd4c530162bc2bbadf0b671"
+        },
+        {
+          "suite": "test_remaining_sequence",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "58eb6e8da9381689f8a6dc4da57c236741186994fa7346a947cb6105939a4ee2",
+          "log_sha256": "9e479005db75acc9bf577c879cbbe717088cbe55acd5d2fbbf48cc286e0e72ed"
+        }
+      ],
+      "total_methods": 34,
+      "all_pass": true,
+      "actual_external_processes": 0,
+      "actual_Docker_Source_HTTP_enable_sign_DELETE": 0
+    },
+    "Python_optimized": {
+      "mode": "optimized",
+      "suites": [
+        {
+          "suite": "test_remaining_six_window",
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "13d2375cf43824c3f2733565668747557a6547a35d30784e8ce2b9bb7fe21aa1",
+          "log_sha256": "a881aaf0b0d11172bd0884d8a6cbf14bbd15cb90279e8ab0f60233d78f10f1eb"
+        },
+        {
+          "suite": "test_six_candidate_runtime",
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "c12907b8f3eb3eaa575a5e78021c7cf19c3fa3276e1b662ddd363b601344b10f",
+          "log_sha256": "a3e94d3e6ad4568f1a00328617461da9364f87e0579c8c2d233f542ea9300e00"
+        },
+        {
+          "suite": "test_freeze_six_candidate",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "fcbd2aba76fea0783fcab5f68e32439d4c133742fa8a0e4b881aad165140832d",
+          "log_sha256": "baba64096e7398e7436caff577a3aa0f53b62837769f86d8ffc7407f675c64eb"
+        },
+        {
+          "suite": "test_verify_six_native",
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "75c8612818762c22d92ffd1af1fa22f7674ecfd66589592c836446ac9dc968f5",
+          "log_sha256": "f4a03412e76a4a8dd3ada6fc63f8999d5717986ca1df0bb0f3912633fe7674ad"
+        },
+        {
+          "suite": "test_window_six_support",
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "795dcf1b3a8941d5f744f306ae05e01e2301e434b9aab44091c3ccea7a863e1b",
+          "log_sha256": "14036cf960d33778d5efaff86dbfa9aadb5b9119388479737b2e779b2e7511bd"
+        },
+        {
+          "suite": "test_remaining_sequence",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "PASS": true,
+          "source_sha256": "58eb6e8da9381689f8a6dc4da57c236741186994fa7346a947cb6105939a4ee2",
+          "log_sha256": "262094f92ac723a3ec2376ea8988a152a8d41fda7c968e50ea2b59ac2aa931bd"
+        }
+      ],
+      "total_methods": 34,
+      "all_pass": true,
+      "actual_external_processes": 0,
+      "actual_Docker_Source_HTTP_enable_sign_DELETE": 0
+    },
+    "Go_targeted": {
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "./internal/lifecycle/pilot",
+        "./cmd/lifecycle-fixture-readonly-check"
+      ],
+      "exit": 0,
+      "test_pass_events": 129,
+      "test_fail_events": 0,
+      "package_results": [
+        {
+          "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+          "status": "pass"
+        },
+        {
+          "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check",
+          "status": "pass"
+        }
+      ],
+      "logs": {
+        "stdout": {
+          "sha256": "4a9d8a385a523b1aee1d5593653fa2cdeafc605b05b5d57bece1d8fa775b27e7",
+          "bytes": 154038
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "actual_Source_Docker_operations": "None in these pure pilot/file-only checker packages"
+    },
+    "Go_skips": [
+      {
+        "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+        "test": "TestPostV22NoSendPostgresEligibility"
+      }
+    ],
+    "recorded_mock_vs_native": "All34 Python methods eachmode executed under external-process rejection. Go pilot/file-only tests129pass; PostgreSQL case skips without DSN. No Docker/Source real provider or new PG/native started by reviewer.",
+    "harness_failure": "First independent runner import path omitted examples/lifecycle-d1, failed before tests; original script+failure preserved. Second runner only adds import path, no repository code change."
+  },
+  "current_actual_native_phase": "Parent has reported completed PASS_NONDELETE_SOURCE_RESTORE_PREPARATION; raw results not yet independently accepted by this source-only report. Frozen packet/full-entry/physical confirmation still pending later final review.",
+  "authority": "Window preference only; new deletion authorization NOT_RECEIVED; no new schedule. Oldv25 PAUSED/blocked and not reusable.",
+  "reviewer_prohibited_actions_performed": {
+    "historical_gate_or_state_against_running_Source": 0,
+    "Docker_start_stop_exec_or_provider_Source_HTTP": 0,
+    "real_seal_enable_hostproof_sign_delete": 0,
+    "implementation_or_old_evidence_writes": 0
+  },
+  "full_D1": "NOT_ACCEPTED",
+  "PR332": "DRAFT",
+  "Issue307": "OPEN"
+}

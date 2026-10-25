@@ -1,0 +1,119 @@
+{
+  "observed_at_utc": "2026-10-24T08:58:44.8363663Z",
+  "docker_version_exit_code": 0,
+  "docker_info_exit_code": 0,
+  "sources": [
+    {
+      "requested_id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "exit_code": 0,
+      "exists": true,
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "name": "/dpp-lifecycle307-808a6960-minio",
+      "created": "2026-10-16T06:25:35.144606937Z",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:40:14.119884474Z",
+        "FinishedAt": "2026-10-23T12:40:23.051952637Z"
+      },
+      "restart_policy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/data",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/access",
+          "Destination": "/run/credentials/access",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/secret",
+          "Destination": "/run/credentials/secret",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "RW": false
+        }
+      ]
+    },
+    {
+      "requested_id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "exit_code": 0,
+      "exists": true,
+      "id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "name": "/dpp-lifecycle307-dfda43b4-minio",
+      "created": "2026-10-16T06:33:23.008958404Z",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:41:29.994764581Z",
+        "FinishedAt": "2026-10-23T12:41:38.26066002Z"
+      },
+      "restart_policy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-dfda43b4-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-dfda43b4-objects/_data",
+          "Destination": "/data",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-dfda43b4/access",
+          "Destination": "/run/credentials/access",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-dfda43b4/secret",
+          "Destination": "/run/credentials/secret",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-dfda43b4/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "RW": false
+        }
+      ]
+    }
+  ]
+}

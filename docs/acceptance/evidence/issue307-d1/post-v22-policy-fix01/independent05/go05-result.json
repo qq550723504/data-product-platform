@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "go",
+    "test",
+    "-count=1",
+    "-json",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-readonly-check",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-remaining-iam"
+  ],
+  "exit_code": 0,
+  "test_events": {
+    "pass": 270,
+    "fail": 0,
+    "skip": 2
+  },
+  "sha256": {
+    "go05.stdout.txt": "49a4b78dd272c58b7a2cb84b6ea012713e526cec8444b55c8c2bd1b9efd6e860",
+    "go05.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

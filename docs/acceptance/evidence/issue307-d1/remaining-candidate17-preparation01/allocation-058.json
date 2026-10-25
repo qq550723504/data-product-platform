@@ -1,0 +1,18 @@
+{
+  "role": "rehearsal-core",
+  "group": "mixed",
+  "cid": "93a26862f7cc9a9ef3b306e61f5c4aa43c8f212c1dd21ebf1e8854f33f66b521",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate17-rehearsal",
+    "--network",
+    "a5f9b39f741435a2457e40812b75fb6970daec30b79b84d3a367f72f13fd0818",
+    "--env-file",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\mixed\\checkpoint\\postgres.env",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-dfda43b4-candidate17-rehearsal-core,target=/var/lib/postgresql/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\mixed\\checkpoint,target=/run/backup,readonly",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+  ]
+}

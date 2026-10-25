@@ -1,0 +1,11 @@
+test_case_cross_field_failure_precedes_permission_and_docker (__main__.SixHostTests.test_case_cross_field_failure_precedes_permission_and_docker) ... ok
+test_dump_failure_stops_new_groups_and_closes_every_known_owner (__main__.SixHostTests.test_dump_failure_stops_new_groups_and_closes_every_known_owner) ... ok
+test_existing_or_wrong_owner_volume_never_starts_or_is_adopted (__main__.SixHostTests.test_existing_or_wrong_owner_volume_never_starts_or_is_adopted) ... ok
+test_fixed_docker_bytes_wrapper_preserves_streamed_dump (__main__.SixHostTests.test_fixed_docker_bytes_wrapper_preserves_streamed_dump) ... ok
+test_full_three_group_source_backup_restore_sequence (__main__.SixHostTests.test_full_three_group_source_backup_restore_sequence) ... ok
+test_owner_success_and_wait_logs_write_failure_always_close (__main__.SixHostTests.test_owner_success_and_wait_logs_write_failure_always_close) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.229s
+
+OK

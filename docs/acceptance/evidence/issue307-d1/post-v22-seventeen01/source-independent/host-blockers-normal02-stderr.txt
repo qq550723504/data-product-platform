@@ -1,0 +1,8 @@
+test_checker_timeout_cannot_replace_wait_original (__main__.OriginalChannelTests.test_checker_timeout_cannot_replace_wait_original) ... ok
+test_known_close_inspect_failure_still_requires_stop (__main__.OriginalChannelTests.test_known_close_inspect_failure_still_requires_stop) ... ok
+test_logs_timeout_keeps_partial_original_channels (__main__.OriginalChannelTests.test_logs_timeout_keeps_partial_original_channels) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.105s
+
+OK

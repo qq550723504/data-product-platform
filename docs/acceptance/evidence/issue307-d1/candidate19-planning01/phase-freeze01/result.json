@@ -1,0 +1,9 @@
+{
+  "phase": "freeze",
+  "exit": 1,
+  "stdout_bytes": 0,
+  "stderr_bytes": 1849,
+  "source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "at": "2026-10-22T01:53:13.110756+00:00",
+  "delete_authority": false
+}

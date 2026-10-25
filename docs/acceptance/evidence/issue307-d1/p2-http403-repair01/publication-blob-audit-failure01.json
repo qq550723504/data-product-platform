@@ -1,0 +1,11 @@
+{
+  "status": "FAILED_MISSING_GIT_BLOBS",
+  "head": "21649d217b435d25ba307f2c57f04d78f3f13acc",
+  "missing": [
+    "docs/acceptance/evidence/issue307-d1/p2-http403-repair01/native02/native-server.log",
+    "docs/acceptance/evidence/issue307-d1/p2-http403-repair01/native03/native-server.log"
+  ],
+  "byte_mismatches": [],
+  "cause": "Git ignored .log; original local bytes and index retained",
+  "source_files_changed": false
+}

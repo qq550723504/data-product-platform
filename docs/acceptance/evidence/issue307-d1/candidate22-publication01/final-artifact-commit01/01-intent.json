@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "diff",
+    "--name-only",
+    "HEAD"
+  ],
+  "at": "2026-10-23T06:12:17.818992+00:00"
+}

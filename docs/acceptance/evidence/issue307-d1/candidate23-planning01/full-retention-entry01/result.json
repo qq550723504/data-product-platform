@@ -1,0 +1,19 @@
+{
+  "status": "PASS_FULL_RETAINED_ENTRY",
+  "started_at": "2026-10-23T11:43:30.551414+00:00",
+  "observed_at": "2026-10-23T11:45:39.103099+00:00",
+  "exit_code": 0,
+  "entry": "prepare-six-candidate.historical_gate",
+  "source_start": 0,
+  "native_delete": 0,
+  "result": {
+    "status": "PASS_RETAINED_V32_EXPIRED_FROZEN_CLOSED_1085",
+    "anchor_sha256": "6af1a5bf3ce4a4f599ca1de4cc7f81f8681e065123fb1e65cd9420fd3f167f2f",
+    "historical_budgets_preserved": 40,
+    "backup_files_preserved": 75,
+    "authorization_reusable": false,
+    "pins_released": 0,
+    "budgets_refunded": 0,
+    "native_delete": 0
+  }
+}

@@ -1,0 +1,1 @@
+{"at": "2026-10-24T14:08:34.217851+00:00", "command": ["docker", "build", "--pull=false", "-t", "dpp307-reader-path-python:31316", "C:/Users/Henry/.codex/fixture-private/reader-path-fix01/python-image01"], "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-reader-paths\\data-product-platform", "retained_source_start": 0}

@@ -1,0 +1,100 @@
+{
+  "generated_at_utc": "2026-10-24T09:01:55.1235051Z",
+  "files": [
+    {
+      "file": "01-before-host.json",
+      "bytes": 419,
+      "sha256": "B3D05A78FC6BC88E223209982B466E8FA3ADD616EFC01FC09876B25C782A917D"
+    },
+    {
+      "file": "02-before-context.txt",
+      "bytes": 323,
+      "sha256": "1233A2024C180DDB12A93C69E1C96BD4CDB83791F59A59C4B9F2C6218D4E1D90"
+    },
+    {
+      "file": "03-before-version.txt",
+      "bytes": 463,
+      "sha256": "A5DAA6955627DC8EC27B1024EF35654C15E9F7806C296355F9A3958BB2308680"
+    },
+    {
+      "file": "04-before-wsl.txt",
+      "bytes": 90,
+      "sha256": "9642AB572AC8A7FAE66964AA958EA8E0B1FC32A8C8F30C5D21B025B21F5878F0"
+    },
+    {
+      "file": "05-before-events-install-disks.json",
+      "bytes": 1098,
+      "sha256": "344E3E2EB1DC106F2C96FD1FF3428AD13158147A153B32D10608B2240831D1B5"
+    },
+    {
+      "file": "06-historical-source-restart-policies.json",
+      "bytes": 957,
+      "sha256": "E1A876BE94873923C0CDD6F7C4794B5C446F3F4D05B17C570CF091468BD58774"
+    },
+    {
+      "file": "07-action-start-desktop.json",
+      "bytes": 336,
+      "sha256": "CE7783A68B60EB41861C444194BB81F1511B5D66ACA8E323D6AF7C73BDDFCDAB"
+    },
+    {
+      "file": "08-daemon-polls.json",
+      "bytes": 1154,
+      "sha256": "0490139AC41E530B4C3C5EB1730FC1ACDE8A3C484EAB62A8F4D1B1D4DAAB2EB3"
+    },
+    {
+      "file": "09-recent-source-prestart-snapshots.json",
+      "bytes": 1258,
+      "sha256": "938E00D995CF4A3DCB19BA6CC0EC9CDD4B2957F6832AF62AED12F5FB2CAD9220"
+    },
+    {
+      "file": "10-after-version.json",
+      "bytes": 1146,
+      "sha256": "353700863285E40C6EF550DD7B7F7B90CF589C9C81BA02D4390DDDB431186AC3"
+    },
+    {
+      "file": "11-after-info-redacted.json",
+      "bytes": 386,
+      "sha256": "4FCCD5BE33799AAD86C7CC37639FFCF223B78351F5791E79822261B09DD1AC85"
+    },
+    {
+      "file": "12-after-source-readback.json",
+      "bytes": 4092,
+      "sha256": "ED293CC1E4ED33392E6865CFAD1E95385F9F3712420BAA8B357F91E98A9F7123"
+    },
+    {
+      "file": "13-after-wsl.txt",
+      "bytes": 90,
+      "sha256": "A666B6CE0952F60FEFEFDF9219909BC7723BD3B4A57F23C5F1B5923DFF80DCCA"
+    },
+    {
+      "file": "14-verification-summary.json",
+      "bytes": 1958,
+      "sha256": "D2F29947109414F8813A468DAFACD1372E255C5F48A698528B89344A56ECAAC8"
+    },
+    {
+      "file": "15-after-host.json",
+      "bytes": 4100,
+      "sha256": "47D29E643890F755E99C0DE3C0B7140B7DCA8EFA4A7D60C7386F141B63364BBC"
+    },
+    {
+      "file": "16-raw-custody.json",
+      "bytes": 3121,
+      "sha256": "E70A38C2A35C845C5AB34D231E2BFEFEF8960DBCA5A9C817034EBE899FF632B1"
+    },
+    {
+      "file": "17-before-log-safe-excerpt.json",
+      "bytes": 902,
+      "sha256": "C9A241A7F4BE90FF17AC3B09A9985FBC83ADFA8B11044038766048E7A69BBDE5"
+    },
+    {
+      "file": "18-public-evidence-safety-audit.json",
+      "bytes": 2008,
+      "sha256": "21B400CD041DAE75AF94FC492267B22D23E4798CD327AFDD9F4998434AFA20F6"
+    },
+    {
+      "file": "19-final-report.json",
+      "bytes": 3401,
+      "sha256": "291761EAB9034A16C6A9E1724E6DA6E6139A2F580F30FA2EAE2E36B2DE3EB42C"
+    }
+  ]
+}

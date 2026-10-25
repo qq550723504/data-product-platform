@@ -1,0 +1,35 @@
+{
+  "status": "PASS_INDEPENDENT_BYTE_PRESERVATION",
+  "source_head": "4420957157ac818cbed719d8a6b8d9c6ccc4b646",
+  "rows": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "outputs": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "6aa902f1baa980a1b7ac108beabd2d89497d0137e5c7ce8140b4fae24ead1498",
+          "bytes": 106
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "outputs": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "7c6d589b11dd430b4700a2b02d1ace0c9f8fa12f5f82b8d0e54311e0b82c92d7",
+          "bytes": 106
+        }
+      }
+    }
+  ],
+  "native_provider_actions": 0
+}

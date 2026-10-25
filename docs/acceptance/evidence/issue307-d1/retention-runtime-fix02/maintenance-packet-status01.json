@@ -1,0 +1,117 @@
+{
+  "schema": "RETENTION_MAINTENANCE_PREPARATION_BOUNDARY_V2",
+  "status": "BLOCKED_LATEST_LINUX_ACCEPTANCE_NOT_EXECUTABLE",
+  "prepared_at": "2026-10-24T08:51:24.266784+00:00",
+  "published_base": "8249b55dec8fcf20de2d378887b9aff66047961f",
+  "runtime_source": "53f6f8a6e69c17fa6896a40293d323f6ee9d0958",
+  "runtime_archive_sha256": "1f9462c13204dddd6f8fc475b2cf21830d094aba14e1677d03848c8d70906557",
+  "proposal_sha256": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f",
+  "exact_objects": [
+    {
+      "group": "business-races",
+      "copy": {
+        "ID": "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+        "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "DatasetVersionID": "6837388a-80b1-4512-8976-ce2a7bae4e85",
+        "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+        "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+        "Namespace": "dpp-lifecycle307-quarantine",
+        "Key": "fixture/control-retention.csv",
+        "ProviderVersion": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+        "ContentSHA256": "51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183",
+        "ByteSize": 55
+      },
+      "source_native_cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "expected_mode": "GOVERNANCE",
+      "expected_legal_hold": false,
+      "historical_retain_until": "2026-10-23T06:25:44Z",
+      "new_retain_until": "2026-10-24T12:40:00Z",
+      "max_mutation_attempts": 1,
+      "sdk": "minio-go/v7.PutObjectRetention",
+      "sdk_options": {
+        "VersionID": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+        "Mode": "GOVERNANCE",
+        "RetainUntilDate": "2026-10-24T12:40:00Z",
+        "GovernanceBypass": false
+      }
+    },
+    {
+      "group": "mixed",
+      "copy": {
+        "ID": "13fd8ecf-07fd-4981-b553-5ce66b67444f",
+        "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+        "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+        "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+        "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+        "Namespace": "dpp-lifecycle307-quarantine",
+        "Key": "fixture/m1-c.csv",
+        "ProviderVersion": "81a8402e-390f-4247-9d34-552df5eadeb3",
+        "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+        "ByteSize": 40
+      },
+      "source_native_cid": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "expected_mode": "GOVERNANCE",
+      "expected_legal_hold": false,
+      "historical_retain_until": "2026-10-23T06:33:33Z",
+      "new_retain_until": "2026-10-24T12:40:00Z",
+      "max_mutation_attempts": 1,
+      "sdk": "minio-go/v7.PutObjectRetention",
+      "sdk_options": {
+        "VersionID": "81a8402e-390f-4247-9d34-552df5eadeb3",
+        "Mode": "GOVERNANCE",
+        "RetainUntilDate": "2026-10-24T12:40:00Z",
+        "GovernanceBypass": false
+      }
+    }
+  ],
+  "max_per_target": 1,
+  "max_total": 2,
+  "unknown_retry": false,
+  "delete": 0,
+  "hold_change": 0,
+  "content_put": 0,
+  "IAM_write": 0,
+  "bypass": 0,
+  "cleanup": 0,
+  "pin_release": 0,
+  "budget_reset": 0,
+  "retention_deadline": "2026-10-24T12:40:00Z",
+  "proposed_window": "2026-10-24 SGT17:00-17:40; NOT_APPROVED_NOT_FROZEN",
+  "actual_maintenance_id": "NOT_ALLOCATED",
+  "actual_budget": "NOT_ALLOCATED",
+  "actual_owner_cids": "NOT_ALLOCATED",
+  "host_key": "NOT_ALLOCATED",
+  "binary_with_trusted_host_anchor": "NOT_BUILT",
+  "source_start_authority": "NOT_GRANTED",
+  "protection_write_authority": "NOT_GRANTED",
+  "publication_authority": "NOT_GRANTED",
+  "delete_authority": "NOT_GRANTED",
+  "old_authorization_reused": false,
+  "before_after_contract": {
+    "groups": [
+      "business-races",
+      "late-hold",
+      "mixed"
+    ],
+    "versions": 17,
+    "p1_absence": true,
+    "before": "exact original old expiry and all original identities/protection",
+    "after": "only the two exact Copy identities may change RetainUntil to fixed deadline",
+    "phase_receipt": [
+      "maintenance_id",
+      "phase",
+      "bindings_sha256"
+    ],
+    "core_fingerprints": "REPEATABLE READ READ ONLY before/after equality; NOT_RUN",
+    "official_iam_semantics": "ParseConfig/Equals plus disabled, sole-policy/no-groups, dormant and absent users; NOT_RUN"
+  },
+  "remaining_gates": [
+    "latest R3 Linux probe and real fsync/wait acceptance",
+    "independent bounded source/acceptance review closure",
+    "new exact P/R publication proposal, new human maintenance-publish authority and exact HEAD PR CI",
+    "complete maintenance-specific host before/after orchestration with Core/topology/finally-close; current reader/checker modes alone are not total-entry acceptance",
+    "allocate and freeze actual MaintenanceID/owners/key/budget/binary/profile/permission; no placeholders allowed for execution",
+    "new explicit source-read and exact-two retention-write authority",
+    "fresh retained Core/17-version/native/IAM proof; on failure stop and preserve UNKNOWN"
+  ]
+}

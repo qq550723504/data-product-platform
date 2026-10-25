@@ -1,0 +1,386 @@
+{
+  "status": "PASS_ALL_66_ACTUAL_BACKUP_FILES_RETAINED",
+  "at": "2026-10-22T11:34:41.860826+00:00",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "old_complete_checkpoint_files": 54,
+  "old_failed_partial_files": 3,
+  "old_total": 57,
+  "new_total": 9,
+  "total": 66,
+  "old": [
+    {
+      "private_relative_path": "remaining-candidate14/business-races/checkpoint/core.dump",
+      "sha256": "88350f7c4d24ce8e8ce148dbe851fe6d8008701e20df7ac9458ac1c2622af66e",
+      "bytes": 1359118,
+      "class": "failed_partial_c14"
+    },
+    {
+      "private_relative_path": "remaining-candidate14/business-races/checkpoint/globals.sql",
+      "sha256": "d8ca96a7ffe9f4c54f082eff286c89083470a496fbe370b4a464038b1fad2719",
+      "bytes": 669,
+      "class": "failed_partial_c14"
+    },
+    {
+      "private_relative_path": "remaining-candidate14/business-races/checkpoint/native.tar",
+      "sha256": "712cc1a5ead3a84b39c3f1c103e43d853f32d09e3da2def676229fc873beac01",
+      "bytes": 257536,
+      "class": "failed_partial_c14"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/business-races/checkpoint/core.dump",
+      "sha256": "34c4043f8433f972418a09851fa80a7b62cb017425be675f261fe46be46916c3",
+      "bytes": 1359118,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/business-races/checkpoint/globals.sql",
+      "sha256": "880d5cfc54f4ae9b36158c763568068eba11f67b2146b167e28344d8cd9b8396",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/business-races/checkpoint/native.tar",
+      "sha256": "4a8658e4240aff6d93ede2d862208a2d0ab07f57f800b9b5047b952ff3132fbe",
+      "bytes": 274944,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/late-hold/checkpoint/core.dump",
+      "sha256": "43af36b1533073967a764f494979eaaa4938106327ee738787887145998e568e",
+      "bytes": 1166712,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/late-hold/checkpoint/globals.sql",
+      "sha256": "31c14e9575be136223f20b939dee08b71bf52e9805bec8b4aa5dfe845387d75f",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/late-hold/checkpoint/native.tar",
+      "sha256": "4e1d9158b9ce6267e75ea23707670cc809b5dd8900f9936af7c6e9da638bfc30",
+      "bytes": 96768,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/mixed/checkpoint/core.dump",
+      "sha256": "9a312dd66bfaac06c757ea9a19a877d99ffeb25ae52f37e1b51683a125c785c9",
+      "bytes": 1158775,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/mixed/checkpoint/globals.sql",
+      "sha256": "ef167ad03083ffea76aa70f356e61375e7446905834c06d84cf0d428e0b9725d",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate15/mixed/checkpoint/native.tar",
+      "sha256": "f98c234e3a63e6ff80862ffb12da1d23f986affbd42ffb138b76178b7e1d3baf",
+      "bytes": 94208,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/business-races/checkpoint/core.dump",
+      "sha256": "282a7a1553f28f5a5b91db2f9c7f300a1fa978b6e3e79f790d845a3067b66625",
+      "bytes": 1359118,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/business-races/checkpoint/globals.sql",
+      "sha256": "897170391bcfcc1ba0fc8aa5b1019d7e653a6d5ec3dacd12cdc2cd3633260776",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/business-races/checkpoint/native.tar",
+      "sha256": "110b88bdf5a873592130c9107eac66cb60914c7f8b255ae0f608aadf38abdb2b",
+      "bytes": 292352,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/late-hold/checkpoint/core.dump",
+      "sha256": "77b699f801670875a618247529d15f7d4c911b317c4c381541d2262b4a16c5cc",
+      "bytes": 1166712,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/late-hold/checkpoint/globals.sql",
+      "sha256": "e28e6890deee7adc19508cec352c3eac9b8cf2730f5fbe64153f6b5723065f05",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/late-hold/checkpoint/native.tar",
+      "sha256": "80bc77fb094d2bcaea5b4742c7bb136daa4155f8c689dc672f8ddfde7fa8d65a",
+      "bytes": 113152,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/mixed/checkpoint/core.dump",
+      "sha256": "60973ef649b9f114c235d0a5683bca44c210e51ede322ba0fab1b3def195512c",
+      "bytes": 1158775,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/mixed/checkpoint/globals.sql",
+      "sha256": "e4ef3d47f25eb1bf5fc81d6371f086ea99dcf0c61d9a15332dcf026a358913e0",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate16/mixed/checkpoint/native.tar",
+      "sha256": "d7cdfb60751300882655570ed68d5c009f17ed973e5275186be97c0d82ad5be9",
+      "bytes": 110080,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/business-races/checkpoint/core.dump",
+      "sha256": "bdbaabcff3058be85bec0b4972ae987046221da65be4fc18b51a3bcd7de2a3b9",
+      "bytes": 1359118,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/business-races/checkpoint/globals.sql",
+      "sha256": "dd0794e9738da037785a7500bffb61e76d43ecc7f6adc6dde27af7230b6f470d",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/business-races/checkpoint/native.tar",
+      "sha256": "b422e17eacf54ea0381217f585848375ed2ac48743ebe4b88ec18b10a08a2c15",
+      "bytes": 309760,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/late-hold/checkpoint/core.dump",
+      "sha256": "eb8bea980d9f0e7c13d41f27c04ee46ea3875ffa798447158dd38b54a5b6bf9e",
+      "bytes": 1166712,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/late-hold/checkpoint/globals.sql",
+      "sha256": "6b6e00652be3244c242b32886674db99b9d1165666a7eb45e307a35d24a06eb0",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/late-hold/checkpoint/native.tar",
+      "sha256": "f3b089728b8aed20bcd539a2e9ed238b8297c2b9b11edca50d3d51550b3e52cd",
+      "bytes": 129536,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/mixed/checkpoint/core.dump",
+      "sha256": "d55b6c4ae541aaad1866817060df5be3bcea9432f14f117c7409a437b65a9b42",
+      "bytes": 1158775,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/mixed/checkpoint/globals.sql",
+      "sha256": "3c40ec457e928e5171fd484b8de151849470c03c16ba50aa3ce335372afcfd1d",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate17/mixed/checkpoint/native.tar",
+      "sha256": "5e7ef26a294ad0e4c4daa1736e58f522d16bd050a39262603d7259103615c023",
+      "bytes": 125952,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/business-races/checkpoint/core.dump",
+      "sha256": "75f02109f039c6ee2735e976ee3c1c7bb9d5f2fd643cface5849e206eed11bab",
+      "bytes": 1216276,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/business-races/checkpoint/globals.sql",
+      "sha256": "d738e649fe404e45e778808ab074d93ca0ba2d90cb5c39a1c6592bb25aa5f360",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/business-races/checkpoint/native.tar",
+      "sha256": "40fdf5125d8df98b97f91eaaf2aad0eb565322e79c5c95704d580f8414973255",
+      "bytes": 222208,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/late-hold/checkpoint/core.dump",
+      "sha256": "63651c3f5f2b93c393e12c8ddec627338132fc5261d8193083522d6736f3a5da",
+      "bytes": 1166712,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/late-hold/checkpoint/globals.sql",
+      "sha256": "06c767c194d83e91552c72b9daf5e1637480506f5a432b7d2ff342ec18874fce",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/late-hold/checkpoint/native.tar",
+      "sha256": "a51518f5ec922fe2a887a346685192f219650409f76f64518facaaf7b29aa25a",
+      "bytes": 62464,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/mixed/checkpoint/core.dump",
+      "sha256": "303ef33e8184f09a3de4d91eda8abb3043578c6de30cb0acde57a5922e15e343",
+      "bytes": 1158775,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/mixed/checkpoint/globals.sql",
+      "sha256": "cc68a7d8f23cf18c9754719b404a4a86a35d83c91d87b49bb05ff92d28ddd2f4",
+      "bytes": 669,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-executable03/mixed/checkpoint/native.tar",
+      "sha256": "e404b58c3e700716497a8ce2b4b8ab2ce6be180923e814a2e5bfa1ce9b7e4940",
+      "bytes": 60416,
+      "class": "complete_checkpoint"
+    },
+    {
+      "private_relative_path": "remaining-candidate18/business-races/checkpoint/core.dump",
+      "sha256": "dc3c401c3a1e23f27e96f25b8b0c2ce90eaeb62425606574cb93fc0e73000853",
+      "bytes": 1381479
+    },
+    {
+      "private_relative_path": "remaining-candidate18/business-races/checkpoint/globals.sql",
+      "sha256": "522a4e8b43e514b117390aaf3fe025cfa2f689a7165330c6d80691d34aae6492",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate18/business-races/checkpoint/native.tar",
+      "sha256": "999ff56b95d1c6f40694481bd5a180a70419357156626b0f3cb0860f9f39de0a",
+      "bytes": 327168
+    },
+    {
+      "private_relative_path": "remaining-candidate18/late-hold/checkpoint/core.dump",
+      "sha256": "5ad011788b67c807d8d4bf6931bd160572f1da889d531461030b71f79f9cbbdf",
+      "bytes": 1166712
+    },
+    {
+      "private_relative_path": "remaining-candidate18/late-hold/checkpoint/globals.sql",
+      "sha256": "8841a0260a40c83848c7749900ce6e25b09152cddc681b6669f09f288103b046",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate18/late-hold/checkpoint/native.tar",
+      "sha256": "f3346392a0e9e4e7e2fbc5599b7afb29fff4f4d3454546df0a4123afbc36d718",
+      "bytes": 145920
+    },
+    {
+      "private_relative_path": "remaining-candidate18/mixed/checkpoint/core.dump",
+      "sha256": "20b3a938828e538f42ff52245367c95493e1ceafc5792ae8a77f9d1b70dacf07",
+      "bytes": 1158775
+    },
+    {
+      "private_relative_path": "remaining-candidate18/mixed/checkpoint/globals.sql",
+      "sha256": "d91aa4ac646aed5cfb63f886cd7e0a1d2a3388a9249af2c3150a1a1e28b6bff1",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate18/mixed/checkpoint/native.tar",
+      "sha256": "0704457424d5e7c47e8272236f212851f48d520eee97592b31af3ad6b22ddf00",
+      "bytes": 141824
+    },
+    {
+      "private_relative_path": "remaining-candidate19/business-races/checkpoint/core.dump",
+      "sha256": "f9255090e65f441f03240c493256263d423ec0ea7720348d3c3478687c21d218",
+      "bytes": 1407183
+    },
+    {
+      "private_relative_path": "remaining-candidate19/business-races/checkpoint/globals.sql",
+      "sha256": "43310df631045788d123042dd9cdf1b7a87b6bfacfc078c2df5626020f77b3e2",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate19/business-races/checkpoint/native.tar",
+      "sha256": "d550fdca81c0bb618b5435a905a7aaf8a3fa3a52b19c9fd6b16a2de211c7a0f5",
+      "bytes": 344576
+    },
+    {
+      "private_relative_path": "remaining-candidate19/late-hold/checkpoint/core.dump",
+      "sha256": "15241ad90215843014acaa69f6b67767009dae1fb34d71cdc682e36053d10e73",
+      "bytes": 1166712
+    },
+    {
+      "private_relative_path": "remaining-candidate19/late-hold/checkpoint/globals.sql",
+      "sha256": "4da0033e72793c9186d823862921596fb787e19e758ca922f728e6c1565c8c1e",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate19/late-hold/checkpoint/native.tar",
+      "sha256": "1de4fc683c97fc3be6df46a3122bac2a3471ca75ffe5e1b8d97a3d36767ee892",
+      "bytes": 162304
+    },
+    {
+      "private_relative_path": "remaining-candidate19/mixed/checkpoint/core.dump",
+      "sha256": "aef0cd7121a315510cac8e9cd89e65436922f66d0ae220588522962b0d8a2503",
+      "bytes": 1158775
+    },
+    {
+      "private_relative_path": "remaining-candidate19/mixed/checkpoint/globals.sql",
+      "sha256": "6483a9b817f9be303ac54578c673de6b1070aac2475c143ca4ee760526977b96",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate19/mixed/checkpoint/native.tar",
+      "sha256": "7db2dddf75d3d9f61d85be444a0b594b73d0c06a67acafe762c24f323029d114",
+      "bytes": 158208
+    }
+  ],
+  "new": [
+    {
+      "private_relative_path": "remaining-candidate21/business-races/checkpoint/core.dump",
+      "sha256": "e20d029018852d3767ce512682579af2acab7bdba5d8a33033f05d3be68cb56f",
+      "bytes": 1407183
+    },
+    {
+      "private_relative_path": "remaining-candidate21/business-races/checkpoint/globals.sql",
+      "sha256": "4d42bf18d2c2826d8f08fabe26c6c5086d2d439102670f5d22e49a30cdcd8e4b",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate21/business-races/checkpoint/native.tar",
+      "sha256": "f86f61a0771ecda19edb39138c833a826aba83b0d02160077e4cee2aa2c2bb98",
+      "bytes": 361984
+    },
+    {
+      "private_relative_path": "remaining-candidate21/late-hold/checkpoint/core.dump",
+      "sha256": "45833ebac44688c26ddb151772c0cb0a7ae8630930caffb0ca496bb851a4f1a8",
+      "bytes": 1166712
+    },
+    {
+      "private_relative_path": "remaining-candidate21/late-hold/checkpoint/globals.sql",
+      "sha256": "3494eb24167adc01a5eaaa8338f1b721a53296505ad6df6559e8874224c83a6f",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate21/late-hold/checkpoint/native.tar",
+      "sha256": "ff63139982c4bf32ed2a8c8abda193bf0569d6668bd7cad2ab50e0a2fb75a739",
+      "bytes": 178688
+    },
+    {
+      "private_relative_path": "remaining-candidate21/mixed/checkpoint/core.dump",
+      "sha256": "b8814065a813f7c355566b316a1cbf2d3534a944dce8b0b3a70eba0798743933",
+      "bytes": 1158775
+    },
+    {
+      "private_relative_path": "remaining-candidate21/mixed/checkpoint/globals.sql",
+      "sha256": "df5cb011f37d611d61f7bd48cb649ce2f58315d4eb37cde1d9399f8b3fac724c",
+      "bytes": 669
+    },
+    {
+      "private_relative_path": "remaining-candidate21/mixed/checkpoint/native.tar",
+      "sha256": "e338e8c660bfd0e25629eae1dfe048f544ca2fc50dd520859ec93ce798049d9b",
+      "bytes": 174592
+    }
+  ],
+  "complete_entry_old_backups_retained_field": 57,
+  "provider_io": 0,
+  "native_delete": 0
+}

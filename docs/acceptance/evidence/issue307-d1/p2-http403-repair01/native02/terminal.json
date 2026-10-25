@@ -1,0 +1,26 @@
+{
+  "status": "PASS_ISOLATED_NONDELETE_REGRESSION",
+  "failure": null,
+  "closure": [
+    {
+      "cid": "707371bb35f1eb592fabc5d852058be8102bbb4404b8301af3b5f34f0a7ec530",
+      "PID": 0,
+      "running": false,
+      "noports": true,
+      "restart": "no"
+    },
+    {
+      "cid": "314d5ba063d89b5769e46e2ba5b245c5ca3056e4e39206f37cef1041b3e6f24e",
+      "PID": 0,
+      "running": false,
+      "noports": true,
+      "restart": "no"
+    }
+  ],
+  "old_source_starts": 0,
+  "old_authorization_reused": false,
+  "old_budget_writes": 0,
+  "pins_released": 0,
+  "actual_object_deletions": 0,
+  "resources_retained": true
+}

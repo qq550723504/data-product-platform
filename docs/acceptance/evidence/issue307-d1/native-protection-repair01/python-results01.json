@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-23T13:12:00.448958+00:00",
+  "results": [
+    {
+      "suite": "test_native_protection.py",
+      "mode": "normal",
+      "exit": 0
+    },
+    {
+      "suite": "test_retention_renewal.py",
+      "mode": "normal",
+      "exit": 0
+    },
+    {
+      "suite": "test_verify_six_native.py",
+      "mode": "normal",
+      "exit": 0
+    },
+    {
+      "suite": "test_six_native_entry.py",
+      "mode": "normal",
+      "exit": 1
+    },
+    {
+      "suite": "test_six_candidate_runtime.py",
+      "mode": "normal",
+      "exit": 0
+    },
+    {
+      "suite": "test_native_protection.py",
+      "mode": "optimized",
+      "exit": 0
+    },
+    {
+      "suite": "test_retention_renewal.py",
+      "mode": "optimized",
+      "exit": 0
+    },
+    {
+      "suite": "test_verify_six_native.py",
+      "mode": "optimized",
+      "exit": 0
+    },
+    {
+      "suite": "test_six_native_entry.py",
+      "mode": "optimized",
+      "exit": 1
+    },
+    {
+      "suite": "test_six_candidate_runtime.py",
+      "mode": "optimized",
+      "exit": 0
+    }
+  ],
+  "native_source_calls": 0,
+  "delete": 0
+}

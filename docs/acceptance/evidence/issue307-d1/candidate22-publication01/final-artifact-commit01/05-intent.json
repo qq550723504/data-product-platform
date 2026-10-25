@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "add",
+    "--",
+    "docs/acceptance/evidence/issue307-d1/candidate22-artifacts-review01",
+    "docs/acceptance/evidence/issue307-d1/candidate22-ci-review01",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning-review01",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01",
+    "docs/acceptance/evidence/issue307-d1/candidate22-receipt-restoration-review01",
+    "docs/acceptance/evidence/issue307-d1/candidate22-source-review01",
+    "docs/acceptance/evidence/issue307-d1/candidate22-source-review02",
+    "docs/acceptance/evidence/issue307-d1/preallocation-ci-5630d5bf27d340578eb2d90d2eace4c6",
+    "docs/acceptance/evidence/issue307-d1/preallocation-ci-e38e3076b2114cbab686bf95c033fe61",
+    "docs/acceptance/issue307-d1-candidate22-confirmation.md",
+    "docs/acceptance/issue307-d1-v32-window-runbook.md",
+    "docs/acceptance/issue307-d1-v32-preparation.md"
+  ],
+  "at": "2026-10-23T06:12:19.626993+00:00"
+}

@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "examples/lifecycle-d1/test_retained_v26.py"
+  ],
+  "exit": 1,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e510ee63629185e648c7790ecea9f48deb55f8340bbb6f582929f6fbfa9f3579",
+  "scope": "File-only unit doubles. No Docker/DB/provider."
+}

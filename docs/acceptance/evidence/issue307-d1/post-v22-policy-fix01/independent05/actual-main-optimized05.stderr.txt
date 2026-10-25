@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\docs\acceptance\evidence\issue307-d1\post-v22-policy-fix01\independent05\test-actual-complete-main05.py", line 25, in <module>
+    try:v.main();raise AssertionError('entry returned unexpectedly')
+        ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 156, in main
+    gate=sealed_gate();output.mkdir()
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 32, in sealed_gate
+    p.window.validate_packet(packet,r.CONTROL)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\remaining_six_window.py", line 40, in validate_packet
+    candidate = json.loads((packet/'candidate.json').read_bytes())
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate15\\candidate.json'

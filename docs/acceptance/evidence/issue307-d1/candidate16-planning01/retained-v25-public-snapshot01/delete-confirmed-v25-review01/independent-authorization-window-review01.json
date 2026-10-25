@@ -1,0 +1,257 @@
+{
+  "status": "BLOCKED_BOUNDED_INDEPENDENT_AUTHORIZATION_WINDOW_REVIEW",
+  "at": "2026-10-20T01:33:15.091903+00:00",
+  "head": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+  "runtime_source": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "profile": "candidate15/v25",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "review_basis": "Direct human request for bounded independent authorization/window preparation/schedule/containment review; AGENTS17 current required-path invariant. No remaining six live acceptance or future platform expansion.",
+  "remaining_blockers": [
+    {
+      "id": "B1",
+      "classification": "BLOCKER_CURRENT_REQUIRED_CLI_UNEXECUTABLE",
+      "file": "examples/lifecycle-d1/window_six_support.py",
+      "line": 148,
+      "frozen_sha256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+      "root_cause": "CLI passes argparse group name str into inherited archive_root/revoke_case, whose contract requires resolved frozen group dict. archive_root reaches binding(group) and revoke_case indexes group[CaseHelpers], both TypeError before their required work.",
+      "actual_counterexamples": [
+        "archive-root --group late-hold --stage disable-all",
+        "revoke-case --group late-hold --stage late"
+      ],
+      "actual_exception": "TypeError: string indices must be integers, not 'str'",
+      "impact": "Required root receipt archival and H1 trusted one-field owner revocation cannot execute via the sole approved host CLI. This is a required success-path failure, not optional hardening.",
+      "original_failure_evidence_sha256": "276517104afb27d32632835111731f7b98e2440ef3dcdd2f59466c0906f9ad0e",
+      "root_cause_isolation_sha256": "706eaba99ba95c3bcecf34c6be0335fdac5fce1bc56621e547dfb552cf94c260",
+      "direct_resolved_group_methods": "PASS in synthetic temporary filesystem using real inherited rotate and disable_json; does not fix current frozen main.",
+      "test_gap": "Existing six two-method and retained fourteen-method mock suites pass but did not execute the actual affected main-to-inherited-method compositions. Earlier independent preparation07 missed this integration edge; original report is preserved, this later BLOCKED fact supersedes execution readiness.",
+      "required_remediation": "Resolve the bounded group through Host.group before inherited calls and cover actual main composition/guards normal and -O. Preserve current frozen tool/source/authorization, pause current heartbeat. A changed tool SHA cannot silently use current approval; any repair plan needs separately reviewed exact bindings and renewed human authority before activation."
+    }
+  ],
+  "accepted_subscope": {
+    "actual_direct_human_authority": {
+      "independently_read_real_thread": true,
+      "deletion_text_bytes": 432,
+      "deletion_text_sha256": "645250401988c564929ad4437358e8c42bd8dfa1b3fda87413d5eea63e33efd4",
+      "trailing_LF_retained": true,
+      "public_authorization_sha256": "55f0be454529612e1d81c47c68f10542929f96d661be675d50aea32fe4029b9e",
+      "user_retyped_template": false,
+      "actual_human_vs_machine_template_distinct": true,
+      "approved_reference_members_current_bytes_sizes_exact": 56,
+      "envelope_private_manifest_additional_host_bindings_exact": true,
+      "new_authority_does_not_rewrite_historical_NOT_RECEIVED": true
+    },
+    "separate_scheduling_authority": {
+      "independently_read_actual_UI_reply": true,
+      "scope": "Same execution, fixed2026-10-20 SGT14:00-14:40 only; no deletion scope expansion",
+      "sha256": "65b68dd6c3f7f44dfec9d99e201deeb91e0d953c70bb55ec7ff0a7e13bdc4774"
+    },
+    "original_schedule": {
+      "id": "307-d1-candidate15-v25",
+      "kind": "heartbeat",
+      "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+      "original_STATUS": "ACTIVE",
+      "original_actual_next_run_ms": 1792476000000,
+      "original_actual_next_run_UTC": "2026-10-20T06:00:00Z",
+      "original_actual_next_run_SGT": "2026-10-20T14:00:00+08:00",
+      "single_execution_matching_automation": 1,
+      "actual_scheduler_runs": 0,
+      "separate_original_submission_vs_actual_prompt": "Exactly one terminal LF omitted by tool; UTF8 intact, no other difference.",
+      "original_schedule_raw_index_members_verified": 15
+    },
+    "current_schedule_after_blocker": {
+      "actual_status": "PAUSED",
+      "actual_next_run_at": null,
+      "actual_next_nominal_at": null,
+      "same_prompt_original_bytes": true,
+      "old07_10_11_12": "All PAUSED",
+      "meaning": "Parent paused same task after B1. Original ACTIVE snapshot retained as history; no duplicate or window shift."
+    },
+    "current_closed_readback": {
+      "actual_batch_Docker_inspect": 1,
+      "actual_owner_count": 93,
+      "current_candidate15_descriptor_owners": 86,
+      "bound_source_Core_Native": 6,
+      "old_business_Redis": 1,
+      "all_closed_PID0_noports_norestart": true,
+      "root_owner_actual_contracts_passed": 15,
+      "permissions_false": 30,
+      "worker_human_confirmation_materialized": false,
+      "raw_inspect_SHA_only_no_Env_saved": true,
+      "full_old270_and_budget_reinspection": "Not repeated; prior independent07 and immutable parent authorized Host.check raw trace retained."
+    },
+    "authorization_Host_check_portion": "Actual56 references/envelope/source/target/window gates pass to a patched physical sentinel. No claim this sentinel reran complete Host/native gate. Only two actual Git show reads.",
+    "parent_prewindow_gate": "Original fixed Host.check evidence PASS_PREWINDOW_CLOSED /896 read-only processes independently indexed and trace reviewed; no need to rerun Native or900 read operations for current B1.",
+    "failure_containment_semantics": "Static and existing mock coverage support continue-all-groups close; fixed disable-all only if existing Native running; archive failure still tries disable; stale/unreadable summary and live enablers cannot become fresh identity confirmation; unknown physical or identity closure stays UNCONFIRMED. Current B1 still blocks required archive/revoke CLI.",
+    "slot_and_window_contract": "P2->T1->T2->H2A->M1A->M1B; each send-disable-selectedOnlyEventID Outbox-Asynq-Core absence before next; H1 stop/revoke/fresh disabled/sealed before proof, H2 upstream204 before witness/latehold/revoke/loss, M1A absence before B mixed checkpoint copied/SHA checked before lookup; B/C forbidden sends excluded; persistent once budget before Core claim."
+  },
+  "actual_independent_tests": {
+    "normal": [
+      {
+        "suite": "six",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "pass": true,
+        "source_sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+        "log_sha256": "653bdb116d8f6526303a933199edbde1939a323ee0855ec9e5e38c74de0d478c"
+      },
+      {
+        "suite": "retained",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "pass": true,
+        "source_sha256": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+        "log_sha256": "9160c08fc4eb54a562910fa9d9d24f609936d6894f33f1ad94d1603a711c761c"
+      }
+    ],
+    "optimized": [
+      {
+        "suite": "six",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "pass": true,
+        "source_sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+        "log_sha256": "0e38dc2c15b8d044a787ff6a963e965097dcdd7d59e362fb4596b9113a2f60c5"
+      },
+      {
+        "suite": "retained",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "pass": true,
+        "source_sha256": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+        "log_sha256": "f9f894adc4f8ded575c6aa82765541027430d5dee4a35c69aa118fe3a7993648"
+      }
+    ],
+    "real_Docker_Source_HTTP_enable_sign_DELETE": 0,
+    "synthetic_H1_signing": "Only generated temporary mock key; no actual host key/proof read or signed.",
+    "CLI_negative_compositions": 2,
+    "direct_resolved_group_positive_models": 2,
+    "mock_PASS_is_not_native_or_current_CLI_PASS": true
+  },
+  "execution_limits_unchanged": {
+    "start_UTC_inclusive": "2026-10-20T06:00:00Z",
+    "end_UTC_exclusive": "2026-10-20T06:40:00Z",
+    "readonly_end_UTC": "2026-10-20T08:40:00Z",
+    "max_per_target": 1,
+    "max_total": 6,
+    "survivors": 11,
+    "UNKNOWN_resend": false,
+    "cleanup": 0,
+    "hold_release": 0,
+    "bypass": 0,
+    "old_authorization_reused": false,
+    "all_backup_pins_oldbudgets_failure_attempt_cost_facts_retained": true,
+    "window_fresh_native_preflight": "NOT_RUN",
+    "six_live_slots": "NOT_RUN",
+    "actual_six_target_delete": "NOT_RUN",
+    "full_D1": "NOT_ACCEPTED",
+    "PR332": "DRAFT_OPEN_NO_MERGE",
+    "Issue307": "OPEN"
+  },
+  "reviewed_files": {
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+      "bytes": 12745
+    },
+    "examples/lifecycle-d1/test_window_six_support.py": {
+      "sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+      "bytes": 7973
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review06/composition/window_support.py": {
+      "sha256": "ad4a7179efb96a02ef23401f1fbe5d489452f5cd923b09c7aae6fba12944738f",
+      "bytes": 28447
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review06/composition/test_window_support.py": {
+      "sha256": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+      "bytes": 20649
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "6a595020fb0c5b248b5a09d4eb0f18ade1b5e31da2dc1bec19797ff61a1c7f04",
+      "bytes": 14571
+    },
+    "examples/lifecycle-d1/remaining_sequence.py": {
+      "sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "bytes": 7093
+    },
+    "examples/lifecycle-d1/remaining_six_window.py": {
+      "sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "bytes": 1931
+    },
+    "docs/acceptance/issue307-d1-v25-window-runbook.md": {
+      "sha256": "843b3a23269cb3c7c808f2c4658426fa44d32131f6d469c5456b9bca2ce9def2",
+      "bytes": 12311
+    },
+    "docs/acceptance/issue307-d1-v25-execution01.md": {
+      "sha256": "6d32c5b71bba1cd5a836314b50d0e6bb8c46e93a975c84599944b92c4b47ce98",
+      "bytes": 4431
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/automation-tool-receipts.json": {
+      "sha256": "d019b5d2128d421153e05d09c838cc055b5717e0176a7e686b227931bd07a6bd",
+      "bytes": 506
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/github-checkpoint.json": {
+      "sha256": "5e0c9604b4eaf0e4e23093e4cf98830b011ad9641ca1ff766741f0a00c8addb2",
+      "bytes": 340
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/human-authorization.json": {
+      "sha256": "55f0be454529612e1d81c47c68f10542929f96d661be675d50aea32fe4029b9e",
+      "bytes": 15626
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/prewindow-final-checkpoint.json": {
+      "sha256": "ccc02289518546660a6e9494506700d0553ce6e2cb04107bb6ea050e5737bb0b",
+      "bytes": 1387
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/schedule-evidence-index.json": {
+      "sha256": "9f37346ee9e5f083ebdbbea89034a4a56205bbec175a0e746b0324abf9b8d0bc",
+      "bytes": 3645
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/schedule-human-authority.json": {
+      "sha256": "65b68dd6c3f7f44dfec9d99e201deeb91e0d953c70bb55ec7ff0a7e13bdc4774",
+      "bytes": 1827
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-resume.json": {
+      "sha256": "1c8bbd122ebb9b10e6caf8d8a9fa901d5358d1d98cdb3bd218b42833a2a04676",
+      "bytes": 3010
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-automation-snapshot.toml": {
+      "sha256": "461da6db8615d53a18f871b0d3d9b3aacafb4a0d4802dccb33f37cc530becefc",
+      "bytes": 14334
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-prompt-actual.txt": {
+      "sha256": "9200bc1c93375483b012948a1fb7c5db21fd00ecadfef2a2b4f33f427bdfb4eb",
+      "bytes": 13974
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/scheduled-prompt.txt": {
+      "sha256": "f9979d73b469abd53490b1edf1a869dd42c08e04835a9d1fd8aa1639e29730fd",
+      "bytes": 13975
+    }
+  },
+  "evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/independent-evidence-index01.json",
+    "sha256": "7cd7803fbaba8308d32422be155cde267b3e46f92a94a719e1bc3c5ae07c0baf",
+    "members": 12
+  },
+  "reviewer_actions": {
+    "runtime_candidate_authorization_matrix_or_automation_writes": 0,
+    "runtime_Docker_start_stop_exec": 0,
+    "provider_Source_HTTP": 0,
+    "actual_permission_mutation_signing_delete": 0,
+    "permitted_evidence_writes": "O_EXCL new review directory only",
+    "actual_read_only_Docker": "Single inspect93; no Env projection or secret output"
+  },
+  "CI_boundary": "Original authorization checkpoint refers exactHEAD a63 PR run39320908916 13SUCCESS, parent fresh rechecked. This report did not independently query current GitHub and never calls it main CI. CI green does not resolve B1.",
+  "followups": [],
+  "limitations": [
+    "No repair candidate/tools activated, no old approval reused.",
+    "Do not append a PASS-only schedule gate while B1 remains.",
+    "Future root isolation repair model is separate and must not be labeled current frozen candidate repaired.",
+    "Current matrix is parent-owned; original reviewed SHA retained, report writer does not modify it."
+  ]
+}

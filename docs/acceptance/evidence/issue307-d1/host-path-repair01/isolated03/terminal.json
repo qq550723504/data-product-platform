@@ -1,0 +1,202 @@
+{
+  "status": "FAILED_OR_UNCONFIRMED_RETAINED",
+  "failure": "ValueError: budget initialization scope/code differs",
+  "execution": "1ed7a604-9f9e-4ddc-823d-39a3d4d3f114",
+  "test_context_only": true,
+  "source_resources_started": 0,
+  "real_delete": 0,
+  "full_source_native_preflight": "NOT_RUN",
+  "facts": [
+    {
+      "phase": "actual_PostgreSQL_adapter",
+      "status": "PASS",
+      "test_binary_sha256": "c8c68e41aaaaf98bedb6f8dadf6bdf0fbdd75ee98ea52d412db291e9b83deb2d"
+    }
+  ],
+  "closure": [
+    {
+      "cid": "e6b57acf24a5f365a02e7f5b09087b29edc2618be7f61e048834baa654e946f3",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "1b195c114f48c06bdef4f271f05ff90f3aaedb37e7fe8178dbf7be61b2adf506",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "9f3663c6cb235d62fc7e3da17d6b769cd440be4e237b82eefaa6d8b304c53d63",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "120e8619a45fcffde71a416cfeef48b640e0ce37f7cd146bcf33737c1a3d1d31",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "24c56a378a5876829a7e3a14537785163da11d8fdb4c39cc80415317780681a9",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "8763fa6f11870aa69d03e973956f857d4c5b04096a5bcddf2e5bd709426b0ae5",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "699c21a6a3a03fc2a9d89f026c46dfebb3a9b58ef1d294944c365db5eac00879",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "55ee66429236f673665d2b09fb277519ace57a49d754bf2dad13d5f84260d68a",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "f724b7f079d55a8ec677065b3ce51f9371e74da3017c0316cca0309565794f66",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "5018f8778412dc97cb67d5a0b05df0be69f147b2dcf6b4233ff0244801193126",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "d44dc232464c7946afd38c1e577ebf065fb563abba2b22f37567c47b861aba3d",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "f8f0835bc40adbf35f0c60f40093f4d052c8096d1b3fb666a07fe20aefb8fff3",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "2ef8692cd195badccc053dedc95696200fb870e5e17fd64967292ecb3b9b3e4f",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "165d9b8560f4962143db31b7cef4c927cd1b23b4c2ec34371d37563c2e65cd8f",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "f0ce4207202837994045c583aecef51d611565db7449f44d72c516b9aa531a55",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "26c9328cd164fd13e307df42c1ab7110254a979975a765d129b654741b4d8022",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "818693c1ee5ccd68875de69891718719996bdae2a5927cacf815d164dc5db03b",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "5dae755c7bab032056f635c22bbd3b2c346010e21b26cec87e21ac3c61a73944",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "d8ac8b91c19dd22d668590640ae3b6d5f90715bb0ae8f43e390c18c2bf62e9db",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "76b92f1be4c7a2b9abd6b34f5c55eabda35bf01394e9b9410956f6665571879c",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "3a68d6356dab72a041459a3aac371c0adc78990cb334e29371e55e9d6a68c15c",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "90d68a6eb8a7da5f22bd04e85773395be147fbcf33e786f2f73222693887ab49",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "c8ff8fbf6c80cf5e13b4748cfb3a3a26ee022cc38823bb71670bc26c28b51454",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "93ea3b4575fcc11a975fd19293b900be8204df0a114465241df9cfb76a9d3623",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "d463dc0167aa65a1a22eb4b9af063d2dfdf9845be071836caf09ca3ae09710b4",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "08aa870ae9d05b820a4c78a8d1399952e4a376a11c5297af3047e959e345652d",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "fed36bf712cee8268d9ade743d75edf3dfd36040fadd427d85042bd5a032e496",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    },
+    {
+      "cid": "6437efbf28d193aecc0986b289d4ae1b2d07c721c6105ea1dc29310922899e7c",
+      "stopped_PID0": true,
+      "noports": true,
+      "norestart": true
+    }
+  ],
+  "retained_volumes": [
+    "dpp307-path03-business-races-pg",
+    "dpp307-path03-business-races-native",
+    "dpp-lifecycle307-808a6960-host-path-rehearsal03-budget",
+    "dpp307-path03-late-hold-pg",
+    "dpp307-path03-late-hold-native",
+    "dpp-lifecycle307-754ea8f0-host-path-rehearsal03-budget",
+    "dpp307-path03-mixed-pg",
+    "dpp307-path03-mixed-native",
+    "dpp-lifecycle307-dfda43b4-host-path-rehearsal03-budget"
+  ],
+  "retained_networks": [
+    "2064c9d27f6bfe9f48e3780b6b5ee8bc2f1efa12f86eb161ee94577262d01c27",
+    "73ae3bb929960ffce1178d9ec2afedc7119f06ed605c7e3dddd5e8a68884415e",
+    "f2862697fe7eb2dd63d678a0dd25baf558c0d0b270952a67c7def2345c8768dc"
+  ]
+}

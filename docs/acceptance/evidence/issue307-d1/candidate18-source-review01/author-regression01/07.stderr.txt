@@ -1,0 +1,26 @@
+test_changed_service_identity_image_owner_state_or_port_rejected (test_native_d1_completion.CompletionSafety.test_changed_service_identity_image_owner_state_or_port_rejected) ... ok
+test_checks_survive_python_optimization (test_native_d1_completion.CompletionSafety.test_checks_survive_python_optimization) ... ok
+test_destructive_expanded_or_confirmation_cli_rejected_before_io (test_native_d1_completion.CompletionSafety.test_destructive_expanded_or_confirmation_cli_rejected_before_io) ... usage: python.exe -m unittest [-h]
+                              {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+python.exe -m unittest: error: argument phase: invalid choice: 'delete' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+usage: python.exe -m unittest [-h]
+                              {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+python.exe -m unittest: error: argument phase: invalid choice: 'enable' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+usage: python.exe -m unittest [-h]
+                              {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+python.exe -m unittest: error: argument phase: invalid choice: 'cleanup' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+usage: python.exe -m unittest [-h]
+                              {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+python.exe -m unittest: error: unrecognized arguments: --target foreign
+usage: python.exe -m unittest [-h]
+                              {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+python.exe -m unittest: error: unrecognized arguments: --human-confirmed
+usage: python.exe -m unittest [-h]
+                              {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+python.exe -m unittest: error: unrecognized arguments: --private-root foreign
+ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.007s
+
+OK

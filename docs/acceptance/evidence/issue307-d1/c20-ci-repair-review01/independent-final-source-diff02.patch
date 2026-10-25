@@ -1,0 +1,520 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 4dc06de7..ed6a1ce8 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -104,6 +104,8 @@ jobs:
+           python -O -B examples/lifecycle-d1/test_retained_v29.py
+           python -B examples/lifecycle-d1/test_fixture_artifacts.py
+           python -O -B examples/lifecycle-d1/test_fixture_artifacts.py
++          python -B examples/lifecycle-d1/test_preallocation_ci.py
++          python -O -B examples/lifecycle-d1/test_preallocation_ci.py
+           python -B examples/lifecycle-d1/test_six_candidate_runtime.py
+           python -O -B examples/lifecycle-d1/test_six_candidate_runtime.py
+           python -B examples/lifecycle-d1/test_execution_freeze.py
+diff --git a/examples/lifecycle-d1/ci-test-fixture-runtime.py b/examples/lifecycle-d1/ci-test-fixture-runtime.py
+index f045307f..ba3a49e0 100644
+--- a/examples/lifecycle-d1/ci-test-fixture-runtime.py
++++ b/examples/lifecycle-d1/ci-test-fixture-runtime.py
+@@ -8,36 +8,47 @@ import zipfile
+ import fixture_artifacts as f
+ import remaining_six_window as window
+ 
+-root=Path(__file__).resolve().parents[2]
+-raw=f.load(root/f.SPEC)
+-# Local worktrees may already share the complete immutable commit. Never make
+-# their shared repository shallow for a CI convenience.
+-present=subprocess.run(['git','cat-file','-e',raw['source']+'^'],cwd=root,capture_output=True)
+-if present.returncode:
+-    subprocess.run(['git','-c','core.longpaths=true','fetch','--no-tags','origin',raw['source']],cwd=root,check=True)
+-w=window.compiled()
+-spec=f.specification(root,execution=w['Execution'],profile=w['Profile'],start=w['NotBefore'],end=w['NotAfter'])
+-with tempfile.TemporaryDirectory(prefix='d1-fixture-R-') as directory:
+-    control=Path(directory)
+-    (control/'approved-runtime-source.zip').write_bytes(f.git(root,'archive','--format=zip',spec['source'],'apps/platform','migrations'))
+-    files=f.verify_archive(root,control,spec)
+-    for name,content in files.items():
+-        path=control/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(content)
+-    # Existing Go tests read immutable historical receipts by repository path.
+-    # Testdata is separately taken from R; it is never a runtime build member.
+-    test_roots=['docs/acceptance/evidence/issue307-d1/remaining-candidate'+n+'/' for n in ['07','09','10','11','12']]+['docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-window01/']
+-    data=f.git(root,'archive','--format=zip',spec['source'],*[p.rstrip('/') for p in test_roots])
+-    with zipfile.ZipFile(io.BytesIO(data)) as archive:
+-        for entry in archive.infolist():
+-            if entry.is_dir():continue
+-            path=control/entry.filename
+-            f.need(path.resolve().is_relative_to(control.resolve()) and entry.filename.startswith(tuple(test_roots)), 'foreign historical testdata member')
+-            path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(archive.read(entry))
+-    env=os.environ.copy()
+-    for key in ['POSTGRES_DSN','TEST_POSTGRES_DSN','REDIS_ADDR','D1_SCHEMA_TEST_DSN','D1_SCHEMA_EXPECT']:
+-        env.pop(key,None)
+-    env.update(GOWORK='off',GOFLAGS='',CGO_ENABLED='0')
+-    base=control/'apps/platform'
+-    subprocess.run(['go','test','./internal/lifecycle/pilot','-run','TestRemaining(FixtureSchemaSingleContract|Retained|DeletePolicy)','-count=1'],cwd=base,env=env,check=True)
+-    subprocess.run(['go','test','./cmd/lifecycle-fixture-reader','./cmd/lifecycle-fixture-remaining','./cmd/lifecycle-fixture-remaining-iam','./cmd/lifecycle-fixture-readonly-check','-count=1'],cwd=base,env=env,check=True)
+-print('PASS_SEPARATE_R_ARCHIVE_BUILD_AND_OFFLINE_CONTRACTS; no source/provider I/O')
++def main():
++    root=Path(__file__).resolve().parents[2]
++    raw=f.load(root/f.SPEC)
++    # Local worktrees may already share the complete immutable commit. Never make
++    # their shared repository shallow for a CI convenience.
++    present=subprocess.run(['git','cat-file','-e',raw['source']+'^'],cwd=root,capture_output=True)
++    if present.returncode:
++        subprocess.run(['git','-c','core.longpaths=true','fetch','--no-tags','origin',raw['source']],cwd=root,check=True)
++    w=window.compiled()
++    spec=f.specification(root,execution=w['Execution'],profile=w['Profile'],start=w['NotBefore'],end=w['NotAfter'])
++    with tempfile.TemporaryDirectory(prefix='d1-fixture-R-') as directory:
++        control=Path(directory)
++        archive_bytes=f.runtime_archive(root,spec['source'])
++        print('R_ARCHIVE expected='+spec['archive_sha256']+' observed='+f.digest(archive_bytes)+' bytes='+str(len(archive_bytes)),flush=True)
++        (control/'approved-runtime-source.zip').write_bytes(archive_bytes)
++        files=f.verify_archive(root,control,spec)
++        for name,content in files.items():
++            path=control/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(content)
++        # Existing Go tests read immutable historical receipts by repository path.
++        # Testdata is separately taken from R; it is never a runtime build member.
++        test_roots=['docs/acceptance/evidence/issue307-d1/remaining-candidate'+n+'/' for n in ['07','09','10','11','12']]+['docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-window01/']
++        data=f.git(root,'archive','--format=zip',spec['source'],*[p.rstrip('/') for p in test_roots])
++        with zipfile.ZipFile(io.BytesIO(data)) as archive:
++            for entry in archive.infolist():
++                if entry.is_dir():continue
++                path=control/entry.filename
++                f.need(path.resolve().is_relative_to(control.resolve()) and entry.filename.startswith(tuple(test_roots)), 'foreign historical testdata member')
++                path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(archive.read(entry))
++        env=os.environ.copy()
++        for key in ['POSTGRES_DSN','TEST_POSTGRES_DSN','REDIS_ADDR','D1_SCHEMA_TEST_DSN','D1_SCHEMA_EXPECT']:
++            env.pop(key,None)
++        env.update(GOWORK='off',GOFLAGS='',CGO_ENABLED='0')
++        base=control/'apps/platform'
++        subprocess.run(['go','test','./internal/lifecycle/pilot','-run','TestRemaining(FixtureSchemaSingleContract|Retained|DeletePolicy)','-count=1'],cwd=base,env=env,check=True)
++        subprocess.run(['go','test','./cmd/lifecycle-fixture-reader','./cmd/lifecycle-fixture-remaining','./cmd/lifecycle-fixture-remaining-iam','./cmd/lifecycle-fixture-readonly-check','-count=1'],cwd=base,env=env,check=True)
++    print('PASS_SEPARATE_R_ARCHIVE_BUILD_AND_OFFLINE_CONTRACTS; no source/provider I/O')
++
++if __name__=="__main__":
++    try:main()
++    except Exception as error:
++        # Fixed CI-only inputs have no source/provider secrets or credentials.
++        detail=(type(error).__name__+": "+str(error)).replace("%","%25").replace("\r","%0D").replace("\n","%0A")
++        print("::error title=Separate fixture archive CI::"+detail,flush=True)
++        raise
+diff --git a/examples/lifecycle-d1/fixture-runtime-artifact.json b/examples/lifecycle-d1/fixture-runtime-artifact.json
+index 4eb7c782..4e419cff 100644
+--- a/examples/lifecycle-d1/fixture-runtime-artifact.json
++++ b/examples/lifecycle-d1/fixture-runtime-artifact.json
+@@ -1,5 +1,5 @@
+ {
+-  "version": 1,
++  "version": 2,
+   "purpose": "RETAINED_D1_FIXTURE_ONLY",
+   "source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+   "base_source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+@@ -31,8 +31,8 @@
+     "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+     "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go"
+   ],
+-  "archive_sha256": "190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea",
+-  "archive_bytes": 1821417,
++  "archive_sha256": "38c63a14db564cecfe688da1ffb10a3784084c914b298a182b2aaa2c026bcb7c",
++  "archive_bytes": 6425445,
+   "files": {
+     "apps/platform/cmd/api/main.go": "4d7402469b6e208c52186ad134e5b95c250398d8ed2fbc562fafba676bc337db",
+     "apps/platform/cmd/ingestion-browser-fixture/main.go": "2dd94df5869849f102313ce1b6644b15e690c946cf9f9f49ddf153142077f447",
+@@ -803,5 +803,6 @@
+     "migrations/000068_lifecycle_checkpoint_read.up.sql": "23e90a25cd53da573419063a308c6366be5312688b7286b64268325394429d16",
+     "migrations/000069_lifecycle_copy_policy_renewal.down.sql": "33ff5287621a3c2c2b3b40c627a4dff7429729bd97e8c8837b62832ca75d66c5",
+     "migrations/000069_lifecycle_copy_policy_renewal.up.sql": "2197bf0d3c226ab087c1be71f9e029f3c213b449d9b7097e369497f2e1c7d635"
+-  }
++  },
++  "archive_recipe": "GIT_ZIP_STORE_UTC_LF_V1"
+ }
+diff --git a/examples/lifecycle-d1/fixture_artifacts.py b/examples/lifecycle-d1/fixture_artifacts.py
+index f14f9e2c..0071420c 100644
+--- a/examples/lifecycle-d1/fixture_artifacts.py
++++ b/examples/lifecycle-d1/fixture_artifacts.py
+@@ -21,7 +21,13 @@ def need(value,message):
+ def digest(raw): return hashlib.sha256(raw).hexdigest()
+ def load(path): return json.loads(Path(path).read_bytes())
+ def git(root,*args):
+-    return subprocess.check_output(['git','-c','core.longpaths=true','-c','core.autocrlf=false',*args],cwd=root)
++    env=os.environ.copy();env['TZ']='UTC'
++    return subprocess.check_output(['git','-c','core.longpaths=true','-c','core.autocrlf=false',*args],cwd=root,env=env)
++
++def runtime_archive(root,source):
++    # ZIP DOS timestamps are local time; compression output may depend on
++    # zlib. Native Git UTC + store-only fixes both without a custom archiver.
++    return git(root,'archive','--format=zip','-0',source,'apps/platform','migrations')
+ 
+ def regular(path):
+     need(path.is_file() and not path.is_symlink() and not path.is_junction()
+@@ -44,7 +50,8 @@ def archive_members(raw):
+ 
+ def specification(root, *, execution, profile, start, end):
+     path=Path(root)/SPEC;regular(path);spec=load(path)
+-    need(spec['version']==1 and spec['purpose']=='RETAINED_D1_FIXTURE_ONLY'
++    need(spec['version']==2 and spec['archive_recipe']=='GIT_ZIP_STORE_UTC_LF_V1'
++         and spec['purpose']=='RETAINED_D1_FIXTURE_ONLY'
+          and spec['execution']==execution and spec['profile']==profile
+          and spec['not_before']==start and spec['not_after']==end,
+          'runtime/host execution or window contract differs')
+@@ -96,7 +103,7 @@ def verify_host(root, host):
+ def build(root, destination, contract):
+     root,destination=Path(root),Path(destination)
+     spec=specification(root,**contract);host=host_snapshot(root)
+-    archive=git(root,'archive','--format=zip',spec['source'],'apps/platform','migrations')
++    archive=runtime_archive(root,spec['source'])
+     with (destination/'approved-runtime-source.zip').open('xb') as stream:stream.write(archive)
+     files=verify_archive(root,destination,spec)
+     build_root=destination/'build-runtime';build_root.mkdir()
+@@ -131,6 +138,7 @@ def verify_frozen(packet,candidate,a,spec):
+     need(digest((Path(packet)/'source-freeze.json').read_bytes())==candidate['SourceFreezeSHA256']
+          and frozen['version']==2 and candidate['Source']==frozen['source']==a['source']
+          and frozen['host']==a['host']
++         and frozen['source_ci']==a['source_ci']
+          and frozen['runtime_artifact_spec_sha256']==a['runtime_artifact_spec_sha256']
+          and frozen['actual_build_source']==frozen['initial_allocation_build_source']==a['source']
+          and frozen['initial_build_files']==a['build_files'], 'frozen R/P source/build binding differs')
+diff --git a/examples/lifecycle-d1/freeze-six-candidate.py b/examples/lifecycle-d1/freeze-six-candidate.py
+index 8a24d39c..214ac119 100644
+--- a/examples/lifecycle-d1/freeze-six-candidate.py
++++ b/examples/lifecycle-d1/freeze-six-candidate.py
+@@ -66,6 +66,7 @@ def source_freeze(a):
+     archive=r.CONTROL/'approved-runtime-source.zip'
+     save(PACKET/'source-freeze.json',{'version':2,'source':a['source'],'runtime':spec,'host':a['host'],
+                                     'runtime_artifact_spec_sha256':a['runtime_artifact_spec_sha256'],
++                                    'source_ci':a['source_ci'],
+                                     'archive_sha256':sha(archive),'archive_bytes':archive.stat().st_size,
+                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
+                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
+@@ -151,7 +152,7 @@ def main():
+                          'recovery_redis':allocation['recovery_redis'],'budget_volume':allocation['volumes']['budget'],'budget_initializer':allocation['budget_initializer'],'budget_initializer_script_sha256':allocation['budget_initializer_script_sha256'],
+                          'root_owners':owners,'allocation_sha256':sha(r.PUBLIC/'allocation.json'),'owner_descriptors_sha256':a['owner_descriptors_sha256'],
+                          'map_sha256':a['map_sha256'],'preparation_terminal_sha256':sha(r.PUBLIC/'non-delete-terminal.json'),'previous_policy_heads':heads})
+-        bindings[-1].update(initial_build_source=a['source'],host_source=a['host']['source'],runtime_artifact_spec_sha256=a['runtime_artifact_spec_sha256'],initial_build_files=a['build_files'],retained_history=a['retained'])
++        bindings[-1].update(initial_build_source=a['source'],host_source=a['host']['source'],source_ci=a['source_ci'],runtime_artifact_spec_sha256=a['runtime_artifact_spec_sha256'],initial_build_files=a['build_files'],retained_history=a['retained'])
+     save(PACKET/'profile-windows.json',windows);candidate['ProfileWindowsSHA256']=sha(PACKET/'profile-windows.json')
+     save(PACKET/'candidate.json',candidate);save(PACKET/'bindings.json',bindings)
+     preparation_audit_plan(candidate)
+@@ -181,6 +182,7 @@ def confirmation(c,bindings,targets):
+            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
+            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
+            f'fixture runtime R={c["Source"]}；PR/host P={bindings[0]["host_source"]}；R archive {sha(r.CONTROL/"approved-runtime-source.zip")}；runtime artifact spec {bindings[0]["runtime_artifact_spec_sha256"]}；schema仅69/66且无protected identity；最终review HEAD另由execution-binding精确绑定。',
++           f'分配前P精确PR CI {bindings[0]["source_ci"]["head"]}；run {bindings[0]["source_ci"]["run"]}；原收据 {bindings[0]["source_ci"]["receipt"]} SHA256 {bindings[0]["source_ci"]["sha256"]}；最终review HEAD仍须独立精确CI。',
+            f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15/16/17冷态/预算/IAM/失败证据、可信NOT_SENT闭合及新17版本只读证据独立原样保留，不复用旧execution或授权。',
+            f'准备阶段完整入口audit plan {sha(PACKET/"preparation-evidence-audit-plan.json")}；显式files-map-v1；未来实际授权/调度后须另按批准manifest绑定对应phase audit plan，不能覆盖准备快照。',
+            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',
+diff --git a/examples/lifecycle-d1/prepare-six-candidate.py b/examples/lifecycle-d1/prepare-six-candidate.py
+index 3d4f40ad..0024a171 100644
+--- a/examples/lifecycle-d1/prepare-six-candidate.py
++++ b/examples/lifecycle-d1/prepare-six-candidate.py
+@@ -14,6 +14,7 @@ import subprocess
+ import sys
+ import uuid
+ import fixture_artifacts
++import execution_freeze
+ 
+ ROOT=Path(__file__).resolve().parents[2]
+ spec=importlib.util.spec_from_file_location('six_prior_readonly',Path(__file__).with_name('verify-post-v22-seventeen.py'))
+@@ -310,20 +311,40 @@ def artifact_contract():
+     return dict(execution=EXECUTION,profile=PROFILE,start=W['NotBefore'],end=W['NotAfter'])
+ 
+ 
++def preallocation_ci():
++    """A completed exact-source CI precedes allocation, not only authorization."""
++    head=subprocess.check_output(['git','-c','core.longpaths=true','rev-parse','HEAD'],cwd=ROOT).decode().strip()
++    journal=ROOT/'docs/acceptance/evidence/issue307-d1'/('preallocation-ci-'+uuid.uuid4().hex)
++    journal.mkdir()
++    snapshot=execution_freeze.GitHub(journal).snapshot()
++    save(journal/'snapshot.json',snapshot)
++    execution_freeze.ready(snapshot,head)
++    receipt=journal/'passed.json'
++    save(receipt,{'status':'PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION','head':head,
++        'execution':EXECUTION,'run':snapshot['ci']['id'],'snapshot_sha256':sha(journal/'snapshot.json'),'provider_io':0,'allocated_resources':0})
++    return {'head':head,'run':snapshot['ci']['id'],'receipt':receipt.relative_to(ROOT).as_posix(),'sha256':sha(receipt)}
++
++
+ def allocate():
+     window.policy_checkpoint()
+     need(PROFILE=='candidate20/v30' and EXECUTION=='5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6','only the new proposed execution is supported')
+     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
++    source_ci=preallocation_ci()
+     # Verify retained history before allocating any owner or volume.
+     retained=historical_gate()
+     CONTROL.mkdir();PUBLIC.mkdir();save(PUBLIC/'retained-before.json',retained)
+     a=Allocation();failure=None
+     try:
+         artifact=build();source=artifact['source']
++        need(artifact['host']['source']==source_ci['head'],'built host P lacks the exact successful source CI')
++        # Historical readback and compilation can take minutes. Revalidate the
++        # captured actual host bytes before creating any network/volume/owner.
++        fixture_artifacts.verify_host(ROOT,artifact['host'])
+         old=load(p1.PACKET/'candidate.json');scopes=load(ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
+         state={'status':'STOPPED_ALLOCATION_NOT_NATIVE_ACCEPTANCE','source':source,'profile':PROFILE,'execution':EXECUTION,'allocation_nonce':a.nonce,
+                'window':W,'policy_checkpoint_sha256':window.POLICY_CHECKPOINT_SHA256,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'build_files':{name:sha(CONTROL/name) for name in ('reader','operator','owner','readonly-check.exe',*[binary+'-build.'+channel for binary in ('reader','operator','owner','checker') for channel in ('stdout','stderr')])},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
+         state.update(artifact)
++        state['source_ci']=source_ci
+         mapping={'Execution':EXECUTION,'Profile':PROFILE,'Groups':[]}
+         for n,scope in enumerate(scopes):
+             group=scope['Group'];g=next(x for x in old['Groups'] if x['Group']==group)
+diff --git a/examples/lifecycle-d1/six_candidate_runtime.py b/examples/lifecycle-d1/six_candidate_runtime.py
+index d57faadd..efe36a5e 100644
+--- a/examples/lifecycle-d1/six_candidate_runtime.py
++++ b/examples/lifecycle-d1/six_candidate_runtime.py
+@@ -74,6 +74,11 @@ def mounts_exact(item,expected):
+ 
+ 
+ def allocation_state():
++    terminal=CONTROL/'preparation-terminal.json'
++    need(not terminal.is_symlink() and not terminal.is_junction(),'preparation terminal aliased')
++    try:terminal.stat()
++    except FileNotFoundError:pass
++    else:raise ValueError('preparation already terminal; retain only, never resume')
+     a=load(CONTROL/'allocation.json')
+     need(a['execution']==p.EXECUTION and a['profile']==p.PROFILE and a==load(PUBLIC/'allocation.json'),'allocation differs')
+     need(a['policy_checkpoint_sha256']==p.window.POLICY_CHECKPOINT_SHA256,'allocation current policy checkpoint differs')
+@@ -88,12 +93,22 @@ BUILD_MEMBERS={'reader','operator','owner','readonly-check.exe'}|{name+'-build.'
+ 
+ def build_contract(a):
+     p.fixture_artifacts.verify(ROOT,CONTROL,a,p.artifact_contract())
++    ci=a['source_ci'];receipt=(ROOT/ci['receipt']).resolve()
++    need(receipt.is_relative_to(ROOT.resolve()) and sha(receipt)==ci['sha256'],'source CI receipt missing or changed')
++    p.fixture_artifacts.regular(receipt)
++    record=load(receipt);snapshot=receipt.with_name('snapshot.json')
++    need(record['status']=='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION' and record['head']==ci['head']==a['host']['source']
++         and record['run']==ci['run'] and record['execution']==p.EXECUTION
++         and sha(snapshot)==record['snapshot_sha256'],'source CI/build or saved snapshot binding differs')
++    captured=load(snapshot)
++    need(captured['ci']['id']==ci['run'],'source CI run differs from pinned actual snapshot')
++    p.execution_freeze.ready(captured,a['host']['source'])
+     need(set(a['build_files'])==BUILD_MEMBERS,'initial build membership differs')
+     for name,digest in a['build_files'].items():
+         path=CONTROL/name
+         need(path.is_file() and not path.is_symlink() and not path.is_junction() and path.stat().st_nlink==1 and sha(path)==digest,'initial build member bytes/type/link differs')
+     need(all(a['build_files'][name]==digest for name,digest in a['binaries'].items()),'active binary differs from initial build')
+-    return {'source':a['source'],'files':a['build_files']}
++    return {'source':a['source'],'files':a['build_files'],'source_ci':ci}
+ 
+ 
+ def state():
+diff --git a/examples/lifecycle-d1/test_fixture_artifacts.py b/examples/lifecycle-d1/test_fixture_artifacts.py
+index 59e9abad..f9683f10 100644
+--- a/examples/lifecycle-d1/test_fixture_artifacts.py
++++ b/examples/lifecycle-d1/test_fixture_artifacts.py
+@@ -3,6 +3,7 @@ import copy
+ import io
+ import importlib.util
+ import json
++import os
+ from pathlib import Path
+ import subprocess
+ import tempfile
+@@ -26,8 +27,8 @@ class ArtifactTests(unittest.TestCase):
+         write('apps/platform/scope.json',b'{"window":"new"}\n')
+         write('migrations/69.sql',b'fixed historical DDL\n')
+         base=commit();write('apps/platform/fixture.go',b'new execution, exact schema guard\n');source=commit()
+-        raw=f.git(root,'archive','--format=zip',source,'apps/platform','migrations')
+-        spec=dict(version=1,purpose='RETAINED_D1_FIXTURE_ONLY',execution='new',profile='test/v1',not_before='start',not_after='end',
++        raw=f.runtime_archive(root,source)
++        spec=dict(version=2,archive_recipe='GIT_ZIP_STORE_UTC_LF_V1',purpose='RETAINED_D1_FIXTURE_ONLY',execution='new',profile='test/v1',not_before='start',not_after='end',
+                   schema=dict(max_version=69,migration_members=66,protected_identity=False),source=source,base_source=base,
+                   runtime_delta_files=['apps/platform/fixture.go'],shared_contract_files=['apps/platform/scope.json'],
+                   archive_sha256=f.digest(raw),archive_bytes=len(raw),files={n:f.digest(v) for n,v in f.archive_members(raw).items()})
+@@ -52,7 +53,8 @@ class ArtifactTests(unittest.TestCase):
+             f.verify(root,control,a,contract)
+             packet=Path(tmp)/'packet';packet.mkdir()
+             a['build_files']={'recorded':'b'*64}
+-            frozen=dict(version=2,source=a['source'],host=a['host'],runtime=spec,
++            a['source_ci']={'recorded_ci':'not_live'}
++            frozen=dict(version=2,source=a['source'],host=a['host'],runtime=spec,source_ci=a['source_ci'],
+                         runtime_artifact_spec_sha256=a['runtime_artifact_spec_sha256'],actual_build_source=a['source'],
+                         initial_allocation_build_source=a['source'],initial_build_files=a['build_files'],
+                         archive_sha256=spec['archive_sha256'],archive_bytes=spec['archive_bytes'])
+@@ -63,6 +65,7 @@ class ArtifactTests(unittest.TestCase):
+             record(frozen);f.verify_frozen(packet,candidate,a,spec)
+             for key,value in [('source',a['host']['source']),('host',dict(a['host'],source=a['source'])),
+                               ('runtime',dict(spec,source=a['host']['source'])),('initial_build_files',{}),
++                              ('source_ci',{}),
+                               ('runtime_artifact_spec_sha256','e'*64),('archive_sha256','f'*64),
+                               ('archive_bytes',0),('version',1)]:
+                 bad=copy.deepcopy(frozen);bad[key]=value;record(bad)
+@@ -95,7 +98,7 @@ class ArtifactTests(unittest.TestCase):
+     def test_cross_artifact_contract_and_schema_refuse_before_build(self):
+         with tempfile.TemporaryDirectory() as tmp:
+             root=Path(tmp);spec,contract=self.fixture(root);path=root/f.SPEC
+-            changes=[('execution','old'),('profile','old/v0'),('not_before','old'),('not_after','later'),
++            changes=[('execution','old'),('profile','old/v0'),('not_before','old'),('not_after','later'),('archive_recipe','LOCAL_TIME_COMPRESSED'),
+                      ('schema',dict(max_version=71,migration_members=68,protected_identity=True)),
+                      ('base_source','f'*40),('runtime_delta_files',[]),('source','f'*40)]
+             for key,value in changes:
+@@ -104,6 +107,16 @@ class ArtifactTests(unittest.TestCase):
+             path.write_text(json.dumps(spec));scope=root/'apps/platform/scope.json';scope.write_bytes(b'foreign scope')
+             with self.assertRaises(ValueError):f.specification(root,**contract)
+ 
++    def test_archive_bytes_stable_across_inherited_timezones_and_all_members_stored(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root=Path(tmp);spec,contract=self.fixture(root);archives=[]
++            for zone in ['UTC','Asia/Singapore','America/New_York','GMT-8']:
++                with patch.dict(os.environ,{'TZ':zone}):archives.append(f.runtime_archive(root,spec['source']))
++            self.assertTrue(all(value==archives[0] for value in archives))
++            with zipfile.ZipFile(io.BytesIO(archives[0])) as archive:
++                self.assertTrue(all(entry.compress_type==zipfile.ZIP_STORED for entry in archive.infolist()))
++            self.assertEqual(f.digest(archives[0]),spec['archive_sha256'])
++
+     def test_archive_rejects_path_escape_links_duplicates_and_extra_members(self):
+         for names in [['../escape'],['/absolute'],['foreign/file'],['apps/platform/a','apps/platform/a']]:
+             out=io.BytesIO()
+diff --git a/examples/lifecycle-d1/test_freeze_six_candidate.py b/examples/lifecycle-d1/test_freeze_six_candidate.py
+index cf48983b..9fc6989b 100644
+--- a/examples/lifecycle-d1/test_freeze_six_candidate.py
++++ b/examples/lifecycle-d1/test_freeze_six_candidate.py
+@@ -21,6 +21,7 @@ class FreezeSixTests(unittest.TestCase):
+             old=f.load(f.p.p1.PACKET/'candidate.json');scopes=f.load(f.p.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
+             allocation={'source':'f'*40,'host':{'source':'e'*40},'runtime_artifact_spec_sha256':'4'*64,'build_files':{},'retained':{'mode':'RECORDED_TEST_ONLY'},'owner_descriptors_sha256':'d'*64,'map_sha256':'a'*64,'binaries':{'reader':'1'*64,'operator':'2'*64,'owner':'3'*64},'groups':[],'offline_validator':'v'*64}
+             (control/'approved-runtime-source.zip').write_bytes(b'recorded-only')
++            allocation['source_ci']={'head':'e'*40,'run':100,'receipt':'recorded-only','sha256':'b'*64}
+             for name in ('reader','operator','owner','readonly-check.exe'):(control/name).write_bytes(b'non-authoritative-test-binary')
+             for old_group,scope in zip(old['Groups'],scopes):
+                 group=scope['Group'];project='dpp-lifecycle307-'+scope['Run'][:8];folder=control/group;folder.mkdir();out=public/group;out.mkdir()
+diff --git a/examples/lifecycle-d1/test_preallocation_ci.py b/examples/lifecycle-d1/test_preallocation_ci.py
+new file mode 100644
+index 00000000..6f5028cd
+--- /dev/null
++++ b/examples/lifecycle-d1/test_preallocation_ci.py
+@@ -0,0 +1,58 @@
++"""Full allocation refuses non-green exact-source CI before any resource I/O."""
++import copy
++import tempfile
++from pathlib import Path
++from unittest.mock import patch
++import unittest
++import importlib.util
++from test_execution_freeze import snapshot, HEAD
++
++loader=importlib.util.spec_from_file_location('preallocation_under_test',Path(__file__).with_name('prepare-six-candidate.py'))
++p=importlib.util.module_from_spec(loader);loader.loader.exec_module(p)
++
++class PreallocationTests(unittest.TestCase):
++    def test_fresh_exact_source_success_records_provenance_without_lock_or_resources(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root=Path(tmp);(root/'docs/acceptance/evidence/issue307-d1').mkdir(parents=True)
++            with patch.object(p,'ROOT',root),patch.object(p.subprocess,'check_output',return_value=(HEAD+'\n').encode()),\
++                 patch.object(p.execution_freeze.GitHub,'snapshot',return_value=snapshot()),\
++                 patch.object(p.Allocation,'__init__',side_effect=AssertionError('allocation before CI')):
++                self.assertEqual(p.preallocation_ci()['head'],HEAD)
++                records=list(root.rglob('passed.json'));self.assertEqual(len(records),1)
++                self.assertEqual(p.load(records[0])['allocated_resources'],0)
++
++    def test_complete_allocate_rejects_failed_pending_foreign_and_unknown_ci_before_history_or_build(self):
++        for fault in ['failed','pending','head','provenance','unknown']:
++            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as tmp:
++                root=Path(tmp);(root/'docs/acceptance/evidence/issue307-d1').mkdir(parents=True)
++                state=copy.deepcopy(snapshot())
++                if fault=='failed':state['ci']['conclusion']='failure'
++                if fault=='pending':state['ci']['status']='in_progress'
++                if fault=='head':state['head']='b'*40
++                if fault=='provenance':state['checks'][0]['app_id']=9876
++                with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
++                     patch.object(p.window,'policy_checkpoint'),patch.object(p.subprocess,'check_output',return_value=(HEAD+'\n').encode()),\
++                     patch.object(p.execution_freeze.GitHub,'snapshot',side_effect=OSError('unavailable') if fault=='unknown' else None,return_value=state),\
++                     patch.object(p,'historical_gate',side_effect=AssertionError('Docker/history before CI')),\
++                     patch.object(p,'build',side_effect=AssertionError('build before CI')),\
++                     patch.object(p.Allocation,'__init__',side_effect=AssertionError('allocate before CI')):
++                    with self.assertRaises((ValueError,OSError)):p.allocate()
++                    self.assertFalse((root/'private').exists());self.assertFalse((root/'public').exists())
++
++    def test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build(self):
++        for fault in ['build-head','host-bytes']:
++            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as tmp:
++                root=Path(tmp)
++                artifact={'source':'f'*40,'host':{'source':'b'*40 if fault=='build-head' else HEAD}}
++                with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
++                     patch.object(p.window,'policy_checkpoint'),patch.object(p,'preallocation_ci',return_value={'head':HEAD}),\
++                     patch.object(p,'historical_gate',return_value={'recorded':True}),patch.object(p,'build',return_value=artifact),\
++                     patch.object(p.fixture_artifacts,'verify_host',side_effect=ValueError('host bytes drift')),\
++                     patch.object(p.Allocation,'network',side_effect=AssertionError('network before source binding')),\
++                     patch.object(p.Allocation,'volume',side_effect=AssertionError('volume before source binding')),\
++                     patch.object(p.Allocation,'create',side_effect=AssertionError('owner before source binding')):
++                    with self.assertRaises(ValueError):p.allocate()
++                    receipt=p.load(root/'public/allocation-closed.json')
++                    self.assertEqual(receipt['owners'],[]);self.assertEqual(receipt['unconfirmed_names'],[])
++
++if __name__=='__main__':unittest.main()
+diff --git a/examples/lifecycle-d1/test_retained_v26.py b/examples/lifecycle-d1/test_retained_v26.py
+index 0435ed6c..aed823f1 100644
+--- a/examples/lifecycle-d1/test_retained_v26.py
++++ b/examples/lifecycle-d1/test_retained_v26.py
+@@ -51,14 +51,15 @@ class RetainedV26Tests(unittest.TestCase):
+         self.assertNotEqual(f.p.EXECUTION,retained.EXECUTION)
+ 
+     def fixture(self,root):
+-        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate20-source-review01'
++        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01'
+         for directory in (public,packet,review):directory.mkdir(parents=True)
+         candidate={'Execution':f.p.EXECUTION,'Source':'f'*40}
++        f.save(packet/'source-freeze.json',{'host':{'source':'d'*40}})
+         f.save(packet/'candidate.json',candidate)
+         for directory,name,status in [(public,'non-delete-evidence-index.json','SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX'),(review,'evidence-index.json','C20_SOURCE_REVIEW_EVIDENCE_INDEX')]:
+             (directory/'source.txt').write_bytes(b'recorded-only')
+             f.save(directory/name,{'status':status,'count':1,'files':{'source.txt':{'sha256':f.sha(directory/'source.txt'),'bytes':13}}})
+-        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C20_SOURCE_PREPARATION_REVIEW','source_head':'f'*40,'remaining_blockers':[]})
++        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C20_DUAL_ARTIFACT_PREPARATION_REVIEW','source_head':'d'*40,'runtime_source':'f'*40,'remaining_blockers':[]})
+         return public,packet,review,candidate
+ 
+     def test_current_source_report_and_preparation_form_exact_typed_plan(self):
+@@ -74,13 +75,14 @@ class RetainedV26Tests(unittest.TestCase):
+             self.assertFalse((packet/'human-authorization.json').exists())
+ 
+     def test_source_review_or_raw_index_drift_stops_freeze_audit(self):
+-        for fault in ('blocked','wrong-source','status','members-in-map','length','count','digest-map','traversal'):
++        for fault in ('blocked','wrong-source','wrong-runtime','status','members-in-map','length','count','digest-map','traversal'):
+             with self.subTest(fault=fault),tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+                 root=Path(tmp);public,packet,review,candidate=self.fixture(root)
+                 for obj,name,value in [(f.r,'ROOT',root),(f.r,'PUBLIC',public),(f,'PACKET',packet)]:stack.enter_context(patch.object(obj,name,value))
+                 report=f.load(review/'independent-final-review01.json');index=f.load(public/'non-delete-evidence-index.json')
+                 if fault=='blocked':report['remaining_blockers']=['B1']
+                 if fault=='wrong-source':report['source_head']='e'*40
++                if fault=='wrong-runtime':report['runtime_source']='e'*40
+                 if fault=='status':report['status']='PENDING'
+                 if fault=='members-in-map':index['members']=[]
+                 if fault=='length':index['files']['source.txt']['bytes']=14
+diff --git a/examples/lifecycle-d1/test_six_candidate_runtime.py b/examples/lifecycle-d1/test_six_candidate_runtime.py
+index 5b762894..e210ffaf 100644
+--- a/examples/lifecycle-d1/test_six_candidate_runtime.py
++++ b/examples/lifecycle-d1/test_six_candidate_runtime.py
+@@ -15,6 +15,7 @@ import tarfile
+ from types import SimpleNamespace
+ import unittest
+ from unittest.mock import patch
++from test_execution_freeze import snapshot
+ 
+ spec=importlib.util.spec_from_file_location('six_host_under_test',Path(__file__).with_name('six_candidate_runtime.py'))
+ r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
+@@ -22,15 +23,30 @@ RECORDED=r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate13-prep
+ 
+ 
+ class SixHostTests(unittest.TestCase):
++    def test_terminal_preparation_refuses_before_allocation_history_or_docker(self):
++        with tempfile.TemporaryDirectory() as tmp,patch.object(r,'CONTROL',Path(tmp)),\
++             patch.object(r,'load',side_effect=AssertionError('allocation read before terminal')):
++            (Path(tmp)/'preparation-terminal.json').write_bytes(b'terminal')
++            with self.assertRaisesRegex(ValueError,'already terminal'):r.allocation_state()
++
+     def test_current_exact_build_has_all_twelve_regular_unlinked_members(self):
+         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+             control=Path(tmp);stack.enter_context(patch.object(r,'CONTROL',control))
++            stack.enter_context(patch.object(r,'ROOT',control))
+             for name in r.BUILD_MEMBERS:(control/name).write_bytes(name.encode())
+             a={'source':'a'*40,'build_files':{n:r.sha(control/n) for n in r.BUILD_MEMBERS},'binaries':{n:r.sha(control/n) for n in ('reader','operator','owner','readonly-check.exe')}}
++            a['host']={'source':'a'*40}
++            r.save(control/'snapshot.json',snapshot())
++            r.save(control/'passed.json',dict(status='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION',head='a'*40,run=9,execution=r.p.EXECUTION,snapshot_sha256=r.sha(control/'snapshot.json')))
++            a['source_ci']={'receipt':'passed.json','sha256':r.sha(control/'passed.json'),'head':'a'*40,'run':9}
+             verified=[]
+             stack.enter_context(patch.object(r.p.fixture_artifacts,'verify',lambda root,control,a,contract:verified.append(a) or {}))
+             self.assertEqual(r.build_contract(a)['source'],'a'*40)
+             self.assertEqual(verified,[a])
++            original_receipt=(control/'passed.json').read_bytes();wrong=r.load(control/'passed.json');wrong['run']=100
++            (control/'passed.json').write_text(json.dumps(wrong));a['source_ci'].update(run=100,sha256=r.sha(control/'passed.json'))
++            with self.assertRaisesRegex(ValueError,'run differs'):r.build_contract(a)
++            (control/'passed.json').write_bytes(original_receipt);a['source_ci'].update(run=9,sha256=r.sha(control/'passed.json'))
+             with patch.object(r.p.fixture_artifacts,'verify',side_effect=ValueError('R/P drift')):
+                 with self.assertRaises(ValueError):r.build_contract(a)
+             for members in ({},a['binaries'],dict(a['build_files'],extra='f'*64),{k:v for k,v in a['build_files'].items() if k!='checker-build.stderr'}):

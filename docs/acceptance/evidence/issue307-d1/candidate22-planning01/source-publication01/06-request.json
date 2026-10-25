@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "merge-base",
+    "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+    "bee86b7961ee77eaa611f9ef8b8540362e8f6038"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:39:08.375071+00:00"
+}

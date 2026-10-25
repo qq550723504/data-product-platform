@@ -1,0 +1,17 @@
+{
+  "head": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "run": 39766229920,
+  "job": 119782859086,
+  "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39766229920/job/119782859086",
+  "job_conclusion": "success",
+  "actual_B2_step": {
+    "completedAt": "2026-10-22T10:56:15Z",
+    "conclusion": "success",
+    "name": "Run real three-RAW Core batch acceptance and recovery",
+    "number": 11,
+    "startedAt": "2026-10-22T10:55:33Z",
+    "status": "completed"
+  },
+  "related_code_delta_to_reviewed_head": "EMPTY",
+  "related_delta_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

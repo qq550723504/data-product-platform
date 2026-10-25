@@ -1,0 +1,30 @@
+{
+  "status": "PASS_ACTUAL_WINDOWS_UNC_FSYNC_AND_LINUX_CUSTODY",
+  "failure": null,
+  "volume": "d1-retention-probe-private-4598c8c87879",
+  "original_sha256": "cab401f73e320e379dfb3ca454c90ca459b8650b55b9b09cd42397f4766e2b80",
+  "final_sha256": "995e5f680227774b20829039fa9a6acea0f0889c58889b68cc9d02bc991bbefd",
+  "original_preserved": true,
+  "actual_linux_snapshot": {
+    "": {
+      "type": "5",
+      "uid": 10001,
+      "gid": 10001,
+      "mode": 448,
+      "size": 0
+    },
+    "control.json": {
+      "type": "0",
+      "uid": 10001,
+      "gid": 10001,
+      "mode": 384,
+      "size": 49,
+      "sha256": "995e5f680227774b20829039fa9a6acea0f0889c58889b68cc9d02bc991bbefd"
+    }
+  },
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "protection_write": 0,
+  "delete": 0,
+  "cleanup": 0
+}

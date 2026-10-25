@@ -1,0 +1,11 @@
+{
+  "status": "PASS_LIVE_NATIVE_PARTIAL_LOCK_INPUT_SCHEMA",
+  "input_type": "UpdateBranchProtectionRuleInput",
+  "proposed_field_names": [
+    "branchProtectionRuleId",
+    "lockBranch"
+  ],
+  "mutation_sent": false,
+  "atomic_CAS": false,
+  "observed_at": "2026-10-24T05:45:42.187008+00:00"
+}

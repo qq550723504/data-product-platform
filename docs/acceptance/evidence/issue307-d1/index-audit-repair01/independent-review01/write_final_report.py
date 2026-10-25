@@ -1,0 +1,37 @@
+import datetime as dt,hashlib,json,os
+from pathlib import Path
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[5]
+sha=lambda raw:hashlib.sha256(raw).hexdigest()
+def metadata(path):
+    raw=path.read_bytes();return {'sha256':sha(raw),'bytes':len(raw)}
+def load(name):return json.loads((OUT/name).read_bytes())
+def save(name,obj):
+    raw=(json.dumps(obj,indent=2,ensure_ascii=True)+'\n').encode()
+    with (OUT/name).open('xb') as f:f.write(raw)
+    return {'path':str(OUT/name),'sha256':sha(raw),'bytes':len(raw)}
+files={};excluded_links=[]
+for parent,dirs,names in os.walk(OUT,followlinks=False):
+    parent=Path(parent)
+    allowed=[]
+    for name in dirs:
+        path=parent/name
+        if path.is_symlink() or path.is_junction():excluded_links.append(path.relative_to(OUT).as_posix())
+        else:allowed.append(name)
+    dirs[:]=allowed
+    for name in names:
+        path=parent/name
+        if path.is_symlink() or path.is_junction():
+            excluded_links.append(path.relative_to(OUT).as_posix());continue
+        if path.is_file():files[path.relative_to(OUT).as_posix()]=metadata(path)
+index=save('independent-evidence-index01.json',{'status':'INDEPENDENT_INDEX_REPAIR_REVIEW_EVIDENCE_INDEX','count':len(files),'files':dict(sorted(files.items())),'excluded_links':excluded_links,'reason':'Actual junction fixture retained locally; only addressed regular raw files are published. Index excludes itself and final report to avoid self-reference.'})
+source=load('final-source-readback02.json')
+initial=load('initial-blocked-review01.json')
+normal=load('final-normal-summary.json');optimized=load('final-optimized-summary.json')
+if any(x['total']!=52 or x['pass']!=51 or x['skip']!=1 or x['real_external_process_attempts'] for x in (normal,optimized)):raise AssertionError('unexpected final regression result')
+folder=OUT.parent
+external_files={}
+for name in ['historical-evidence-audit-plan.json','saved-cli-receipt.json','saved-cli.stdout.txt','saved-cli.stderr.txt','terminal-cli-receipt.json','terminal-cli.stdout.txt','terminal-cli.stderr.txt','ci-windows-first-failure.json']:
+    external_files[name]=metadata(folder/name)
+report={'status':'PASS_BOUNDED_INDEPENDENT_EVIDENCE_INDEX_REPAIR_REVIEW','reviewed_at':dt.datetime.now(dt.timezone.utc).isoformat(),'reviewer':'existing_sole_independent_reviewer','source_head':source['source_head'],'base_head':source['base'],'initial_source_head':initial['source_head'],'initial_publication_head':initial['publication_head'],'remaining_blockers':[],'closed_blockers':[{'id':'B1','classification':'BLOCKER_CLOSED','root_cause':'Terminal parent directory was followed before absence classification. An actual Windows junction could redirect the lookup to an empty directory.','current_guard':'Check fixed CONTROL, authorized-execution01 directory and terminal for symlink/junction before stat; unreadable terminal still raises.','independent_proof':'terminal-parent-junction-recheck02.json','complete_main_proof':'Final test_six_native_entry uses actual Windows junction and asserts no host gate/create/start and original FAILED terminal unchanged.','original_failure_preserved':'initial-blocked-review01.json and terminal-parent-junction-counterexample01.json'},{'id':'B2','classification':'BLOCKER_CLOSED','root_cause':'Resolved root and only-absolute plan used unequal Windows 8.3 and long spellings in containment comparison.','current_guard':'Original components are checked for links and traversal before resolving both root and plan. No format or path fallback.','independent_proof':'actual-short-long-audit-plan02.json: three actual distinct Windows short/long combinations each verified 53+19+12=84 members.','original_failure_preserved':'Author ci-windows-first-failure.json and independent initial-blocked-review01.json'}],'source_files':source['source_files'],'in_scope_findings':[{'classification':'PASS','topic':'Explicit index formats','detail':'files-map-v1 and members-list-v1 have separate fixed containers; mixed/swapped/unknown/legacy formats, duplicate keys and entries, empty or wrong count/status/type/SHA/bytes, escapes and linked paths reject. No recursive format guessing.'},{'classification':'PASS','topic':'Plan and immutable evidence binding','detail':'Plan raw SHA and exact fields bind candidate raw SHA and execution. Every spec/index/member is checked; rehashed malformed structures still reject. Original saved history audit recomputed as 84 members and exactly equals saved receipt.'},{'classification':'PASS','topic':'Complete entry ordering and failure behavior','detail':'Required audit arguments and real typed audit run before terminal/host gate; audit-only never enters host/native. Existing output, invalid indexes, old terminal/parent alias and host rejection do not start resources. Three true collect calls and second-group failure/finally are exercised with all external effects doubled; no third group or complete PASS after failure.'},{'classification':'PASS','topic':'CI and existing collector reuse','detail':'Windows/Linux CI invokes both new suites in normal and -O under explicit bash; lifecycle CI retains existing suites and adds both new suites. Original collect AST is unchanged from base. No Go/migration/provider capability changed.'}],'independent_tests':{'initial':{'normal':{'methods':50,'pass':49,'skip':1},'optimized':{'methods':50,'pass':49,'skip':1}},'final':{'normal':{'methods':52,'pass':51,'skip':1,'summary':metadata(OUT/'final-normal-summary.json')},'optimized':{'methods':52,'pass':51,'skip':1,'summary':metadata(OUT/'final-optimized-summary.json')}},'skip':'Actual symlink creation is unavailable to this Windows account; junction rejection is not skipped and was exercised with a real Windows junction. Linux symlink coverage requires matching CI, not claimed locally.','global_external_process_guard':'subprocess.Popen rejected globally in every offline suite; zero unmocked attempts.','actual_saved_file_audit':metadata(OUT/'actual-saved-file-audit02.json'),'actual_windows_short_long_audit':metadata(OUT/'actual-short-long-audit-plan02.json'),'B1_actual_junction_recheck':metadata(OUT/'terminal-parent-junction-recheck02.json')},'original_external_evidence':external_files,'evidence_index':index,'scope_limits':{'full_native_preflight':'NOT_RUN','Docker_Source_Core_provider_enable_send_delete':0,'production_proof_signing':0,'non_audit_only_cli_run':False,'original_candidate_or_authorization_modified':False,'old_execution_reused':False,'old_v26':'TERMINATED; six NOT_RUN/DELETE0; overall fresh IAM seal remains UNCONFIRMED per original facts; heartbeat PAUSED','new_candidate_window_authorization_schedule':'NOT_CREATED_BY_THIS_REPAIR','exact_head_PR_CI':'PENDING_SEPARATE_FRESH_READBACK_NOT_CERTIFIED_BY_THIS_REPORT','main_CI_merge_deploy':'NOT_REVIEWED_NOT_AUTHORIZED','full_D1':'NOT_ACCEPTED','Git_GitHub_writes':0,'report_writes':'O_EXCL under assigned independent-review01 only; temporary test fixtures are synthetic.','local_actual_junction_fixture':'Preserved locally and explicitly excluded from raw publication index; publish the regular JSON/script/terminal bytes only.'},'followups':[{'classification':'OUT_OF_SCOPE_PENDING_REQUIRED_NEXT_STEP','detail':'Fresh exact final HEAD CI, future candidate/audit-plan freeze and new human authorization remain separate. This report only closes the finite non-delete repair slice.'}]}
+print(json.dumps({'index':index,'report':save('independent-final-review01.json',report),'source_head':source['source_head'],'remaining_blockers':[]},indent=2))

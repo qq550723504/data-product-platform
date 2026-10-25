@@ -1,0 +1,42 @@
+[
+  {
+    "name": "reader",
+    "path": "lifecycle-fixture-reader",
+    "goos": "linux",
+    "goarch": "amd64",
+    "binary_sha256": "62308664bd72e79bde61225e0e3f122db1e7a8feefc55254108de221983f384d",
+    "stdout_sha256": "2e0c5aa4e5a1cb3545211edc51ac3c27b75c9ea2004447432011565ea7586ae9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "embedded_vcs_revision": "NOT_CLAIMED"
+  },
+  {
+    "name": "operator",
+    "path": "lifecycle-fixture-remaining",
+    "goos": "linux",
+    "goarch": "amd64",
+    "binary_sha256": "fef94d893a4a0aee85269343d7824e2bd7a3b8f9e1c196fc376f666f39aa412b",
+    "stdout_sha256": "a6b12fb89c177a39efc71f615ce070fc27cc5c351706c8656312cc5a17ee5bca",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "embedded_vcs_revision": "NOT_CLAIMED"
+  },
+  {
+    "name": "owner",
+    "path": "lifecycle-fixture-remaining-iam",
+    "goos": "linux",
+    "goarch": "amd64",
+    "binary_sha256": "23f15d918ce0942dcab2fae8da13785c8a386bb4811a533cc04d70f25a1409f2",
+    "stdout_sha256": "75b76336a6d41064a901ddf85a2cb0bb3bd685ca1e766eff847cbfe383c3f9de",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "embedded_vcs_revision": "NOT_CLAIMED"
+  },
+  {
+    "name": "readonly-check.exe",
+    "path": "lifecycle-fixture-readonly-check",
+    "goos": "windows",
+    "goarch": "amd64",
+    "binary_sha256": "0460e6a812b519840e20e674eb1ef82da08fe7eca188e41de42bf88aaf9ac15a",
+    "stdout_sha256": "ae0e14eccbbedafae19526660abf2b62056d04b52c973d5d30c259b1367a15a6",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "embedded_vcs_revision": "NOT_CLAIMED"
+  }
+]

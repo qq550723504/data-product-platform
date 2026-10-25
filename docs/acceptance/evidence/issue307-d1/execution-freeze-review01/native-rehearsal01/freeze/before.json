@@ -1,0 +1,120 @@
+{
+  "repository": "qq550723504/data-product-platform",
+  "repository_id": "R_kgDOUdQLBg",
+  "branch": "codex/issue307-freeze-rehearsal-4047394d6311",
+  "expected_branch": "codex/issue307-freeze-rehearsal-4047394d6311",
+  "head": "17c5248a868376603ae9c3951123c545f2f7e56f",
+  "pr": 332,
+  "draft": true,
+  "state": "open",
+  "merged": false,
+  "issue_state": "open",
+  "rule": null,
+  "protection": null,
+  "checks": [
+    {
+      "id": 119619550915,
+      "name": "required",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536682,
+      "name": "browser-contracts / web-browser-contracts",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536664,
+      "name": "live-core / live-core-browser",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536599,
+      "name": "demo / demo-lifecycle",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536385,
+      "name": "web-console",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536353,
+      "name": "splink-smoke",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536298,
+      "name": "gx-smoke",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536294,
+      "name": "go-platform",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536272,
+      "name": "hop-smoke",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536263,
+      "name": "label-studio-smoke",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536258,
+      "name": "temporary-container-contracts (windows-latest)",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616536232,
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119616470748,
+      "name": "classify-changes",
+      "app_id": 15368,
+      "head_sha": "17c5248a868376603ae9c3951123c545f2f7e56f",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}

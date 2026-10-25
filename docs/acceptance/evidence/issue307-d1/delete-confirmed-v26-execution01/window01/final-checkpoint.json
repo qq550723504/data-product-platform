@@ -1,0 +1,21 @@
+{
+  "status": "PASS_FAILED_RUN_EVIDENCE_CLOSURE_ONLY",
+  "at": "2026-10-20T10:07:19.189575+00:00",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "terminal": "FAILED_OFFLINE_AUDIT_SEALED_NO_DELETE",
+  "terminal_sha256": "f94fcc9d2ccb8074ce9c1810c085394a2ef61144a4bbf118db5c82d385cda8c2",
+  "actual_delete_attempts": 0,
+  "targets_not_run": 6,
+  "full_fresh_preflight": "NOT_RUN",
+  "physical_containment_readback": "PASS_LOCAL_ONLY_445_CIDS_CLOSED",
+  "overall_seal": "UNCONFIRMED_NO_FRESH_NATIVE_IAM_READBACK",
+  "scheduler": "PAUSED_NO_NEXT_RUN",
+  "approved_reference_bytes_match": 76,
+  "head": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+  "PR332": "DRAFT_OPEN_UNMERGED",
+  "Issue307": "OPEN",
+  "source_enable_provider_DELETE": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "old_authorization_reuse_allowed": false,
+  "automatic_new_candidate_or_retry": false
+}

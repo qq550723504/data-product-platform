@@ -1,0 +1,19 @@
+{
+  "status": "FAIL_REAL_POSTGRES_COMPOSITION",
+  "at": "2026-10-19T12:31:54.902192+00:00",
+  "exit": 1,
+  "scratch_cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "pass": [],
+  "skip": [],
+  "failure_output": [
+    "--- FAIL: TestOldDispatchClosureThreeCommandCompositionPreservesFacts (2.89s)\n"
+  ],
+  "channels": {
+    "stdout": "066ca7c2b0b03b8e9acdf6dd5c2d9ae1b49ac2cfc6535377b2299eea68d60015",
+    "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_environment_changes": 0,
+  "provider_DELETE": 0,
+  "prior_harness_failure": "postgres-regression02.json; stopped HostConfig automatic port is empty; runtime assigned localhost port now read from fresh NetworkSettings after start",
+  "scratch_stopped_PID0": true
+}

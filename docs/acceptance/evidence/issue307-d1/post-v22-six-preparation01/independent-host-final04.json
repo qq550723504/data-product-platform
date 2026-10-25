@@ -1,0 +1,103 @@
+{
+  "at": "2026-10-19T16:18:40.149599+00:00",
+  "source_before": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "1d5be822c6421954533c2e3316c3b77fe71d46381b15a5ea0680947c22df71df",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "a97a84d68adcc1378a4bd0ab15c3f103089cdb471a74707aa633860e060544fe",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_after": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "1d5be822c6421954533c2e3316c3b77fe71d46381b15a5ea0680947c22df71df",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "a97a84d68adcc1378a4bd0ab15c3f103089cdb471a74707aa633860e060544fe",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_unchanged": true,
+  "guard_sha256": "64e0132ae79308656e7a285a94ff112247247e42933a8ffff905b89f10df3296",
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "methods": 6,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal04-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal04-stderr.txt",
+          "sha256": "588dc43cc73c3da5b0349e09d486ec80671bd93c82fba8cf7bfa9f98658a0f2e"
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 6,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized04-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized04-stderr.txt",
+          "sha256": "3c15c66fd401f745b5dee462a150c974d70851926ac9d90750b04a9904dd5d7e"
+        }
+      }
+    }
+  ],
+  "network_ast_sha256": "4fbf318ab042ad9cf82fa72d66c81d2181cfaf21d3d5095eeef78f8ee484b6f7",
+  "network_guards": [
+    {
+      "fault": "existing",
+      "accepted": false,
+      "modeled_commands": [
+        [
+          "network",
+          "ls"
+        ]
+      ],
+      "evidence_records": 0,
+      "actual_docker": 0
+    },
+    {
+      "fault": "wrong-label",
+      "accepted": false,
+      "modeled_commands": [
+        [
+          "network",
+          "ls"
+        ],
+        [
+          "network",
+          "create"
+        ],
+        [
+          "network",
+          "inspect"
+        ]
+      ],
+      "evidence_records": 1,
+      "actual_docker": 0
+    },
+    {
+      "fault": "positive",
+      "accepted": true,
+      "modeled_commands": [
+        [
+          "network",
+          "ls"
+        ],
+        [
+          "network",
+          "create"
+        ],
+        [
+          "network",
+          "inspect"
+        ]
+      ],
+      "evidence_records": 2,
+      "actual_docker": 0
+    }
+  ],
+  "scope": "6 recorded-double host methods normal/-O plus actual AST Allocation.network synthetic guards; no external Docker/Core/native/provider"
+}

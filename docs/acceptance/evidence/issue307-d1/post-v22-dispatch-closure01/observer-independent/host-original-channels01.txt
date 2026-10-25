@@ -1,0 +1,9 @@
+{"phase": "observer", "at": "2026-10-19T12:27:42.854862+00:00"}
+{"phase": "observer", "at": "2026-10-19T12:27:42.870574+00:00"}
+
+test_wait_timeout_and_inspect_failure_keep_original_channels (__main__.OriginalChannels.test_wait_timeout_and_inspect_failure_keep_original_channels) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.021s
+
+OK

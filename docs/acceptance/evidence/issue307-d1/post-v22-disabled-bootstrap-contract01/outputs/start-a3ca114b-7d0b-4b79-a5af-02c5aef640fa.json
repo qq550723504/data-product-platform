@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-19T18:07:48.692160709Z",
+  "id": "a3ca114b-7d0b-4b79-a5af-02c5aef640fa",
+  "method": "POST",
+  "path": "/minio/admin/v3/idp/builtin/policy/attach",
+  "query": ""
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-index-audit\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 188, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-index-audit\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 177, in main
+    require_unfinished_execution()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-index-audit\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 39, in require_unfinished_execution
+    raise ValueError('execution already terminal; saved-evidence audit only')
+ValueError: execution already terminal; saved-evidence audit only

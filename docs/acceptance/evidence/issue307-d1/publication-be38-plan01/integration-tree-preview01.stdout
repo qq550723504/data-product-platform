@@ -1,0 +1,6 @@
+745b294391b959edf52570e08e89219fcdbc356f
+examples/lifecycle-d1/prepare-six-candidate.py
+
+Auto-merging .github/workflows/ci.yml
+Auto-merging examples/lifecycle-d1/prepare-six-candidate.py
+CONFLICT (content): Merge conflict in examples/lifecycle-d1/prepare-six-candidate.py

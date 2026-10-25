@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-19T16:26:54.550818+00:00",
+  "findings": {
+    "E1_inherited_stop": {
+      "inspect_unavailable": true,
+      "fixed_stop_requested": true,
+      "actual_modeled_commands": [
+        [
+          "stop",
+          "--time",
+          "15",
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      ],
+      "error": "ValueError"
+    },
+    "E2_unknown_create_closure": {
+      "raised": "ValueError",
+      "receipt": {
+        "owners": [
+          {
+            "cid": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+            "closed": true
+          },
+          {
+            "cid": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "closed": true
+          }
+        ],
+        "failure": {
+          "type": "RuntimeError",
+          "message": "recorded create transport outcome unknown"
+        },
+        "unknown_temporary_owner": {
+          "name": "dpp307-six-read-11111111-1111-4111-8111-111111111111",
+          "state": "UNCONFIRMED",
+          "error_type": "RuntimeError"
+        },
+        "native_delete": 0,
+        "all_closed": false
+      },
+      "closed_known_cids": [
+        "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "create_names": [
+        "dpp307-six-read-11111111-1111-4111-8111-111111111111"
+      ],
+      "unconfirmed_created_name_recorded": true,
+      "model_only": true
+    }
+  },
+  "source_files": {
+    "window_six_support.py": "d4052b640e20406a344cc0653408270a07cb1187fca0580e81b2aa95d6579e8d",
+    "verify-six-native.py": "bbddab99c8ca263588e4e2ea4cf0cf58a96b27375c93ceacb3114229daf8bce5"
+  },
+  "actual_Docker": 0,
+  "actual_source_native_provider": 0
+}

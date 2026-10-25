@@ -1,0 +1,33 @@
+{
+  "role": "root-enable-read",
+  "group": "business-races",
+  "cid": "f3c493001ba8d03f652631255acc8d5106bc751a498e873b02466e81af932a87",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate15-root-enable-read",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate15\\business-races\\root-enable-read,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate15/owner,target=/run/owner,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate15\\business-races\\outputs\\root-enable-read,target=/run/output",
+    "--entrypoint",
+    "/run/owner",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-action",
+    "enable-read"
+  ]
+}

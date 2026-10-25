@@ -1,0 +1,3 @@
+=== RUN   TestV28ActualRestoredCommandAndReplay
+--- PASS: TestV28ActualRestoredCommandAndReplay (0.52s)
+PASS

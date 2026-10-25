@@ -1,0 +1,304 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_PRODUCTION_GUARD_SOURCE_REVIEW",
+  "remaining_blockers": [],
+  "review_scope": "Current Go disabled-only provisioning guard, canonical ImportIAMV2 request/result, SDK once/UNKNOWN behavior, fixed retained NONE identity and 15-known/5-absent IAM contract. No Python host, allocation, Source or complete D1 acceptance.",
+  "proposal": {
+    "profile": "candidate14/v24",
+    "execution": "afc0e66c-535b-426e-a937-964d0c9ca0d6",
+    "not_before": "2026-10-20T06:00:00Z",
+    "not_after": "2026-10-20T06:40:00Z",
+    "window_kind": "HUMAN_PREFERENCE_ONLY",
+    "deletion_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED"
+  },
+  "checks": [
+    {
+      "check": "reuse_boundary",
+      "result": "PASS",
+      "detail": "Official madmin-go ImportIAMV2 and standard archive/zip; existing MinIO ParseConfig/Equals; no Core/Port/DB/queue semantic changes or fork."
+    },
+    {
+      "check": "canonical_request",
+      "result": "PASS",
+      "detail": "One Store regular ZIP member iam-assets/user_mappings.json; bounded archive/inflated sizes; exact canonical bytes and one compiled current user -> version1/one exact policy. Duplicate/traversal/extra-member/extra-user/extra-policy/trailing variants rejected before upstream."
+    },
+    {
+      "check": "query_and_endpoint",
+      "result": "PASS",
+      "detail": "Final six_provision.go parses RawQuery with url.ParseQuery and rejects parse errors. Exact singleton GET/create selectors; import query empty; fixed HTTP localhost endpoint. No AttachPolicy/SetPolicy/object API in provisioning transport."
+    },
+    {
+      "check": "disabled_creation_and_readback",
+      "result": "PASS",
+      "detail": "sixCreateDisabled requires typed user+policy absence; creates exact policy, SetUser(AccountDisabled), then disabled/no-policy/no-groups before one import, then disabled/sole-policy/no-groups and official policy Equals afterwards. AddUser default enable is not used."
+    },
+    {
+      "check": "raw_import_response",
+      "result": "PASS",
+      "detail": "Raw response persisted O_EXCL before SDK success; exact four object categories, duplicate/unknown/trailing fields rejected, skipped/removed/failed empty, added only one exact association. SDK normalized result is not substituted for original raw response."
+    },
+    {
+      "check": "once_and_unknown",
+      "result": "PASS",
+      "detail": "Validated mutation key is marked before evidence/start/wire. Unknown/malformed/non200 outcome does not reopen key. SDK MaxRetry=1 in one-shot reader/root processes; transport independently denies mutation replay. Failed preparations remain terminal retained attempts."
+    },
+    {
+      "check": "15_known_and_one_NONE",
+      "result": "PASS",
+      "detail": "Group counts 7/4/4 = original8 + exact c13 dormant1 + current6. Only business i4e524c04808a6960 admits disabled/empty PolicyName/no-groups; its unassigned canned policy remains independently compared. Other identities still strict sole-policy; dormant is never selected by current enable paths. Disable containment still covers all known identities."
+    },
+    {
+      "check": "five_uncreated",
+      "result": "PASS_SOURCE_AND_MOCK_ONLY",
+      "detail": "Compiled old c13 absent names are queried by SDK in current six reader; require typed NoSuchUser+HTTP404 and exact attempt journal. File checker binds exact names/audit/UUID/query/status and common complete-journal timestamps. Root current gate also checks typed NoSuchUser. No disabled identity is fabricated; this branch has not been accepted as actual Source state by this review."
+    },
+    {
+      "check": "old_contracts",
+      "result": "PASS",
+      "detail": "Original post-v22 path keeps old18 policy baseline and no dormant extra set. Current expected-contract explicitly remains FROZEN_SIX_EXPECTATION_NOT_OBSERVATION, present17/uniqueP1 absence separate. New expectation export does not rewrite historical receipt."
+    },
+    {
+      "check": "restore_inspector",
+      "result": "PASS_IN_MEMORY",
+      "detail": "Only fixed RESTORE inspector status action; cannot choose sender/provision/mismatched status/replay. SOURCE role rejected before admin client. No actual identity was enabled by reviewer."
+    }
+  ],
+  "independent_tests": {
+    "initial_run": {
+      "tests": [
+        {
+          "name": "reader-in-memory",
+          "argv": [
+            "go",
+            "test",
+            "./cmd/lifecycle-fixture-reader",
+            "-count=1",
+            "-v",
+            "-run",
+            "^(TestSix(MappingRejectsArchiveAndAssociationExpansion|ImportResponseRequiresExactConfirmedOutcome|ImportUnknownAndBadResponseNeverReplay|UncreatedUsersRequireExactSDKAbsenceAndJournal|DisabledProvisionUsesRealSDKAndRejectsEnableExpansionReplay|ReadOnlySourceRestoreMapsAndProfileCounterexamples|RestoreInspectorSDKStatusOnlyCannotEnableSenderOrProvision)|TestAuditAssociationAllowsOnlyExactRetainedPartialWithoutPolicy|TestNativeVerifierRejectsExtraDirectAndInheritedPolicies)$"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "2d717c26d6f2c9f9e1ed6863ca7c3f1664d16e45c5e0bddbadeb311717998429",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "checker-file-only",
+          "argv": [
+            "go",
+            "test",
+            "./cmd/lifecycle-fixture-readonly-check",
+            "-count=1",
+            "-v",
+            "-run",
+            "^TestSix"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "698b1fa56e223d797f289bece7ece4a0a740975e745252dd6492aef10bf55b40",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "root-in-memory",
+          "argv": [
+            "go",
+            "test",
+            "./cmd/lifecycle-fixture-remaining-iam",
+            "-count=1",
+            "-v",
+            "-run",
+            "^TestBootstrap"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "3d7966b98ce6d2f65814dddacbff1b4aca7aba14d44755de7b41b26503893e6c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "pilot-compile-only",
+          "argv": [
+            "go",
+            "test",
+            "./internal/lifecycle/pilot",
+            "-count=1",
+            "-run",
+            "^$"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "e4c23f1235dd7bab7dc25add0756e8d6f313d703c65f9e4c91e3440ac45fd7cc",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "snapshot_drift": {
+        "file": "apps/platform/cmd/lifecycle-fixture-reader/six_provision.go",
+        "before": "de60280527999384e976886ae55bf908af9b930eb4282dcf014ec24d78d50604",
+        "after": "40680784a39ade5553c196581406707373e8df75fc392e5b9978e27473a4030f"
+      }
+    },
+    "initial_snapshot_note": "All selected tests passed. six_provision.go changed during initial run from de60280527999384e976886ae55bf908af9b930eb4282dcf014ec24d78d50604 to 40680784a39ade5553c196581406707373e8df75fc392e5b9978e27473a4030f. Parent confirmed this is ParseQuery+parse-error rejection, not formatting. This initial reader run is not claimed as a stable final-source run; it is preserved here.",
+    "final_reader_run": {
+      "argv": [
+        "go",
+        "test",
+        "./cmd/lifecycle-fixture-reader",
+        "-count=1",
+        "-v",
+        "-run",
+        "^(TestSix(MappingRejectsArchiveAndAssociationExpansion|ImportResponseRequiresExactConfirmedOutcome|ImportUnknownAndBadResponseNeverReplay|UncreatedUsersRequireExactSDKAbsenceAndJournal|DisabledProvisionUsesRealSDKAndRejectsEnableExpansionReplay|ReadOnlySourceRestoreMapsAndProfileCounterexamples)|TestRestoreInspectorSDKStatusOnlyCannotEnableSenderOrProvision|TestAuditAssociationAllowsOnlyExactRetainedPartialWithoutPolicy|TestNativeVerifierRejectsExtraDirectAndInheritedPolicies)$"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "7176991eae4d5815fe3c5ab2f1b54dc8ca9e1a78f5091601cf8341fef37359f1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "accepted_final_counts": {
+      "reader_top_level_pass": 9,
+      "checker_file_only_top_level_pass": 4,
+      "root_in_memory_top_level_pass": 2,
+      "pilot_compile_only": true,
+      "pilot_tests_executed": 0
+    },
+    "network_boundary": "All selected reader SDK operations used in-memory postRoundTripper, checker only local temp files, root forbidden paths used shouldNotCall. Opt-in TestSixNativeDisabledBootstrapContract was excluded and its environment variable removed. Reviewer started no HTTP server/client connection and invoked no Docker."
+  },
+  "native_evidence_file_only_readback": {
+    "native02": {
+      "terminal_sha256": "070a1b356ed6fbe4108a159b89a95b2e7b7bff82053e61fa9d972adee4bfafc1",
+      "intent_sha256": "fe2ce734e407da1b693f815f2a5a076fd33f4b7cb0922dc0551093e2e82cc586",
+      "status": "FAILED_OR_UNCONFIRMED_RETAINED",
+      "start_count": 8,
+      "observation_count": 8,
+      "http_statuses": {
+        "200": 6,
+        "404": 2
+      },
+      "transport_errors": 0,
+      "imports": [
+        {
+          "id": "f8dd8d70-4bb1-419b-98df-041651bb943a",
+          "user": "iafc0e66c808a6960",
+          "policy": "lifecycle307-six-iafc0e66c808a6960",
+          "zip_sha256": "8b67b8360e97a27f97ac4e4f4d4bcbdefc2918e996fcfdf149a03e74ef29be46",
+          "response_sha256": "22f20a4df82f2058744bd23ea2f6a34a6c5fc528065fa04f1e7dd5ffb4280da3"
+        }
+      ],
+      "paths": {
+        "GET /minio/admin/v3/user-info": 3,
+        "GET /minio/admin/v3/info-canned-policy": 2,
+        "PUT /minio/admin/v3/add-user": 1,
+        "PUT /minio/admin/v3/import-iam-v2": 1,
+        "PUT /minio/admin/v3/add-canned-policy": 1
+      },
+      "source_file_matches": {
+        "apps/platform/cmd/lifecycle-fixture-reader/six_mapping.go": true,
+        "apps/platform/cmd/lifecycle-fixture-reader/six_mapping_test.go": false,
+        "apps/platform/cmd/lifecycle-fixture-reader/six_provision.go": false,
+        "apps/platform/cmd/lifecycle-fixture-reader/six_provision_test.go": true,
+        "apps/platform/internal/lifecycle/pilot/remaining_policies.go": false,
+        "apps/platform/internal/lifecycle/pilot/remaining_scope.go": true
+      },
+      "files_count": 27,
+      "file_hash_map_canonical_sha256": "542032eaea2d5747842505c62e100e0508da0730572efa6dad0e8549384755ee"
+    },
+    "native03": {
+      "terminal_sha256": "1e5343bb904ff4760c34dd28ac087cc5201a16503f2406ed9982b908a83e16c0",
+      "intent_sha256": "dea541b7b283ab246ee1d433a6c589af07606fdc4a876ebeaa9543188209a6ce",
+      "status": "PASS_PRODUCTION_NATIVE_ADAPTER_CONTRACT",
+      "start_count": 16,
+      "observation_count": 16,
+      "http_statuses": {
+        "200": 12,
+        "404": 4
+      },
+      "transport_errors": 0,
+      "imports": [
+        {
+          "id": "8f6a84bc-bd1e-49ca-a04a-b7544e107577",
+          "user": "iafc0e66c808a6960",
+          "policy": "lifecycle307-six-iafc0e66c808a6960",
+          "zip_sha256": "8b67b8360e97a27f97ac4e4f4d4bcbdefc2918e996fcfdf149a03e74ef29be46",
+          "response_sha256": "22f20a4df82f2058744bd23ea2f6a34a6c5fc528065fa04f1e7dd5ffb4280da3"
+        },
+        {
+          "id": "afe403b5-3a8a-45e1-ad6d-ee833264826c",
+          "user": "dafc0e66c808a6960",
+          "policy": "lifecycle307-six-dafc0e66c808a6960",
+          "zip_sha256": "9d7d4febd250edd885d6a3933ca0f2549259a530e91085bf1dff65632ee734f6",
+          "response_sha256": "f33751e624d6feda7b9d75a042bcad5bdf7a9ae15d2b5cf3546562126fe712bd"
+        }
+      ],
+      "paths": {
+        "GET /minio/admin/v3/info-canned-policy": 4,
+        "GET /minio/admin/v3/user-info": 6,
+        "PUT /minio/admin/v3/add-user": 2,
+        "PUT /minio/admin/v3/import-iam-v2": 2,
+        "PUT /minio/admin/v3/add-canned-policy": 2
+      },
+      "source_file_matches": {
+        "apps/platform/cmd/lifecycle-fixture-reader/six_mapping.go": true,
+        "apps/platform/cmd/lifecycle-fixture-reader/six_mapping_test.go": false,
+        "apps/platform/cmd/lifecycle-fixture-reader/six_provision.go": false,
+        "apps/platform/cmd/lifecycle-fixture-reader/six_provision_test.go": true,
+        "apps/platform/internal/lifecycle/pilot/remaining_policies.go": false,
+        "apps/platform/internal/lifecycle/pilot/remaining_scope.go": true
+      },
+      "files_count": 47,
+      "file_hash_map_canonical_sha256": "3901a20cad6cd832798ea6920571cd229d898791f7643361440f1a5c36bf378a"
+    },
+    "distinction": "native02 remains FAILED_OR_UNCONFIRMED_RETAINED with 8 actual starts/observations and timeout after replay guard caused SDK local backoff. native03 is parent-run isolated same-image production helper/transport evidence: 16 actual technical IAM starts+observations, 12 HTTP200+4 HTTP404, two exact request ZIP/raw response pairs, both SDK replay calls rejected without new HTTP, final policy readback through shared helper. Reviewer re-parsed files and hashes only, did not rerun or inspect Docker.",
+    "current_source_binding": "native03 source intent matches six_mapping.go/six_provision_test.go/remaining_scope.go, but not final six_provision.go, expanded six_mapping_test.go or remaining_policies.go. Query-parser tightening and fixed-5-absent changes followed that snapshot. Do not claim native03 proves identical final source bytes.",
+    "amount": "NOT_ASSESSED",
+    "source_calls": 0,
+    "object_put": 0,
+    "native_delete": 0
+  },
+  "pending_required_validation": [
+    "Fresh isolated production-adapter native04 on final stable current Go snapshot before Source; prior native02/native03 remain retained.",
+    "Separate Python host review, exact committed source CI, stopped-resource manifest and full candidate14 non-delete Source/Restore/Core acceptance. No candidate freeze/delete authority granted here."
+  ],
+  "classification": {
+    "BLOCKER": [],
+    "FOLLOWUP": [],
+    "OUT_OF_SCOPE": [
+      "Python host WIP",
+      "Source/provider execution",
+      "new candidate freeze/authorization",
+      "real deletion",
+      "full D1 acceptance"
+    ]
+  },
+  "reviewer_actions": {
+    "source_edits": 0,
+    "docker_calls": 0,
+    "source_calls": 0,
+    "http_connections": 0,
+    "identity_mutations": 0,
+    "secret_values_read": 0,
+    "git_writes": 0,
+    "github_writes": 0,
+    "report_writes": 1
+  },
+  "source_files_sha256": {
+    "apps/platform/cmd/lifecycle-fixture-reader/six_mapping.go": "c59b9976276ce3be8ac8410b0cdf8529052c5bd92a4c4e2db211b024eb837415",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_mapping_test.go": "126f7e719be411cd378328df8c6a73664e3a15e9736de2e7028b8e4d524daaa2",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_provision.go": "40680784a39ade5553c196581406707373e8df75fc392e5b9978e27473a4030f",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_provision_test.go": "bb1e78f480f843d5d55cfdbeae2d6bfb387b1e14ff3fdfb6f6e902c827ac385a",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_absence.go": "092638eccd68604df87e082066d47c7f2fa1595148099e222d65aedb64baa2b0",
+    "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify.go": "671031adf8ad94e249302628ad6ef35d25c0383ba5c757fe374ac812337e2b99",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify.go": "93c315cf9d873220f89edc30d6e16d3dfe38e8b975cc29c4f69454ae36f29f79",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify_test.go": "8c0aa0696ba54dedb16fd8eeb12d2702951a2fb245b40f838e903e50ecd65633",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go": "0b126cfa019fa13cb766883542df390235d5bb6c7b7da515f3085f73269d4a19",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go": "310d54f91ebf15ef275cf9ba1884da0617c4c6459b00009028ce6413ef1a90fd",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six.go": "4e6478397ef882e649d3499fc15d53190f2e02468a66425bb0aeffe599fdd681",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": "feb8bb876db3f12b4a6213776d54876cbcd875e44e65830f743fd06cf0d80703",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": "2043446199b564b9e643a78d57b9adff97bc5f6a51cf0dbe99b89b0475c398bf",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": "1a835ef3202f99203ed7004f2650ea737b5dcb7c512c6cc11bd14c9b8eeaa7f0",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly_test.go": "5ddcd2e81a79d23f509f3f4e4a9445653d496a512bd9d5c6c729a45c0ce4056f",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": "cde552119e1ae2633939a4ab6e230e8416efc06682c0d3256c483faf40381d02",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "5337e599d76ab14c9a200e88219121752c87164df7c1b9e24d585f05459f8c58",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_restore_inspector.go": "453b1ba71ed80c761dd77f5afa301d67954bb7b9b1271c4448a6419ac5322f50",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_restore_inspector_test.go": "4e0cf7ad52a229431f74b9a2eecdc8d038ece8efba10d02a1d70f673a2b1fc84"
+  },
+  "contract_and_prior_review_sha256": {
+    "docs/acceptance/issue307-d1-v24-bootstrap-contract.md": "e22865348f94f897c02a35c428955beae6126ccad9f956b6a489952ee5edb807",
+    "docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-contract01/independent-api-design-review01.json": "c159c910926067cabdfe4e65162a97f3d240f6df487e98b3d76c5374b5711c41"
+  },
+  "source_base_head": "c72930430d1aeaf89f6af9be49881391405d9efa",
+  "source_snapshot_kind": "UNCOMMITTED_CURRENT_GO_FILES_BOUND_BY_RAW_SHA256_NOT_BASE_HEAD_CONTENT",
+  "reviewed_at": "2026-10-19T18:32:52.588339+00:00"
+}

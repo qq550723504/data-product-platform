@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-19T16:16:25.772939+00:00",
+  "scope": "Pure recorded doubles with global unmodeled subprocess refusal; no Docker/Core/native/provider",
+  "source_before": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "22999e23445d5cdbc7843fedd256085186e02564f5f6e0dc463eee60064ab1ae",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "9e39dbcfd3f0c56782247e4dca8963aab619db4bd8869b6af4b0521cdbce56cd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_after": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "22999e23445d5cdbc7843fedd256085186e02564f5f6e0dc463eee60064ab1ae",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "9e39dbcfd3f0c56782247e4dca8963aab619db4bd8869b6af4b0521cdbce56cd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "source_unchanged": true,
+  "guard_sha256": "8cbde7c49ead1942a204d1658252e7e06edfbcad83040c717338b80873b73c9f",
+  "results": [
+    {
+      "mode": "normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-six-preparation01\\run-host-guarded02.py"
+      ],
+      "exit": 1,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal02-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-normal02-stderr.txt",
+          "sha256": "29d93d40168dee7748ac8e01e3fa7f918c5c65f5641818d565f44ab6e0cd6f8e"
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-six-preparation01\\run-host-guarded02.py"
+      ],
+      "exit": 1,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized02-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-host-optimized02-stderr.txt",
+          "sha256": "29d93d40168dee7748ac8e01e3fa7f918c5c65f5641818d565f44ab6e0cd6f8e"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+diff --git a/docs/acceptance/.gitattributes b/docs/acceptance/.gitattributes
+index aff1629c..91078213 100644
+--- a/docs/acceptance/.gitattributes
++++ b/docs/acceptance/.gitattributes
+@@ -3,3 +3,9 @@
+ issue307-d1-candidate21-confirmation.md -text
+ issue307-d1-v31-window-runbook.md -text
+ issue307-d1-v31-preparation-contract.md -text
++# Current v32 approval documents are opaque issued bytes too.
++issue307-d1-candidate22-confirmation.md -text
++issue307-d1-candidate22-final-confirmation01.md -text
++issue307-d1-v32-window-runbook.md -text
++issue307-d1-v32-preparation-contract03.md -text
++issue307-d1-v32-preparation.md -text
+diff --git a/docs/acceptance/issue307-d1-v32-preparation-contract03.md b/docs/acceptance/issue307-d1-v32-preparation-contract03.md
+new file mode 100644
+index 00000000..2860062c
+--- /dev/null
++++ b/docs/acceptance/issue307-d1-v32-preparation-contract03.md
+@@ -0,0 +1,13 @@
++# #307 D1 v32 分配前网段闭合补充
++
++本文件补充[有限准备边界02](issue307-d1-v32-preparation-contract02.md)。execution、R、目标、保留范围和2026-10-23新加坡18:00–18:40窗口不变。本代未分配任何新资源，未冻结候选，未获删除或调度授权；#332保持Draft、不合并，#307保持OPEN。
++
++源码P `bee86b7961ee77eaa611f9ef8b8540362e8f6038` 的旧源码评审原件保留。后续分配前检查发现它仍使用candidate21已占用的221/222/223三个恢复网段；原生重叠检查会正确拒绝，属于当前必需准备路径的有效阻断。旧PASS不覆盖这项后来发现的阻断，不改写旧评审。
++
++修正将本代三个提议网段统一列为 `10.246.225.0/28`、`10.246.226.0/28`、`10.246.227.0/28`。先完成严格clean-source和精确P CI门禁，再复用既有 `prepare-remaining-runner.check_subnet` 对**全部三组**做重叠检查；任一冲突或未知读取失败都在历史读取、CONTROL/PUBLIC创建、构建和首次资源分配之前停止。每组实际创建之前仍重查，最终由Docker原生IPAM原子拒绝并发占用；不声称前检消除了TOCTOU，不自行实现IPAM或自动删网腾位。
++
++正常回归保留candidate21的三个已占用网段，证明本代三网段可通过既有真实重叠算法；反例分别在第一、第二、第三组制造冲突，调用完整allocate入口，证明不会进入构建或创建资源。初次新测试误断言了既有checker的异常类型；修正测试为其真实RuntimeError，不改原门禁语义。
++
++当前源码独立复评使用新的 `candidate22-source-review02` 目录及精确新P提交。原source-review01与原CI失败原件保留；源码未修改的Hop集成超时仍是原CI失败，不将同期最后一个重启Hop测试的RemoteDisconnected误认成该超时根因。新P须获得完整精确PR CI，不借用旧绿灯。R仍为 `81a083751c01a281d42df594f6e91012255081f1`，不重编译或改写其源码以修宿主网段问题。
++
++其后仍按02所列非删除验收、17版本只读、全绑定冻结及独立评审、最终HEAD CI、原生重新锁定/execution-binding顺序执行。最后锁定后只追加回执，不再推进HEAD；新删除授权须另获人类确认，旧授权不复用。
+diff --git a/examples/lifecycle-d1/freeze-six-candidate.py b/examples/lifecycle-d1/freeze-six-candidate.py
+index 7db6b250..4f39eddf 100644
+--- a/examples/lifecycle-d1/freeze-six-candidate.py
++++ b/examples/lifecycle-d1/freeze-six-candidate.py
+@@ -36,7 +36,7 @@ def audit_preparation_index():
+ def preparation_audit_plan(candidate):
+     # Source review and preparation exist now. Later human authorization and
+     # schedule indexes do not: they are never invented or rewritten here.
+-    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate22-source-review01'
++    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate22-source-review02'
+     report=load(review/'independent-final-review01.json')
+     need(report['status']=='PASS_BOUNDED_C22_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW' and report['remaining_blockers']==[]
+          and report['source_head']==load(PACKET/'source-freeze.json')['host']['source']
+diff --git a/examples/lifecycle-d1/prepare-six-candidate.py b/examples/lifecycle-d1/prepare-six-candidate.py
+index f0d088c1..0f1df271 100644
+--- a/examples/lifecycle-d1/prepare-six-candidate.py
++++ b/examples/lifecycle-d1/prepare-six-candidate.py
+@@ -29,6 +29,9 @@ CONTROL=p1.PRIVATE/('remaining-'+GENERATION)
+ PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1'/('remaining-'+GENERATION+'-preparation01')
+ ZERO='0001-01-01T00:00:00Z'
+ GROUPS=('business-races','late-hold','mixed')
++# This generation's independent restore networks. The prior generation's
++# 221/222/223 networks remain allocated and are never reused or removed.
++RESTORE_SUBNETS=('10.246.225.0/28','10.246.226.0/28','10.246.227.0/28')
+ need,load,sha,save=prior.need,prior.load,prior.sha,prior.save
+ inspect,closed=p1.inspect,p1.closed
+ 
+@@ -317,6 +320,14 @@ def artifact_contract():
+     return dict(execution=EXECUTION,profile=PROFILE,start=W['NotBefore'],end=W['NotAfter'])
+ 
+ 
++def preallocation_networks():
++    """Check every proposed network before build or the first allocation."""
++    runner=prior.module('six_allocation_runner','prepare-remaining-runner.py')
++    need(len(RESTORE_SUBNETS)==len(GROUPS) and len(set(RESTORE_SUBNETS))==len(GROUPS),
++         'restore network plan membership differs')
++    return tuple(runner.check_subnet(value) for value in RESTORE_SUBNETS)
++
++
+ def preallocation_ci():
+     """A completed exact-source CI precedes allocation, not only authorization."""
+     # Reuse the existing strict host snapshot before API/history/build I/O.
+@@ -339,6 +350,7 @@ def allocate():
+     need(PROFILE=='candidate22/v32' and EXECUTION=='0e5cb8f3-46a9-4339-88e4-7154d6ebe13f','only the new proposed execution is supported')
+     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
+     source_ci=preallocation_ci()
++    subnets=preallocation_networks()
+     # Verify retained history before allocating any owner or volume.
+     retained=historical_gate()
+     CONTROL.mkdir();PUBLIC.mkdir();save(PUBLIC/'retained-before.json',retained)
+@@ -362,7 +374,7 @@ def allocate():
+             config=load(p1.PRIVATE/project/'config.json')
+             need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
+             pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
+-            subnet='10.246.'+str(221+n)+'.0/28'
++            subnet=subnets[n]
+             # Reuse the existing subnet overlap check; never attach to another run.
+             runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
+             network=a.network(prefix+'-restore',subnet)
+diff --git a/examples/lifecycle-d1/test_preallocation_ci.py b/examples/lifecycle-d1/test_preallocation_ci.py
+index 61670239..9fabc970 100644
+--- a/examples/lifecycle-d1/test_preallocation_ci.py
++++ b/examples/lifecycle-d1/test_preallocation_ci.py
+@@ -1,5 +1,6 @@
+ """Full allocation refuses non-green exact-source CI before any resource I/O."""
+ import copy
++import json
+ import tempfile
+ from pathlib import Path
+ from unittest.mock import patch
+@@ -9,8 +10,39 @@ from test_execution_freeze import snapshot, HEAD
+ 
+ loader=importlib.util.spec_from_file_location('preallocation_under_test',Path(__file__).with_name('prepare-six-candidate.py'))
+ p=importlib.util.module_from_spec(loader);loader.loader.exec_module(p)
++runner=p.prior.module('six_preallocation_network_test','prepare-remaining-runner.py')
+ 
+ class PreallocationTests(unittest.TestCase):
++    def network_reply(self, conflict=None):
++        networks={str(n):{'Name':'retained-c21-'+str(n),'IPAM':{'Config':[{'Subnet':'10.246.'+str(221+n)+'.0/28'}]}} for n in range(3)}
++        if conflict is not None:
++            networks['new-conflict']={'Name':'other-retained','IPAM':{'Config':[{'Subnet':p.RESTORE_SUBNETS[conflict]}]}}
++        def docker(*args):
++            if args==('network','ls','-q'):return (' '.join(networks)+'\n').encode()
++            self.assertEqual(args[:2],('network','inspect'))
++            return json.dumps([networks[args[2]]]).encode()
++        return docker
++
++    def test_all_new_subnets_pass_real_existing_overlap_check_with_c21_retained(self):
++        with patch.object(p.prior,'module',return_value=runner),patch.object(runner,'docker',side_effect=self.network_reply()):
++            self.assertEqual(p.preallocation_networks(),p.RESTORE_SUBNETS)
++            for old in ('10.246.221.0/28','10.246.222.0/28','10.246.223.0/28'):
++                with self.assertRaisesRegex(RuntimeError,'overlaps'):runner.check_subnet(old)
++
++    def test_any_subnet_conflict_rejects_complete_allocate_before_history_build_or_control(self):
++        for slot in range(3):
++            with self.subTest(slot=slot),tempfile.TemporaryDirectory() as tmp:
++                root=Path(tmp)
++                with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
++                     patch.object(p.window,'policy_checkpoint'),patch.object(p,'preallocation_ci',return_value={'head':HEAD}),\
++                     patch.object(p.prior,'module',return_value=runner),patch.object(runner,'docker',side_effect=self.network_reply(slot)),\
++                     patch.object(p,'historical_gate',side_effect=AssertionError('history before network gate')) as history,\
++                     patch.object(p,'build',side_effect=AssertionError('build before network gate')) as build,\
++                     patch.object(p.Allocation,'__init__',side_effect=AssertionError('allocation before network gate')) as allocation:
++                    with self.assertRaisesRegex(RuntimeError,'overlaps'):p.allocate()
++                    history.assert_not_called();build.assert_not_called();allocation.assert_not_called()
++                    self.assertFalse((root/'private').exists());self.assertFalse((root/'public').exists())
++
+     def test_fresh_exact_source_success_records_provenance_without_lock_or_resources(self):
+         with tempfile.TemporaryDirectory() as tmp:
+             root=Path(tmp);(root/'docs/acceptance/evidence/issue307-d1').mkdir(parents=True)
+@@ -71,6 +103,7 @@ class PreallocationTests(unittest.TestCase):
+                 artifact={'source':'f'*40,'host':{'source':'b'*40 if fault=='build-head' else HEAD}}
+                 with patch.object(p,'ROOT',root),patch.object(p,'CONTROL',root/'private'),patch.object(p,'PUBLIC',root/'public'),\
+                      patch.object(p.window,'policy_checkpoint'),patch.object(p,'preallocation_ci',return_value={'head':HEAD}),\
++                     patch.object(p,'preallocation_networks',return_value=p.RESTORE_SUBNETS),\
+                      patch.object(p,'historical_gate',return_value={'recorded':True}),patch.object(p,'build',return_value=artifact),\
+                      patch.object(p.fixture_artifacts,'verify_host',side_effect=ValueError('host bytes drift')),\
+                      patch.object(p.Allocation,'network',side_effect=AssertionError('network before source binding')),\
+diff --git a/examples/lifecycle-d1/test_receipt_bytes.py b/examples/lifecycle-d1/test_receipt_bytes.py
+index d7779640..9c374b94 100644
+--- a/examples/lifecycle-d1/test_receipt_bytes.py
++++ b/examples/lifecycle-d1/test_receipt_bytes.py
+@@ -11,6 +11,9 @@ ROOT=Path(__file__).resolve().parents[2]
+ RULE='docs/acceptance/evidence/issue307-d1/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab'
+ MARKDOWN=[f'docs/acceptance/issue307-d1-v29-{suffix}.md' for suffix in ('crosscheck01','execution01','schedule01','window01')]
+ MARKDOWN.append('docs/acceptance/issue307-d1-v31-preparation.md')
++CURRENT_DOCUMENTS=('issue307-d1-candidate22-confirmation.md','issue307-d1-candidate22-final-confirmation01.md',
++                   'issue307-d1-v32-window-runbook.md','issue307-d1-v32-preparation-contract03.md',
++                   'issue307-d1-v32-preparation.md')
+ 
+ 
+ class ReceiptBytesTests(unittest.TestCase):
+@@ -26,13 +29,22 @@ class ReceiptBytesTests(unittest.TestCase):
+         if not current:
+             for rule in rules:attributes=attributes.replace(rule,'')
+         (repo/'.gitattributes').write_text(attributes,encoding='utf-8',newline='\n')
++        child_attributes=(ROOT/'docs/acceptance/.gitattributes').read_text(encoding='utf-8')
++        for name in CURRENT_DOCUMENTS:self.assertIn(name+' -text',child_attributes)
++        if not current:
++            for name in CURRENT_DOCUMENTS:child_attributes=child_attributes.replace(name+' -text','')
+         files={
++            'docs/acceptance/.gitattributes':child_attributes.encode('utf-8'),
+             'docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/terminal.json':b'{"status":"FAILED"}\r\n',
+             'docs/acceptance/evidence/issue307-d1/candidate21-planning01/process.stderr.txt':b'original error\r\n\r\n',
+             'docs/acceptance/evidence/issue307-d1/execution-freeze-review01/index.json':b'{"count":1}\r\n',
+             'docs/acceptance/evidence/issue307-d1/delete-confirmed-v31-execution01/user.txt':'授权\n'.encode('utf-8'),
+         }
+         files.update({name:(ROOT/name).read_bytes() for name in MARKDOWN})
++        # Current documents are rendered after native acceptance. Exercise the
++        # already committed exact-path rules using both native line endings.
++        files.update({'docs/acceptance/'+name:('精确确认\n' if n%2==0 else '原始回执\r\n').encode('utf-8')
++                      for n,name in enumerate(CURRENT_DOCUMENTS)})
+         for name,raw in files.items():
+             path=repo/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+         self.git(repo,'add','.')
+@@ -54,7 +66,8 @@ class ReceiptBytesTests(unittest.TestCase):
+     def test_prior_normalizing_rule_breaks_frozen_raw_sha_even_if_text_equal(self):
+         with tempfile.TemporaryDirectory() as tmp:
+             repo,files=self.fixture(Path(tmp),current=False)
+-            name=next(iter(files));raw=files[name];blob=self.git(repo,'show','HEAD:'+name)
++            name='docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/terminal.json'
++            raw=files[name];blob=self.git(repo,'show','HEAD:'+name)
+             self.assertEqual(blob.replace(b'\r\n',b'\n'),raw.replace(b'\r\n',b'\n'))
+             self.assertNotEqual(hashlib.sha256(blob).hexdigest(),hashlib.sha256(raw).hexdigest())
+ 
+diff --git a/examples/lifecycle-d1/test_retained_v26.py b/examples/lifecycle-d1/test_retained_v26.py
+index cf83e8b8..80b05d7a 100644
+--- a/examples/lifecycle-d1/test_retained_v26.py
++++ b/examples/lifecycle-d1/test_retained_v26.py
+@@ -51,7 +51,7 @@ class RetainedV26Tests(unittest.TestCase):
+         self.assertNotEqual(f.p.EXECUTION,retained.EXECUTION)
+ 
+     def fixture(self,root):
+-        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate22-source-review01'
++        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate22-source-review02'
+         for directory in (public,packet,review):directory.mkdir(parents=True)
+         candidate={'Execution':f.p.EXECUTION,'Source':'f'*40}
+         f.save(packet/'source-freeze.json',{'host':{'source':'d'*40}})

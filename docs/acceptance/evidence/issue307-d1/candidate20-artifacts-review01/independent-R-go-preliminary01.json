@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-22T07:51:40.652907+00:00",
+  "source": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "args": [
+    "go",
+    "test",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-remaining-iam",
+    "-run",
+    "^(TestRemainingFixtureSchemaSingleContract|TestRemainingDeletePolicy|TestRemainingRetained|TestCurrentPolicyCheckpoint|TestRemainingWindow|TestResumeRejectsStaleCurrentPolicyCheckpointBeforeDatabase)$",
+    "-count=1",
+    "-v"
+  ],
+  "exit": 0,
+  "scope": "Pure name-filtered unit tests and package compilation, native schema test not run",
+  "GOPROXY": "off",
+  "stdout_sha256": "b6f838ce84263de9bc619d6641671a2774a1f553eafb4fa006a6403858c3bf81",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

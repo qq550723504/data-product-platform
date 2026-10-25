@@ -1,0 +1,12 @@
+{
+  "status": "PASS_ORIGINAL_FAILED_C23_BYTES_RETAINED",
+  "members": 5954,
+  "mismatches": [],
+  "index_sha256": "c7093afdfdacb71416df2eb1bf44240d00919d6d4ebb162efb744acdda5a7d1a",
+  "terminal_sha256": "6bf40cca760fdf81532ba52dd2677d77180f49c80efac97db5fb03f85103c8b2",
+  "public_private_terminal_identical": true,
+  "tracked_diff": [],
+  "source_operations_this_audit": 0,
+  "native_write": 0,
+  "delete": 0
+}

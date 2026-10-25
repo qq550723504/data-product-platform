@@ -1,0 +1,14 @@
+{
+  "status": "STOPPED_FAILED_NONDELETE_ENTRY_RETAIN_ORIGINALS",
+  "results": [
+    {
+      "phase": "allocate",
+      "exit": 1,
+      "at": "2026-10-23T05:23:51.528808+00:00"
+    }
+  ],
+  "delete_authority": false,
+  "full_D1": "NOT_ACCEPTED",
+  "PR332": "DRAFT_UNMERGED",
+  "Issue307": "OPEN"
+}

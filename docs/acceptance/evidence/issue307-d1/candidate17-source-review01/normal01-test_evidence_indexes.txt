@@ -1,0 +1,17 @@
+test_both_explicit_formats_verify_original_bytes (test_evidence_indexes.EvidenceIndexTests.test_both_explicit_formats_verify_original_bytes) ... ok
+test_duplicate_json_keys_nonobjects_nonfinite_and_bad_utf8 (test_evidence_indexes.EvidenceIndexTests.test_duplicate_json_keys_nonobjects_nonfinite_and_bad_utf8) ... ok
+test_escapes_ambiguous_paths_and_duplicate_members_are_rejected (test_evidence_indexes.EvidenceIndexTests.test_escapes_ambiguous_paths_and_duplicate_members_are_rejected) ... ok
+test_junction_flag_rejects_before_reading_linked_member (test_evidence_indexes.EvidenceIndexTests.test_junction_flag_rejects_before_reading_linked_member) ... ok
+test_member_count_status_metadata_and_type_failures (test_evidence_indexes.EvidenceIndexTests.test_member_count_status_metadata_and_type_failures) ... ok
+test_missing_changed_truncated_and_extra_member_fields (test_evidence_indexes.EvidenceIndexTests.test_missing_changed_truncated_and_extra_member_fields) ... ok
+test_mixed_swapped_unknown_or_legacy_formats_are_rejected (test_evidence_indexes.EvidenceIndexTests.test_mixed_swapped_unknown_or_legacy_formats_are_rejected) ... ok
+test_order_changes_are_valid_only_when_new_index_bytes_are_pinned (test_evidence_indexes.EvidenceIndexTests.test_order_changes_are_valid_only_when_new_index_bytes_are_pinned) ... ok
+test_original_temp_spelling_and_canonical_root_both_pass (test_evidence_indexes.EvidenceIndexTests.test_original_temp_spelling_and_canonical_root_both_pass) ... ok
+test_plan_binding_shape_duplicates_and_pinned_digest (test_evidence_indexes.EvidenceIndexTests.test_plan_binding_shape_duplicates_and_pinned_digest) ... ok
+test_plan_parent_link_is_rejected_before_normalization (test_evidence_indexes.EvidenceIndexTests.test_plan_parent_link_is_rejected_before_normalization) ... ok
+test_symlink_member_and_parent_are_rejected (test_evidence_indexes.EvidenceIndexTests.test_symlink_member_and_parent_are_rejected) ... skipped 'OS does not permit symlinks for this account'
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.256s
+
+OK (skipped=1)

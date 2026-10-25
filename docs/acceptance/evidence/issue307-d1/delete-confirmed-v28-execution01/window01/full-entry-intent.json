@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-21T14:02:52.004529+00:00",
+  "entry_sha256": "67b8a6904b336d2c82f29f7c896f69e7d42d1fa4bdcc0eeaf1d8627ad6c99a2c",
+  "args": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/verify-six-native.py",
+    "--candidate-sha256",
+    "bb0924c1814b0bcdecd33d3b57a21a24beaafce2a3d64e10e5dac9aba1947f63",
+    "--bindings-sha256",
+    "8d021af81d905cc6de255bf84e460fc0b416d5af5bacc8388cfbb2b423a60624",
+    "--checker-sha256",
+    "b05d9f331cb2126176021db402b189678a7b0a0c1aaa8776612e5751de5b7081",
+    "--evidence-audit-plan",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/scheduled-evidence-audit-plan01.json",
+    "--evidence-audit-plan-sha256",
+    "d371bc30d6d2c35b83b1802e314ef6c3953c22a96b985fe78f3ab8a3eb8ad0de",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\delete-confirmed-v28-execution01\\window01\\complete-native"
+  ],
+  "scope": "FROZEN_COMPLETE_READONLY_PREFLIGHT; permissions remain false; no enable/send/delete"
+}

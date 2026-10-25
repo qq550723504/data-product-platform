@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-22T02:44:56.854013+00:00",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "scope": "Displayed text and saved evidence; Docker inspect/ps/cp only for cold state",
+  "source_start": 0,
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "authorization": false,
+  "schedule": false
+}

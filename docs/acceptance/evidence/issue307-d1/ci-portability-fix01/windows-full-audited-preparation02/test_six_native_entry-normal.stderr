@@ -1,0 +1,110 @@
+E...E.EE.
+======================================================================
+ERROR: test_authorized_complete_entry_checks_branch_before_cold_gate_and_three_collects (__main__.SixNativeEntryTests.test_authorized_complete_entry_checks_branch_before_cold_gate_and_three_collects)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 173, in collect
+    protection=native_protection.validate_group(g['Group'],load(output/'files'/receipt_file),r.now(),p.W['RecoveryEnd'])
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 43, in validate_group
+    need(at < horizon, 'REQUIRED_HORIZON_EXPIRED')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+    raise ValueError('native protection required: ' + reason)
+ValueError: native protection required: REQUIRED_HORIZON_EXPIRED
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 269, in test_authorized_complete_entry_checks_branch_before_cold_gate_and_three_collects
+    self.composition(authorized=True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 224, in composition
+    v.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 239, in main
+    for g,b in zip(candidate['Groups'],bindings):results.append(collect(g,b,PACKET,private/g['Group'],output/g['Group'],deadline))
+                                                                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_main_complete_entry_rejects_actual_mixed_expiry_and_closes (__main__.SixNativeEntryTests.test_main_complete_entry_rejects_actual_mixed_expiry_and_closes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 304, in test_main_complete_entry_rejects_actual_mixed_expiry_and_closes
+    self.composition(fault='mixed-protection-expired')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 244, in composition
+    self.assertTrue(r.load(output/'mixed/closure.json')['all_closed'])
+                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 38, in load
+    def load(path):return json.loads(path.read_bytes())
+                                     ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpjt1i9wiw\\docs\\acceptance\\evidence\\issue307-d1\\fresh-output\\mixed\\closure.json'
+
+======================================================================
+ERROR: test_main_real_audit_three_real_collects_and_finally_success (__main__.SixNativeEntryTests.test_main_real_audit_three_real_collects_and_finally_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 173, in collect
+    protection=native_protection.validate_group(g['Group'],load(output/'files'/receipt_file),r.now(),p.W['RecoveryEnd'])
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 43, in validate_group
+    need(at < horizon, 'REQUIRED_HORIZON_EXPIRED')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+    raise ValueError('native protection required: ' + reason)
+ValueError: native protection required: REQUIRED_HORIZON_EXPIRED
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 266, in test_main_real_audit_three_real_collects_and_finally_success
+    self.composition()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 224, in composition
+    v.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 239, in main
+    for g,b in zip(candidate['Groups'],bindings):results.append(collect(g,b,PACKET,private/g['Group'],output/g['Group'],deadline))
+                                                                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 210, in collect
+    need(failure is None and all_closed,'complete verification failed or closure unconfirmed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete verification failed or closure unconfirmed
+
+======================================================================
+ERROR: test_main_second_group_failure_closes_and_does_not_collect_third (__main__.SixNativeEntryTests.test_main_second_group_failure_closes_and_does_not_collect_third)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 301, in test_main_second_group_failure_closes_and_does_not_collect_third
+    self.composition(fault='second-group-checker')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_native_entry.py", line 239, in composition
+    self.assertEqual((output / 'late-hold/checker-stderr.txt').read_bytes(), b'checker-failure')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpamiti5va\\docs\\acceptance\\evidence\\issue307-d1\\fresh-output\\late-hold\\checker-stderr.txt'
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.136s
+
+FAILED (errors=4)

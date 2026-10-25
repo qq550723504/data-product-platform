@@ -1,0 +1,49 @@
+{
+  "audit_id": "37d481bb-4cc1-40da-97ee-e42412509760",
+  "budgets_refunded": 0,
+  "cases": [
+    {
+      "NOT_SENT": {
+        "ID": "13c0a0f4-4559-4be1-bf93-fadd1d40dddc",
+        "Replayed": false,
+        "PreservationUnconfirmed": false
+      },
+      "attempt": "ba5bec6b-84ec-4418-a63f-4b08601ccb76",
+      "case": "P2",
+      "old_approval_already_revoked": true
+    },
+    {
+      "NOT_SENT": {
+        "ID": "26ad3dd7-9dcc-48c0-9a81-e72597a9cd92",
+        "Replayed": false,
+        "PreservationUnconfirmed": false
+      },
+      "attempt": "c1f32764-d3d3-4752-ba48-fc88373c0210",
+      "case": "T1",
+      "new_approval_revocation": {
+        "ID": "e53225de-b3d8-49e2-9bf0-8cee7a3669a9",
+        "Replayed": false,
+        "PreservationUnconfirmed": false
+      },
+      "old_approval_already_revoked": false
+    },
+    {
+      "NOT_SENT": {
+        "ID": "d0a4267d-35bb-4262-bb48-7e23dcf0b55c",
+        "Replayed": false,
+        "PreservationUnconfirmed": false
+      },
+      "attempt": "3c731704-cc91-4717-95fc-828ced05b46c",
+      "case": "T2",
+      "new_approval_revocation": {
+        "ID": "103e36dd-93a4-479f-ab2f-f11e3730f139",
+        "Replayed": false,
+        "PreservationUnconfirmed": false
+      },
+      "old_approval_already_revoked": false
+    }
+  ],
+  "completed": true,
+  "native_delete": 0,
+  "pins_released": 0
+}

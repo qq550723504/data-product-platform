@@ -1,0 +1,9 @@
+{
+  "status": "FAILED_PUBLICATION_AUDIT_ONLY",
+  "operation": "old repair index schema selection",
+  "error": "KeyError: count; pinned repair indexes are string-SHA files maps rather than metadata files-map-v1",
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "native_audit_terminal_unchanged": true
+}

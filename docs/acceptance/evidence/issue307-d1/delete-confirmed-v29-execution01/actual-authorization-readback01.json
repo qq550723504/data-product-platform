@@ -1,0 +1,61 @@
+{
+  "status": "PASS_ACTUAL_C19_AUTHORIZATION_ORIGINALS_AND_PRIVATE_ENVELOPE",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "at": "2026-10-22T02:59:26.331882+00:00",
+  "private_files": {
+    "approved-full-confirmation-event.jsonl": {
+      "sha256": "99f3cc4d4135d1b8f539ecdd6f72bd493d0258f0803f88a2cd97955b0f81be7e",
+      "bytes": 43002
+    },
+    "approved-full-confirmation.txt": {
+      "sha256": "acb4a8e4627cf9371b12fff6cfc36403c116586a4ca0feee51a77f781ddb7183",
+      "bytes": 41754
+    },
+    "approved-host-bindings.txt": {
+      "sha256": "f28cf2fedb09f63b9d2fe92ef8aa56b3bd9a8590bcba80e1d46d051739cf0e01",
+      "bytes": 1201
+    },
+    "approved-reference-manifest.json": {
+      "sha256": "53b9c78c82aa6406878021849381f8ef77a8df45301b00f05f00d94c140379e7",
+      "bytes": 249353
+    },
+    "approved-referenced-template.txt": {
+      "sha256": "2e7090f4f6adedaa0c7693dfa72b660685f376770bc37ca17b3f7eb08107eb15",
+      "bytes": 31606
+    },
+    "authorization-envelope.txt": {
+      "sha256": "52cb58908632fa76c9d4b82a12cae09b126906308b570702d99e74e8d2a9558e",
+      "bytes": 4220
+    },
+    "full-confirmation-session-verbatim.txt": {
+      "sha256": "d202e5eca645d76bc60a3c46225fb6de02b2e8b6c64f5f55a4d36820fde2abe7",
+      "bytes": 41980
+    },
+    "human-message-source.json": {
+      "sha256": "7cd1a5858df4f4f826b3073012ea29eb1749b28d01668f96dba26e896d7087fa",
+      "bytes": 1616
+    },
+    "original-user-message-event.jsonl": {
+      "sha256": "4c424882eafe011a5e639a8a52f5c65315f7b399d1860d2c9ec320414511338b",
+      "bytes": 5887
+    },
+    "preceding-crosscheck-event.jsonl": {
+      "sha256": "2920fbaa72bcd0b35663ff0584e8eb1b34557bd3feade2b4bae283af012082e4",
+      "bytes": 2171
+    },
+    "preceding-crosscheck-verbatim.txt": {
+      "sha256": "c526d0208900e09358f3240fbc228409de53cfffb4b2f687b7995dab46dc6cb6",
+      "bytes": 1370
+    },
+    "user-message-verbatim.txt": {
+      "sha256": "b0c94da7bcacb7c9c0a3863fadfd5faba0418322cb603ed6e26e3ffb0c8993b3",
+      "bytes": 432
+    }
+  },
+  "user_retyped_template": false,
+  "old_authorization_reused": false,
+  "approved_references": 924,
+  "source_start": 0,
+  "permission_enable": 0,
+  "native_delete": 0
+}

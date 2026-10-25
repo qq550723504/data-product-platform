@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-21T10:18:13.219525+00:00",
+  "finished_at": "2026-10-21T10:19:41.867614+00:00",
+  "exit_code": 0,
+  "entry": "examples/lifecycle-d1/window_six_support.py",
+  "entry_sha256": "add5e5e18f9d2d6d936ac16eaad4e14ad7eccf4f1e0122fa283f4cc7be14a005",
+  "action": "check",
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0
+}

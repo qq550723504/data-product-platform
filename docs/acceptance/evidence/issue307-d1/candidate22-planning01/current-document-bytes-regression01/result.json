@@ -1,0 +1,11 @@
+{
+  "status": "FAIL",
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 1
+    }
+  ],
+  "at": "2026-10-23T04:58:27.190551+00:00",
+  "native_delete": 0
+}

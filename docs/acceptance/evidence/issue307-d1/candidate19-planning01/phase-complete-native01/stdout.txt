@@ -1,0 +1,1 @@
+{"status": "PASS_COMPLETE_SIX_NATIVE_ENTRY", "output": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c19\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate19-readonly01", "native_delete": 0}

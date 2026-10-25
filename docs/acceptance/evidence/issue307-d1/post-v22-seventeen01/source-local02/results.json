@@ -1,0 +1,19 @@
+{
+  "status": "PASS_SHARED_DEADLINE_OFFLINE",
+  "host_sha256": "abdc3acbd141549593a7916f2435358a9c39d131730e0b498a33e06a9191b3c0",
+  "test_sha256": "96d0e2f2c0fcd584a1013a1d70d53a2a270b26fdfdaf91fbf57d502a51ac34a7",
+  "results": [
+    {
+      "name": "normal",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4748285c7420bfff56ff76988636d38b98f848fd9a2e5b7b23389440811eb3c8"
+    },
+    {
+      "name": "opt",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "77cc3c5e9784837ca18180209e8fb4878f8e54e1249637ff075791bba54a2028"
+    }
+  ]
+}

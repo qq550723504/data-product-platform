@@ -1,0 +1,1369 @@
+﻿2026-10-21T07:19:52.0935501Z Current runner version: '2.338.0'
+2026-10-21T07:19:52.0961698Z ##[group]Runner Image Provisioner
+2026-10-21T07:19:52.0962549Z Hosted Compute Agent
+2026-10-21T07:19:52.0963233Z Version: 20261012.601
+2026-10-21T07:19:52.0963893Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-21T07:19:52.0964699Z Build Date: 2026-10-12T17:48:21Z
+2026-10-21T07:19:52.0965441Z Worker ID: {1c52327b-a1e1-4edc-a9b7-f860928cfcf8}
+2026-10-21T07:19:52.0966153Z Region: eastus
+2026-10-21T07:19:52.0966822Z Cloud: Azure
+2026-10-21T07:19:52.0967375Z ##[endgroup]
+2026-10-21T07:19:52.0968968Z ##[group]Operating System
+2026-10-21T07:19:52.0969683Z Ubuntu
+2026-10-21T07:19:52.0970212Z 24.04.5
+2026-10-21T07:19:52.0970775Z LTS
+2026-10-21T07:19:52.0971666Z ##[endgroup]
+2026-10-21T07:19:52.0972338Z ##[group]Runner Image
+2026-10-21T07:19:52.0973017Z Image: ubuntu-24.04
+2026-10-21T07:19:52.0973603Z Version: 20261012.334.1
+2026-10-21T07:19:52.0975002Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-21T07:19:52.0976659Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-21T07:19:52.0977708Z ##[endgroup]
+2026-10-21T07:19:52.0978889Z ##[group]GITHUB_TOKEN Permissions
+2026-10-21T07:19:52.0981147Z Contents: read
+2026-10-21T07:19:52.0982082Z Metadata: read
+2026-10-21T07:19:52.0982826Z ##[endgroup]
+2026-10-21T07:19:52.0985074Z Secret source: Actions
+2026-10-21T07:19:52.0986226Z Cache mode: write
+2026-10-21T07:19:52.0986932Z Prepare workflow directory
+2026-10-21T07:19:52.1460615Z Prepare all required actions
+2026-10-21T07:19:52.1525041Z Getting action download info
+2026-10-21T07:19:52.3861930Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-21T07:19:52.4861336Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-21T07:19:52.6804057Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-21T07:19:53.0551688Z Uses: qq550723504/data-product-platform/.github/workflows/demo-lifecycle.yml@refs/pull/332/merge (b66849d25f6c5b6048576c7119d34e26fb4a2d10)
+2026-10-21T07:19:53.0558176Z Complete job name: demo / demo-lifecycle
+2026-10-21T07:19:53.1582863Z ##[group]Run actions/checkout@v4
+2026-10-21T07:19:53.1584180Z with:
+2026-10-21T07:19:53.1584982Z   fetch-depth: 0
+2026-10-21T07:19:53.1585900Z   repository: qq550723504/data-product-platform
+2026-10-21T07:19:53.1595084Z   token: ***
+2026-10-21T07:19:53.1595862Z   ssh-strict: true
+2026-10-21T07:19:53.1596649Z   ssh-user: git
+2026-10-21T07:19:53.1597458Z   persist-credentials: true
+2026-10-21T07:19:53.1598351Z   clean: true
+2026-10-21T07:19:53.1599155Z   sparse-checkout-cone-mode: true
+2026-10-21T07:19:53.1600140Z   fetch-tags: false
+2026-10-21T07:19:53.1601315Z   show-progress: true
+2026-10-21T07:19:53.1602180Z   lfs: false
+2026-10-21T07:19:53.1602929Z   submodules: false
+2026-10-21T07:19:53.1603742Z   set-safe-directory: true
+2026-10-21T07:19:53.1604709Z   allow-unsafe-pr-checkout: false
+2026-10-21T07:19:53.1605982Z env:
+2026-10-21T07:19:53.1606668Z   CI: true
+2026-10-21T07:19:53.1607373Z ##[endgroup]
+2026-10-21T07:19:53.2651095Z Syncing repository: qq550723504/data-product-platform
+2026-10-21T07:19:53.2655388Z ##[group]Getting Git version info
+2026-10-21T07:19:53.2657970Z Working directory is '/home/runner/work/data-product-platform/data-product-platform'
+2026-10-21T07:19:53.2661949Z [command]/usr/bin/git version
+2026-10-21T07:19:53.2741905Z git version 2.55.0
+2026-10-21T07:19:53.2773171Z ##[endgroup]
+2026-10-21T07:19:53.2790148Z Temporarily overriding HOME='/home/runner/work/_temp/9c7fbfe7-a748-491c-9fad-c587281b8cf7' before making global git config changes
+2026-10-21T07:19:53.2794075Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-21T07:19:53.2797718Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/data-product-platform/data-product-platform
+2026-10-21T07:19:53.2849150Z Deleting the contents of '/home/runner/work/data-product-platform/data-product-platform'
+2026-10-21T07:19:53.2858977Z ##[group]Initializing the repository
+2026-10-21T07:19:53.2862377Z [command]/usr/bin/git init /home/runner/work/data-product-platform/data-product-platform
+2026-10-21T07:19:53.2971234Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-21T07:19:53.2974864Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-21T07:19:53.2977933Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-21T07:19:53.2980346Z hint: call:
+2026-10-21T07:19:53.2981703Z hint:
+2026-10-21T07:19:53.2983196Z hint: 	git config --global init.defaultBranch <name>
+2026-10-21T07:19:53.2985211Z hint:
+2026-10-21T07:19:53.2986934Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-21T07:19:53.2989963Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-21T07:19:53.2993307Z hint:
+2026-10-21T07:19:53.2994499Z hint: 	git branch -m <name>
+2026-10-21T07:19:53.2995879Z hint:
+2026-10-21T07:19:53.2997790Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-21T07:19:53.3001925Z Initialized empty Git repository in /home/runner/work/data-product-platform/data-product-platform/.git/
+2026-10-21T07:19:53.3010396Z [command]/usr/bin/git remote add origin https://github.com/qq550723504/data-product-platform
+2026-10-21T07:19:53.3065667Z ##[endgroup]
+2026-10-21T07:19:53.3067907Z ##[group]Disabling automatic garbage collection
+2026-10-21T07:19:53.3069924Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-21T07:19:53.3106668Z ##[endgroup]
+2026-10-21T07:19:53.3108735Z ##[group]Setting up auth
+2026-10-21T07:19:53.3116588Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-21T07:19:53.3154135Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-21T07:19:53.3558890Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-21T07:19:53.3598845Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-21T07:19:53.3826819Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-21T07:19:53.3864586Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-21T07:19:53.4094477Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-21T07:19:53.4141649Z ##[endgroup]
+2026-10-21T07:19:53.4143029Z ##[group]Fetching the repository
+2026-10-21T07:19:53.4153702Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +b66849d25f6c5b6048576c7119d34e26fb4a2d10:refs/remotes/pull/332/merge
+2026-10-21T07:19:54.4845570Z From https://github.com/qq550723504/data-product-platform
+2026-10-21T07:19:54.4847586Z  * [new branch]        chore/ci-hardening                       -> origin/chore/ci-hardening
+2026-10-21T07:19:54.4849421Z  * [new branch]        cleanup/evidence-v2-only-159             -> origin/cleanup/evidence-v2-only-159
+2026-10-21T07:19:54.4851654Z  * [new branch]        cleanup/remove-entity-legacy-provenance-159 -> origin/cleanup/remove-entity-legacy-provenance-159
+2026-10-21T07:19:54.4853540Z  * [new branch]        cleanup/remove-legacy-execution-reconcile-159 -> origin/cleanup/remove-legacy-execution-reconcile-159
+2026-10-21T07:19:54.4854911Z  * [new branch]        cleanup/remove-preprod-compat-159        -> origin/cleanup/remove-preprod-compat-159
+2026-10-21T07:19:54.4856122Z  * [new branch]        cleanup/remove-stale-compat-wording-159  -> origin/cleanup/remove-stale-compat-wording-159
+2026-10-21T07:19:54.4857874Z  * [new branch]        cleanup/strict-dataset-output-key-159    -> origin/cleanup/strict-dataset-output-key-159
+2026-10-21T07:19:54.4859071Z  * [new branch]        cleanup/strict-outbox-obligations-159    -> origin/cleanup/strict-outbox-obligations-159
+2026-10-21T07:19:54.4860285Z  * [new branch]        cleanup/strict-rights-scope-159          -> origin/cleanup/strict-rights-scope-159
+2026-10-21T07:19:54.4861945Z  * [new branch]        codex/T3-B2                              -> origin/codex/T3-B2
+2026-10-21T07:19:54.4863765Z  * [new branch]        codex/c1-execution-idempotency-outbox    -> origin/codex/c1-execution-idempotency-outbox
+2026-10-21T07:19:54.4865736Z  * [new branch]        codex/c1-unified-outbox-dispatcher       -> origin/codex/c1-unified-outbox-dispatcher
+2026-10-21T07:19:54.4867081Z  * [new branch]        codex/csv-ingestion-review-ui            -> origin/codex/csv-ingestion-review-ui
+2026-10-21T07:19:54.4868389Z  * [new branch]        codex/csv-workspace-integration          -> origin/codex/csv-workspace-integration
+2026-10-21T07:19:54.4870061Z  * [new branch]        codex/docker-temporary-container-cleanup -> origin/codex/docker-temporary-container-cleanup
+2026-10-21T07:19:54.4872167Z  * [new branch]        codex/follow-up-pr150-pr151-review       -> origin/codex/follow-up-pr150-pr151-review
+2026-10-21T07:19:54.4873768Z  * [new branch]        codex/fork-submission-contract-docs      -> origin/codex/fork-submission-contract-docs
+2026-10-21T07:19:54.4874862Z  * [new branch]        codex/issue-131-cost-allocation          -> origin/codex/issue-131-cost-allocation
+2026-10-21T07:19:54.4875921Z  * [new branch]        codex/issue-131-quality-assessment       -> origin/codex/issue-131-quality-assessment
+2026-10-21T07:19:54.4877144Z  * [new branch]        codex/issue-132-quality-engine           -> origin/codex/issue-132-quality-engine
+2026-10-21T07:19:54.4878338Z  * [new branch]        codex/issue-133-quality-report           -> origin/codex/issue-133-quality-report
+2026-10-21T07:19:54.4879943Z  * [new branch]        codex/issue-134-dataset-certification    -> origin/codex/issue-134-dataset-certification
+2026-10-21T07:19:54.4881556Z  * [new branch]        codex/issue-135-certified-dataset-ui     -> origin/codex/issue-135-certified-dataset-ui
+2026-10-21T07:19:54.4882651Z  * [new branch]        codex/issue-137-data-rights              -> origin/codex/issue-137-data-rights
+2026-10-21T07:19:54.4883674Z  * [new branch]        codex/issue-75-entity-review-actions     -> origin/codex/issue-75-entity-review-actions
+2026-10-21T07:19:54.4884801Z  * [new branch]        codex/issue-85-browser-readiness-hardening -> origin/codex/issue-85-browser-readiness-hardening
+2026-10-21T07:19:54.4885880Z  * [new branch]        codex/issue294-source-integrity          -> origin/codex/issue294-source-integrity
+2026-10-21T07:19:54.4886929Z  * [new branch]        codex/issue298-b1                        -> origin/codex/issue298-b1
+2026-10-21T07:19:54.4887957Z  * [new branch]        codex/issue298-closure                   -> origin/codex/issue298-closure
+2026-10-21T07:19:54.4888985Z  * [new branch]        codex/issue298-invocation-recovery       -> origin/codex/issue298-invocation-recovery
+2026-10-21T07:19:54.4889990Z  * [new branch]        codex/issue298-pgi09                     -> origin/codex/issue298-pgi09
+2026-10-21T07:19:54.4891220Z  * [new branch]        codex/issue299-c1                        -> origin/codex/issue299-c1
+2026-10-21T07:19:54.4892154Z  * [new branch]        codex/issue299-c2                        -> origin/codex/issue299-c2
+2026-10-21T07:19:54.4893002Z  * [new branch]        codex/issue299-c3                        -> origin/codex/issue299-c3
+2026-10-21T07:19:54.4893949Z  * [new branch]        codex/issue299-independent-20261014      -> origin/codex/issue299-independent-20261014
+2026-10-21T07:19:54.4894899Z  * [new branch]        codex/issue299-pr318-handoff             -> origin/codex/issue299-pr318-handoff
+2026-10-21T07:19:54.4896040Z  * [new branch]        codex/issue300-lifecycle-design          -> origin/codex/issue300-lifecycle-design
+2026-10-21T07:19:54.4896973Z  * [new branch]        codex/issue307-d1-acceptance             -> origin/codex/issue307-d1-acceptance
+2026-10-21T07:19:54.4897949Z  * [new branch]        codex/issue307-d1-remaining-preparation  -> origin/codex/issue307-d1-remaining-preparation
+2026-10-21T07:19:54.4898947Z  * [new branch]        codex/issue307-lifecycle-d1              -> origin/codex/issue307-lifecycle-d1
+2026-10-21T07:19:54.4899976Z  * [new branch]        codex/issue307-post-v22-dispatch-closure -> origin/codex/issue307-post-v22-dispatch-closure
+2026-10-21T07:19:54.4902146Z  * [new branch]        codex/issue307-reference-demand-lc11-lc12 -> origin/codex/issue307-reference-demand-lc11-lc12
+2026-10-21T07:19:54.4903272Z  * [new branch]        codex/issue320-trial-image-lifecycle     -> origin/codex/issue320-trial-image-lifecycle
+2026-10-21T07:19:54.4904310Z  * [new branch]        codex/issue325-bootstrap-recovery        -> origin/codex/issue325-bootstrap-recovery
+2026-10-21T07:19:54.4905364Z  * [new branch]        codex/issue325-business-prerequisites    -> origin/codex/issue325-business-prerequisites
+2026-10-21T07:19:54.4906398Z  * [new branch]        codex/issue325-business-upgrade          -> origin/codex/issue325-business-upgrade
+2026-10-21T07:19:54.4907405Z  * [new branch]        codex/issue325-explicit-activation       -> origin/codex/issue325-explicit-activation
+2026-10-21T07:19:54.4908414Z  * [new branch]        codex/issue325-ledger-bootstrap          -> origin/codex/issue325-ledger-bootstrap
+2026-10-21T07:19:54.4909392Z  * [new branch]        codex/issue325-operator-custody          -> origin/codex/issue325-operator-custody
+2026-10-21T07:19:54.4910390Z  * [new branch]        codex/issue325-protected-resume          -> origin/codex/issue325-protected-resume
+2026-10-21T07:19:54.4911801Z  * [new branch]        codex/issue325-readonly-plan             -> origin/codex/issue325-readonly-plan
+2026-10-21T07:19:54.4912775Z  * [new branch]        codex/issue325-trial-stage1              -> origin/codex/issue325-trial-stage1
+2026-10-21T07:19:54.4913868Z  * [new branch]        codex/issue325-trial-stage2              -> origin/codex/issue325-trial-stage2
+2026-10-21T07:19:54.4915015Z  * [new branch]        codex/issue325-windows-exited-process    -> origin/codex/issue325-windows-exited-process
+2026-10-21T07:19:54.4916060Z  * [new branch]        codex/issue330-workspace-storage         -> origin/codex/issue330-workspace-storage
+2026-10-21T07:19:54.4917110Z  * [new branch]        codex/issue84-external-core              -> origin/codex/issue84-external-core
+2026-10-21T07:19:54.4918034Z  * [new branch]        codex/issue86-execution                  -> origin/codex/issue86-execution
+2026-10-21T07:19:54.4918913Z  * [new branch]        codex/issue87-usage                      -> origin/codex/issue87-usage
+2026-10-21T07:19:54.4919950Z  * [new branch]        codex/live-core-browser-acceptance       -> origin/codex/live-core-browser-acceptance
+2026-10-21T07:19:54.4921610Z  * [new branch]        codex/poc-consolidated-local-demo        -> origin/codex/poc-consolidated-local-demo
+2026-10-21T07:19:54.4922705Z  * [new branch]        compliance/attempt-recovery              -> origin/compliance/attempt-recovery
+2026-10-21T07:19:54.4923744Z  * [new branch]        delivery/direct-data-recovery-readmodel  -> origin/delivery/direct-data-recovery-readmodel
+2026-10-21T07:19:54.4924890Z  * [new branch]        docs/208-gold-pilot-acceptance           -> origin/docs/208-gold-pilot-acceptance
+2026-10-21T07:19:54.4925986Z  * [new branch]        docs/209-gold-architecture-baseline      -> origin/docs/209-gold-architecture-baseline
+2026-10-21T07:19:54.4927059Z  * [new branch]        docs/216-product-boundaries              -> origin/docs/216-product-boundaries
+2026-10-21T07:19:54.4927966Z  * [new branch]        docs/217-sync-gold-stage                 -> origin/docs/217-sync-gold-stage
+2026-10-21T07:19:54.4928913Z  * [new branch]        docs/certified-dataset-baseline          -> origin/docs/certified-dataset-baseline
+2026-10-21T07:19:54.4930171Z  * [new branch]        docs/certified-dataset-pilot-acceptance  -> origin/docs/certified-dataset-pilot-acceptance
+2026-10-21T07:19:54.4931996Z  * [new branch]        docs/data-ingestion-capability           -> origin/docs/data-ingestion-capability
+2026-10-21T07:19:54.4933139Z  * [new branch]        docs/full-lifecycle-governance-v2-20261010 -> origin/docs/full-lifecycle-governance-v2-20261010
+2026-10-21T07:19:54.4934247Z  * [new branch]        docs/issue298-b0-postgres-ingestion      -> origin/docs/issue298-b0-postgres-ingestion
+2026-10-21T07:19:54.4935219Z  * [new branch]        docs/mark-hqd4-complete                  -> origin/docs/mark-hqd4-complete
+2026-10-21T07:19:54.4936692Z  * [new branch]        docs/ndi-integration-boundary            -> origin/docs/ndi-integration-boundary
+2026-10-21T07:19:54.4938208Z  * [new branch]        docs/no-reinvent-wheel-policy            -> origin/docs/no-reinvent-wheel-policy
+2026-10-21T07:19:54.4939249Z  * [new branch]        docs/readme-acceptance-issue-refs        -> origin/docs/readme-acceptance-issue-refs
+2026-10-21T07:19:54.4940356Z  * [new branch]        docs/readme-lifecycle-current-main-20261013 -> origin/docs/readme-lifecycle-current-main-20261013
+2026-10-21T07:19:54.4941778Z  * [new branch]        docs/readme-status-20260922              -> origin/docs/readme-status-20260922
+2026-10-21T07:19:54.4942810Z  * [new branch]        docs/reconcile-certified-dataset-status  -> origin/docs/reconcile-certified-dataset-status
+2026-10-21T07:19:54.4943973Z  * [new branch]        docs/reference-capability-roadmap-20261020 -> origin/docs/reference-capability-roadmap-20261020
+2026-10-21T07:19:54.4945169Z  * [new branch]        docs/start-certified-dataset-pilot       -> origin/docs/start-certified-dataset-pilot
+2026-10-21T07:19:54.4946123Z  * [new branch]        docs/sync-gold-current-state             -> origin/docs/sync-gold-current-state
+2026-10-21T07:19:54.4947058Z  * [new branch]        docs/translate-docs-to-chinese           -> origin/docs/translate-docs-to-chinese
+2026-10-21T07:19:54.4948142Z  * [new branch]        feat/172-direct-data-delivery            -> origin/feat/172-direct-data-delivery
+2026-10-21T07:19:54.4949046Z  * [new branch]        feat/204-annotation-domain               -> origin/feat/204-annotation-domain
+2026-10-21T07:19:54.4949994Z  * [new branch]        feat/205-annotation-engine-labelstudio   -> origin/feat/205-annotation-engine-labelstudio
+2026-10-21T07:19:54.4951197Z  * [new branch]        feat/206-annotation-human-review-http    -> origin/feat/206-annotation-human-review-http
+2026-10-21T07:19:54.4952311Z  * [new branch]        feat/206-annotation-human-review-http-main -> origin/feat/206-annotation-human-review-http-main
+2026-10-21T07:19:54.4953319Z  * [new branch]        feat/206-gold-quality-preflight          -> origin/feat/206-gold-quality-preflight
+2026-10-21T07:19:54.4954251Z  * [new branch]        feat/207-gold-candidate-builder          -> origin/feat/207-gold-candidate-builder
+2026-10-21T07:19:54.4955156Z  * [new branch]        feat/207-gold-certification              -> origin/feat/207-gold-certification
+2026-10-21T07:19:54.4956019Z  * [new branch]        feat/207-gold-delivery-gate              -> origin/feat/207-gold-delivery-gate
+2026-10-21T07:19:54.4956885Z  * [new branch]        feat/207-gold-formal-quality             -> origin/feat/207-gold-formal-quality
+2026-10-21T07:19:54.4957799Z  * [new branch]        feat/207-gold-required-resources         -> origin/feat/207-gold-required-resources
+2026-10-21T07:19:54.4958770Z  * [new branch]        feat/208-gold-dataset-explainability     -> origin/feat/208-gold-dataset-explainability
+2026-10-21T07:19:54.4959749Z  * [new branch]        feat/208-gold-explanation-readmodel      -> origin/feat/208-gold-explanation-readmodel
+2026-10-21T07:19:54.4960662Z  * [new branch]        feat/208-gold-trace-summary              -> origin/feat/208-gold-trace-summary
+2026-10-21T07:19:54.4962459Z  * [new branch]        feat/208-live-gold-build-quality         -> origin/feat/208-live-gold-build-quality
+2026-10-21T07:19:54.4963407Z  * [new branch]        feat/208-live-gold-delivery              -> origin/feat/208-live-gold-delivery
+2026-10-21T07:19:54.4964659Z  * [new branch]        feat/208-live-labelstudio-core-result    -> origin/feat/208-live-labelstudio-core-result
+2026-10-21T07:19:54.4965733Z  * [new branch]        feat/208-live-labelstudio-core-results   -> origin/feat/208-live-labelstudio-core-results
+2026-10-21T07:19:54.4966726Z  * [new branch]        feat/208-live-labelstudio-runtime        -> origin/feat/208-live-labelstudio-runtime
+2026-10-21T07:19:54.4967719Z  * [new branch]        feat/214-request-principal-boundary      -> origin/feat/214-request-principal-boundary
+2026-10-21T07:19:54.4968669Z  * [new branch]        feat/222-gx-reference-adapter            -> origin/feat/222-gx-reference-adapter
+2026-10-21T07:19:54.4970241Z  * [new branch]        feat/222-quality-engine-port             -> origin/feat/222-quality-engine-port
+2026-10-21T07:19:54.4971907Z  * [new branch]        feat/poc-full-path-acceptance            -> origin/feat/poc-full-path-acceptance
+2026-10-21T07:19:54.4972863Z  * [new branch]        feat/poc-product-release-ui              -> origin/feat/poc-product-release-ui
+2026-10-21T07:19:54.4973755Z  * [new branch]        feat/poc-release-trace-ui                -> origin/feat/poc-release-trace-ui
+2026-10-21T07:19:54.4975047Z  * [new branch]        feat/poc-ui-actions-traceability         -> origin/feat/poc-ui-actions-traceability
+2026-10-21T07:19:54.4976465Z  * [new branch]        feat/poc-ui-read-models                  -> origin/feat/poc-ui-read-models
+2026-10-21T07:19:54.4977593Z  * [new branch]        feat/poc-web-console                     -> origin/feat/poc-web-console
+2026-10-21T07:19:54.4978453Z  * [new branch]        feat/sprint-0-foundation                 -> origin/feat/sprint-0-foundation
+2026-10-21T07:19:54.4979287Z  * [new branch]        feat/sprint-1-dataset                    -> origin/feat/sprint-1-dataset
+2026-10-21T07:19:54.4980105Z  * [new branch]        feat/sprint-1-entity                     -> origin/feat/sprint-1-entity
+2026-10-21T07:19:54.4981509Z  * [new branch]        feat/sprint-2-native-worker              -> origin/feat/sprint-2-native-worker
+2026-10-21T07:19:54.4982444Z  * [new branch]        feat/sprint-2-product-core               -> origin/feat/sprint-2-product-core
+2026-10-21T07:19:54.4983408Z  * [new branch]        feat/sprint-2-traceability-query         -> origin/feat/sprint-2-traceability-query
+2026-10-21T07:19:54.4984483Z  * [new branch]        feat/sprint-2-workflow-core              -> origin/feat/sprint-2-workflow-core
+2026-10-21T07:19:54.4985433Z  * [new branch]        feat/sprint-3-product-release-publish    -> origin/feat/sprint-3-product-release-publish
+2026-10-21T07:19:54.4986430Z  * [new branch]        feat/sprint-3-quality-compliance         -> origin/feat/sprint-3-quality-compliance
+2026-10-21T07:19:54.4987384Z  * [new branch]        feat/sprint-3-release-readiness          -> origin/feat/sprint-3-release-readiness
+2026-10-21T07:19:54.4988350Z  * [new branch]        feat/sprint-3-release-traceability       -> origin/feat/sprint-3-release-traceability
+2026-10-21T07:19:54.4989305Z  * [new branch]        feat/sprint-3-rights-contract            -> origin/feat/sprint-3-rights-contract
+2026-10-21T07:19:54.4990287Z  * [new branch]        feat/sprint-3-rights-lineage-coverage    -> origin/feat/sprint-3-rights-lineage-coverage
+2026-10-21T07:19:54.4991472Z  * [new branch]        feat/sprint-4-openmetadata-adapter       -> origin/feat/sprint-4-openmetadata-adapter
+2026-10-21T07:19:54.4992481Z  * [new branch]        feat/sprint-4-openmetadata-projection    -> origin/feat/sprint-4-openmetadata-projection
+2026-10-21T07:19:54.4993444Z  * [new branch]        feat/sprint-5-hop-reconcile              -> origin/feat/sprint-5-hop-reconcile
+2026-10-21T07:19:54.4994673Z  * [new branch]        feat/sprint-5-hop-transport              -> origin/feat/sprint-5-hop-transport
+2026-10-21T07:19:54.4996270Z  * [new branch]        feat/sprint-6-entity-evaluation          -> origin/feat/sprint-6-entity-evaluation
+2026-10-21T07:19:54.4997260Z  * [new branch]        feat/sprint-6-entity-resolution-spi      -> origin/feat/sprint-6-entity-resolution-spi
+2026-10-21T07:19:54.4998208Z  * [new branch]        feat/sprint-6-splink-adapter             -> origin/feat/sprint-6-splink-adapter
+2026-10-21T07:19:54.4999157Z  * [new branch]        fix/100-hop-submit-outcome-unknown       -> origin/fix/100-hop-submit-outcome-unknown
+2026-10-21T07:19:54.5000111Z  * [new branch]        fix/100-metadata-projection-cas          -> origin/fix/100-metadata-projection-cas
+2026-10-21T07:19:54.5001336Z  * [new branch]        fix/102-release-production-provenance    -> origin/fix/102-release-production-provenance
+2026-10-21T07:19:54.5002314Z  * [new branch]        fix/104-hop-adapter-boundary             -> origin/fix/104-hop-adapter-boundary
+2026-10-21T07:19:54.5003212Z  * [new branch]        fix/104-openmetadata-boundary            -> origin/fix/104-openmetadata-boundary
+2026-10-21T07:19:54.5004144Z  * [new branch]        fix/104-park-indicator-boundary          -> origin/fix/104-park-indicator-boundary
+2026-10-21T07:19:54.5005070Z  * [new branch]        fix/104-v1-contract-company-name         -> origin/fix/104-v1-contract-company-name
+2026-10-21T07:19:54.5005956Z  * [new branch]        fix/104-v1-output-contract               -> origin/fix/104-v1-output-contract
+2026-10-21T07:19:54.5006796Z  * [new branch]        fix/105-pagination-scope                 -> origin/fix/105-pagination-scope
+2026-10-21T07:19:54.5007790Z  * [new branch]        fix/107-eval-ground-truth                -> origin/fix/107-eval-ground-truth
+2026-10-21T07:19:54.5008702Z  * [new branch]        fix/111-explicit-entity-selection        -> origin/fix/111-explicit-entity-selection
+2026-10-21T07:19:54.5009696Z  * [new branch]        fix/161-certification-history-pagination -> origin/fix/161-certification-history-pagination
+2026-10-21T07:19:54.5010772Z  * [new branch]        fix/173-retry-profile-context            -> origin/fix/173-retry-profile-context
+2026-10-21T07:19:54.5012229Z  * [new branch]        fix/204-post-merge-blockers              -> origin/fix/204-post-merge-blockers
+2026-10-21T07:19:54.5013123Z  * [new branch]        fix/205-post-merge-closure               -> origin/fix/205-post-merge-closure
+2026-10-21T07:19:54.5014093Z  * [new branch]        fix/99-entity-mapping-decision-protection -> origin/fix/99-entity-mapping-decision-protection
+2026-10-21T07:19:54.5015136Z  * [new branch]        fix/99-freeze-dataset-version-lineage    -> origin/fix/99-freeze-dataset-version-lineage
+2026-10-21T07:19:54.5016155Z  * [new branch]        fix/99-freeze-product-release-membership -> origin/fix/99-freeze-product-release-membership
+2026-10-21T07:19:54.5017164Z  * [new branch]        fix/99-freeze-product-version-assets     -> origin/fix/99-freeze-product-version-assets
+2026-10-21T07:19:54.5018221Z  * [new branch]        fix/99-prove-rights-snapshot-release-binding -> origin/fix/99-prove-rights-snapshot-release-binding
+2026-10-21T07:19:54.5019388Z  * [new branch]        fix/99-remove-datasetversion-quality-projections -> origin/fix/99-remove-datasetversion-quality-projections
+2026-10-21T07:19:54.5020411Z  * [new branch]        fix/ambiguous-entity-match               -> origin/fix/ambiguous-entity-match
+2026-10-21T07:19:54.5021705Z  * [new branch]        fix/authorization-status-cas             -> origin/fix/authorization-status-cas
+2026-10-21T07:19:54.5022710Z  * [new branch]        fix/certified-dataset-pilot-p1-followup  -> origin/fix/certified-dataset-pilot-p1-followup
+2026-10-21T07:19:54.5023695Z  * [new branch]        fix/dataset-supersede-events             -> origin/fix/dataset-supersede-events
+2026-10-21T07:19:54.5024677Z  * [new branch]        fix/enterprise-activity-contract-output  -> origin/fix/enterprise-activity-contract-output
+2026-10-21T07:19:54.5025686Z  * [new branch]        fix/entity-match-failed-authority        -> origin/fix/entity-match-failed-authority
+2026-10-21T07:19:54.5026904Z  * [new branch]        fix/entity-match-finalize-idempotency    -> origin/fix/entity-match-finalize-idempotency
+2026-10-21T07:19:54.5027953Z  * [new branch]        fix/evidence-snapshot-membership-freeze  -> origin/fix/evidence-snapshot-membership-freeze
+2026-10-21T07:19:54.5028952Z  * [new branch]        fix/gold-preflight-ci-isolation          -> origin/fix/gold-preflight-ci-isolation
+2026-10-21T07:19:54.5029922Z  * [new branch]        fix/hqd-quality-acceptance-closeout      -> origin/fix/hqd-quality-acceptance-closeout
+2026-10-21T07:19:54.5031114Z  * [new branch]        fix/manual-upload-idempotency            -> origin/fix/manual-upload-idempotency
+2026-10-21T07:19:54.5032074Z  * [new branch]        fix/minio-public-registry-pin            -> origin/fix/minio-public-registry-pin
+2026-10-21T07:19:54.5032999Z  * [new branch]        fix/native-execution-recovery            -> origin/fix/native-execution-recovery
+2026-10-21T07:19:54.5033919Z  * [new branch]        fix/non-finite-numeric-guards            -> origin/fix/non-finite-numeric-guards
+2026-10-21T07:19:54.5034838Z  * [new branch]        fix/pilot-cost-audit-evidence            -> origin/fix/pilot-cost-audit-evidence
+2026-10-21T07:19:54.5035990Z  * [new branch]        fix/pilot-cost-traceability              -> origin/fix/pilot-cost-traceability
+2026-10-21T07:19:54.5037238Z  * [new branch]        fix/poc-release-readiness-browser        -> origin/fix/poc-release-readiness-browser
+2026-10-21T07:19:54.5038210Z  * [new branch]        fix/quarantine-replay-identity           -> origin/fix/quarantine-replay-identity
+2026-10-21T07:19:54.5039189Z  * [new branch]        fix/release-dataset-workspace-scope      -> origin/fix/release-dataset-workspace-scope
+2026-10-21T07:19:54.5040157Z  * [new branch]        fix/web-console-runtime-config           -> origin/fix/web-console-runtime-config
+2026-10-21T07:19:54.5041300Z  * [new branch]        fix/workspace-tenant-boundaries          -> origin/fix/workspace-tenant-boundaries
+2026-10-21T07:19:54.5042258Z  * [new branch]        infra/281-stage-contract-fks             -> origin/infra/281-stage-contract-fks
+2026-10-21T07:19:54.5043382Z  * [new branch]        infra/283-recheck-migration-after-lock   -> origin/infra/283-recheck-migration-after-lock
+2026-10-21T07:19:54.5044339Z  * [new branch]        infra/285-api-readiness                  -> origin/infra/285-api-readiness
+2026-10-21T07:19:54.5045194Z  * [new branch]        infra/287-exact-cost-amount              -> origin/infra/287-exact-cost-amount
+2026-10-21T07:19:54.5046065Z  * [new branch]        infra/289-push-range-smoke               -> origin/infra/289-push-range-smoke
+2026-10-21T07:19:54.5046928Z  * [new branch]        infra/291-exact-cost-write               -> origin/infra/291-exact-cost-write
+2026-10-21T07:19:54.5047689Z  * [new branch]        main                                     -> origin/main
+2026-10-21T07:19:54.5048508Z  * [new branch]        quality/attempt-status-readmodel         -> origin/quality/attempt-status-readmodel
+2026-10-21T07:19:54.5049526Z  * [new branch]        reliability/215-outbox-dead-letter-replay -> origin/reliability/215-outbox-dead-letter-replay
+2026-10-21T07:19:54.5050552Z  * [new branch]        test/172-direct-data-live-acceptance     -> origin/test/172-direct-data-live-acceptance
+2026-10-21T07:19:54.5051946Z  * [new branch]        test/208-live-gold-ui-browser            -> origin/test/208-live-gold-ui-browser
+2026-10-21T07:19:54.5052888Z  * [new branch]        test/208-shared-facts-live-gold          -> origin/test/208-shared-facts-live-gold
+2026-10-21T07:19:54.5053992Z  * [new branch]        test/certified-dataset-pilot-certification-failures -> origin/test/certified-dataset-pilot-certification-failures
+2026-10-21T07:19:54.5055186Z  * [new branch]        test/certified-dataset-pilot-current-facts -> origin/test/certified-dataset-pilot-current-facts
+2026-10-21T07:19:54.5056373Z  * [new branch]        test/certified-dataset-pilot-current-facts-complete -> origin/test/certified-dataset-pilot-current-facts-complete
+2026-10-21T07:19:54.5057731Z  * [new branch]        test/certified-dataset-pilot-happy-path  -> origin/test/certified-dataset-pilot-happy-path
+2026-10-21T07:19:54.5058815Z  * [new branch]        test/certified-dataset-pilot-success-path -> origin/test/certified-dataset-pilot-success-path
+2026-10-21T07:19:54.5059861Z  * [new branch]        test/pilot-browser-certified-dataset     -> origin/test/pilot-browser-certified-dataset
+2026-10-21T07:19:54.5061176Z  * [new branch]        test/pilot-certification-failures        -> origin/test/pilot-certification-failures
+2026-10-21T07:19:54.5062174Z  * [new branch]        test/pilot-certified-browser             -> origin/test/pilot-certified-browser
+2026-10-21T07:19:54.5063122Z  * [new branch]        test/pilot-context-mismatch              -> origin/test/pilot-context-mismatch
+2026-10-21T07:19:54.5064096Z  * [new branch]        test/pilot-delivery-fence-linearization  -> origin/test/pilot-delivery-fence-linearization
+2026-10-21T07:19:54.5065168Z  * [new branch]        test/pilot-direct-data-response-boundary -> origin/test/pilot-direct-data-response-boundary
+2026-10-21T07:19:54.5066196Z  * [new branch]        test/pilot-entity-quality-report         -> origin/test/pilot-entity-quality-report
+2026-10-21T07:19:54.5067112Z  * [new branch]        test/pilot-frozen-history                -> origin/test/pilot-frozen-history
+2026-10-21T07:19:54.5068042Z  * [new branch]        test/pilot-frozen-snapshot-tamper        -> origin/test/pilot-frozen-snapshot-tamper
+2026-10-21T07:19:54.5068999Z  * [new branch]        test/pilot-trusted-caller-http           -> origin/test/pilot-trusted-caller-http
+2026-10-21T07:19:54.5069966Z  * [new branch]        test/pilot-trusted-principal-http        -> origin/test/pilot-trusted-principal-http
+2026-10-21T07:19:54.5071104Z  * [new branch]        tmp/208-shared-facts-rebase              -> origin/tmp/208-shared-facts-rebase
+2026-10-21T07:19:54.5071954Z  * [new branch]        ui/attention-center                      -> origin/ui/attention-center
+2026-10-21T07:19:54.5072818Z  * [new branch]        ui/compliance-check-action               -> origin/ui/compliance-check-action
+2026-10-21T07:19:54.5073840Z  * [new branch]        ui/create-release-action                 -> origin/ui/create-release-action
+2026-10-21T07:19:54.5074694Z  * [new branch]        ui/dataset-core-links                    -> origin/ui/dataset-core-links
+2026-10-21T07:19:54.5075577Z  * [new branch]        ui/dataset-version-detail-tabs           -> origin/ui/dataset-version-detail-tabs
+2026-10-21T07:19:54.5076548Z  * [new branch]        ui/dataset-version-invalidate-action     -> origin/ui/dataset-version-invalidate-action
+2026-10-21T07:19:54.5077543Z  * [new branch]        ui/dataset-version-resource-links        -> origin/ui/dataset-version-resource-links
+2026-10-21T07:19:54.5078456Z  * [new branch]        ui/direct-data-delivery                  -> origin/ui/direct-data-delivery
+2026-10-21T07:19:54.5079423Z  * [new branch]        ui/evidence-workspace-release-readmodel  -> origin/ui/evidence-workspace-release-readmodel
+2026-10-21T07:19:54.5080456Z  * [new branch]        ui/execution-detail-core-alignment       -> origin/ui/execution-detail-core-alignment
+2026-10-21T07:19:54.5081627Z  * [new branch]        ui/execution-retry-action                -> origin/ui/execution-retry-action
+2026-10-21T07:19:54.5082543Z  * [new branch]        ui/product-release-pagination            -> origin/ui/product-release-pagination
+2026-10-21T07:19:54.5083445Z  * [new branch]        ui/quality-check-action                  -> origin/ui/quality-check-action
+2026-10-21T07:19:54.5084368Z  * [new branch]        ui/release-entity-version-links          -> origin/ui/release-entity-version-links
+2026-10-21T07:19:54.5085321Z  * [new branch]        ui/release-readiness-checklist           -> origin/ui/release-readiness-checklist
+2026-10-21T07:19:54.5086265Z  * [new branch]        ui/release-readiness-checklist-v2        -> origin/ui/release-readiness-checklist-v2
+2026-10-21T07:19:54.5087440Z  * [new branch]        ui/release-target-evidence-link          -> origin/ui/release-target-evidence-link
+2026-10-21T07:19:54.5088378Z  * [new branch]        ui/workbench-needs-attention             -> origin/ui/workbench-needs-attention
+2026-10-21T07:19:54.5089325Z  * [new tag]           evidence/issue307-pr323-reviewed-8b96cf35 -> evidence/issue307-pr323-reviewed-8b96cf35
+2026-10-21T07:19:54.5090167Z  * [new ref]           b66849d25f6c5b6048576c7119d34e26fb4a2d10 -> pull/332/merge
+2026-10-21T07:19:54.5092458Z ##[endgroup]
+2026-10-21T07:19:54.5093180Z ##[group]Determining the checkout info
+2026-10-21T07:19:54.5093896Z ##[endgroup]
+2026-10-21T07:19:54.5094475Z [command]/usr/bin/git sparse-checkout disable
+2026-10-21T07:19:54.5095643Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-21T07:19:54.5097025Z ##[group]Checking out the ref
+2026-10-21T07:19:54.5097652Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/332/merge
+2026-10-21T07:19:55.4548566Z Note: switching to 'refs/remotes/pull/332/merge'.
+2026-10-21T07:19:55.4549097Z 
+2026-10-21T07:19:55.4549471Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-21T07:19:55.4550322Z changes and commit them, and you can discard any commits you make in this
+2026-10-21T07:19:55.4551454Z state without impacting any branches by switching back to a branch.
+2026-10-21T07:19:55.4551943Z 
+2026-10-21T07:19:55.4552247Z If you want to create a new branch to retain commits you create, you may
+2026-10-21T07:19:55.4552992Z do so (now or later) by using -c with the switch command. Example:
+2026-10-21T07:19:55.4553411Z 
+2026-10-21T07:19:55.4553600Z   git switch -c <new-branch-name>
+2026-10-21T07:19:55.4553904Z 
+2026-10-21T07:19:55.4554089Z Or undo this operation with:
+2026-10-21T07:19:55.4554366Z 
+2026-10-21T07:19:55.4554524Z   git switch -
+2026-10-21T07:19:55.4554745Z 
+2026-10-21T07:19:55.4555139Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-21T07:19:55.4555683Z 
+2026-10-21T07:19:55.4556282Z HEAD is now at b66849d2 Merge cf1322e11466bab1fd5990786a1eb38e23744ff0 into 4b3652e3f3fe3885b0648c16a92c920efc6c905e
+2026-10-21T07:19:55.4595014Z ##[endgroup]
+2026-10-21T07:19:55.4646468Z [command]/usr/bin/git log -1 --format=%H
+2026-10-21T07:19:55.4675586Z b66849d25f6c5b6048576c7119d34e26fb4a2d10
+2026-10-21T07:19:55.4949467Z ##[group]Run actions/setup-node@v4
+2026-10-21T07:19:55.4949784Z with:
+2026-10-21T07:19:55.4949993Z   node-version: 22
+2026-10-21T07:19:55.4950210Z   always-auth: false
+2026-10-21T07:19:55.4950427Z   check-latest: false
+2026-10-21T07:19:55.4953125Z   token: ***
+2026-10-21T07:19:55.4953338Z env:
+2026-10-21T07:19:55.4953525Z   CI: true
+2026-10-21T07:19:55.4953741Z ##[endgroup]
+2026-10-21T07:19:55.6588516Z Found in cache @ /opt/hostedtoolcache/node/22.23.3/x64
+2026-10-21T07:19:55.6593046Z (node:2331) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-21T07:19:55.6594340Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-21T07:19:55.6596637Z ##[group]Environment details
+2026-10-21T07:19:58.2473722Z node: v22.23.3
+2026-10-21T07:19:58.2474016Z npm: 10.9.9
+2026-10-21T07:19:58.2474332Z yarn: 1.22.22
+2026-10-21T07:19:58.2475464Z ##[endgroup]
+2026-10-21T07:19:58.2608351Z ##[group]Run node --test deploy/demo/demo.test.mjs
+2026-10-21T07:19:58.2608787Z [36;1mnode --test deploy/demo/demo.test.mjs[0m
+2026-10-21T07:19:58.2908664Z shell: /usr/bin/bash -e {0}
+2026-10-21T07:19:58.2908981Z env:
+2026-10-21T07:19:58.2909206Z   CI: true
+2026-10-21T07:19:58.2909421Z ##[endgroup]
+2026-10-21T07:19:58.3675748Z TAP version 13
+2026-10-21T07:19:58.4154571Z # Subtest: accept only exact up
+2026-10-21T07:19:58.4159316Z ok 1 - accept only exact up
+2026-10-21T07:19:58.4160293Z   ---
+2026-10-21T07:19:58.4160733Z   duration_ms: 1.179394
+2026-10-21T07:19:58.4161692Z   type: 'test'
+2026-10-21T07:19:58.4162150Z   ...
+2026-10-21T07:19:58.4166451Z # Subtest: accept only exact down
+2026-10-21T07:19:58.4168227Z ok 2 - accept only exact down
+2026-10-21T07:19:58.4169045Z   ---
+2026-10-21T07:19:58.4169434Z   duration_ms: 0.181118
+2026-10-21T07:19:58.4169889Z   type: 'test'
+2026-10-21T07:19:58.4170269Z   ...
+2026-10-21T07:19:58.4171238Z # Subtest: accept only exact advance
+2026-10-21T07:19:58.4173855Z ok 3 - accept only exact advance
+2026-10-21T07:19:58.4175251Z   ---
+2026-10-21T07:19:58.4175641Z   duration_ms: 0.099065
+2026-10-21T07:19:58.4176085Z   type: 'test'
+2026-10-21T07:19:58.4176478Z   ...
+2026-10-21T07:19:58.4177053Z # Subtest: accept only exact status
+2026-10-21T07:19:58.4178370Z ok 4 - accept only exact status
+2026-10-21T07:19:58.4179106Z   ---
+2026-10-21T07:19:58.4179539Z   duration_ms: 0.099045
+2026-10-21T07:19:58.4179983Z   type: 'test'
+2026-10-21T07:19:58.4180351Z   ...
+2026-10-21T07:19:58.4184967Z # Subtest: accept only exact verify
+2026-10-21T07:19:58.4186729Z ok 5 - accept only exact verify
+2026-10-21T07:19:58.4187386Z   ---
+2026-10-21T07:19:58.4187890Z   duration_ms: 0.105647
+2026-10-21T07:19:58.4188475Z   type: 'test'
+2026-10-21T07:19:58.4188874Z   ...
+2026-10-21T07:19:58.4190091Z # Subtest: accept only exact logs
+2026-10-21T07:19:58.4192807Z ok 6 - accept only exact logs
+2026-10-21T07:19:58.4193575Z   ---
+2026-10-21T07:19:58.4193979Z   duration_ms: 0.1177
+2026-10-21T07:19:58.4194425Z   type: 'test'
+2026-10-21T07:19:58.4194802Z   ...
+2026-10-21T07:19:58.4205822Z # Subtest: accept only exact doctor
+2026-10-21T07:19:58.4212391Z ok 7 - accept only exact doctor
+2026-10-21T07:19:58.4213073Z   ---
+2026-10-21T07:19:58.4213600Z   duration_ms: 0.08573
+2026-10-21T07:19:58.4214165Z   type: 'test'
+2026-10-21T07:19:58.4214689Z   ...
+2026-10-21T07:19:58.4215218Z # Subtest: reject unsafe/ambiguous []
+2026-10-21T07:19:58.4215816Z ok 8 - reject unsafe/ambiguous []
+2026-10-21T07:19:58.4216277Z   ---
+2026-10-21T07:19:58.4216651Z   duration_ms: 0.280764
+2026-10-21T07:19:58.4217059Z   type: 'test'
+2026-10-21T07:19:58.4217426Z   ...
+2026-10-21T07:19:58.4218122Z # Subtest: reject unsafe/ambiguous ["reset"]
+2026-10-21T07:19:58.4219307Z ok 9 - reject unsafe/ambiguous ["reset"]
+2026-10-21T07:19:58.4219892Z   ---
+2026-10-21T07:19:58.4220516Z   duration_ms: 0.302024
+2026-10-21T07:19:58.4221306Z   type: 'test'
+2026-10-21T07:19:58.4221916Z   ...
+2026-10-21T07:19:58.4222583Z # Subtest: reject unsafe/ambiguous ["reset","--yes"]
+2026-10-21T07:19:58.4223422Z ok 10 - reject unsafe/ambiguous ["reset","--yes"]
+2026-10-21T07:19:58.4224181Z   ---
+2026-10-21T07:19:58.4224757Z   duration_ms: 0.350906
+2026-10-21T07:19:58.4225350Z   type: 'test'
+2026-10-21T07:19:58.4225923Z   ...
+2026-10-21T07:19:58.4228883Z # Subtest: reject unsafe/ambiguous ["up","--host=remote"]
+2026-10-21T07:19:58.4230360Z ok 11 - reject unsafe/ambiguous ["up","--host=remote"]
+2026-10-21T07:19:58.4231428Z   ---
+2026-10-21T07:19:58.4231820Z   duration_ms: 0.211776
+2026-10-21T07:19:58.4232258Z   type: 'test'
+2026-10-21T07:19:58.4232631Z   ...
+2026-10-21T07:19:58.4233733Z # Subtest: reject unsafe/ambiguous ["down","--volumes"]
+2026-10-21T07:19:58.4235130Z ok 12 - reject unsafe/ambiguous ["down","--volumes"]
+2026-10-21T07:19:58.4236255Z   ---
+2026-10-21T07:19:58.4236657Z   duration_ms: 0.088626
+2026-10-21T07:19:58.4237093Z   type: 'test'
+2026-10-21T07:19:58.4237469Z   ...
+2026-10-21T07:19:58.4238606Z # Subtest: reject unsafe/ambiguous ["up;rm -rf /"]
+2026-10-21T07:19:58.4239631Z ok 13 - reject unsafe/ambiguous ["up;rm -rf /"]
+2026-10-21T07:19:58.4240365Z   ---
+2026-10-21T07:19:58.4241160Z   duration_ms: 0.072246
+2026-10-21T07:19:58.4241792Z   type: 'test'
+2026-10-21T07:19:58.4242348Z   ...
+2026-10-21T07:19:58.4243065Z # Subtest: reject unsafe/ambiguous ["status","extra"]
+2026-10-21T07:19:58.4244011Z ok 14 - reject unsafe/ambiguous ["status","extra"]
+2026-10-21T07:19:58.4244738Z   ---
+2026-10-21T07:19:58.4245269Z   duration_ms: 0.071494
+2026-10-21T07:19:58.4245884Z   type: 'test'
+2026-10-21T07:19:58.4246403Z   ...
+2026-10-21T07:19:58.4247107Z # Subtest: reset needs exact explicit confirmation
+2026-10-21T07:19:58.4248070Z ok 15 - reset needs exact explicit confirmation
+2026-10-21T07:19:58.4249147Z   ---
+2026-10-21T07:19:58.4249813Z   duration_ms: 0.084328
+2026-10-21T07:19:58.4250431Z   type: 'test'
+2026-10-21T07:19:58.4251254Z   ...
+2026-10-21T07:19:58.4252228Z # Subtest: project is stable within a checkout and separate across paths
+2026-10-21T07:19:58.4253236Z ok 16 - project is stable within a checkout and separate across paths
+2026-10-21T07:19:58.4253608Z   ---
+2026-10-21T07:19:58.4253810Z   duration_ms: 0.985692
+2026-10-21T07:19:58.4254043Z   type: 'test'
+2026-10-21T07:19:58.4254235Z   ...
+2026-10-21T07:19:58.4254546Z # Subtest: allow local unix:///var/run/docker.sock
+2026-10-21T07:19:58.4254962Z ok 17 - allow local unix:///var/run/docker.sock
+2026-10-21T07:19:58.4255251Z   ---
+2026-10-21T07:19:58.4255447Z   duration_ms: 0.134542
+2026-10-21T07:19:58.4255681Z   type: 'test'
+2026-10-21T07:19:58.4255876Z   ...
+2026-10-21T07:19:58.4257807Z # Subtest: allow local npipe:////./pipe/docker_engine
+2026-10-21T07:19:58.4258540Z ok 18 - allow local npipe:////./pipe/docker_engine
+2026-10-21T07:19:58.4259065Z   ---
+2026-10-21T07:19:58.4259407Z   duration_ms: 0.094576
+2026-10-21T07:19:58.4259780Z   type: 'test'
+2026-10-21T07:19:58.4260098Z   ...
+2026-10-21T07:19:58.4261177Z # Subtest: refuse remote or unsupported null
+2026-10-21T07:19:58.4262795Z ok 19 - refuse remote or unsupported null
+2026-10-21T07:19:58.4263310Z   ---
+2026-10-21T07:19:58.4263643Z   duration_ms: 0.078757
+2026-10-21T07:19:58.4264015Z   type: 'test'
+2026-10-21T07:19:58.4272070Z   ...
+2026-10-21T07:19:58.4272745Z # Subtest: refuse remote or unsupported ssh://prod
+2026-10-21T07:19:58.4273639Z ok 20 - refuse remote or unsupported ssh://prod
+2026-10-21T07:19:58.4274294Z   ---
+2026-10-21T07:19:58.4274662Z   duration_ms: 0.08576
+2026-10-21T07:19:58.4275131Z   type: 'test'
+2026-10-21T07:19:58.4300951Z   ...
+2026-10-21T07:19:58.4312085Z # Subtest: refuse remote or unsupported tcp://prod:2375
+2026-10-21T07:19:58.4312935Z ok 21 - refuse remote or unsupported tcp://prod:2375
+2026-10-21T07:19:58.4313542Z   ---
+2026-10-21T07:19:58.4313923Z   duration_ms: 0.052648
+2026-10-21T07:19:58.4314326Z   type: 'test'
+2026-10-21T07:19:58.4314680Z   ...
+2026-10-21T07:19:58.4315286Z # Subtest: refuse remote or unsupported tcp://127.0.0.1:2375
+2026-10-21T07:19:58.4316090Z ok 22 - refuse remote or unsupported tcp://127.0.0.1:2375
+2026-10-21T07:19:58.4316529Z   ---
+2026-10-21T07:19:58.4316734Z   duration_ms: 0.051897
+2026-10-21T07:19:58.4316972Z   type: 'test'
+2026-10-21T07:19:58.4317175Z   ...
+2026-10-21T07:19:58.4317485Z # Subtest: refuse remote or unsupported https://prod
+2026-10-21T07:19:58.4317919Z ok 23 - refuse remote or unsupported https://prod
+2026-10-21T07:19:58.4318218Z   ---
+2026-10-21T07:19:58.4318424Z   duration_ms: 0.047278
+2026-10-21T07:19:58.4318652Z   type: 'test'
+2026-10-21T07:19:58.4318845Z   ...
+2026-10-21T07:19:58.4319102Z # Subtest: refuse remote or unsupported 
+2026-10-21T07:19:58.4319439Z ok 24 - refuse remote or unsupported 
+2026-10-21T07:19:58.4319719Z   ---
+2026-10-21T07:19:58.4319921Z   duration_ms: 0.047329
+2026-10-21T07:19:58.4320142Z   type: 'test'
+2026-10-21T07:19:58.4320334Z   ...
+2026-10-21T07:19:58.4409672Z 1..24
+2026-10-21T07:19:58.4410065Z # tests 24
+2026-10-21T07:19:58.4410698Z # suites 0
+2026-10-21T07:19:58.4411698Z # pass 24
+2026-10-21T07:19:58.4412421Z # fail 0
+2026-10-21T07:19:58.4413663Z # cancelled 0
+2026-10-21T07:19:58.4414116Z # skipped 0
+2026-10-21T07:19:58.4414560Z # todo 0
+2026-10-21T07:19:58.4414796Z # duration_ms 98.066969
+2026-10-21T07:19:58.4504475Z ##[group]Run python3 -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v
+2026-10-21T07:19:58.4505256Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v[0m
+2026-10-21T07:19:58.4505894Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v[0m
+2026-10-21T07:19:58.4506572Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_delete_preflight.py -v[0m
+2026-10-21T07:19:58.4507277Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_delete_preflight.py -v[0m
+2026-10-21T07:19:58.4508141Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_disposal_preparation.py -v[0m
+2026-10-21T07:19:58.4508852Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_disposal_preparation.py -v[0m
+2026-10-21T07:19:58.4509586Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_native_d1_completion.py -v[0m
+2026-10-21T07:19:58.4510245Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_native_d1_completion.py -v[0m
+2026-10-21T07:19:58.4511228Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_lc13_readonly.py -v[0m
+2026-10-21T07:19:58.4512146Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_lc13_readonly.py -v[0m
+2026-10-21T07:19:58.4512756Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v[0m
+2026-10-21T07:19:58.4513403Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v[0m
+2026-10-21T07:19:58.4514055Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05.py -v[0m
+2026-10-21T07:19:58.4514700Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05.py -v[0m
+2026-10-21T07:19:58.4515366Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_check.py -v[0m
+2026-10-21T07:19:58.4516054Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_check.py -v[0m
+2026-10-21T07:19:58.4516745Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_history.py -v[0m
+2026-10-21T07:19:58.4517436Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_history.py -v[0m
+2026-10-21T07:19:58.4518058Z [36;1mpython3 examples/lifecycle-d1/check-reference-candidate05-history.py[0m
+2026-10-21T07:19:58.4518560Z [36;1mpython3 examples/lifecycle-d1/check-remaining-v16-history.py[0m
+2026-10-21T07:19:58.4519005Z [36;1mpython3 .github/scripts/check-lifecycle307-history.py[0m
+2026-10-21T07:19:58.4519510Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_remaining_window.py -v[0m
+2026-10-21T07:19:58.4520115Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_remaining_window.py -v[0m
+2026-10-21T07:19:58.4521036Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_freeze_remaining_executable.py -v[0m
+2026-10-21T07:19:58.4521770Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_freeze_remaining_executable.py -v[0m
+2026-10-21T07:19:58.4522444Z [36;1mpython3 -m unittest discover -s examples/lifecycle-d1 -p test_verify_remaining_native.py -v[0m
+2026-10-21T07:19:58.4523107Z [36;1mpython3 -O -m unittest discover -s examples/lifecycle-d1 -p test_verify_remaining_native.py -v[0m
+2026-10-21T07:19:58.4523700Z [36;1mpython3 -B examples/lifecycle-d1/test_complete_remaining_preflight.py[0m
+2026-10-21T07:19:58.4524224Z [36;1mpython3 -O -B examples/lifecycle-d1/test_complete_remaining_preflight.py[0m
+2026-10-21T07:19:58.4524715Z [36;1mpython3 -B examples/lifecycle-d1/test_p1_post_v22_readonly.py[0m
+2026-10-21T07:19:58.4525174Z [36;1mpython3 -O -B examples/lifecycle-d1/test_p1_post_v22_readonly.py[0m
+2026-10-21T07:19:58.4525845Z [36;1mpython3 -B examples/lifecycle-d1/test_old_business_dispatch_closure.py[0m
+2026-10-21T07:19:58.4526368Z [36;1mpython3 -O -B examples/lifecycle-d1/test_old_business_dispatch_closure.py[0m
+2026-10-21T07:19:58.4526855Z [36;1mpython3 -B examples/lifecycle-d1/test_post_v22_seventeen.py[0m
+2026-10-21T07:19:58.4527295Z [36;1mpython3 -O -B examples/lifecycle-d1/test_post_v22_seventeen.py[0m
+2026-10-21T07:19:58.4527731Z [36;1mpython3 -B examples/lifecycle-d1/test_remaining_sequence.py[0m
+2026-10-21T07:19:58.4528163Z [36;1mpython3 -O -B examples/lifecycle-d1/test_remaining_sequence.py[0m
+2026-10-21T07:19:58.4528725Z [36;1mpython3 -B examples/lifecycle-d1/test_remaining_six_window.py[0m
+2026-10-21T07:19:58.4529173Z [36;1mpython3 -O -B examples/lifecycle-d1/test_remaining_six_window.py[0m
+2026-10-21T07:19:58.4529630Z [36;1mpython3 -B examples/lifecycle-d1/test_six_candidate_runtime.py[0m
+2026-10-21T07:19:58.4530085Z [36;1mpython3 -O -B examples/lifecycle-d1/test_six_candidate_runtime.py[0m
+2026-10-21T07:19:58.4530546Z [36;1mpython3 -B examples/lifecycle-d1/test_freeze_six_candidate.py[0m
+2026-10-21T07:19:58.4531298Z [36;1mpython3 -O -B examples/lifecycle-d1/test_freeze_six_candidate.py[0m
+2026-10-21T07:19:58.4531746Z [36;1mpython3 -B examples/lifecycle-d1/test_window_six_support.py[0m
+2026-10-21T07:19:58.4532187Z [36;1mpython3 -O -B examples/lifecycle-d1/test_window_six_support.py[0m
+2026-10-21T07:19:58.4532620Z [36;1mpython3 -B examples/lifecycle-d1/test_verify_six_native.py[0m
+2026-10-21T07:19:58.4533050Z [36;1mpython3 -O -B examples/lifecycle-d1/test_verify_six_native.py[0m
+2026-10-21T07:19:58.4533484Z [36;1mpython3 -B examples/lifecycle-d1/test_evidence_indexes.py[0m
+2026-10-21T07:19:58.4533912Z [36;1mpython3 -O -B examples/lifecycle-d1/test_evidence_indexes.py[0m
+2026-10-21T07:19:58.4534340Z [36;1mpython3 -B examples/lifecycle-d1/test_six_native_entry.py[0m
+2026-10-21T07:19:58.4534761Z [36;1mpython3 -O -B examples/lifecycle-d1/test_six_native_entry.py[0m
+2026-10-21T07:19:58.4535187Z [36;1mpython3 -B examples/lifecycle-d1/test_retained_v26.py[0m
+2026-10-21T07:19:58.4535592Z [36;1mpython3 -O -B examples/lifecycle-d1/test_retained_v26.py[0m
+2026-10-21T07:19:58.4602682Z shell: /usr/bin/bash -e {0}
+2026-10-21T07:19:58.4602936Z env:
+2026-10-21T07:19:58.4603115Z   CI: true
+2026-10-21T07:19:58.4603304Z ##[endgroup]
+2026-10-21T07:19:58.7103873Z test_bad_backup_and_prior_attempt_cannot_prepare_authority (test_confirmed_race.DriverBoundaryTests.test_bad_backup_and_prior_attempt_cannot_prepare_authority) ... ok
+2026-10-21T07:19:58.7117766Z test_bad_confirmation_rejects_before_private_reads_or_io (test_confirmed_race.DriverBoundaryTests.test_bad_confirmation_rejects_before_private_reads_or_io) ... ok
+2026-10-21T07:19:58.7183511Z test_expected_process_loss_reseals_delete_route_before_return (test_confirmed_race.DriverBoundaryTests.test_expected_process_loss_reseals_delete_route_before_return) ... ok
+2026-10-21T07:19:58.7288339Z test_expired_or_disabled_authority_never_changes_gateway (test_confirmed_race.DriverBoundaryTests.test_expired_or_disabled_authority_never_changes_gateway) ... ok
+2026-10-21T07:19:58.7321666Z test_failed_helper_closes_all_object_and_admin_routes (test_confirmed_race.DriverBoundaryTests.test_failed_helper_closes_all_object_and_admin_routes) ... ok
+2026-10-21T07:20:13.0315896Z test_optimized_interpreter_enforces_confirmation_and_consumed_scope (test_confirmed_race.DriverBoundaryTests.test_optimized_interpreter_enforces_confirmation_and_consumed_scope) ... ok
+2026-10-21T07:20:13.0359038Z test_recovery_preflights_before_launch_without_opening_routes (test_confirmed_race.DriverBoundaryTests.test_recovery_preflights_before_launch_without_opening_routes) ... ok
+2026-10-21T07:20:13.0605182Z test_runtime_topology_and_schema_rejections_cannot_open_gateway (test_confirmed_race.DriverBoundaryTests.test_runtime_topology_and_schema_rejections_cannot_open_gateway) ... ok
+2026-10-21T07:20:13.0647872Z test_sealed_scope_all_phases_reject_before_private_reads_or_io (test_confirmed_race.DriverBoundaryTests.test_sealed_scope_all_phases_reject_before_private_reads_or_io) ... ok
+2026-10-21T07:20:13.0648892Z 
+2026-10-21T07:20:13.0649502Z ----------------------------------------------------------------------
+2026-10-21T07:20:13.0650128Z Ran 9 tests in 14.359s
+2026-10-21T07:20:13.0650396Z 
+2026-10-21T07:20:13.0650578Z OK
+2026-10-21T07:20:13.9712673Z test_bad_backup_and_prior_attempt_cannot_prepare_authority (test_confirmed_race.DriverBoundaryTests.test_bad_backup_and_prior_attempt_cannot_prepare_authority) ... ok
+2026-10-21T07:20:13.9725342Z test_bad_confirmation_rejects_before_private_reads_or_io (test_confirmed_race.DriverBoundaryTests.test_bad_confirmation_rejects_before_private_reads_or_io) ... ok
+2026-10-21T07:20:13.9775000Z test_expected_process_loss_reseals_delete_route_before_return (test_confirmed_race.DriverBoundaryTests.test_expected_process_loss_reseals_delete_route_before_return) ... ok
+2026-10-21T07:20:13.9871036Z test_expired_or_disabled_authority_never_changes_gateway (test_confirmed_race.DriverBoundaryTests.test_expired_or_disabled_authority_never_changes_gateway) ... ok
+2026-10-21T07:20:13.9902787Z test_failed_helper_closes_all_object_and_admin_routes (test_confirmed_race.DriverBoundaryTests.test_failed_helper_closes_all_object_and_admin_routes) ... ok
+2026-10-21T07:20:27.5374568Z test_optimized_interpreter_enforces_confirmation_and_consumed_scope (test_confirmed_race.DriverBoundaryTests.test_optimized_interpreter_enforces_confirmation_and_consumed_scope) ... ok
+2026-10-21T07:20:27.5409137Z test_recovery_preflights_before_launch_without_opening_routes (test_confirmed_race.DriverBoundaryTests.test_recovery_preflights_before_launch_without_opening_routes) ... ok
+2026-10-21T07:20:27.5662701Z test_runtime_topology_and_schema_rejections_cannot_open_gateway (test_confirmed_race.DriverBoundaryTests.test_runtime_topology_and_schema_rejections_cannot_open_gateway) ... ok
+2026-10-21T07:20:27.5706526Z test_sealed_scope_all_phases_reject_before_private_reads_or_io (test_confirmed_race.DriverBoundaryTests.test_sealed_scope_all_phases_reject_before_private_reads_or_io) ... ok
+2026-10-21T07:20:27.5707430Z 
+2026-10-21T07:20:27.5707744Z ----------------------------------------------------------------------
+2026-10-21T07:20:27.5708222Z Ran 9 tests in 13.603s
+2026-10-21T07:20:27.5708410Z 
+2026-10-21T07:20:27.5708519Z OK
+2026-10-21T07:20:27.6756787Z test_changed_script_is_not_trusted_executor (test_reference_delete_preflight.ClosedReferencePreflight.test_changed_script_is_not_trusted_executor) ... ok
+2026-10-21T07:20:27.6788318Z test_cli_cannot_enable_or_execute_deletion (test_reference_delete_preflight.ClosedReferencePreflight.test_cli_cannot_enable_or_execute_deletion) ... ok
+2026-10-21T07:20:27.6833155Z test_exact_scope_cannot_expand_or_change (test_reference_delete_preflight.ClosedReferencePreflight.test_exact_scope_cannot_expand_or_change) ... ok
+2026-10-21T07:20:27.6842255Z test_known_closed_trial_is_candidate_only (test_reference_delete_preflight.ClosedReferencePreflight.test_known_closed_trial_is_candidate_only) ... ok
+2026-10-21T07:20:27.6931570Z test_no_claim_alone_never_proves_no_send (test_reference_delete_preflight.ClosedReferencePreflight.test_no_claim_alone_never_proves_no_send) ... ok
+2026-10-21T07:20:27.6951323Z test_working_input_cannot_replace_pinned_manifest_or_sql (test_reference_delete_preflight.ClosedReferencePreflight.test_working_input_cannot_replace_pinned_manifest_or_sql) ... ok
+2026-10-21T07:20:27.6952837Z 
+2026-10-21T07:20:27.6953273Z ----------------------------------------------------------------------
+2026-10-21T07:20:27.6954018Z Ran 6 tests in 0.027s
+2026-10-21T07:20:27.6954257Z 
+2026-10-21T07:20:27.6954440Z OK
+2026-10-21T07:20:28.1339689Z test_changed_script_is_not_trusted_executor (test_reference_delete_preflight.ClosedReferencePreflight.test_changed_script_is_not_trusted_executor) ... ok
+2026-10-21T07:20:28.1380647Z test_cli_cannot_enable_or_execute_deletion (test_reference_delete_preflight.ClosedReferencePreflight.test_cli_cannot_enable_or_execute_deletion) ... ok
+2026-10-21T07:20:28.1426286Z test_exact_scope_cannot_expand_or_change (test_reference_delete_preflight.ClosedReferencePreflight.test_exact_scope_cannot_expand_or_change) ... ok
+2026-10-21T07:20:28.1434731Z test_known_closed_trial_is_candidate_only (test_reference_delete_preflight.ClosedReferencePreflight.test_known_closed_trial_is_candidate_only) ... ok
+2026-10-21T07:20:28.1524785Z test_no_claim_alone_never_proves_no_send (test_reference_delete_preflight.ClosedReferencePreflight.test_no_claim_alone_never_proves_no_send) ... ok
+2026-10-21T07:20:28.1540224Z test_working_input_cannot_replace_pinned_manifest_or_sql (test_reference_delete_preflight.ClosedReferencePreflight.test_working_input_cannot_replace_pinned_manifest_or_sql) ... ok
+2026-10-21T07:20:28.1541791Z 
+2026-10-21T07:20:28.1542114Z ----------------------------------------------------------------------
+2026-10-21T07:20:28.1542588Z Ran 6 tests in 0.022s
+2026-10-21T07:20:28.1542770Z 
+2026-10-21T07:20:28.1542878Z OK
+2026-10-21T07:20:28.2484640Z test_authorization_check_survives_optimized_python (test_reference_disposal_preparation.PreparationSafety.test_authorization_check_survives_optimized_python) ... ok
+2026-10-21T07:20:28.2495155Z test_destructive_and_expanded_arguments_fail_before_any_io (test_reference_disposal_preparation.PreparationSafety.test_destructive_and_expanded_arguments_fail_before_any_io) ... usage: prepare [-h]
+2026-10-21T07:20:28.2497239Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.2500222Z prepare: error: argument phase: invalid choice: 'execute' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.2502120Z usage: prepare [-h]
+2026-10-21T07:20:28.2503341Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.2506364Z prepare: error: argument phase: invalid choice: 'provision' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.2507630Z usage: prepare [-h]
+2026-10-21T07:20:28.2508733Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.2511887Z prepare: error: argument phase: invalid choice: 'enable' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.2513141Z usage: prepare [-h]
+2026-10-21T07:20:28.2514277Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.2516737Z prepare: error: argument phase: invalid choice: 'cleanup' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.2518017Z usage: prepare [-h]
+2026-10-21T07:20:28.2518917Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.2519951Z prepare: error: unrecognized arguments: --human-confirmed
+2026-10-21T07:20:28.2522243Z usage: prepare [-h]
+2026-10-21T07:20:28.2523777Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.2524813Z prepare: error: unrecognized arguments: --target foreign
+2026-10-21T07:20:28.2527344Z usage: prepare [-h]
+2026-10-21T07:20:28.2529060Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.2531063Z prepare: error: unrecognized arguments: --release foreign
+2026-10-21T07:20:28.2531711Z ok
+2026-10-21T07:20:28.2533531Z test_frozen_source_topology_input_cannot_be_redefined_by_working_files (test_reference_disposal_preparation.PreparationSafety.test_frozen_source_topology_input_cannot_be_redefined_by_working_files) ... ok
+2026-10-21T07:20:28.2562444Z test_render_keeps_strict_config_path_and_private_output_mount (test_reference_disposal_preparation.PreparationSafety.test_render_keeps_strict_config_path_and_private_output_mount) ... ok
+2026-10-21T07:20:28.2563197Z 
+2026-10-21T07:20:28.2563456Z ----------------------------------------------------------------------
+2026-10-21T07:20:28.2563819Z Ran 4 tests in 0.008s
+2026-10-21T07:20:28.2563971Z 
+2026-10-21T07:20:28.2564055Z OK
+2026-10-21T07:20:28.6919784Z test_authorization_check_survives_optimized_python (test_reference_disposal_preparation.PreparationSafety.test_authorization_check_survives_optimized_python) ... ok
+2026-10-21T07:20:28.6931142Z test_destructive_and_expanded_arguments_fail_before_any_io (test_reference_disposal_preparation.PreparationSafety.test_destructive_and_expanded_arguments_fail_before_any_io) ... usage: prepare [-h]
+2026-10-21T07:20:28.6933236Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.6936391Z prepare: error: argument phase: invalid choice: 'execute' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.6938550Z usage: prepare [-h]
+2026-10-21T07:20:28.6940469Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.6943553Z prepare: error: argument phase: invalid choice: 'provision' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.6953600Z usage: prepare [-h]
+2026-10-21T07:20:28.6955232Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.6958112Z prepare: error: argument phase: invalid choice: 'enable' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.6959578Z usage: prepare [-h]
+2026-10-21T07:20:28.6961365Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.6963981Z prepare: error: argument phase: invalid choice: 'cleanup' (choose from 'build', 'build-revision', 'render', 'render02', 'rehearse', 'rehearse02', 'no-send', 'no-send-replay', 'native-before', 'native-snapshot', 'native-restored', 'native-after', 'core-refresh', 'seal')
+2026-10-21T07:20:28.6965683Z usage: prepare [-h]
+2026-10-21T07:20:28.6967263Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.6968806Z prepare: error: unrecognized arguments: --human-confirmed
+2026-10-21T07:20:28.6969901Z usage: prepare [-h]
+2026-10-21T07:20:28.6971468Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.6972464Z prepare: error: unrecognized arguments: --target foreign
+2026-10-21T07:20:28.6974942Z usage: prepare [-h]
+2026-10-21T07:20:28.7003112Z                {build,build-revision,render,render02,rehearse,rehearse02,no-send,no-send-replay,native-before,native-snapshot,native-restored,native-after,core-refresh,seal}
+2026-10-21T07:20:28.7005435Z prepare: error: unrecognized arguments: --release foreign
+2026-10-21T07:20:28.7006117Z ok
+2026-10-21T07:20:28.7007328Z test_frozen_source_topology_input_cannot_be_redefined_by_working_files (test_reference_disposal_preparation.PreparationSafety.test_frozen_source_topology_input_cannot_be_redefined_by_working_files) ... ok
+2026-10-21T07:20:28.7010420Z test_render_keeps_strict_config_path_and_private_output_mount (test_reference_disposal_preparation.PreparationSafety.test_render_keeps_strict_config_path_and_private_output_mount) ... ok
+2026-10-21T07:20:28.7012179Z 
+2026-10-21T07:20:28.7012675Z ----------------------------------------------------------------------
+2026-10-21T07:20:28.7013406Z Ran 4 tests in 0.009s
+2026-10-21T07:20:28.7013679Z 
+2026-10-21T07:20:28.7013793Z OK
+2026-10-21T07:20:28.7998163Z test_changed_service_identity_image_owner_state_or_port_rejected (test_native_d1_completion.CompletionSafety.test_changed_service_identity_image_owner_state_or_port_rejected) ... ok
+2026-10-21T07:20:28.8001244Z test_checks_survive_python_optimization (test_native_d1_completion.CompletionSafety.test_checks_survive_python_optimization) ... ok
+2026-10-21T07:20:28.8009069Z test_destructive_expanded_or_confirmation_cli_rejected_before_io (test_native_d1_completion.CompletionSafety.test_destructive_expanded_or_confirmation_cli_rejected_before_io) ... usage: completion [-h]
+2026-10-21T07:20:28.8014187Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:28.8020408Z completion: error: argument phase: invalid choice: 'delete' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+2026-10-21T07:20:28.8023010Z usage: completion [-h]
+2026-10-21T07:20:28.8026575Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:28.8031136Z completion: error: argument phase: invalid choice: 'enable' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+2026-10-21T07:20:28.8033444Z usage: completion [-h]
+2026-10-21T07:20:28.8036198Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:28.8040601Z completion: error: argument phase: invalid choice: 'cleanup' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+2026-10-21T07:20:28.8042929Z usage: completion [-h]
+2026-10-21T07:20:28.8045429Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:28.8047922Z completion: error: unrecognized arguments: --target foreign
+2026-10-21T07:20:28.8048289Z usage: completion [-h]
+2026-10-21T07:20:28.8051026Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:28.8053725Z completion: error: unrecognized arguments: --human-confirmed
+2026-10-21T07:20:28.8054094Z usage: completion [-h]
+2026-10-21T07:20:28.8056582Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:28.8059081Z completion: error: unrecognized arguments: --private-root foreign
+2026-10-21T07:20:28.8059436Z ok
+2026-10-21T07:20:28.8059544Z 
+2026-10-21T07:20:28.8059774Z ----------------------------------------------------------------------
+2026-10-21T07:20:28.8060119Z Ran 3 tests in 0.006s
+2026-10-21T07:20:28.8060254Z 
+2026-10-21T07:20:28.8060336Z OK
+2026-10-21T07:20:29.2446674Z test_changed_service_identity_image_owner_state_or_port_rejected (test_native_d1_completion.CompletionSafety.test_changed_service_identity_image_owner_state_or_port_rejected) ... ok
+2026-10-21T07:20:29.2448996Z test_checks_survive_python_optimization (test_native_d1_completion.CompletionSafety.test_checks_survive_python_optimization) ... ok
+2026-10-21T07:20:29.2458425Z test_destructive_expanded_or_confirmation_cli_rejected_before_io (test_native_d1_completion.CompletionSafety.test_destructive_expanded_or_confirmation_cli_rejected_before_io) ... usage: completion [-h]
+2026-10-21T07:20:29.2464673Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:29.2473790Z completion: error: argument phase: invalid choice: 'delete' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+2026-10-21T07:20:29.2477267Z usage: completion [-h]
+2026-10-21T07:20:29.2482428Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:29.2491566Z completion: error: argument phase: invalid choice: 'enable' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+2026-10-21T07:20:29.2494784Z usage: completion [-h]
+2026-10-21T07:20:29.2498880Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:29.2506293Z completion: error: argument phase: invalid choice: 'cleanup' (choose from 'prepare-plane', 'prepare-archive', 'prepare-copy', 'prepare-copy-02', 'prepare-metadata', 'plane-setup', 'pre-issued-crash', 'verify-pre-issued-crash', 'pre-issued', 'plane-final', 'plane-seal', 'archive-run', 'copy-init', 'copy-archive-faults', 'copy-archive-resume', 'copy-restore-owner', 'copy-revocation', 'copy-finish', 'metadata-init', 'metadata-seed', 'metadata-faults', 'metadata-resume', 'metadata-owner', 'metadata-finish', 'seal')
+2026-10-21T07:20:29.2509120Z usage: completion [-h]
+2026-10-21T07:20:29.2513215Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:29.2517138Z completion: error: unrecognized arguments: --target foreign
+2026-10-21T07:20:29.2517674Z usage: completion [-h]
+2026-10-21T07:20:29.2521882Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:29.2526220Z completion: error: unrecognized arguments: --human-confirmed
+2026-10-21T07:20:29.2526829Z usage: completion [-h]
+2026-10-21T07:20:29.2531365Z                   {prepare-plane,prepare-archive,prepare-copy,prepare-copy-02,prepare-metadata,plane-setup,pre-issued-crash,verify-pre-issued-crash,pre-issued,plane-final,plane-seal,archive-run,copy-init,copy-archive-faults,copy-archive-resume,copy-restore-owner,copy-revocation,copy-finish,metadata-init,metadata-seed,metadata-faults,metadata-resume,metadata-owner,metadata-finish,seal}
+2026-10-21T07:20:29.2535738Z completion: error: unrecognized arguments: --private-root foreign
+2026-10-21T07:20:29.2536317Z ok
+2026-10-21T07:20:29.2536485Z 
+2026-10-21T07:20:29.2537145Z ----------------------------------------------------------------------
+2026-10-21T07:20:29.2537702Z Ran 3 tests in 0.007s
+2026-10-21T07:20:29.2537908Z 
+2026-10-21T07:20:29.2538024Z OK
+2026-10-21T07:20:29.3481306Z test_audit_config_preserves_source_and_rejects_wrong_target (test_lc13_readonly.ReadonlyContract.test_audit_config_preserves_source_and_rejects_wrong_target) ... ok
+2026-10-21T07:20:29.3487440Z test_audit_readiness_waits_for_final_tcp_listener (test_lc13_readonly.ReadonlyContract.test_audit_readiness_waits_for_final_tcp_listener) ... ok
+2026-10-21T07:20:30.3014505Z test_cli_does_not_admit_delete_or_arbitrary_target (test_lc13_readonly.ReadonlyContract.test_cli_does_not_admit_delete_or_arbitrary_target) ... ok
+2026-10-21T07:20:30.3015728Z test_failed_helper_creation_still_stops_sources (test_lc13_readonly.ReadonlyContract.test_failed_helper_creation_still_stops_sources) ... ok
+2026-10-21T07:20:30.3016872Z test_inspector_entrypoint_is_existing_env_and_lf (test_lc13_readonly.ReadonlyContract.test_inspector_entrypoint_is_existing_env_and_lf) ... ok
+2026-10-21T07:20:30.3021075Z test_refresh_has_only_eight_fixed_generations (test_lc13_readonly.ReadonlyContract.test_refresh_has_only_eight_fixed_generations) ... ok
+2026-10-21T07:20:30.3025818Z test_six_versions_reject_hash_version_and_protection_drift (test_lc13_readonly.ReadonlyContract.test_six_versions_reject_hash_version_and_protection_drift) ... ok
+2026-10-21T07:20:30.3028489Z test_source_dsn_identity_and_root_fail_closed (test_lc13_readonly.ReadonlyContract.test_source_dsn_identity_and_root_fail_closed) ... ok
+2026-10-21T07:20:30.3030950Z test_stop_failures_do_not_skip_either_source (test_lc13_readonly.ReadonlyContract.test_stop_failures_do_not_skip_either_source) ... ok
+2026-10-21T07:20:30.3031606Z 
+2026-10-21T07:20:30.3031855Z ----------------------------------------------------------------------
+2026-10-21T07:20:30.3032229Z Ran 9 tests in 0.956s
+2026-10-21T07:20:30.3032376Z 
+2026-10-21T07:20:30.3032470Z OK
+2026-10-21T07:20:30.7362337Z test_audit_config_preserves_source_and_rejects_wrong_target (test_lc13_readonly.ReadonlyContract.test_audit_config_preserves_source_and_rejects_wrong_target) ... ok
+2026-10-21T07:20:30.7379002Z test_audit_readiness_waits_for_final_tcp_listener (test_lc13_readonly.ReadonlyContract.test_audit_readiness_waits_for_final_tcp_listener) ... ok
+2026-10-21T07:20:31.7531696Z test_cli_does_not_admit_delete_or_arbitrary_target (test_lc13_readonly.ReadonlyContract.test_cli_does_not_admit_delete_or_arbitrary_target) ... ok
+2026-10-21T07:20:31.7534516Z test_failed_helper_creation_still_stops_sources (test_lc13_readonly.ReadonlyContract.test_failed_helper_creation_still_stops_sources) ... ok
+2026-10-21T07:20:31.7537884Z test_inspector_entrypoint_is_existing_env_and_lf (test_lc13_readonly.ReadonlyContract.test_inspector_entrypoint_is_existing_env_and_lf) ... ok
+2026-10-21T07:20:31.7556816Z test_refresh_has_only_eight_fixed_generations (test_lc13_readonly.ReadonlyContract.test_refresh_has_only_eight_fixed_generations) ... ok
+2026-10-21T07:20:31.7562348Z test_six_versions_reject_hash_version_and_protection_drift (test_lc13_readonly.ReadonlyContract.test_six_versions_reject_hash_version_and_protection_drift) ... ok
+2026-10-21T07:20:31.7565296Z test_source_dsn_identity_and_root_fail_closed (test_lc13_readonly.ReadonlyContract.test_source_dsn_identity_and_root_fail_closed) ... ok
+2026-10-21T07:20:31.7567391Z test_stop_failures_do_not_skip_either_source (test_lc13_readonly.ReadonlyContract.test_stop_failures_do_not_skip_either_source) ... ok
+2026-10-21T07:20:31.7568275Z 
+2026-10-21T07:20:31.7568695Z ----------------------------------------------------------------------
+2026-10-21T07:20:31.7569271Z Ran 9 tests in 1.021s
+2026-10-21T07:20:31.7569481Z 
+2026-10-21T07:20:31.7569618Z OK
+2026-10-21T07:20:32.1805702Z test_cli_cannot_select_revision_target_or_confirmation_before_io (test_reference_history.HistoricalRuntimeIsolation.test_cli_cannot_select_revision_target_or_confirmation_before_io) ... usage: history [-h]
+2026-10-21T07:20:32.1807811Z history: error: unrecognized arguments: delete
+2026-10-21T07:20:32.1808385Z usage: history [-h]
+2026-10-21T07:20:32.1809320Z history: error: unrecognized arguments: --confirm
+2026-10-21T07:20:32.1813357Z usage: history [-h]
+2026-10-21T07:20:32.1814005Z history: error: unrecognized arguments: --source foreign
+2026-10-21T07:20:32.1817805Z usage: history [-h]
+2026-10-21T07:20:32.1818417Z history: error: unrecognized arguments: --revision HEAD
+2026-10-21T07:20:32.1822544Z usage: history [-h]
+2026-10-21T07:20:32.1823149Z history: error: unrecognized arguments: --root foreign
+2026-10-21T07:20:32.1824449Z ok
+2026-10-21T07:20:32.1927693Z test_edited_current_receipt_cannot_redefine_frozen_history (test_reference_history.HistoricalRuntimeIsolation.test_edited_current_receipt_cannot_redefine_frozen_history) ... ok
+2026-10-21T07:20:32.1937131Z test_only_fixed_offline_commands_and_failure_is_not_retried (test_reference_history.HistoricalRuntimeIsolation.test_only_fixed_offline_commands_and_failure_is_not_retried) ... ok
+2026-10-21T07:20:34.0791230Z test_snapshot_uses_exact_git_runtime_and_leaves_current_fix_in_place (test_reference_history.HistoricalRuntimeIsolation.test_snapshot_uses_exact_git_runtime_and_leaves_current_fix_in_place) ... ok
+2026-10-21T07:20:36.0085843Z test_tampered_frozen_runtime_is_rejected (test_reference_history.HistoricalRuntimeIsolation.test_tampered_frozen_runtime_is_rejected) ... ok
+2026-10-21T07:20:36.0086683Z 
+2026-10-21T07:20:36.0087000Z ----------------------------------------------------------------------
+2026-10-21T07:20:36.0087464Z Ran 5 tests in 4.153s
+2026-10-21T07:20:36.0087663Z 
+2026-10-21T07:20:36.0087775Z OK
+2026-10-21T07:20:36.8039175Z test_cli_cannot_select_revision_target_or_confirmation_before_io (test_reference_history.HistoricalRuntimeIsolation.test_cli_cannot_select_revision_target_or_confirmation_before_io) ... usage: history [-h]
+2026-10-21T07:20:36.8040731Z history: error: unrecognized arguments: delete
+2026-10-21T07:20:36.8057290Z usage: history [-h]
+2026-10-21T07:20:36.8057985Z history: error: unrecognized arguments: --confirm
+2026-10-21T07:20:36.8062580Z usage: history [-h]
+2026-10-21T07:20:36.8067590Z history: error: unrecognized arguments: --source foreign
+2026-10-21T07:20:36.8068231Z usage: history [-h]
+2026-10-21T07:20:36.8068853Z history: error: unrecognized arguments: --revision HEAD
+2026-10-21T07:20:36.8072859Z usage: history [-h]
+2026-10-21T07:20:36.8073507Z history: error: unrecognized arguments: --root foreign
+2026-10-21T07:20:36.8075362Z ok
+2026-10-21T07:20:36.8142525Z test_edited_current_receipt_cannot_redefine_frozen_history (test_reference_history.HistoricalRuntimeIsolation.test_edited_current_receipt_cannot_redefine_frozen_history) ... ok
+2026-10-21T07:20:36.8152633Z test_only_fixed_offline_commands_and_failure_is_not_retried (test_reference_history.HistoricalRuntimeIsolation.test_only_fixed_offline_commands_and_failure_is_not_retried) ... ok
+2026-10-21T07:20:38.6978234Z test_snapshot_uses_exact_git_runtime_and_leaves_current_fix_in_place (test_reference_history.HistoricalRuntimeIsolation.test_snapshot_uses_exact_git_runtime_and_leaves_current_fix_in_place) ... ok
+2026-10-21T07:20:40.6470772Z test_tampered_frozen_runtime_is_rejected (test_reference_history.HistoricalRuntimeIsolation.test_tampered_frozen_runtime_is_rejected) ... ok
+2026-10-21T07:20:40.6471912Z 
+2026-10-21T07:20:40.6472229Z ----------------------------------------------------------------------
+2026-10-21T07:20:40.6472705Z Ran 5 tests in 4.166s
+2026-10-21T07:20:40.6472888Z 
+2026-10-21T07:20:40.6473008Z OK
+2026-10-21T07:20:40.7543220Z test_checkpoint_dsn_cannot_fall_back_to_source (test_reference_candidate05.Candidate05PreparationBoundary.test_checkpoint_dsn_cannot_fall_back_to_source) ... ok
+2026-10-21T07:20:40.7551446Z test_cli_rejects_execution_and_override_options_before_io (test_reference_candidate05.Candidate05PreparationBoundary.test_cli_rejects_execution_and_override_options_before_io) ... usage: prepare [-h]
+2026-10-21T07:20:40.7552749Z prepare: error: unrecognized arguments: delete
+2026-10-21T07:20:40.7556532Z usage: prepare [-h]
+2026-10-21T07:20:40.7557194Z prepare: error: unrecognized arguments: --confirm
+2026-10-21T07:20:40.7561538Z usage: prepare [-h]
+2026-10-21T07:20:40.7562212Z prepare: error: unrecognized arguments: --source HEAD
+2026-10-21T07:20:40.7567818Z usage: prepare [-h]
+2026-10-21T07:20:40.7568513Z prepare: error: unrecognized arguments: --execution old
+2026-10-21T07:20:40.7573113Z usage: prepare [-h]
+2026-10-21T07:20:40.7573737Z prepare: error: unrecognized arguments: --resume
+2026-10-21T07:20:40.7577984Z usage: prepare [-h]
+2026-10-21T07:20:40.7578961Z prepare: error: unrecognized arguments: --cleanup
+2026-10-21T07:20:40.7579501Z ok
+2026-10-21T07:20:40.7643823Z test_prior_denial_closure_and_no_new_authority_are_required (test_reference_candidate05.Candidate05PreparationBoundary.test_prior_denial_closure_and_no_new_authority_are_required) ... ok
+2026-10-21T07:20:40.7646095Z test_seal_attempts_every_resource_when_first_stop_fails (test_reference_candidate05.Candidate05PreparationBoundary.test_seal_attempts_every_resource_when_first_stop_fails) ... ok
+2026-10-21T07:20:40.7646995Z 
+2026-10-21T07:20:40.7647268Z ----------------------------------------------------------------------
+2026-10-21T07:20:40.7647707Z Ran 4 tests in 0.011s
+2026-10-21T07:20:40.7647870Z 
+2026-10-21T07:20:40.7647977Z OK
+2026-10-21T07:20:41.2138047Z test_checkpoint_dsn_cannot_fall_back_to_source (test_reference_candidate05.Candidate05PreparationBoundary.test_checkpoint_dsn_cannot_fall_back_to_source) ... ok
+2026-10-21T07:20:41.2146243Z test_cli_rejects_execution_and_override_options_before_io (test_reference_candidate05.Candidate05PreparationBoundary.test_cli_rejects_execution_and_override_options_before_io) ... usage: prepare [-h]
+2026-10-21T07:20:41.2147647Z prepare: error: unrecognized arguments: delete
+2026-10-21T07:20:41.2151992Z usage: prepare [-h]
+2026-10-21T07:20:41.2152657Z prepare: error: unrecognized arguments: --confirm
+2026-10-21T07:20:41.2156358Z usage: prepare [-h]
+2026-10-21T07:20:41.2157069Z prepare: error: unrecognized arguments: --source HEAD
+2026-10-21T07:20:41.2160543Z usage: prepare [-h]
+2026-10-21T07:20:41.2161479Z prepare: error: unrecognized arguments: --execution old
+2026-10-21T07:20:41.2165105Z usage: prepare [-h]
+2026-10-21T07:20:41.2165762Z prepare: error: unrecognized arguments: --resume
+2026-10-21T07:20:41.2169236Z usage: prepare [-h]
+2026-10-21T07:20:41.2169821Z prepare: error: unrecognized arguments: --cleanup
+2026-10-21T07:20:41.2170330Z ok
+2026-10-21T07:20:41.2232935Z test_prior_denial_closure_and_no_new_authority_are_required (test_reference_candidate05.Candidate05PreparationBoundary.test_prior_denial_closure_and_no_new_authority_are_required) ... ok
+2026-10-21T07:20:41.2236191Z test_seal_attempts_every_resource_when_first_stop_fails (test_reference_candidate05.Candidate05PreparationBoundary.test_seal_attempts_every_resource_when_first_stop_fails) ... ok
+2026-10-21T07:20:41.2237499Z 
+2026-10-21T07:20:41.2237780Z ----------------------------------------------------------------------
+2026-10-21T07:20:41.2238211Z Ran 4 tests in 0.010s
+2026-10-21T07:20:41.2238377Z 
+2026-10-21T07:20:41.2238480Z OK
+2026-10-21T07:20:41.3256717Z test_all_exact_scope_fields_are_bound_to_frozen_render (test_reference_candidate05_check.Candidate05OfflineEvidence.test_all_exact_scope_fields_are_bound_to_frozen_render) ... ok
+2026-10-21T07:20:41.3313289Z test_authority_and_old_execution_cannot_be_substituted (test_reference_candidate05_check.Candidate05OfflineEvidence.test_authority_and_old_execution_cannot_be_substituted) ... ok
+2026-10-21T07:20:41.3364397Z test_changed_render_artifact_and_matching_new_index_still_fail (test_reference_candidate05_check.Candidate05OfflineEvidence.test_changed_render_artifact_and_matching_new_index_still_fail) ... ok
+2026-10-21T07:20:41.3478295Z test_checkpoint_history_accounting_and_seal_are_required (test_reference_candidate05_check.Candidate05OfflineEvidence.test_checkpoint_history_accounting_and_seal_are_required) ... ok
+2026-10-21T07:20:41.3485811Z test_cli_has_no_authorization_or_native_options (test_reference_candidate05_check.Candidate05OfflineEvidence.test_cli_has_no_authorization_or_native_options) ... usage: check [-h]
+2026-10-21T07:20:41.3486985Z check: error: unrecognized arguments: delete
+2026-10-21T07:20:41.3488962Z usage: check [-h]
+2026-10-21T07:20:41.3489576Z check: error: unrecognized arguments: --confirm
+2026-10-21T07:20:41.3494410Z usage: check [-h]
+2026-10-21T07:20:41.3498896Z check: error: unrecognized arguments: --source HEAD
+2026-10-21T07:20:41.3499489Z usage: check [-h]
+2026-10-21T07:20:41.3500067Z check: error: unrecognized arguments: --execution old
+2026-10-21T07:20:41.3500721Z ok
+2026-10-21T07:20:41.3531796Z test_complete_current_proposal_is_prepared_without_authority (test_reference_candidate05_check.Candidate05OfflineEvidence.test_complete_current_proposal_is_prepared_without_authority) ... ok
+2026-10-21T07:20:41.3577881Z test_native_scope_protection_and_iam_are_not_relaxed (test_reference_candidate05_check.Candidate05OfflineEvidence.test_native_scope_protection_and_iam_are_not_relaxed) ... ok
+2026-10-21T07:20:41.3578799Z 
+2026-10-21T07:20:41.3579113Z ----------------------------------------------------------------------
+2026-10-21T07:20:41.3579680Z Ran 7 tests in 0.036s
+2026-10-21T07:20:41.3579855Z 
+2026-10-21T07:20:41.3579965Z OK
+2026-10-21T07:20:41.8222325Z test_all_exact_scope_fields_are_bound_to_frozen_render (test_reference_candidate05_check.Candidate05OfflineEvidence.test_all_exact_scope_fields_are_bound_to_frozen_render) ... ok
+2026-10-21T07:20:41.8342106Z test_authority_and_old_execution_cannot_be_substituted (test_reference_candidate05_check.Candidate05OfflineEvidence.test_authority_and_old_execution_cannot_be_substituted) ... ok
+2026-10-21T07:20:41.8392144Z test_changed_render_artifact_and_matching_new_index_still_fail (test_reference_candidate05_check.Candidate05OfflineEvidence.test_changed_render_artifact_and_matching_new_index_still_fail) ... ok
+2026-10-21T07:20:41.8503486Z test_checkpoint_history_accounting_and_seal_are_required (test_reference_candidate05_check.Candidate05OfflineEvidence.test_checkpoint_history_accounting_and_seal_are_required) ... ok
+2026-10-21T07:20:41.8511087Z test_cli_has_no_authorization_or_native_options (test_reference_candidate05_check.Candidate05OfflineEvidence.test_cli_has_no_authorization_or_native_options) ... usage: check [-h]
+2026-10-21T07:20:41.8512889Z check: error: unrecognized arguments: delete
+2026-10-21T07:20:41.8514312Z usage: check [-h]
+2026-10-21T07:20:41.8515177Z check: error: unrecognized arguments: --confirm
+2026-10-21T07:20:41.8519231Z usage: check [-h]
+2026-10-21T07:20:41.8519815Z check: error: unrecognized arguments: --source HEAD
+2026-10-21T07:20:41.8523617Z usage: check [-h]
+2026-10-21T07:20:41.8524192Z check: error: unrecognized arguments: --execution old
+2026-10-21T07:20:41.8524735Z ok
+2026-10-21T07:20:41.8555531Z test_complete_current_proposal_is_prepared_without_authority (test_reference_candidate05_check.Candidate05OfflineEvidence.test_complete_current_proposal_is_prepared_without_authority) ... ok
+2026-10-21T07:20:41.8600547Z test_native_scope_protection_and_iam_are_not_relaxed (test_reference_candidate05_check.Candidate05OfflineEvidence.test_native_scope_protection_and_iam_are_not_relaxed) ... ok
+2026-10-21T07:20:41.8602442Z 
+2026-10-21T07:20:41.8602987Z ----------------------------------------------------------------------
+2026-10-21T07:20:41.8603789Z Ran 7 tests in 0.042s
+2026-10-21T07:20:41.8604091Z 
+2026-10-21T07:20:41.8604212Z OK
+2026-10-21T07:20:42.3184719Z test_changed_old_payload_or_index_cannot_redefine_archive (test_reference_candidate05_history.Candidate05History.test_changed_old_payload_or_index_cannot_redefine_archive) ... ok
+2026-10-21T07:20:44.2050063Z test_corrupt_archived_runtime_is_rejected (test_reference_candidate05_history.Candidate05History.test_corrupt_archived_runtime_is_rejected) ... ok
+2026-10-21T07:20:44.2061170Z test_foreign_archives_and_cli_authority_fail_before_io (test_reference_candidate05_history.Candidate05History.test_foreign_archives_and_cli_authority_fail_before_io) ... usage: history [-h]
+2026-10-21T07:20:44.2062420Z history: error: unrecognized arguments: delete
+2026-10-21T07:20:44.2064663Z usage: history [-h]
+2026-10-21T07:20:44.2065324Z history: error: unrecognized arguments: --confirm
+2026-10-21T07:20:44.2069438Z usage: history [-h]
+2026-10-21T07:20:44.2070097Z history: error: unrecognized arguments: --source HEAD
+2026-10-21T07:20:44.2074566Z usage: history [-h]
+2026-10-21T07:20:44.2075196Z history: error: unrecognized arguments: --execution old
+2026-10-21T07:20:44.2075691Z ok
+2026-10-21T07:20:46.0990245Z test_full_original_checker_with_frozen_runtime_leaves_current_code (test_reference_candidate05_history.Candidate05History.test_full_original_checker_with_frozen_runtime_leaves_current_code) ... ok
+2026-10-21T07:20:46.0992371Z 
+2026-10-21T07:20:46.0992711Z ----------------------------------------------------------------------
+2026-10-21T07:20:46.0993232Z Ran 4 tests in 4.139s
+2026-10-21T07:20:46.0993423Z 
+2026-10-21T07:20:46.0993542Z OK
+2026-10-21T07:20:46.0995078Z {"status": "PASS_CANDIDATE05_PREPARED_NOT_AUTHORIZED", "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15", "old_raw": 344, "new_payloads": 35, "runtime": 317, "provider_io": 0, "db_io": 0, "container_starts": 0, "delete": 0}
+2026-10-21T07:20:46.0997942Z {"status": "PASS_CANDIDATE05_HISTORICAL_OFFLINE", "frozen_source": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9", "current_source_replaced": false, "current_historical_payloads_checked": 35, "runtime_hashes_checked": 317, "old_raw_checked": 344, "provider_io": 0, "db_io": 0, "delete": 0}
+2026-10-21T07:20:46.9337414Z test_changed_old_payload_or_index_cannot_redefine_archive (test_reference_candidate05_history.Candidate05History.test_changed_old_payload_or_index_cannot_redefine_archive) ... ok
+2026-10-21T07:20:48.8159207Z test_corrupt_archived_runtime_is_rejected (test_reference_candidate05_history.Candidate05History.test_corrupt_archived_runtime_is_rejected) ... ok
+2026-10-21T07:20:48.8173104Z test_foreign_archives_and_cli_authority_fail_before_io (test_reference_candidate05_history.Candidate05History.test_foreign_archives_and_cli_authority_fail_before_io) ... usage: history [-h]
+2026-10-21T07:20:48.8174574Z history: error: unrecognized arguments: delete
+2026-10-21T07:20:48.8177539Z usage: history [-h]
+2026-10-21T07:20:48.8178115Z history: error: unrecognized arguments: --confirm
+2026-10-21T07:20:48.8182498Z usage: history [-h]
+2026-10-21T07:20:48.8183178Z history: error: unrecognized arguments: --source HEAD
+2026-10-21T07:20:48.8186898Z usage: history [-h]
+2026-10-21T07:20:48.8187609Z history: error: unrecognized arguments: --execution old
+2026-10-21T07:20:48.8188046Z ok
+2026-10-21T07:20:50.7229156Z test_full_original_checker_with_frozen_runtime_leaves_current_code (test_reference_candidate05_history.Candidate05History.test_full_original_checker_with_frozen_runtime_leaves_current_code) ... ok
+2026-10-21T07:20:50.7230300Z 
+2026-10-21T07:20:50.7230637Z ----------------------------------------------------------------------
+2026-10-21T07:20:50.7231545Z Ran 4 tests in 4.154s
+2026-10-21T07:20:50.7231750Z 
+2026-10-21T07:20:50.7231871Z OK
+2026-10-21T07:20:50.7233380Z {"status": "PASS_CANDIDATE05_PREPARED_NOT_AUTHORIZED", "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15", "old_raw": 344, "new_payloads": 35, "runtime": 317, "provider_io": 0, "db_io": 0, "container_starts": 0, "delete": 0}
+2026-10-21T07:20:50.7236069Z {"status": "PASS_CANDIDATE05_HISTORICAL_OFFLINE", "frozen_source": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9", "current_source_replaced": false, "current_historical_payloads_checked": 35, "runtime_hashes_checked": 317, "old_raw_checked": 344, "provider_io": 0, "db_io": 0, "delete": 0}
+2026-10-21T07:20:53.0361832Z {"status": "PASS_CANDIDATE05_PREPARED_NOT_AUTHORIZED", "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15", "old_raw": 344, "new_payloads": 35, "runtime": 317, "provider_io": 0, "db_io": 0, "container_starts": 0, "delete": 0}
+2026-10-21T07:20:53.0365692Z {"status": "PASS_CANDIDATE05_HISTORICAL_OFFLINE", "frozen_source": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9", "current_source_replaced": false, "current_historical_payloads_checked": 35, "runtime_hashes_checked": 317, "old_raw_checked": 344, "provider_io": 0, "db_io": 0, "delete": 0}
+2026-10-21T07:20:54.3068391Z {"status": "PASS_V16_HISTORICAL_OFFLINE", "source": "de5f7dd2683cc5b5ed3a68528364d6fe59836f10", "payloads": 76, "files": 768, "original_audit": {"status": "PASS", "groups": 3, "versions": 16, "plans": 8, "tables_per_core": 194, "typed_storage_calls": 54, "retained_failure_receipts": 5, "delete_budget": 0, "native_race_acceptance": "NOT_RUN", "send_authorization": "BLOCKED", "indexed_files": 76}, "current_source_replaced": false, "provider_io": 0, "delete": 0}
+2026-10-21T07:21:17.9693202Z test_exact_model_and_tamper_rejection (__main__.Candidate07Guards.test_exact_model_and_tamper_rejection) ... ok
+2026-10-21T07:21:17.9695603Z test_host_attester_rejects_unconfirmed_shifted_and_expired_authority (__main__.Candidate07Guards.test_host_attester_rejects_unconfirmed_shifted_and_expired_authority) ... ok
+2026-10-21T07:21:17.9697245Z test_raw_evidence_path_and_bytes (__main__.Candidate07Guards.test_raw_evidence_path_and_bytes) ... ok
+2026-10-21T07:21:17.9697785Z 
+2026-10-21T07:21:17.9698098Z ----------------------------------------------------------------------
+2026-10-21T07:21:17.9698580Z Ran 3 tests in 0.004s
+2026-10-21T07:21:17.9698769Z 
+2026-10-21T07:21:17.9698876Z OK
+2026-10-21T07:21:17.9699606Z test_exact_model_and_tamper_rejection (__main__.Candidate07Guards.test_exact_model_and_tamper_rejection) ... ok
+2026-10-21T07:21:17.9701419Z test_host_attester_rejects_unconfirmed_shifted_and_expired_authority (__main__.Candidate07Guards.test_host_attester_rejects_unconfirmed_shifted_and_expired_authority) ... ok
+2026-10-21T07:21:17.9702859Z test_raw_evidence_path_and_bytes (__main__.Candidate07Guards.test_raw_evidence_path_and_bytes) ... ok
+2026-10-21T07:21:17.9703384Z 
+2026-10-21T07:21:17.9703673Z ----------------------------------------------------------------------
+2026-10-21T07:21:17.9704118Z Ran 3 tests in 0.005s
+2026-10-21T07:21:17.9704302Z 
+2026-10-21T07:21:17.9704405Z OK
+2026-10-21T07:21:17.9722905Z {"v17": {"status": "PASS_V17_HISTORICAL_STRICT", "historical_runtime": "f3b5de45857add3f852bbac0348e8c30ea105ade", "historical_tools_anchor": "b4d0556ad424e15896577a069bcbd1b236647a07", "source_files": 812, "raw_evidence": 940, "historical_strict_result": {"candidate": "candidate07/v17", "execution": "effa0385-9308-42eb-bd66-d0c379b6a989", "targets": 7, "survivors": 11, "source_files": 812, "raw_evidence": 940, "native_delete": 0, "status": "PASS_FROZEN_CANDIDATE07_OFFLINE", "frozen_source": "f3b5de45857add3f852bbac0348e8c30ea105ade", "original_audit": "UNCHANGED_F3_CHECKER", "current_runtime_source_drift": 0, "current_test_gofmt_only": "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go", "git_raw_blobs_checked": 940, "candidate_bytes_changed": false, "provider_io": 0, "db_io": 0, "container_starts": 0}, "current_runtime_not_substituted": true, "current_runtime_check": "test_complete_remaining_preflight.py + new frozen current packet checker", "provider_io": 0, "container_starts": 0, "delete": 0}, "v19": {"status": "PASS_V19_HISTORICAL_STRICT", "historical_runtime": "650a2f4be3f8f82c2382627b00538195522a1ab5", "packet_anchor": "72e4ce098203f1c076bb3753c6b11931f734e911", "source_files": 823, "raw_evidence": 1118, "historical_strict_result": {"status": "PASS_CANDIDATE09_OFFLINE", "execution": "9780707d-55eb-4da8-873f-3a901d7aac3f", "source": "650a2f4be3f8f82c2382627b00538195522a1ab5", "targets": 7, "survivors": 11, "source_files": 823, "raw_evidence": 1118, "native_technical_requests": 76, "checker_provider_io": 0, "native_delete": 0, "human_confirmation": "NOT_RECEIVED"}, "current_runtime_not_substituted": true, "provider_io": 0, "container_starts": 0, "delete": 0}, "v20": {"status": "PASS_V20_HISTORICAL_STRICT", "historical_runtime": "71b1711927247d7aafc7d6a8bd707f013f2b310c", "packet_anchor": "5eb3aec724f55e97ee05595439f74781d0e4b989", "source_files": 824, "raw_evidence": 1119, "historical_strict_result": {"status": "PASS_CANDIDATE10_OFFLINE", "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5", "source": "71b1711927247d7aafc7d6a8bd707f013f2b310c", "targets": 7, "survivors": 11, "source_files": 824, "raw_evidence": 1119, "native_technical_requests": 76, "checker_provider_io": 0, "native_delete": 0, "human_confirmation": "NOT_RECEIVED"}, "current_runtime_not_substituted": true, "provider_io": 0, "container_starts": 0, "delete": 0}, "v21": {"status": "PASS_V21_HISTORICAL_STRICT", "historical_runtime": "3d62dacb36b94096a364f32525853fbe95aaa2ed", "packet_anchor": "c00d4a8f85aaaaa71b9c19c76d042dee6aad1802", "source_files": 829, "raw_evidence": 1122, "historical_strict_result": {"status": "PASS_CANDIDATE11_OFFLINE", "execution": "602acafe-065a-4385-b739-5776408f5448", "source": "3d62dacb36b94096a364f32525853fbe95aaa2ed", "targets": 7, "survivors": 11, "source_files": 829, "raw_evidence": 1122, "native_technical_requests": 76, "checker_provider_io": 0, "native_delete": 0, "human_confirmation": "NOT_RECEIVED"}, "current_runtime_not_substituted": true, "provider_io": 0, "container_starts": 0, "delete": 0}, "v22": {"status": "PASS_V22_HISTORICAL_STRICT", "historical_runtime": "5c7e964dac83ebda0cf44743d49a546123735119", "packet_anchor": "30e954027bc1d5a74d683f0dcd8bd141aa7a678b", "source_files": 831, "raw_evidence": 1305, "historical_strict_result": {"status": "PASS_CANDIDATE12_OFFLINE", "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e", "source": "5c7e964dac83ebda0cf44743d49a546123735119", "targets": 7, "survivors": 11, "source_files": 831, "raw_evidence": 1305, "native_technical_requests": 76, "checker_provider_io": 0, "native_delete": 0, "human_confirmation": "NOT_RECEIVED"}, "current_runtime_not_substituted": true, "provider_io": 0, "container_starts": 0, "delete": 0}, "current_runtime_check": "test_complete_remaining_preflight.py + new frozen current packet checker"}
+2026-10-21T07:21:17.9735956Z test_only_exact_reviewed_gofmt_test_may_differ (__main__.FrozenCandidate07Guards.test_only_exact_reviewed_gofmt_test_may_differ) ... ok
+2026-10-21T07:21:17.9737034Z test_raw_working_bytes_and_git_bytes_both_required (__main__.FrozenCandidate07Guards.test_raw_working_bytes_and_git_bytes_both_required) ... ok
+2026-10-21T07:21:17.9738123Z test_rewritten_index_or_candidate_anchor_rejected (__main__.FrozenCandidate07Guards.test_rewritten_index_or_candidate_anchor_rejected) ... ok
+2026-10-21T07:21:17.9738651Z 
+2026-10-21T07:21:17.9738866Z ----------------------------------------------------------------------
+2026-10-21T07:21:17.9739217Z Ran 3 tests in 0.385s
+2026-10-21T07:21:17.9739351Z 
+2026-10-21T07:21:17.9739443Z OK
+2026-10-21T07:21:17.9740084Z test_only_exact_reviewed_gofmt_test_may_differ (__main__.FrozenCandidate07Guards.test_only_exact_reviewed_gofmt_test_may_differ) ... ok
+2026-10-21T07:21:17.9741280Z test_raw_working_bytes_and_git_bytes_both_required (__main__.FrozenCandidate07Guards.test_raw_working_bytes_and_git_bytes_both_required) ... ok
+2026-10-21T07:21:17.9742371Z test_rewritten_index_or_candidate_anchor_rejected (__main__.FrozenCandidate07Guards.test_rewritten_index_or_candidate_anchor_rejected) ... ok
+2026-10-21T07:21:17.9742897Z 
+2026-10-21T07:21:17.9743117Z ----------------------------------------------------------------------
+2026-10-21T07:21:17.9743461Z Ran 3 tests in 0.009s
+2026-10-21T07:21:17.9743600Z 
+2026-10-21T07:21:17.9743675Z OK
+2026-10-21T07:21:18.2091633Z test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) ... ok
+2026-10-21T07:21:18.2164901Z test_generated_profiles_pass_public_and_actual_file_checks (test_remaining_window.WindowContractTests.test_generated_profiles_pass_public_and_actual_file_checks) ... ok
+2026-10-21T07:21:18.2167756Z test_generator_overwrites_old_deadline_and_does_not_mutate_template (test_remaining_window.WindowContractTests.test_generator_overwrites_old_deadline_and_does_not_mutate_template) ... ok
+2026-10-21T07:21:18.2979427Z test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) ... ok
+2026-10-21T07:21:18.2980355Z 
+2026-10-21T07:21:18.2980666Z ----------------------------------------------------------------------
+2026-10-21T07:21:18.2981654Z Ran 4 tests in 0.215s
+2026-10-21T07:21:18.2981877Z 
+2026-10-21T07:21:18.2981988Z OK
+2026-10-21T07:21:18.8934279Z test_complete_cli_rejects_cross_fields_before_permission_or_source_io (test_remaining_window.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) ... ok
+2026-10-21T07:21:18.9006608Z test_generated_profiles_pass_public_and_actual_file_checks (test_remaining_window.WindowContractTests.test_generated_profiles_pass_public_and_actual_file_checks) ... ok
+2026-10-21T07:21:18.9009266Z test_generator_overwrites_old_deadline_and_does_not_mutate_template (test_remaining_window.WindowContractTests.test_generator_overwrites_old_deadline_and_does_not_mutate_template) ... ok
+2026-10-21T07:21:18.9810259Z test_semantic_mutations_fail_even_after_rehash_offline (test_remaining_window.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) ... ok
+2026-10-21T07:21:18.9811680Z 
+2026-10-21T07:21:18.9812009Z ----------------------------------------------------------------------
+2026-10-21T07:21:18.9812514Z Ran 4 tests in 0.212s
+2026-10-21T07:21:18.9812721Z 
+2026-10-21T07:21:18.9812841Z OK
+2026-10-21T07:21:19.0810339Z test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics (test_freeze_remaining_executable.PreparationClosureTests.test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics) ... ok
+2026-10-21T07:21:19.0813770Z test_stop_or_inspect_failure_continues_every_other_owner (test_freeze_remaining_executable.PreparationClosureTests.test_stop_or_inspect_failure_continues_every_other_owner) ... ok
+2026-10-21T07:21:19.0815067Z 
+2026-10-21T07:21:19.0815496Z ----------------------------------------------------------------------
+2026-10-21T07:21:19.0816053Z Ran 2 tests in 0.002s
+2026-10-21T07:21:19.0816227Z 
+2026-10-21T07:21:19.0816327Z OK
+2026-10-21T07:21:19.5333213Z test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics (test_freeze_remaining_executable.PreparationClosureTests.test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics) ... ok
+2026-10-21T07:21:19.5335434Z test_stop_or_inspect_failure_continues_every_other_owner (test_freeze_remaining_executable.PreparationClosureTests.test_stop_or_inspect_failure_continues_every_other_owner) ... ok
+2026-10-21T07:21:19.5336422Z 
+2026-10-21T07:21:19.5336733Z ----------------------------------------------------------------------
+2026-10-21T07:21:19.5337310Z Ran 2 tests in 0.002s
+2026-10-21T07:21:19.5337568Z 
+2026-10-21T07:21:19.5337757Z OK
+2026-10-21T07:21:51.1559970Z test_actual_sort_changes_pass_complete_entry (test_verify_remaining_native.CompleteEntryTests.test_actual_sort_changes_pass_complete_entry) ... ok
+2026-10-21T07:21:51.1819529Z test_baseline_file_anchor_is_required (test_verify_remaining_native.CompleteEntryTests.test_baseline_file_anchor_is_required) ... ok
+2026-10-21T07:21:51.1852646Z test_cli_normalizes_relative_paths_before_any_source_io (test_verify_remaining_native.CompleteEntryTests.test_cli_normalizes_relative_paths_before_any_source_io) ... ok
+2026-10-21T07:21:51.2090480Z test_expansion_fails_and_closes_every_started_source (test_verify_remaining_native.CompleteEntryTests.test_expansion_fails_and_closes_every_started_source) ... ok
+2026-10-21T07:21:51.2329127Z test_malformed_policy_fails_and_retains_failure (test_verify_remaining_native.CompleteEntryTests.test_malformed_policy_fails_and_retains_failure) ... ok
+2026-10-21T07:21:51.2341256Z 
+2026-10-21T07:21:51.2341939Z ----------------------------------------------------------------------
+2026-10-21T07:21:51.2342624Z Ran 5 tests in 31.606s
+2026-10-21T07:21:51.2342916Z 
+2026-10-21T07:21:51.2343067Z OK
+2026-10-21T07:21:52.2484530Z test_actual_sort_changes_pass_complete_entry (test_verify_remaining_native.CompleteEntryTests.test_actual_sort_changes_pass_complete_entry) ... ok
+2026-10-21T07:21:52.2735081Z test_baseline_file_anchor_is_required (test_verify_remaining_native.CompleteEntryTests.test_baseline_file_anchor_is_required) ... ok
+2026-10-21T07:21:52.2766855Z test_cli_normalizes_relative_paths_before_any_source_io (test_verify_remaining_native.CompleteEntryTests.test_cli_normalizes_relative_paths_before_any_source_io) ... ok
+2026-10-21T07:21:52.3007276Z test_expansion_fails_and_closes_every_started_source (test_verify_remaining_native.CompleteEntryTests.test_expansion_fails_and_closes_every_started_source) ... ok
+2026-10-21T07:21:52.3234984Z test_malformed_policy_fails_and_retains_failure (test_verify_remaining_native.CompleteEntryTests.test_malformed_policy_fails_and_retains_failure) ... ok
+2026-10-21T07:21:52.3247427Z 
+2026-10-21T07:21:52.3247945Z ----------------------------------------------------------------------
+2026-10-21T07:21:52.3248436Z Ran 5 tests in 0.619s
+2026-10-21T07:21:52.3248594Z 
+2026-10-21T07:21:52.3248697Z OK
+2026-10-21T07:21:53.0225645Z test_case_mount_expansion_fails (__main__.CompleteCLI.test_case_mount_expansion_fails) ... ERROR
+2026-10-21T07:21:53.1182918Z test_case_private_root_file_fails (__main__.CompleteCLI.test_case_private_root_file_fails) ... ERROR
+2026-10-21T07:21:53.2146888Z test_case_private_unbound_directory_fails (__main__.CompleteCLI.test_case_private_unbound_directory_fails) ... ERROR
+2026-10-21T07:21:53.3150466Z test_expanded_mount_membership_fails (__main__.CompleteCLI.test_expanded_mount_membership_fails) ... ERROR
+2026-10-21T07:21:53.4112661Z test_external_network_fails (__main__.CompleteCLI.test_external_network_fails) ... ERROR
+2026-10-21T07:21:53.5069538Z test_missing_mount_member_fails (__main__.CompleteCLI.test_missing_mount_member_fails) ... ERROR
+2026-10-21T07:21:53.6271862Z test_nonempty_budget_fails (__main__.CompleteCLI.test_nonempty_budget_fails) ... ERROR
+2026-10-21T07:21:53.7226844Z test_offline_checker_requires_complete_exact_members_and_invocation (__main__.CompleteCLI.test_offline_checker_requires_complete_exact_members_and_invocation) ... ERROR
+2026-10-21T07:21:53.8189148Z test_recovery_private_host_key_fails (__main__.CompleteCLI.test_recovery_private_host_key_fails) ... ERROR
+2026-10-21T07:21:53.9147914Z test_success_combines_all_host_gates_and_three_real_file_aggregations (__main__.CompleteCLI.test_success_combines_all_host_gates_and_three_real_file_aggregations) ... ERROR
+2026-10-21T07:21:54.0105833Z test_wrong_budget_execution_owner_fails (__main__.CompleteCLI.test_wrong_budget_execution_owner_fails) ... ERROR
+2026-10-21T07:21:54.1087018Z test_wrong_output_type_fails_before_any_source_start (__main__.CompleteCLI.test_wrong_output_type_fails_before_any_source_start) ... ERROR
+2026-10-21T07:21:54.1153924Z test_explicit_text_boundary_rejects_str_and_invalid_utf8 (__main__.DockerOutputContract.test_explicit_text_boundary_rejects_str_and_invalid_utf8) ... ok
+2026-10-21T07:21:54.1158547Z test_real_wrapper_rejects_str_including_empty_str (__main__.DockerOutputContract.test_real_wrapper_rejects_str_including_empty_str) ... ok
+2026-10-21T07:21:54.1161096Z test_real_wrapper_returns_bytes_and_explicit_text (__main__.DockerOutputContract.test_real_wrapper_returns_bytes_and_explicit_text) ... ok
+2026-10-21T07:21:54.1162199Z 
+2026-10-21T07:21:54.1162597Z ======================================================================
+2026-10-21T07:21:54.1163620Z ERROR: test_case_mount_expansion_fails (__main__.CompleteCLI.test_case_mount_expansion_fails)
+2026-10-21T07:21:54.1164627Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1165316Z Traceback (most recent call last):
+2026-10-21T07:21:54.1166693Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 164, in test_case_mount_expansion_fails
+2026-10-21T07:21:54.1167980Z     self.run_entry(mutate,True)
+2026-10-21T07:21:54.1169503Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1171110Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1171723Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1172835Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1174089Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1174870Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1176318Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1177448Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1177995Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1179191Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1180596Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1182359Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1184168Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1185208Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1185594Z KeyError: 'Type'
+2026-10-21T07:21:54.1185781Z 
+2026-10-21T07:21:54.1186080Z ======================================================================
+2026-10-21T07:21:54.1186969Z ERROR: test_case_private_root_file_fails (__main__.CompleteCLI.test_case_private_root_file_fails)
+2026-10-21T07:21:54.1187862Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1188451Z Traceback (most recent call last):
+2026-10-21T07:21:54.1189719Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 167, in test_case_private_root_file_fails
+2026-10-21T07:21:54.1191519Z     self.run_entry(lambda d:write(d.owner/'business-races/case-renew/root.json',{'fake':'no usable credential'}),True)
+2026-10-21T07:21:54.1193072Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1194255Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1194828Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1195907Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1197157Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1197944Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1199097Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1200180Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1200703Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1202050Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1203451Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1205191Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1206971Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1208015Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1208389Z KeyError: 'Type'
+2026-10-21T07:21:54.1208592Z 
+2026-10-21T07:21:54.1208886Z ======================================================================
+2026-10-21T07:21:54.1209912Z ERROR: test_case_private_unbound_directory_fails (__main__.CompleteCLI.test_case_private_unbound_directory_fails)
+2026-10-21T07:21:54.1211321Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1211919Z Traceback (most recent call last):
+2026-10-21T07:21:54.1213246Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 171, in test_case_private_unbound_directory_fails
+2026-10-21T07:21:54.1214748Z     self.run_entry(lambda d:(d.owner/'business-races/case-renew/unbound').mkdir(),True)
+2026-10-21T07:21:54.1216117Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1217276Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1217851Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1219070Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1220328Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1221322Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1222503Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1223615Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1224152Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1225295Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1226650Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1228068Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1229807Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1231062Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1231460Z KeyError: 'Type'
+2026-10-21T07:21:54.1231670Z 
+2026-10-21T07:21:54.1231977Z ======================================================================
+2026-10-21T07:21:54.1232984Z ERROR: test_expanded_mount_membership_fails (__main__.CompleteCLI.test_expanded_mount_membership_fails)
+2026-10-21T07:21:54.1233937Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1234549Z Traceback (most recent call last):
+2026-10-21T07:21:54.1235894Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 159, in test_expanded_mount_membership_fails
+2026-10-21T07:21:54.1237531Z     def test_expanded_mount_membership_fails(self):self.run_entry(lambda d:next(iter(d.mount_users.values())).append('f'*64),True)
+2026-10-21T07:21:54.1238699Z                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1240286Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1241735Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1242346Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1243418Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1244779Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1245619Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1247123Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1248301Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1248880Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1250224Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1251917Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1253478Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1255350Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1256423Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1256802Z KeyError: 'Type'
+2026-10-21T07:21:54.1256997Z 
+2026-10-21T07:21:54.1257292Z ======================================================================
+2026-10-21T07:21:54.1258136Z ERROR: test_external_network_fails (__main__.CompleteCLI.test_external_network_fails)
+2026-10-21T07:21:54.1259006Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1259603Z Traceback (most recent call last):
+2026-10-21T07:21:54.1261067Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 165, in test_external_network_fails
+2026-10-21T07:21:54.1262706Z     def test_external_network_fails(self):self.run_entry(lambda d:next(iter(d.nets.values())).update(Internal=False),True)
+2026-10-21T07:21:54.1263768Z                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1265111Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1266331Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1266928Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1268032Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1269325Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1270233Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1271733Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1272998Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1273596Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1274891Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1276645Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1278257Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1280251Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1281581Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1281999Z KeyError: 'Type'
+2026-10-21T07:21:54.1282205Z 
+2026-10-21T07:21:54.1282734Z ======================================================================
+2026-10-21T07:21:54.1283650Z ERROR: test_missing_mount_member_fails (__main__.CompleteCLI.test_missing_mount_member_fails)
+2026-10-21T07:21:54.1284489Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1285069Z Traceback (most recent call last):
+2026-10-21T07:21:54.1286524Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 160, in test_missing_mount_member_fails
+2026-10-21T07:21:54.1288250Z     def test_missing_mount_member_fails(self):self.run_entry(lambda d:next(iter(d.mount_users.values())).pop(),True)
+2026-10-21T07:21:54.1289322Z                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1290637Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1292206Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1292858Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1294051Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1295461Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1296325Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1297625Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1298853Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1299444Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1300739Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1302502Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1304099Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1306076Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1307199Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1307599Z KeyError: 'Type'
+2026-10-21T07:21:54.1307800Z 
+2026-10-21T07:21:54.1308131Z ======================================================================
+2026-10-21T07:21:54.1309006Z ERROR: test_nonempty_budget_fails (__main__.CompleteCLI.test_nonempty_budget_fails)
+2026-10-21T07:21:54.1309897Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1310539Z Traceback (most recent call last):
+2026-10-21T07:21:54.1312152Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 161, in test_nonempty_budget_fails
+2026-10-21T07:21:54.1314071Z     def test_nonempty_budget_fails(self):self.run_entry(lambda d:setattr(d,'variant','nonempty'),True)
+2026-10-21T07:21:54.1315079Z                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1316488Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1317801Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1318451Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1319771Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1321649Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1322187Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1322986Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1323715Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1324064Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1324818Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1325733Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1326667Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1327812Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1328490Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1328744Z KeyError: 'Type'
+2026-10-21T07:21:54.1328868Z 
+2026-10-21T07:21:54.1329060Z ======================================================================
+2026-10-21T07:21:54.1329956Z ERROR: test_offline_checker_requires_complete_exact_members_and_invocation (__main__.CompleteCLI.test_offline_checker_requires_complete_exact_members_and_invocation)
+2026-10-21T07:21:54.1330946Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1331386Z Traceback (most recent call last):
+2026-10-21T07:21:54.1332349Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 192, in test_offline_checker_requires_complete_exact_members_and_invocation
+2026-10-21T07:21:54.1333245Z     self.run_entry(after=check)
+2026-10-21T07:21:54.1333976Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 146, in run_entry
+2026-10-21T07:21:54.1334737Z     v.main();result=v.load(root/'public/complete.json')
+2026-10-21T07:21:54.1335050Z     ^^^^^^^^
+2026-10-21T07:21:54.1335683Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1336518Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1337034Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1337804Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1338524Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1338869Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1339804Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1340721Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1341920Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1343072Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1343752Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1344134Z KeyError: 'Type'
+2026-10-21T07:21:54.1344261Z 
+2026-10-21T07:21:54.1344453Z ======================================================================
+2026-10-21T07:21:54.1345074Z ERROR: test_recovery_private_host_key_fails (__main__.CompleteCLI.test_recovery_private_host_key_fails)
+2026-10-21T07:21:54.1345679Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1346066Z Traceback (most recent call last):
+2026-10-21T07:21:54.1346906Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 169, in test_recovery_private_host_key_fails
+2026-10-21T07:21:54.1347975Z     self.run_entry(lambda d:(d.owner/'business-races/recover-P1/topology-key.private').write_bytes(b'fake'),True)
+2026-10-21T07:21:54.1348961Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1349730Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1350108Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1350980Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1351819Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1352346Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1353106Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1353836Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1354185Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1354938Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1355844Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1356774Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1357919Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1358611Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1358954Z KeyError: 'Type'
+2026-10-21T07:21:54.1359075Z 
+2026-10-21T07:21:54.1359270Z ======================================================================
+2026-10-21T07:21:54.1360248Z ERROR: test_success_combines_all_host_gates_and_three_real_file_aggregations (__main__.CompleteCLI.test_success_combines_all_host_gates_and_three_real_file_aggregations)
+2026-10-21T07:21:54.1361353Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1361778Z Traceback (most recent call last):
+2026-10-21T07:21:54.1362749Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 156, in test_success_combines_all_host_gates_and_three_real_file_aggregations
+2026-10-21T07:21:54.1364002Z     def test_success_combines_all_host_gates_and_three_real_file_aggregations(self):self.run_entry()
+2026-10-21T07:21:54.1364582Z                                                                                     ^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1365384Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 146, in run_entry
+2026-10-21T07:21:54.1366136Z     v.main();result=v.load(root/'public/complete.json')
+2026-10-21T07:21:54.1366438Z     ^^^^^^^^
+2026-10-21T07:21:54.1367055Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1367990Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1368502Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1369273Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1369992Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1370338Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1371251Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1372171Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1373098Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1374235Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1374916Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1375175Z KeyError: 'Type'
+2026-10-21T07:21:54.1375299Z 
+2026-10-21T07:21:54.1375494Z ======================================================================
+2026-10-21T07:21:54.1376145Z ERROR: test_wrong_budget_execution_owner_fails (__main__.CompleteCLI.test_wrong_budget_execution_owner_fails)
+2026-10-21T07:21:54.1376776Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1377157Z Traceback (most recent call last):
+2026-10-21T07:21:54.1378064Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 158, in test_wrong_budget_execution_owner_fails
+2026-10-21T07:21:54.1379336Z     def test_wrong_budget_execution_owner_fails(self):self.run_entry(lambda d:next(iter(d.volumes.values()))['Labels'].update({'lifecycle307.remaining':'wrong'}),True)
+2026-10-21T07:21:54.1380230Z                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1381379Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1382171Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1382553Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1383261Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1384085Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1384608Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1385368Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1386323Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1386749Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1387508Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1388412Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1389336Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1390587Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1391434Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1391684Z KeyError: 'Type'
+2026-10-21T07:21:54.1391809Z 
+2026-10-21T07:21:54.1392004Z ======================================================================
+2026-10-21T07:21:54.1392762Z ERROR: test_wrong_output_type_fails_before_any_source_start (__main__.CompleteCLI.test_wrong_output_type_fails_before_any_source_start)
+2026-10-21T07:21:54.1393492Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1393883Z Traceback (most recent call last):
+2026-10-21T07:21:54.1395345Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 157, in test_wrong_output_type_fails_before_any_source_start
+2026-10-21T07:21:54.1397261Z     def test_wrong_output_type_fails_before_any_source_start(self):self.run_entry(lambda d:setattr(d,'variant','str'),True)
+2026-10-21T07:21:54.1397964Z                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1398825Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/test_complete_remaining_preflight.py", line 141, in run_entry
+2026-10-21T07:21:54.1399599Z     with self.assertRaises((ValueError,TypeError)):v.main()
+2026-10-21T07:21:54.1399983Z                                                    ^^^^^^^^
+2026-10-21T07:21:54.1400689Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 369, in main
+2026-10-21T07:21:54.1401841Z     sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+2026-10-21T07:21:54.1402373Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1403304Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 155, in sealed_gate
+2026-10-21T07:21:54.1404069Z     retained = retained_owners_gate(packet, owner_root)
+2026-10-21T07:21:54.1404444Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-21T07:21:54.1405207Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/verify-remaining-native.py", line 123, in retained_owners_gate
+2026-10-21T07:21:54.1406122Z     attester.helper_contract(item,g,stage,folder/stage,owner_root/'operator',b['budget_volume'])
+2026-10-21T07:21:54.1407053Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/attest-remaining-executable.py", line 60, in helper_contract
+2026-10-21T07:21:54.1408212Z     require(mounts[target]['Type']=='bind' and hostpath(mounts[target]['Source'])==path.resolve() and mounts[target]['RW'] is False,'readonly config/binary mount differs')
+2026-10-21T07:21:54.1408907Z             ~~~~~~~~~~~~~~^^^^^^^^
+2026-10-21T07:21:54.1409156Z KeyError: 'Type'
+2026-10-21T07:21:54.1409291Z 
+2026-10-21T07:21:54.1409510Z ----------------------------------------------------------------------
+2026-10-21T07:21:54.1409860Z Ran 15 tests in 1.691s
+2026-10-21T07:21:54.1410004Z 
+2026-10-21T07:21:54.1410282Z FAILED (errors=12)
+2026-10-21T07:21:54.1421700Z ##[error]Process completed with exit code 1.
+2026-10-21T07:21:54.1495263Z ##[group]Run mkdir -p .artifacts/demo
+2026-10-21T07:21:54.1495664Z [36;1mmkdir -p .artifacts/demo[0m
+2026-10-21T07:21:54.1496093Z [36;1mnode deploy/demo/demo.mjs logs > .artifacts/demo/services.log 2>&1 || true[0m
+2026-10-21T07:21:54.1496571Z [36;1mgit rev-parse HEAD > .artifacts/demo/source-sha.txt[0m
+2026-10-21T07:21:54.1559330Z shell: /usr/bin/bash -e {0}
+2026-10-21T07:21:54.1559602Z env:
+2026-10-21T07:21:54.1559788Z   CI: true
+2026-10-21T07:21:54.1560178Z ##[endgroup]
+2026-10-21T07:21:55.0617828Z ##[group]Run actions/upload-artifact@v4
+2026-10-21T07:21:55.0618159Z with:
+2026-10-21T07:21:55.0618362Z   name: demo-lifecycle-1
+2026-10-21T07:21:55.0618602Z   path: .artifacts/demo/
+2026-10-21T07:21:55.0618839Z   include-hidden-files: true
+2026-10-21T07:21:55.0619077Z   retention-days: 7
+2026-10-21T07:21:55.0619290Z   if-no-files-found: warn
+2026-10-21T07:21:55.0619517Z   compression-level: 6
+2026-10-21T07:21:55.0619730Z   overwrite: false
+2026-10-21T07:21:55.0619931Z env:
+2026-10-21T07:21:55.0620106Z   CI: true
+2026-10-21T07:21:55.0620291Z ##[endgroup]
+2026-10-21T07:21:55.2314721Z (node:8621) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-21T07:21:55.2315592Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-21T07:21:55.2380754Z With the provided path, there will be 2 files uploaded
+2026-10-21T07:21:55.2389176Z Artifact name is valid!
+2026-10-21T07:21:55.2394707Z Root directory input is valid!
+2026-10-21T07:21:55.4583953Z Beginning upload of artifact content to blob storage
+2026-10-21T07:21:55.4801919Z (node:8621) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-21T07:21:55.5062786Z Uploaded bytes 301
+2026-10-21T07:21:55.5225651Z Finished uploading artifact content to blob storage!
+2026-10-21T07:21:55.5227109Z SHA256 digest of uploaded artifact zip is 94f1a08076a9fc4592ac0db4e17278957bbe57c557ad6da8f1d8628ed5b756b5
+2026-10-21T07:21:55.5228223Z Finalizing artifact upload
+2026-10-21T07:21:55.7344380Z Artifact demo-lifecycle-1.zip successfully finalized. Artifact ID 12327613667
+2026-10-21T07:21:55.7346034Z Artifact demo-lifecycle-1 has been successfully uploaded! Final size is 301 bytes. Artifact ID is 12327613667
+2026-10-21T07:21:55.7353318Z Artifact download URL: https://github.com/qq550723504/data-product-platform/actions/runs/39561190084/artifacts/12327613667
+2026-10-21T07:21:55.7514997Z ##[group]Run node deploy/demo/demo.mjs reset --confirm=DELETE_DEMO_DATA
+2026-10-21T07:21:55.7515924Z [36;1mnode deploy/demo/demo.mjs reset --confirm=DELETE_DEMO_DATA[0m
+2026-10-21T07:21:55.7609239Z shell: /usr/bin/bash -e {0}
+2026-10-21T07:21:55.7609713Z env:
+2026-10-21T07:21:55.7610108Z   CI: true
+2026-10-21T07:21:55.7610458Z ##[endgroup]
+2026-10-21T07:21:56.0462391Z Deleted only this synthetic demo's containers and named volumes. No system prune was used.
+2026-10-21T07:21:56.0614983Z Post job cleanup.
+2026-10-21T07:21:56.1504153Z [command]/usr/bin/git version
+2026-10-21T07:21:56.1553458Z git version 2.55.0
+2026-10-21T07:21:56.1599411Z Temporarily overriding HOME='/home/runner/work/_temp/b1fb8a61-a906-4e46-b6ae-a9881993d49d' before making global git config changes
+2026-10-21T07:21:56.1601091Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-21T07:21:56.1607284Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/data-product-platform/data-product-platform
+2026-10-21T07:21:56.1656418Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-21T07:21:56.1703351Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-21T07:21:56.1998080Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-21T07:21:56.2025276Z http.https://github.com/.extraheader
+2026-10-21T07:21:56.2038897Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-21T07:21:56.2080646Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-21T07:21:56.2490409Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-21T07:21:56.2557339Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-21T07:21:56.3046210Z Cleaning up orphan processes
+2026-10-21T07:21:56.3340570Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

@@ -1,0 +1,42 @@
+{
+  "status": "C22_RECEIPT_RESTORATION_READONLY_INPUT_INDEX",
+  "count": 9,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/execution-freeze-review01/retained-v29-receipt-index.json": {
+      "sha256": "5c5c9ef750d90d1a70597797b71fea6b02c3f3a2a17695556bf852e173ec708d",
+      "bytes": 28684
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/v29-receipt-drift01.json": {
+      "sha256": "c3bb44fcd55886e7ac814392458a3eb064974c7e95691739519b44d8b3651ad4",
+      "bytes": 4108
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/v29-checkout-raw-restoration02.json": {
+      "sha256": "e3bb97cd0aff193939ccad68c68082b8e2b93c2cc5b4024e741e25b0b85a9994",
+      "bytes": 3195
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/phase-allocate01/result.json": {
+      "sha256": "7c1fe9be26c0e4d7e6d5379fcc5b05fe98fabab6acb55e2991a3c45d4751a222",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/phase-allocate01/stderr.txt": {
+      "sha256": "8701bf6ac83ca3f4cf449a4e2b0072a5f7bcb9ee03ece7923a3cecc7dbd9f80d",
+      "bytes": 1542
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/bounded-preparation-run01/result.json": {
+      "sha256": "96745aa23788743b5f1ae29319c031b8363bc9887e350eb7fff5476f70f14876",
+      "bytes": 310
+    },
+    ".gitattributes": {
+      "sha256": "351a663766ef04db6a402bc4dc9fea22fce46f53354d6cdde8b825fa14eb5f64",
+      "bytes": 25376
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-source-review02/new-host-source-snapshot.json": {
+      "sha256": "08493923a1e787cd8f3859b97a1185c06b97f84dd9375f8bb85dee070d920d5a",
+      "bytes": 627782
+    },
+    "examples/lifecycle-d1/retained_v29.py": {
+      "sha256": "cddd9756187a5ae8083eb67c1272830b232dc8f11fa9fd2b8b033c3028c3a1ea",
+      "bytes": 8430
+    }
+  }
+}

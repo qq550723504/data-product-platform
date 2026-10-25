@@ -1,0 +1,1 @@
+{"at": "2026-10-24T12:44:33.228279+00:00", "command": ["python", "-B", "docs/acceptance/evidence/issue307-d1/ci-portability-fix01/read_publication_boundary01.py"], "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform", "retained_source_start": 0}

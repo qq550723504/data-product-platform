@@ -1,0 +1,69 @@
+{
+  "status": "PASS_BOUNDED_C18_V28_EXACT_CONFIRMATION_CROSSCHECK",
+  "completed_at": "2026-10-21T10:10:34.796223+00:00",
+  "profile": "candidate18/v28",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "source": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "window": {
+    "not_before": "2026-10-21T14:00:00Z",
+    "not_after_exclusive": "2026-10-21T14:40:00Z",
+    "Singapore": "2026-10-21 22:00-22:40",
+    "readonly_until": "2026-10-21T16:40:00Z"
+  },
+  "actual_assistant_message_id": "msg_099c3841d45c7835016ad88accdbfc81998b054fb97b19e79f",
+  "actual_assistant_text_sha256": "a0c567614dd785a8c074402179ce635ab20bfb80643c91132a4728e20a26a090",
+  "machine_template_sha256": "5cd148132b380b4a3361ae7210c8cc02fe6932fee3824ae77b4fec0cc2523a90",
+  "approval_manifest_sha256": "3b8e4c6351d7147fb604f64cee57b9d34482c90dc8a7e439570a963d6f03620b",
+  "candidate_blockers": [],
+  "targets": 6,
+  "survivors": 11,
+  "source_files_raw_LF": 2129,
+  "source_ZIP_full_files": 2184,
+  "original_build_members": 12,
+  "host_table_members": 35,
+  "approved_artifacts": 1017,
+  "typed_indexes": 7,
+  "typed_references": 3348,
+  "known_CIDs_closed": 712,
+  "permissions_false": 30,
+  "new_budgets_empty": 3,
+  "old_budgets_retained": 18,
+  "backup_files_retained": 48,
+  "PR_CI": {
+    "run": 39577806574,
+    "event": "pull_request",
+    "attempt": 1,
+    "jobs": "13/13 SUCCESS",
+    "main_CI": "NOT_CLAIMED"
+  },
+  "unresolved_threads": 0,
+  "PR332": "OPEN_DRAFT_UNMERGED",
+  "Issue307": "OPEN",
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "execution_authority": false,
+  "new_native_preflight": "NOT_RUN",
+  "required_future_steps": [
+    "New direct human delete authority for this unique execution/full reference manifest/window",
+    "Separate human request if scheduling is wanted",
+    "Fresh fixed complete native/Core/IAM/inventory/topology/budget preconditions in the fixed window",
+    "Actual authorization Host.check after full-entry finally-close and before Source restart",
+    "Frozen finite order, fresh topology, once-only budgets and failure seal"
+  ],
+  "new_source_start": 0,
+  "new_provider_io": 0,
+  "new_native_delete": 0,
+  "old_authorization_reused": false,
+  "full_D1": "NOT_ACCEPTED",
+  "original_failed_observers": [
+    "observe-manifest-build01.py",
+    "observe-manifest-build02.py"
+  ],
+  "corrected_observer": "observe-manifest-build03.py",
+  "candidate_source_gate_modified": false,
+  "matrix": {
+    "path": "docs/acceptance/issue307-d1-v28-crosscheck01.md",
+    "sha256": "aeca3365aaaec2886a376e7f401c7fab70485c59394db28aca108899e3ad433f"
+  }
+}

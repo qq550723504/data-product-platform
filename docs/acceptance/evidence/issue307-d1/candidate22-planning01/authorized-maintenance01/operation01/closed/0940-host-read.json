@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "docker",
+    "cp",
+    "1005487df2b2c61fc7bb8eed440d9584490e1f9d46c8f26609ff51df3568b7cd:/run/budget",
+    "-"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:20:40.049899+00:00",
+  "stdout_sha256": "1b3bfe5d13bf132045703901ce4130f659fd6da4e2767150b61a11e10d0b051e",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

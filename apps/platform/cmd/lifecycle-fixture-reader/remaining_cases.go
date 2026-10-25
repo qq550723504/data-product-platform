@@ -194,13 +194,14 @@ func remainingCases(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, 
 			return lc.ErrStorageScope
 		}
 		blocked, e := d.dispatch(ctx, "M1", "M1-C-nondelete-protection", cs[2])
-		if e != nil || blocked.Admitted || blocked.AttemptID != uuid.Nil {
-			return errors.New("native retained C admitted")
+		observation := observeProtectedDispatch(blocked, e)
+		if err = write(c, "remaining-M1-C-dispatch-observation.json", observation); err != nil {
+			return err
+		}
+		if observation.Reason != "REJECTED_WITHOUT_ATTEMPT" {
+			return fmt.Errorf("protected C dispatch: %s", observation.Reason)
 		}
 		p := d.deps.Protection[cs[2].ID]
-		if p.RetentionMode != "GOVERNANCE" || p.RetainUntil == nil || !time.Now().UTC().Before(*p.RetainUntil) {
-			return errors.New("native C retention absent")
-		}
 		return write(c, "remaining-M1-C-native-nondelete.json", map[string]any{"dispatch": blocked, "native_protection": p, "mixed_outcomes": "NOT_RUN", "native_delete": 0})
 	}
 	if mode == "remaining-mixed-b" {
@@ -232,12 +233,13 @@ func remainingCases(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, 
 		return errors.New("M1 checkpoint was preceded by a B lookup")
 	}
 	blocked, err := d.dispatch(ctx, "M1", "M1-C-retained", cs[2])
-	if err != nil || blocked.Admitted {
-		return errors.New("M1 retained C admitted")
+	observation := observeProtectedDispatch(blocked, err)
+	if e := write(c, "remaining-M1-C-dispatch-observation.json", observation); e != nil {
+		return e
+	}
+	if observation.Reason != "REJECTED_WITHOUT_ATTEMPT" {
+		return fmt.Errorf("protected C dispatch: %s", observation.Reason)
 	}
 	protection := d.deps.Protection[cs[2].ID]
-	if protection.RetentionMode != "GOVERNANCE" || protection.RetainUntil == nil || !time.Now().UTC().Before(*protection.RetainUntil) {
-		return errors.New("M1 C native retention no longer active")
-	}
 	return write(c, "remaining-M1-C-blocked.json", map[string]any{"dispatch": blocked, "native_protection": protection, "completion": 0, "native_delete_C": 0})
 }

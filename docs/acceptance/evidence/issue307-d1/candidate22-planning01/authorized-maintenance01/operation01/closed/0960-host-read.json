@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "docker",
+    "volume",
+    "inspect",
+    "dpp-lifecycle307-808a6960-candidate21-budget"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:20:55.222075+00:00",
+  "stdout_sha256": "0ef95a759fd5a4325d711617d3b8f977d75ec7d10a4f4f7c861aed8fb7fa17b8",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

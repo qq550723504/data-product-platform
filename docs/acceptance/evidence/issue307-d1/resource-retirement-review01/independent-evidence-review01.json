@@ -1,0 +1,72 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_RETIREMENT_EVIDENCE_REVIEW",
+  "reviewed_commit": "81c8a1130d83379c8614d3b3082b237fd2073f73",
+  "remaining_blockers": [],
+  "checks": {
+    "public_index_members_verified": 182,
+    "private_index_members_verified": 13043,
+    "container_receipt_index_members_verified": 1972,
+    "volume_receipt_index_members_verified": 424,
+    "pg_archive_index_members_verified": 108,
+    "exact_container_receipts_verified": 986,
+    "volume_decisions_verified": {
+      "removed": 106,
+      "empty": 70,
+      "old_pg_restore": 36,
+      "preserved": 91
+    },
+    "physical_pg_archives_decompressed_and_compared": 36,
+    "physical_pg_archive_members_compared": 80861,
+    "physical_pg_archive_compressed_bytes": 347632160,
+    "all_pg_archives_completed_before_corresponding_removal": true,
+    "executed_source_snapshot_files_verified": {
+      "containers": 7,
+      "volumes": 7
+    },
+    "budget_tar_archives_verified": 58,
+    "existing_budget_files": 5,
+    "budget_original_reference_files_verified": 29,
+    "budget_origin_union_verified": {
+      "original_frozen_packet": 18,
+      "original_allocation": 33,
+      "failed_isolated_rehearsal": 7
+    },
+    "original_budget_mount_edges_verified": 344
+  },
+  "methods": [
+    "使用 python -u -B - 对五份固定索引逐成员重算实际 bytes/SHA256，全部无差异。",
+    "对实际固定输入调用 retired_resources.receipts 和 retired_volumes.checked，核对精确回执、197卷分区及原始备份证明。",
+    "逐份解压36个PG归档，将完整成员集合、文件SHA256、type、size、UID、GID、mode、linkname与原离线内容观察比较；核对归档完成早于对应删除意图。",
+    "核对两个执行源码快照与各自冻结binding；区分执行版本与后来填入完成索引的catalog，未将正常分阶段完成判为漂移。",
+    "解析58份原始预算tar，验证完整内容树；独立重算29项原引用，并以原完整宿主挂载图核对58预算身份、归属和344条挂载关系。",
+    "核对空间报告将Docker内部净回收与宿主C盘变化分开表述，没有将内部回收冒称宿主释放。"
+  ],
+  "duplicate_readonly_audit_cancellation": {
+    "status": "CANCELLED_OWN_DUPLICATE_READONLY_AUDIT",
+    "reason": "Root固定完整入口正在执行同一现场原件及预算检查，按Root要求停止重复扫描。",
+    "last_reported_original_files_processed": 10000,
+    "original_file_audit_terminal_result": "NOT_AVAILABLE_CANCELLED",
+    "fresh_physical_budget_phase": "NOT_RUN",
+    "child_pid": 19368,
+    "child_creation_utc": "2026-10-24T03:32:08.5711370Z",
+    "parent_pid": 10548,
+    "parent_creation_utc": "2026-10-24T03:32:06.2471620Z",
+    "identity_proof": "终止前复核精确子命令、父子PID、双方creation time及父CommandLine三项唯一评审脚本标记。",
+    "confirmed_child_absent": true
+  },
+  "limitations": [
+    "本独立范围没有调用Docker命令，没有重新证明当前全机容器或卷现场状态。",
+    "54310原件的独立重复扫描没有终态结果，不能宣称全部通过；现场全量原件及58预算物理读回应采用Root固定完整入口的新鲜结果。",
+    "本结果不代替完整D1验收、CI、删除授权或保护状态写入授权。"
+  ],
+  "review_driver_diagnostics": [
+    "初次源码快照检查误假定保留仓库层级，实际为平铺文件；改按原文件名后14项哈希通过，没有修改证据。",
+    "首次只读进程枚举误用PowerShell自动变量Matches，未执行终止；改用专用变量后严格识别并仅终止本评审重复只读进程。"
+  ],
+  "repository_or_evidence_writes": 0,
+  "actual_docker_operations": 0,
+  "actual_docker_runtime_started": false,
+  "source_started": 0,
+  "business_object_delete": 0,
+  "protection_state_writes": 0
+}

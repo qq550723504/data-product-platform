@@ -1,0 +1,8 @@
+{
+  "status": "PASS_READONLY_V28_CORE_AUDIT_SEALED",
+  "failure": null,
+  "Core_stopped": true,
+  "provider_calls": 0,
+  "native_delete": 0,
+  "business_mutations": 0
+}

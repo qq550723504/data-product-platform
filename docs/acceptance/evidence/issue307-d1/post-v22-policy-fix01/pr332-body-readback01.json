@@ -1,0 +1,8 @@
+{
+  "status": "PASS_UTF8_BODY_READBACK",
+  "head": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "body_sha256": "f90c5dedc006edbb184340d68a455e506ed986cecab9220176fd35ccaeacd497",
+  "pr": "https://github.com/qq550723504/data-product-platform/pull/332",
+  "isDraft": true,
+  "issue307": "OPEN"
+}

@@ -1,0 +1,12 @@
+{
+  "repository": {
+    "pullRequest": {
+      "reviewThreads": {
+        "nodes": [],
+        "pageInfo": {
+          "hasNextPage": false
+        }
+      }
+    }
+  }
+}

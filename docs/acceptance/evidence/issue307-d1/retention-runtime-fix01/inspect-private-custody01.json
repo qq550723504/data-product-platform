@@ -1,0 +1,88 @@
+{
+  "status": "PASS_PRIVATE_RAW_PUBLIC_REDACTED_CUSTODY",
+  "members": [
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-01-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-01-inspect.stdout",
+      "raw_sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+      "raw_bytes": 9252,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-01-inspect.redacted.json",
+      "redacted_sha256": "5bad155e09fc6e9aa1110442f22fa47789860d76761551ef8330521c25ec7653",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-02-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-02-inspect.stdout",
+      "raw_sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+      "raw_bytes": 9251,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-02-inspect.redacted.json",
+      "redacted_sha256": "4eef71f5d072cd9e568cbef108ac1fa3b3a58a69a79ce8582f8bd564d2a84dd3",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-05-volume-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-05-volume-inspect.stdout",
+      "raw_sha256": "56287fc77bb69fcce361060760f9d143ac1e5a8d25fdc09c11dc03f1893a44db",
+      "raw_bytes": 383,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-05-volume-inspect.redacted.json",
+      "redacted_sha256": "c683b8447a68d2504a9955b358c73e89eb44bb2d074ea0f3d8803ffbc679c20b",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-11-volume-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-11-volume-inspect.stdout",
+      "raw_sha256": "2d1e78e59d9d2b9bce070ebc79e5f8f9e6419f7ec27e4d77d3491a50a28856ed",
+      "raw_bytes": 381,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-11-volume-inspect.redacted.json",
+      "redacted_sha256": "daf07b8c9c80a1d362daae002392245377392fd37186a631bbea75b95c135bb6",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-16-volume-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-16-volume-inspect.stdout",
+      "raw_sha256": "188992ffa566b49cec0cd58780525dd82737bf7c1ccb2720f807f8ddb2fed27e",
+      "raw_bytes": 381,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-16-volume-inspect.redacted.json",
+      "redacted_sha256": "82c523f662106c4b71fd27f9cd6569ffa439512e258602cbc677eb21ddce7850",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-22-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-22-inspect.stdout",
+      "raw_sha256": "e0e54c301293012aec06c04945c70c1416d5ed2d9283bc67822e43746ab23f6f",
+      "raw_bytes": 10532,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-22-inspect.redacted.json",
+      "redacted_sha256": "5fd8b26eea79f4dd6e3d98e5132a5163ddd2138f1fee079e6cb21a770619058d",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-31-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-31-inspect.stdout",
+      "raw_sha256": "e0e54c301293012aec06c04945c70c1416d5ed2d9283bc67822e43746ab23f6f",
+      "raw_bytes": 10532,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-31-inspect.redacted.json",
+      "redacted_sha256": "5fd8b26eea79f4dd6e3d98e5132a5163ddd2138f1fee079e6cb21a770619058d",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-32-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-32-inspect.stdout",
+      "raw_sha256": "86582b65ee2839915d225f220944054aa8f4cd735cc44a13575992da2aea50a7",
+      "raw_bytes": 9252,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-32-inspect.redacted.json",
+      "redacted_sha256": "5bad155e09fc6e9aa1110442f22fa47789860d76761551ef8330521c25ec7653",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    },
+    {
+      "original_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-33-inspect.stdout",
+      "raw_private_path": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-runtime-fix01\\raw-inspect\\probe-33-inspect.stdout",
+      "raw_sha256": "d855ecd83b1430a6a739d5c8c7a7026bfa387ba9eb23fa53aa64e294b323d2f3",
+      "raw_bytes": 9251,
+      "redacted_public_path": "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-33-inspect.redacted.json",
+      "redacted_sha256": "4eef71f5d072cd9e568cbef108ac1fa3b3a58a69a79ce8582f8bd564d2a84dd3",
+      "custody": "ORIGINAL_BYTES_PRESERVED_PRIVATELY_NOT_PUBLISHED"
+    }
+  ],
+  "source_mutation": 0,
+  "published": false
+}

@@ -1,0 +1,1039 @@
+{
+  "status": "C21_POSTLOCK_PUBLICATION_RECEIPT_INDEX_NOT_AUTHORIZED",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "final_head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "count": 255,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/001-intent.json": {
+      "sha256": "32027504dd81250a19214f20734eda1402c2a50fe45a7471bd755de529099f12",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/001-process.json": {
+      "sha256": "4d2cc83ce01db86a9690e50c649af5b010b714b9e270fcf91cf365a0854d8e5d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/001-stdout.json": {
+      "sha256": "131f2c176217b7dddc7c81570d32719e5f8fbcff935ece36204d7c062d07f4c9",
+      "bytes": 4082
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/002-intent.json": {
+      "sha256": "594c99b034366643d738e4fd5231023849b4a587634971edb163dda6cf3fa491",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/002-process.json": {
+      "sha256": "d9dd7287a4f4ebdba2c57efbde11834fb052fb57b0afcf8f5fbd343cd07689d6",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/002-stderr.txt": {
+      "sha256": "256bf323d488b96ed59be6a50a192e2badd6b722792fcc4b8856f97aa3a3d23a",
+      "bytes": 36
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/002-stdout.json": {
+      "sha256": "d6020ee3b0852c3deb66c66d159cc80caabeaa66ee301778307a2a18d486450d",
+      "bytes": 149
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/003-intent.json": {
+      "sha256": "d095e1494669bdb260dc0b3496d2ced0bbb742cd4ef2ec1b495d0994d8c57f10",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/003-process.json": {
+      "sha256": "b18bbf76ed567864ca4b633f128483a7d26bcc05a3872700fdfd845f0db0a100",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/003-stdout.json": {
+      "sha256": "5cccebd498ef10b5cb3ec0ddadc0fb47680eda42f551cc3e019b4cd2bca75eb2",
+      "bytes": 193
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/004-intent.json": {
+      "sha256": "409eb1340017f2a406b7deb5908fc5569c423570406825e4e658f737c22f131c",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/004-process.json": {
+      "sha256": "dd5a4d0e3e08fdbbb0c2e65abea3a3fe615179c32ff2526e79f56d271d1ca22e",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/004-stdout.json": {
+      "sha256": "65edffe53df427fce6b406e75d42199b87b13f2fe2aafbd8a0c1e68feea27561",
+      "bytes": 20723
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/005-intent.json": {
+      "sha256": "18ba0a33abb4fd60769d8272c50942be1e3b7e612c474a93c9fda5b77b835b84",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/005-process.json": {
+      "sha256": "a244d579399e58f40e320b5395f4a13d6facdad1e1760b543649ff66d7568727",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/006-intent.json": {
+      "sha256": "f7796015c64bbbc6b867d27cdc157bdfb8761488582ce3037e5efcde9cc9405a",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/006-process.json": {
+      "sha256": "b589f97818b584a5dc3126ed25501d9c49a26c28da2e5583288794ec5188adf8",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/006-stdout.json": {
+      "sha256": "b344585303d7e777eec7cc586e307456a2814e7095e649dff5c45e0b4c17cec9",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/007-intent.json": {
+      "sha256": "fb7bcc2de0b9f140764a11b8405cb51d1a998c7bece28ef6ad8be11fe050bf4e",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/007-process.json": {
+      "sha256": "10172afd2d047d7db279b50c13da1b1b9c8d011578cb45e850fa5eae1fef1382",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/007-stdout.json": {
+      "sha256": "5b4b58862332db4e05788cbf0f8ece6016a4886fcfc7bebfe6891416878f844a",
+      "bytes": 28604
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/008-intent.json": {
+      "sha256": "dd6b8df6b2319b08d430a1b3650b4ad8ea0b7f915aaba73eb02f9d96b33a928f",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/008-process.json": {
+      "sha256": "f4b339d39c296ddfcd752116c3f595cc78563637c93680190a3e9c74d409a9f4",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/008-stdout.json": {
+      "sha256": "f7522fd1220cece46f18b4c87f011d5882e16f9ae6575d44010154b14924f69e",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/009-intent.json": {
+      "sha256": "89ef9cacf9cfdd78f71fc09df55da75fddc976a812630abc82c3f12b3f559e55",
+      "bytes": 669
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/009-process.json": {
+      "sha256": "f67b318736f6fa3057665e2b58d92a113f1c19988bd2ffd65ea3401afbdd2081",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/009-stdout.json": {
+      "sha256": "3c255a8c419b0b8a8e24a7aece0147ec1e2650caac3e6480fa1359831f503d7e",
+      "bytes": 270
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/010-intent.json": {
+      "sha256": "b3c26d8537aa7b2de65442745fe7860bf535a1f2db3db5c44dc5bffcf82502f3",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/010-process.json": {
+      "sha256": "3a19c7c5cf6521e27be0df6dc1d733ad586e41a32c26f507b2c6185744faf91f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/010-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/010-stdout.json": {
+      "sha256": "3e6bbad83bf9b259c5764226bd7012d19fdff3e9b2ad48dc535f2252c0b8932d",
+      "bytes": 4080
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/011-intent.json": {
+      "sha256": "0a3ea846b153cc06a922210f42bf31c4024443b27b61e58f40072bad7f0366f4",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/011-process.json": {
+      "sha256": "cfe9b58bdac42dbf8b77ba88d15ed3219fab39b5eefe375419c731aa16ad6afd",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/011-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/011-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/012-intent.json": {
+      "sha256": "525410c49829c3c5d1463fd886dc65f10dbfe6a5586f297b227895be963033bc",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/012-process.json": {
+      "sha256": "b3c506a43c69fad09d33fb040e261c97c3ee3035b40c30e4799251de35d42af5",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/012-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/012-stdout.json": {
+      "sha256": "60a51021301800d6299429443f4318c277264baeee36797ac6fccdbe2a9a6f29",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/013-intent.json": {
+      "sha256": "a04efef64ab5a63a80fe7026b21b32340797834f35ca21754ee8f2a4ededf756",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/013-process.json": {
+      "sha256": "bf4930ae5228b798e7d3f817922bc8a0aeca8cf9378477a592f03e4326237abd",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/013-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/013-stdout.json": {
+      "sha256": "65edffe53df427fce6b406e75d42199b87b13f2fe2aafbd8a0c1e68feea27561",
+      "bytes": 20723
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/014-intent.json": {
+      "sha256": "ab900d238239fbb2ca7fec202dfe61e154cf9e0c88e27423828c91936eb9053f",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/014-process.json": {
+      "sha256": "d6839805bfa7563fded3af75938c1f47187cbb0bc4cd63cc857e985ed9cee363",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/014-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/014-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/015-intent.json": {
+      "sha256": "52dc34823fd8ea5dd1525c66ea99a20ac6e7b14f71ae4a9e911ba01a904c966a",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/015-process.json": {
+      "sha256": "1c040b078cefaaf7bedc18f72060e2a9115db3d39655ee4683f23c64746cd75d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/015-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/015-stdout.json": {
+      "sha256": "b344585303d7e777eec7cc586e307456a2814e7095e649dff5c45e0b4c17cec9",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/016-intent.json": {
+      "sha256": "ffc5cf76ec14765d9f0991192d46ea9f42d41712d804bd460204caef6081f857",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/016-process.json": {
+      "sha256": "4139697e8793f611d0164122c62680bd0ca39dd5c7bc0893be2845151b4f159d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/016-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/016-stdout.json": {
+      "sha256": "5b4b58862332db4e05788cbf0f8ece6016a4886fcfc7bebfe6891416878f844a",
+      "bytes": 28604
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/017-intent.json": {
+      "sha256": "1224036a0a55b71d44d44bb76c27a4910c8319298a15c77c47a52ff2d9704169",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/017-process.json": {
+      "sha256": "b1cbd1d159b1a96ee415a1416c291757381cbb39c7be25a79be748c378d891dc",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/017-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/017-stdout.json": {
+      "sha256": "f7522fd1220cece46f18b4c87f011d5882e16f9ae6575d44010154b14924f69e",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/after.json": {
+      "sha256": "3a55d4ae741d891be7058419b7ec4b60f7f4048d9a1b77819a98bc94aee65d96",
+      "bytes": 9496
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/before.json": {
+      "sha256": "77a5eedaab0a2097f6d6f8947c0ed8a7bf1fd1d882da06ec926ab12694daca8c",
+      "bytes": 8274
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/branch-lock.json": {
+      "sha256": "49bc8da2e36be84e127aadb659d396e69a3de9cac942e93741383c0852c0abd0",
+      "bytes": 20383
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/execution-binding.json": {
+      "sha256": "f27a617f278fcbaf64db29ddf536d5816d88acaba8a0d760280eb23bbe55d0de",
+      "bytes": 23071
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/branch-freeze01/lock-intent.json": {
+      "sha256": "ddd2a874cb257bf27296e0ae55480e42e0726a728c84c8c82dbdd63fc7fa55a9",
+      "bytes": 170
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/000-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/000-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/001-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/002-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/003-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/004-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/005-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/006-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/007-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/008-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/009-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/010-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/010-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/011-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/011-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/012-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/012-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/013-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/013-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/014-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/014-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/015-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/015-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/016-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/016-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/017-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/017-stdout.json": {
+      "sha256": "681829b8b0d9d5cfdc401abcd921403dd7b9c103b08b9d913364ca737d79f906",
+      "bytes": 207
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/018-stderr.txt": {
+      "sha256": "febde9d21b0665cb43873dc264d242a17ee0ecc80174896765b2c394ba2fefe2",
+      "bytes": 316
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch01/018-stdout.json": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch02/000-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch02/000-stdout.txt": {
+      "sha256": "4387b6a73e1ef81dcda46429e3f366c07d978d3f28da2ab1c746b87ae9c601fd",
+      "bytes": 31287
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/ci-watch02/completed.json": {
+      "sha256": "0e00b3f8b2919b68f8b0d64159d8709cf8eab78c5636f860718162025b9bc9f5",
+      "bytes": 181
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/clarify-postlock-creation02.py": {
+      "sha256": "0dee61dae456e691a31d54e3c239e7a690139a46e9d788e83b2332555f880560",
+      "bytes": 3184
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-checkpoint01.json": {
+      "sha256": "5323e9d0af86e02133e88988329b2c26aeffd8e1ee83445c942b5746b30c6840",
+      "bytes": 1377
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-checkpoint02.json": {
+      "sha256": "174dc9ec36dbc0a35b11a86bc3f391803a5511c72b843c21b746cb86795d1f41",
+      "bytes": 1881
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/001-intent.json": {
+      "sha256": "daddac3a1b146321864b6af2f2f611a5af91d4b4590b22a40970c0dfa77aaef3",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/001-process.json": {
+      "sha256": "196591156248c92affce2606257d42d83f498c239372ed5bd855a849ff3b89af",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/001-stdout.json": {
+      "sha256": "131f2c176217b7dddc7c81570d32719e5f8fbcff935ece36204d7c062d07f4c9",
+      "bytes": 4082
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/002-intent.json": {
+      "sha256": "efa9b2eb77cf478f609a499c3c59de49ab0106f4a900af3ab5be0dcf934fb7aa",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/002-process.json": {
+      "sha256": "ea54f7cbe0bfaab750136dfad29f5233e12ab818f3cc3c3d7a222a1da29c1c36",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/002-stderr.txt": {
+      "sha256": "256bf323d488b96ed59be6a50a192e2badd6b722792fcc4b8856f97aa3a3d23a",
+      "bytes": 36
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/002-stdout.json": {
+      "sha256": "d6020ee3b0852c3deb66c66d159cc80caabeaa66ee301778307a2a18d486450d",
+      "bytes": 149
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/003-intent.json": {
+      "sha256": "ffbdbafba268d5ca1820663789dea13cddc27a552cc7fbba1ab18b200c77d60d",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/003-process.json": {
+      "sha256": "d525209049db5d49bc2a88ff0392b787b39fb62e3fb0ee1ebcc4826165a8f0db",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/003-stdout.json": {
+      "sha256": "5cccebd498ef10b5cb3ec0ddadc0fb47680eda42f551cc3e019b4cd2bca75eb2",
+      "bytes": 193
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/004-intent.json": {
+      "sha256": "177aa7bb682e1d27b3a30a9daab4aec5dbefb954372a52145c12cc08bce7392b",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/004-process.json": {
+      "sha256": "6c7195c22b730368d62363ac6c7f44c765c612f5bf737faa52a275159d80060b",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/004-stdout.json": {
+      "sha256": "65edffe53df427fce6b406e75d42199b87b13f2fe2aafbd8a0c1e68feea27561",
+      "bytes": 20723
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/005-intent.json": {
+      "sha256": "9f2fe23d68460ee13ca1522eec219585dd1331363b94079c5901741e790dbc11",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/005-process.json": {
+      "sha256": "853d216c266a73063539766d971b6e0c4e6d5021b0d3eaa1a3c1d676354d6656",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/006-intent.json": {
+      "sha256": "a806760089210df2b930b0402e3d4932909838fb2c1523bca45cee4d89fa5621",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/006-process.json": {
+      "sha256": "ad33a74d9e742fba1235f69ce03a5e009296af03b23f211d2ac1f072e799b6cf",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/006-stdout.json": {
+      "sha256": "b344585303d7e777eec7cc586e307456a2814e7095e649dff5c45e0b4c17cec9",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/007-intent.json": {
+      "sha256": "ba857fa0be5bfdd6770347286df102791691f54332df12cd0ec6828939fd376f",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/007-process.json": {
+      "sha256": "5be4a3850d3c3b60113187f1efaa554426b7111ad23de0dc83a49c81a51ca461",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/007-stdout.json": {
+      "sha256": "5b4b58862332db4e05788cbf0f8ece6016a4886fcfc7bebfe6891416878f844a",
+      "bytes": 28604
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/008-intent.json": {
+      "sha256": "d97c770e93c8bb57409cb9047681ebae9de3c560873e78e009f76aab4b7b8b9e",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/008-process.json": {
+      "sha256": "7bdb7578f75a243ef66b6b7100e32cfc3390668d04d626af2d7878a7be4edbe5",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/008-stdout.json": {
+      "sha256": "f7522fd1220cece46f18b4c87f011d5882e16f9ae6575d44010154b14924f69e",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/009-intent.json": {
+      "sha256": "68663e35b096bce29d8437259017d60c803890b73c935bc33a4a7dd29ec9499d",
+      "bytes": 433
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/009-process.json": {
+      "sha256": "a80ae27768d1c965b47499d5761616daa5498652cf01e08ade8d4e92eb4bcbd0",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/009-stdout.json": {
+      "sha256": "7c30478d764063c6a0f59654db961b6a05eb87f1b4e6abef162eb1a93c9950d7",
+      "bytes": 229
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/result.json": {
+      "sha256": "1176a891f558423cca02c1959265088dbd2d75ce2159c525c41ecccc4f086631",
+      "bytes": 387
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/review-threads.json": {
+      "sha256": "521e977e76defe43a006cec0ea91d91b39be29410e56ead0b93a58553507e180",
+      "bytes": 295
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-ci-review01/snapshot.json": {
+      "sha256": "77a5eedaab0a2097f6d6f8947c0ed8a7bf1fd1d882da06ec926ab12694daca8c",
+      "bytes": 8274
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/final-text-crosscheck01.json": {
+      "sha256": "0a004a0cc9a3f42137f8e48d41d32da8de1762d2a7d3efb8aad3f8dcec2de945",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/evidence-index.json": {
+      "sha256": "593c090c88444501044cde906a71b4b1b2a534a8253a93d68269ad622ef104b4",
+      "bytes": 11309
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/independent-current-proposal02-audit01.json": {
+      "sha256": "82a4f39ecf9ad3fb17aea97c1d3afe47e01dae928bb4bec3ace71e061e9746db",
+      "bytes": 1349
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/independent-final-review01.json": {
+      "sha256": "7836ed0a17efe80417a2e024df6f41488793c19d4a643dad03580a3769744477",
+      "bytes": 7339
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/independent-saved-lock-ci-audit01.json": {
+      "sha256": "f6de9d528a2f38211bda5046b5473c4b68929a6b6d2c151bca32b08da3934e4c",
+      "bytes": 5016
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/reviewed-artifacts01.json": {
+      "sha256": "885e2a378ff3d85bba11d0e112153c12287c7d8d85f8fdeb23c885178cb5abf5",
+      "bytes": 307560
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/001-intent.json": {
+      "sha256": "5545aaade3863dfa76a8726a2cb5e85b56e15b95d843a17a217ef839af2f925a",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/001-process.json": {
+      "sha256": "638165099804b9a9da7ee5179a67e734cb326a4b2231981229e56ad5bd5fd048",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/001-stdout.json": {
+      "sha256": "3e6bbad83bf9b259c5764226bd7012d19fdff3e9b2ad48dc535f2252c0b8932d",
+      "bytes": 4080
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/002-intent.json": {
+      "sha256": "69928f35f065367cf68b0221350acf9d3ebb7a31ab32aad42ea2d825b17620c7",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/002-process.json": {
+      "sha256": "c41f2a1f91ad4dd97f0bdbff9225c6da1cadd64c2386a86e3c30eba1ba68cba3",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/002-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/003-intent.json": {
+      "sha256": "70bee6eb50fc51b3e84edca527dc8548ef50167dc627e4c1e8b38e362a478cae",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/003-process.json": {
+      "sha256": "441bc1f409dcc02fff1be6a21c781bb1a1cf6e43db92b7e4d654a4c51d514480",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/003-stdout.json": {
+      "sha256": "60a51021301800d6299429443f4318c277264baeee36797ac6fccdbe2a9a6f29",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/004-intent.json": {
+      "sha256": "a9dfd753148d6ccbf350f08287702d15c397d80e03e2ae47533b828b9c9fe58b",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/004-process.json": {
+      "sha256": "f40c67eabb9f68ca76f30c77056fed227bef7808455185240f0874b19683151c",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/004-stdout.json": {
+      "sha256": "65edffe53df427fce6b406e75d42199b87b13f2fe2aafbd8a0c1e68feea27561",
+      "bytes": 20723
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/005-intent.json": {
+      "sha256": "4f31b4998273ddda5ceee74efdd6f624247792e504d1f23a4521f5b8c73a1329",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/005-process.json": {
+      "sha256": "1abc8c0e63013aba44b667e698b652e303f559b156da4fa91aa8d40bdbdeff7f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/006-intent.json": {
+      "sha256": "38217c7c4ffbe09fd3326e7204059bce3d189df702e7f6cdeff5ff5d01bb2808",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/006-process.json": {
+      "sha256": "8e73c142608095167163c4c78d5499d69c1222d56f02a896ad0ee650ad47b09b",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/006-stdout.json": {
+      "sha256": "b344585303d7e777eec7cc586e307456a2814e7095e649dff5c45e0b4c17cec9",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/007-intent.json": {
+      "sha256": "65c9b7931509990ef3460fffa5695bf9deaa9876fa2e564b733d381dfbafe70c",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/007-process.json": {
+      "sha256": "9a394fbea829f1ca2f8872299b1ee0bf87feb04970cc76688b8e49f99e32a865",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/007-stdout.json": {
+      "sha256": "5b4b58862332db4e05788cbf0f8ece6016a4886fcfc7bebfe6891416878f844a",
+      "bytes": 28604
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/008-intent.json": {
+      "sha256": "250ebeb25e3070fe82682624c4c51724235f5c732aabac0b260ef284e9bcdbc1",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/008-process.json": {
+      "sha256": "d456f29879ec07f3e8fa37943c556a0af06d030071afdc0a9c949c122e077c70",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/008-stdout.json": {
+      "sha256": "f7522fd1220cece46f18b4c87f011d5882e16f9ae6575d44010154b14924f69e",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-after/REPLAY_ONLY_NOT_NETWORK.json": {
+      "sha256": "43637fa9493d62f826faab441c9716129b6cdfd713a41b5993978af8c1c2f22f",
+      "bytes": 250
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/001-intent.json": {
+      "sha256": "fe0b81120728389d6c389930b6d13bab67d1a64b84413240181d5f1b71af3e4f",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/001-process.json": {
+      "sha256": "1d06222b766c70c917e110200913e143578b4a04a8a1c9a38b5adf36df7a73f2",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/001-stdout.json": {
+      "sha256": "131f2c176217b7dddc7c81570d32719e5f8fbcff935ece36204d7c062d07f4c9",
+      "bytes": 4082
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/002-intent.json": {
+      "sha256": "590f1ce837d960eb2e912aa5817445c9ab0a2553070ed267d38d9c25e9c2f028",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/002-process.json": {
+      "sha256": "95e7349566bb09df8adca4ac8063207ab26583fef5a2361751d2398aad26a5a0",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/002-stderr.txt": {
+      "sha256": "256bf323d488b96ed59be6a50a192e2badd6b722792fcc4b8856f97aa3a3d23a",
+      "bytes": 36
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/002-stdout.json": {
+      "sha256": "d6020ee3b0852c3deb66c66d159cc80caabeaa66ee301778307a2a18d486450d",
+      "bytes": 149
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/003-intent.json": {
+      "sha256": "1372243ef8fbd14bdd7f7ed0c0b15e2ade6524ebb010a955545ae19166e5fdc7",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/003-process.json": {
+      "sha256": "275eecbdc3b6f1f3d33200acbcb312c7329fd733b03750cfdd98fc4d1ad1fd83",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/003-stdout.json": {
+      "sha256": "5cccebd498ef10b5cb3ec0ddadc0fb47680eda42f551cc3e019b4cd2bca75eb2",
+      "bytes": 193
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/004-intent.json": {
+      "sha256": "55ea0db25395fe9a7e892f5cff523902366282e2f472fc57d32f3f4135c61b48",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/004-process.json": {
+      "sha256": "c54e9bebe936fabbef9f0cc29900deafc741ecc000657da25cf2753969986f97",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/004-stdout.json": {
+      "sha256": "65edffe53df427fce6b406e75d42199b87b13f2fe2aafbd8a0c1e68feea27561",
+      "bytes": 20723
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/005-intent.json": {
+      "sha256": "fa4b7d4169c6e0fca96d3d67940e5773d17dd9234fdaaaa3b87ac2bc58b7e1ce",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/005-process.json": {
+      "sha256": "1628f8a08f0b9ec9c8926e6a3cf181e18d75a98d7ff372e0c82271eab2d2adad",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/006-intent.json": {
+      "sha256": "b4cc4eaf31da2cc16510baf5a86e548ec0777b6cfa1ea98f8767c4b0ce0ed55e",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/006-process.json": {
+      "sha256": "ee059ea073a08cf2ea8b2c7cea0a87d788b3175d8f8f9c4a87f1798c932921b5",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/006-stdout.json": {
+      "sha256": "b344585303d7e777eec7cc586e307456a2814e7095e649dff5c45e0b4c17cec9",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/007-intent.json": {
+      "sha256": "96b4cd69f715806225e4f4517fbe620e97d7b42cda74f338114a9ba852eb5f60",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/007-process.json": {
+      "sha256": "8064bfc06b53db66b6ecfcf4c643e833562e68377919411d47a90dfe3fca0f49",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/007-stdout.json": {
+      "sha256": "5b4b58862332db4e05788cbf0f8ece6016a4886fcfc7bebfe6891416878f844a",
+      "bytes": 28604
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/008-intent.json": {
+      "sha256": "42048bbc3c68e3d54031ed065fbdd54ad0e6cd2679583252200f0efe2f156624",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/008-process.json": {
+      "sha256": "6fb9268a0a287d015eae70846918e670ee2f08d1c009fd7ee5361b2dc5b62904",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/008-stdout.json": {
+      "sha256": "f7522fd1220cece46f18b4c87f011d5882e16f9ae6575d44010154b14924f69e",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/independent-postlock-review01/saved-API-replay-before/REPLAY_ONLY_NOT_NETWORK.json": {
+      "sha256": "0b8cd6c5e29a0a9c87f73362b6670d763785d136e8ebb6a0372c2316f31e8322",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/index-final-publication01.py": {
+      "sha256": "dfc0229dfe03f8a2e8ebccc0adf290564752a704c9fcfd67bea2c3acbf950b2e",
+      "bytes": 3332
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-body-prelock-readback01.json": {
+      "sha256": "a8a201d06e9200dd5694c1e4ffcd3f14364b0d2d8800bf831498fc7d940ac4f7",
+      "bytes": 3851
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-body-prelock01.md": {
+      "sha256": "a01270cebfb5087ac27d5b16a488c7099c8626a9c6a425f4f7afdbc047314a8c",
+      "bytes": 3647
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/body-readback-process.json": {
+      "sha256": "38e9d4e3504d4623c576afc62c4f856e6664de3522a8bda141ccd82574e95847",
+      "bytes": 240
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/body-readback-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/body-readback-stdout.txt": {
+      "sha256": "050f953eeba38bfdee15b94fe32e98e59fdf3e2d7ee62bcff1cbb623c96df05e",
+      "bytes": 4151
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/body.md": {
+      "sha256": "fb1dc53812638e5593046b7b1c109a4bc10c447c6eaca1a53353d6b249b261f3",
+      "bytes": 3947
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/comment-process.json": {
+      "sha256": "f09bc47a2415e1efaac5253eb39dbac62b7fc7fa2825db33906d6dab68d87c51",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/comment-readback-process.json": {
+      "sha256": "620aca14e537861079f6d5737dc0aa4748bfd517252979aed13c5855270080d0",
+      "bytes": 171
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/comment-readback-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/comment-readback-stdout.txt": {
+      "sha256": "389e745c7f10ae22019c38d97f3af159563a9e7d8a5d032c17613ddadee05089",
+      "bytes": 3215
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/comment-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/comment-stdout.txt": {
+      "sha256": "a7815e667fce3beb15438b7ff54723d81782831a40aa829a7723b55c2ee34d6b",
+      "bytes": 86
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/comment.md": {
+      "sha256": "3d8140a4e434ecde3e6a4e406b9a7b718166762f6902b646dd20736ae182d69d",
+      "bytes": 1506
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/edit-process.json": {
+      "sha256": "482fc250292da91476e5922bfe97db6ae3e67804a567504d5be2061bc3e9a4d4",
+      "bytes": 361
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/edit-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/edit-stdout.txt": {
+      "sha256": "3d28457ce10d8bd8aa522857b3835eb170d9bfea29183f3cab31f17d598aa59e",
+      "bytes": 62
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/pr-checkpoint01/result.json": {
+      "sha256": "eae83504f3a33042d6720a82f13c3353be6dac4b038fb8a74b2ab4c1489910fa",
+      "bytes": 292
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/publication-secret-scan02.json": {
+      "sha256": "92f8f3fcb0d6cc62e80ae6f405c623e064b586f9648ea7699b014b23927175ac",
+      "bytes": 197
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/publish-close-checkpoint01.py": {
+      "sha256": "f8cb40f2d2f2382ff0fba2ef0271efd4b60301d81a08f1f1475a3a4d2fa825f9",
+      "bytes": 5410
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/scan-final-publication02.py": {
+      "sha256": "c67c4fd168596c25a71b9000cbc2623dd23484aa19fa30cfc4c52a0d54f90251",
+      "bytes": 770
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/watch-final-ci01.py": {
+      "sha256": "510da5f537c5a25315e190d37ac3734d8a3edfc26a066765e54a861330c976a2",
+      "bytes": 1986
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-publication01/watch-final-ci02.py": {
+      "sha256": "68aac19a2a98d7f3aebd08fb0e46b51b762520593115cea712aa3e4d3d798fcd",
+      "bytes": 1843
+    },
+    "docs/acceptance/issue307-d1-candidate21-final-confirmation01.md": {
+      "sha256": "f51754642b34f738cf6313f520432baaf4d43e71005c78c6f147943dad71b9ea",
+      "bytes": 57455
+    },
+    "docs/acceptance/issue307-d1-candidate21-final-confirmation02.md": {
+      "sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989",
+      "bytes": 57842
+    },
+    "docs/acceptance/issue307-d1-v31-postlock-matrix01.md": {
+      "sha256": "8c7adc901482a21f6e0302e01117c64a60db9c7ff9395c2fed503abf3afbd7f2",
+      "bytes": 1252
+    },
+    "docs/acceptance/issue307-d1-v31-postlock-matrix02.md": {
+      "sha256": "37df8a49fb56b526516732e5c3d6420d0bbd1c437df1af1deddf4bed339b6467",
+      "bytes": 1512
+    }
+  },
+  "member_root": ".",
+  "format": "files-map-v1",
+  "current_proposal": "docs\\acceptance\\issue307-d1-candidate21-final-confirmation02.md",
+  "current_proposal_sha256": "50d88777d6ed5d9b54e33558c98b9866f5a07e630dc8c77e1c098404e3119989",
+  "execution_binding_sha256": "f27a617f278fcbaf64db29ddf536d5816d88acaba8a0d760280eb23bbe55d0de",
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "native_delete": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "original_failed_watch_preserved": true,
+  "scope": "Exact saved receipts only; index excludes itself and future authorization/scheduling observations. Original v01 rendering is retained and clarified by v02 without changing runtime/binding/HEAD."
+}

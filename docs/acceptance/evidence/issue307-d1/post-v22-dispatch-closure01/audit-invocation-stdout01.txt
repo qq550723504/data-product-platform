@@ -1,0 +1,1 @@
+{"status": "PASS_CORE_READONLY_AUDIT_ONLY", "receipt": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\23587686-0a95-4eaa-a010-a8c896c9735b\\terminal.json"}

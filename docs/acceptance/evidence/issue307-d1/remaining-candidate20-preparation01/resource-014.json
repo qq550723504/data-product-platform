@@ -1,0 +1,10 @@
+{
+  "volume": "dpp-lifecycle307-dfda43b4-candidate20-checkpoint-core",
+  "driver": "local",
+  "scope": "local",
+  "labels": {
+    "lifecycle307.allocation": "683dac99-f1a8-49ea-818b-6490eb7a3134",
+    "lifecycle307.remaining": "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6"
+  },
+  "mounted_cids": []
+}

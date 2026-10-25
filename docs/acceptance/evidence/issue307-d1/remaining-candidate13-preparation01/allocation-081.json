@@ -1,0 +1,33 @@
+{
+  "role": "remaining-mixed",
+  "group": "mixed",
+  "cid": "3ec4a85c3d4082e9f8f68db07f76bc341d019189d60d4f7e53adf401a6ac740d",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate13-rehearsal-mixed",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:64da4f8bc2e0e43a0ed861da044e67e56ceef62732141581ee7674b1b88d7646",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\mixed\\rehearsal-mixed,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\mixed\\outputs\\rehearsal-mixed,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "remaining-mixed"
+  ]
+}

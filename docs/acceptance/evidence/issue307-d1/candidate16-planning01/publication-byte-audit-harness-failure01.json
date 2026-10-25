@@ -1,0 +1,9 @@
+{
+  "status": "AUDIT_HARNESS_RAW_VS_GIT_TEXT_MISMATCH",
+  "failed_assertion": "raw blob SHA1 equals Git committed blob for every approved reference",
+  "first_path": ".gitattributes",
+  "reason": "text source files use canonical Git LF while Windows raw working bytes may be CRLF; packet/raw evidence is -text; contract binds actual raw SHA separately from canonical build source",
+  "frozen_gate_or_bytes_changed": false,
+  "source_provider_io": 0,
+  "native_delete": 0
+}

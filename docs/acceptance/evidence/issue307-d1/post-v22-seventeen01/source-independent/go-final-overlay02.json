@@ -1,0 +1,6 @@
+{
+  "Replace": {
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\apps\\platform\\cmd\\lifecycle-fixture-reader\\zz_independent_generic404_test.go": "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\independent_generic404_test02.go",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\apps\\platform\\cmd\\lifecycle-fixture-readonly-check\\zz_independent_stale_journal_test.go": "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\independent_stale_journal_test02.go"
+  }
+}

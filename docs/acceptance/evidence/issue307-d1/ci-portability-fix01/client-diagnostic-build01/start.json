@@ -1,0 +1,1 @@
+{"at": "2026-10-24T13:05:26.378935+00:00", "command": ["docker", "build", "--pull=false", "--network", "none", "-t", "dpp307-client-diagnostic:01", "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/client-diagnostic01"], "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform", "retained_source_start": 0}

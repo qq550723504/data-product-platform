@@ -1,0 +1,18 @@
+{
+  "role": "checkpoint-core",
+  "group": "business-races",
+  "cid": "c7a7b00660928d64ca17e56e89aae9abeccac3d9e58a7e492a9e9ce50001ca7c",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate15-checkpoint",
+    "--network",
+    "4bf74a7732fec586a0f95ea29aee8d09082553b125f7688b7378d1eb07e8306c",
+    "--env-file",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate15\\business-races\\checkpoint\\postgres.env",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-candidate15-checkpoint-core,target=/var/lib/postgresql/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate15\\business-races\\checkpoint,target=/run/backup,readonly",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+  ]
+}

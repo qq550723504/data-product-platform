@@ -1,0 +1,17 @@
+{
+  "status": "PASS_BOUNDED_RETENTION_MAINTENANCE_ENTRY_SOURCE_REVIEW",
+  "remaining_blockers": [],
+  "provenance": {"assessment_by": "/root/c23_preparation_boundary_review", "mode": "human-authorized readonly independent agent", "serialization_by": "/root"},
+  "scope": "Historical source review before the actual R compile failure was discovered. It does not establish R build success. Final acceptance requires independent-review02.json and checks03.",
+  "R_commit": "71286535d2b14c5456726d0f6db0aae8879de0cf",
+  "R_archive_sha256": "df667c9ebddf6b2b5000c31ecdc5b2e867b51cfaab5ad890ab2fd8b9f6e1ead2",
+  "R_archive_bytes": 6479535,
+  "R_archive_files": 774,
+  "shared_LF_members_independently_verified": 11,
+  "independent_tests": {"P_Go": "7 top-level methods / 35 table subcases PASS; official SDK httptest localhost only", "host_Python": "normal and optimized each 6 methods PASS; Docker compositions only", "R_build": "NOT_RUN in this original assessment"},
+  "closed_findings": ["Fresh purpose-specific human grant and compiled host key; default build disabled", "Exact two targets, transport allowlist and max1/max2 durable invocation/slot", "Actual returned version/size/bytes/SHA and retention/hold readback", "Persistence failure separate from readback; next owner requires trusted exit and terminal", "Private file whitelist, hardlink/key isolation and all-owner physical closure composition"],
+  "subsequent_fact": "Actual R archive CI entry rejected the missing product-only pilot.CheckCustodyPrivatePath dependency. Original failed R/spec, checks02 stderr/stdout and the review fact remain; never treat this original PASS as final R build acceptance.",
+  "operational_authority": "NOT_AUTHORIZED",
+  "reviewer_repository_edits": 0,
+  "reviewer_Docker_GitHub_provider_calls": 0
+}

@@ -1,0 +1,19 @@
+{
+  "native_delete": 0,
+  "source_Native_started": 0,
+  "provider_calls": 0,
+  "test_oracle_not_host_authority": true,
+  "failure": "RuntimeError: Unexpected source relation contract",
+  "closure": [
+    {
+      "cid": "213216a12df867a5d6dddc78c40e066b11269dbbab048c1269522a771f31249e",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "8694c4eb9dc59e8ee797f4411bbf6e16117c320cbdacea48340f95113ab9167b",
+      "stopped_PID0": true
+    }
+  ],
+  "source_retained_unchanged": true,
+  "status": "FAILED_OR_UNCONFIRMED_NO_REPLAY_KEEP_FACTS"
+}

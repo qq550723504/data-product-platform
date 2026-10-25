@@ -1,0 +1,11 @@
+{
+  "status": "FAILED_CLOSED_BEFORE_ALLOCATION",
+  "operation": "retained_v27 bindings read",
+  "error": "evidence audit: JSON document must be an object",
+  "cause": "pinned bindings.json is the ordered three-group list; object-only metadata decoder used initially",
+  "native_source_start": 0,
+  "provider_io": 0,
+  "new_allocations": 0,
+  "DELETE": 0,
+  "old_facts_retained": true
+}
