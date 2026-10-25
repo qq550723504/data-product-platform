@@ -3,9 +3,11 @@ package zitadel
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 
 	"strings"
@@ -15,6 +17,38 @@ import (
 )
 
 const validResponse = `{"pagination":{"totalResult":"1","appliedLimit":"20"},"authorizations":[{"id":"grant-b","creationDate":"2026-09-12T00:00:00Z","changeDate":"2026-09-12T00:00:00Z","project":{"id":"project"},"organization":{"id":"effective-b"},"user":{"id":"user-a","organizationId":"home-a","displayName":"Member A","preferredLoginName":"a@example.invalid"},"state":"STATE_ACTIVE","roles":[{"key":"listingkit_viewer"}]}]}`
+
+func TestDirectoryTransportRequiresVerifiedIsolatedTLS(t *testing.T) {
+	for _, transport := range []http.RoundTripper{
+		&http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+		&http.Transport{TLSClientConfig: &tls.Config{ServerName: "foreign.example.invalid"}},
+		&http.Transport{DialTLSContext: func(context.Context, string, string) (net.Conn, error) {
+			t.Fatal("custom TLS dial reached")
+			return nil, nil
+		}},
+		&http.Transport{DialTLS: func(string, string) (net.Conn, error) { t.Fatal("custom TLS dial reached"); return nil, nil }},
+		transportFunc(func(*http.Request) (*http.Response, error) { t.Fatal("unsafe transport reached"); return nil, nil }),
+	} {
+		if _, err := NewClient("https://identity.example.invalid", "synthetic-read-token", "project", &http.Client{Transport: transport}); err == nil {
+			t.Fatal("unverified directory transport accepted")
+		}
+	}
+	server := authorizedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, validResponse) }))
+	defer server.Close()
+	provided := server.Client()
+	client, err := NewClient(server.URL, "synthetic-read-token", "project", provided)
+	if err != nil {
+		t.Fatal(err)
+	}
+	provided.Transport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true
+	isolated, ok := client.http.Transport.(*http.Transport)
+	if !ok || isolated == provided.Transport || isolated.TLSClientConfig.InsecureSkipVerify || isolated.MaxResponseHeaderBytes > 16<<10 || isolated.MaxResponseHeaderBytes == 0 {
+		t.Fatal("caller can change directory TLS verification or header limit")
+	}
+	if _, err := client.List(context.Background(), "effective-b", domain.PageRequest{Limit: 20}); err != nil {
+		t.Fatal(err)
+	}
+}
 
 func TestListUsesProjectGrantOrganizationNotHomeOrganization(t *testing.T) {
 	server := authorizedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -100,12 +134,22 @@ func (r cancelAfterBody) Read(p []byte) (int, error) {
 func TestListDoesNotReturnDataAfterCancellationWhileReading(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	httpClient := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
+	client, err := NewClient("https://identity.example.invalid", "synthetic-read-token", "project", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listCalls := 0
+	// Inject only after the verified production constructor, to cancel exactly
+	// while consuming a directory body rather than failing the permission probe.
+	client.http.Transport = transportFunc(func(r *http.Request) (*http.Response, error) {
+		if strings.HasSuffix(r.URL.Path, "/permissions/zitadel/me/_search") {
+			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"result":["user.grant.read"]}`)), Header: make(http.Header), Request: r}, nil
+		}
+		listCalls++
 		return &http.Response{StatusCode: 200, Body: io.NopCloser(cancelAfterBody{Reader: strings.NewReader(validResponse), cancel: cancel}), Header: make(http.Header), Request: r}, nil
-	})}
-	client, _ := NewClient("https://identity.example.invalid", "synthetic-read-token", "project", httpClient)
+	})
 	page, err := client.List(ctx, "effective-b", domain.PageRequest{Limit: 20})
-	if err == nil || len(page.Items) != 0 {
+	if err == nil || len(page.Items) != 0 || listCalls != 1 || ctx.Err() == nil {
 		t.Fatalf("canceled read published data: %+v %v", page, err)
 	}
 }

@@ -15,7 +15,8 @@
 - DirectoryBinding 为服务器配置的 workspace → provider organization/project 映射；企业不是工作空间。目录返回的 provider user/grant ID 只作外部引用，不能冒充本平台 actor UUID。Native provider 的只读 credential 与人的 RP token 分开。
 - 角色目录是应用配置的只读映射，名字/权限来自明确 catalog；不声称已经接入企业自定义角色。返回 `policySource=APPLICATION_CATALOG`。当前目录中未映射角色显示无已配置权限，不能放大 caller 资格。
 - 实际目录与角色来源保持 UNCONFIGURED；仅隔离验收显式配置 SYNTHETIC_FIXTURE。无配置、权限缺失、错空间、依赖失败分别返回拒绝/不可用；不能用演示数据补齐，也不能返回假 0。
-- 查询前后在 READ COMMITTED 只读事务复用 ValidateInTx。目录外部 I/O 不持数据库事务；结果公开前再次核验当前身份 revision、有效期与资格。远端权限在每页读取前后重新确认，无法证明跨系统分布式原子撤销。
+- 查询前后复用无缓存 OIDC resolver，并在 READ COMMITTED 只读事务复用 ValidateInTx。目录外部 I/O 不持数据库事务；结果公开前再次 introspect 访问令牌，并核对原 canonical actor、issuer/subject、workspace 和 authority revision，然后复查本地资格。读取中身份或版本变化时丢弃结果，不能用新资格追认旧读取；更短的重查有效期不得放大。远端权限在每页读取前后重新确认，无法证明跨系统分布式原子撤销。
+- 目录客户端沿用既有OIDC适配器的标准transport克隆、证书校验与响应头边界；拒绝关闭证书验证、绕过标准TLS握手的自定义DialTLS、错主机ServerName或不可确认的自定义RoundTripper，不继承cookie/重定向配置。测试故障注入只在同包测试内进行，不作为产品构造参数。
 - AuditEvent 仅按明确 workspace 投影 id、actor reference、action、object type/id、occurredAt；不返回自由文本、metadata、before/after 或 credential。历史不改写；没有新审计 owner 或业务写表。
 
 ## 接口与页面
@@ -24,7 +25,7 @@
 
 只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit}`；固定 limit=25，成员 offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义）。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
 
-响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI。目录一次完整查询超过上限/超时/页集合变化必须失败，不返回部分成功。
+响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI，权限必须命中显式自有键白名单，Object继承属性不能算权限。目录一次完整查询超过上限、超时，或检测到总数变化、短页、重复/乱序ID、错空间或原生筛选不符时必须失败，不返回部分成功。远端offset接口没有共同快照/修订号；相同总数下的并发替换不保证可检测，目录结果仅为查询视图，不是冻结成员事实，也不能作为后续写入授权。
 
 新版 `/settings`、`/settings/members`、`/settings/roles`、`/settings/audit`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。用户目录、组织树、空间生命周期、运行日志和系统配置写入另属后续范围。
 

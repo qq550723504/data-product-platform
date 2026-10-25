@@ -12,7 +12,7 @@ const text=(v:unknown,n=512)=>typeof v==='string'&&new TextEncoder().encode(v).l
 const time=(v:unknown)=>typeof v==='string'&&Number.isFinite(Date.parse(v));
 const exact=(v:object,keys:string)=>Object.keys(v).sort().join(',')===keys.split(',').sort().join(',');
 export const permissionLabels:Record<string,string>={'management.members.read':'查看空间成员','management.roles.read':'查看应用角色权限','management.audit.read':'查看空间审计'};
-const permissions=(v:unknown):v is string[]=>Array.isArray(v)&&new Set(v).size===v.length&&v.every(p=>typeof p==='string'&&permissionLabels[p]);
+const permissions=(v:unknown):v is string[]=>Array.isArray(v)&&new Set(v).size===v.length&&v.every(p=>typeof p==='string'&&Object.hasOwn(permissionLabels,p));
 const roles=(v:unknown):v is Role[]=>Array.isArray(v)&&v.length>0&&v.length<=64&&new Set(v.map(r=>r.id)).size===v.length&&v.every(r=>r&&exact(r,'id,name,permissions')&&id(r.id)&&text(r.name,200)&&r.name.trim()&&permissions(r.permissions));
 function member(v:Member):boolean{return !!v&&exact(v,'id,userId,organizationId,projectId,displayName,loginName,roles,state,createdAt,changedAt,permissions')&&[v.id,v.userId,v.organizationId,v.projectId].every(id)&&text(v.displayName)&&text(v.loginName)&&Array.isArray(v.roles)&&v.roles.length<=32&&new Set(v.roles).size===v.roles.length&&v.roles.every(id)&&['active','inactive'].includes(v.state)&&time(v.createdAt)&&time(v.changedAt)&&permissions(v.permissions);}
 export function managementSelection(section:ManagementSection,q:Record<string,string|string[]|undefined>):ManagementSelection{

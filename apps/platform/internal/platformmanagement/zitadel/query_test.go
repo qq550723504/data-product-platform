@@ -147,7 +147,11 @@ func TestDirectoryQueryNeverPublishesIncompleteSearch(t *testing.T) {
 				}
 				return server.Client().Transport.RoundTrip(r)
 			})
-			client, _ := NewClient(server.URL, "synthetic-read-token", "project", &http.Client{Transport: transport})
+			client, err := NewClient(server.URL, "synthetic-read-token", "project", server.Client())
+			if err != nil {
+				t.Fatal(err)
+			}
+			client.http.Transport = transport // test-only fault injection after verified construction
 			result, err := client.List(ctx, "effective-b", domain.PageRequest{Limit: 20, Filter: domain.ListFilter{Search: "ordinary", Role: directoryQueryRole, State: "inactive"}})
 			if err == nil || result.Total != 0 || len(result.Items) != 0 {
 				t.Fatalf("partial success: %+v %v", result, err)
@@ -214,7 +218,11 @@ func TestDirectoryQueryTenThousandBoundarySharesOneDeadline(t *testing.T) {
 		}
 		return server.Client().Transport.RoundTrip(r)
 	})
-	client, _ := NewClient(server.URL, "synthetic-read-token", "project", &http.Client{Transport: transport})
+	client, err := NewClient(server.URL, "synthetic-read-token", "project", server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	client.http.Transport = transport // test-only deadline observer after verified construction
 	page, err := client.List(context.Background(), "effective-b", domain.PageRequest{Limit: 20, Filter: domain.ListFilter{Search: "last target"}})
 	if err != nil || reads != 100 || page.Total != 1 || len(page.Items) != 1 || page.Items[0].ID != "grant-09999" {
 		t.Fatalf("page=%+v reads=%d err=%v", page, reads, err)

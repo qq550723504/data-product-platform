@@ -182,6 +182,21 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		payload = page
 	}
+	// A local grant check cannot detect IdP token revocation during directory I/O.
+	// Reuse the uncached resolver, then validate the original authority revision;
+	// a newly granted identity must never legitimize data fetched under an old one.
+	fresh, err := h.Principal.Resolve(r, ws, principal.CapabilityManagementRead)
+	if err != nil {
+		authorityFailure(w, err)
+		return
+	}
+	if fresh.ActorID != p.ActorID || fresh.Subject != p.Subject || fresh.WorkspaceID != p.WorkspaceID || fresh.IdentityIssuer != p.IdentityIssuer || fresh.IdentitySubject != p.IdentitySubject || fresh.IdentityRevision != p.IdentityRevision {
+		authorityFailure(w, principal.ErrUnauthenticated)
+		return
+	}
+	if fresh.IdentityExpiresAt.Before(p.IdentityExpiresAt) {
+		p.IdentityExpiresAt = fresh.IdentityExpiresAt
+	}
 	a, err := h.Gate.Confirm(ctx, p)
 	if err != nil {
 		authorityFailure(w, err)

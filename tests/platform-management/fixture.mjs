@@ -10,7 +10,7 @@ if(process.env.MANAGEMENT_FIXTURE_ACK!=='ISOLATED_READONLY_MANAGEMENT')throw Err
 const p=JSON.parse(readFileSync(process.env.MANAGEMENT_FIXTURE_PROFILE,'utf8'));
 if(p.issuer!=='https://localhost:19130'||p.origin!=='https://localhost:4300')throw Error('exact independent origin required');
 const {publicKey,privateKey}=await generateKeyPair('RS256'),jwk=await exportJWK(publicKey);jwk.kid='management-synthetic';
-const codes=new Map(),logins=new Map(),tokens=new Map();const state={permission:true,foreign:false,fail:false,reads:0};
+const codes=new Map(),logins=new Map(),tokens=new Map(),held=new Set();const state={permission:true,foreign:false,fail:false,holdList:false,waiting:0,reads:0};
 const opaque=()=>randomBytes(32).toString('base64url');
 const json=(res,value,status=200)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(value))};
 async function body(req){let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>16000)throw Error('oversized fixture input')}return raw;}
@@ -37,7 +37,7 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
   }
   if(u.pathname==='/jwks'&&req.method==='GET')return json(res,{keys:[jwk]});
   if(u.pathname==='/introspect'&&req.method==='POST'){
-   if(!basic(req,'dpp-management-api',p.resourceSecret))return json(res,{},401);const b=new URLSearchParams(await body(req)),t=tokens.get(b.get('token'));if(!t||t.expires<=Date.now()/1000)return json(res,{active:false});return json(res,{active:true,iss:p.issuer,sub:t.subject,aud:['dpp-management-api'],client_id:'dpp-management-rp',scope:'openid platform-management',exp:t.expires,iat:t.expires-600,token_type:'Bearer'});
+   if(!basic(req,'dpp-management-api',p.resourceSecret))return json(res,{},401);const b=new URLSearchParams(await body(req)),t=tokens.get(b.get('token'));if(!t||t.revoked||t.expires<=Date.now()/1000)return json(res,{active:false});return json(res,{active:true,iss:p.issuer,sub:t.subject,aud:['dpp-management-api'],client_id:'dpp-management-rp',scope:'openid platform-management',exp:t.expires,iat:t.expires-600,token_type:'Bearer'});
   }
   if(u.pathname==='/auth/v1/permissions/zitadel/me/_search'&&req.method==='POST'){
    if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(req.headers['x-zitadel-orgid']))return json(res,{},403);return json(res,{result:state.permission?['user.grant.read']:[]});
@@ -47,10 +47,20 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
    if(!['organization-a','organization-b'].includes(org)||project!=='governance')return json(res,{},400);
    const role=filters.find(f=>f.roleKey)?.roleKey?.key,status=filters.find(f=>f.state)?.state?.state,ids=filters.find(f=>f.authorizationIds)?.authorizationIds?.ids;
    const matched=rows(org).filter(r=>(!role||r.roles.some(v=>v.key===role))&&(!status||r.state===status)&&(!ids||ids.includes(r.id))),items=matched.slice(b.pagination.offset,b.pagination.offset+b.pagination.limit);
+   if(state.holdList){state.waiting++;const released=await new Promise(resolve=>{const release=()=>{clearTimeout(timer);held.delete(release);resolve(true)},timer=setTimeout(()=>{held.delete(release);resolve(false)},5000);held.add(release)});state.waiting--;if(!released)return json(res,{},503)}
    if(state.foreign)for(const r of items)r.organization.id='organization-foreign';return json(res,{pagination:{totalResult:String(matched.length)},authorizations:items});
   }
   if(u.pathname==='/logout'){const target=new URL(p.origin+'/auth/logged-out');res.writeHead(303,{Location:target.href});return res.end();}
-  if(u.pathname==='/_control'&&req.headers['x-fixture-control']===p.control){if(req.method==='POST'){const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail'])if(typeof b[k]==='boolean')state[k]=b[k];}return json(res,state)}
+  if(u.pathname==='/_control'&&req.headers['x-fixture-control']===p.control){
+   let testAccessToken;
+   if(req.method==='POST'){
+    const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail','holdList'])if(typeof b[k]==='boolean')state[k]=b[k];
+    if(Object.hasOwn(labels,b.revokeSubject))for(const t of tokens.values())if(t.subject===b.revokeSubject)t.revoked=true;
+    if(Object.hasOwn(labels,b.issueSubject)){testAccessToken=opaque();tokens.set(testAccessToken,{subject:b.issueSubject,expires:Math.floor(Date.now()/1000)+600})}
+    if(!state.holdList)for(const release of held)release();
+   }
+   return json(res,{...state,...(testAccessToken?{testAccessToken}:{})});
+  }
   if(u.pathname==='/healthz')return json(res,{synthetic:true,businessWrites:false,realSources:'UNCONFIGURED'});
   return json(res,{},404);
  }catch{return json(res,{error:'synthetic fixture request failed'},400)}

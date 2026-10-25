@@ -50,8 +50,16 @@ func NewClient(origin, token, project string, client *http.Client) (*Client, err
 	if client != nil && client.Transport != nil {
 		transport = client.Transport
 	}
+	// Match the existing OIDC adapter: a caller-supplied client cannot disable
+	// certificate verification or mutate the transport after construction.
+	standard, ok := transport.(*http.Transport)
+	if !ok || standard.DialTLS != nil || standard.DialTLSContext != nil || standard.TLSClientConfig != nil && (standard.TLSClientConfig.InsecureSkipVerify || standard.TLSClientConfig.ServerName != "" && standard.TLSClientConfig.ServerName != u.Hostname()) {
+		return nil, domain.ErrUnavailable
+	}
+	secure := standard.Clone()
+	secure.MaxResponseHeaderBytes = 16 << 10
 	// Do not inherit cookie jars or credential-bearing redirect behavior.
-	httpClient := &http.Client{Transport: transport, Timeout: 10 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	httpClient := &http.Client{Transport: secure, Timeout: 10 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 	return &Client{origin: strings.TrimRight(origin, "/"), token: token, project: project, http: httpClient}, nil
 }
 

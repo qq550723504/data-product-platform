@@ -3,9 +3,11 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
-const root=fileURLToPath(new URL('../../',import.meta.url)),run=new URL('../../.data/management-readonly-20261025/',import.meta.url);
+const root=fileURLToPath(new URL('../../',import.meta.url)),fixtureRun=new URL('../../.data/management-readonly-20261025/',import.meta.url);
+const output=process.env.MANAGEMENT_BROWSER_OUTPUT??'management-readonly-20261025';if(!/^management-readonly-[a-z0-9-]+$/.test(output))throw Error('independent evidence directory required');
+const run=new URL('../../.data/'+output+'/',import.meta.url);
 const require=createRequire(new URL('../browser/package.json',import.meta.url)),{chromium,expect}=require('@playwright/test'),{Pool}=createRequire(new URL('../../apps/web/package.json',import.meta.url))('pg');
-const p=JSON.parse(readFileSync(new URL('profile.json',run),'utf8'));assert.equal(p.origin,'https://localhost:4300');
+const p=JSON.parse(readFileSync(new URL('profile.json',fixtureRun),'utf8'));assert.equal(p.origin,'https://localhost:4300');
 const db=new Pool({connectionString:p.adminDSN,ssl:{ca:readFileSync(p.cert),rejectUnauthorized:true}}),results=[],contexts=[],errors=[],writes=[],external=[];
 const channel=process.env.MANAGEMENT_BROWSER_CHANNEL??'msedge';if(!['msedge','chromium'].includes(channel))throw Error('explicit browser required');
 const browser=await chromium.launch({...(channel==='msedge'?{channel}:{}),headless:true}),a='11111111-1111-4111-8111-111111111111',b='12121212-1212-4212-8212-121212121212';
@@ -16,7 +18,7 @@ async function person(label,ws=a){
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await login(page,label,ws);return {page,context};
 }
 async function login(page,label,ws=a){await page.goto(p.origin+'/auth/login?workspaceId='+ws);await page.getByRole('button',{name:'使用统一身份登录',exact:true}).click();await page.getByRole('button',{name:label,exact:true}).click();await page.waitForURL(p.origin+'/**');}
-async function control(data){const response=await browser.newContext({ignoreHTTPSErrors:true});try{const r=await response.request.post(p.issuer+'/_control',{headers:{'x-fixture-control':p.control},data});assert.equal(r.status(),200)}finally{await response.close()}}
+async function control(data){const response=await browser.newContext({ignoreHTTPSErrors:true});try{const r=await response.request.post(p.issuer+'/_control',{headers:{'x-fixture-control':p.control},data});assert.equal(r.status(),200);return await r.json()}finally{await response.close()}}
 const rows=page=>page.getByRole('table',{name:'空间成员',exact:true}).locator('tbody tr');
 async function businessHash(){return (await db.query("SELECT md5(string_agg(row_to_json(t)::text,'|' ORDER BY id)) AS hash FROM audit_event t")).rows[0].hash}
 async function pass(name,fn){active=name;await fn();results.push({name,status:'PASS'});console.log('PASS '+name)}
@@ -64,6 +66,19 @@ try{
   await control({permission:false});await page.reload();await expect(page.getByRole('heading',{name:'成员目录暂时无法读取',exact:true})).toBeVisible();assert.equal(await rows(page).count(),0);assert.equal(await page.getByText('当前条件下没有成员',{exact:true}).count(),0);
   await control({permission:true,foreign:true});await page.reload();await expect(page.getByRole('heading',{name:'成员目录暂时无法读取',exact:true})).toBeVisible();assert.equal(await rows(page).count(),0);await control({foreign:false});await page.reload();await expect(rows(page)).toHaveCount(25);
  });
+ await pass('direct API discards directory records when access token is revoked during the read',async()=>{
+  const direct=await browser.newContext({ignoreHTTPSErrors:true});
+  const issued=await control({issueSubject:'admin-a',holdList:true});
+  let pending;
+  try{
+   pending=direct.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/members',{headers:{Authorization:'Bearer '+issued.testAccessToken}});
+   await expect.poll(async()=>(await control({})).waiting,{timeout:3000}).toBe(1);
+   await control({revokeSubject:'admin-a',holdList:false});
+   const response=await pending;assert.equal(response.status(),401);const denied=await response.json();assert.equal(denied.code,'AUTHENTICATION_REQUIRED');assert.equal(Object.hasOwn(denied,'data'),false);
+   await page.reload();await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await rows(page).count(),0);
+   await login(page,'查询人员 A');await page.goto(p.origin+'/settings/members');await expect(rows(page)).toHaveCount(25);
+  }finally{await control({holdList:false});if(pending)await pending.catch(()=>{});await direct.close()}
+ });
  await pass('management profile has no business, model, Agent or write routes',async()=>{
   for(const path of ['/settings/members','/api/agent-tasks','/api/v1/business-acceptances','/core/acceptance-context'])assert.equal((await one.context.request.post(p.origin+path,{data:{workspaceId:a}})).status(),403);
   assert.equal((await one.context.request.get(p.origin+'/agent')).status(),403);assert.equal((await one.context.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/members')).status(),400);
@@ -73,4 +88,4 @@ try{
  });
  assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);assert.deepEqual(external,[]);
 }catch(error){process.exitCode=1;results.push({name:'failure near '+active,status:'FAIL',error:String(error).slice(0,1300)});console.log('FAIL isolated management browser; non-secret failure details in result file');}
-finally{await control({permission:true,foreign:false,fail:false}).catch(()=>{});writeFileSync(new URL('browser-results.json',run),JSON.stringify({recordedAt:new Date().toISOString(),browser:channel,source:'SYNTHETIC_FIXTURE',realSources:'UNCONFIGURED',businessWrites:false,models:false,dispatch:false,errors,writes,external,verdict:process.exitCode?'FAIL':'PASS',results},null,2));await browser.close();await db.end()}
+finally{await control({permission:true,foreign:false,fail:false,holdList:false}).catch(()=>{});writeFileSync(new URL('browser-results.json',run),JSON.stringify({recordedAt:new Date().toISOString(),browser:channel,source:'SYNTHETIC_FIXTURE',realSources:'UNCONFIGURED',businessWrites:false,models:false,dispatch:false,errors,writes,external,verdict:process.exitCode?'FAIL':'PASS',results},null,2));await browser.close();await db.end()}

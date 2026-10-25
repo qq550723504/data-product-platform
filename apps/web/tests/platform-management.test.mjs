@@ -28,3 +28,11 @@ test('management response never trusts another workspace, revision or unexpected
  assert.equal(validManagement(raw,p,'members',{offset:0}),true);
  for(const v of [{...raw,workspaceId:p.principal_id},{...raw,writeEnabled:true},{...raw,authorityRevision:'1:1:2'},{...raw,secret:'unexpected'},{...raw,data:{...raw.data,total:26}}])assert.equal(validManagement(v,p,'members',{offset:0}),false);
 });
+
+test('management permission allowlist rejects inherited Object property names',()=>{
+ const p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1'};
+ for(const permission of ['toString','constructor','__proto__']){
+  const raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:new Date().toISOString(),source:'SYNTHETIC_FIXTURE',writeEnabled:false,data:{items:[{id:'viewer',name:'查询员',permissions:[permission]}],policySource:'APPLICATION_CATALOG'}};
+  assert.equal(validManagement(raw,p,'roles',{offset:0}),false,permission);
+ }
+});
