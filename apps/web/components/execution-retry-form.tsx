@@ -1,4 +1,5 @@
 "use client";
+import {businessText,displayText} from '../lib/business-language.mjs';
 
 import Link from "next/link";
 import { useActionState, useEffect } from "react";
@@ -35,24 +36,24 @@ export function ExecutionRetryForm({
     <form action={action} style={{ marginTop: 16 }}>
       <input type="hidden" name="executionId" value={executionId} />
       <button type="submit" disabled={!enabled || locked}>
-        {pending ? "正在创建 Retry…" : state.ok ? "Retry 已创建" : "重试 Execution"}
+        {businessText(pending ? "正在创建 Retry…" : state.ok ? "Retry 已创建" : "重试 Execution")}
       </button>
-      {!enabled ? (
+      {displayText(!enabled ? (
         <small style={{ display: "block", marginTop: 8 }}>
           当前环境未开放任务重试。
         </small>
       ) : (
         <small style={{ display: "block", marginTop: 8 }}>
-          Retry 会创建新的 QUEUED Execution，并保留当前记录作为不可变历史。
+          Retry 会创建新的 待运行 运行记录，并保留当前记录作为不可变历史。
         </small>
-      )}
-      {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
-      {state.refreshRequired ? (
+      ))}
+      {displayText(state.message ? <p role={state.ok ? "status" : "alert"}>{businessText(state.message)}</p> : null)}
+      {displayText(state.refreshRequired ? (
         <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button>
-      ) : null}
-      {state.ok && state.execution?.id ? (
-        <p><Link className="text-link" href={`/production/${state.execution.id}`}>打开新的 Execution →</Link></p>
-      ) : null}
+      ) : null)}
+      {displayText(state.ok && state.execution?.id ? (
+        <p><Link className="text-link" href={`/production/${state.execution.id}`}>打开新的 运行记录 →</Link></p>
+      ) : null)}
     </form>
   );
 }

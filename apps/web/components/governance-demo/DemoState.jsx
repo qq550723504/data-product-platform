@@ -1,3 +1,4 @@
+import {displayText} from '../../lib/business-language.mjs';
 import React,{useContext,useState,useEffect} from 'react';
 import {DemoContext} from './demo-context.mjs';
 import {useWorkspace} from './WorkspaceContext';
@@ -9,7 +10,7 @@ export function DemoProvider({children}){
  const [storageAvailable,setStorageAvailable]=useState(null);
  useEffect(()=>{setStorageAvailable(saveDemoSession(demoStorageKeys.data,data))},[data]);
  const update=(key,value)=>setData(old=>({...old,[key]:typeof value==='function'?value(old[key]):value}));
- return <DemoContext.Provider value={{data,update,storageAvailable}}>{children}</DemoContext.Provider>
+ return <DemoContext.Provider value={{data,update,storageAvailable}}>{displayText(children)}</DemoContext.Provider>
 }
 export function DemoStorageWarning(){const demo=useContext(DemoContext);const workspace=useWorkspace();return demo?.storageAvailable===false||workspace?.storageAvailable===false?<div className="prototype-notice" role="alert">本地会话存储不可用：当前修改仅在内存中，刷新会丢失；请勿作为已保存证据。</div>:null}
 export function useDemo(key,initial){const {data,update}=useContext(DemoContext);const {workspace}=useWorkspace();const scoped=dataKey(workspace.id,key);return [data[scoped]??initial,value=>update(scoped,old=>typeof value==='function'?value(old??initial):value)]}

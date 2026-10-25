@@ -34,11 +34,11 @@ test('Core catalog renders server facts without synthetic asset content or reset
  const html=renderToStaticMarkup(React.createElement(App,{liveAgent:false,liveCatalog:true},React.createElement('h1',null,'CORE_FACT_SENTINEL')));
  assert.match(html,/CORE_FACT_SENTINEL/);
  assert.match(html,/资产目录/);assert.match(html,/待办工作台/);
- assert.doesNotMatch(html,/重置演示|当前成果 · VER-|合成数据演示/);
+ assert.doesNotMatch(html,/重置(?:演示|预览数据)|当前成果 · VER-|合成数据演示/);
 });
 
 test('connected shell renders server facts without browser globals or demo providers',()=>{
  delete globalThis.location;
  const html=renderToStaticMarkup(React.createElement(ConnectedApp,{liveAgent:false},React.createElement('h1',null,'SSR_CORE_FACT_SENTINEL')));
- assert.match(html,/SSR_CORE_FACT_SENTINEL/);assert.doesNotMatch(html,/重置演示|当前成果 · VER-/);
+ assert.match(html,/SSR_CORE_FACT_SENTINEL/);assert.doesNotMatch(html,/重置(?:演示|预览数据)|当前成果 · VER-/);
 });

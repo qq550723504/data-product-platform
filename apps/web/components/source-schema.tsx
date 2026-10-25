@@ -1,3 +1,4 @@
+import {businessText,displayText} from '../lib/business-language.mjs';
 import {core,workspace} from "@/lib/batches";
 import {Badge,formatDate} from "./ui";
 import {SchemaScanForm,SchemaHandlingForm} from "./schema-controls";
@@ -10,23 +11,23 @@ export async function SourceSchema({resourceId,providerAvailable}:{resourceId:st
  try{
   const history=await core<{enabled:boolean;items:Request[]}>(`/data-resources/${resourceId}/schema-observations?workspaceId=${workspace()}`,"GET",undefined,undefined,true);
   if(!history.enabled&&!history.items.length)return null;
-  return <section className="detail-card"><h2>来源 schema 持续治理</h2>
+  return <section className="detail-card"><h2>来源 数据结构 持续治理</h2>
    <p>观察范围：固定用电表；由原生 PostgreSQL Connector 扫描。最近扫描结论不是实时来源保证，也不是某个冻结数据版本的质量证明。</p>
-   {!providerAvailable&&<p role="alert">UNKNOWN：metadata 当前失联。下列扫描仅为历史证据，不能确认当前来源结构；重连后须请求新的原生扫描。</p>}
-   <p>schema 变化须在来源侧按批准契约处理；平台不会自动接受新列、修改旧 RAW 或认证。未知下游影响：UNKNOWN。</p>
-   {history.enabled&&<SchemaScanForm resourceId={resourceId}/>}
-   {history.items.length===0&&<p>NOT_RUN：尚无原生来源扫描事实。</p>}
+   {displayText(!providerAvailable&&<p role="alert">无法确认：metadata 当前失联。下列扫描仅为历史证据，不能确认当前来源结构；重连后须请求新的原生扫描。</p>)}
+   <p>数据结构 变化须在来源侧按批准契约处理；平台不会自动接受新列、修改旧 原始数据 或认证。未知下游影响：无法确认。</p>
+   {displayText(history.enabled&&<SchemaScanForm resourceId={resourceId}/>)}
+   {displayText(history.items.length===0&&<p>NOT_RUN：尚无原生来源扫描事实。</p>)}
    {history.items.map((r,i)=>{const o=r.observations.at(-1);const handled=o&&r.handling.some(h=>h.observation_id===o.id);return <article key={r.id}>
-    <h3>{i===0?"最近扫描请求":"历史扫描请求"} · {r.id}</h3><Badge value={o?.status??"REQUESTED"}/>
-    <p>责任人 {r.responsibleActorId} · {o?.status==="DRIFT"?(handled?"处理中":"待处理"):o?.status==="MATCH"?"本次结构与基线一致":"尚未确认恢复"}</p>
-    <p>来源 {r.externalFqn} · 规则 {r.ruleRef} / {r.ruleVersion} · 规则 hash {r.ruleHash} · 观察契约 hash {r.planHash}</p>
-    <p>请求 {formatDate(r.requestedAt)} · 原生扫描完成 {formatDate(o?.completed_at)} · 记录 {formatDate(o?.recorded_at)}</p>
-    <p>原因 {o?.reason??"等待现有 worker 执行"} · schema hash {o?.schema_hash||"UNKNOWN"}</p>
+    <h3>{businessText(i===0?"最近扫描请求":"历史扫描请求")} · {businessText(r.id)}</h3><Badge value={o?.status??"REQUESTED"}/>
+    <p>责任人 {displayText(r.responsibleActorId)} · {displayText(o?.status==="DRIFT"?(handled?"处理中":"待处理"):o?.status==="MATCH"?"本次结构与基线一致":"尚未确认恢复")}</p>
+    <p>来源 {displayText(r.externalFqn)} · 规则 {displayText(r.ruleRef)} / {displayText(r.ruleVersion)} · 规则 hash {displayText(r.ruleHash)} · 观察契约 hash {displayText(r.planHash)}</p>
+    <p>请求 {displayText(formatDate(r.requestedAt))} · 原生扫描完成 {displayText(formatDate(o?.completed_at))} · 记录 {displayText(formatDate(o?.recorded_at))}</p>
+    <p>原因 {displayText(o?.reason??"等待现有 worker 执行")} · 数据结构 hash {displayText(o?.schema_hash||"UNKNOWN")}</p>
     <SchemaColumnComparison baseline={r.baseline} columns={o?.columns??[]} conclusive={o?.status==="MATCH"||o?.status==="DRIFT"}/>
-    {o?.status==="DRIFT"&&!handled&&history.enabled&&<SchemaHandlingForm resourceId={resourceId} observationId={o.id}/>}
-    {r.handling.map(h=><p key={h.observation_id+h.created_at}>处理记录：{h.reason} · {formatDate(h.created_at)}</p>)}
-    {r.observations.length>1&&<p>本请求保留全部观察：{r.observations.map(x=>`${x.status} (${formatDate(x.recorded_at)})`).join(" → ")}</p>}
+    {displayText(o?.status==="DRIFT"&&!handled&&history.enabled&&<SchemaHandlingForm resourceId={resourceId} observationId={o.id}/>)}
+    {r.handling.map(h=><p key={h.observation_id+h.created_at}>处理记录：{displayText(h.reason)} · {displayText(formatDate(h.created_at))}</p>)}
+    {r.observations.length>1&&<p>本请求保留全部观察：{displayText(r.observations.map(x=>`${x.status} (${formatDate(x.recorded_at)})`).join(" → "))}</p>}
    </article>;})}
   </section>;
- }catch{return <section className="detail-card"><h2>来源 schema 持续治理</h2><p role="alert">UNKNOWN：来源扫描历史当前不可读取，不能确认恢复。</p></section>;}
+ }catch{return <section className="detail-card"><h2>来源 数据结构 持续治理</h2><p role="alert">无法确认：来源扫描历史当前不可读取，不能确认恢复。</p></section>;}
 }

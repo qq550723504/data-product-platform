@@ -13,7 +13,7 @@ test("CSV ingestion is read-only by default even after local preview", async ({ 
   await form.getByRole("checkbox").check();
   await form.getByLabel("选择 CSV 文件").setInputFiles({ name: "preview.csv", mimeType: "text/csv", buffer: Buffer.from("source_company_id,company_name\na,b") });
   await expect(page.getByText(/CSV 预检通过/)).toBeVisible();
-  await expect(form.getByRole("button", { name: "登记来源并保存 RAW 版本", exact: true })).toBeDisabled();
+  await expect(form.getByRole("button", { name: "登记来源并保存 原始数据 版本", exact: true })).toBeDisabled();
   const response = await request.get("http://127.0.0.1:4400/__control/state", { headers });
   expect(response.ok()).toBeTruthy();
   expect((await response.json()).requests.filter(call => call.method === "POST")).toHaveLength(0);
@@ -34,7 +34,7 @@ test("readonly ingest downloads the shipped template and previews it without a C
   expect(await readFile(target)).toEqual(expected);
   await page.getByLabel("选择 CSV 文件").setInputFiles(target);
   await expect(page.getByText(/CSV 预检通过：2 条记录，7 个字段/)).toBeVisible();
-  await expect(page.getByRole("button", { name: "登记来源并保存 RAW 版本" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "登记来源并保存 原始数据 版本" })).toBeDisabled();
   const response = await request.get("http://127.0.0.1:4400/__control/state", { headers });
   expect(response.ok()).toBeTruthy();
   expect((await response.json()).requests.filter(call => call.method === "POST")).toHaveLength(0);

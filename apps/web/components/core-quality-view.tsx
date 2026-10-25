@@ -1,3 +1,4 @@
+import {businessText,displayText} from '../lib/business-language.mjs';
 import CoreQualityCost from "./core-quality-cost";
 import { Badge, BackLink, EmptyState, PageHeader } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
@@ -15,8 +16,8 @@ import {
 function Unknown({ children }: { children: React.ReactNode }) {
   return (
     <div className="callout callout-warn" role="status">
-      <strong>UNKNOWN · 无法确认</strong>
-      <p>{children}</p>
+      <strong>无法确认</strong>
+      <p>{displayText(children)}</p>
     </div>
   );
 }
@@ -33,20 +34,20 @@ function Pages({
 }) {
   return (
     <nav className="pagination" aria-label={label}>
-      {offset > 0 ? (
+      {displayText(offset > 0 ? (
         <a href={href(Math.max(0, offset - AGENT_PAGE_SIZE))}>← 上一页</a>
       ) : (
         <span>已到首页</span>
-      )}
+      ))}
       <span>
-        共 {total} 条 · 当前 {offset < total ? offset + 1 : 0}–
-        {offset < total ? Math.min(offset + AGENT_PAGE_SIZE, total) : 0}
+        共 {displayText(total)} 条 · 当前 {displayText(offset < total ? offset + 1 : 0)}–
+        {displayText(offset < total ? Math.min(offset + AGENT_PAGE_SIZE, total) : 0)}
       </span>
-      {offset + AGENT_PAGE_SIZE < total ? (
+      {displayText(offset + AGENT_PAGE_SIZE < total ? (
         <a href={href(offset + AGENT_PAGE_SIZE)}>下一页 →</a>
       ) : (
         <span>已到末页</span>
-      )}
+      ))}
     </nav>
   );
 }
@@ -98,7 +99,7 @@ export default async function CoreQualityView({
   return (
     <div className="agent-page">
       <BackLink href="/agent">Agent 工作台</BackLink>
-      {catalog && <nav className="capability-links" aria-label="相关业务导航"><a href="/core/assets">资产目录</a><a href="/core/releases">发布历史</a></nav>}
+      {displayText(catalog && <nav className="capability-links" aria-label="相关业务导航"><a href="/core/assets">资产目录</a><a href="/core/releases">发布历史</a></nav>)}
       <PageHeader
         eyebrow="质量管理"
         title={catalog ? "资产目录" : "质量上下文"}
@@ -111,11 +112,11 @@ export default async function CoreQualityView({
         </span>
         {context && (
           <span>
-            读取于{" "}
-            {new Date(context.readAt).toLocaleString("zh-CN", {
+            读取于{businessText(" ")}
+            {displayText(new Date(context.readAt).toLocaleString("zh-CN", {
               timeZone: "Asia/Singapore",
               hour12: false,
-            })}
+            }))}
           </span>
         )}
       </div>
@@ -123,7 +124,7 @@ export default async function CoreQualityView({
         <Unknown>
           暂时无法读取数据，请确认当前工作空间与访问权限，或联系管理员。
           <a className="text-link" href={href(selection)}>
-            {" "}
+            {businessText(" ")}
             重新读取 →
           </a>
         </Unknown>
@@ -131,22 +132,22 @@ export default async function CoreQualityView({
         <>
           <nav className="agent-breadcrumb" aria-label="上下文路径">
             <a href={basePath}>数据集</a>
-            {context.dataset && (
+            {displayText(context.dataset && (
               <>
                 <span> / </span>
                 <a href={href({ datasetId: context.dataset.id })}>
-                  {context.dataset.name}
+                  {businessText(context.dataset.name)}
                 </a>
               </>
-            )}
-            {context.version && <span> / v{context.version.versionNo}</span>}
+            ))}
+            {context.version && <span> / v{displayText(context.version.versionNo)}</span>}
           </nav>
           {list && (
             <section className="card">
               <div className="section-heading">
                 <div>
                   <h2>
-                    {context.dataset ? "选择明确的数据版本" : "选择数据集"}
+                    {businessText(context.dataset ? "选择明确的数据版本" : "选择数据集")}
                   </h2>
                   <p>仅显示当前授权工作空间中的记录。</p>
                 </div>
@@ -168,11 +169,11 @@ export default async function CoreQualityView({
                       </tr>
                     </thead>
                     <tbody>
-                      {context.datasets?.items.map((d) => (
+                      {displayText(context.datasets?.items.map((d) => (
                         <tr key={d.id}>
                           <td>
-                            <strong>{d.name}</strong>
-                            <div className="muted">{d.code}</div>
+                            <strong>{businessText(d.name)}</strong>
+                            <details><summary>查看资产编号</summary><code>{d.code}</code></details>
                           </td>
                           <td>
                             <Badge value={d.datasetType} />
@@ -186,12 +187,12 @@ export default async function CoreQualityView({
                             </a>
                           </td>
                         </tr>
-                      ))}
+                      )))}
                       {context.versions?.items.map((v) => (
                         <tr key={v.id}>
                           <td>
-                            <strong>v{v.versionNo}</strong>
-                            <div className="muted">{v.id}</div>
+                            <strong>v{displayText(v.versionNo)}</strong>
+                            <div className="muted">{businessText(v.id)}</div>
                           </td>
                           <td>
                             <Badge value={v.status} />
@@ -227,25 +228,25 @@ export default async function CoreQualityView({
             <div className="agent-context-grid">
               <div className="agent-main-column">
                 <section className="card">
-                  {catalog && <a className="button" href={"/core/certifications?"+new URLSearchParams({datasetId:context.version.datasetId,versionId:context.version.id})}>查看此版本认证历史 →</a>}
+                  {displayText(catalog && <a className="button" href={"/core/certifications?"+new URLSearchParams({datasetId:context.version.datasetId,versionId:context.version.id})}>查看此版本认证历史 →</a>)}
                   <div className="section-heading">
                     <div>
-                      <span className="eyebrow">SOURCE FACT</span>
+                      <span className="eyebrow">来源记录</span>
                       <h2>
-                        {context.dataset?.name} · v{context.version.versionNo}
+                        {businessText(context.dataset?.name)} · v{displayText(context.version.versionNo)}
                       </h2>
                     </div>
                     <Badge value={context.version.status} />
                   </div>
                   <p>
-                    数据版本{" "}
-                    <code className="agent-id">{context.version.id}</code>
+                    数据版本{businessText(" ")}
+                    <code className="agent-id">{businessText(context.version.id)}</code>
                   </p>
                   <p>
                     记录行数：
-                    {context.version.rowCount === undefined
+                    {displayText(context.version.rowCount === undefined
                       ? "UNKNOWN"
-                      : context.version.rowCount.toLocaleString("zh-CN")}
+                      : context.version.rowCount.toLocaleString("zh-CN"))}
                   </p>
                   <p className="muted">
                     数据版本状态与质量结论分开记录。当前页面不会执行评测或修复。
@@ -274,8 +275,9 @@ export default async function CoreQualityView({
                         />
                       ) : (
                         <div className="agent-history">
-                          {evidence.history.items.map((a) => (
+                          {displayText(evidence.history.items.map((a) => (
                             <a
+                              title={a.ruleSetRef}
                               key={a.id}
                               className={`agent-history-row ${a.id === selection.assessmentId ? "selected" : ""}`}
                               aria-current={
@@ -290,12 +292,12 @@ export default async function CoreQualityView({
                               })}
                             >
                               <span>
-                                <strong>{a.ruleSetRef}</strong>
-                                <small>{a.id}</small>
+                                <strong>质量评测记录</strong>
+                                <small>{businessText(a.id)}</small>
                               </span>
                               <Badge value={a.gateDecision} />
                             </a>
-                          ))}
+                          )))}
                         </div>
                       )}
                       <Pages
@@ -312,10 +314,10 @@ export default async function CoreQualityView({
                 <section className="card" id="assessment-report">
                   <div className="section-heading">
                     <div>
-                      <span className="eyebrow">EXACT ASSESSMENT</span>
+                      <span className="eyebrow">指定评测</span>
                       <h2>评测报告</h2>
                     </div>
-                    {report && <Badge value={report.gateDecision} />}
+                    {displayText(report && <Badge value={report.gateDecision} />)}
                   </div>
                   {!selection.assessmentId ? (
                     <EmptyState
@@ -324,18 +326,19 @@ export default async function CoreQualityView({
                     />
                   ) : !report ? (
                     <Unknown>
-                      所选报告 {selection.assessmentId}{" "}
+                      所选报告 {displayText(selection.assessmentId)}{businessText(" ")}
                       不可确认。可能是读取失败、权限不足或不属于当前版本。没有替换成最新报告。
                     </Unknown>
                   ) : (
                     <>
                       <p>
-                        评测 <code className="agent-id">{report.id}</code>
+                        评测 <code className="agent-id">{businessText(report.id)}</code>
                       </p>
                       <p className="muted">
-                        {report.ruleSetRef} · {report.ruleSetVersion} ·{" "}
-                        {report.createdAt}
+                        规则版本 {displayText(report.ruleSetVersion)} ·{businessText(" ")}
+                        {displayText(report.createdAt)}
                       </p>
+                      <details><summary>查看评测规则引用</summary><code>{report.ruleSetRef}</code></details>
                       <div className="table-wrap">
                         <table>
                           <thead>
@@ -349,12 +352,12 @@ export default async function CoreQualityView({
                             {report.findings.items.map((f) => (
                               <tr key={f.id}>
                                 <td>
-                                  <strong>{f.ruleId}</strong>
+                                  <strong>{businessText(f.ruleId)}</strong>
                                   <div className="muted">
-                                    {f.reason || "未记录原因"}
+                                    {displayText(f.reason || "未记录原因")}
                                   </div>
                                 </td>
-                                <td>{f.severity}</td>
+                                <td>{businessText(f.severity)}</td>
                                 <td>
                                   <Badge value={f.status} />
                                 </td>
@@ -363,11 +366,11 @@ export default async function CoreQualityView({
                           </tbody>
                         </table>
                       </div>
-                      {!report.findings.page.total && (
+                      {displayText(!report.findings.page.total && (
                         <p className="muted">
                           本次未返回发现项；请以该评测的实际结论为准。
                         </p>
-                      )}
+                      ))}
                       <Pages
                         offset={selection.findingOffset}
                         total={report.findings.page.total}
@@ -378,39 +381,39 @@ export default async function CoreQualityView({
                       />
                       <div className="agent-evidence">
                         <div>
-                          <h3>证据引用 · {report.evidence.length}</h3>
+                          <h3>证据引用 · {displayText(report.evidence.length)}</h3>
                           {report.evidence.map((e) => (
-                            <details key={e.id}><summary>{e.id}</summary><p>类型：{e.evidenceType} · 关系：{e.relationType}</p><p>来源：{e.sourceType} / {e.sourceId||'未返回'}</p><p>摘要：{e.hashAlgorithm||'未返回'} / {e.hashValue||'未返回'}</p><p>记录时间：{e.createdAt}</p></details>
+                            <details key={e.id}><summary>{businessText(e.id)}</summary><p>类型：{displayText(e.evidenceType)} · 关系：{displayText(e.relationType)}</p><p>来源：{displayText(e.sourceType)} / {displayText(e.sourceId||'未返回')}</p><p>摘要：{displayText(e.hashAlgorithm||'未返回')} / {displayText(e.hashValue||'未返回')}</p><p>记录时间：{displayText(e.createdAt)}</p></details>
                           ))}
-                          {!report.evidence.length && (
+                          {displayText(!report.evidence.length && (
                             <p className="muted">未返回证据引用</p>
-                          )}
+                          ))}
                         </div>
                         <div>
-                          <h3>审计引用 · {report.auditEvents.length}</h3>
+                          <h3>审计引用 · {displayText(report.auditEvents.length)}</h3>
                           {report.auditEvents.map((e) => (
-                            <details key={e.id}><summary>{e.id}</summary><p>动作：{e.action}</p><p>主体：{e.objectType} / {e.objectId}</p><p>办理类型：{e.actorType}</p><p>记录时间：{e.occurredAt}</p></details>
+                            <details key={e.id}><summary>{businessText(e.id)}</summary><p>动作：{businessText(e.action)}</p><p>主体：{displayText(e.objectType)} / {displayText(e.objectId)}</p><p>办理类型：{displayText(e.actorType)}</p><p>记录时间：{displayText(e.occurredAt)}</p></details>
                           ))}
-                          {!report.auditEvents.length && (
+                          {displayText(!report.auditEvents.length && (
                             <p className="muted">未返回审计引用</p>
-                          )}
+                          ))}
                         </div>
                       </div>
                     </>
                   )}
                 </section>
-                {catalog && report && <CoreQualityCost workspace={workspace} version={context.version.id} assessment={report.id}/>}
+                {displayText(catalog && report && <CoreQualityCost workspace={workspace} version={context.version.id} assessment={report.id}/>)}
                 <section className="card">
                   <h2>评测尝试核实</h2>
                   <p className="muted">
-                    响应中断时，可按已有尝试 ID 查询事实；不会发起新评测。
+                    响应中断时，可按已有评测记录编号 查询事实；不会发起新评测。
                   </p>
                   <form
                     method="get"
                     action={basePath}
                     className="agent-lookup"
                   >
-                    {(["historyOffset", "findingOffset"] as const).map(
+                    {displayText((["historyOffset", "findingOffset"] as const).map(
                       (key) => (
                         <input
                           key={key}
@@ -419,33 +422,33 @@ export default async function CoreQualityView({
                           value={selection[key]}
                         />
                       ),
-                    )}
+                    ))}
                     <input
                       type="hidden"
                       name="versionId"
                       value={context.version.id}
                     />
-                    {context.dataset && (
+                    {displayText(context.dataset && (
                       <input
                         type="hidden"
                         name="datasetId"
                         value={context.dataset.id}
                       />
-                    )}
-                    {selection.assessmentId && (
+                    ))}
+                    {displayText(selection.assessmentId && (
                       <input
                         type="hidden"
                         name="assessmentId"
                         value={selection.assessmentId}
                       />
-                    )}
-                    <label htmlFor="attemptId">尝试 ID</label>
+                    ))}
+                    <label htmlFor="attemptId">评测记录编号</label>
                     <input
                       id="attemptId"
                       name="attemptId"
                       required
                       defaultValue={selection.attemptId ?? ""}
-                      placeholder="输入明确的 UUID"
+                      placeholder="填写完整记录编号"
                     />
                     <button className="button" type="submit">
                       核实记录
@@ -461,10 +464,10 @@ export default async function CoreQualityView({
                         <Badge value={evidence.attempt.outcome} />
                         <p>
                           <code className="agent-id">
-                            {evidence.attempt.id}
+                            {businessText(evidence.attempt.id)}
                           </code>
                         </p>
-                        {evidence.attempt.assessmentId ? (
+                        {displayText(evidence.attempt.assessmentId ? (
                           <a
                             className="text-link"
                             href={href({
@@ -477,7 +480,7 @@ export default async function CoreQualityView({
                           </a>
                         ) : (
                           <p>尚无关联评测事实。</p>
-                        )}
+                        ))}
                       </div>
                     ))}
                 </section>
@@ -487,11 +490,11 @@ export default async function CoreQualityView({
                 aria-label="上下文与模板要求"
               >
                 <section className="card">
-                  <span className="eyebrow">CONTEXT</span>
+                  <span className="eyebrow">关联信息</span>
                   <h2>当前上下文</h2>
-                  <p>{context.dataset?.code}</p>
+                  <details><summary>查看资产编号</summary><code>{context.dataset?.code}</code></details>
                   <p>
-                    <Badge value={context.dataset?.datasetType} />{" "}
+                    <Badge value={context.dataset?.datasetType} />{businessText(" ")}
                     <Badge value={`v${context.version.versionNo}`} />
                   </p>
                   <p className="muted">
@@ -509,21 +512,21 @@ export default async function CoreQualityView({
                   {context.template.configured ? (
                     <>
                       <p>
-                        {context.template.name} · {context.template.version}
+                        {businessText(context.template.name)} · {displayText(context.template.version)}
                       </p>
-                      <p className="muted">计划 hash</p>
+                      <details><summary>查看模板版本与校验摘要</summary><p className="muted">计划校验摘要</p>
                       <code className="agent-id">{context.template.hash}</code>
-                      <p className="muted">Workflow hash</p>
+                      <p className="muted">工作流校验摘要</p>
                       <code className="agent-id">
                         {context.template.workflowHash}
-                      </code>
+                      </code></details>
                       <ul>
-                        {context.template.inputs.map((i) => (
+                        {displayText(context.template.inputs.map((i) => (
                           <li key={i.name}>
-                            {i.name} · {i.datasetType}
-                            {i.required ? " · 必需" : ""}
+                            {businessText(i.name)} · {businessText(i.datasetType)}
+                            {businessText(i.required ? " · 必需" : "")}
                           </li>
-                        ))}
+                        )))}
                       </ul>
                     </>
                   ) : (
@@ -535,9 +538,9 @@ export default async function CoreQualityView({
                   <Badge value="NOT EVALUATED" tone="warn" />
                   <p>以下条件尚未在本次查询中核验：</p>
                   <ul>
-                    {context.unverified.map((x) => (
-                      <li key={x}>{labels[x] ?? x}</li>
-                    ))}
+                    {displayText(context.unverified.map((x) => (
+                      <li key={x}>{businessText(labels[x] ?? x)}</li>
+                    )))}
                   </ul>
                   <p className="muted">
                     此处的模板配置和历史质量结论均不构成执行授权。

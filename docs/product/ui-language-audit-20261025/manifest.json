@@ -1,0 +1,36 @@
+{
+  "capturedAt": "2026-10-25T06:06:19.068Z",
+  "source": "isolated Edge / synthetic-readonly",
+  "files": [
+    {
+      "file": "agent-before.png",
+      "sha256": "dcf9182ebab82c502687374b82edfb2050b16d9da6b2097f819fce5d4b2f1a32",
+      "capture": "before/55-agent.png"
+    },
+    {
+      "file": "quality-before.png",
+      "sha256": "5f6d64ca5a230fa3187e9fffa34ce135fd5edb732adf8240614d9f75e9b2a7c4",
+      "capture": "before/58-agent-quality.png"
+    },
+    {
+      "file": "agent-after.png",
+      "sha256": "5635b5e6a553a881f207ff9d9f90ba8a9e538a40981f23912f3baf342bd93d88",
+      "capture": "done/55-agent.png"
+    },
+    {
+      "file": "quality-after.png",
+      "sha256": "cb1a163c12426b5294724ae6db6f9aabb32ae3977bd6d691ebc807bb7cdcc76e",
+      "capture": "done/58-agent-quality.png"
+    },
+    {
+      "file": "receipt-after.png",
+      "sha256": "862f2f8d385bd479efe68c4187d2f9ed7faa14153aafd9def29703e5576185ed",
+      "capture": "done/12-business-receipts.png"
+    },
+    {
+      "file": "roles-after.png",
+      "sha256": "912d2635899aabe04862f808f9231f4ed7f9e5bc8dd44341af5be2121ac617d2",
+      "capture": "done/51-admin-roles.png"
+    }
+  ]
+}

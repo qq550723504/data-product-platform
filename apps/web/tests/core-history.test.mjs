@@ -39,15 +39,15 @@ const ui=require.resolve('../components/ui.tsx');require.cache[ui]={id:ui,filena
 const {CertificationRecords,ReleaseRecords}=require('../components/core-history-records.tsx');
 test('nonempty historical presentation keeps original certified decision plus revocation, exact selection opens its own facts',()=>{
  const html=renderToStaticMarkup(React.createElement(CertificationRecords,{history,selected:id}));
- assert.match(html,/CERTIFIED/);assert.match(html,/REVOKED/);assert.match(html,/historical decision/);assert.match(html,/<details open=""/);
+ assert.match(html,/CERTIFIED/);assert.match(html,/已撤销/);assert.equal(history.items[0].dispositions[0].disposition,'REVOKED');assert.match(html,/historical decision/);assert.match(html,/<details open=""/);
  const missing=renderToStaticMarkup(React.createElement(CertificationRecords,{history:{...history,items:[]},selected:other}));
- assert.match(missing,/UNKNOWN/);assert.doesNotMatch(missing,/historical decision/);
+ assert.match(missing,/无法确认/);assert.doesNotMatch(missing,/historical decision/);
 });
 test('release presentation does not invent publish time or dataset membership; missing selected batch is explicit',()=>{
  const row={id,productId:id,productVersionId:other,releaseNo:'r1',status:'DRAFT',createdAt:time,releaseNotes:'frozen release note'};
  const html=renderToStaticMarkup(React.createElement(ReleaseRecords,{history:{workspaceId:ws,items:[row],page:{limit:25,offset:0,total:1}},selected:id}));
  assert.match(html,/DRAFT/);assert.match(html,/未记录发布时间/);assert.match(html,/未返回数据集成员/);assert.match(html,/frozen release note/);
- const missing=renderToStaticMarkup(React.createElement(ReleaseRecords,{history:{workspaceId:ws,items:[],page:{limit:25,offset:0,total:0}},selected:other}));assert.match(missing,/UNKNOWN/);
+ const missing=renderToStaticMarkup(React.createElement(ReleaseRecords,{history:{workspaceId:ws,items:[],page:{limit:25,offset:0,total:0}},selected:other}));assert.match(missing,/无法确认/);
 });
 
 const {qualityCosts}=require('../.history-tests/quality-cost.js');
@@ -125,9 +125,9 @@ test('history binding references accept absent/null identities but reject object
     '@/lib/core-history':require('../.history-tests/core-history.js'),
    };
    const code=ts.transpileModule(fs.readFileSync(new URL('../components/core-history-view.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS}}).outputText;
-   const mod={exports:{}};new Function('require','module','exports',code)(name=>{assert.ok(name in imports,name);return imports[name];},mod,mod.exports);
+   const mod={exports:{}};new Function('require','module','exports',code)(name=>{if(name.endsWith('/business-language.mjs'))return require('../lib/business-language.mjs');assert.ok(name in imports,name);return imports[name];},mod,mod.exports);
    const element=await mod.exports.default({certification,searchParams:Promise.resolve(certification?{versionId:version}:{})});
-   const html=renderToStaticMarkup(element);assert.match(html,/UNKNOWN/);assert.match(html,/历史读取失败/);
+   const html=renderToStaticMarkup(element);assert.match(html,/无法确认/);assert.match(html,/历史读取失败/);
    if(certification)assert.ok(html.includes(version));
   }
  }

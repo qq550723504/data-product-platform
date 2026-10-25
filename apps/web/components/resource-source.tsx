@@ -1,3 +1,4 @@
+import {businessText,displayText} from '../lib/business-language.mjs';
 import Link from "next/link";
 import { Badge, DefinitionList, formatDate } from "./ui";
 import { CommandButton } from "./batch-controls";
@@ -54,16 +55,16 @@ async function ResourceConnection({ id, m }: { id: string; m: MetadataObservatio
     return (
       <><section className="detail-card">
         <h2>PostgreSQL 来源与批次</h2>
-        <p>{s.database}.{table?.Schema}.{table?.Name} · {s.connectionRef} · {s.instanceRef}</p>
-        <p>只读账户 {s.reader} · 已接纳批次 schema：{slot.columns.join(", ")}</p>
+        <p>{displayText(s.database)}.{displayText(table?.Schema)}.{displayText(table?.Name)} · {displayText(s.connectionRef)} · {displayText(s.instanceRef)}</p>
+        <p>只读账户 {displayText(s.reader)} · 已接纳批次 数据结构：{displayText(slot.columns.join(", "))}</p>
         <h3>metadata 治理观察</h3>
         <Badge value={m.status} />
-        <p>{m.status === "OBSERVED"
+        <p>{businessText(m.status === "OBSERVED"
           ? "提供方已响应本次观察。"
-          : "治理信息陈旧 / 未知；metadata 可能失联或尚未绑定。当前不能确认提供方状态。"}</p>
-        <p>来源 {m.provider ?? "OpenMetadata（未确认）"} · 当前观察版本 {m.version ?? "UNKNOWN"} · 本次观察 {formatDate(m.observedAt)}</p>
-        <p>绑定缓存版本 {m.lastConfirmedVersion ?? "UNKNOWN"} · 上次绑定确认 {formatDate(m.lastConfirmedAt)}</p>
-        <p>外部对象 {m.externalFqn ?? "未确认"} · ID {m.externalId ?? "未确认"}</p>
+          : "治理信息陈旧 / 未知；metadata 可能失联或尚未绑定。当前不能确认提供方状态。")}</p>
+        <p>来源 {displayText(m.provider ?? "OpenMetadata（未确认）")} · 当前观察版本 {displayText(m.version ?? "UNKNOWN")} · 本次观察 {displayText(formatDate(m.observedAt))}</p>
+        <p>绑定缓存版本 {displayText(m.lastConfirmedVersion ?? "UNKNOWN")} · 上次绑定确认 {displayText(formatDate(m.lastConfirmedAt))}</p>
+        <p>外部对象 {displayText(m.externalFqn ?? "未确认")} · 编号 {displayText(m.externalId ?? "未确认")}</p>
         <DefinitionList items={[
           { label: "目录描述", value: g?.description || missing },
           { label: "目录 Owner", value: partyNames(g?.owners) || missing },
@@ -75,12 +76,12 @@ async function ResourceConnection({ id, m }: { id: string; m: MetadataObservatio
         <CommandButton label="刷新治理绑定" action={refreshMetadata.bind(null, id, `dpp_source.${s.database}.${table?.Schema}.${table?.Name}`)} />
         <h3>同一事实链</h3>
         {linked.map(b => <p key={b.id}>
-          <Link className="text-link" href={`/batches/${b.id}`}>{b.request.batchKey} · 查看批次与加工入口</Link>{" "}
+          <Link className="text-link" href={`/batches/${b.id}`}>{displayText(b.request.batchKey)} · 查看批次与加工入口</Link>{businessText(" ")}
           <Badge value={b.state} />
         </p>)}
       </section></>
     );
   } catch {
-    return <section className="callout callout-warn"><h2>来源信息 UNKNOWN</h2><p>来源和治理信息暂不可用，请重新读取；已有历史记录仍保留。</p></section>;
+    return <section className="callout callout-warn"><h2>来源信息 无法确认</h2><p>来源和治理信息暂不可用，请重新读取；已有历史记录仍保留。</p></section>;
   }
 }

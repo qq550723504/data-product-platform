@@ -1,10 +1,10 @@
 import {test,expect} from '@playwright/test';
 import {fixtureToken} from './fixture-server.mjs';
 const control='http://127.0.0.1:4400/__control';
-const actor=(page,value)=>page.getByRole('combobox',{name:'演示办理身份',exact:true}).selectOption(value);
+const actor=(page,value)=>page.getByRole('combobox',{name:"办理身份（预览）",exact:true}).selectOption(value);
 const note=(page,value)=>page.getByRole('textbox',{name:'办理说明',exact:true}).fill(value);
 const click=(page,name)=>page.getByRole('button',{name,exact:true}).click();
-const submissionRows=page=>page.getByRole('row').filter({hasText:/DEMO-SUB-/});
+const submissionRows=page=>page.getByRole('row').filter({hasText:/验收提交 /});
 async function receipt(page,evidence){
  await click(page,'核对签收记录');await actor(page,'receiver');
  await page.getByRole('textbox',{name:'签收依据',exact:true}).fill(evidence);
@@ -49,14 +49,14 @@ test('receipt replacement blocks approval and can return on context change witho
  await expect(page.getByText('暂不能通过：签收依据已变化，请退回后重新提交',{exact:true})).toBeVisible();
  await expect(page.getByRole('button',{name:'确认验收通过',exact:true})).toBeDisabled();
  await expect(page.getByRole('button',{name:'退回修改',exact:true})).toBeEnabled();await click(page,'退回修改');
- const original=submissionRows(page).filter({hasText:'第1次'});await original.locator('summary').click();await expect(original).toContainText('FROZEN-RECEIPT-A');await expect(original).not.toContainText('REPLACEMENT-RECEIPT-B');await expect(original).toContainText('C1: PASS');
+ const original=submissionRows(page).filter({hasText:'第1次'});await original.locator('summary').click();await expect(original).toContainText('FROZEN-RECEIPT-A');await expect(original).not.toContainText('REPLACEMENT-RECEIPT-B');await expect(original).toContainText("C1: 通过");
  await submit(page);const second=submissionRows(page).filter({hasText:'第2次'});await second.locator('summary').click();await expect(second).toContainText('REPLACEMENT-RECEIPT-B');
  await approve(page);await expect(page.getByText(/修订.*验收通过.*未归档/)).toBeVisible();
 });
 
 test('invalidating an archived decision preserves original facts and exact receipt/submission trace after refresh',async({page})=>{
  await receipt(page,'OLD-UNREFERENCED');await receipt(page,'ARCHIVED-RECEIPT');await submit(page);await approve(page);
- await actor(page,'archivist');await click(page,'冻结验收档案');const heading=page.getByRole('heading',{name:/验收档案 · DEMO-ARC-/});const archiveTitle=await heading.innerText();
+ await actor(page,'archivist');await click(page,'冻结验收档案');const heading=page.getByRole('heading',{name:/验收档案 /});const archiveTitle=await heading.innerText();
  await click(page,'返回对应验收与办理历史');await actor(page,'reviewer');await expect(page.getByRole('button',{name:'追加决定作废处置',exact:true})).toBeDisabled();
  await note(page,'原审核依据存在错误，追加作废，不覆盖原决定');await click(page,'追加决定作废处置');
  await expect(page.getByText(/修订.*原通过决定已作废/)).toBeVisible();
@@ -94,16 +94,16 @@ test('workspace switches isolate identical demo IDs, frozen archives, dispositio
   await expect(page.locator('.workspace-scope-bar strong')).toHaveText(name);await click(page,'数据开发中心');await click(page,route);
  };
  await receipt(page,'ENTERPRISE-RECEIPT');await submit(page);await approve(page);await actor(page,'archivist');await click(page,'冻结验收档案');
- const archiveTitle=await page.getByRole('heading',{name:/验收档案 · DEMO-ARC-/}).innerText();
+ const archiveTitle=await page.getByRole('heading',{name:/验收档案 /}).innerText();
  await switchTo('园区能耗分析','验收归档');await expect(page.getByText(/尚无验收档案/)).toBeVisible();await expect(page.getByText('ENTERPRISE-RECEIPT',{exact:false})).toHaveCount(0);
- await click(page,'业务验收');await click(page,'查看验收');await expect(page.getByText(/DEMO-ACC-1 · 修订 0 · 草稿/)).toBeVisible();await expect(submissionRows(page)).toHaveCount(0);
+ await click(page,'业务验收');await click(page,'查看验收');await expect(page.getByText(/验收单 1 · 修订 0 · 草稿/)).toBeVisible();await expect(submissionRows(page)).toHaveCount(0);
  await click(page,'核对签收记录');await actor(page,'receiver');await expect(page.getByRole('textbox',{name:'签收依据',exact:true})).toHaveValue('');await expect(page.getByRole('textbox',{name:'签收说明',exact:true})).toHaveValue('');
  await page.getByRole('textbox',{name:'签收依据',exact:true}).fill('PARK-RECEIPT');await page.getByRole('textbox',{name:'签收说明',exact:true}).fill('园区独立签收');await click(page,'保存签收记录');await click(page,'进入业务验收');await submit(page);
  await actor(page,'reviewer');await page.getByRole('combobox',{name:'核验 字段与约定一致',exact:true}).selectOption('PASS');await note(page,'UNSAVED-PARK-REVIEW');
- await switchTo('企业经营数据','验收归档');await expect(page.getByRole('heading',{name:/验收档案 · DEMO-ARC-/})).toHaveText(archiveTitle);await expect(page.getByText('冻结签收：',{exact:false})).toContainText('ENTERPRISE-RECEIPT');await expect(page.getByText('PARK-RECEIPT',{exact:false})).toHaveCount(0);
+ await switchTo('企业经营数据','验收归档');await expect(page.getByRole('heading',{name:/验收档案 /})).toHaveText(archiveTitle);await expect(page.getByText('冻结签收：',{exact:false})).toContainText('ENTERPRISE-RECEIPT');await expect(page.getByText('PARK-RECEIPT',{exact:false})).toHaveCount(0);
  await click(page,'返回对应验收与办理历史');await actor(page,'reviewer');await note(page,'仅作废企业空间决定');await click(page,'追加决定作废处置');await click(page,'查看已归档记录');
- await expect(page.getByRole('heading',{name:/验收档案 · DEMO-ARC-/})).toHaveText(archiveTitle);await expect(page.getByText('原决定已作废',{exact:true})).toBeVisible();
- await switchTo('园区能耗分析','业务验收');await expect(page.getByText(/DEMO-ACC-1 · 修订.*待验收/)).toBeVisible();await expect(page.getByRole('textbox',{name:'办理说明',exact:true})).toHaveValue('');await expect(page.getByRole('combobox',{name:'核验 字段与约定一致',exact:true})).toHaveValue('');
+ await expect(page.getByRole('heading',{name:/验收档案 /})).toHaveText(archiveTitle);await expect(page.getByText('原决定已作废',{exact:true})).toBeVisible();
+ await switchTo('园区能耗分析','业务验收');await expect(page.getByText(/验收单 1 · 修订.*待验收/)).toBeVisible();await expect(page.getByRole('textbox',{name:'办理说明',exact:true})).toHaveValue('');await expect(page.getByRole('combobox',{name:'核验 字段与约定一致',exact:true})).toHaveValue('');
  await submissionRows(page).locator('summary').click();await expect(submissionRows(page)).toContainText('PARK-RECEIPT');await expect(submissionRows(page)).not.toContainText('ENTERPRISE-RECEIPT');await expect(page.getByText('仅作废企业空间决定',{exact:false})).toHaveCount(0);
- await page.reload();await expect(page.getByText(/DEMO-ACC-1 · 修订.*待验收/)).toBeVisible();await expect(page.getByRole('combobox',{name:'演示办理身份',exact:true})).toHaveValue('reviewer');await expect(page.getByText('仅作废企业空间决定',{exact:false})).toHaveCount(0);
+ await page.reload();await expect(page.getByText(/验收单 1 · 修订.*待验收/)).toBeVisible();await expect(page.getByRole('combobox',{name:"办理身份（预览）",exact:true})).toHaveValue('reviewer');await expect(page.getByText('仅作废企业空间决定',{exact:false})).toHaveCount(0);
 });

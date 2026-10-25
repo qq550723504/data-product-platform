@@ -1,6 +1,7 @@
+import {businessText} from '../lib/business-language.mjs';
 export function ReadUnavailable({ title }: { title: string }) {
   return <div className="callout callout-warn" role="status" data-testid="read-unavailable">
-    <strong>{title}：UNKNOWN</strong>
-    <p>读取未完成、失败、权限不足或响应无效，本次无法确认。其他分区按各自读取结果展示。</p>
+    <strong>{businessText(title)}：无法确认</strong>
+    <details><summary>查看原因</summary><p>读取尚未完成或当前不可用，请核对访问权限后重新查询。其他分区仍保留各自的读取结果。</p></details>
   </div>;
 }

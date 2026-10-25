@@ -14,10 +14,10 @@ test("exception history paginates past 100 and binds exact nullable historical e
   const panel=page.getByTestId("schema-exceptions");
   await expect(panel.locator("tbody tr")).toHaveCount(5);
   await expect(panel.getByRole("navigation",{name:"扫描异常历史分页"})).toContainText("101–105 / 105");
-  await expect(panel).toContainText("UNAVAILABLE 35 条 · DENIED 35 条 · INTERRUPTED 35 条");
-  await expect(panel).toContainText("不是当前未恢复待办数");
+  await expect(panel).toContainText("暂不可用 35 条 · 拒绝 35 条 · 已中断 35 条");
+  await expect(panel).toContainText("不等于当前未恢复数量");
   const row=panel.locator("tbody tr").filter({hasText:"HISTORICAL_DENIED 104"});
-  await expect(row).toContainText("未绑定 attempt");
+  await expect(row).toContainText("未绑定 尝试记录");
   const before=await calls(request);
   expect(before.filter(c=>c.path.endsWith("/source-schema-observations/exceptions"))).toHaveLength(1);
   expect(before.filter(c=>/schema-observations\/[0-9a-f-]+$/.test(c.path))).toHaveLength(0);
@@ -27,8 +27,8 @@ test("exception history paginates past 100 and binds exact nullable historical e
   const evidence=page.getByTestId("schema-observation-evidence");
   await expect(evidence).toContainText(exceptionRequestId(104));
   await expect(evidence).toContainText("historical-provider-id");
-  await expect(evidence).toContainText("未绑定 attempt");
-  await expect(evidence.locator("tr").filter({hasText:"energy_kwh"})).toContainText("UNKNOWN");
+  await expect(evidence).toContainText("未绑定 尝试记录");
+  await expect(evidence.locator("tr").filter({hasText:"energy_kwh"})).toContainText("无法确认");
   await expect(evidence).not.toContainText("本次无此列");
   await expect(evidence.getByRole("heading",{name:"处理记录",exact:true})).toHaveCount(0);
   await expect(page.locator("form")).toHaveCount(0);
@@ -64,7 +64,7 @@ test("workbench keeps history separate from current queues and filters survive o
   await row.getByRole("link",{name:"查看精确观察"}).click();
   await page.getByRole("link",{name:"返回扫描异常历史"}).click();
   await expect(page).toHaveURL(/schemaExceptionStatus=DENIED&schemaExceptionOffset=25#schema-exception-history$/);
-  await page.getByRole("navigation",{name:"schema 漂移视图"}).getByRole("link",{name:"全部漂移观察",exact:true}).click();
+  await page.getByRole("navigation",{name:"数据结构 漂移视图"}).getByRole("link",{name:"全部漂移观察",exact:true}).click();
   await expect(page).toHaveURL(/schemaExceptionStatus=DENIED&schemaExceptionOffset=25/);
   await expect(panel.locator("tbody tr")).toHaveCount(10);
   assertPureHistory(await calls(request));
@@ -74,7 +74,7 @@ test("history failures, foreign data and successful empty reads never assert cur
   for(const scenario of ["schema-exceptions-unavailable","schema-exceptions-foreign"]){
     await reset(request,scenario);
     await page.goto("/attention");
-    await expect(page.getByTestId("schema-exceptions-unavailable")).toContainText("UNKNOWN");
+    await expect(page.getByTestId("schema-exceptions-unavailable")).toContainText("无法确认");
     await expect(page.getByTestId("schema-attention")).toBeVisible();
     await expect(page.getByTestId("quality-attention")).toBeVisible();
     assertPureHistory(await calls(request));

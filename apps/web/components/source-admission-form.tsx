@@ -1,4 +1,5 @@
 "use client";
+import {displayText} from '../lib/business-language.mjs';
 import { useEffect, useState } from "react";
 import { admissionText, type AdmissionLocale } from "@/lib/source-admission-text";
 import styles from "./source-admission-form.module.css";
@@ -40,11 +41,11 @@ export function SourceAdmissionForm({ lang, scope }: { lang: AdmissionLocale; sc
   }
   return <div className="detail-card">
     <form className={styles.form} onSubmit={(e) => { e.preventDefault(); void run(false); }}>
-      {(["releaseId", "snapshotId", "manifestSha256"] as const).map((key) => <label className={styles.field} key={key}>{key === "releaseId" ? t.release : key === "snapshotId" ? t.snapshot : t.hash}<input name={key} required value={fields[key]} disabled={Boolean(intent) || busy} onChange={(e) => setFields({ ...fields, [key]: e.target.value })} pattern={key === "manifestSha256" ? "[0-9a-f]{64}" : "[0-9a-fA-F-]{36}"} /></label>)}
-      <button className={`${styles.button} ${styles.primary}`} disabled={busy || blocked}>{busy ? t.busy : t.submit}</button>
+      {(["releaseId", "snapshotId", "manifestSha256"] as const).map((key) => <label className={styles.field} key={key}>{displayText(key === "releaseId" ? t.release : key === "snapshotId" ? t.snapshot : t.hash)}<input name={key} required value={fields[key]} disabled={Boolean(intent) || busy} onChange={(e) => setFields({ ...fields, [key]: e.target.value })} pattern={key === "manifestSha256" ? "[0-9a-f]{64}" : "[0-9a-fA-F-]{36}"} /></label>)}
+      <button className={`${styles.button} ${styles.primary}`} disabled={busy || blocked}>{displayText(busy ? t.busy : t.submit)}</button>
     </form>
-    {intent && <><p className={styles.identity}>{t.key}: <code data-testid="request-key">{intent.key}</code></p><div className={styles.actions}><button className={styles.button} disabled={busy} onClick={() => void run(true)}>{t.lookup}</button><button className={styles.button} disabled={busy} onClick={() => { sessionStorage.removeItem(storage); setIntent(null); setFields(empty); setReceipt(null); setMessage(""); setBlocked(false); }}>{t.fresh}</button></div></>}
-    {message && <p className={styles.result} role="status">{message}</p>}
-    {receipt?.state === "ACCEPTED_SOURCE" && <dl className={styles.facts}><dt>{t.version}</dt><dd data-testid="accepted-version">{receipt.datasetVersionId}</dd><dt>{t.count}</dt><dd>{receipt.rowCount}</dd></dl>}
+    {intent && <><p className={styles.identity}>{displayText(t.key)}: <code data-testid="request-key">{intent.key}</code></p><div className={styles.actions}><button className={styles.button} disabled={busy} onClick={() => void run(true)}>{displayText(t.lookup)}</button><button className={styles.button} disabled={busy} onClick={() => { sessionStorage.removeItem(storage); setIntent(null); setFields(empty); setReceipt(null); setMessage(""); setBlocked(false); }}>{displayText(t.fresh)}</button></div></>}
+    {message && <p className={styles.result} role="status">{displayText(message)}</p>}
+    {receipt?.state === "ACCEPTED_SOURCE" && <dl className={styles.facts}><dt>{displayText(t.version)}</dt><dd data-testid="accepted-version">{displayText(receipt.datasetVersionId)}</dd><dt>{displayText(t.count)}</dt><dd>{displayText(receipt.rowCount)}</dd></dl>}
   </div>;
 }

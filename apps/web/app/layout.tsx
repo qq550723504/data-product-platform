@@ -1,3 +1,4 @@
+import {displayText} from '../lib/business-language.mjs';
 import type { Metadata } from "next";
 import { ConsoleShell } from "@/components/shell";
 import {AcceptanceIdentityShell} from '@/components/acceptance-identity-shell';
@@ -20,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN">
       <body>
-        {process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='business-acceptance'?<AcceptanceIdentityShell>{children}</AcceptanceIdentityShell>:<ConsoleShell syntheticPreview={process.env.GOVERNANCE_PREVIEW_MODE==='synthetic-readonly'}>{children}</ConsoleShell>}
+        {process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='business-acceptance'?<AcceptanceIdentityShell>{displayText(children)}</AcceptanceIdentityShell>:<ConsoleShell syntheticPreview={process.env.GOVERNANCE_PREVIEW_MODE==='synthetic-readonly'}>{displayText(children)}</ConsoleShell>}
       </body>
     </html>
   );

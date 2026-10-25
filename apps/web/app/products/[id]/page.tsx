@@ -1,3 +1,4 @@
+import {businessText,displayText} from '../../../lib/business-language.mjs';
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, Pagination, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { ProductReleaseCreateForm, type ReleaseDatasetCandidate } from "@/components/product-release-create-form";
@@ -105,37 +106,37 @@ export default async function ProductDetailPage({
           <a className="text-link" href="#definition">产品定义</a>
           <a className="text-link" href="#assets">交付资产</a>
           <a className="text-link" href="#governance">治理绑定</a>
-          <a className="text-link" href="#releases">Releases</a>
+          <a className="text-link" href="#releases">发布记录s</a>
         </nav>
 
         <section className="detail-card" id="definition" style={{ marginBottom: 18 }}>
           <div className="panel-header"><h2>产品定义</h2><span className="eyebrow">Stable Identity</span></div>
           <DefinitionList items={[
-            { label: "Product ID", value: <span className="mono">{product.id}</span> },
+            { label: "Product ID", value: <span className="mono">{businessText(product.id)}</span> },
             { label: "Domain", value: product.domainCode || "—" },
-            { label: "Project", value: <span className="mono">{shortId(product.projectId)}</span> },
-            { label: "Use Case", value: <span className="mono">{shortId(product.useCaseId)}</span> },
+            { label: "Project", value: <span className="mono">{displayText(shortId(product.projectId))}</span> },
+            { label: "Use Case", value: <span className="mono">{displayText(shortId(product.useCaseId))}</span> },
             { label: "Current Version", value: version ? `${version.version} · ${shortId(version.id)}` : "—" },
             { label: "Latest Release", value: product.latestReleaseNo ? `${product.latestReleaseNo} · ${product.latestReleaseStatus}` : "—" },
             { label: "更新时间", value: formatDate(product.updatedAt) },
           ]} />
-          {version ? <details style={{ marginTop: 16 }}><summary>Version definition snapshot</summary><pre className="json-preview">{JSON.stringify(version.definition, null, 2)}</pre></details> : null}
+          {displayText(version ? <details style={{ marginTop: 16 }}><summary>Version definition snapshot</summary><pre className="json-preview">{JSON.stringify(version.definition, null, 2)}</pre></details> : null)}
         </section>
 
         <section className="detail-card" id="assets" style={{ marginBottom: 18 }}>
-          <div className="panel-header"><h2>交付资产</h2><span className="eyebrow">ProductVersion Assets</span></div>
+          <div className="panel-header"><h2>交付资产</h2><span className="eyebrow">产品版本 Assets</span></div>
           {!version || version.assets.length === 0 ? (
-            <EmptyState title="当前版本没有交付资产" description="Release 的 delivery Gate 会保持阻塞，直到 ProductVersion 定义了可交付资产。" />
+            <EmptyState title="当前版本没有交付资产" description="发布记录 的 delivery 检查项 会保持阻塞，直到 产品版本 定义了可交付资产。" />
           ) : (
             <div className="table-card">
               <table className="data-table">
-                <thead><tr><th>资产</th><th>类型</th><th>Dataset</th><th>外部引用</th></tr></thead>
+                <thead><tr><th>资产</th><th>类型</th><th>数据集</th><th>外部引用</th></tr></thead>
                 <tbody>{version.assets.map((asset) => (
                   <tr key={asset.id}>
-                    <td className="primary-cell"><strong>{asset.name}</strong><span className="mono">{shortId(asset.id)}</span></td>
+                    <td className="primary-cell"><strong>{businessText(asset.name)}</strong><span className="mono">{displayText(shortId(asset.id))}</span></td>
                     <td><Badge value={asset.assetType} tone="info" /></td>
-                    <td>{asset.datasetId ? <Link className="text-link mono" href={`/datasets/${asset.datasetId}`}>{shortId(asset.datasetId)}</Link> : "—"}</td>
-                    <td className="mono">{asset.externalRef || "—"}</td>
+                    <td>{asset.datasetId ? <Link className="text-link mono" href={`/datasets/${asset.datasetId}`}>{displayText(shortId(asset.datasetId))}</Link> : "—"}</td>
+                    <td className="mono">{displayText(asset.externalRef || "—")}</td>
                   </tr>
                 ))}</tbody>
               </table>
@@ -144,18 +145,18 @@ export default async function ProductDetailPage({
         </section>
 
         <section className="detail-card" id="governance" style={{ marginBottom: 18 }}>
-          <div className="panel-header"><h2>治理与生产绑定</h2><span className="eyebrow">Frozen by ProductVersion</span></div>
+          <div className="panel-header"><h2>治理与生产绑定</h2><span className="eyebrow">Frozen by 产品版本</span></div>
           {version ? <DefinitionList items={[
-            { label: "Workflow Version", value: <span className="mono">{version.workflowVersionId ?? "—"}</span> },
-            { label: "Contract Version", value: <span className="mono">{version.contractVersionId ?? "—"}</span> },
+            { label: "Workflow Version", value: <span className="mono">{displayText(version.workflowVersionId ?? "—")}</span> },
+            { label: "Contract Version", value: <span className="mono">{displayText(version.contractVersionId ?? "—")}</span> },
             { label: "Entity Policy", value: version.entityPolicyRef || "—" },
             { label: "Indicator Set", value: version.indicatorSetRef || "—" },
-          ]} /> : <EmptyState title="暂无 ProductVersion" description="请先创建固定的产品版本，再准备发布。" />}
-          <p style={{ marginTop: 12 }}>Rights、Quality、Compliance 与 Evidence 以每个 Release 的冻结引用和独立 Readiness Gate 为准，不由浏览器推导。</p>
+          ]} /> : <EmptyState title="暂无 产品版本" description="请先创建固定的产品版本，再准备发布。" />}
+          <p style={{ marginTop: 12 }}>Rights、Quality、Compliance 与 证据记录 以每个 发布记录 的冻结引用和独立 发布检查 检查项 为准，不由浏览器推导。</p>
         </section>
 
         <section id="releases">
-          {version && actionsEnabled ? (
+          {displayText(version && actionsEnabled ? (
             <ProductReleaseCreateForm
               productId={product.id}
               productVersionId={version.id}
@@ -164,32 +165,32 @@ export default async function ProductDetailPage({
             />
           ) : version ? (
             <div className="callout" style={{ marginBottom: 18 }}>
-              <strong>Release 创建写入未启用</strong>
+              <strong>发布记录 创建写入未启用</strong>
               <p>当前环境仅供查看，未开放发布准备，也不会加载候选成果版本。</p>
             </div>
-          ) : null}
+          ) : null)}
           <div className="panel-header">
-            <div><h2>ProductRelease 与 Readiness</h2><p>逐项显示 production、dataset、rights、quality、compliance、contract、evidence、delivery 八个 Gate。</p></div>
-            <span className="eyebrow">{releasePage.page.total} Releases</span>
+            <div><h2>发布记录 与 发布检查</h2><p>逐项显示 production、dataset、rights、quality、compliance、contract、evidence、delivery 八个 检查项。</p></div>
+            <span className="eyebrow">{displayText(releasePage.page.total)} 发布记录s</span>
           </div>
-          {releasePage.page.total > 0 && releases.length === 0 ? (
+          {displayText(releasePage.page.total > 0 && releases.length === 0 ? (
             <div className="callout callout-warn">
-              <strong>该页没有 Release</strong>
-              <p>当前偏移超出历史范围，请使用下方分页返回有效页。</p>
+              <strong>该页没有 发布记录</strong>
+              <p>当前起始位置超出历史范围，请使用下方分页返回有效页。</p>
             </div>
           ) : (
             <ProductReleasePanel productId={product.id} items={releases} actionsEnabled={actionsEnabled} />
-          )}
-          {releasePage.page.total > 0 ? (
+          ))}
+          {displayText(releasePage.page.total > 0 ? (
             <Pagination
               basePath={`/products/${product.id}`}
               offset={releasePage.page.offset}
               itemCount={releasePage.items.length}
               total={releasePage.page.total}
               pageSize={LIST_PAGE_SIZE}
-              label="ProductRelease 历史分页"
+              label="发布记录 历史分页"
             />
-          ) : null}
+          ) : null)}
         </section>
       </>
     );

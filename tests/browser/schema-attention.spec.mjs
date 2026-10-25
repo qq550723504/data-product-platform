@@ -14,7 +14,7 @@ test("schema attention paginates past 100 without detail fanout then opens exact
   await page.goto("/attention?schemaView=ALL&schemaOffset=100&qualityView=CLOSED");
   const panel=page.getByTestId("schema-attention");
   await expect(panel.locator("tbody tr")).toHaveCount(5);
-  await expect(panel.getByRole("navigation",{name:"schema 漂移分页"})).toContainText("101–105 / 105");
+  await expect(panel.getByRole("navigation",{name:"数据结构 漂移分页"})).toContainText("101–105 / 105");
   const row=panel.locator("tbody tr").filter({hasText:"SOURCE_SCHEMA_CHANGED 105"});
   await expect(row).toContainText("已记录处理（3 条记录）");
   await expect(panel).toContainText("未记录处理 104 条 · 已记录处理 1 条");
@@ -49,7 +49,7 @@ test("workbench enters unhandled observations and filters preserve quality queue
   await expect(page).toHaveURL(/schemaView=UNHANDLED#source-schema-attention$/);
   await expect(page.getByTestId("schema-attention").locator("tbody tr")).toHaveCount(25);
   await page.goto("/attention?qualityView=CLOSED&qualityOffset=100&schemaView=ALL&schemaOffset=100");
-  await page.getByRole("navigation",{name:"schema 漂移视图"}).getByRole("link",{name:"未记录处理",exact:true}).click();
+  await page.getByRole("navigation",{name:"数据结构 漂移视图"}).getByRole("link",{name:"未记录处理",exact:true}).click();
   await expect(page).toHaveURL(/qualityOffset=100&qualityView=CLOSED&schemaView=UNHANDLED#source-schema-attention$/);
   assertPureHistory(await calls(request));
 });
@@ -57,7 +57,7 @@ test("schema unavailability and foreign summary stay UNKNOWN while original queu
   for(const scenario of ["schema-attention-unavailable","schema-attention-foreign"]){
     await reset(request,scenario);
     await page.goto("/attention");
-    await expect(page.getByTestId("schema-attention-unavailable")).toContainText("UNKNOWN");
+    await expect(page.getByTestId("schema-attention-unavailable")).toContainText("无法确认");
     await expect(page.getByTestId("quality-attention")).toBeVisible();
     await expect(page.getByRole("heading",{name:"待办中心",exact:true})).toBeVisible();
     assertPureHistory(await calls(request));

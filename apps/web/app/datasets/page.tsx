@@ -1,3 +1,4 @@
+import {businessText,displayText} from '../../lib/business-language.mjs';
 import Link from "next/link";
 import { Badge, EmptyState, LoadError, PageHeader, Pagination, SetupRequired, formatDate } from "@/components/ui";
 import { LIST_PAGE_SIZE, parsePageOffset } from "@/lib/pagination";
@@ -5,7 +6,7 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 export default async function DatasetsPage({ searchParams }: { searchParams: Promise<{ offset?: string }> }) {
   if (!configuredWorkspaceId()) {
-    return <><PageHeader eyebrow="Datasets" title="数据集" description="逻辑数据集与不可变版本。" /><SetupRequired /></>;
+    return <><PageHeader eyebrow="数据集s" title="数据集" description="逻辑数据集与不可变版本。" /><SetupRequired /></>;
   }
 
   const offset = parsePageOffset((await searchParams).offset);
@@ -14,16 +15,16 @@ export default async function DatasetsPage({ searchParams }: { searchParams: Pro
     return (
       <>
         <PageHeader
-          eyebrow="Datasets"
+          eyebrow="数据集s"
           title="数据集"
-          description="明确区分 RAW、STANDARDIZED、CURATED 与 PRODUCT；每次生产都生成新的不可变 DatasetVersion。"
+          description="明确区分 原始数据、标准数据、加工成果 与 数据产品；每次生产都生成新的不可变 成果版本。"
         />
         {datasets.page.total === 0 ? (
-          <EmptyState title="暂无数据集" description="原始数据进入生产链后，先形成 RAW Dataset，再通过执行产生新的标准化或加工版本。" />
+          <EmptyState title="暂无数据集" description="原始数据进入生产链后，先形成 原始数据 数据集，再通过执行产生新的标准化或加工版本。" />
         ) : (
           <>
             {datasets.items.length === 0 ? (
-              <div className="callout callout-warn"><strong>该页没有记录</strong><p>当前偏移超出数据范围，请使用下方分页返回有效页。</p></div>
+              <div className="callout callout-warn"><strong>该页没有记录</strong><p>当前起始位置超出数据范围，请使用下方分页返回有效页。</p></div>
             ) : (
               <div className="table-card">
                 <table className="data-table">
@@ -32,13 +33,13 @@ export default async function DatasetsPage({ searchParams }: { searchParams: Pro
                     {datasets.items.map((dataset) => (
                       <tr key={dataset.id}>
                         <td className="primary-cell">
-                          <Link className="text-link" href={`/datasets/${dataset.id}`}><strong>{dataset.name}</strong></Link>
-                          <span>{dataset.code}</span>
+                          <Link className="text-link" href={`/datasets/${dataset.id}`}><strong>{businessText(dataset.name)}</strong></Link>
+                          <span>{businessText(dataset.code)}</span>
                         </td>
                         <td><Badge value={dataset.datasetType} tone="info" /></td>
                         <td><Badge value={dataset.lifecycleStatus} /></td>
-                        <td className="mono">{dataset.currentVersionId ? `${dataset.currentVersionId.slice(0, 8)}…` : "—"}</td>
-                        <td>{formatDate(dataset.updatedAt)}</td>
+                        <td className="mono">{displayText(dataset.currentVersionId ? `${dataset.currentVersionId.slice(0, 8)}…` : "—")}</td>
+                        <td>{displayText(formatDate(dataset.updatedAt))}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -51,6 +52,6 @@ export default async function DatasetsPage({ searchParams }: { searchParams: Pro
       </>
     );
   } catch (error) {
-    return <><PageHeader eyebrow="Datasets" title="数据集" /><LoadError error={error} /></>;
+    return <><PageHeader eyebrow="数据集s" title="数据集" /><LoadError error={error} /></>;
   }
 }

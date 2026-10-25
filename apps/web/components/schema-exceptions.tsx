@@ -1,3 +1,5 @@
+import {RecordCode} from './record-code';
+import {displayText} from '../lib/business-language.mjs';
 import Link from "next/link";
 import { Badge, EmptyState, formatDate } from "./ui";
 import { attentionOffset } from "@/lib/quality-attention";
@@ -15,39 +17,39 @@ export async function SchemaExceptions({ compact = false, query = {} }: { compac
     const { unavailableCount, deniedCount, interruptedCount } = result.summary;
     return <section className="panel" id="schema-exception-history" style={{ marginTop: 18 }} data-testid="schema-exceptions">
       <div className="panel-header">
-        <div><h2>源端 schema 扫描异常历史</h2><span className="panel-meta">UNAVAILABLE {unavailableCount} 条 · DENIED {deniedCount} 条 · INTERRUPTED {interruptedCount} 条</span></div>
-        {compact ? <a href={schemaExceptionsHref({}, "ALL", 0)}>查看扫描异常历史</a> : null}
+        <div><h2>源表结构 扫描异常历史</h2><span className="panel-meta">暂不可用 {displayText(unavailableCount)} 条 · 拒绝 {displayText(deniedCount)} 条 · 已中断 {displayText(interruptedCount)} 条</span></div>
+        {displayText(compact ? <a href={schemaExceptionsHref({}, "ALL", 0)}>查看扫描异常历史</a> : null)}
       </div>
       <p>按已登记的异常记录计数，不等于当前未恢复数量。后续扫描成功仍保留旧异常；没有记录不代表来源健康。尚无观察结果的请求不在本历史范围内。</p>
-      {compact ? <p>已记录 {unavailableCount + deniedCount + interruptedCount} 条扫描异常历史。</p> : <>
+      {compact ? <p>已记录 {displayText(unavailableCount + deniedCount + interruptedCount)} 条扫描异常历史。</p> : <>
         {/* Reuse QualityAttention's document navigation boundary for query-only
             reads; an unfinished client transition must not retain the old page. */}
         <nav className="detail-tabs" aria-label="扫描异常历史筛选">
-          {filters.map(([value, label]) => <a key={value} className={`detail-tab ${status === value ? "active" : ""}`} aria-current={status === value ? "page" : undefined} href={schemaExceptionsHref(query, value, 0)}>{label}</a>)}
+          {filters.map(([value, label]) => <a key={value} className={`detail-tab ${status === value ? "active" : ""}`} aria-current={status === value ? "page" : undefined} href={schemaExceptionsHref(query, value, 0)}>{displayText(label)}</a>)}
         </nav>
         {result.items.length === 0 ? <EmptyState title={result.page.total ? "本页没有历史记录" : "当前筛选没有已登记扫描异常"} description="可切换筛选或返回上一页；此处不提供当前健康或恢复结论。" /> :
           <div className="table-card" style={{ overflowX: "auto" }}>
             <table className="data-table"><thead><tr><th>资源 / 历史来源</th><th>请求责任人</th><th>观察 / 原因</th><th>规则</th><th>记录时间</th><th>查看</th></tr></thead>
               <tbody>{result.items.map(o => <tr key={o.observationId}>
-                <td className="primary-cell">{o.resourceName}<span>{o.resourceCode}</span><span>{o.externalFqn}</span></td>
-                <td className="mono">{o.responsibleActorId}</td>
-                <td><Badge value={o.status} /><p>{o.reason}</p><span>{o.attemptId ? `attempt ${o.attemptId}` : "未绑定 attempt"}</span></td>
-                <td>{o.ruleRef} / {o.ruleVersion}</td><td>{formatDate(o.recordedAt)}</td>
+                <td className="primary-cell">{displayText(o.resourceName)}<span><RecordCode value={o.resourceCode}/></span><span>{displayText(o.externalFqn)}</span></td>
+                <td className="mono">{displayText(o.responsibleActorId)}</td>
+                <td><Badge value={o.status} /><p>{displayText(o.reason)}</p><span>{displayText(o.attemptId ? `attempt ${o.attemptId}` : "未绑定 attempt")}</span></td>
+                <td>{displayText(o.ruleRef)} / {displayText(o.ruleVersion)}</td><td>{displayText(formatDate(o.recordedAt))}</td>
                 <td><Link prefetch={false} href={schemaExceptionEvidenceHref(o, status, offset)}>查看精确观察</Link></td>
               </tr>)}</tbody>
             </table>
           </div>}
         <nav className="pagination" aria-label="扫描异常历史分页">
-          {offset > 0 ? <a href={schemaExceptionsHref(query, status, Math.max(0, offset - 25))}>上一页</a> : null}
-          <span>{result.page.total ? `${Math.min(offset + 1, result.page.total)}–${Math.min(offset + result.items.length, result.page.total)} / ${result.page.total}` : "0 条"}</span>
-          {offset + result.items.length < result.page.total ? <a href={schemaExceptionsHref(query, status, offset + 25)}>下一页</a> : null}
+          {displayText(offset > 0 ? <a href={schemaExceptionsHref(query, status, Math.max(0, offset - 25))}>上一页</a> : null)}
+          <span>{displayText(result.page.total ? `${Math.min(offset + 1, result.page.total)}–${Math.min(offset + result.items.length, result.page.total)} / ${result.page.total}` : "0 条")}</span>
+          {displayText(offset + result.items.length < result.page.total ? <a href={schemaExceptionsHref(query, status, offset + 25)}>下一页</a> : null)}
         </nav>
       </>}
-      <p className="panel-meta">读取时间：{formatDate(result.readAt)}。分类计数覆盖三类异常历史，列表总数按当前筛选计算；不合并为资源数或当前任务数。</p>
+      <p className="panel-meta">读取时间：{displayText(formatDate(result.readAt))}。分类计数覆盖三类异常历史，列表总数按当前筛选计算；不合并为资源数或当前任务数。</p>
     </section>;
   } catch {
     return <section className="callout callout-warn" id="schema-exception-history" style={{ marginTop: 18 }} data-testid="schema-exceptions-unavailable">
-      <h2>源端 schema 扫描异常历史暂不可确认</h2><p>读取失败、权限不足或凭据未配置；数量与结论为 UNKNOWN。其他待办分区保持独立。</p>
+      <h2>源表结构 扫描异常历史暂不可确认</h2><p>读取失败、权限不足或凭据未配置；数量与结论为 无法确认。其他待办分区保持独立。</p>
     </section>;
   }
 }

@@ -1,3 +1,4 @@
+import {businessText,displayText} from '../../lib/business-language.mjs';
 import Link from "next/link";
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { collectAllPages } from "@/lib/pagination";
@@ -5,7 +6,7 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 export default async function EvidencePage() {
   if (!configuredWorkspaceId()) {
-    return <><PageHeader eyebrow="Evidence" title="证据中心" /><SetupRequired /></>;
+    return <><PageHeader eyebrow="证据记录" title="证据中心" /><SetupRequired /></>;
   }
 
   try {
@@ -22,7 +23,7 @@ export default async function EvidencePage() {
     return (
       <>
         <PageHeader
-          eyebrow="Evidence"
+          eyebrow="证据记录"
           title="证据中心"
           description="证据不是附件文件夹，而是对权利、来源、加工、质量、合规、成本与发布事实的可追溯证明。"
         />
@@ -31,28 +32,28 @@ export default async function EvidencePage() {
           <div className="flow" style={{ marginTop: 16 }}>
             {["ProductRelease", "DatasetVersion", "Execution", "Input DatasetVersion", "Data Resource", "Evidence / Cost / Audit"].map((step, index, steps) => (
               <span key={step} className="flow">
-                <span className="flow-step">{step}</span>
-                {index < steps.length - 1 ? <span className="flow-arrow">→</span> : null}
+                <span className="flow-step">{businessText(step)}</span>
+                {displayText(index < steps.length - 1 ? <span className="flow-arrow">→</span> : null)}
               </span>
             ))}
           </div>
-          <p style={{ marginTop: 14 }}>Release 直接从 Workspace 级 ProductRelease read model 读取，并与同一 Workspace 的 Data Product 目录关联；证据页会遍历全部分页，不会遗漏不可变历史，也不会要求操作者粘贴任意 UUID。</p>
+          <p style={{ marginTop: 14 }}>发布记录 直接从 工作空间 级 发布记录 read model 读取，并与同一 工作空间 的 数据产品 目录关联；证据页会遍历全部分页，不会遗漏不可变历史，也不会要求操作者粘贴任意 编号。</p>
         </section>
 
-        <div className="panel-header"><h2>可追溯 ProductRelease</h2><span className="eyebrow">{rows.length} Releases</span></div>
+        <div className="panel-header"><h2>可追溯 发布记录</h2><span className="eyebrow">{displayText(rows.length)} 发布记录s</span></div>
         {rows.length === 0 ? (
-          <EmptyState title="暂无可追溯 Release" description="当前 Workspace 尚未产生 ProductRelease。" />
+          <EmptyState title="暂无可追溯 发布记录" description="当前 工作空间 尚未产生 发布记录。" />
         ) : (
           <div className="table-card">
             <table className="data-table">
-              <thead><tr><th>数据产品</th><th>Release</th><th>状态</th><th>Evidence Snapshot</th><th>时间</th><th>证据链</th></tr></thead>
+              <thead><tr><th>数据产品</th><th>发布记录</th><th>状态</th><th>证据记录 Snapshot</th><th>时间</th><th>证据链</th></tr></thead>
               <tbody>{rows.map(({ product, release }) => (
                 <tr key={release.id}>
-                  <td className="primary-cell"><Link className="text-link" href={`/products/${product.id}`}><strong>{product.name}</strong></Link><span>{product.code}</span></td>
-                  <td className="primary-cell"><strong>{release.releaseNo}</strong><span className="mono">{shortId(release.id)}</span></td>
+                  <td className="primary-cell"><Link className="text-link" href={`/products/${product.id}`}><strong>{businessText(product.name)}</strong></Link><span>{businessText(product.code)}</span></td>
+                  <td className="primary-cell"><strong>{displayText(release.releaseNo)}</strong><span className="mono">{displayText(shortId(release.id))}</span></td>
                   <td><Badge value={release.status} /></td>
-                  <td className="mono">{shortId(release.evidenceSnapshotId)}</td>
-                  <td>{formatDate(release.releasedAt ?? release.createdAt)}</td>
+                  <td className="mono">{displayText(shortId(release.evidenceSnapshotId))}</td>
+                  <td>{displayText(formatDate(release.releasedAt ?? release.createdAt))}</td>
                   <td><Link className="text-link" href={`/products/${product.id}/releases/${release.id}`}>查看 Trace →</Link></td>
                 </tr>
               ))}</tbody>
@@ -62,6 +63,6 @@ export default async function EvidencePage() {
       </>
     );
   } catch (error) {
-    return <><PageHeader eyebrow="Evidence" title="证据中心" /><LoadError error={error} /></>;
+    return <><PageHeader eyebrow="证据记录" title="证据中心" /><LoadError error={error} /></>;
   }
 }

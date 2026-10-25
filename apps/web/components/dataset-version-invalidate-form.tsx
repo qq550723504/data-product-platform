@@ -1,4 +1,5 @@
 "use client";
+import {businessText,displayText} from '../lib/business-language.mjs';
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -34,7 +35,7 @@ export function DatasetVersionInvalidateForm({
   if (!invalidatable) return null;
 
   return (
-    <form action={action} className="detail-card" style={{ marginBottom: 18 }} aria-label="作废 DatasetVersion">
+    <form action={action} className="detail-card" style={{ marginBottom: 18 }} aria-label="作废 成果版本">
       <input type="hidden" name="datasetId" value={datasetId} />
       <input type="hidden" name="versionId" value={versionId} />
       <div className="panel-header">
@@ -55,9 +56,9 @@ export function DatasetVersionInvalidateForm({
         />
       </label>
       <button type="submit" disabled={!canSubmit} style={{ marginTop: 12 }}>
-        {pending ? "正在作废，请勿重复操作…" : state.ok ? "已作废" : "作废 DatasetVersion"}
+        {businessText(pending ? "正在作废，请勿重复操作…" : state.ok ? "已作废" : "作废 DatasetVersion")}
       </button>
-      {!enabled ? (
+      {displayText(!enabled ? (
         <small style={{ display: "block", marginTop: 8 }}>
           当前环境未开放版本作废。
         </small>
@@ -65,11 +66,11 @@ export function DatasetVersionInvalidateForm({
         <small style={{ display: "block", marginTop: 8 }}>
           作废会追加一条处置记录，保留原版本内容和历史。
         </small>
-      )}
-      {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
-      {state.refreshRequired ? (
+      ))}
+      {displayText(state.message ? <p role={state.ok ? "status" : "alert"}>{businessText(state.message)}</p> : null)}
+      {displayText(state.refreshRequired ? (
         <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button>
-      ) : null}
+      ) : null)}
     </form>
   );
 }

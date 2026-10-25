@@ -71,7 +71,7 @@ test('actual workbench reload keeps original pending CREATE through auth refusal
  const hooks={useState(initial){const n=cursor++;if(!(n in states))states[n]=initial;return [states[n],v=>{states[n]=typeof v==='function'?v(states[n]):v;}];},useEffect(fn){if(!mounted)effects.push(fn);}};
  const imports={react:hooks,'react/jsx-runtime':require('react/jsx-runtime'),'next/link':{default:'a'},'@phosphor-icons/react':{Sparkle:'i',MagnifyingGlass:'i',FileText:'i',ArrowRight:'i'},'@/components/ui':{Badge:({value})=>React.createElement('span',null,value)},'@/lib/agent-command-receipt':require('../.agent-tests/agent-command-receipt.js'),'@/lib/agent-quality':require('../.agent-tests/agent-quality.js')};
  const code=ts.transpileModule(readFileSync(new URL('../app/agent/tasks/workbench.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- const mod={exports:{}};new Function('require','module','exports',code)(name=>{assert.ok(name in imports,name);return imports[name];},mod,mod.exports);
+ const mod={exports:{}};new Function('require','module','exports',code)(name=>{if(name.endsWith('/business-language.mjs'))return require('../lib/business-language.mjs');assert.ok(name in imports,name);return imports[name];},mod,mod.exports);
  const originals=Object.fromEntries(['fetch','sessionStorage','location','history'].map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
  try{
   Object.defineProperties(globalThis,{

@@ -1,4 +1,5 @@
 "use client";
+import {businessText,displayText} from '../lib/business-language.mjs';
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,7 +31,7 @@ function ReviewForm({ review, onResult }: { review: EntityReview; onResult: (res
           onChange={(event) => setSelectedEntityId(event.target.value)} disabled={locked}>
           <option value="">请选择冻结候选实体</option>
           {review.alternatives.map((alternative) => <option key={alternative.entityId} value={alternative.entityId}>
-            {alternative.canonicalName || alternative.entityId}{alternative.canonicalKey ? ` · ${alternative.canonicalKey}` : ""}
+            {displayText(alternative.canonicalName || alternative.entityId)}{displayText(alternative.canonicalKey ? ` · ${alternative.canonicalKey}` : "")}
           </option>)}
         </select>
       </> : null}
@@ -42,12 +43,12 @@ function ReviewForm({ review, onResult }: { review: EntityReview; onResult: (res
         <button type="submit" name="decision" value="confirm"
           disabled={locked || !reason.trim() || (!review.candidateEntityId && !selectedEntityId)}>确认匹配</button>
         <button type="submit" name="decision" value="reject" disabled={locked || !reason.trim()}>拒绝匹配</button>
-        {pending ? <span role="status">正在提交，请勿重复操作…</span> : null}
+        {displayText(pending ? <span role="status">正在提交，请勿重复操作…</span> : null)}
       </div>
-      {!review.candidateEntityId && review.alternatives.length === 0 ? <small>没有可选择的冻结候选实体，不能确认；拒绝也不会自动新建实体。</small> : null}
-      {!review.candidateEntityId && review.alternatives.length > 0 ? <small>仅可从本次匹配保留的候选中选择；提交时将重新核实候选是否仍为当前工作空间中同类型的有效实体。</small> : null}
-      {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
-      {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button> : null}
+      {displayText(!review.candidateEntityId && review.alternatives.length === 0 ? <small>没有可选择的冻结候选实体，不能确认；拒绝也不会自动新建实体。</small> : null)}
+      {displayText(!review.candidateEntityId && review.alternatives.length > 0 ? <small>仅可从本次匹配保留的候选中选择；提交时将重新核实候选是否仍为当前工作空间中同类型的有效实体。</small> : null)}
+      {displayText(state.message ? <p role={state.ok ? "status" : "alert"}>{businessText(state.message)}</p> : null)}
+      {displayText(state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button> : null)}
     </form>
   );
 }
@@ -62,10 +63,10 @@ export function ReviewQueue({ items, actionsEnabled }: { items: EntityReview[]; 
   return (
     <>
       {notice ? <div className={`callout ${notice.ok ? "" : "callout-warn"}`} role={notice.ok ? "status" : "alert"}>
-        <strong>{notice.message}</strong>
-        {notice.job ? <p>任务 <span className="mono">{notice.job.id}</span> · <Badge value={notice.job.status} /></p> : null}
+        <strong>{businessText(notice.message)}</strong>
+        {displayText(notice.job ? <p>任务 <span className="mono">{businessText(notice.job.id)}</span> · <Badge value={notice.job.status} /></p> : null)}
         {notice.job?.outputDatasetId && notice.job.outputDatasetVersionId ? <p>
-          已生成版本 <span className="mono">{notice.job.outputDatasetVersionId}</span> · <Link href={`/datasets/${notice.job.outputDatasetId}`}>查看数据集版本</Link>
+          已生成版本 <span className="mono">{displayText(notice.job.outputDatasetVersionId)}</span> · <Link href={`/datasets/${notice.job.outputDatasetId}`}>查看数据集版本</Link>
         </p> : null}
       </div> : null}
       <div className={styles.buttons}><button type="button" onClick={() => router.refresh()}>刷新队列</button></div>
@@ -75,25 +76,25 @@ export function ReviewQueue({ items, actionsEnabled }: { items: EntityReview[]; 
             <article className="review-card" key={review.candidateId}>
               <div>
                 <div className="badge-row"><Badge value={review.status} /><Badge value={review.decision} tone="info" /></div>
-                <h3>{review.sourceName || review.sourceKey}</h3>
-                <p>来源键 <span className="mono">{review.sourceKey}</span> · {formatDate(review.createdAt)}</p>
-                <p>任务 <span className="mono">{review.jobId}</span></p>
+                <h3>{displayText(review.sourceName || review.sourceKey)}</h3>
+                <p>来源键 <span className="mono">{displayText(review.sourceKey)}</span> · {displayText(formatDate(review.createdAt))}</p>
+                <p>任务 <span className="mono">{displayText(review.jobId)}</span></p>
                 <details><summary>原始来源记录</summary><pre className="json-preview">{JSON.stringify(review.source, null, 2)}</pre></details>
                 <details open><summary>规范化记录</summary><pre className="json-preview">{JSON.stringify(review.normalized, null, 2)}</pre></details>
-                {actionsEnabled ? <ReviewForm review={review} onResult={onResult} /> : null}
+                {displayText(actionsEnabled ? <ReviewForm review={review} onResult={onResult} /> : null)}
               </div>
               <div>
-                <div className="review-score"><span className="eyebrow">Confidence</span><strong>{Number.isFinite(review.confidence) && review.confidence >= 0 && review.confidence <= 1 ? `${(review.confidence * 100).toFixed(1)}%` : "未提供"}</strong></div>
+                <div className="review-score"><span className="eyebrow">Confidence</span><strong>{displayText(Number.isFinite(review.confidence) && review.confidence >= 0 && review.confidence <= 1 ? `${(review.confidence * 100).toFixed(1)}%` : "未提供")}</strong></div>
                 <dl className={styles.provenance}>
-                  <dt>匹配方法</dt><dd>{review.matchMethod || "—"}</dd>
-                  <dt>匹配规则</dt><dd>{review.matchRuleId || "—"}</dd>
-                  <dt>候选实体</dt><dd>{review.candidateEntityId || "—"}</dd>
-                  <dt>冻结备选</dt><dd>{review.alternatives.length ? review.alternatives.map((item) => item.canonicalName || item.entityId).join(" / ") : "—"}</dd>
-                  <dt>策略引用</dt><dd>{review.policyRef || "—"}</dd>
-                  <dt>策略版本</dt><dd>{review.policyVersion || "—"}</dd>
-                  <dt>诊断引擎</dt><dd>{review.engineName || "未提供"}</dd>
-                  <dt>引擎版本</dt><dd>{review.engineVersion || "—"}</dd>
-                  <dt>模型版本</dt><dd>{review.modelVersion || "—"}</dd>
+                  <dt>匹配方法</dt><dd>{displayText(review.matchMethod || "—")}</dd>
+                  <dt>匹配规则</dt><dd>{displayText(review.matchRuleId || "—")}</dd>
+                  <dt>候选实体</dt><dd>{displayText(review.candidateEntityId || "—")}</dd>
+                  <dt>冻结备选</dt><dd>{displayText(review.alternatives.length ? review.alternatives.map((item) => item.canonicalName || item.entityId).join(" / ") : "—")}</dd>
+                  <dt>策略引用</dt><dd>{displayText(review.policyRef || "—")}</dd>
+                  <dt>策略版本</dt><dd>{displayText(review.policyVersion || "—")}</dd>
+                  <dt>诊断引擎</dt><dd>{displayText(review.engineName || "未提供")}</dd>
+                  <dt>引擎版本</dt><dd>{displayText(review.engineVersion || "—")}</dd>
+                  <dt>模型版本</dt><dd>{displayText(review.modelVersion || "—")}</dd>
                 </dl>
                 <small>分数和引擎信息是诊断依据，不代替人工判断。</small>
               </div>

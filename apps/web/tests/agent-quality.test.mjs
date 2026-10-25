@@ -258,7 +258,7 @@ async function renderQuality({source=context,history=assessment,selected=report}
   '@/lib/agent-quality-server':{readAgentContext:async()=>source},
   '@/lib/agent-quality':require('../.agent-tests/agent-quality.js'),
  };
- const mod={exports:{}};new Function('require','module','exports',code)(name=>{assert.ok(name in modules,name);return modules[name];},mod,mod.exports);
+ const mod={exports:{}};new Function('require','module','exports',code)(name=>{if(name.endsWith('/business-language.mjs'))return require('../lib/business-language.mjs');assert.ok(name in modules,name);return modules[name];},mod,mod.exports);
  const element=await mod.exports.default({searchParams:Promise.resolve({datasetId:ds,versionId:version,assessmentId:old,attemptId})});
  return {html:require('react-dom/server').renderToStaticMarkup(element),calls};
 }
@@ -270,7 +270,7 @@ test('actual CoreQualityView renders malformed report/history as local UNKNOWN w
   ...['reason','severity'].map(key=>({...report,findings:page([{...finding,[key]:{}}])})),
  ]){
   const {html,calls}=await renderQuality({selected});
-  assert.match(html,/UNKNOWN/);assert.match(html,/所选报告/);
+  assert.match(html,/无法确认/);assert.match(html,/所选报告/);
   assert.ok(html.includes(version));assert.match(html,/fixture\/rules/);assert.match(html,/SUCCEEDED/);
   assert.deepEqual(calls,[old]);
  }
@@ -281,6 +281,6 @@ test('actual CoreQualityView renders malformed report/history as local UNKNOWN w
 test('actual CoreQualityView rejects malformed configured template before rendering and reads no unrelated evidence',async()=>{
  for(const key of ['name','version']){
   const {html,calls}=await renderQuality({source:{...context,template:{configured:true,name:'repair',version:'v1',hash:'a'.repeat(64),workflowHash:'b'.repeat(64),inputs:[],[key]:{}}}});
-  assert.match(html,/UNKNOWN/);assert.deepEqual(calls,[]);
+  assert.match(html,/无法确认/);assert.deepEqual(calls,[]);
  }
 });

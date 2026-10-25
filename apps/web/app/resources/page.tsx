@@ -1,3 +1,4 @@
+import {businessText,displayText} from '../../lib/business-language.mjs';
 import Link from "next/link";
 import { Badge, EmptyState, LoadError, PageHeader, Pagination, SetupRequired, formatDate } from "@/components/ui";
 import { LIST_PAGE_SIZE, parsePageOffset } from "@/lib/pagination";
@@ -5,7 +6,7 @@ import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 export default async function ResourcesPage({ searchParams }: { searchParams: Promise<{ offset?: string }> }) {
   if (!configuredWorkspaceId()) {
-    return <><PageHeader eyebrow="Data Resources" title="数据资源" description="业务语义资源，不等同于物理表。" /><SetupRequired /></>;
+    return <><PageHeader eyebrow="数据资源s" title="数据资源" description="业务语义资源，不等同于物理表。" /><SetupRequired /></>;
   }
 
   const offset = parsePageOffset((await searchParams).offset);
@@ -14,7 +15,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
     return (
       <>
         <PageHeader
-          eyebrow="Data Resources"
+          eyebrow="数据资源s"
           title="数据资源"
           description="管理可被数据产品生产链引用的业务资源，并观察权利、质量与敏感级别状态。"
         />
@@ -23,7 +24,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
         ) : (
           <>
             {resources.items.length === 0 ? (
-              <div className="callout callout-warn"><strong>该页没有记录</strong><p>当前偏移超出数据范围，请使用下方分页返回有效页。</p></div>
+              <div className="callout callout-warn"><strong>该页没有记录</strong><p>当前起始位置超出数据范围，请使用下方分页返回有效页。</p></div>
             ) : (
               <div className="table-card">
                 <table className="data-table">
@@ -32,14 +33,14 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
                     {resources.items.map((resource) => (
                       <tr key={resource.id}>
                         <td className="primary-cell">
-                          <Link href={`/resources/${resource.id}`} className="text-link"><strong>{resource.name}</strong></Link>
-                          <span>{resource.code}{resource.domainCode ? ` · ${resource.domainCode}` : ""}</span>
+                          <Link href={`/resources/${resource.id}`} className="text-link"><strong>{businessText(resource.name)}</strong></Link>
+                          <span>{businessText(resource.code)}{displayText(resource.domainCode ? ` · ${resource.domainCode}` : "")}</span>
                         </td>
-                        <td>{resource.resourceType}</td>
+                        <td>{displayText(resource.resourceType)}</td>
                         <td><Badge value={resource.rightsStatus} /></td>
                         <td><Badge value={resource.qualityStatus} /></td>
                         <td><Badge value={resource.lifecycleStatus} /></td>
-                        <td>{formatDate(resource.updatedAt)}</td>
+                        <td>{displayText(formatDate(resource.updatedAt))}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -52,6 +53,6 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
       </>
     );
   } catch (error) {
-    return <><PageHeader eyebrow="Data Resources" title="数据资源" /><LoadError error={error} /></>;
+    return <><PageHeader eyebrow="数据资源s" title="数据资源" /><LoadError error={error} /></>;
   }
 }
