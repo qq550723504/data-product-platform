@@ -6,13 +6,13 @@
 
 | 编号 / 级别 | 复现与影响 | 根因及修复 | 修复后的证据 |
 |---|---|---|---|
-| F1 / P2 | “确认一份修复计划”进入空白诊断表单，按讲解无法审阅已有修复计划 | 卡片复用了通用任务页入口。改为“审阅修复计划”，定位最近任务并选择明确记录；保留原控制器与任务详情 | [工作台](leader-demo-20261025-reviewed/02-agent.png)、[明确修复任务](leader-demo-20261025-reviewed/04-agent-repair.png)，步骤2/6 |
-| F2 / P2 | 演示历史列出26条评测，第一页可选报告却返回404/UNKNOWN；原稿要求翻页，掩盖了不可读条目 | 通用分页压力数据被当成领导演示材料。该场景改为两份有精确 GET 响应的报告：当前 FAIL、此前 PASS；维度/发现项与任务来源一致。独立 `agent-quality-pages` 的26条压力场景不变 | [修复前](leader-demo-review-before-20261025/missing-report.png)、[当前报告](leader-demo-20261025-reviewed/03-quality-report.png)，步骤4/5与逐条报告契约测试 |
-| F3 / P2 | 禁止 sessionStorage.setItem 后，签收仍提示“已保存”；讲解稿却要求保留并不存在的存储错误提示 | 两个共享 Provider 丢弃保存返回值。复用已有 saveDemoSession，记录失败并显示持久警告；业务动作提示改为“已更新”。明确仅在内存、刷新丢失本次修改；此前成功保存的内容可能恢复 | [修复前](leader-demo-review-before-20261025/storage-message.png)、[修复后](leader-demo-20261025-reviewed/14-storage-unavailable.png)，步骤21及新增浏览器回归 |
-| F4 / P2 | “原型说明”仍宣称 Agent 连接 Core 保存计划/确认/意图，与合成只读预览冲突 | 弹窗未复用服务端显式预览边界。按既有 syntheticPreview 显示未连接数据库/既有服务、来源未配置与写入关闭；常规模式行为保留 | [修复前](leader-demo-review-before-20261025/about-message.png)、[修复后](leader-demo-20261025-reviewed/00-about-boundary.png)，步骤1 |
-| F5 / P2 | 默认重演覆盖已提交的截图/JSON；源码摘要在捕获结束才读取，容易被误解为运行构建证明 | 默认输出唯一 `.data` 目录；显式输出仅允许 checkout 内新目录，已有目录以 EEXIST 拒绝。捕获前记录工作树摘要，结束核对未变，并记录 PNG 摘要；文档明确这些不是运行身份或业务证明 | 输出保护单测；[新包 JSON](leader-demo-20261025-reviewed/acceptance.json)；旧包未覆盖 |
+| F1 / P2 | “确认一份修复计划”进入空白诊断表单，按讲解无法审阅已有修复计划 | 卡片复用了通用任务页入口。改为“审阅修复计划”，定位最近任务并选择明确记录；保留原控制器与任务详情 | [工作台](leader-demo-20261025-reviewed-final/02-agent.png)、[明确修复任务](leader-demo-20261025-reviewed-final/04-agent-repair.png)，步骤2/6 |
+| F2 / P2 | 演示历史列出26条评测，第一页可选报告却返回404/UNKNOWN；原稿要求翻页，掩盖了不可读条目 | 通用分页压力数据被当成领导演示材料。该场景改为两份有精确 GET 响应的报告：当前 FAIL、此前 PASS；维度/发现项与任务来源一致。两份报告为同秒独立样例，不按时间戳推断当前业务资格；补入评测不得早于来源版本的契约断言。独立 `agent-quality-pages` 的26条压力场景不变 | [修复前](leader-demo-review-before-20261025/missing-report.png)、[当前报告](leader-demo-20261025-reviewed-final/03-quality-report.png)，步骤4/5与逐条报告契约测试 |
+| F3 / P2 | 禁止 sessionStorage.setItem 后，签收仍提示“已保存”；讲解稿却要求保留并不存在的存储错误提示 | 两个共享 Provider 丢弃保存返回值。复用已有 saveDemoSession，记录失败并显示持久警告；业务动作提示改为“已更新”。明确仅在内存、刷新丢失本次修改；此前成功保存的内容可能恢复 | [修复前](leader-demo-review-before-20261025/storage-message.png)、[修复后](leader-demo-20261025-reviewed-final/14-storage-unavailable.png)，步骤21及新增浏览器回归 |
+| F4 / P2 | “原型说明”仍宣称 Agent 连接 Core 保存计划/确认/意图，与合成只读预览冲突 | 弹窗未复用服务端显式预览边界。按既有 syntheticPreview 显示未连接数据库/既有服务、来源未配置与写入关闭；常规模式行为保留 | [修复前](leader-demo-review-before-20261025/about-message.png)、[修复后](leader-demo-20261025-reviewed-final/00-about-boundary.png)，步骤1 |
+| F5 / P2 | 默认重演覆盖已提交的截图/JSON；源码摘要在捕获结束才读取，容易被误解为运行构建证明 | 默认输出唯一 `.data` 目录；显式输出仅允许 checkout 内新目录，已有目录以 EEXIST 拒绝。捕获前记录工作树摘要，结束核对未变，并记录 PNG 摘要；文档明确这些不是运行身份或业务证明 | 输出保护单测；[新包 JSON](leader-demo-20261025-reviewed-final/acceptance.json)；旧包未覆盖 |
 
-能力清单、讲解稿和重演步骤已同步：移除现场分页要求，统一新卡片名称与真实角色标签，说明正常刷新和存储故障的区别。原 `leader-demo-20261025/` 保留为历史交付，本轮新证据集中于 `leader-demo-20261025-reviewed/`，16张 PNG 均为实际 Edge 页面原始截图，无设计图替代或手工合成。
+能力清单、讲解稿和重演步骤已同步：移除现场分页要求，统一新卡片名称与真实角色标签，说明正常刷新和存储故障的区别。原 `leader-demo-20261025/` 保留为历史交付，中间复审包 `leader-demo-20261025-reviewed/` 保留；本轮最终证据集中于 `leader-demo-20261025-reviewed-final/`，16张 PNG 均为实际 Edge 页面原始截图，无设计图替代或手工合成。
 
 ## 六项复核结果
 

@@ -8,7 +8,7 @@
 |---|---|
 | 本地交互 | 前端合成状态，正常时保存当前标签页；存储失败时警告仅在内存中，可重置；不形成 Core 业务事实 |
 | 已接查询 | 源码已有 API 查询与边界校验；不等于企业来源已配置，也不等于本轮重新验收了该接口 |
-| 本轮 PASS | 本轮隔离 Edge 路线实际验证，步骤、URL、截图和源码摘要见[验收记录](leader-demo-20261025-reviewed/acceptance.json) |
+| 本轮 PASS | 本轮隔离 Edge 路线实际验证，步骤、URL、截图和源码摘要见[验收记录](leader-demo-20261025-reviewed-final/acceptance.json) |
 | 关闭 / 未配置 | 真实来源 UNCONFIGURED；正式业务写入 DISABLED；模型和真实派发 NOT_RUN |
 
 4193 的 API 查询由 loopback4493 的合成 GET 夹具响应，**没有连接数据库或现有 Agent 服务**。页面仍复用已有 Agent 控制器、BFF 和 Core 查询组件；没有另做一套“假成功”的 Agent 客户端。原库、原 API、原预览及身份环境不受此演示影响。夹具中的计划 UUID、输入绑定和指纹均用于展示，不是通过真实 Command 形成的冻结事实、有效授权或密码学证明。

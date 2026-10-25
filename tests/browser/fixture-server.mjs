@@ -637,7 +637,7 @@ export function createFixtureServer(initialScenario = "ready") {
             createdAt: "2026-09-29T08:00:00Z",
           };
           const items = state.scenario === "leader-demo-quality"
-            ? [goldAssessment, { ...goldAssessment, id: ids.qualityAssessment, gateDecision: "PASS", createdAt: "2026-09-01T08:00:00Z", metrics: { synthetic: true, totalRows: 2, failedRows: 0 }, dimensionSummary: { VALIDITY: { dimension: "VALIDITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 } } }]
+            ? [goldAssessment, { ...goldAssessment, id: ids.qualityAssessment, gateDecision: "PASS", createdAt: stamp, metrics: { synthetic: true, totalRows: 2, failedRows: 0 }, dimensionSummary: { VALIDITY: { dimension: "VALIDITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 } } }]
             : state.scenario === "agent-quality-pages"
             ? [generatedAssessment, ...Array.from({length:24},(_,i)=>({...goldAssessment,id:`a1100003-a101-4101-8101-${String(i+1).padStart(12,"0")}`,ruleSetRef:`fixture/history-${i+1}`})), goldAssessment]
             : state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
@@ -681,7 +681,7 @@ export function createFixtureServer(initialScenario = "ready") {
           });
         }
         if (url.pathname === `/api/v1/quality-assessments/${ids.qualityAssessment}/report` && state.scenario === "leader-demo-quality") {
-          return send(200, { ...goldAssessment, id: ids.qualityAssessment, gateDecision: "PASS", createdAt: "2026-09-01T08:00:00Z", metrics: { synthetic: true, totalRows: 2, failedRows: 0 }, dimensionSummary: { VALIDITY: { dimension: "VALIDITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 } }, findings: page([]), evidence: [], auditEvents: [] });
+          return send(200, { ...goldAssessment, id: ids.qualityAssessment, gateDecision: "PASS", createdAt: stamp, metrics: { synthetic: true, totalRows: 2, failedRows: 0 }, dimensionSummary: { VALIDITY: { dimension: "VALIDITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 } }, findings: page([]), evidence: [], auditEvents: [] });
         }
         if (url.pathname === `/api/v1/quality-assessments/${ids.qualityAssessment}/report` && state.qualityCompleted) {
           return send(200, {
