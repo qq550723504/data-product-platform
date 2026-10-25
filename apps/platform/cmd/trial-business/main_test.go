@@ -44,6 +44,33 @@ func testIdentity(t *testing.T) (config, registry, spec) {
 	return c, r, s
 }
 
+// The current command must track the current DDL while retaining an exact
+// schema check. Older retained binaries keep their own frozen schema contract.
+func TestBusinessSchemaMatchesCurrentMigration(t *testing.T) {
+	_, file, _, _ := runtime.Caller(0)
+	entries, err := os.ReadDir(filepath.Join(filepath.Dir(file), "../../../../migrations"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	latest := 0
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".up.sql") {
+			continue
+		}
+		prefix, _, ok := strings.Cut(entry.Name(), "_")
+		version, err := strconv.Atoi(prefix)
+		if !ok || err != nil {
+			t.Fatalf("invalid migration filename %q", entry.Name())
+		}
+		if version > latest {
+			latest = version
+		}
+	}
+	if latest == 0 || requiredBusinessSchema != latest {
+		t.Fatalf("current trial command requires schema %d; current DDL is %d", requiredBusinessSchema, latest)
+	}
+}
+
 func TestIdentityAndScopeFailClosed(t *testing.T) {
 	c, r, s := testIdentity(t)
 	if err := validate(c, r, s); err != nil {

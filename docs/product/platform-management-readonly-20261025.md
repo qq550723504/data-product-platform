@@ -36,6 +36,8 @@
 
 首次隔离夹具暴露Windows ESM路径和OAuth Basic凭据表单编码问题，修复了测试夹具，保留失败记录；没有放宽现有RP验证。截图检查另修复仅管理profile所需的单一品牌静态资源路径，以及成员角色主文案显示编码的问题。
 
+首轮CI发现当前构建的`trial-business`仍精确要求schema76，而新增DDL为77。已将当前命令的精确版本要求同步至77，并补充当前命令与最新migration一致性回归；未改成接受任意更高版本。独立测试容器内另建`management_schema77_regression_20261025`空库，完整迁移与`go test -count=1 ./cmd/trial-business`均PASS。旧冻结二进制、原库和原有运行实例未升级。
+
 ## 证据与重演
 
 本地原始结果为`.data/management-readonly-20261025/browser-results.json`及截图；保留的非秘密副本见[验收结果](platform-management-readonly-20261025/browser-results.json)、[截图和来源摘要清单](platform-management-readonly-20261025/manifest.json)。截图来自合成数据，不能证明真实来源已配置。旧候选与旧截图保持历史状态。
