@@ -8,13 +8,15 @@
 |---|---|
 | 统一能力清单 | [菜单、页面、接入情况与未开放能力](leader-demo-capabilities-20261025.md)，区分本地交互、已接查询与本轮验收 |
 | 新版预览 | 独立 Next standalone 构建与 loopback 合成只读夹具；保留原库、Agent API 与所有原预览会话 |
-| Agent 与业务签收路线 | Microsoft Edge 新上下文21步 PASS，详见下表与[原始 JSON](leader-demo-20261025-reviewed-final/acceptance.json) |
+| Agent 与业务签收路线 | Microsoft Edge 新上下文21步 PASS，详见下表与[原始 JSON](leader-demo-20261025-technical-review/acceptance.json) |
 | 演示问题修复 | 数据来源标识、Agent 场景入口、明确版本/评测回跳、首页独立记录文案与夹具依据一致性已修复 |
 | 讲解与重演材料 | [8分钟讲解稿、确切操作、启动/停止/重演与故障恢复](leader-demo-talk-track-20261025.md)及16张原始截图 |
 
 **这是一份可重演的界面交付。** 当前 Agent 读取合成 API 历史，业务签收使用当前标签页合成状态；没有执行模型、生产任务、真实交付或正式业务办理。真实场景、接收组织及责任团队仍待定，真实来源 UNCONFIGURED，业务写入口 DISABLED。PR #363 保持 Draft、不合并、不部署。
 
-本次对照复审见[五项根因与修复记录](leader-demo-review-20261025.md)。本页与能力清单、讲解稿统一指向新的 `leader-demo-20261025-reviewed-final/`；原 `leader-demo-20261025/` 保留为历史证据，不再作为当前预览截图。
+本轮全量技术审查、冻结候选与两项小修见[独立审查记录](pr363-full-technical-review-20261025.md)。当前预览使用 `.next-acceptance-identity-leader-tech-review-20261025`；修复编辑页仅保留壳的一个 main，避免重复缩进。
+
+本次对照复审见[五项根因与修复记录](leader-demo-review-20261025.md)。本页与能力清单、讲解稿统一指向新的 `leader-demo-20261025-technical-review/`；原 `leader-demo-20261025/` 保留为历史证据，不再作为当前预览截图。
 
 ## 审查与修复
 
@@ -69,21 +71,21 @@ Agent 路线闭环为“查询依据 → 审阅固定计划 → 人工办理边�
 
 | 截图 | 用途 |
 |---|---|
-| [00 关于边界](leader-demo-20261025-reviewed-final/00-about-boundary.png) | 与顶部一致的合成只读、未连接与写入关闭说明 |
-| [01 首页](leader-demo-20261025-reviewed-final/01-home.png) | 导航与当前边界 |
-| [02 Agent 工作台](leader-demo-20261025-reviewed-final/02-agent.png) | 场景入口、当前只读 |
-| [03 质量报告视口](leader-demo-20261025-reviewed-final/03-quality-focus.png) / [完整页](leader-demo-20261025-reviewed-final/03-quality-report.png) | 负能耗失败发现、明确评测与依据 |
-| [04 修复详情](leader-demo-20261025-reviewed-final/04-agent-repair.png) | 固定依赖与人工办理边界 |
-| [05 修复页](leader-demo-20261025-reviewed-final/05-repair-readonly.png) | 已有表单、保存关闭 |
-| [06 UNKNOWN](leader-demo-20261025-reviewed-final/06-unknown.png) | 缺失报告不伪造成功 |
-| [07 提交前置](leader-demo-20261025-reviewed-final/07-receipt-required.png) | 完整签收是前提 |
-| [08 签收历史](leader-demo-20261025-reviewed-final/08-receipt.png) | 部分与完整两条独立记录 |
-| [09 验收通过](leader-demo-20261025-reviewed-final/09-acceptance.png) | 原退回、重提、逐项判断 |
-| [10 独立归档](leader-demo-20261025-reviewed-final/10-archive.png) | 明确提交/签收/标准/决定 |
-| [11 后续作废](leader-demo-20261025-reviewed-final/11-invalidation.png) | 原决定与后续处置并存 |
-| [12 历史追溯](leader-demo-20261025-reviewed-final/12-trace.png) | 明确提交及冻结材料 |
-| [13 依据补正](leader-demo-20261025-reviewed-final/13-correction.png) | 新旧依据分别保留 |
-| [14 存储失败](leader-demo-20261025-reviewed-final/14-storage-unavailable.png) | 警告仅在内存中，不能声称已保存 |
+| [00 关于边界](leader-demo-20261025-technical-review/00-about-boundary.png) | 与顶部一致的合成只读、未连接与写入关闭说明 |
+| [01 首页](leader-demo-20261025-technical-review/01-home.png) | 导航与当前边界 |
+| [02 Agent 工作台](leader-demo-20261025-technical-review/02-agent.png) | 场景入口、当前只读 |
+| [03 质量报告视口](leader-demo-20261025-technical-review/03-quality-focus.png) / [完整页](leader-demo-20261025-technical-review/03-quality-report.png) | 负能耗失败发现、明确评测与依据 |
+| [04 修复详情](leader-demo-20261025-technical-review/04-agent-repair.png) | 固定依赖与人工办理边界 |
+| [05 修复页](leader-demo-20261025-technical-review/05-repair-readonly.png) | 已有表单、保存关闭 |
+| [06 UNKNOWN](leader-demo-20261025-technical-review/06-unknown.png) | 缺失报告不伪造成功 |
+| [07 提交前置](leader-demo-20261025-technical-review/07-receipt-required.png) | 完整签收是前提 |
+| [08 签收历史](leader-demo-20261025-technical-review/08-receipt.png) | 部分与完整两条独立记录 |
+| [09 验收通过](leader-demo-20261025-technical-review/09-acceptance.png) | 原退回、重提、逐项判断 |
+| [10 独立归档](leader-demo-20261025-technical-review/10-archive.png) | 明确提交/签收/标准/决定 |
+| [11 后续作废](leader-demo-20261025-technical-review/11-invalidation.png) | 原决定与后续处置并存 |
+| [12 历史追溯](leader-demo-20261025-technical-review/12-trace.png) | 明确提交及冻结材料 |
+| [13 依据补正](leader-demo-20261025-technical-review/13-correction.png) | 新旧依据分别保留 |
+| [14 存储失败](leader-demo-20261025-technical-review/14-storage-unavailable.png) | 警告仅在内存中，不能声称已保存 |
 
 ## 后续最小业务决策
 

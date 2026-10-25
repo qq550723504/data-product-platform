@@ -1,5 +1,7 @@
 # 全站新版界面与演示边界（2026-10-23）
 
+> 历史批次记录：下文的全路径重写与4189入口描述当时的迁移阶段，已被后续根路径重写方案取代。当前仅根演示页重写到 `/demo`，Core/Agent 深链及其服务端读取/Actions 保留；精确路径与只读边界以 [merge contract](governance-preview-merge-contract.md)、当前 middleware 和[领导演示交付指南](leader-demo-closeout-20261025.md)为准。原批次证据继续保留，不能当作当前部署或业务写入授权。
+
 ## 目标与唯一入口
 
 在隔离 worktree aq1 中统一前端。预览 http://127.0.0.1:4189/；不是另起一份 Vite 站点，也不是 iframe 包装。ConsoleShell 只加载同一个 Governance App；Agent 的工作台、任务详情、修复绑定和质量上下文仍由原 Next 页面及既有控制器提供。
