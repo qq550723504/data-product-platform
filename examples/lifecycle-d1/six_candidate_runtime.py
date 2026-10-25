@@ -98,12 +98,17 @@ def build_contract(a):
     need(receipt.is_relative_to(ROOT.resolve()) and sha(receipt)==ci['sha256'],'source CI receipt missing or changed')
     p.fixture_artifacts.regular(receipt)
     record=load(receipt);snapshot=receipt.with_name('snapshot.json')
-    need(record['status']=='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION' and record['head']==ci['head']==a['host']['source']
-         and record['run']==ci['run'] and record['execution']==p.EXECUTION
-         and sha(snapshot)==record['snapshot_sha256'],'source CI/build or saved snapshot binding differs')
-    captured=load(snapshot)
-    need(captured['ci']['id']==ci['run'],'source CI run differs from pinned actual snapshot')
-    p.execution_freeze.ready(captured,a['host']['source'])
+    if ci.get('kind')=='MERGED_RELEASE_SOURCE_CI_V1':
+        import release_binding as release
+        release.saved_build_ci(ROOT,a,record,load(snapshot),sha(snapshot),p.EXECUTION)
+    else:
+        need('kind' not in ci,'unknown allocation CI kind')
+        need(record['status']=='PASS_EXACT_SOURCE_CI_BEFORE_ALLOCATION' and record['head']==ci['head']==a['host']['source']
+             and record['run']==ci['run'] and record['execution']==p.EXECUTION
+             and sha(snapshot)==record['snapshot_sha256'],'source CI/build or saved snapshot binding differs')
+        captured=load(snapshot)
+        need(captured['ci']['id']==ci['run'],'source CI run differs from pinned actual snapshot')
+        p.execution_freeze.ready(captured,a['host']['source'])
     need(set(a['build_files'])==BUILD_MEMBERS,'initial build membership differs')
     for name,digest in a['build_files'].items():
         path=CONTROL/name

@@ -1,0 +1,45 @@
+{
+  "status": "FAILED_OBSERVATIONS_PRESERVED_NOT_OVERRIDDEN",
+  "failures": [
+    {
+      "stage": "managed worktree creation",
+      "reason": "existing evidence filenames exceeded Windows default checkout path; app rolled back registration",
+      "repair": "new short native worktree d1-rb, per-command core.longpaths=true; no existing checkout removal"
+    },
+    {
+      "stage": "managed attach",
+      "reason": "native checkout is not a managed worktree",
+      "repair": "explicit absolute working directory for all commands"
+    },
+    {
+      "stage": "early model test",
+      "reason": "V3 FakeOperations retained old V2 bindings while fixture used derived BudgetID",
+      "repair": "test double points to new b/h; no production gate change"
+    },
+    {
+      "stage": "original full Windows/Linux collection",
+      "reason": "new model tried O_EXCL source-freeze twice",
+      "repair": "separate frozen-final temporary fixture; affected normal/-O reruns only",
+      "evidence": [
+        "windows-output01",
+        "linux-output01/collection01",
+        "python-export01",
+        "windows-output02",
+        "linux-output02/collection01",
+        "python-export02"
+      ]
+    },
+    {
+      "stage": "connector branch read",
+      "reason": "connector rejected encoded slash repository path",
+      "repair": "native host GET/GraphQL read-only proof; original connector error retained"
+    },
+    {
+      "stage": "origin observer01",
+      "reason": "operator selected older retention-runtime-fix03 ZIP; exact verifier rejected it before network/source I/O",
+      "repair": "observer02 reads existing approved R4 from retention-composition-v2-acceptance01; old ZIP unchanged"
+    }
+  ],
+  "old_failed_business_facts": "RETAINED_UNMODIFIED",
+  "production_gate_relaxation": false
+}

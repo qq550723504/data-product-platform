@@ -1,0 +1,28 @@
+{
+  "status": "PASS_BOUNDED_SOURCE_NONDELETE_REVIEW",
+  "baseline": "e0e4f77a576ea4572cf16b3a3475461127f44acc",
+  "remaining_blockers": [],
+  "publication": "NOT_PUBLISHED",
+  "new_head_ci": "NOT_RUN",
+  "actual_maintenance": "NOT_AUTHORIZED",
+  "reviewer": "/root/docker_linux_engine_repair",
+  "reviewed_sha256": {
+    ".github/workflows/ci.yml": "c51ec4a75b8d875c9df9b9dd4f012f660ca8c7bbf5f278ef7d2f17e8b9a8360e",
+    "examples/lifecycle-d1/execution_freeze.py": "edc24064f6853c343dcebb9a390b1cde0f96938718c7eb53f431c60c43102f74",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "a508f8e34f59142a1e756f4c9f339fa686591d251e06824fc7756510594d4b44",
+    "examples/lifecycle-d1/prepare-six-candidate.py": "5a9304c92c6bcb76908531f51365a597e92635f18d152f8ae48aaec032eb97c0",
+    "examples/lifecycle-d1/retention_composition.py": "c67f9d05cc315e21f0f58186271b4abd927d81253ce85a762618c0496867ed71",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "13fe28ae161e731f05013d5cd692fbc49e0455b01b12fd011d20b46a9bc528d6",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "b335c696ccf99e7c56c3e75bf3a1459342c66bd2da0f6a935834acde8084813e",
+    "examples/lifecycle-d1/release_binding.py": "9bfeb3cf8b8925c1d4e209a4ecc35886e5c45c71a41afe1ab53cbce4a06215a2",
+    "examples/lifecycle-d1/test_release_binding.py": "0c6d89965c1982a2b2aba506e25e4d2713fbff9cb19f9dd66bbe26ddbeea36e5",
+    "docs/acceptance/issue307-d1-postmerge-binding-contract01.md": "468d1774cffd67545f7f857ba1c20fbcf19bef6dabeb8386e093b96a90ac5f83"
+  },
+  "read_summary_sha256": {
+    "regression-summary01.json": "359021965c56ea4ac98d6131cfc11bb820350ed2f7bf612a76cbd3966180816e",
+    "actual-origin01.json": "e1993f1433e8023e4be1f1c11f40e0c53a4bc240687ef0f6980f34a97f20f64a"
+  },
+  "summary_scope": "Read source and summaries; not an independent rerun or complete raw evidence index audit",
+  "reviewer_mutations": 0,
+  "review_summary": "Merged origin through preallocation, original CI receipts/snapshot, twelve-member build, source-freeze and authorization is closed. V3 read/write share release-bound BudgetID/BindingsSHA without altering R4. Legacy ready, terminal, current authority, independent full protection and unpublished-code refusal remain strict."
+}

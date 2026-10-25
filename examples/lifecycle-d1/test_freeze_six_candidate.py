@@ -13,7 +13,14 @@ f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
 
 
 class FreezeSixTests(unittest.TestCase):
-    def test_complete_six_packet_and_confirmation_with_eleven_survivors(self):
+    def test_complete_six_packet_and_confirmation_with_eleven_survivors(self):self.complete(False)
+
+    def test_complete_merged_release_confirmation_keeps_scope_without_Draft_claim(self):self.complete(True)
+
+    def test_unknown_source_kind_cannot_fall_back_to_Draft(self):
+        with self.assertRaises(ValueError):f.source_kind({'kind':'unknown'})
+
+    def complete(self,merged):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             root=Path(tmp);control=root/'private';public=root/'preparation';packet=root/'packet';fixtures=root/'fixtures'
             control.mkdir();public.mkdir();fixtures.mkdir();(control/'offline').mkdir()
@@ -22,6 +29,7 @@ class FreezeSixTests(unittest.TestCase):
             allocation={'source':'f'*40,'host':{'source':'e'*40},'runtime_artifact_spec_sha256':'4'*64,'build_files':{},'retained':{'mode':'RECORDED_TEST_ONLY'},'owner_descriptors_sha256':'d'*64,'map_sha256':'a'*64,'binaries':{'reader':'1'*64,'operator':'2'*64,'owner':'3'*64},'groups':[],'offline_validator':'v'*64}
             (control/'approved-runtime-source.zip').write_bytes(b'recorded-only')
             allocation['source_ci']={'head':'e'*40,'run':100,'receipt':'recorded-only','sha256':'b'*64}
+            if merged:allocation['source_ci']['kind']='MERGED_RELEASE_SOURCE_CI_V1'
             for name in ('reader','operator','owner','readonly-check.exe'):(control/name).write_bytes(b'non-authoritative-test-binary')
             for old_group,scope in zip(old['Groups'],scopes):
                 group=scope['Group'];project='dpp-lifecycle307-'+scope['Run'][:8];folder=control/group;folder.mkdir();out=public/group;out.mkdir()
@@ -66,7 +74,14 @@ class FreezeSixTests(unittest.TestCase):
             f.main()
             c=f.load(packet/'candidate.json');text=(packet/'confirmation-template.txt').read_text(encoding='utf-8')
             self.assertIn('--execution-binding-sha256',text)
-            self.assertIn('未绑定不得授权或调度',text)
+            if merged:
+                self.assertIn('精确push/main CI',text);self.assertIn('已发布host merge M=',text)
+                self.assertIn('独立冻结既有分支',text);self.assertNotIn('#332 Draft',text)
+                self.assertNotIn('精确PR CI',text);self.assertNotIn('PR332',f.load(packet/'status.json'))
+                self.assertEqual(f.load(packet/'status.json')['source_gate'],'MERGED_RELEASE_NOT_EXECUTION_AUTHORITY')
+            else:
+                self.assertIn('未绑定不得授权或调度',text)
+                self.assertEqual(f.load(packet/'status.json')['PR332'],'DRAFT')
             self.assertIn('终态不自动解锁',text)
             self.assertEqual(c['Execution'],f.p.EXECUTION)
             self.assertEqual(text.count('删除目标 '),6);self.assertEqual(text.count('保留版本 '),11)
