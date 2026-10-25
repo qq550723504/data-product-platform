@@ -60,12 +60,12 @@ try {
   assert.deepEqual(status(), ready, "second advance duplicated production/release");
   cli(["verify"], false);
   await page.goto(ready.productURL);
-  const blocked = page.locator("article").filter({ hasText: "Release R-DEMO-BLOCKED" });
-  const release = page.locator("article").filter({ hasText: "Release R-DEMO-READY" });
-  await expect(blocked.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
-  await expect(release.getByRole("button", { name: "发布 Release", exact: true })).toBeEnabled();
+  const blocked = page.locator("article").filter({ hasText: "R-DEMO-BLOCKED" });
+  const release = page.locator("article").filter({ hasText: "R-DEMO-READY" });
+  await expect(blocked.getByRole("button", { name: "确认发布", exact: true })).toBeDisabled();
+  await expect(release.getByRole("button", { name: "确认发布", exact: true })).toBeEnabled();
   await page.screenshot({ path: `${artifacts}/02-ready-and-blocked.png`, fullPage: true });
-  await release.getByRole("button", { name: "发布 Release", exact: true }).click();
+  await release.getByRole("button", { name: "确认发布", exact: true }).click();
   await expect(release.getByRole("button", { name: "已发布", exact: true })).toBeDisabled();
   const verified = JSON.parse(cli(["verify"]));
   assert.equal(verified.verified, true);
