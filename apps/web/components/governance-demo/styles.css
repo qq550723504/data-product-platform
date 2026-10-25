@@ -132,7 +132,7 @@
 @media(max-width:1250px){.governance-demo .environment>span{display:none}}
 @media(max-width:900px){.governance-demo .workspace-trigger{max-width:150px}.governance-demo .environment .workspace-trigger>span{display:block!important}.governance-demo .centers{gap:14px}}
 @media(max-width:600px){.governance-demo .environment .workspace-trigger{max-width:160px;font-size:12px}.governance-demo .topbar .environment{flex-wrap:wrap;justify-content:flex-end}.governance-demo .topbar .environment .account-entry{display:none}.governance-demo .workspace-scope-bar{flex-wrap:wrap;gap:8px;padding-bottom:15px;margin-bottom:22px}.governance-demo .workspace-scope-bar small{display:none}.governance-demo .workspace-scope-bar button{font-size:11px}.governance-demo .workspace-options>button{padding:14px}}
-.governance-demo .environment .modal{white-space:normal}.governance-demo .workspace-options{grid-template-columns:minmax(0,1fr)}.governance-demo .workspace-options>button{min-width:0;white-space:normal}.governance-demo .environment .modal .small{margin-top:16px;line-height:1.8}
+.governance-demo .workspace-options{grid-template-columns:minmax(0,1fr)}.governance-demo .workspace-options>button{min-width:0;white-space:normal}
 
 .governance-demo .toast.error{background:#7f3b32}.governance-demo .toast>button{color:inherit;white-space:nowrap;text-decoration:underline;font-size:12px}.governance-demo .page-my-work td:last-child{min-width:210px}.governance-demo .page-publish .loop-context{margin-top:20px}.governance-demo .page-cost .demo-summary strong{overflow-wrap:anywhere}
 
@@ -150,3 +150,10 @@
 .governance-demo .system-environment-details{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;line-height:1.9;color:var(--muted)}
 .governance-demo .field-help{font-size:12px;color:var(--muted)}
 .governance-demo .environment-status{font-size:12px;color:var(--muted)}
+
+/* Shared overlays use a body portal, outside filtered navigation containers. */
+.governance-demo.governance-modal-root{position:fixed;inset:0;z-index:80;background:transparent}
+.governance-modal-root .modal-backdrop{padding:24px}
+.governance-modal-root .modal{max-height:min(85dvh,calc(100dvh - 48px));white-space:normal;overscroll-behavior:contain}
+.governance-modal-root .modal-backdrop-agent-drawer{padding:0}
+.governance-modal-root .agent-drawer{max-height:100dvh}

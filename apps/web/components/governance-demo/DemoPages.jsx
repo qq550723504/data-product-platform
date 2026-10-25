@@ -1,5 +1,6 @@
 import {businessText,displayText} from '../../lib/business-language.mjs';
-import React,{useEffect,useRef,useState} from 'react';
+import React,{useEffect,useId,useRef,useState} from 'react';
+import {createPortal} from 'react-dom';
 import {ArrowRight,Plus,MagnifyingGlass,FileText,X,CheckCircle,Database,ShieldCheck,BookOpen,Download,Clock} from '@phosphor-icons/react';
 
 import {useWorkspace} from './WorkspaceContext';
@@ -8,9 +9,41 @@ export {useDemo,useGlobalDemo,DemoProvider,useBusinessActivities} from './DemoSt
 export function downloadSample(name,content,type='text/plain;charset=utf-8'){
  const blob=new Blob(['\ufeff'+content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
+let openModalCount=0,bodyOverflowBeforeModals='';
 export function Modal({title,children,onClose,className=''}){
- const ref=useRef();useEffect(()=>{const old=document.activeElement;ref.current?.focus();const f=e=>{if(e.key==='Escape')onClose();if(e.key==='Tab'){const all=ref.current?.querySelectorAll('button:not(:disabled),input,select,textarea,a[href]');if(!all?.length)return;const first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}};document.addEventListener('keydown',f);return()=>{document.removeEventListener('keydown',f);old?.isConnected&&old.focus()}},[]);
- return <div className={'modal-backdrop '+(className?'modal-backdrop-'+className:'')} onClick={e=>e.target===e.currentTarget&&onClose()}><section className={'modal demo-dialog '+className} role="dialog" aria-modal="true" aria-labelledby="demo-dialog-title" tabIndex={-1} ref={ref}><button className="modal-close" aria-label="关闭弹窗" onClick={onClose}><X size={22}/></button><h2 id="demo-dialog-title">{businessText(title)}</h2>{displayText(children)}</section></div>
+ const ref=useRef(),closeRef=useRef(onClose),titleId=useId();
+ const [mounted,setMounted]=useState(false);
+ closeRef.current=onClose;
+ useEffect(()=>setMounted(true),[]);
+ useEffect(()=>{
+  if(!mounted)return;
+  const old=document.activeElement;
+  if(openModalCount++===0){bodyOverflowBeforeModals=document.body.style.overflow;document.body.style.overflow='hidden'}
+  ref.current?.focus({preventScroll:true});
+  const f=e=>{
+   // Only the top dialog owns keyboard events when another dialog is open.
+   const dialogs=document.querySelectorAll('.governance-modal-root [role="dialog"]');
+   if(dialogs[dialogs.length-1]!==ref.current)return;
+   if(e.key==='Escape'){e.preventDefault();closeRef.current()}
+   if(e.key==='Tab'){
+    const all=[...ref.current.querySelectorAll('button,input,select,textarea,a[href],summary,[tabindex]')].filter(el=>!el.disabled&&el.tabIndex>=0&&el.getClientRects().length);
+    const first=all[0],last=all[all.length-1];
+    if(!first){e.preventDefault();return}
+    if(e.shiftKey&&(document.activeElement===first||document.activeElement===ref.current)){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&(document.activeElement===last||!ref.current.contains(document.activeElement))){e.preventDefault();first.focus()}
+   }
+  };
+  document.addEventListener('keydown',f);
+  return()=>{
+   document.removeEventListener('keydown',f);
+   if(--openModalCount===0)document.body.style.overflow=bodyOverflowBeforeModals;
+   if(old?.isConnected)old.focus({preventScroll:true});
+  };
+ },[mounted]);
+ if(!mounted)return null;
+ // A filtered header establishes a containing block for fixed descendants.
+ // Mount shared dialogs at body level so their bounds always use the viewport.
+ return createPortal(<div className="governance-demo governance-modal-root"><div className={'modal-backdrop '+(className?'modal-backdrop-'+className:'')} onClick={e=>e.target===e.currentTarget&&closeRef.current()}><section className={'modal demo-dialog '+className} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} ref={ref}><button className="modal-close" aria-label="关闭弹窗" onClick={()=>closeRef.current()}><X size={22}/></button><h2 id={titleId}>{businessText(title)}</h2>{displayText(children)}</section></div></div>,document.body);
 }
 export function Switch({items,value,onChange,label='视图分类'}){return <div className="segmented module-switch" role="group" aria-label={label}>{displayText(items.map(t=><button key={t} className={value===t?'active':''} aria-pressed={value===t} onClick={()=>onChange(t)}>{businessText(t)}</button>))}</div>}
 export function Search({value,onChange,label='搜索记录'}){return <label className="search demo-search"><MagnifyingGlass size={18}/><input aria-label={businessText(label)} placeholder={businessText(label)} value={value} onChange={e=>onChange(e.target.value)}/>{displayText(value&&<button aria-label="清除搜索" onClick={()=>onChange('')}><X size={14}/></button>)}</label>}
