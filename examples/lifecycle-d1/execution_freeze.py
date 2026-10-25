@@ -279,6 +279,13 @@ def verify_binding(root, private, packet, candidate, expected_sha, client, *, au
     need(re.fullmatch('[0-9a-f]{64}', expected_sha or '') is not None
          and sha(path) == expected_sha, 'exact new execution binding absent/different')
     binding = load(path)
+    # An explicit new kind, never a fallback from a failed legacy PR gate.
+    if binding.get('kind') == 'FROZEN_MERGED_RELEASE_EXECUTION_V1':
+        import release_binding
+        need(auth is not None and auth.get('execution_binding_sha256') == expected_sha,
+             'actual new merged-release binding authority differs')
+        return release_binding.verify_execution(root, private, packet, candidate, binding, auth, client)
+    need('kind' not in binding, 'unknown execution binding kind')
     need(binding['status'] == 'FROZEN_EXECUTION_BINDING_NOT_AUTHORIZED'
          and binding['execution'] == candidate['Execution']
          and binding['profile'] == candidate['Profile']
@@ -320,5 +327,11 @@ def authorized_gate(root, private, packet, candidate, *, expected_sha=None, jour
     need(expected_sha == auth.get('execution_binding_sha256'), 'CLI and actual authorization freeze differ')
     journal = Path(journal or (private/'branch-checks'/dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%S%f')))
     journal.mkdir(parents=True, exist_ok=False)
-    return verify_binding(root, private, packet, candidate, expected_sha, GitHub(journal), auth=auth)
+    binding = load(private/'execution-binding.json')
+    if binding.get('kind') == 'FROZEN_MERGED_RELEASE_EXECUTION_V1':
+        import release_binding
+        client = release_binding.Client(journal)
+    else:
+        client = GitHub(journal)
+    return verify_binding(root, private, packet, candidate, expected_sha, client, auth=auth)
 

@@ -172,17 +172,33 @@ def main():
     r.run_owner(a['offline_validator'],PACKET/'offline-validator')
     save(PACKET/'status.json',{'candidate':p.PROFILE,'execution':p.EXECUTION,'candidate_sha256':candidate_sha,'bindings_sha256':sha(PACKET/'bindings.json'),'confirmation_sha256':template_sha,
                               'source':a['source'],'historical_copies':18,'present_versions':17,'targets':6,'survivors':11,'human_confirmation':'NOT_RECEIVED','permission_enabled':False,'native_delete':0,
-                              'full_D1':'NOT_ACCEPTED','Issue307':'OPEN','PR332':'DRAFT','old_authorization_reused':False,'schedule':'NOT_CREATED'})
+                              'full_D1':'NOT_ACCEPTED','Issue307':'OPEN',**({'source_gate':source_kind(a['source_ci'])} if a['source_ci'].get('kind') else {'PR332':'DRAFT'}),'old_authorization_reused':False,'schedule':'NOT_CREATED'})
     print(json.dumps({'status':'SIX_PACKET_FROZEN_NOT_AUTHORIZED','candidate_sha256':candidate_sha,'execution':p.EXECUTION}))
+
+
+def source_kind(ci):
+    if ci.get('kind')=='MERGED_RELEASE_SOURCE_CI_V1':return 'MERGED_RELEASE_NOT_EXECUTION_AUTHORITY'
+    need('kind' not in ci,'unknown frozen source CI kind')
+    return 'DRAFT_PR_NOT_EXECUTION_AUTHORITY'
+
+
+def source_text(binding):
+    ci=binding['source_ci'];merged=source_kind(ci)=='MERGED_RELEASE_NOT_EXECUTION_AUTHORITY'
+    provenance=('已发布host merge M' if merged else 'PR/host P')
+    proof=('精确push/main CI' if merged else '精确PR CI')
+    return (f'{provenance}={binding["host_source"]}；runtime artifact spec {binding["runtime_artifact_spec_sha256"]}。',
+            f'分配前来源{proof} {ci["head"]}；run {ci["run"]}；原收据 {ci["receipt"]} SHA256 {ci["sha256"]}；来源证明不替代本次新授权。')
 
 
 def confirmation(c,bindings,targets):
     sgt=dt.timezone(dt.timedelta(hours=8));start=p.window.instant(c['NotBefore']).astimezone(sgt);end=p.window.instant(c['NotAfter']).astimezone(sgt)
+    merged=source_kind(bindings[0]['source_ci'])=='MERGED_RELEASE_NOT_EXECUTION_AUTHORITY'
+    provenance,ci_text=source_text(bindings[0])
     lines=[f'CONFIRM_DELETE_EXACT_SIX；execution {p.EXECUTION}；{p.PROFILE}。',
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
-           f'fixture runtime R={c["Source"]}；PR/host P={bindings[0]["host_source"]}；R archive {sha(r.CONTROL/"approved-runtime-source.zip")}；runtime artifact spec {bindings[0]["runtime_artifact_spec_sha256"]}；schema仅69/66且无protected identity；最终review HEAD另由execution-binding精确绑定。',
-           f'分配前P精确PR CI {bindings[0]["source_ci"]["head"]}；run {bindings[0]["source_ci"]["run"]}；原收据 {bindings[0]["source_ci"]["receipt"]} SHA256 {bindings[0]["source_ci"]["sha256"]}；最终review HEAD仍须独立精确CI。',
+           f'fixture runtime R={c["Source"]}；{provenance}R archive {sha(r.CONTROL/"approved-runtime-source.zip")}；schema仅69/66且无protected identity；最终执行来源另由execution-binding精确绑定。',
+           ci_text,
            f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15/16/17冷态/预算/IAM/失败证据、可信NOT_SENT闭合及新17版本只读证据独立原样保留，不复用旧execution或授权。',
            f'准备阶段完整入口audit plan {sha(PACKET/"preparation-evidence-audit-plan.json")}；显式files-map-v1；未来实际授权/调度后须另按批准manifest绑定对应phase audit plan，不能覆盖准备快照。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',
@@ -214,12 +230,12 @@ def confirmation(c,bindings,targets):
             protection=next(x for x in b['copy_protection'] if x['Copy']['ID']==cp['ID'])
             lines.append(('删除目标' if target else '保留版本')+f' {b["project"]} {cp["Namespace"]}/{cp["Key"]}@{cp["ProviderVersion"]}；copy {cp["ID"]}；DV {cp["DatasetVersionID"]}；SHA256 {cp["ContentSHA256"]}；bytes {cp["ByteSize"]}；hold={protection["LegalHold"]}；retention={protection["Retention"]}；retain-until={protection["RetainUntil"]}；'+(f'plan {plan["id"]}；hash {plan["scope_hash"]}。' if plan else '非发送目标。'))
     lines.extend(['严格顺序P2→T1→T2→H2A→M1A→M1B；每份至多一次、全局至多六次，UNKNOWN不重发；每份send后关闭发送，经既有选定Outbox→Asynq只读恢复并提交absence，再进入下一份。三Core保持可读以核全局顺序。',
-                  '最终PR HEAD的源码/候选/评审/CI全部完成后，必须先以GitHub原生精确分支锁冻结该HEAD并锁后重新核对；锁后execution-binding.json的SHA须纳入新授权及完整批准引用，未绑定不得授权或调度。',
-                  '已授权窗口的完整入口必须提供--execution-binding-sha256；Host.check及每次发送拓扑/H1签名前fresh核对HEAD、ruleID与完整保护；锁定期间不push/同步main，授权/执行回执单独追加保存，终态不自动解锁。',
+                  ('已发布来源必须固定实际M/P/tree、精确push/main CI、R与原ZIP，并独立冻结既有分支head/rule/完整保护；操作execution-binding.json及release_source摘要须纳入本次新授权和完整批准引用。来源不是授权。' if merged else '最终PR HEAD的源码/候选/评审/CI全部完成后，必须先以GitHub原生精确分支锁冻结该HEAD并锁后重新核对；锁后execution-binding.json的SHA须纳入新授权及完整批准引用，未绑定不得授权或调度。'),
+                  '已授权窗口的完整入口必须提供--execution-binding-sha256；Host.check及每次发送拓扑/H1签名前fresh核对执行来源及独立保护锚的HEAD、ruleID与完整保护；锁定期间不push/同步main，授权/执行回执单独追加保存，终态不自动解锁。',
                   'H0/H1零发送；可信owner终止、profile撤销、enabler关闭、fresh disabled-IAM及sealed gateway后H1才NOT_SENT。H2仅A真实204后witness/late hold A+B/revoke/响应丢失，B永不dispatch。M1先A absence，B UNKNOWN+C-only保护阻断checkpoint原字节复制并核SHA后才B lookup，C永不删除。',
-                  '全部新鲜前置及精确当前HEAD PR CI/评审通过后才可启用发送；每个sender/wire/recovery前≤1分钟新鲜实际host topology；wire context≤3分钟，每目标刷新；SDK无重试，持久预算先于Core claim。',
+                  ('全部新鲜前置、精确发布来源push/main CI/评审及独立保护锚通过后才可启用发送；' if merged else '全部新鲜前置及精确当前HEAD PR CI/评审通过后才可启用发送；')+'每个sender/wire/recovery前≤1分钟新鲜实际host topology；wire context≤3分钟，每目标刷新；SDK无重试，持久预算先于Core claim。',
                   '11份survivor、其他全部环境、全部旧/新备份、旧pins、旧预算、失败/UNKNOWN/真实attempt/成本事实保留。cleanup=0；hold-release=0；bypass=0。不得退款、补发、重发UNKNOWN、修改旧事实或复用旧授权。',
-                  '失败或过窗立即停止新增发送并逐组封存；不延长、平移、重开窗口。只读恢复期限不得重新启用身份或延长发送；关闭IAM后无法lookup即保留UNKNOWN/NOT_RUN。#332 Draft、不合并；#307 OPEN；完整D1不提前验收。'])
+                  '失败或过窗立即停止新增发送并逐组封存；不延长、平移、重开窗口。只读恢复期限不得重新启用身份或延长发送；关闭IAM后无法lookup即保留UNKNOWN/NOT_RUN。'+('源PR已合并事实保留，不要求重开/Draft；' if merged else '#332 Draft、不合并；')+'#307 OPEN；完整D1不提前验收。'])
     r.write_raw(PACKET/'confirmation-template.txt',('\n'.join(lines)+'\n').encode('utf-8'))
 
 

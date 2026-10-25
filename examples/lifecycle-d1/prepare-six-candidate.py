@@ -343,7 +343,7 @@ def preallocation_networks():
     return tuple(runner.check_subnet(value) for value in RESTORE_SUBNETS)
 
 
-def preallocation_ci():
+def preallocation_ci(release_source=None):
     """A completed exact-source CI precedes allocation, not only authorization."""
     # Reuse the existing strict host snapshot before API/history/build I/O.
     # HEAD alone could select its old green CI while current host code is dirty.
@@ -351,6 +351,16 @@ def preallocation_ci():
     head=host['source']
     journal=ROOT/'docs/acceptance/evidence/issue307-d1'/('preallocation-ci-'+uuid.uuid4().hex)
     journal.mkdir()
+    if release_source is not None:
+        import release_binding as release
+        result=release.check(ROOT,release_source,release.Client(journal))
+        save(journal/'snapshot.json',result['snapshot'])
+        receipt=journal/'passed.json'
+        run=result['snapshot']['workflows'][0]['id']
+        save(receipt,{'status':'PASS_MERGED_RELEASE_SOURCE_CI_BEFORE_ALLOCATION','head':head,'run':run,
+            'execution':EXECUTION,'release_source':release_source,'snapshot_sha256':sha(journal/'snapshot.json'),
+            'provider_io':0,'allocated_resources':0})
+        return {'kind':release.CI_KIND,'head':head,'run':run,'receipt':receipt.relative_to(ROOT).as_posix(),'sha256':sha(receipt)}
     snapshot=execution_freeze.GitHub(journal).snapshot()
     save(journal/'snapshot.json',snapshot)
     execution_freeze.ready(snapshot,head)
@@ -360,11 +370,11 @@ def preallocation_ci():
     return {'head':head,'run':snapshot['ci']['id'],'receipt':receipt.relative_to(ROOT).as_posix(),'sha256':sha(receipt)}
 
 
-def allocate():
+def allocate(release_source=None):
     window.policy_checkpoint()
     need(PROFILE=='candidate23/v33' and EXECUTION=='4fad1007-6595-4037-a7a5-1d8d38cb8bcc','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
-    source_ci=preallocation_ci()
+    source_ci=preallocation_ci(release_source)
     subnets=preallocation_networks()
     # Verify retained history before allocating any owner or volume.
     retained=historical_gate()
@@ -487,8 +497,18 @@ def allocate():
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['allocate']);args=parser.parse_args()
-    allocate()
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['allocate'])
+    parser.add_argument('--release-source',type=Path)
+    parser.add_argument('--release-source-sha256')
+    args=parser.parse_args()
+    need(bool(args.release_source)==bool(args.release_source_sha256),'release source path/SHA must be supplied together')
+    reference=None
+    if args.release_source is not None:
+        import release_binding as release
+        path=args.release_source
+        reference=dict(path=str(path),sha256=args.release_source_sha256,bytes=path.stat().st_size)
+        release.load_source(ROOT,reference)
+    allocate(reference)
 
 
 if __name__=='__main__':main()

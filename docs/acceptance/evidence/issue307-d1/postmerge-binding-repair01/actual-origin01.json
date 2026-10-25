@@ -1,0 +1,95 @@
+{
+  "status": "PASS_READONLY_ACTUAL_MERGE_MAIN_PR_ARTIFACT_ORIGIN_NOT_AUTHORITY",
+  "observed_at": "2026-10-25T02:23:50.556928+00:00",
+  "merge_sha": "e0e4f77a576ea4572cf16b3a3475461127f44acc",
+  "review_head": "e5a547b4601f39740256fa018d3877a6276ad1cf",
+  "tree": "9a0ae2bb488dcf716a40f168b908983388f84f2b",
+  "parent": "f7a90022aad5da4d67ea594ccb86f8b9925a3840",
+  "origin": {
+    "status": "PASS_MERGED_RELEASE_ORIGIN_NOT_EXECUTION_AUTHORITY",
+    "merge_sha": "e0e4f77a576ea4572cf16b3a3475461127f44acc"
+  },
+  "protection_anchor": {
+    "branch": "codex/issue307-post-v22-dispatch-closure",
+    "head": "e5a547b4601f39740256fa018d3877a6276ad1cf",
+    "rule": {
+      "id": "BPR_kwDOUdQLBs4FE_7b",
+      "pattern": "codex/issue307-post-v22-dispatch-closure",
+      "lockBranch": true,
+      "isAdminEnforced": true,
+      "lockAllowsFetchAndMerge": false,
+      "allowsForcePushes": false,
+      "allowsDeletions": false
+    },
+    "protection": {
+      "url": "https://api.github.com/repos/qq550723504/data-product-platform/branches/codex/issue307-post-v22-dispatch-closure/protection",
+      "required_signatures": {
+        "url": "https://api.github.com/repos/qq550723504/data-product-platform/branches/codex/issue307-post-v22-dispatch-closure/protection/required_signatures",
+        "enabled": false
+      },
+      "enforce_admins": {
+        "url": "https://api.github.com/repos/qq550723504/data-product-platform/branches/codex/issue307-post-v22-dispatch-closure/protection/enforce_admins",
+        "enabled": true
+      },
+      "required_linear_history": {
+        "enabled": false
+      },
+      "allow_force_pushes": {
+        "enabled": false
+      },
+      "allow_deletions": {
+        "enabled": false
+      },
+      "block_creations": {
+        "enabled": false
+      },
+      "required_conversation_resolution": {
+        "enabled": false
+      },
+      "lock_branch": {
+        "enabled": true
+      },
+      "allow_fork_syncing": {
+        "enabled": false
+      }
+    }
+  },
+  "R": "0446fde5985b51de7da5863b45df3f1b47b6167c",
+  "R_parent": "53f6f8a6e69c17fa6896a40293d323f6ee9d0958",
+  "R_archive_sha256": "a60ddfeb8a81d4414bc56e1ddd05fa01ca7f2e0e9579a7d403783bdd318d115a",
+  "R_archive_bytes": 6515425,
+  "R_members": 781,
+  "runtime_spec_sha256": "7915856584bb83fad50982e2a0c95a6c930de3fbe8e36f842fdbae8bb9f5e0d9",
+  "bootstrap": {
+    "status": "PASS_UNPUBLISHED_PATCH_REJECTED",
+    "reason": "host P tracked/untracked source drift"
+  },
+  "workflows": [
+    {
+      "id": 40148063796,
+      "attempt": 1,
+      "event": "push",
+      "branch": "main",
+      "head_sha": "e0e4f77a576ea4572cf16b3a3475461127f44acc",
+      "jobs": 13,
+      "conclusion": "success"
+    },
+    {
+      "id": 40148063765,
+      "attempt": 1,
+      "event": "push",
+      "branch": "main",
+      "head_sha": "e0e4f77a576ea4572cf16b3a3475461127f44acc",
+      "jobs": 1,
+      "conclusion": "success"
+    }
+  ],
+  "issue307": "OPEN",
+  "new_candidate": 0,
+  "new_window": 0,
+  "new_operational_budget": 0,
+  "source_start": 0,
+  "protection_write": 0,
+  "delete": 0,
+  "old_authorization_reused": false
+}

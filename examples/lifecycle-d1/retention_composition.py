@@ -21,11 +21,13 @@ import execution_freeze as freeze
 import fixture_artifacts as artifacts
 import retention_maintenance as host
 import retirement_catalog as history
+import release_binding as release
 
 ROOT=Path(__file__).resolve().parents[2]
 PRIVATE_BASE=Path.home()/'.codex/fixture-private/retention-maintenance-v2'
 GROUPS=('business-races','late-hold','mixed')
 SCHEMA='EXACT_TWO_RETENTION_COMPOSITION_V2'
+RELEASE_SCHEMA='EXACT_TWO_RETENTION_COMPOSITION_MERGED_V3'
 READ_KIND='EXACT_TWO_RETENTION_READONLY_AUTHORITY_V2'
 need=host.need
 now=lambda:dt.datetime.now(dt.timezone.utc)
@@ -208,6 +210,10 @@ class NativeOperations:
 
     def branch(self,packet):
         journal=self.control/('github-'+uuid.uuid4().hex);journal.mkdir()
+        if packet['schema']==RELEASE_SCHEMA:
+            result=release.check(ROOT,packet['release_source'],release.Client(journal))
+            freeze.save(journal/'snapshot.json',result['snapshot'])
+            return result
         client=freeze.GitHub(journal);snapshot=client.snapshot()
         freeze.ready(snapshot,packet['review_head'],require_frozen=True)
         need(snapshot['rule']['id']==packet['rule_id'] and
@@ -271,12 +277,16 @@ class NativeOperations:
 class Composition:
     def __init__(self,packet,packet_sha,ops=None,clock=now):
         need(host.sha(host.canonical(packet))==packet_sha,'COMPOSITION_CANONICAL_MANIFEST_DRIFT')
-        need(set(packet)=={'schema','review_head','rule_id','protection_sha256','bindings','host','public_key','private_key','reader','checker','control','sources','anchor'},'COMPOSITION_PACKET_FIELDS')
-        need(packet['schema']==SCHEMA,'COMPOSITION_SCHEMA')
+        common={'schema','bindings','host','public_key','private_key','reader','checker','control','sources','anchor'}
+        need(packet['schema'] in (SCHEMA,RELEASE_SCHEMA),'COMPOSITION_SCHEMA')
+        required=common|({'release_source'} if packet['schema']==RELEASE_SCHEMA else {'review_head','rule_id','protection_sha256'})
+        need(set(packet)==required,'COMPOSITION_PACKET_FIELDS')
+        if packet['schema']==RELEASE_SCHEMA:release.load_source(ROOT,packet['release_source'])
         self.packet,self.packet_sha,self.clock=packet,packet_sha,clock
         self.b_raw=file_bytes(packet['bindings']);self.b=indexes.decode(self.b_raw)
         self.h=indexes.decode(file_bytes(packet['host']));self.h['_bindings_raw']=self.b_raw
         host.fixed_bindings(self.b,self.h)
+        self.release_scope()
         self.control=indexes.unlinked_absolute(packet['control'])
         need(self.control.name==self.b['MaintenanceID'] and self.control.parent==indexes.unlinked_absolute(PRIVATE_BASE),'COMPOSITION_CONTROL_IDENTITY')
         self.public=file_bytes(packet['public_key'])
@@ -315,7 +325,16 @@ class Composition:
         self.ops=ops or NativeOperations(self.control)
         self.activated=False
 
+    def release_scope(self):
+        if self.packet['schema']==RELEASE_SCHEMA:
+            # No Go format change: both signed grants bind the existing
+            # immutable BudgetID through BindingsSHA. No self-referencing hash.
+            release.load_source(ROOT,self.packet['release_source'])
+            need(self.b['BudgetID']==release.maintenance_budget_id(self.b['MaintenanceID'],self.packet['release_source']['sha256']),
+                 'COMPOSITION_RELEASE_READ_WRITE_BINDING_DRIFT')
+
     def grant(self,path,phase,human_path):
+        self.release_scope()
         wrapper=host.load(path)
         need(set(wrapper)=={'Body','Signature'},'COMPOSITION_SIGNED_GRANT_FIELDS')
         raw=base64.b64decode(wrapper['Body'],validate=True);signature=base64.b64decode(wrapper['Signature'],validate=True)

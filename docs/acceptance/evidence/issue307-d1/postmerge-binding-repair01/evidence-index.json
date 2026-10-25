@@ -1,0 +1,30 @@
+{
+  "schema": "files-map-v1",
+  "status": "PASS_LOCAL_NONDELETE_REPAIR_REVIEW_NOT_PUBLISHED",
+  "files": {
+    "actual-origin01.json": {
+      "sha256": "e1993f1433e8023e4be1f1c11f40e0c53a4bc240687ef0f6980f34a97f20f64a",
+      "bytes": 3107
+    },
+    "failure-ledger01.json": {
+      "sha256": "f12d256a730f3f357aa55074acdfe22ba4e2c84f23b4f979fc29e5f6710d5d5b",
+      "bytes": 1804
+    },
+    "independent-final-review01.json": {
+      "sha256": "b23e086779e9de0777d5dd200c02855521c608e57c0e915031a6d767ce0973bc",
+      "bytes": 2236
+    },
+    "private-evidence-index01.json": {
+      "sha256": "c00f39df9188c53146109232c4d96ecf56ee8576d84fcb72e45e346a7f872778",
+      "bytes": 153140
+    },
+    "regression-summary01.json": {
+      "sha256": "359021965c56ea4ac98d6131cfc11bb820350ed2f7bf612a76cbd3966180816e",
+      "bytes": 7044
+    },
+    "review-inputs01.json": {
+      "sha256": "6dc5894a4b3f71ff1cb6451f26f1a27e8d1e0f8eb08b42620ac84c9552a118e5",
+      "bytes": 2026
+    }
+  }
+}
