@@ -3,6 +3,17 @@ import {ids,fixtureToken} from './fixture-server.mjs';
 const control='http://127.0.0.1:4400/__control';
 async function reset(request,scenario='modern-trace'){expect((await request.post(control+'/reset',{headers:{'x-fixture-token':fixtureToken},data:{scenario}})).ok()).toBeTruthy();}
 async function calls(request){return (await(await request.get(control+'/state',{headers:{'x-fixture-token':fixtureToken}})).json()).requests;}
+test('modern Agent preserves semantic failure colors and quality reads issue no commands',async({page,request})=>{
+ await reset(request,'leader-demo-quality');
+ await page.goto(`/agent/quality?versionId=${ids.goldVersion}&assessmentId=${ids.goldAssessment}`);
+ await expect(page.getByText('negative-energy',{exact:true})).toBeVisible();
+ const failure=page.locator('.badge-bad').first(),success=page.locator('.badge-good').first();
+ await expect(failure).toHaveText('FAIL');
+ const appearance=locator=>locator.evaluate(el=>({color:getComputedStyle(el).color,background:getComputedStyle(el).backgroundColor}));
+ const failed=await appearance(failure),passed=await appearance(success);
+ expect(failed.color).not.toBe(passed.color);expect(failed.background).not.toBe(passed.background);
+ expect((await calls(request)).some(c=>c.method!=='GET')).toBe(false);
+});
 test('prototype root stays synthetic; Core workbench uses server facts in the same modern shell',async({page,request})=>{
  await reset(request,'ready');await page.goto('/');
  await expect(page.getByText('本地交互演示',{exact:true})).toBeVisible();

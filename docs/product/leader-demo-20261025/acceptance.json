@@ -1,16 +1,17 @@
 {
-  "recordedAt": "2026-10-25T02:53:18.886Z",
+  "recordedAt": "2026-10-25T02:56:53.815Z",
   "base": "http://127.0.0.1:4193",
-  "sourceBase": "12290089b029cab7f8559be999613cdac47c1474",
+  "sourceBase": "ef833d4a1349e24848bec7c388cd39bad0687bdd",
   "sourceHashes": {
     "apps/web/app/layout.tsx": "0f871213641738a45c8bc2d0aeb22bf472864646a148a1dd79048f450dc70e2f",
+    "apps/web/app/globals.css": "1759e4cb837f4bf37b2308e2c4999df97f3447f667a5921ee4a435cbbe2592d2",
     "apps/web/components/shell.tsx": "e95bfe44958588e4b2a54aadaeb55d1912cb04b840869c5a8039b267e0dc2ea0",
     "apps/web/components/governance-demo/App.jsx": "0ce5513aeaa45f28dba4c3dad1c3f6668f6e65c8939cb75ce183ce926347c7f5",
     "apps/web/app/agent/tasks/workbench.tsx": "dc2f4ff5b70d228962abf5506b15b7840948d0fe5dac5abe838b252f7c2791ca",
     "tests/leader-demo/readonly-fixture.mjs": "6d7cc098b705eb4c331294a582547f9df6a716470427c381a68d53681ca122f4",
     "tests/browser/fixture-server.mjs": "6db89db5a4d67bbb48625a0f8457deeff7c75424c4a35b2e44ad6ad8da70bc45",
     "tests/leader-demo/preview.ps1": "3d8b64aac78cd1536ccac31c5ba7fbf2b4e812303626651e22d5a5e8f8763a63",
-    "tests/leader-demo/acceptance.mjs": "05c7397cb1dcb01ab1394efb7e144d7269f34e73ee0a2527a7153316d6a570cd"
+    "tests/leader-demo/acceptance.mjs": "ba221e8e6ea454bd92f338175f35422d74f2dd3f4c740680e6f50ccd18c657ad"
   },
   "browser": "Microsoft Edge via Playwright (fresh contexts)",
   "source": "synthetic GET-only fixture and per-tab local demo",
