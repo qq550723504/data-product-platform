@@ -1,0 +1,10 @@
+{
+  "at_utc": "2026-10-24T08:57:58.7093230Z",
+  "action": "Start-Process",
+  "file_path": "C:\\Users\\Henry\\AppData\\Local\\Programs\\DockerDesktop\\Docker Desktop.exe",
+  "window_style": "Hidden",
+  "process_id": 6156,
+  "container_start_command_issued": false,
+  "config_changed": false,
+  "data_reset_or_cleanup": false
+}

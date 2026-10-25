@@ -1,0 +1,20 @@
+test_cli_cannot_select_revision_target_or_confirmation_before_io (test_reference_history.HistoricalRuntimeIsolation.test_cli_cannot_select_revision_target_or_confirmation_before_io) ... usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: delete
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --confirm
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --source foreign
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --revision HEAD
+usage: python.exe -m unittest [-h]
+python.exe -m unittest: error: unrecognized arguments: --root foreign
+ok
+test_edited_current_receipt_cannot_redefine_frozen_history (test_reference_history.HistoricalRuntimeIsolation.test_edited_current_receipt_cannot_redefine_frozen_history) ... ok
+test_only_fixed_offline_commands_and_failure_is_not_retried (test_reference_history.HistoricalRuntimeIsolation.test_only_fixed_offline_commands_and_failure_is_not_retried) ... ok
+test_snapshot_uses_exact_git_runtime_and_leaves_current_fix_in_place (test_reference_history.HistoricalRuntimeIsolation.test_snapshot_uses_exact_git_runtime_and_leaves_current_fix_in_place) ... ok
+test_tampered_frozen_runtime_is_rejected (test_reference_history.HistoricalRuntimeIsolation.test_tampered_frozen_runtime_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 38.786s
+
+OK

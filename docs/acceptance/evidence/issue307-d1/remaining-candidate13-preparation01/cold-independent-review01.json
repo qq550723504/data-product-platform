@@ -1,0 +1,103 @@
+{
+  "status": "BLOCKED_BOUNDED_INDEPENDENT_COLD_ALLOCATION_REVIEW",
+  "observed_at_utc": "2026-10-19T16:50:04.484980+00:00",
+  "final_no_start_recheck_utc": "2026-10-19T16:52:01.646006+00:00",
+  "initial_build_source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "allocation_nonce": "d54522c4-20db-4be6-9bb7-f2f8ed9b3aa3",
+  "public_files": {
+    "allocation.json": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+    "allocation-closed.json": "f2626acc1717bbad13e06b97ae9743ea45dd3d09e089350bfd0e6e20197452a7",
+    "owner-descriptors.json": "5a248613f65b789dc6fa3f8427d80816810cb9df70826038acca6e281f3ed498",
+    "six-map.json": "11b85beb001223b39ff7de0c586a5a727e1560dabe9ec195d51669788227f898"
+  },
+  "public_selected_member_count": 212,
+  "public_selected_member_sha256_map_digest": "4221d725a1999fb84774c17f29a6a6a0b8f920677bfd0b02a9d5ec1d61ced258",
+  "selected_member_digest_recipe": "SHA256 of UTF8 json.dumps(name_to_sha256,sort_keys=True,separators=(comma,colon)) plus LF; top-level allocation.json/allocation-*/resource-*/owner-descriptors.json/six-map.json",
+  "actual_binary_sha256": {
+    "reader": "4efd3322b8e1423eb55aa6e85b8522e85852eadcf9171a2478b66ae8d0e4a810",
+    "operator": "7a326665c129e9fb9cfefcfdb6af7e07decd1bcf248459d1b30edf5cd918bc0c",
+    "owner": "0682b6260b62e5ddc604fbf509f6e19ada835614813f107df828c44c147cfb92",
+    "readonly-check.exe": "538a8ec129aa57482f75928cabd79dc350ddc06f83b96778fdc0ed7e8c60db4d"
+  },
+  "actual_readonly_checks": {
+    "new_owner_descriptor_exact_matches": 86,
+    "new_owners_stopped_PID0_noports_no_restart": 86,
+    "new_owner_state_counts": {
+      "created": 86
+    },
+    "new_owner_started_at_zero": 86,
+    "original_source_Core_Native_closed": 6,
+    "unprivileged_workers_security_PASS": 56,
+    "new_volumes_execution_nonce_local_no_options_PASS": 15,
+    "complete_new_volume_mount_CID_membership_PASS": 15,
+    "complete_volume_mountgraph_sha256": "d6417152b64eb7ca7e74eb01a193c9882e3d0b2b96cc42f044b3975e4a10eaef",
+    "new_restore_internal_network_execution_nonce_driver_subnet_empty_endpoints_PASS": 3,
+    "original_internal_networks_without_active_endpoints": 3,
+    "actual_descriptor_and_state_projection_sha256": "cc3b77054e4b15b12407aeabb07c7754ca3a0876aaa9ad70bae089608ad54f2a",
+    "unexpected_or_anonymous_volume_mounts": 0,
+    "allowed_original_native_volumes": 3,
+    "allowed_original_volume_source_readonly_mounts": 6,
+    "restore_services_distinct_from_source": 9,
+    "restore_created_exact_HostConfig_network_ID_empty_runtime_endpoint": 9,
+    "budget_initializers_UID0_none_only_canonical_CAP_CHOWN_single_new_budget": 3,
+    "budget_initializer_script_sha256": "42c20d231a42bc66977b0a0351b59c029a94438a18211db96ddc089593a5098f"
+  },
+  "remaining_blockers": [
+    {
+      "id": "COLD1",
+      "classification": "BLOCKER",
+      "file": "examples/lifecycle-d1/six_candidate_runtime.py",
+      "observed": "Nine created-never-started restore Core/rehearsal Core/Native owners have exact64hex HostConfig.NetworkMode but sole NetworkSettings entry has empty NetworkID/EndpointID/IP. Current unconditional runtime NetworkID equality rejects this valid cold state.",
+      "required_fix": "Strict separate created/PID0 prebinding from running endpoint validation. Exact fixed HostConfig network ID and sole approved network membership remain mandatory; exited/running empty or foreign/extra/unknown networks reject. Never start to populate fields."
+    },
+    {
+      "id": "COLD2",
+      "classification": "BLOCKER",
+      "file": "examples/lifecycle-d1/six_candidate_runtime.py",
+      "observed": "All three initializer actual descriptors return CapAdd=[CAP_CHOWN] for reviewed --cap-add CHOWN. Current literal [CHOWN] gate rejects actual Docker canonical representation.",
+      "required_fix": "Require exactly canonical [CAP_CHOWN], preserving UID0/no network/capdropALL/no-extra-cap and single exact new-budget scope. Keep original descriptors and allocator argv unchanged."
+    }
+  ],
+  "reviewer_operation_allowlist": [
+    "docker inspect exact approved full CIDs",
+    "docker volume inspect exact15 names",
+    "docker network inspect exact3 new and3 source IDs",
+    "docker ps -aq --no-trunc --filter volume=exact_name",
+    "read/hash public allocation receipts, nonsecret budget initializer scripts and four executable binaries"
+  ],
+  "actual_review_query_counts": {
+    "docker_inspect_batches": 2,
+    "docker_volume_inspect_batches": 1,
+    "docker_network_inspect_batches": 1,
+    "docker_ps_volume_queries": 15
+  },
+  "prohibited_operations_executed": {
+    "start": 0,
+    "stop": 0,
+    "exec": 0,
+    "cp": 0,
+    "prepare": 0,
+    "SDK": 0,
+    "provider": 0,
+    "DELETE": 0,
+    "permission_or_profile_mutation": 0,
+    "file_writes": 0
+  },
+  "secret_values_output": false,
+  "inspect_retention": "Only reviewed descriptor/state projection SHA; Config.Env/root/profile secret plaintext never emitted",
+  "source_checkpoint_design": "Bounded mandatory append-only repair checkpoint acceptable in principle; initial allocation/build source remains immutable, effective repair source explicit, reviewed Python-only diff, unchanged apps/platform and migrations, four independent rebuild outputs exactly equal active binaries, same86 CIDs/nonce/resources, failure SHA; no fallback and no new authority. Implementation/rebuild/checkpoint not yet reviewed.",
+  "scope_limits": {
+    "profiles": "PENDING_MATERIALIZE_NOT_REVIEWED",
+    "budget_UID_and_contents": "NOT_INITIALIZED_NOT_CHECKED",
+    "cold_production_gate": "BLOCKED",
+    "original_allocation_and_failure": "PRESERVED",
+    "actual_native_source_IAM_restore": "NOT_RUN",
+    "candidate": "NOT_FROZEN",
+    "delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "CI": "NOT_INDEPENDENTLY_REVIEWED",
+    "full_D1": "NOT_ACCEPTED"
+  }
+}

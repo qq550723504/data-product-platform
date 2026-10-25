@@ -1,0 +1,49 @@
+{
+  "status": "PASS_C21_EXACT_R_P_SOURCE_AND_STORE_ARCHIVE",
+  "source_head": "4420957157ac818cbed719d8a6b8d9c6ccc4b646",
+  "runtime_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "runtime_parent": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "runtime_delta_files": [
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go"
+  ],
+  "archive_sha256": "148efd92fe1e1261e044425ffecadbfab837414c9bbc00bac4bca78280855fd9",
+  "archive_bytes": 6427821,
+  "archive_members": 769,
+  "archive_recipe": "GIT_ZIP_STORE_UTC_LF_V1",
+  "all_zip_entries_stored": true,
+  "shared_contracts": {
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "P_raw_sha256": "8ab9cb6337e68364deb2fd2bf77342b85668f5a546c1ceef482311fd08813166",
+      "R_LF_sha256": "8ab9cb6337e68364deb2fd2bf77342b85668f5a546c1ceef482311fd08813166"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.json": {
+      "P_raw_sha256": "d5758dd1082e6191a508d6ab9ad9db1d9e8ea8ecd2b2b7a61b5d0d1c38ae447c",
+      "R_LF_sha256": "6814f2e9e26c7f9305f6ebd675de1a9cdc6e70095583bac7d196bde13fe35288"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "P_raw_sha256": "cc09c4709b112e32de5d47fa8d6b2a71786be41f32b109c03d63e71018278d7c",
+      "R_LF_sha256": "cc09c4709b112e32de5d47fa8d6b2a71786be41f32b109c03d63e71018278d7c"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go": {
+      "P_raw_sha256": "e294a0ba58f649e122bf1fb0858c04d89da12611160a9c7732b208834e2f9990",
+      "R_LF_sha256": "c45e41d7ceaad4fa26ef3c81640628e9fa84c9725d18d691a7c4baf8668839ef"
+    }
+  },
+  "P_product_identity_predicate_paths": [
+    "apps/platform/internal/lifecycle/infrastructure/postgres_repository.go"
+  ],
+  "R_schema_guard_unchanged_paths": [
+    "apps/platform/internal/lifecycle/pilot/remaining_fixture_schema.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_fixture_schema_test.go"
+  ],
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "window": [
+    "2026-10-22T14:00:00Z",
+    "2026-10-22T14:40:00Z"
+  ],
+  "no_source_migration": true,
+  "native_provider_actions": 0
+}

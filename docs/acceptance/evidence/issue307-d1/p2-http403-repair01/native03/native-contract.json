@@ -1,0 +1,9 @@
+{
+  "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+  "binary_sha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+  "module": "v0.0.0-20251015172955-9e49d5e7a648",
+  "handler_sha256": "07e6c703d32974e4a0eee631e55b2c1bef412b0e29d187d39458888e10f9363e",
+  "auth_sha256": "d79e454532b17d89e3dd5e0216c91b1e3d2741c3aff3aa7b291f84497692c27b",
+  "mutation_guard": "X-Minio-Source-Replication-Check",
+  "ordinary_delete_disabled": true
+}

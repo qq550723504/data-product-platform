@@ -1,0 +1,10 @@
+test_actual_successor_checkpoint_and_generator_reject_old_snapshot (test_remaining_six_window.SixWindow.test_actual_successor_checkpoint_and_generator_reject_old_snapshot) ... ok
+test_cross_fields_rehash_does_not_allow_stale_or_extended_window (test_remaining_six_window.SixWindow.test_cross_fields_rehash_does_not_allow_stale_or_extended_window) ... ok
+test_foreign_p1_recovery_or_renew_owner_not_accepted (test_remaining_six_window.SixWindow.test_foreign_p1_recovery_or_renew_owner_not_accepted) ... ok
+test_rehashing_case_candidate_and_projection_cannot_accept_predecessors (test_remaining_six_window.SixWindow.test_rehashing_case_candidate_and_projection_cannot_accept_predecessors) ... ok
+test_whole_six_success_uses_one_end_without_renew_or_p1 (test_remaining_six_window.SixWindow.test_whole_six_success_uses_one_end_without_renew_or_p1) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.368s
+
+OK

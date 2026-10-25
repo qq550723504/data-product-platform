@@ -1,0 +1,18 @@
+{
+  "started_at": "2026-10-23T06:30:58.366344+00:00",
+  "method": "POST",
+  "endpoint": "graphql",
+  "body": {
+    "query": "mutation($input:UpdateBranchProtectionRuleInput!){updateBranchProtectionRule(input:$input){branchProtectionRule{id pattern lockBranch isAdminEnforced lockAllowsFetchAndMerge allowsForcePushes allowsDeletions}}}",
+    "variables": {
+      "input": {
+        "branchProtectionRuleId": "BPR_kwDOUdQLBs4FE_7b",
+        "lockBranch": true,
+        "isAdminEnforced": true,
+        "lockAllowsFetchAndMerge": false,
+        "allowsForcePushes": false,
+        "allowsDeletions": false
+      }
+    }
+  }
+}

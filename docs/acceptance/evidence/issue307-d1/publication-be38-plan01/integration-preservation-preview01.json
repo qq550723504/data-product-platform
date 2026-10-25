@@ -1,0 +1,19 @@
+{
+  "status": "PREVIEW_ONLY_PUBLISHED_FACTS_PRESERVED_WITH_ONE_CONFLICT",
+  "preview_tree": "745b294391b959edf52570e08e89219fcdbc356f",
+  "conflicts": [
+    "examples/lifecycle-d1/prepare-six-candidate.py"
+  ],
+  "published_issue307_evidence_members": 34090,
+  "changed_published_evidence": [],
+  "published_retention_tool_members": 5,
+  "retention_tool_members_identical": true,
+  "retained_runtime_spec_blob_unchanged": true,
+  "retained_runtime_spec_git_blob": "aa009fbd15440e5e00769995d093088f0edd9022",
+  "new_successor_tests_present_in_CI": true,
+  "published_retention_tests_preserved_in_CI": true,
+  "preview_is_publishable": false,
+  "commit_created": false,
+  "branch_updated": false,
+  "worktree_updated": false
+}

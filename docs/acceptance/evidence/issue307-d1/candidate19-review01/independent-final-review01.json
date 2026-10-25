@@ -1,0 +1,177 @@
+{
+  "schema": "bounded-independent-review-v1",
+  "status": "PASS_BOUNDED_C19_FROZEN_NONDELETE_PREPARATION_REVIEW",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "profile": "candidate19/v29",
+  "source_head": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "packet_commit": "749257f15e13ee7ab64b4b828857e2e88a054fbc",
+  "reviewed_at": "2026-10-22T02:10:43.121316+00:00",
+  "remaining_blockers": [],
+  "merge_contract": "docs/acceptance/evidence/issue307-d1/candidate19-source-review01/merge-contract.md",
+  "reviewed_artifacts_index_sha256": "58a41aa3d10bcbd4834c0b3af637094e7d003e45dac81ed5ce7e29a0f4ba3e2a",
+  "candidate_sha256": "af2499793a39b0515001fe11835305b73ef1055b76be2db929aada900e0acb98",
+  "bindings_sha256": "581bd79ce4074f130cd4841d617960078421546c0287d6deaec91af9dc8e55a1",
+  "template_sha256": "2e7090f4f6adedaa0c7693dfa72b660685f376770bc37ca17b3f7eb08107eb15",
+  "source_freeze_sha256": "a0a85ec4314cc43c048916621e35f7f76e936631333051d226c5abcabab2ba2c",
+  "confirmation_document_sha256": "8c4a60741cc9e7785889ffde112504f3b07da84369e672e6729d30774a2b7476",
+  "runbook_sha256": "226a5fd039d8cffaa62e7267c9f9f4a731ff51d74e70c8f8ddd710eaae77daca",
+  "window": {
+    "NotBefore": "2026-10-22T06:00:00Z",
+    "NotAfter": "2026-10-22T06:40:00Z",
+    "RecoveryEnd": "2026-10-22T08:40:00Z",
+    "Singapore": "2026-10-22 14:00–14:40"
+  },
+  "checks": {
+    "source_and_build": {
+      "selected_members": 2143,
+      "workspace_raw_SHA_exact": true,
+      "Git_blob_LF_and_ZIP_LF_equal": true,
+      "archive_commit_comment": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+      "archive_sha256": "139662b5a908aacb59ba71a18132cc1480ba79d1eced71d31b43a516fe035a3a",
+      "archive_bytes": 3625455,
+      "raw_Git_equals_raw_ZIP": "NOT_CLAIMED;1745 archive EOL differences, all normalized-LF hashes equal",
+      "initial_build_members": 12,
+      "original_empty_build_logs": 8,
+      "reader_sender_owner_checker_SHA": {
+        "reader": "5d169277d6f459ab0dcc07349b6bdfced44f4950f8120133b20a7e8eaba20071",
+        "operator": "6138eb135a5bde050819b86081a3b1c275358e179a90b9184460bd782e34daed",
+        "owner": "368ca58f3750b23ea9581757dd9823d9e3c7472da8223ccf429d70a321e4e3b4",
+        "readonly-check.exe": "b4f6f240101df39c7dddf68fd1734a3bbbb32049736e94032d0dfdfbac26176e",
+        "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "candidate_window_and_scope": {
+      "frozen_template_127_lines_exact_in_memory_regeneration_and_document": true,
+      "six_case_and_six_recovery_cross_fields": "PASS",
+      "six_targets": [
+        "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+        "f48755f1-976b-4f47-98da-70ead936a4c3",
+        "e09fd433-54cf-4e82-b8c4-098472505fa2",
+        "c05307db-cb81-4220-b42e-be23f85821e3",
+        "5e712426-2109-4f0b-8791-df0a2be3a9f7",
+        "ad08947a-4c4d-4b0f-8c7e-2d89f287819f"
+      ],
+      "eleven_survivors": [
+        "91d954ee-cce5-4ceb-840d-fd6bdab778be",
+        "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+        "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+        "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+        "a01751a1-9311-4357-8fb2-c833de6b8fc4",
+        "b3c4e113-f5c5-4421-a9d6-08403b1b9d0a",
+        "0d8b77a8-195d-4a83-bd52-04f800d7dc68",
+        "e735d90a-8352-4a01-ad16-8573297bc684",
+        "a37c347d-dbff-492e-9c7a-317a1f188184",
+        "f3167994-3790-4a6c-918e-ea6d95248b79",
+        "13fd8ecf-07fd-4981-b553-5ce66b67444f"
+      ],
+      "P1_permanently_excluded": true,
+      "same_immutable_policy_heads": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+      "no_Renew_or_original_business_replay": true
+    },
+    "native_preparation": {
+      "source_restore_independent_checker_replays": 6,
+      "source_versions": 17,
+      "restore_versions": 17,
+      "original_GET_HEAD_pairs": 298,
+      "source_known_disabled": 41,
+      "new_disabled_IAM_provisioning": "three groups each16 actual requests; disabled-only operations, no original sender enable",
+      "full_Core_before_after_and_clean_trial_equality": true,
+      "old_clone_fact_multisets_retained": true,
+      "business_late_mixed_protected_nondelete_rehearsals": "PASS; full mixed outcomes NOT_RUN",
+      "distinct_source_clean_trial_Core": true,
+      "new_backups_actual_SHA": 9,
+      "new_empty_budgets": 3,
+      "UID_GID": 10001,
+      "closed_resources": 92,
+      "revoked_profiles": 19
+    },
+    "fixed_complete_entry": {
+      "status": "PASS_COMPLETE_SIX_NATIVE_ENTRY",
+      "file_only_checker_independent_replays": 3,
+      "versions": 17,
+      "disabled": 41,
+      "known_strict_policy": "40 sole-policy/no-groups + fixed c13 partial NONE/no-groups",
+      "uncreated_official_NoSuchUser": 9,
+      "technical_actual_HTTP_pairs": 149,
+      "Core_before_after_unchanged_all_groups": true,
+      "GET_HEAD_only": true,
+      "amount": "NOT_ASSESSED",
+      "new_read_owners_closed_and_profiles_revoked": true
+    },
+    "host_cold_actual_readback": {
+      "status": "PASS_C19_INDEPENDENT_CURRENT_COLD_READBACK",
+      "known_cids": 820,
+      "all_stopped_PID0_noports_no_restart": true,
+      "old_budget_archives_and_full_mount_graphs_preserved": 21,
+      "new_budget_archives_empty_and_exact_mount_graphs": 3,
+      "backup_actual_SHA_bytes_verified": 57,
+      "cold_gate": {
+        "status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+        "cases": 6,
+        "recoveries": 6,
+        "permissions_false": 30,
+        "owners_closed": 86,
+        "backup_hashes": 9,
+        "old_backups_retained": 48,
+        "budgets_empty": 3,
+        "native_delete": 0,
+        "source_provider_io": 0
+      },
+      "authorization": "NOT_RECEIVED",
+      "schedule": "NOT_CREATED",
+      "source_provider_io": 0,
+      "native_delete": 0
+    },
+    "key_boundary": "No host signing private key in any worker mount; standalone root bootstrap roles carry root configuration; wire key only wire, recovery has no delete secret/wire key. Fixed role-specific security and full mount graphs checked by actual sealed_gate.",
+    "old_facts": "v28 P2 CONFIRMED DENIED/claim/cost and two used budget members remain; source maintenance appended one real HEAD journal/cost and release, T1/T2 trusted NOT_SENT. No old claim/cost/UNKNOWN/failure/pin/budget/authorization fact rewritten.",
+    "freeze_failure_preservation": {
+      "phase01_original_exit": 1,
+      "root_cause": "Git child path limit; original stderr and empty-packet directory archived unchanged",
+      "phase02_exit": 0,
+      "only_process_local_core_longpaths_true": true,
+      "global_local_git_config_changed": false,
+      "source_binary_changed": false,
+      "no_source_IAM_delete_io_during_freeze": true
+    },
+    "documentation_and_indices": {
+      "all36_host_members_actual_SHA": true,
+      "confirmation_and_runbook_exact_window_bindings": true,
+      "57_backup_breakdown": "48 old (45 complete+3 partial)+9 new",
+      "tracked_postfreeze_changes": "doc composer only corrects48 backup count and reads frozen UTC; .gitattributes one raw-preservation rule; neither in2143 frozen runtime selection/ZIP",
+      "typed_files_map_audits": "source20 + nondelete1340 + preparation plan + final review indexes",
+      "live_matrix_final_static_plan_and_approval_manifest_excluded_from_review_index": true
+    }
+  },
+  "authority": {
+    "delete": "NOT_RECEIVED_NOT_AUTHORIZED",
+    "schedule": "NOT_CREATED_NOT_AUTHORIZED",
+    "old_authorization_reused": false,
+    "human_retyped_template": false,
+    "PR332": "REMAIN_DRAFT_UNMERGED",
+    "Issue307": "REMAIN_OPEN"
+  },
+  "not_accepted": [
+    "new human deletion authority or schedule",
+    "future window fresh preflight/enable/send/recover",
+    "actual six deletions or full H2/mixed outcomes",
+    "exact final published PR HEAD CI or main CI",
+    "complete D1"
+  ],
+  "reviewer_actions": {
+    "native_provider_calls": 0,
+    "source_start": 0,
+    "Core_commands": 0,
+    "proof_signatures": 0,
+    "enable_sender_wire": 0,
+    "real_DELETE": 0,
+    "read_operations": "frozen file checkers; Docker inspect/volume graph/cp budgets only"
+  },
+  "publication_note": "Saved prepublish GitHub13/13 is historical remote head, not the later final publication head; fresh exact-head CI remains a separate required publication/execution gate."
+}

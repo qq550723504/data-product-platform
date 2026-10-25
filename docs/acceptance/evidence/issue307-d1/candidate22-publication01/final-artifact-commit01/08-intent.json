@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "commit",
+    "-q",
+    "-m",
+    "docs(lifecycle): freeze candidate22 non-delete evidence and exact proposal"
+  ],
+  "at": "2026-10-23T06:12:23.468333+00:00"
+}

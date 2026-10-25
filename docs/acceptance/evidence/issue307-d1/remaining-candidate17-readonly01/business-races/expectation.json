@@ -1,0 +1,16 @@
+{
+  "audit_id": "484b0edd-6a47-49b9-895e-8074b3e27c01",
+  "profile_sha256": "bc1ce11e628793dd14cfee8d80c08fbda1f24ceae6bdd1c4583afbadb6cd65b7",
+  "binary_sha256": "e9b32947d97bea569c0e5957c2f8d64ff7ead07a3ef31b7e39c96cf5236fd5e5",
+  "candidate_sha256": "c7a1c4ce3be5b4552870c5b8de038a8d3c65b244949fbdb704f242b5dc7add6f",
+  "frozen_inventory_sha256": "6330308dafa1d377ed8dda5a4f869cd5d5df21583fa334f3493e739a112e8001",
+  "present_inventory_sha256": "8536a4828f6bb6699e952adf90b37bcc66d714b6018f3738cc513aa43da672fd",
+  "core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+  "native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+  "network": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+  "not_before": "2026-10-20T11:48:12Z",
+  "expires_at": "2026-10-20T12:38:12Z",
+  "Execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+  "Profile": "candidate17/v27",
+  "Role": "SOURCE"
+}

@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-10-21T10:04:44.963459+00:00",
+  "operation": "Call frozen complete-entry sealed_gate only; inspect saved 712 CIDs",
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "authorization": "NOT_RECEIVED"
+}

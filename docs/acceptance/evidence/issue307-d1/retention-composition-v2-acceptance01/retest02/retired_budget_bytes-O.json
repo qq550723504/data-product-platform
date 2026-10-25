@@ -1,0 +1,12 @@
+{
+  "name": "retired_budget_bytes-O",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-O",
+    "-B",
+    "examples/lifecycle-d1/test_retired_budget_bytes.py"
+  ],
+  "started_at": "2026-10-24T11:06:27.613408+00:00",
+  "finished_at": "2026-10-24T11:06:27.901115+00:00",
+  "returncode": 0
+}

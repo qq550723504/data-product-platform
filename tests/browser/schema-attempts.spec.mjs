@@ -59,8 +59,13 @@ test("compact and existing section filters keep attempt counts separate and pres
     // A Link click can resolve before the streamed panel commits. Require the
     // new destination before clicking, rather than clicking the previous page twice.
     await expect(next).toHaveAttribute("href",new RegExp(`schemaAttemptOffset=${offset}(?:&|#|$)`));
+    const destination=new URL(await next.getAttribute("href"),page.url());
+    expect(destination.pathname).toBe("/attention");
+    expect(destination.hash).toBe("#schema-unobserved-attempts");
+    expect(destination.searchParams.getAll("schemaAttemptOffset")).toEqual([String(offset)]);
     await next.click();
-    await expect(page).toHaveURL(new RegExp(`schemaAttemptOffset=${offset}(?:&|#|$)`));
+    await expect(page).toHaveURL(url=>url.pathname==="/attention"&&url.hash==="#schema-unobserved-attempts"&&url.searchParams.get("schemaAttemptOffset")===String(offset));
+    await expect(panel.getByRole("navigation",{name:"无观察 attempt 分页"})).toContainText(`${offset+1}–${Math.min(offset+25,105)} / 105`);
   }
   await expect(panel.locator("tbody tr")).toHaveCount(5);
   await page.getByRole("navigation",{name:"扫描异常历史筛选"}).getByRole("link",{name:"当次拒绝",exact:true}).click();
@@ -87,6 +92,22 @@ for(const path of ["/core/workbench","/attention"])test(path+" streams independe
   await expect(page.getByTestId("schema-attempts-pending")).toHaveCount(0);
   await expect(page.getByTestId("schema-attempts")).toContainText("105 个 attempt");
   await expect(page.locator("#schema-unobserved-attempts")).toHaveCount(1);await pure(page,request);
+});
+test("page switch commits its query and UNKNOWN while the new attempt read stays held",async({page,request})=>{
+  await page.goto("/attention#schema-unobserved-attempts");
+  const panel=page.getByTestId("schema-attempts");await expect(panel.locator("tbody tr")).toHaveCount(25);
+  await reset(request,"schema-attempts",{attempts:"hold"});
+  try{
+    await panel.getByRole("link",{name:"下一页",exact:true}).click();
+    await expect(page).toHaveURL(/schemaAttemptOffset=25#schema-unobserved-attempts$/);
+    await expect(page.getByTestId("schema-attempts-pending")).toContainText("UNKNOWN");
+    await expect(panel).toHaveCount(0);await others(page,"/attention");
+    const state=await(await request.get(control+"/state",{headers})).json();expect(state.heldReadCount).toBe(1);
+    await pure(page,request);
+  }finally{expect((await request.post(control+"/release-reads",{headers})).ok()).toBeTruthy();}
+  await expect(page.getByTestId("schema-attempts-pending")).toHaveCount(0);
+  await expect(panel.getByRole("navigation",{name:"无观察 attempt 分页"})).toContainText("26–50 / 105");
+  await expect(panel.locator("tbody tr")).toHaveCount(25);await pure(page,request);
 });
 test("successful empty attempt collection differs from unavailable and recovers on refresh",async({page,request})=>{
   await reset(request,"schema-attempts-empty");await page.goto("/attention");

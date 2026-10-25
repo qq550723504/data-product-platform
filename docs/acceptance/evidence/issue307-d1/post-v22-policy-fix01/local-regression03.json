@@ -1,0 +1,28 @@
+{
+  "status": "PASS_LOCAL_NONDELETE_POLICY_CHECKPOINT_REGRESSIONS",
+  "at": "2026-10-19T19:29:37.032498+00:00",
+  "go": {
+    "pass": 270,
+    "skip": 2
+  },
+  "go_scope": "reader/checker/operator/root-owner/pilot; no TEST_POSTGRES_DSN or opt-in native",
+  "python_normal": 29,
+  "python_optimized": 29,
+  "provider_requests": 0,
+  "native_delete": 0,
+  "source_runtime": "WIP_UNCOMMITTED",
+  "raw_files": {
+    "go-checker02.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-checker02.stdout.txt": "366795d82d58ca37676cd8a979ace3cfdda5cd14d7aa4a2d5090d3d4b0187e10",
+    "go-final02.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-final02.stdout.txt": "cc385ba7600e94bef81a6a8f419af84463daec450831b5640e92912b21c8c35c",
+    "go01.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go01.stdout.txt": "2683d682c71fa7a992cbf4dc101e9206da0de5642604c241f5d69bc435502f25",
+    "python-O02.stderr.txt": "2d52657149f4ad1f115426fb80908928bc19b3add46512725820ed1c6601775b",
+    "python-O02.stdout.txt": "1816129ccf7287ef7ff92eefbe83c7fd995070c8819e8ee52086b645df336524",
+    "python01.stderr.txt": "5abd677e579e062fb1e3a17f9b483d937345e629d753de2e6fe546a39afbaf27",
+    "python01.stdout.txt": "cfea18037d52ec40cd2a6b045f5db35b499f48d6c8f6504e32b799b2ac7e5b13",
+    "python02.stderr.txt": "afeb7950c51e589d57917a05b9585af713b686969e25e9126222b8742299a444",
+    "python02.stdout.txt": "71c454827ea1d34eb06eea10da4e62de84a3b7d3fea4bac6bd0a7a851915b9fd"
+  }
+}

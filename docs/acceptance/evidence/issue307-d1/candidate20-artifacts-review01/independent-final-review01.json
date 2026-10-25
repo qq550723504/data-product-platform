@@ -1,0 +1,69 @@
+{
+  "status": "PASS_BOUNDED_C20_DUAL_ARTIFACT_PREPARATION_REVIEW",
+  "at": "2026-10-22T08:03:31.260754+00:00",
+  "source_head": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "runtime_base_source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "execution": "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6",
+  "profile": "candidate20/v30",
+  "remaining_blockers": [],
+  "scope": "Independent review of the bounded R/P source, archive/build/freeze/preflight/CI contracts and saved isolated schema evidence. This permits only previously authorized non-delete preparation; candidate20 allocation/preparation/freeze/fresh native17/final packet review are not yet accepted by this report.",
+  "reviewed_artifacts_index": "docs/acceptance/evidence/issue307-d1/candidate20-artifacts-review01/independent-reviewed-artifacts01.json",
+  "reviewed_artifacts_index_sha256": "50aeaa23242eb86605517dc9c73012a97f6428b77325c78a266f655f97944102",
+  "decisions": [
+    {
+      "id": "SCHEMA-R1",
+      "state": "CLOSED_FOR_CURRENT_DUAL_ARTIFACT_REQUIRED_PATH",
+      "reason": "The actual schema69 source is not migrated. Fixture R is an explicit a260-based immutable Git artifact with a single strict schema69/66/no-identity_kind guard. Current product P retains the protected identity_kind predicate and migration70/71. R builds only from its exact archive in a separate directory, with no schema-dependent query fallback or P build substitution. The old955 source-only blocker receipt and prior PASS remain immutable history."
+    },
+    {
+      "id": "ARTIFACT-BINDINGS",
+      "state": "PASS",
+      "reason": "Actual new R archive769members/1821417bytes/SHA190722017c4a76013b198942712071296ded12213f94db173c7bb0a5499165ea and final P snapshot2243tracked files verified by the production artifact verifier. Allocation, original12buildfiles, source-freeze version2, candidate.Source R, full runtime spec and P host snapshot cross-bind. Complete-entry rehashed R/P mismatch rejects before cold topology/Docker. Execution/profile/window/schema/base/delta/shared-contract/host drift and malicious archive counterexamples pass normal and -O."
+    },
+    {
+      "id": "ACTUAL-SCHEMA-EVIDENCE",
+      "state": "PASS_BOUNDED_EQUIVALENCE",
+      "reason": "Independently audited53 saved native commands: only the network-none isolated PG clone starts/executes/stops; six real source Core/native have12 closed observations. Three schema69 ALLOW, three protected71 DENY, six actual R repository queries(3+1+2), and194 old-table projections per group unchanged. Original native source label27cb/a233 remains. Final R72 differs solely in one Go test IAM-count expectation; actual4binaries+8build logs are byte-identical to original27cb, and schema gate/test sources and original native program0fd893c0f787939caaebd4d350eb066e16860e91771fcc31b3fe38e3c39c5bf1 are unchanged."
+    },
+    {
+      "id": "CI-REQUIRED-PATH",
+      "state": "PASS_LOCAL_CI_COMMAND_NOT_PR_CI_ACCEPTANCE",
+      "reason": "Exact R commit plus same-R historical testdata are independently packaged for existing Go tests. Archive runtime membership remains769 and does not include testdata. The fixed CI command succeeded for pilot and all four command packages. Historical missing-testdata/IAM-count failures and shallow-repository diagnosis are preserved; absent R fetch is standard immutable SHA fetch without making a shared local repository shallow."
+    }
+  ],
+  "independent_validation": {
+    "preliminary_python_normal_methods": 28,
+    "preliminary_python_optimized_methods": 28,
+    "final_P_artifact_methods_normal": 3,
+    "final_P_artifact_methods_optimized": 3,
+    "final_R_Go_top_level_tests": 15,
+    "final_R_Go_nested_subcases": 75,
+    "native_schema_test_run_by_reviewer": false,
+    "native_evidence_file_audit": "independent-artifact-evidence-audit02.json",
+    "final_artifact_equality_audit": "independent-final-artifact-equivalence01.json",
+    "final_offline_receipt": "independent-final-offline-regression01.json",
+    "R_preliminary01_filter_correction": "Original01 anchored filter matched two methods only;02 retained and correctly tests prefixes. Final R72 tests supersede current unit claim.",
+    "first_native_audit_refusal": "audit01 properly refused currentR72 versus immutable historical27cb native witness; audit02 pins historical spec; final equivalence audit closes current byte equality without relabeling native facts."
+  },
+  "limits": {
+    "source_migration": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "source_provider_delete": 0,
+    "reviewer_Docker_DB_provider_actions": 0,
+    "candidate20_resource_allocation_at_review": "NOT_RUN",
+    "candidate20_full_native_preparation": "NOT_RUN",
+    "new_delete_authorization": "NOT_RECEIVED",
+    "new_schedule": "NOT_CREATED",
+    "final_execution_branch_lock": "NOT_RUN",
+    "final_exact_PR_HEAD_CI": "PENDING_SEPARATE_CURRENT_HEAD_CHECK",
+    "PR332": "KEEP_OPEN_DRAFT_UNMERGED",
+    "Issue307": "KEEP_OPEN",
+    "old_budgets_pins_failures_authorization": "PRESERVE_NO_REUSE",
+    "clone_restore": "--no-owner/--no-acl clone projection does not prove original roles/ACL; actual full native preparation remains required"
+  },
+  "next_required_steps": [
+    "Use only R72/Pc79 reviewed source for bounded new allocation and independent budgets.",
+    "Run actual source/restore/rehearsal non-delete preparation and fixed full17 native readonly entry; retain all prior budgets/pins/failures.",
+    "Review final candidate packet and complete all static inputs/precise HEAD CI/native branch lock, then append off-HEAD execution binding and request new exact human authorization; no deletion or scheduling authority is provided here."
+  ]
+}

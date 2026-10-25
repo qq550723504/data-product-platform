@@ -1,0 +1,9 @@
+{
+  "schema": "files-map-v1",
+  "status": "INTEGRATION_METADATA_REVIEW_APPENDIX",
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/integrated-publication01/evidence-index01.json": "4bebd8daa147bd064f8799b050d95e5be3c2972a0b711cb93beeebba8197b89a",
+    "docs/acceptance/evidence/issue307-d1/integrated-publication01/evidence-index-audit01.json": "748add51dc52f0d3c8ce1812a2376c0b645e603376bf3d1880745f9a1d692f50",
+    "docs/acceptance/evidence/issue307-d1/integrated-publication01/independent-metadata-review01.json": "1862929c0b4bd79827deefdfabb6194f92ec3141e675fdfc4cdecc4feff917df"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "status": "PASS_LOCAL_NONDELETE_SOURCE_CHECKS",
+  "checks": [
+    {
+      "name": "go-host",
+      "command": [
+        "go",
+        "test",
+        "./cmd/lifecycle-fixture-retention",
+        "./cmd/lifecycle-fixture-reader",
+        "./internal/platform/storage",
+        "./internal/lifecycle/pilot",
+        "-count=1"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\apps\\platform",
+      "started_at": "2026-10-23T15:22:02.353513+00:00",
+      "finished_at": "2026-10-23T15:22:10.106827+00:00",
+      "exit_code": 0
+    },
+    {
+      "name": "actual-R-archive-CI-entry",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew",
+      "started_at": "2026-10-23T15:22:10.106877+00:00",
+      "finished_at": "2026-10-23T15:22:33.048401+00:00",
+      "exit_code": 0
+    },
+    {
+      "name": "linux-disabled-default-build",
+      "command": [
+        "go",
+        "build",
+        "-trimpath",
+        "-buildvcs=false",
+        "-o",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\docs\\acceptance\\evidence\\issue307-d1\\retention-maintenance-entry01\\checks03\\retention-disabled-linux",
+        "./cmd/lifecycle-fixture-retention"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-renew\\apps\\platform",
+      "started_at": "2026-10-23T15:22:33.048458+00:00",
+      "finished_at": "2026-10-23T15:22:33.861092+00:00",
+      "exit_code": 0
+    }
+  ],
+  "boundary": "Official SDK localhost doubles, file/Git archive and recorded Docker compositions. Not actual native/provider/PG acceptance or remote PR CI.",
+  "actual_source_start": 0,
+  "actual_provider_calls": 0,
+  "retention_write": 0,
+  "delete": 0,
+  "new_execution_or_budget": 0
+}

@@ -1,0 +1,62 @@
+{
+  "status": "PASS_BOUNDED_LOCAL_PROTECTION_REPAIR_PREPARATION",
+  "at": "2026-10-23T13:24:48.075565+00:00",
+  "P_base": "1841d39d9ab5a08a823f83ab8e9a625b619727e2",
+  "P_state": "LOCAL_UNCOMMITTED_REPAIR_BYTES_REVIEWED_NOT_PUBLISHED",
+  "R_commit": "8e53ea564f9b81bdebf7c31d6a99060d1ec3b7db",
+  "review_scope_blockers": [],
+  "python_methods_per_mode": 45,
+  "python_modes": [
+    "normal",
+    "optimized"
+  ],
+  "host_go_final02_exit": 0,
+  "actual_R_archive_final03_exit": 0,
+  "source_started": 0,
+  "real_provider_calls": 0,
+  "native_metadata_writes": 0,
+  "delete": 0,
+  "remote_operations": 0,
+  "new_candidate": "NOT_CREATED",
+  "new_execution": "NOT_CREATED",
+  "new_budget": "NOT_CREATED",
+  "write_entry": "NOT_IMPLEMENTED",
+  "write_authority": "NOT_AUTHORIZED",
+  "live17_acceptance": "NOT_RUN",
+  "PR_CI": "NOT_RUN",
+  "main_CI": "NOT_RUN",
+  "old_facts": "RETAINED",
+  "required_PR332": "OPEN_DRAFT_UNMERGED",
+  "required_Issue307": "OPEN",
+  "remote_current_state_this_slice": "NOT_REQUERIED",
+  "references": {
+    "docs/acceptance/issue307-d1-native-protection-repair01.md": {
+      "sha256": "9b70aa3866be20fad20a19ccd68758514ef767f4d401cd480031365e9645891e",
+      "bytes": 8285
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/evidence-index01.json": {
+      "sha256": "739f8a8d9deac67fc86f3961f1358ee230d7d0b430b93fb51291077b728de892",
+      "bytes": 16324
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/index-audit01.json": {
+      "sha256": "2d43a1021ab683ad00c87382997e6322372011b3aca81cb8d1baab4348f41a20",
+      "bytes": 572
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/index-audit-invocation-error01.json": {
+      "sha256": "8e143411043ee613447dabe760abfafa76fffd8032a0f07c4331dd4c192fe52a",
+      "bytes": 346
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/independent-final-review01.json": {
+      "sha256": "9714b67479fb6a9ca034421d4b69d684f28b13f402fadf1f1f5089a4fd19be4d",
+      "bytes": 6758
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/independent-packaging-review01.json": {
+      "sha256": "777e3be2cd16d43a94663f46ecf2138f68a310447a63e6ea60f50d95bbd261fd",
+      "bytes": 688
+    },
+    "docs/acceptance/evidence/issue307-d1/native-protection-repair01/exact-two-proposal01.json": {
+      "sha256": "ae85a69fee49b556b88c9437be4c4923a370213b9c9c0e92466328932f826d2f",
+      "bytes": 3141
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"status": "PASS_COMPLETE_SIX_NATIVE_ENTRY", "output": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\delete-confirmed-v28-execution01\\window01\\complete-native", "native_delete": 0}

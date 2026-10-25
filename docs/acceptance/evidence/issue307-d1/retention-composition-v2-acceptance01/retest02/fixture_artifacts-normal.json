@@ -1,0 +1,11 @@
+{
+  "name": "fixture_artifacts-normal",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/test_fixture_artifacts.py"
+  ],
+  "started_at": "2026-10-24T11:05:50.114297+00:00",
+  "finished_at": "2026-10-24T11:06:03.269158+00:00",
+  "returncode": 0
+}

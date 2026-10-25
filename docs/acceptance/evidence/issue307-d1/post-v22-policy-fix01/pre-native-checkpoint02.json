@@ -1,0 +1,14 @@
+{
+  "status": "PASS_PRE_NATIVE_CURRENT_HEAD",
+  "at": "2026-10-19T19:46:47.869750+00:00",
+  "source": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "pr_ci": 39311610413,
+  "event": "pull_request",
+  "jobs": 13,
+  "unresolved_threads": 0,
+  "allocation_sha256": "80cf4a96e73759116a8a62952888361a7db06547c4318404a6ce50e46f4f1682",
+  "budget_initialization_sha256": "3a91e3df11bbf4fa7151bd91e73a6bb2447738a4d9f0018ed942fd5ccb96c017",
+  "cold_check_exit": 0,
+  "native_delete": 0,
+  "delete_authorization": "NOT_RECEIVED"
+}

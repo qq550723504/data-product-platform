@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-19T16:17:19.843454+00:00",
+  "command": [
+    "go",
+    "test",
+    "-count=1",
+    "-json",
+    "./cmd/lifecycle-fixture-readonly-check"
+  ],
+  "exit": 0,
+  "pass_tests_subtests": 79,
+  "failed": [],
+  "skipped": [],
+  "source_before": {
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go": "7dc5d743913495b0e0505e5f2140a555701f922964b1a7559d7de04ee52e9cd1",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main_test.go": "ba7924c1632dec4b60c6ea5c3de46c8d68ccab7f1e83501fc7af0bc502e3d58a",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go": "f7bffbfa0b68d48285a1794d624dd8c100183d17c50af1094b1cf6d37d9c2adf",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22_test.go": "250c9157f724883e462b7c7f11e3b7e7796282dba83e15f27a7f05c820a4bdc5",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six.go": "3a22c9a756800463385ea116dfacbf696e19ece33f198a2ca1039fd7a61e84d1",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": "f279696453c906d5694128178fc9406fbc1ee65fae9b7aa8d2ea79c7e6e478b4"
+  },
+  "source_after": {
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go": "7dc5d743913495b0e0505e5f2140a555701f922964b1a7559d7de04ee52e9cd1",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main_test.go": "ba7924c1632dec4b60c6ea5c3de46c8d68ccab7f1e83501fc7af0bc502e3d58a",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go": "f7bffbfa0b68d48285a1794d624dd8c100183d17c50af1094b1cf6d37d9c2adf",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22_test.go": "250c9157f724883e462b7c7f11e3b7e7796282dba83e15f27a7f05c820a4bdc5",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six.go": "3a22c9a756800463385ea116dfacbf696e19ece33f198a2ca1039fd7a61e84d1",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": "f279696453c906d5694128178fc9406fbc1ee65fae9b7aa8d2ea79c7e6e478b4"
+  },
+  "source_unchanged": true,
+  "channels": {
+    "stdout": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-checker-go03-stdout.txt",
+      "sha256": "eea61a0728aebd290f07b0c7c986d81a1b83a3ff8fefe32098e3d01c03abefcb"
+    },
+    "stderr": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-checker-go03-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scope": "file-only/SDK synthetic and loopback; real PG explicitly disabled; no Docker or native source"
+}

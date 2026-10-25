@@ -20,11 +20,13 @@ POC_WORKSPACE_ID=<workspace uuid>
 ## 运行
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
 控制台默认可通过 `http://localhost:3000` 访问。
+
+普通安装、CI和demo镜像均使用已提交的`package-lock.json`。需要修改依赖时才运行`npm install`，并一同提交manifest和lock；不要在构建时重新选择浮动传递依赖。
 
 ## POC 导航
 

@@ -1,0 +1,2 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch	1.287s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.502s

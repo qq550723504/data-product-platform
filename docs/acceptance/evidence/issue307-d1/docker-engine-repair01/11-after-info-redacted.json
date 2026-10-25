@@ -1,0 +1,14 @@
+{
+  "ID": "d8e3cb9f-adc6-4df6-b5de-eb23d57bb00f",
+  "Name": "docker-desktop",
+  "ServerVersion": "29.8.2",
+  "OperatingSystem": "Docker Desktop",
+  "OSType": "linux",
+  "Architecture": "x86_64",
+  "KernelVersion": "6.18.54.1-microsoft-standard-WSL2",
+  "Containers": 1077,
+  "ContainersRunning": 25,
+  "ContainersPaused": 0,
+  "ContainersStopped": 1052,
+  "Images": 107
+}

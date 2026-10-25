@@ -1,0 +1,134 @@
+{
+  "native_delete": 0,
+  "pins_released": 0,
+  "budgets_refunded": 0,
+  "observer": {
+    "audit_id": "ed74f10f-85e2-4332-913c-2c8973ad6d25",
+    "budgets_refunded": 0,
+    "cases": [
+      {
+        "NOT_SENT": {
+          "ID": "780ba1c4-36ae-45cd-ba0a-4cb8a032e200",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "ba5bec6b-84ec-4418-a63f-4b08601ccb76",
+        "case": "P2",
+        "old_approval_already_revoked": true
+      },
+      {
+        "NOT_SENT": {
+          "ID": "afad1d57-d7b7-4430-8c51-7c4b1a85b01a",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "c1f32764-d3d3-4752-ba48-fc88373c0210",
+        "case": "T1",
+        "new_approval_revocation": {
+          "ID": "a64c719b-3d29-47df-9933-7ce5200ee436",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false
+      },
+      {
+        "NOT_SENT": {
+          "ID": "0b65468e-afbc-46b0-b0b7-05616dd2fc21",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "attempt": "3c731704-cc91-4717-95fc-828ced05b46c",
+        "case": "T2",
+        "new_approval_revocation": {
+          "ID": "5d4b6ffa-3162-4f86-962c-d80a29f6b3ab",
+          "Replayed": false,
+          "PreservationUnconfirmed": false
+        },
+        "old_approval_already_revoked": false
+      }
+    ],
+    "completed": true,
+    "native_delete": 0,
+    "pins_released": 0
+  },
+  "delta": {
+    "changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_approval_revocation",
+      "lifecycle_dispatch_release",
+      "lifecycle_provider_observation",
+      "outbox_event"
+    ],
+    "new_row_counts": {
+      "lifecycle_approval_revocation": 2,
+      "lifecycle_provider_observation": 3,
+      "lifecycle_dispatch_release": 3,
+      "command_idempotency": 5,
+      "audit_event": 8,
+      "evidence": 8,
+      "evidence_relation": 8,
+      "outbox_event": 8
+    },
+    "old_rows_preserved": true,
+    "new_provider_Cost": 0,
+    "pins_released": 0
+  },
+  "profile_disabled": true,
+  "final_Core": "OBSERVED_AFTER_OBSERVER_STOPPED",
+  "final_delta": {
+    "changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_approval_revocation",
+      "lifecycle_dispatch_release",
+      "lifecycle_provider_observation",
+      "outbox_event"
+    ],
+    "new_row_counts": {
+      "lifecycle_approval_revocation": 2,
+      "lifecycle_provider_observation": 3,
+      "lifecycle_dispatch_release": 3,
+      "command_idempotency": 5,
+      "audit_event": 8,
+      "evidence": 8,
+      "evidence_relation": 8,
+      "outbox_event": 8
+    },
+    "old_rows_preserved": true,
+    "new_provider_Cost": 0,
+    "pins_released": 0
+  },
+  "identity_containment": "UNCHANGED_NO_ENABLE_PATH",
+  "closure": [
+    {
+      "cid": "eb46634e70f66907e2378c92983de2fcbcc330235655f743aba20201995f0f33",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "41a6c9ca6076ec6cddf83b657fbf1c9a8c4a0ed847aa0aa83b3528b1b48cb6dc",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "262dd338fc2f6990b4590e9f13dd604f37bd607968cea897d102cfea8fcea56b",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "stopped_PID0": true
+    }
+  ],
+  "retained_unchanged": true,
+  "failure": null,
+  "status": "PASS_V27_THREE_NOT_SENT_APPEND_ONLY_SEALED"
+}

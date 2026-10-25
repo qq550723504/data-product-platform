@@ -1,0 +1,10 @@
+{
+  "native_delete": 0,
+  "source_Native_started": false,
+  "source_business_mutations": 0,
+  "HEAD_oracle": "TEST_HTTP_ONLY_NOT_NATIVE_ACCEPTANCE",
+  "closure": [],
+  "source_retained_unchanged": true,
+  "failure": "RuntimeError: P1 read-only command failed; original private diagnostics retained",
+  "status": "FAILED_REHEARSAL_RETAINED_NO_SOURCE_COMMAND"
+}

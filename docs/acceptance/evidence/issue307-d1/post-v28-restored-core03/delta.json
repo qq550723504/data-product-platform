@@ -1,0 +1,33 @@
+{
+  "old_rows_preserved": true,
+  "changed_relations": [
+    "audit_event",
+    "command_idempotency",
+    "cost_allocation",
+    "cost_event",
+    "delivery_authorization_fence",
+    "evidence",
+    "evidence_relation",
+    "lifecycle_approval_revocation",
+    "lifecycle_dispatch_release",
+    "lifecycle_provider_observation",
+    "lifecycle_storage_call",
+    "lifecycle_storage_observation",
+    "outbox_event"
+  ],
+  "new_row_counts": {
+    "audit_event": 12,
+    "command_idempotency": 6,
+    "cost_allocation": 2,
+    "cost_event": 2,
+    "delivery_authorization_fence": 0,
+    "evidence": 12,
+    "evidence_relation": 12,
+    "lifecycle_approval_revocation": 3,
+    "lifecycle_dispatch_release": 3,
+    "lifecycle_provider_observation": 2,
+    "lifecycle_storage_call": 2,
+    "lifecycle_storage_observation": 2,
+    "outbox_event": 12
+  }
+}

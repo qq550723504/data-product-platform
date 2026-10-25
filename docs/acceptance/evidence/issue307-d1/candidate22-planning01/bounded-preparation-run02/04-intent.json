@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-planning01\\run-preparation-phase02.py",
+    "run-non-delete"
+  ],
+  "at": "2026-10-23T05:40:21.986307+00:00",
+  "native_delete_authority": false
+}

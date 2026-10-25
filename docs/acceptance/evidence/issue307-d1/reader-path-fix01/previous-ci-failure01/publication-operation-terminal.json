@@ -1,0 +1,15 @@
+{
+  "status": "PUSHED_EXACT_P_AND_RELOCKED_PENDING_PR_CI",
+  "observed_at": "2026-10-24T13:41:55.899259+00:00",
+  "unlock_attempts": 1,
+  "push_attempts": 1,
+  "relocked": true,
+  "publish_head": "16ec447f2c60ddf08a514207963f478bc70c7e09",
+  "old_authorization_reused": false,
+  "source_starts": 0,
+  "provider_calls": 0,
+  "business_protection_write": 0,
+  "business_delete": 0,
+  "PR_ready_or_merge": 0,
+  "new_HEAD_PR_CI": "NOT_YET_VALIDATED"
+}

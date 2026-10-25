@@ -1,0 +1,10 @@
+{
+  "status": "FAILED_SHAPE_PROBE_NO_MUTATION",
+  "error_type": "ValueError",
+  "message": "resource retirement: fixed final inspect membership differs",
+  "cause": "Initial new reader expected list; the pinned original final-containers.json is a CID mapping. Corrected the new reader to the strict existing mapping contract without rewriting history or allowing both formats.",
+  "source_started": 0,
+  "provider_calls": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

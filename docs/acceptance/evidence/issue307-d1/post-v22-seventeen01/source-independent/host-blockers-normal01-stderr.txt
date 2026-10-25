@@ -1,0 +1,19 @@
+test_checker_timeout_cannot_replace_wait_original (__main__.OriginalChannelTests.test_checker_timeout_cannot_replace_wait_original) ... ok
+test_known_close_inspect_failure_still_requires_stop (__main__.OriginalChannelTests.test_known_close_inspect_failure_still_requires_stop) ... FAIL
+test_logs_timeout_keeps_partial_original_channels (__main__.OriginalChannelTests.test_logs_timeout_keeps_partial_original_channels) ... ok
+
+======================================================================
+FAIL: test_known_close_inspect_failure_still_requires_stop (__main__.OriginalChannelTests.test_known_close_inspect_failure_still_requires_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\docs\acceptance\evidence\issue307-d1\post-v22-seventeen01\source-independent\test_host_blockers01.py", line 20, in test_known_close_inspect_failure_still_requires_stop
+    self.assertEqual({c[-1]for c in calls if c[0]=='stop'},{'one','two'},f'known close was skipped: {result}')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the second set but not the first:
+'two'
+'one' : known close was skipped: [{'cid': 'two', 'closed': False, 'initial_inspect_failed': True, 'stop_failed': True}, {'cid': 'one', 'closed': False, 'initial_inspect_failed': True, 'stop_failed': True}]
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.771s
+
+FAILED (failures=1)

@@ -1,0 +1,13 @@
+{
+  "status": "LOCAL_R_SUCCESSOR_NOT_AUTHORIZED",
+  "source": "53f6f8a6e69c17fa6896a40293d323f6ee9d0958",
+  "base_source": "215098f0bc36a7d88eb19d0f24ed148ef0fe238f",
+  "delta": [
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/wait_test.go"
+  ],
+  "archive_sha256": "1f9462c13204dddd6f8fc475b2cf21830d094aba14e1677d03848c8d70906557",
+  "archive_bytes": 6504490,
+  "members": 780,
+  "spec_sha256": "683b2acf58328ce4d1bb199c4ead9b203f81c00c9cd8710f03398a9d82210859"
+}

@@ -1,0 +1,68 @@
+{
+  "at": "2026-10-22T06:40:44.530618+00:00",
+  "status": "PASS",
+  "runs": [
+    {
+      "test": "test_execution_freeze",
+      "optimized": false,
+      "exit": 0,
+      "source_sha256": "103468ec5c1f0157d4230b5e6b0e6892c055e8c734ddc2e61387272c913e6394"
+    },
+    {
+      "test": "test_execution_freeze",
+      "optimized": true,
+      "exit": 0,
+      "source_sha256": "103468ec5c1f0157d4230b5e6b0e6892c055e8c734ddc2e61387272c913e6394"
+    },
+    {
+      "test": "test_six_native_entry",
+      "optimized": false,
+      "exit": 0,
+      "source_sha256": "5e0058fe271a907428931d8c73f51a80fb0ac66c69f71154403ee554cbee10ab"
+    },
+    {
+      "test": "test_six_native_entry",
+      "optimized": true,
+      "exit": 0,
+      "source_sha256": "5e0058fe271a907428931d8c73f51a80fb0ac66c69f71154403ee554cbee10ab"
+    },
+    {
+      "test": "test_window_six_support",
+      "optimized": false,
+      "exit": 0,
+      "source_sha256": "1b4eab4e1a84c86d13136c07142c0bc8431c3d82155019fd9a86ec076c1f8f4d"
+    },
+    {
+      "test": "test_window_six_support",
+      "optimized": true,
+      "exit": 0,
+      "source_sha256": "1b4eab4e1a84c86d13136c07142c0bc8431c3d82155019fd9a86ec076c1f8f4d"
+    },
+    {
+      "test": "test_attest_remaining_executable",
+      "optimized": false,
+      "exit": 0,
+      "source_sha256": "84803bb366e1986682f106c5c9b4ae643417f191ae14d98ec0e6fcc43172bcdd"
+    },
+    {
+      "test": "test_attest_remaining_executable",
+      "optimized": true,
+      "exit": 0,
+      "source_sha256": "84803bb366e1986682f106c5c9b4ae643417f191ae14d98ec0e6fcc43172bcdd"
+    },
+    {
+      "test": "test_freeze_six_candidate",
+      "optimized": false,
+      "exit": 0,
+      "source_sha256": "5fefea35f1432da3b1e14e0259b479433be1392d409fc8b1b93186d946c1aa6e"
+    },
+    {
+      "test": "test_freeze_six_candidate",
+      "optimized": true,
+      "exit": 0,
+      "source_sha256": "5fefea35f1432da3b1e14e0259b479433be1392d409fc8b1b93186d946c1aa6e"
+    }
+  ],
+  "provider_requests": 0,
+  "native_delete": 0
+}

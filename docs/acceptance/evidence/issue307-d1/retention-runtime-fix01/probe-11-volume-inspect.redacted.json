@@ -1,0 +1,17 @@
+{
+  "status": "REDACTED_INSPECT_NOT_RAW_BYTES",
+  "original_sha256": "2d1e78e59d9d2b9bce070ebc79e5f8f9e6419f7ec27e4d77d3491a50a28856ed",
+  "inspect": [
+    {
+      "CreatedAt": "2026-10-24T08:40:01Z",
+      "Driver": "local",
+      "Labels": {
+        "dpp.retention-maintenance": "preparation-only"
+      },
+      "Mountpoint": "/var/lib/docker/volumes/d1-retention-probe-output-4b5c79dde33b/_data",
+      "Name": "d1-retention-probe-output-4b5c79dde33b",
+      "Options": null,
+      "Scope": "local"
+    }
+  ]
+}

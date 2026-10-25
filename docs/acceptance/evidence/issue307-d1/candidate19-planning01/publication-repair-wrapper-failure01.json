@@ -1,0 +1,9 @@
+{
+  "error": "KeyError: old diagnostic file is not a member of reviewed-artifacts01.json",
+  "capture_source": "Tool output transcription, not raw subprocess output",
+  "failed_script": "repair-publication-index01.py",
+  "original_file_changed": false,
+  "commit_or_push": false,
+  "native_delete": 0,
+  "correction": "Compare original content to its retained HEAD blob and staged raw bytes. Do not claim this diagnostic was an indexed independent input."
+}

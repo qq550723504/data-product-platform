@@ -1,0 +1,10 @@
+{
+  "status": "APPEND_ONLY_DIAGNOSIS_CORRECTION",
+  "at": "2026-10-19T12:43:17.752201+00:00",
+  "original_terminal_sha256": "ea420fe2215894d65b1f10e040b8c4cae5b324d37ca18278c50741b2621ad084",
+  "actual_root_cause": "Docker Config.Cmd serializes an empty command as null; host manifest required []. It did not inherit [postgres].",
+  "original_cause_text_incorrect": true,
+  "fix": "Require a nonempty explicit fixed observer command; no null/empty fallback. Preserve three closed original CIDs, old bytes and all source facts.",
+  "original_source_started": 0,
+  "DELETE": 0
+}

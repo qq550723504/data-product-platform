@@ -34,7 +34,7 @@ jobs:
         run: test -z "$(gofmt -l apps/platform/internal/acceptance/browser_live_test.go)"
       - name: Install application and isolated browser dependencies
         run: |
-          npm --prefix apps/web install --no-audit --no-fund
+          npm --prefix apps/web ci --no-audit --no-fund
           npm --prefix tests/live-browser install --no-audit --no-fund
       - name: Build and prepare actual standalone console
         run: |

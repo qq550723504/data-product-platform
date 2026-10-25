@@ -1,0 +1,87 @@
+{
+  "at": "2026-10-22T09:20:05.491837+00:00",
+  "status": "PASS_CURRENT_EXISTING_MODELED_CASES",
+  "scope": "Pure offline unit doubles. Does not settle pending CI-R1 post-gate source cross-binding finding or Linux CI.",
+  "runs": [
+    {
+      "test": "test_fixture_artifacts.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 4,
+      "tested_input_sha256": "01c0801a95d1f2fe8b8e6de50055892c30a8c6d484f710f799a5bd9129e0dc08",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f5f0e6f8c5f0a69488a613850bfc09892000e3c994cafeb49bb5c4e7148b796a"
+    },
+    {
+      "test": "test_fixture_artifacts.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 4,
+      "tested_input_sha256": "01c0801a95d1f2fe8b8e6de50055892c30a8c6d484f710f799a5bd9129e0dc08",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "2cd441ce2b3ef3a15644cfe2150b6dcd0537c8bef5da9df2e5adf3cf7ec0fcab"
+    },
+    {
+      "test": "test_retained_v26.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 5,
+      "tested_input_sha256": "5bd1a925ac4f2fb6bd066b56d5e6b3837c990ad8d0aa27e6f27322187a8f3700",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "7cc56216d9bc1207a29c39b51776550db0be84ad733f225621f8b3f4cac6777c"
+    },
+    {
+      "test": "test_retained_v26.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 5,
+      "tested_input_sha256": "5bd1a925ac4f2fb6bd066b56d5e6b3837c990ad8d0aa27e6f27322187a8f3700",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "cd3f36d8ca5538400313556d24e9e7e1f4fb5b472a674ee6ede64342c1ed1a9e"
+    },
+    {
+      "test": "test_preallocation_ci.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 2,
+      "tested_input_sha256": "7bf7799bd71bd67e46fdc181a8ebc93d2103357a2689dfe3815843aedbabcc10",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "0f60089433d2c2ef2afe88d1ef66af8c5b245edf7cb2e22ca5d4b34e62607559"
+    },
+    {
+      "test": "test_preallocation_ci.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 2,
+      "tested_input_sha256": "7bf7799bd71bd67e46fdc181a8ebc93d2103357a2689dfe3815843aedbabcc10",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "d624895c00d1a035d9dd1765556a9ee323492642992bd8901c34d628427c6561"
+    },
+    {
+      "test": "test_six_candidate_runtime.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 14,
+      "tested_input_sha256": "f9616edd1a0c0601f9441abb7eca15faa3c7e145342b3755449701176ce40483",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "59540955cb72e17e2a3566f030257284019a1e34271ecb1a593d3fdaeacd88ba"
+    },
+    {
+      "test": "test_six_candidate_runtime.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 14,
+      "tested_input_sha256": "f9616edd1a0c0601f9441abb7eca15faa3c7e145342b3755449701176ce40483",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "348a7594d0eefe1902e00b7ed7571ddec5c0b770c5dd839faa90f500637b9ae9"
+    }
+  ]
+}

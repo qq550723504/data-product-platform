@@ -1,0 +1,18 @@
+{
+  "status": "SCOPED_HOST_LONG_PATH_REPAIR_BEFORE_FIRST_PACKET_OUTPUT",
+  "at": "2026-10-19T20:11:17.956258+00:00",
+  "source": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "preserved_empty_directory": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/empty-packet",
+  "original_failure_sha256": "51f40145c340f491b2c86770fdd53aceab85290f08f668fa316cb48fb01aa652",
+  "zero_output_sha256": "16d0d30063edd0be36927f05267ed388702e8e36efa7546868eb1a42f67c4e5b",
+  "git_child_override": {
+    "appended_config_key": "core.longpaths",
+    "appended_config_value": "true",
+    "previous_count": null
+  },
+  "git_local_global_config_writes": 0,
+  "source_native_replayed": false,
+  "source_binary_modified": false,
+  "native_delete": 0,
+  "independent_reviewer_decision": "NO_VALID_BLOCKER; ZERO_OUTPUT_PRE_PACKET_HOST_RETRY_ONLY"
+}

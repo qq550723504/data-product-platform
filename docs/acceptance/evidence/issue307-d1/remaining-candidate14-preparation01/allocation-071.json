@@ -1,0 +1,33 @@
+{
+  "role": "root-check-disabled",
+  "group": "mixed",
+  "cid": "1ab4e7162ea63dd75463f4dbb4b7b699ed246ec1d1b04b592eae03ba9e32369a",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate14-root-check-disabled",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\mixed\\root-check-disabled,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14/owner,target=/run/owner,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\mixed\\outputs\\root-check-disabled,target=/run/output",
+    "--entrypoint",
+    "/run/owner",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-action",
+    "check-disabled"
+  ]
+}

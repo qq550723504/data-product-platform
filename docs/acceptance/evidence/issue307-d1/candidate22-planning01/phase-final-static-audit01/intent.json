@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "-B",
+    "examples/lifecycle-d1/verify-six-native.py",
+    "--candidate-sha256",
+    "d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db",
+    "--bindings-sha256",
+    "e63b908ca5269853478f7d5a65621327bc5f52ff2ff389de96707e0a137296af",
+    "--checker-sha256",
+    "15367f67aa6fabadbbd1796f31a9d5743a245681482f20316f151c24c18da586",
+    "--evidence-audit-plan",
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/final-static-evidence-audit-plan01.json",
+    "--evidence-audit-plan-sha256",
+    "9893a44b861cfcfd0d817e20e5e65b6e4cbcecca8bfc8edb881164f169206a5c",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-planning01\\final-static-audit01",
+    "--audit-only"
+  ],
+  "at": "2026-10-23T06:11:30.990722+00:00",
+  "delete_authority": false
+}

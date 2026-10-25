@@ -1,0 +1,97 @@
+[
+  {
+    "module": "test_retained_v30",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_retained_v30",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_receipt_bytes",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_receipt_bytes",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_retained_v29",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_retained_v29",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_retained_v27",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_retained_v27",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_retained_v26",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_retained_v26",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_fixture_artifacts",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_fixture_artifacts",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_preallocation_ci",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_preallocation_ci",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_remaining_six_window",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_remaining_six_window",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_six_candidate_runtime",
+    "mode": "normal",
+    "exit": 0
+  },
+  {
+    "module": "test_six_candidate_runtime",
+    "mode": "optimized",
+    "exit": 0
+  },
+  {
+    "module": "test_freeze_six_candidate",
+    "mode": "normal",
+    "exit": 1
+  }
+]

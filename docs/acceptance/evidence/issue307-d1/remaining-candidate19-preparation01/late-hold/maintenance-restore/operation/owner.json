@@ -1,0 +1,11 @@
+{
+  "cid": "5c7c7f41b3e70c35c04a9cdca4f5d9485a29bacd8b7222614ecad70f61d0dad2",
+  "closure": {
+    "cid": "5c7c7f41b3e70c35c04a9cdca4f5d9485a29bacd8b7222614ecad70f61d0dad2",
+    "closed": true,
+    "initial_inspect_failed": false,
+    "stop_failed": false
+  },
+  "failure": null,
+  "native_delete": 0
+}

@@ -1,0 +1,1 @@
+{"argv": ["gh", "api", "--hostname", "github.com", "--method", "GET", "repos/qq550723504/data-product-platform/branches/codex%2Fissue307-post-v22-dispatch-closure/protection"], "method": "GET", "branch_unlock": 0}

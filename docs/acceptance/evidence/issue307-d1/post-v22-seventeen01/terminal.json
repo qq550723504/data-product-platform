@@ -1,0 +1,202 @@
+{
+  "status": "PASS_COMPLETE_POST_V22_SEVENTEEN_READONLY",
+  "audit_id": "f4330324-98de-4fc4-ae3d-e1feab7adaae",
+  "versions": 17,
+  "remaining_targets": 6,
+  "survivors": 11,
+  "groups": [
+    {
+      "status": "PASS_COMPLETE_POST_V22_NATIVE_AGGREGATION",
+      "group": "business-races",
+      "copies": 7,
+      "policies": [
+        {
+          "policy": "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5",
+          "baseline_file_sha256": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+          "fresh_file_sha256": "193dddf518870148b6a72650aed7445f3575be7e9dea0b510a753d6b38a08746",
+          "official_equals": true
+        },
+        {
+          "policy": "lifecycle307-remaining-business-remainput808a6960",
+          "baseline_file_sha256": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+          "fresh_file_sha256": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+          "official_equals": true
+        },
+        {
+          "policy": "lifecycle307-remaining-business-remainread808a6960",
+          "baseline_file_sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+          "fresh_file_sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+          "official_equals": true
+        },
+        {
+          "policy": "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5",
+          "baseline_file_sha256": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf",
+          "fresh_file_sha256": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf",
+          "official_equals": true
+        }
+      ],
+      "provider_io": 0,
+      "delete": 0,
+      "technical_requests": 32,
+      "amount": "NOT_ASSESSED",
+      "native_delete": 0,
+      "business_mutations": 0
+    },
+    {
+      "status": "PASS_COMPLETE_POST_V22_NATIVE_AGGREGATION",
+      "group": "late-hold",
+      "copies": 6,
+      "policies": [
+        {
+          "policy": "lifecycle307-inspection-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b",
+          "baseline_file_sha256": "7a0b85b266cbbcacdd4d92d5b8bd5626ae99ac8235b4c7a43f8194c7d6434dca",
+          "fresh_file_sha256": "779465a2fa48e7c0757fa7e74d50cb9fa64a230cad0424f3f314e55fa798e8fd",
+          "official_equals": true
+        },
+        {
+          "policy": "lifecycle307-remaining-delete-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b",
+          "baseline_file_sha256": "4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0",
+          "fresh_file_sha256": "4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0",
+          "official_equals": true
+        }
+      ],
+      "provider_io": 0,
+      "delete": 0,
+      "technical_requests": 24,
+      "amount": "NOT_ASSESSED",
+      "native_delete": 0,
+      "business_mutations": 0
+    },
+    {
+      "status": "PASS_COMPLETE_POST_V22_NATIVE_AGGREGATION",
+      "group": "mixed",
+      "copies": 4,
+      "policies": [
+        {
+          "policy": "lifecycle307-inspection-dfda43b4-4419-433d-959b-c617556953fd",
+          "baseline_file_sha256": "247ebba00c26d1237177ce4208ab8017b2a7779314f4ccf512e24111a1c0e0b2",
+          "fresh_file_sha256": "723f17d20699d893dd0a869d378d319bce21e6ffb1c71a3e867b1db88fe04134",
+          "official_equals": true
+        },
+        {
+          "policy": "lifecycle307-remaining-delete-dfda43b4-4419-433d-959b-c617556953fd",
+          "baseline_file_sha256": "da176caf99518950a627327c4c065fe40f682e6faee79b62098f6c379b23e5cf",
+          "fresh_file_sha256": "3a55a4dcd2b321a31251733404dfb291576be7ea87cc9119eb99632592766c6b",
+          "official_equals": true
+        }
+      ],
+      "provider_io": 0,
+      "delete": 0,
+      "technical_requests": 18,
+      "amount": "NOT_ASSESSED",
+      "native_delete": 0,
+      "business_mutations": 0
+    }
+  ],
+  "technical_requests": 74,
+  "amount": "NOT_ASSESSED",
+  "native_delete": 0,
+  "business_mutations": 0,
+  "old_authorization_reused": false,
+  "D1": "NOT_ACCEPTED",
+  "six_candidate": "NOT_FROZEN",
+  "at": "2026-10-19T14:07:54.314377+00:00",
+  "attempted_groups": [
+    "business-races",
+    "late-hold",
+    "mixed"
+  ],
+  "physical_close": [
+    {
+      "cid": "5be9993bf7fdc6a2b1a0557b6d0d448b959ed7a1be5684f199a1b961f0ea84ef",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "138c13b0afe40ca4afd6c99e99b33460717c4efeb8baa92777e9c20752e1a100",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "2191b98cb61107c4f89565eb5e94da77ad3f4f08191187e8dcf7e33a5580b4dc",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    }
+  ],
+  "disabled_profiles": [
+    {
+      "group": "business-races",
+      "disabled_readback": true
+    },
+    {
+      "group": "late-hold",
+      "disabled_readback": true
+    },
+    {
+      "group": "mixed",
+      "disabled_readback": true
+    }
+  ],
+  "request_journals": {
+    "business-races": {
+      "start_facts": 32,
+      "observation_facts": 32,
+      "amount": "NOT_ASSESSED",
+      "unobserved_attempt_ids": []
+    },
+    "late-hold": {
+      "start_facts": 24,
+      "observation_facts": 24,
+      "amount": "NOT_ASSESSED",
+      "unobserved_attempt_ids": []
+    },
+    "mixed": {
+      "start_facts": 18,
+      "observation_facts": 18,
+      "amount": "NOT_ASSESSED",
+      "unobserved_attempt_ids": []
+    }
+  },
+  "resources_retained": true,
+  "manifest_sha256": "dc8aed61f6a6755cea5c43d6a35aa19adf2c544d6e8b9754de7d66bfdf0d6c9f",
+  "independent_review_sha256": "edb1d915e9101485ad77c11f8064fe598ce2223833b44c20e0649713805472bb"
+}

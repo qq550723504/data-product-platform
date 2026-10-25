@@ -1,0 +1,12 @@
+{
+  "status": "PASS_PRIOR_REPAIR_IN_ORIGINAL_P_WORKTREE",
+  "audit": {
+    "id": "prior-local-protection-fix",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/native-protection-repair01/evidence-index01.json",
+    "sha256": "739f8a8d9deac67fc86f3961f1358ee230d7d0b430b93fb51291077b728de892",
+    "members_verified": 78
+  },
+  "root": "C:\\Users\\Henry\\.codex\\worktrees\\d1-protect",
+  "note": "Old review indexes remain in their original source context; no old index is rewritten to match the new repair."
+}

@@ -1,0 +1,18 @@
+{
+  "status": "PASS_EXACT_REVIEWED_LOCAL_PATH_FIX_EVIDENCE",
+  "audit": {
+    "id": "retention-path-fix01",
+    "format": "files-map-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/retention-path-fix01/evidence-index01.json",
+    "sha256": "82baa69461458c5d0e96027beb451cdf2e582a27362d9767033bc6705a00085d",
+    "members_verified": 19
+  },
+  "reviewed_source_members": 2,
+  "actual_source_changes": [
+    "examples/lifecycle-d1/retention_maintenance.py",
+    "examples/lifecycle-d1/test_retention_maintenance.py"
+  ],
+  "R_unchanged": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d",
+  "new_remote_CI": "NOT_RUN",
+  "publication_authority": "NOT_GRANTED_FOR_NEW_SHA"
+}

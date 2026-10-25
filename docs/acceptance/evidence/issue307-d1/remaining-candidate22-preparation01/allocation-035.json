@@ -1,0 +1,22 @@
+{
+  "role": "restore-gateway",
+  "group": "late-hold",
+  "cid": "b6b4d18ed891904658d07887e6130e50c9279e1c737187e406443793c02d0951",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate22-restore-gateway",
+    "--network",
+    "b0d10b08d1817505797304eb82354e12192903bab65325a2fe5b0802e45f5c96",
+    "--tmpfs",
+    "/config",
+    "--tmpfs",
+    "/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\late-hold\\restore-gateway.Caddyfile,target=/etc/caddy/Caddyfile,readonly",
+    "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "caddy",
+    "run",
+    "--config",
+    "/etc/caddy/Caddyfile"
+  ]
+}

@@ -1,0 +1,1 @@
+{"at":"2026-10-19T19:49:37.003789492Z","audit_id":"2f512cbe-e5f3-477d-a6a2-bd38d62fc2b0","id":"e24dfd60-c33d-4b14-a6de-c1e82a330b4d","method":"GET","path":"/minio/admin/v3/info-canned-policy","query":"name=lifecycle307-six-d9f9c67d7dfda43b4"}

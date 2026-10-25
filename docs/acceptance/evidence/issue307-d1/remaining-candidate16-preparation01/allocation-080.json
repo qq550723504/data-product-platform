@@ -1,0 +1,33 @@
+{
+  "role": "six-restore-inspect-disable",
+  "group": "mixed",
+  "cid": "e3a7579f3c2b6ad292dedd8f467a1f97b3019cc7d4ee994fa0e7849f8d67bce0",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate16-restore-inspect-disable",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:a7a9547163144042ea72ac931db86fb1782093ac1028ca7e91edbab3e1cf9910",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\mixed\\restore-inspect-disable,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\mixed\\outputs\\restore-inspect-disable,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "six-restore-inspect-disable"
+  ]
+}

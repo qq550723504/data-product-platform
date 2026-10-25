@@ -1,0 +1,7 @@
+FAIL	./cmd/lifecycle-fixture-owner [setup failed]
+FAIL	./cmd/lifecycle-fixture-readonly [setup failed]
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.351s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-old-dispatch	1.581s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	3.314s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage	4.192s
+FAIL

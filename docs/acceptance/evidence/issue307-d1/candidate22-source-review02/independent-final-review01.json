@@ -1,0 +1,78 @@
+{
+  "status": "PASS_BOUNDED_C22_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW",
+  "review_round": 2,
+  "reviewed_at": "2026-10-23T05:04:01.642839+00:00",
+  "source_head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "incremental_base": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "overall_base": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "runtime_parent": "514843da1a143fba537c1668483fe95800ddd992",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "profile": "candidate22/v32",
+  "window": {
+    "not_before": "2026-10-23T10:00:00Z",
+    "not_after": "2026-10-23T10:40:00Z",
+    "read_only_not_after": "2026-10-23T12:40:00Z",
+    "preparation_only": true
+  },
+  "remaining_blockers": [],
+  "authoritative_contracts": [
+    "AGENTS.md sections 1A, 3, 13, 16 and 17",
+    "docs/acceptance/issue307-d1-execution-freeze-boundary.md",
+    "docs/acceptance/issue307-d1-v32-preparation-contract02.md",
+    "docs/acceptance/issue307-d1-v32-preparation-contract03.md"
+  ],
+  "scope": "Fresh independent source review for new P. Native acceptance, actual allocation, exact new-head CI, final document head CI, lock/binding, deletion authority and schedule remain separate gates.",
+  "resolved_findings": [
+    {
+      "id": "C22-SUBNET-REUSE",
+      "prior_blocker": "candidate22-ci-review01/subnet-blocker-confirmation01.json",
+      "resolution_commit": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+      "file": "examples/lifecycle-d1/prepare-six-candidate.py",
+      "lines": "34-35, 323-328, 352-355, 377-380",
+      "resolution": "C22 uses independent 225/226/227 networks. All three existing overlap checks execute after clean-source/exact CI and before history, CONTROL/PUBLIC, build or allocation. Every conflict and unknown-read slot stops early. Per-create check and native IPAM refusal remain."
+    }
+  ],
+  "verified_contracts": [
+    "New exact P source head and all 2249 host raw/LF members remained unchanged throughout independent tests. Old source-review01 and CI/blocker history remain original bytes and are not reused as approval for the new P. Evidence delta from bee86b is append-only.",
+    "Existing check_subnet and Docker native IPAM are reused. No new IPAM, network allocator, automatic cleanup or deletion is introduced. New fixed networks are disjoint from retained C21 and from each other; author fresh read reports no current conflicts and is retained as author evidence.",
+    "The five exact current v32 Markdown paths have text unset in docs/acceptance/.gitattributes. Independent Git blob/archive/checkouts preserve LF and CRLF prototype bytes. Original negative normalization counterexample selects its explicit historical failed terminal and still fails as intended.",
+    "Current freeze source-review binding selects candidate22-source-review02 and requires this exact P plus unchanged R. The corresponding typed-plan tests and complete file-only freeze path pass.",
+    "6061 C21 indexed public members were independently re-audited in current P and original C21 with exact SHA and size. C21 anchor SHA is unchanged; retained_v31 composition and failure cases pass. No live Docker/Core/IAM observation is claimed by this review.",
+    "Exact R archive was recomputed again: 769 members, 6428089 bytes, SHA aca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698. Shared execution/window/scope/policy and schema max 69 / 66 migrations / no protected identity match. P protected identity predicate and R five-file delta are unchanged.",
+    "Strict source CI ordering, bytes-only wrappers, old C21/C19 exact-version two-action IAM, earlier Version-only policies, C20 NoSuchUser requirement, six targets/max1/globalmax6, P1 exclusion, eleven survivors, budgets/pins/failure/cost preservation remain in the reviewed contract."
+  ],
+  "independent_checks": {
+    "normal": "36 methods PASS, no skips",
+    "optimized": "36 methods PASS, no skips",
+    "extra_counterexamples": "One independent method tests unknown network reads at each of three slots through complete allocate. Original tests independently cover three conflict slots and old C21 overlap refusal.",
+    "current_document_bytes": "Actual Git temporary repository, blob, archive, autocrlf true/false checkout and mixed LF/CRLF current-path prototypes passed in both modes.",
+    "fresh_historical_public_audit": "6061 current/original files exact SHA and bytes match.",
+    "unchanged_R_archive": "All original ZIP bytes and 769 member SHA values rechecked.",
+    "old_regression_input_delta": "2244 of 2249 prior host inputs unchanged. Five changed Python files are all covered by this new independent suite. Prior 102+102 local tests and R/P Go runs are historical author evidence, not claimed freshly rerun or CI."
+  },
+  "provenance_boundaries": {
+    "new_P_PR_CI": "NOT_ASSESSED; exact new P requires all necessary jobs successful in one completed attempt before allocation. Old failed or green CI is not reused.",
+    "Hop_prior_failure": "Preserved; root cause remains UNKNOWN. No Hop source fix or timeout widening inferred from RemoteDisconnected.",
+    "C22_allocation": "NOT_RUN_AT_THIS_SOURCE_REVIEW",
+    "native_acceptance": "NOT_RUN",
+    "final_frozen_candidate": "NOT_CREATED",
+    "final_review_head_CI_and_lock": "STILL_REQUIRED",
+    "independent_Docker_Core_provider_io": 0,
+    "independent_native_delete": 0,
+    "delete_authority": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "old_authorization_reused": false
+  },
+  "reviewed_artifacts_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate22-source-review02/reviewed-artifacts01.json",
+    "sha256": "43e570295477a0a4c42cb2d15e6e469cdd72442dbfa621b11fc3dc289cb83d19",
+    "count": 2299
+  },
+  "evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate22-source-review02/evidence-index.json",
+    "sha256": "140fe7b899649b352cd641ecdb4bf7a064b5ff816a65e75225a54764755dccb4",
+    "count": 15
+  },
+  "forbidden_actions_performed": []
+}

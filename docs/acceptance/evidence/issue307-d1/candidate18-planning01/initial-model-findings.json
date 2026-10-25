@@ -1,0 +1,18 @@
+{
+  "status": "MODEL_EXPECTATIONS_UPDATED_BEFORE_ALLOCATION",
+  "findings": [
+    {
+      "test": "test_current_Core_checkpoint_mismatch_stops_before_IAM",
+      "old_assumption": "historical policy CoreSHA equals current complete Core",
+      "fix": "model actual post-closure Core mismatch; keep pre-PROVISION refusal"
+    },
+    {
+      "test": "TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory",
+      "old_assumption": "13/8/8 IAM users",
+      "fix": "15/10/10 including all six retired c17 users; no production semantic relaxation"
+    }
+  ],
+  "source_start": 0,
+  "provider_io": 0,
+  "DELETE": 0
+}

@@ -1,0 +1,36 @@
+{
+  "native_delete": 0,
+  "source_Native_started": 0,
+  "provider_calls": 0,
+  "test_oracle_not_host_authority": true,
+  "status": "PASS_ACTUAL_RESTORED_SCHEMA_COMMAND_AND_REPLAY",
+  "clone_core": "b66887314d01fbd5adb90c290f17da7803d80ca645f4252f6e272d25a22097d1",
+  "clone_network": "2ec90ebb36bc70aabb3bc757015e40903b4f9c006c17c519c9f67d2d3ac177c0",
+  "retained_volume": "dpp307-v27-restored-core02",
+  "private_dump_sha256": "95824726003ae672ff621a1211ad25aef12a8ec47a7cac3bac5f0ce05d7364bd",
+  "source_Core_readonly_fingerprint_equal": true,
+  "observer_binary_sha256": "547fc639550ed881f5015dc9b2ca4b5ffe824e11f040f682d545d4c2e4577be4",
+  "new_revocations": 2,
+  "new_NOT_SENT": 3,
+  "new_releases": 3,
+  "failure": null,
+  "closure": [
+    {
+      "cid": "d07e99fd1dbfb7f8795c6f26d7c00f59885e463a391af172eebb407f26598180",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "ad8d76c47c57c41241771fc3e6c69e8d13d82a66e78cf103366c7fe9ccb0a593",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "3fd1124adc7bc451b8b69c16d7e8d77b5914b8f67f882b1394b81618a9b179c3",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "b66887314d01fbd5adb90c290f17da7803d80ca645f4252f6e272d25a22097d1",
+      "stopped_PID0": true
+    }
+  ],
+  "source_retained_unchanged": true
+}

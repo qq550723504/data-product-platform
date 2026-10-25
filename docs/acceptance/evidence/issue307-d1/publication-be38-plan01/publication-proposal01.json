@@ -1,0 +1,208 @@
+{
+  "schema": "issue307-bounded-publication-preparation-v1",
+  "status": "BLOCKED_REQUIRES_INTEGRATED_REVIEWED_P",
+  "created_at": "2026-10-24T05:44:18.711094+00:00",
+  "repository": "qq550723504/data-product-platform",
+  "pr": 332,
+  "issue": 307,
+  "branch": "codex/issue307-post-v22-dispatch-closure",
+  "source_anchor": "be38a68ded0bd4267a2c7711b5c4bc8bd1012e60",
+  "source_tree": "e1523ec55778ecd9db370992a3174e7753419ab4",
+  "expected_remote_head": "e54967e822847e97316e703ee413ffc1298cb627",
+  "common_base": "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+  "publish_head": null,
+  "publish_authorization_request_ready": false,
+  "authorization_received": false,
+  "old_authorization_reuse": false,
+  "source_acceptance": {
+    "index_sha256": "67ea4b509fd393c3d10ee21f56ea3bc4c8f05dd821ca60b90d272462f0cd23c8",
+    "members": 91,
+    "scope": "be38 isolated-source acceptance, not integration acceptance"
+  },
+  "current_protection": {
+    "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+    "exact_pattern": "codex/issue307-post-v22-dispatch-closure",
+    "lockBranch": true,
+    "retained_critical_flags": {
+      "isAdminEnforced": true,
+      "lockAllowsFetchAndMerge": false,
+      "allowsForcePushes": false,
+      "allowsDeletions": false
+    },
+    "snapshot_path": "github-read01/snapshot.json",
+    "snapshot_sha256": "8cd5ee417ac04d082edd44f3bd621a214934aaf4ae63b66ce5358a9e45d34760",
+    "full_REST_protection_canonical_sha256": "5d0546ee5d181e57fc924155bfb7783ec4578bbd8f0189bec954496fc630b6f7",
+    "REST_protection_except_lock_branch_canonical_sha256": "77b0679be0f70f7858a864fd66c90aec78e63dbd387029919ad7a1693c6fc6ab",
+    "GraphQL_rule_except_lockBranch_canonical_sha256": "a32bef8dd9a4bf02df6bc2adf703adf118ff7c5ce828e87f6c6a4c9c8967f182"
+  },
+  "current_ci": {
+    "head": "e54967e822847e97316e703ee413ffc1298cb627",
+    "run": 39983308178,
+    "attempt": 1,
+    "event": "pull_request",
+    "jobs": 13,
+    "unresolved_review_threads": 0,
+    "observed_at": "2026-10-24T05:35:03.630055+00:00",
+    "covers_source_anchor": false,
+    "covers_future_publish_head": false
+  },
+  "blockers": [
+    {
+      "id": "B1_PUBLISHED_BASE_DIVERGENCE",
+      "classification": "BLOCKER",
+      "reason": "e549 is not an ancestor of be38; direct replacement would drop published code, evidence and runtime contract",
+      "ancestor_exit_code": 1,
+      "direct_tree_removed_files": 642,
+      "direct_tree_removed_issue307_evidence": 620,
+      "direct_tree_removed_app_files": [
+        "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection.go",
+        "apps/platform/cmd/lifecycle-fixture-reader/remaining_protection_test.go",
+        "apps/platform/cmd/lifecycle-fixture-retention/main.go",
+        "apps/platform/cmd/lifecycle-fixture-retention/main_test.go",
+        "apps/platform/cmd/lifecycle-fixture-retention/testdata/approved-proposal.json"
+      ],
+      "local_merge_preview_status": "CONFLICTED_LOCAL_MERGE_TREE_PREVIEW",
+      "local_merge_preview_conflicts": [
+        "examples/lifecycle-d1/prepare-six-candidate.py"
+      ],
+      "safe_resolution": "Keep be38 as reviewed source anchor; integrate on e549 into a new local P, resolve the one host-source conflict, retain all published artifacts, re-test/review; present the exact new P for separate publication confirmation"
+    }
+  ],
+  "runtime_contracts": {
+    "published_to_preserve": {
+      "source": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d",
+      "base_source": "71286535d2b14c5456726d0f6db0aae8879de0cf",
+      "execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
+      "profile": "candidate23/v33",
+      "not_before": "2026-10-24T10:00:00Z",
+      "not_after": "2026-10-24T10:40:00Z",
+      "archive_sha256": "5e86e36808f00f62b9e9c7eb9b6b76d0c306958f4c5118c6d9d4eb4ff00de092",
+      "archive_bytes": 6479934,
+      "archive_recipe": "GIT_ZIP_STORE_UTC_LF_V1"
+    },
+    "be38_historical_comparison_only": {
+      "source": "81a083751c01a281d42df594f6e91012255081f1",
+      "base_source": "514843da1a143fba537c1668483fe95800ddd992",
+      "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+      "profile": "candidate22/v32",
+      "not_before": "2026-10-23T10:00:00Z",
+      "not_after": "2026-10-23T10:40:00Z",
+      "archive_sha256": "aca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698",
+      "archive_bytes": 6428089,
+      "archive_recipe": "GIT_ZIP_STORE_UTC_LF_V1"
+    },
+    "runtime_build_or_change_authorized": false,
+    "old_candidate_execution_authorized": false
+  },
+  "integration_preview": {
+    "tree": "745b294391b959edf52570e08e89219fcdbc356f",
+    "commit_created": false,
+    "branch_updated": false,
+    "worktree_updated": false,
+    "is_publishable": false,
+    "published_evidence_members": 34090,
+    "published_evidence_preserved": true,
+    "retention_tool_members_preserved": true,
+    "published_R_spec_blob_preserved": true
+  },
+  "future_preconditions": [
+    "A new local publish P must exist and descend from both e549 and be38; no force push or history rewriting",
+    "All existing published evidence, retention tooling and ecf runtime specification remain intact; the prepare-six-candidate conflict is explicitly resolved and reviewed",
+    "Combined local non-delete regression and independent integration review PASS; be38-only review cannot substitute",
+    "Fresh direct human authority names the exact new P, this repository/ref/rule and the only lockBranch maintenance scope",
+    "Before unlock: fresh same remote head/rule/full protection, PR Draft/open/unmerged, Issue307 open, closed/terminal retained controls and no active old execution or schedule; use scoped successor gate, not unrelated historical PIDs",
+    "No old deletion, maintenance or scheduling grant is reused; no source/helper startup or resource allocation"
+  ],
+  "conditional_future_steps": [
+    {
+      "step": 1,
+      "operation": "Fresh read-only preflight and O_EXCL intent/source/protection evidence",
+      "expected_remote_head": "e54967e822847e97316e703ee413ffc1298cb627"
+    },
+    {
+      "step": 2,
+      "operation": "GitHub native updateBranchProtectionRule",
+      "input": {
+        "branchProtectionRuleId": "BPR_kwDOUdQLBs4FE_7b",
+        "lockBranch": false
+      },
+      "other_fields": "OMIT_FROM_MUTATION_AND_COMPARE_FULL_READBACK"
+    },
+    {
+      "step": 3,
+      "operation": "One normal fast-forward push of the separately approved new P to the exact ref",
+      "command_template": "git -c core.longpaths=true push https://github.com/qq550723504/data-product-platform.git <EXACT_NEW_P>:refs/heads/codex/issue307-post-v22-dispatch-closure",
+      "forbidden": [
+        "force",
+        "force-with-lease",
+        "Update branch",
+        "merge main",
+        "rebase",
+        "foreign ref",
+        "second unapproved P"
+      ]
+    },
+    {
+      "step": 4,
+      "operation": "Immediately verify the remote equals the approved new P and restore only lockBranch=true; keep locked while CI finishes",
+      "input": {
+        "branchProtectionRuleId": "BPR_kwDOUdQLBs4FE_7b",
+        "lockBranch": true
+      }
+    },
+    {
+      "step": 5,
+      "operation": "Verify exact new-P PR CI and final full protection/readback; append receipts without advancing the locked HEAD"
+    }
+  ],
+  "exact_new_head_ci_acceptance": {
+    "head": "MUST_BE_SEPARATELY_FIXED_NEW_P_NOT_BE38_OR_E549",
+    "checker": "execution_freeze.ready(snapshot, NEW_P, require_frozen=True)",
+    "workflow": ".github/workflows/ci.yml",
+    "event": "pull_request",
+    "repository": "qq550723504/data-product-platform",
+    "head_repository": "qq550723504/data-product-platform",
+    "pr": 332,
+    "app_id": 15368,
+    "app_slug": "github-actions",
+    "latest_matching_run_and_attempt_only": true,
+    "required_status": "completed",
+    "required_conclusion": "success",
+    "full_job_check_run_suite_membership_required": true,
+    "pagination_complete": true,
+    "baseline_job_slots": 13,
+    "new_workflow_must_retain_required_job_graph": true,
+    "no_cancelled_skipped_or_old_head_as_success": true,
+    "review": "No unresolved in-scope blocker; current baseline has 0 unresolved threads",
+    "not_main_CI": true
+  },
+  "failure_closure": [
+    "Any pre-unlock mismatch stops with branch locked; never relax a gate or amend published evidence",
+    "After unlock, any push/CI/API/disk failure stops further pushes; append raw intent/result and restore only the same approved rule lock bit where fresh identity is provable",
+    "On unknown push outcome, read actual remote head before any further action; no automatic push retry, force, rollback, reset or new-P substitution",
+    "Unknown rule/identity or unconfirmed relock stays UNCONFIRMED and requires protection-owner handling; do not claim PASS",
+    "Do not unlock again to fix failed CI; a changed P needs a new bounded proposal and new direct authority"
+  ],
+  "limits": {
+    "PR_state": "OPEN/Draft/unmerged",
+    "Issue307": "OPEN",
+    "source_started": 0,
+    "provider_calls": 0,
+    "business_object_delete": 0,
+    "retention_hold_IAM_writes": 0,
+    "new_candidate": 0,
+    "new_execution": 0,
+    "new_budget": 0,
+    "new_window": 0,
+    "new_schedule": 0,
+    "cleanup": 0,
+    "pins_released": 0,
+    "budgets_reset": 0,
+    "budgets_refunded": 0,
+    "actual_GitHub_protection_mutations": 0,
+    "actual_push": 0,
+    "actual_merge": 0
+  },
+  "no_atomic_CAS_claim": true,
+  "confirmation_scope": "Confirm the integration route and source/base bindings only; this blocked plan is not an unlock/push grant. Exact publication confirmation text is unavailable until a reviewed integrated P exists."
+}

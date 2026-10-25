@@ -1,0 +1,86 @@
+{
+  "observed_at": "2026-10-19T14:31:41.365889+00:00",
+  "run_id": 39262723502,
+  "head": "9708a54d44346906e8cff89bfbd77ec8e6ed28d1",
+  "event": "pull_request",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "classify-changes",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094910788"
+    },
+    {
+      "name": "splink-smoke",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984420"
+    },
+    {
+      "name": "gx-smoke",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984545"
+    },
+    {
+      "name": "hop-smoke",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984681"
+    },
+    {
+      "name": "web-console",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984693"
+    },
+    {
+      "name": "temporary-container-contracts (windows-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984699"
+    },
+    {
+      "name": "label-studio-smoke",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984740"
+    },
+    {
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984757"
+    },
+    {
+      "name": "go-platform",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094984998"
+    },
+    {
+      "name": "browser-contracts / web-browser-contracts",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094985808"
+    },
+    {
+      "name": "live-core / live-core-browser",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094985870"
+    },
+    {
+      "name": "demo / demo-lifecycle",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118094985970"
+    },
+    {
+      "name": "required",
+      "conclusion": "success",
+      "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39262723502/job/118099560232"
+    }
+  ],
+  "pr": {
+    "headRefOid": "9708a54d44346906e8cff89bfbd77ec8e6ed28d1",
+    "isDraft": true,
+    "number": 332,
+    "state": "OPEN",
+    "url": "https://github.com/qq550723504/data-product-platform/pull/332"
+  },
+  "issue": {
+    "number": 307,
+    "state": "OPEN"
+  },
+  "main_ci": false
+}

@@ -1,0 +1,41 @@
+{
+  "status": "PASS_LOCAL_SUBNET_AND_FREEZE_SOURCE_REGRESSIONS",
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "argv": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "test_preallocation_ci",
+        "test_retained_v26",
+        "test_freeze_six_candidate",
+        "test_six_candidate_runtime"
+      ],
+      "at": "2026-10-23T04:54:27.305336+00:00"
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "argv": [
+        "python",
+        "-X",
+        "utf8",
+        "-B",
+        "-O",
+        "-m",
+        "unittest",
+        "test_preallocation_ci",
+        "test_retained_v26",
+        "test_freeze_six_candidate",
+        "test_six_candidate_runtime"
+      ],
+      "at": "2026-10-23T04:54:29.105443+00:00"
+    }
+  ],
+  "native_delete": 0
+}

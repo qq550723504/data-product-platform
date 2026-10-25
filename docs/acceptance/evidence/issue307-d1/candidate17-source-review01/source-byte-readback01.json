@@ -1,0 +1,176 @@
+{
+  "source_head": "8cca345525af828a8c9461e75f2dc5bf5f1fb428",
+  "base": "226a94c61ba2670f4dfc33e00b9181e051e33288",
+  "files": {
+    ".gitattributes": {
+      "sha256": "e5dd8c476d75dcedb1fea749a7e026f0d6dbc5194182dae472c56b2349529a39",
+      "bytes": 17244,
+      "git_sha256": "e5dd8c476d75dcedb1fea749a7e026f0d6dbc5194182dae472c56b2349529a39",
+      "git_bytes": 17244,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "4c88404f60f0be10c226dace1c8936797e37ec7d5c43243fd2fd9638fb7ca9f6",
+      "bytes": 31073,
+      "git_sha256": "4c88404f60f0be10c226dace1c8936797e37ec7d5c43243fd2fd9638fb7ca9f6",
+      "git_bytes": 31073,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "419f1e9dd2920af80111aac6a88c814644de912ddc1f1366b7cc49c93b8946f6",
+      "bytes": 6511,
+      "git_sha256": "419f1e9dd2920af80111aac6a88c814644de912ddc1f1366b7cc49c93b8946f6",
+      "git_bytes": 6511,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": {
+      "sha256": "6f5effdcfbfcab3ce62a9c4683227cbff920895c92bf4ef00ee0da620255028f",
+      "bytes": 8683,
+      "git_sha256": "6f5effdcfbfcab3ce62a9c4683227cbff920895c92bf4ef00ee0da620255028f",
+      "git_bytes": 8683,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "sha256": "ca4280e18c59c371d087d8739ee3aafc8606ed6825749e084b1f60d66c36e461",
+      "bytes": 5508,
+      "git_sha256": "ca4280e18c59c371d087d8739ee3aafc8606ed6825749e084b1f60d66c36e461",
+      "git_bytes": 5508,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go": {
+      "sha256": "f2d6465805cfbf575aa81c9430ce5451a15b6b956692ea94aaf544cdc567af7e",
+      "bytes": 1192,
+      "git_sha256": "f2d6465805cfbf575aa81c9430ce5451a15b6b956692ea94aaf544cdc567af7e",
+      "git_bytes": 1192,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "sha256": "1dab3d36baf5fbe0669c67808953d2621eea4edca7ba5d59459f99f461ae88f2",
+      "bytes": 2366,
+      "git_sha256": "1dab3d36baf5fbe0669c67808953d2621eea4edca7ba5d59459f99f461ae88f2",
+      "git_bytes": 2366,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "docs/acceptance/issue307-d1-candidate17-source-contract.md": {
+      "sha256": "cc1a0547bda80a497f6f8e1233e4ce32a166961338b7d02bbc5759c171af24c7",
+      "bytes": 4141,
+      "git_sha256": "cc1a0547bda80a497f6f8e1233e4ce32a166961338b7d02bbc5759c171af24c7",
+      "git_bytes": 4141,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "bytes": 8053,
+      "git_sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "git_bytes": 7869,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "sha256": "11a7098bc89bc0b0ed554d414ec0838016f8b4867ba52a3803e2d04146757e3e",
+      "bytes": 23154,
+      "git_sha256": "3113644101f9d822961417b1ccbc901552b7b994cb7f4c2016c586b6ebc83d3d",
+      "git_bytes": 22927,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "0641bb5480c2443d34793dd69ea94c90c380f616caaf58b6a5b504a32bd9d279",
+      "bytes": 38921,
+      "git_sha256": "58151b5cbce279966b2bb316b901ae2f9bf245a790c0fc097bca50a89baf6dc8",
+      "git_bytes": 38489,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/remaining_sequence.py": {
+      "sha256": "0596c039e67cf386cde2b9dd0d870bd5646bb4a3e89553f849ecd70c1a429a1c",
+      "bytes": 7221,
+      "git_sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "git_bytes": 7093,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/remaining_six_window.py": {
+      "sha256": "8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494",
+      "bytes": 1978,
+      "git_sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "git_bytes": 1931,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/retained_v26.py": {
+      "sha256": "b7c973b61f8656fa5d4d730ae3fdd7cc164bc793b8842a7ca7dbf7139223d86b",
+      "bytes": 9795,
+      "git_sha256": "b7c973b61f8656fa5d4d730ae3fdd7cc164bc793b8842a7ca7dbf7139223d86b",
+      "git_bytes": 9795,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "sha256": "fda88a943c0fa5f6e8d90f7e9a9cd2c5da9a99d012d7dd1db762cc1b5db5070c",
+      "bytes": 43565,
+      "git_sha256": "d8746d98bf1007920adf476dd5aba30f47a97d7c25facd0f05bbbe398e272d0a",
+      "git_bytes": 42996,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "sha256": "38bf4952f56fa0738a85006833c27dc3b9dfc0c792b69a633cd3fc733f20ad96",
+      "bytes": 7172,
+      "git_sha256": "38bf4952f56fa0738a85006833c27dc3b9dfc0c792b69a633cd3fc733f20ad96",
+      "git_bytes": 7172,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_remaining_six_window.py": {
+      "sha256": "cc572045742504f6afda1f8462ce5557898943644b33229c5bd025dd34e8a07e",
+      "bytes": 6266,
+      "git_sha256": "cc572045742504f6afda1f8462ce5557898943644b33229c5bd025dd34e8a07e",
+      "git_bytes": 6266,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_retained_v26.py": {
+      "sha256": "4c060d5e1bb1526bf134a11b39a6d2a5fcb3f48707096f6b1cf8656682fe3321",
+      "bytes": 6447,
+      "git_sha256": "4c060d5e1bb1526bf134a11b39a6d2a5fcb3f48707096f6b1cf8656682fe3321",
+      "git_bytes": 6447,
+      "raw_equals_git": true,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "32c8da326e88c78f335ad370c3a9d7a86722e1224435d628037955c0550cea98",
+      "bytes": 15977,
+      "git_sha256": "cd9a647ef5da92c761c9ce482abdb12dbf4adc7e8726217c46a73da97cf6e97f",
+      "git_bytes": 15700,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "f29c13db8a9bb5a99d92a500b3a93c0b55178f52bb1526a9361bf6ddd1fbadd8",
+      "bytes": 16124,
+      "git_sha256": "2c3e51178565b118ca766f610fd8d0082585e36bd67e175363084a8021520e70",
+      "git_bytes": 15935,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "sha256": "40e392ea463e92dd094e2364e236e1bd4a5539864cde5bbda61a1e29a682c5d2",
+      "bytes": 12925,
+      "git_sha256": "3d9e7efd75f9e9da4070683fa79c0aecc6c006c639156835995bb3562401bd2b",
+      "git_bytes": 12772,
+      "raw_equals_git": false,
+      "normalized_lf_equals_git": true
+    }
+  },
+  "untracked_runtime_source": false,
+  "tracked_runtime_diff_empty": true
+}

@@ -1,0 +1,192 @@
+{
+  "status": "PASS_PARENT_FILE_READBACK_NOT_INDEPENDENT",
+  "groups": [
+    {
+      "group": "business-races",
+      "technical_file_calls_by_role": {
+        "maintenance-provision": {
+          "starts": 16,
+          "observations": 16
+        },
+        "maintenance-restore": {
+          "starts": 43,
+          "observations": 43
+        },
+        "maintenance-source": {
+          "starts": 43,
+          "observations": 43
+        },
+        "restore-inspect-disable": {
+          "starts": 2,
+          "observations": 2
+        },
+        "restore-inspect-enable": {
+          "starts": 4,
+          "observations": 4
+        }
+      },
+      "technical_http_statuses": {
+        "200": 76,
+        "404": 8,
+        "400": 24
+      },
+      "new_backups_sha256": {
+        "core.dump": "34c4043f8433f972418a09851fa80a7b62cb017425be675f261fe46be46916c3",
+        "globals.sql": "880d5cfc54f4ae9b36158c763568068eba11f67b2146b167e28344d8cd9b8396",
+        "native.tar": "4a8658e4240aff6d93ede2d862208a2d0ab07f57f800b9b5047b952ff3132fbe"
+      },
+      "old_fact_tables": 20,
+      "old_fact_multiset_preserved": true,
+      "trial_append_only_row_deltas": {
+        "lifecycle_fixture_copy": 0,
+        "lifecycle_copy_policy": 0,
+        "lifecycle_provider_attempt": 3,
+        "lifecycle_provider_observation": 0,
+        "lifecycle_provider_send_claim": 0,
+        "lifecycle_reader_pin": 0,
+        "lifecycle_reader_termination": 0,
+        "lifecycle_fixture_reference_release": 0,
+        "lifecycle_disposition_approval": 3,
+        "lifecycle_approval_revocation": 0,
+        "lifecycle_disposition_dispatch": 3,
+        "lifecycle_dispatch_release": 0,
+        "lifecycle_copy_absence_receipt": 0,
+        "dataset_version": 0,
+        "cost_event": 9,
+        "cost_allocation": 9,
+        "audit_event": 31,
+        "evidence": 31,
+        "evidence_relation": 31,
+        "outbox_event": 31
+      },
+      "trial_native_delete": 0,
+      "Source_Core_before_after_equal": true
+    },
+    {
+      "group": "late-hold",
+      "technical_file_calls_by_role": {
+        "maintenance-provision": {
+          "starts": 16,
+          "observations": 16
+        },
+        "maintenance-restore": {
+          "starts": 32,
+          "observations": 32
+        },
+        "maintenance-source": {
+          "starts": 32,
+          "observations": 32
+        },
+        "restore-inspect-disable": {
+          "starts": 2,
+          "observations": 2
+        },
+        "restore-inspect-enable": {
+          "starts": 4,
+          "observations": 4
+        }
+      },
+      "technical_http_statuses": {
+        "200": 52,
+        "404": 12,
+        "400": 22
+      },
+      "new_backups_sha256": {
+        "core.dump": "43af36b1533073967a764f494979eaaa4938106327ee738787887145998e568e",
+        "globals.sql": "31c14e9575be136223f20b939dee08b71bf52e9805bec8b4aa5dfe845387d75f",
+        "native.tar": "4e1d9158b9ce6267e75ea23707670cc809b5dd8900f9936af7c6e9da638bfc30"
+      },
+      "old_fact_tables": 20,
+      "old_fact_multiset_preserved": true,
+      "trial_append_only_row_deltas": {
+        "lifecycle_fixture_copy": 0,
+        "lifecycle_copy_policy": 0,
+        "lifecycle_provider_attempt": 2,
+        "lifecycle_provider_observation": 0,
+        "lifecycle_provider_send_claim": 0,
+        "lifecycle_reader_pin": 0,
+        "lifecycle_reader_termination": 0,
+        "lifecycle_fixture_reference_release": 0,
+        "lifecycle_disposition_approval": 3,
+        "lifecycle_approval_revocation": 1,
+        "lifecycle_disposition_dispatch": 2,
+        "lifecycle_dispatch_release": 0,
+        "lifecycle_copy_absence_receipt": 0,
+        "dataset_version": 0,
+        "cost_event": 12,
+        "cost_allocation": 12,
+        "audit_event": 45,
+        "evidence": 45,
+        "evidence_relation": 45,
+        "outbox_event": 45
+      },
+      "trial_native_delete": 0,
+      "Source_Core_before_after_equal": true
+    },
+    {
+      "group": "mixed",
+      "technical_file_calls_by_role": {
+        "maintenance-provision": {
+          "starts": 16,
+          "observations": 16
+        },
+        "maintenance-restore": {
+          "starts": 26,
+          "observations": 26
+        },
+        "maintenance-source": {
+          "starts": 26,
+          "observations": 26
+        },
+        "restore-inspect-disable": {
+          "starts": 2,
+          "observations": 2
+        },
+        "restore-inspect-enable": {
+          "starts": 4,
+          "observations": 4
+        }
+      },
+      "technical_http_statuses": {
+        "200": 50,
+        "404": 12,
+        "400": 12
+      },
+      "new_backups_sha256": {
+        "core.dump": "9a312dd66bfaac06c757ea9a19a877d99ffeb25ae52f37e1b51683a125c785c9",
+        "globals.sql": "ef167ad03083ffea76aa70f356e61375e7446905834c06d84cf0d428e0b9725d",
+        "native.tar": "f98c234e3a63e6ff80862ffb12da1d23f986affbd42ffb138b76178b7e1d3baf"
+      },
+      "old_fact_tables": 20,
+      "old_fact_multiset_preserved": true,
+      "trial_append_only_row_deltas": {
+        "lifecycle_fixture_copy": 0,
+        "lifecycle_copy_policy": 0,
+        "lifecycle_provider_attempt": 1,
+        "lifecycle_provider_observation": 0,
+        "lifecycle_provider_send_claim": 0,
+        "lifecycle_reader_pin": 0,
+        "lifecycle_reader_termination": 0,
+        "lifecycle_fixture_reference_release": 0,
+        "lifecycle_disposition_approval": 1,
+        "lifecycle_approval_revocation": 0,
+        "lifecycle_disposition_dispatch": 1,
+        "lifecycle_dispatch_release": 0,
+        "lifecycle_copy_absence_receipt": 0,
+        "dataset_version": 0,
+        "cost_event": 6,
+        "cost_allocation": 6,
+        "audit_event": 19,
+        "evidence": 19,
+        "evidence_relation": 19,
+        "outbox_event": 19
+      },
+      "trial_native_delete": 0,
+      "Source_Core_before_after_equal": true
+    }
+  ],
+  "technical_file_calls": 268,
+  "trial_storage_calls": "PERSISTED_IN_RETAINED_REHEARSAL_CORE; NOT_INCLUDED_IN_TECHNICAL_FILE_CALL_TOTAL",
+  "amount": "NOT_ASSESSED",
+  "native_delete": 0
+}

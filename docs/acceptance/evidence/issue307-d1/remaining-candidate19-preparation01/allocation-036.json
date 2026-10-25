@@ -1,0 +1,17 @@
+{
+  "role": "recovery-redis",
+  "group": "late-hold",
+  "cid": "a658f3337f488018c83005797ed53cd9576c28428664a57a1f1ee812e15aca83",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate19-recovery-redis",
+    "--network",
+    "e27a29ee55732447bff932d15bcb83339784089c00f03b9139232417fe1a8847",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-754ea8f0-candidate19-recovery-redis,target=/data",
+    "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "redis-server",
+    "--appendonly",
+    "yes"
+  ]
+}

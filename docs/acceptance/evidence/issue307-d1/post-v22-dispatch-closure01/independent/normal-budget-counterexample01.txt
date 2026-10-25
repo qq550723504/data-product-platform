@@ -1,0 +1,9 @@
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpknwpcpn9\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\de7c0000-778e-4a22-a81d-ec8580176622\\terminal.json"}
+{"status": "BLOCKED_OR_UNCONFIRMED", "receipt": "C:\\Users\\Henry\\AppData\\Local\\Temp\\tmpa63_rkk2\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-dispatch-audit\\9432d6b6-7b5d-4ef0-8c41-ac38fc4df821\\terminal.json"}
+
+test_preexisting_loss_or_changed_SHA_never_starts_Core (__main__.RetainedBudget.test_preexisting_loss_or_changed_SHA_never_starts_Core) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.050s
+
+OK

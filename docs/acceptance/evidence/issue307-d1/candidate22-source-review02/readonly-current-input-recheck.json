@@ -1,0 +1,29 @@
+{
+  "status": "PASS_RECHECKED_NEW_P_AND_UNCHANGED_R_HISTORICAL_INPUTS",
+  "source_head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "original_C21_public_count": 6061,
+  "current_and_original_bytes_match": true,
+  "C21_anchor_sha256": "aedf37a6544077b06aad4053c8cdece559197c0431c75ad00678024d2b47d982",
+  "archive_sha256": "aca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698",
+  "archive_bytes": 6428089,
+  "archive_members": 769,
+  "schema": {
+    "max_version": 69,
+    "migration_members": 66,
+    "protected_identity": false
+  },
+  "changed_host_inputs_vs_prior_regression": [
+    "examples/lifecycle-d1/freeze-six-candidate.py",
+    "examples/lifecycle-d1/prepare-six-candidate.py",
+    "examples/lifecycle-d1/test_preallocation_ci.py",
+    "examples/lifecycle-d1/test_receipt_bytes.py",
+    "examples/lifecycle-d1/test_retained_v26.py"
+  ],
+  "unchanged_host_input_count": 2244,
+  "current_host_input_count": 2249,
+  "old_source_report01_sha256": "d5c8203c1b93375882281888819bbefedee26d9fb3f028ed099c4830e9cbfd48",
+  "live_retained_resource_IAM": "NOT_RUN_BY_REVIEWER",
+  "native_delete": 0,
+  "provider_calls": 0
+}

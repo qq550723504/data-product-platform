@@ -1,0 +1,32 @@
+{
+  "status": "PASS_FROZEN_PRIVATE_FILE_SCOPE_AND_PERMISSION_BINDINGS",
+  "validated_packet": {
+    "status": "PASS_CURRENT_CROSS_FIELD_WINDOWS",
+    "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453",
+    "candidate_use_until": "2026-10-21T06:40:00Z",
+    "recovery_until": "2026-10-21T08:40:00Z",
+    "cases": 6,
+    "recoveries": 6,
+    "provider_io": 0,
+    "current_policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8"
+  },
+  "counts": {
+    "permissions_false": 30,
+    "operators": 15,
+    "root": 15,
+    "cases": 6,
+    "recoveries": 6,
+    "maintenance_disabled": 15,
+    "trial_disabled": 0
+  },
+  "build_owner_descriptors": 86,
+  "host_private_key_not_bound_into_any_allocated_owner": true,
+  "docker_socket_mounts": 0,
+  "budget_initialization_receipt_sha256": "13e7c7320d95076612fd00a697087c7dc01121c3ee9095c6413c00a753f3dc6d",
+  "authority_schedule_absence_receipt_sha256": "c635a1675223e970e6fac7b9c493a0b586144dd7ff8bc8f555d5c505747933d0",
+  "five_actual_policy_heads_bound": true,
+  "frozen_case_and_recovery_static_enabled_values": "Exact immutable preparation bytes; physical owners stopped and permissionsfalse. Not activated by this review.",
+  "private_profile_values_or_secrets_output": false,
+  "readiness_scope": "File-only; physical and budget live state taken from original fixed host gate and final-cold parent receipt, not operated by reviewer.",
+  "reviewer_Docker_Source_provider_enable_delete": 0
+}

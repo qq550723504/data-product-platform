@@ -1,0 +1,12 @@
+{
+  "status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+  "cases": 6,
+  "recoveries": 6,
+  "permissions_false": 30,
+  "owners_closed": 86,
+  "backup_hashes": 9,
+  "old_backups_retained": 48,
+  "budgets_empty": 3,
+  "native_delete": 0,
+  "source_provider_io": 0
+}

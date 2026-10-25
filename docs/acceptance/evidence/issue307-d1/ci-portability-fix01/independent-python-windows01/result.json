@@ -1,0 +1,350 @@
+{
+  "status": "PASS",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\ci-portability-fix01\\python-export02",
+  "collection": [
+    "test_evidence_indexes.py",
+    "test_six_native_entry.py",
+    "test_retired_resources.py",
+    "test_retired_volumes.py",
+    "test_retired_budget_bytes.py",
+    "test_successor_dependencies.py",
+    "test_retained_v26.py",
+    "test_retained_v29.py",
+    "test_retained_v30.py",
+    "test_retained_v31.py",
+    "test_retained_v32.py",
+    "test_receipt_bytes.py",
+    "test_fixture_artifacts.py",
+    "test_preallocation_ci.py",
+    "test_six_candidate_runtime.py",
+    "test_native_protection.py",
+    "test_retention_renewal.py",
+    "test_retention_maintenance.py",
+    "test_retention_composition.py",
+    "test_verify_six_native.py",
+    "test_retention_staging.py",
+    "test_execution_freeze.py",
+    "test_freeze_six_candidate.py",
+    "test_window_six_support.py",
+    "test_attest_remaining_executable.py",
+    "../temporary_containers_test.py"
+  ],
+  "results": [
+    {
+      "name": "test_evidence_indexes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:56.720910+00:00"
+    },
+    {
+      "name": "test_evidence_indexes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:56.721156+00:00"
+    },
+    {
+      "name": "test_six_native_entry-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:56.721505+00:00"
+    },
+    {
+      "name": "test_six_native_entry-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:56.721746+00:00"
+    },
+    {
+      "name": "test_retired_resources-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:57.624219+00:00"
+    },
+    {
+      "name": "test_retired_resources-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:57.631234+00:00"
+    },
+    {
+      "name": "test_retired_volumes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:58.924847+00:00"
+    },
+    {
+      "name": "test_retired_volumes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:58.925233+00:00"
+    },
+    {
+      "name": "test_retired_budget_bytes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:59.334690+00:00"
+    },
+    {
+      "name": "test_retired_budget_bytes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:59.335710+00:00"
+    },
+    {
+      "name": "test_successor_dependencies-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:59.340992+00:00"
+    },
+    {
+      "name": "test_successor_dependencies-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:59.344200+00:00"
+    },
+    {
+      "name": "test_retained_v26-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:59.536627+00:00"
+    },
+    {
+      "name": "test_retained_v26-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:50:59.536975+00:00"
+    },
+    {
+      "name": "test_retained_v29-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:00.319635+00:00"
+    },
+    {
+      "name": "test_retained_v29-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:00.320166+00:00"
+    },
+    {
+      "name": "test_retained_v30-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:03.154175+00:00"
+    },
+    {
+      "name": "test_retained_v30-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:03.164130+00:00"
+    },
+    {
+      "name": "test_retained_v31-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:13.636270+00:00"
+    },
+    {
+      "name": "test_retained_v31-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:13.687660+00:00"
+    },
+    {
+      "name": "test_retained_v32-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:21.449000+00:00"
+    },
+    {
+      "name": "test_retained_v32-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:21.554776+00:00"
+    },
+    {
+      "name": "test_receipt_bytes-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:26.775507+00:00"
+    },
+    {
+      "name": "test_receipt_bytes-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:26.787264+00:00"
+    },
+    {
+      "name": "test_fixture_artifacts-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:31.340137+00:00"
+    },
+    {
+      "name": "test_fixture_artifacts-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:31.340588+00:00"
+    },
+    {
+      "name": "test_preallocation_ci-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:39.797771+00:00"
+    },
+    {
+      "name": "test_preallocation_ci-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:39.798263+00:00"
+    },
+    {
+      "name": "test_six_candidate_runtime-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:41.317438+00:00"
+    },
+    {
+      "name": "test_six_candidate_runtime-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:41.345094+00:00"
+    },
+    {
+      "name": "test_native_protection-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:43.826947+00:00"
+    },
+    {
+      "name": "test_native_protection-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:43.830777+00:00"
+    },
+    {
+      "name": "test_retention_renewal-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:44.192365+00:00"
+    },
+    {
+      "name": "test_retention_renewal-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:44.194843+00:00"
+    },
+    {
+      "name": "test_retention_maintenance-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:44.594548+00:00"
+    },
+    {
+      "name": "test_retention_maintenance-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:44.606750+00:00"
+    },
+    {
+      "name": "test_retention_composition-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:47.711109+00:00"
+    },
+    {
+      "name": "test_retention_composition-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:51:47.721704+00:00"
+    },
+    {
+      "name": "test_verify_six_native-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:08.578780+00:00"
+    },
+    {
+      "name": "test_verify_six_native-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:08.766453+00:00"
+    },
+    {
+      "name": "test_retention_staging-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:11.284981+00:00"
+    },
+    {
+      "name": "test_retention_staging-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:11.305142+00:00"
+    },
+    {
+      "name": "test_execution_freeze-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:11.685344+00:00"
+    },
+    {
+      "name": "test_execution_freeze-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:11.709457+00:00"
+    },
+    {
+      "name": "test_freeze_six_candidate-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:12.938592+00:00"
+    },
+    {
+      "name": "test_freeze_six_candidate-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:12.961009+00:00"
+    },
+    {
+      "name": "test_window_six_support-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:13.180784+00:00"
+    },
+    {
+      "name": "test_window_six_support-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:13.181826+00:00"
+    },
+    {
+      "name": "test_attest_remaining_executable-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:15.700266+00:00"
+    },
+    {
+      "name": "test_attest_remaining_executable-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:15.705048+00:00"
+    },
+    {
+      "name": "temporary_containers_test-normal",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:15.719078+00:00"
+    },
+    {
+      "name": "temporary_containers_test-O",
+      "returncode": 0,
+      "denied": [],
+      "started_at": "2026-10-24T12:52:15.993761+00:00"
+    }
+  ],
+  "retained_source_start": 0,
+  "business_provider_io": 0
+}

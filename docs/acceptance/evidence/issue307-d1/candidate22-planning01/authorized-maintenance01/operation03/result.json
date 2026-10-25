@@ -1,0 +1,14 @@
+{
+  "status": "PASS_OWNER_AUTHORIZED_EXACT_LOCKBRANCH_ONLY_UNLOCK",
+  "at": "2026-10-23T04:33:30.986692+00:00",
+  "head": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "native_rule_retained": true,
+  "other_protection_fields": "FULL_EXACT_MATCH",
+  "CI": "OLD_HEAD_ONLY_NOT_NEW_SOURCE_CI",
+  "next": "PREPARE_NEW_SOURCE_CI_THEN_INDEPENDENT_RESOURCES_FINAL_CI_AND_RELOCK",
+  "PR332": "OPEN_DRAFT_UNMERGED",
+  "Issue307": "OPEN",
+  "native_delete": 0,
+  "delete_authorization": false
+}

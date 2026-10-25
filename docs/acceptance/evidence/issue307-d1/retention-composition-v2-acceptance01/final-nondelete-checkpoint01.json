@@ -1,0 +1,53 @@
+{
+  "status": "PASS_LOCAL_RETENTION_V2_SOURCE_AND_NONDELETE_ACCEPTANCE",
+  "at": "2026-10-24T11:14:55.673539+00:00",
+  "published_base": "f4e25a88f62da6bb14ed24da8b71b634be43f17a",
+  "runtime_source": "0446fde5985b51de7da5863b45df3f1b47b6167c",
+  "python_tests": {
+    "evidence_indexes-normal": 12,
+    "evidence_indexes-O": 12,
+    "fixture_artifacts-normal": 4,
+    "fixture_artifacts-O": 4,
+    "retention_composition-normal": 8,
+    "retention_composition-O": 8,
+    "retention_maintenance-normal": 9,
+    "retention_maintenance-O": 9,
+    "retention_renewal-normal": 4,
+    "retention_renewal-O": 4,
+    "retention_staging-normal": 2,
+    "retention_staging-O": 2,
+    "retired_budget_bytes-normal": 3,
+    "retired_budget_bytes-O": 3,
+    "successor_dependencies-normal": 16,
+    "successor_dependencies-O": 16,
+    "verify_six_native-normal": 5,
+    "verify_six_native-O": 5
+  },
+  "source_final_raw_sha256": {
+    "retention_composition.py": "b15ac3a0987f4eb121f00244ddef6cda865b068013a6b20f6e9ba790b7b96081",
+    "verify-six-native.py": "ce2a47ffd079526a1be38a6a63be378117134fa9f76bbd56272218f8b685ede8",
+    "test_retention_composition.py": "867656ec58a486d0eec2af59b6d315a15fa703bde29e487d7b270317c66e7634",
+    "test_verify_six_native.py": "31efe0d2a7cfb89870dd479202027a1c073ca690a7dd6786c20a784ae4c70cbe"
+  },
+  "actual_retained_source_start": 0,
+  "actual_retained_provider_io": 0,
+  "actual_protection_write": 0,
+  "actual_business_delete": 0,
+  "remote_mutations": 0,
+  "isolated_probe": "a3713c4afecc9a1d6a9b77c7a902ce89ffdd15f1abf9e7f1b669689d4b0aae06",
+  "isolated_probe_volumes_retained": true,
+  "source_state_comparison": "two exact target natives unchanged; no retained source start by this round",
+  "old_data_budgets_pins": "NO_MUTATIONS",
+  "new_operational_maintenance_id": "NOT_CREATED",
+  "new_operational_budget": "NOT_CREATED",
+  "new_human_authorization": "NOT_GRANTED",
+  "new_p_pr_ci": "NOT_RUN",
+  "new_p_main_ci": "NOT_APPLICABLE",
+  "historical_failures_preserved": [
+    "original acceptance01 verify-six test-double Path/Args failure",
+    "original Go strict plan binding failure before provider IO",
+    "original checker fixture used pre-extension date",
+    "independent missing dynamic reader P1",
+    "independent corrupt intent masking valid registration P1"
+  ]
+}

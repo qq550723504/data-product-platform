@@ -1,0 +1,33 @@
+{
+  "role": "six-restore-inspect-enable",
+  "group": "business-races",
+  "cid": "6b959c6b7315b1e028b02153e046ccd5d90aa9d526e4501081527ffe0dbf708b",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate17-restore-inspect-enable",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:3b306e7e4c6cd984eed1bef064d55ba323989db0c1c2858bb73fc3eae9f8ab9a",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\business-races\\restore-inspect-enable,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\business-races\\outputs\\restore-inspect-enable,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "six-restore-inspect-enable"
+  ]
+}

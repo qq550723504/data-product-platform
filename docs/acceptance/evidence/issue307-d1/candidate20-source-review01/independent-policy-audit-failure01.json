@@ -1,0 +1,7 @@
+{
+  "status": "REVIEW_DIAGNOSTIC_SCHEMA_ASSUMPTION_FAILED_NO_RUNTIME_EFFECT",
+  "at": "2026-10-22T07:09:21.037670+00:00",
+  "failure": "Diagnostic compared StringEquals version value as str; actual SDK-normalized policy files store singleton arrays. This was a review script error, not policy drift. No runtime validator or frozen policy bytes changed.",
+  "original_error": "ValueError: actual old exact target/version differs",
+  "source_provider_IO": 0
+}

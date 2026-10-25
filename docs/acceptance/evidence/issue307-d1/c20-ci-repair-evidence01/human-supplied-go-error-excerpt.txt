@@ -1,0 +1,5 @@
+Run python3 -B examples/lifecycle-d1/ci-test-fixture-runtime.py
+From https://github.com/qq550723504/data-product-platform
+ * branch 72ec972570a6f10a916ace39d90ab0c5593e8dd4 -> FETCH_HEAD
+ValueError: exact runtime archive drift
+Error: Process completed with exit code 1.

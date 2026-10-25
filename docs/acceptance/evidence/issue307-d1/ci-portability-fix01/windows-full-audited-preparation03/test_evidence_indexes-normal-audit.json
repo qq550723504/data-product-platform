@@ -1,0 +1,11 @@
+{
+  "test": "test_evidence_indexes.py",
+  "root": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform",
+  "reads": [
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-314.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/test_evidence_indexes.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

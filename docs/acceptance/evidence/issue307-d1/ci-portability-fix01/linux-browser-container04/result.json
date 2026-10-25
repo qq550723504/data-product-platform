@@ -1,0 +1,12 @@
+{
+  "status": "PASS_ISOLATED_LINUX_BROWSER_FULL_COLLECTION",
+  "cid": "6690a616a4b26dba7939ddb50d23fe7904e92b0c311fd094b2466a989bd6566b",
+  "image": "sha256:2846fabbb82948bab5f07af52d1b7675fe984197f4c1ff2c8e1612447094b77a",
+  "network": "none",
+  "ports": [],
+  "retained_mounts": [],
+  "runtime_uid": 10001,
+  "exit_code": 0,
+  "retained_source_start": 0,
+  "business_provider_io": 0
+}

@@ -1,0 +1,288 @@
+{
+  "status": "PASS_CURRENT_CLOSED_ROOT_CONTRACT_PERMISSION_READBACK",
+  "at": "2026-10-20T01:31:42.380934+00:00",
+  "actual_owner_count": 93,
+  "actual_current_allocation_owners": 86,
+  "all_actual_closed_PID0_noports_norestart": true,
+  "failures": [],
+  "actual_root_contracts": [
+    {
+      "group": "business-races",
+      "action": "check-disabled",
+      "cid": "7fb76b867c99fcfd120103c82f6ba8d82af18ea850c30fc73e1d23c8aec97f4c",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "business-races",
+      "action": "enable-read",
+      "cid": "f3c493001ba8d03f652631255acc8d5106bc751a498e873b02466e81af932a87",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "business-races",
+      "action": "enable-send",
+      "cid": "bc09b912659730ac07db08c981664c479d7a7f973b1378a3e57b16de6891b5f4",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "business-races",
+      "action": "disable-send",
+      "cid": "bfcd4878c31d9d0a4d169215457fdab6224bfe07498940749f1a0882c6f078a1",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "business-races",
+      "action": "disable-all",
+      "cid": "f2256f36f252ff78f0890c20425ffd066aae8e7495dd2c7c00a5c3599baa999f",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "late-hold",
+      "action": "check-disabled",
+      "cid": "9204f5b741abb9e64f26d7cf8b97087e990d7e50f41715366849055d1d9faba5",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "late-hold",
+      "action": "enable-read",
+      "cid": "95425439e027af8e7b550aef1ab895deef4168285493a38ea2e66131cf27b90e",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "late-hold",
+      "action": "enable-send",
+      "cid": "a5f419f807b1c24788f7fe83bb7a4de3f7a24688872da3dfd7ed76f6b640ed62",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "late-hold",
+      "action": "disable-send",
+      "cid": "f4f79a0d779bfaeab6b6af2999606ec1078dd31eda2fb478df4c5cb8c6daef78",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "late-hold",
+      "action": "disable-all",
+      "cid": "8c6744395869b8f88b430a0e92611201dc1767532a294ed74168a2e27118ed6b",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "mixed",
+      "action": "check-disabled",
+      "cid": "2621801fe9d1c8de538d005896dacca13a44c5fdf7b1da2ba408c2446c9ebd99",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "mixed",
+      "action": "enable-read",
+      "cid": "40a650971a3fe08c68552e2a9345d1b846abcde26f1305d077d914a763a25397",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "mixed",
+      "action": "enable-send",
+      "cid": "cf2b5e007a78e1c9016cf006cbe9d657cde46d9b4815984ce45cc1284369e224",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "mixed",
+      "action": "disable-send",
+      "cid": "4e84d57e71a2d271e152e2c2753e32f6671846700569040f4eaa2f99646ab25b",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    },
+    {
+      "group": "mixed",
+      "action": "disable-all",
+      "cid": "601dc6f1251ed89b15ccf7d27b55fa43aa3808d263047027002d62c186d04b22",
+      "contract": "PASS_ACTUAL_READONLY_BASE_ROOT_OWNER"
+    }
+  ],
+  "operator_root_permissions": [
+    {
+      "group": "business-races",
+      "stage": "wire",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "P2",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-P2",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "T1",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T1",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "T2",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T2",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "root-check-disabled",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "root-enable-read",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "root-enable-send",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "root-disable-send",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "business-races",
+      "stage": "root-disable-all",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "wire",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "H2",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "recover-H2",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-check-disabled",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-enable-read",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-enable-send",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-disable-send",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "root-disable-all",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "wire",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "M1A",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1A",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "M1B",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1B",
+      "sha256": "fef77254752d19615806949c9e4aac6d8ab82d3b9147c738b048795c3eb0936c",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "root-check-disabled",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "root-enable-read",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "root-enable-send",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "root-disable-send",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    },
+    {
+      "group": "mixed",
+      "stage": "root-disable-all",
+      "sha256": "04b64c17f3a8c24f3abdcf9a588616e17bc43b96109dd70f1984d3223030ed41",
+      "Enabled": false
+    }
+  ],
+  "worker_confirmation_materialized": [],
+  "raw_inspect_sha256": "bde1bfc2d768deba50abcd3faf803d0c13f12da5b1fc65c4040f0d1015637e78",
+  "raw_inspect_not_saved_no_Env_or_secret_projection": true,
+  "reviewer_Docker_action": "one inspect only",
+  "actual_Source_HTTP_start_enable_sign_delete": 0,
+  "full_old270_or_budget_reinspection": "NOT_REPEATED; retain prior independent07 and parent authorized read-only gate evidence"
+}

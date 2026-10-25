@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "source_bytes_unchanged": true,
+  "started_at": "2026-10-24T05:15:40.900438+00:00",
+  "observed_at": "2026-10-24T05:21:00.525439+00:00",
+  "source_started": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

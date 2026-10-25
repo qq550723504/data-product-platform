@@ -1,0 +1,18 @@
+{
+  "started_at_utc": "2026-10-24T09:13:35.1035008Z",
+  "finished_at_utc": "2026-10-24T09:14:04.7859887Z",
+  "command": [
+    "python",
+    "-B",
+    "examples/lifecycle-d1/ci-test-fixture-runtime.py"
+  ],
+  "env": {
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOTOOLCHAIN": "local",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit_code": 0,
+  "docker_or_wsl_invoked": false,
+  "network_package_fetch": false
+}

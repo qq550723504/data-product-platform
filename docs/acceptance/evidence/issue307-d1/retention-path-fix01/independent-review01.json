@@ -1,0 +1,14 @@
+{
+  "status": "PASS_BOUNDED_RETENTION_WINDOWS_PATH_REPAIR_REVIEW",
+  "remaining_blockers": [],
+  "provenance": {"assessment_by": "/root/c23_preparation_boundary_review", "mode": "human-authorized readonly independent agent", "serialization_by": "/root"},
+  "base_HEAD": "f2dbe4106ff5c27ff6b250091bbf9f9d79d71665",
+  "scope": "Only the two host Python files fixing Windows path identity. R ecf40e6 unchanged. No new SHA publication authority is inferred.",
+  "findings": ["Same actual directory with uppercase or real8.3 spelling was incorrectly rejected by raw-string mount comparison.", "Reuse existing unlinked_absolute: inspect original path components for symlinks/junctions before canonicalizing both bind paths.", "Raw descriptor SHA, exact CID, mount membership/type/RW and budget volume name checks remain enforced.", "Rehashed descriptors cannot admit a different directory; actual junction/symlink aliases still fail closed."],
+  "independent_tests": {"test_retention_maintenance.py": {"normal": "8 methods PASS, no skip", "optimized": "8 methods PASS, no skip", "includes": "Real Windows case/8.3 success, wrong directory and actual junction rejection, prior expansion/authority counterexamples"}, "test_evidence_indexes.py": {"normal": "12 methods:11 PASS,1 existing conditional skip", "optimized": "12 methods:11 PASS,1 existing conditional skip", "skip_reason": "Current account cannot create ordinary symlinks; actual junction rejection in the new host tests passed."}},
+  "reviewed_hashes": {
+    "examples/lifecycle-d1/retention_maintenance.py": {"raw_sha256": "542d1f9380b9498ca2a38f6617e3270139664f7a7e3c1b51e5e52cb4602d1951", "lf_sha256": "08a91f69da74fc8017cab729395cb6af4dc23b0bac05567f9ce0af0df1823902"},
+    "examples/lifecycle-d1/test_retention_maintenance.py": {"raw_sha256": "bb1c17945a3a6121977e9841c353d950f4a124813c90646a55bf0325b34083b0", "lf_sha256": "b26e37b993bfcd81c89b579612f59c5fa7a0cb4865de3710a28f9f54621cdc8d"}
+  },
+  "boundary": {"new_remote_CI": "NOT_RUN", "new_SHA_publication": "NOT_AUTHORIZED", "reviewer_edits": 0, "reviewer_Docker_GitHub_provider_calls": 0, "metadata_write": 0, "DELETE": 0, "old_failed_CI": "Original failure retained, not rewritten as PASS"}
+}

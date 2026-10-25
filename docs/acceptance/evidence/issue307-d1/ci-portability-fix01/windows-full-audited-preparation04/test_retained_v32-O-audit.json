@@ -1,0 +1,19 @@
+{
+  "test": "test_retained_v32.py",
+  "root": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform",
+  "reads": [
+    "docs/acceptance/evidence/issue307-d1/post-v27-seventeen01/plan.json",
+    "docs/acceptance/evidence/issue307-d1/post-v28-seventeen01/plan.json",
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/historical_descriptors.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/retained_v30.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/retained_v32.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/historical_descriptors.py",
+    "examples/lifecycle-d1/retained_v30.py",
+    "examples/lifecycle-d1/retained_v32.py",
+    "examples/lifecycle-d1/test_retained_v32.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

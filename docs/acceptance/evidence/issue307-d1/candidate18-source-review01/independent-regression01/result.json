@@ -1,0 +1,608 @@
+{
+  "status": "PASS_INDEPENDENT_SOURCE_ONLY_REGRESSION",
+  "source_head": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "commands": 25,
+  "results": [
+    {
+      "index": 1,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:54.582272+00:00",
+      "completed_at": "2026-10-21T09:02:54.933913+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "01.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "01.stderr.txt",
+        "sha256": "024e7008b7418ce8d6cf9fe6cbf0e09f5316be06bae3003d3bbf78d5d9033c43",
+        "bytes": 109
+      },
+      "unittest_methods": 6
+    },
+    {
+      "index": 2,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v27.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:54.934999+00:00",
+      "completed_at": "2026-10-21T09:02:55.242736+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "02.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "02.stderr.txt",
+        "sha256": "95f123a15b56b59cff8f028058f5949d1ebbfd6ec6a326a5054bee97163ec7c9",
+        "bytes": 109
+      },
+      "unittest_methods": 6
+    },
+    {
+      "index": 3,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:55.243398+00:00",
+      "completed_at": "2026-10-21T09:02:56.039254+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "03.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "03.stderr.txt",
+        "sha256": "b47e2d01983861bd7209c0031a68498c932620df1ac263521fd20c940f96f434",
+        "bytes": 117
+      },
+      "unittest_methods": 13
+    },
+    {
+      "index": 4,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_candidate_runtime.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:56.040161+00:00",
+      "completed_at": "2026-10-21T09:02:56.704156+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "04.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "04.stderr.txt",
+        "sha256": "e58f270627194bb1a477107b49ec028f8206dd8f9c2184d90991a918642ab33f",
+        "bytes": 117
+      },
+      "unittest_methods": 13
+    },
+    {
+      "index": 5,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:56.705105+00:00",
+      "completed_at": "2026-10-21T09:02:57.410123+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "05.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "05.stderr.txt",
+        "sha256": "d592b416cb292a1e048e490dd09347f474299664708bdd303bc60b3ca504ce01",
+        "bytes": 110
+      },
+      "unittest_methods": 7
+    },
+    {
+      "index": 6,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_window_six_support.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:57.410822+00:00",
+      "completed_at": "2026-10-21T09:02:58.017134+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "06.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "06.stderr.txt",
+        "sha256": "d80c4d64e0f6369ca5c902036a2dbdd55d99896fec223474c126d09f0d09ac56",
+        "bytes": 110
+      },
+      "unittest_methods": 7
+    },
+    {
+      "index": 7,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:58.017839+00:00",
+      "completed_at": "2026-10-21T09:02:58.687765+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "07.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "07.stderr.txt",
+        "sha256": "ef8e82b658b3d405f447abcd5ff650a9f64356d8b689280f8dd01627473bdd42",
+        "bytes": 108
+      },
+      "unittest_methods": 5
+    },
+    {
+      "index": 8,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_remaining_six_window.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:58.688936+00:00",
+      "completed_at": "2026-10-21T09:02:59.176299+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "08.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "08.stderr.txt",
+        "sha256": "1e3164d6c917c1e70494b090b1caf6b12996c14e410760b38cc5f4f3a29654a8",
+        "bytes": 108
+      },
+      "unittest_methods": 5
+    },
+    {
+      "index": 9,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:02:59.177130+00:00",
+      "completed_at": "2026-10-21T09:03:00.077652+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "09.stdout.txt",
+        "sha256": "eb79061cd3480608989d3ee2aad8da9ed61a358a855269e0f5fb1b01e4625cc6",
+        "bytes": 189
+      },
+      "stderr": {
+        "path": "09.stderr.txt",
+        "sha256": "c3eb5089e09344a4671b6d302d54af56df5386a56741ae05f108c51cdc80546f",
+        "bytes": 103
+      },
+      "unittest_methods": 1
+    },
+    {
+      "index": 10,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_six_candidate.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:00.078685+00:00",
+      "completed_at": "2026-10-21T09:03:00.723522+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "10.stdout.txt",
+        "sha256": "a7bcb0138be1f5b544c2f48fb39bc447db0aae34af41cc9dcdef7278a98bde96",
+        "bytes": 189
+      },
+      "stderr": {
+        "path": "10.stderr.txt",
+        "sha256": "cb59aec2415a042c6d2916d74d82ae73dfaf2dbab561a8edb77d6c3da579337f",
+        "bytes": 103
+      },
+      "unittest_methods": 1
+    },
+    {
+      "index": 11,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:00.724515+00:00",
+      "completed_at": "2026-10-21T09:03:01.149001+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "11.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "11.stderr.txt",
+        "sha256": "09ccd6bb0896e403f3f8d079ccb177f780f741ddf43018b7c02da15a86a3b1da",
+        "bytes": 108
+      },
+      "unittest_methods": 5
+    },
+    {
+      "index": 12,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retained_v26.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:01.149813+00:00",
+      "completed_at": "2026-10-21T09:03:01.546086+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "12.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "12.stderr.txt",
+        "sha256": "87d4778d3c836d369b4daed17ace833591108cdd67cb5869c09ad2ad4ba79076",
+        "bytes": 108
+      },
+      "unittest_methods": 5
+    },
+    {
+      "index": 13,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:01.546780+00:00",
+      "completed_at": "2026-10-21T09:03:02.476050+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "13.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "13.stderr.txt",
+        "sha256": "47add9fd7bb8769293bc91eb1f2e88bc91ba0ce32731f1b9e016a0b3c729d1c9",
+        "bytes": 109
+      },
+      "unittest_methods": 6
+    },
+    {
+      "index": 14,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_six_native_entry.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:02.476754+00:00",
+      "completed_at": "2026-10-21T09:03:03.310398+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "14.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "14.stderr.txt",
+        "sha256": "91a79f1c49b01d460eb05e11f7118204c8346cb6f6d06261ed63c3752d8c059c",
+        "bytes": 109
+      },
+      "unittest_methods": 6
+    },
+    {
+      "index": 15,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:03.311192+00:00",
+      "completed_at": "2026-10-21T09:03:04.012540+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "15.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "15.stderr.txt",
+        "sha256": "d287036d0a17065362200c181bc628b19c9520619b6dc2e1d536527b7369f774",
+        "bytes": 106
+      },
+      "unittest_methods": 3
+    },
+    {
+      "index": 16,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_verify_six_native.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:04.013229+00:00",
+      "completed_at": "2026-10-21T09:03:04.734547+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "16.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "16.stderr.txt",
+        "sha256": "a6a8d4a1616e2c57e5405b401378f4e3ef927d5d8379bfbce6aa26192f76d1a3",
+        "bytes": 106
+      },
+      "unittest_methods": 3
+    },
+    {
+      "index": 17,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:04.735633+00:00",
+      "completed_at": "2026-10-21T09:03:05.350981+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "17.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "17.stderr.txt",
+        "sha256": "e3984500c8cf6650bb7aba3dbd060f7112fd52151cabbf220a023a9091e4013d",
+        "bytes": 128
+      },
+      "unittest_methods": 12
+    },
+    {
+      "index": 18,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:05.351808+00:00",
+      "completed_at": "2026-10-21T09:03:05.744583+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "18.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "18.stderr.txt",
+        "sha256": "449e6ad9438f0b41bfe24d31f8214392d0de0d4c8bb80746dec145975ba522dd",
+        "bytes": 128
+      },
+      "unittest_methods": 12
+    },
+    {
+      "index": 19,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_v27_dispatch_closure.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:05.745435+00:00",
+      "completed_at": "2026-10-21T09:03:06.827950+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "19.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "19.stderr.txt",
+        "sha256": "f1122af24c75dd8df40bd75c0364169dbc93fc362d0d95ad943ece825f4ed642",
+        "bytes": 107
+      },
+      "unittest_methods": 4
+    },
+    {
+      "index": 20,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_v27_dispatch_closure.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:06.828809+00:00",
+      "completed_at": "2026-10-21T09:03:08.102939+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "20.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "20.stderr.txt",
+        "sha256": "2567f4baf1a965a673b2b7fd58832c8409566e32859c3b2033b0448a87592e28",
+        "bytes": 107
+      },
+      "unittest_methods": 4
+    },
+    {
+      "index": 21,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:08.104397+00:00",
+      "completed_at": "2026-10-21T09:03:08.489246+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "21.stdout.txt",
+        "sha256": "9228c37459c793e13fd56786aed23f553896c55f6ad6b047ed615654aa2d9a49",
+        "bytes": 479
+      },
+      "stderr": {
+        "path": "21.stderr.txt",
+        "sha256": "27f5982adc8f910ba51e5f3e9cb39776bb2866763954022c5f2db09a385de2cf",
+        "bytes": 107
+      },
+      "unittest_methods": 4
+    },
+    {
+      "index": 22,
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_post_v27_seventeen_refresh.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform",
+      "started_at": "2026-10-21T09:03:08.490365+00:00",
+      "completed_at": "2026-10-21T09:03:08.824506+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "22.stdout.txt",
+        "sha256": "9228c37459c793e13fd56786aed23f553896c55f6ad6b047ed615654aa2d9a49",
+        "bytes": 479
+      },
+      "stderr": {
+        "path": "22.stderr.txt",
+        "sha256": "ac458877bd3f133809713ea219a74c018e03f632caba26f41dd6eb120427e709",
+        "bytes": 107
+      },
+      "unittest_methods": 4
+    },
+    {
+      "index": 23,
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "./internal/lifecycle/pilot",
+        "-run",
+        "^TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17Users$",
+        "-v"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\apps\\platform",
+      "started_at": "2026-10-21T09:03:08.825252+00:00",
+      "completed_at": "2026-10-21T09:03:11.075795+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "23.stdout.txt",
+        "sha256": "b1df8715410525d7e7e8a56fdf2bc63e582d7f6df708b9935946661aa4777605",
+        "bytes": 847
+      },
+      "stderr": {
+        "path": "23.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "index": 24,
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "./cmd/lifecycle-fixture-remaining-iam",
+        "-run",
+        "^TestBootstrap(NeverExposesObjectDeletionOrUnconfirmedEnable|SelectsOnlyCurrentExactIdentityAndDormantIsNeverEnabled)$",
+        "-v"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\apps\\platform",
+      "started_at": "2026-10-21T09:03:11.077043+00:00",
+      "completed_at": "2026-10-21T09:03:13.742029+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "24.stdout.txt",
+        "sha256": "02934f42e2e5b0cb93dbca09fedc9057753d87a097d5fd6c14c6013414648b9e",
+        "bytes": 2930
+      },
+      "stderr": {
+        "path": "24.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "index": 25,
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "./cmd/lifecycle-fixture-readonly-check",
+        "-run",
+        "^TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory$",
+        "-v"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-c18\\data-product-platform\\apps\\platform",
+      "started_at": "2026-10-21T09:03:13.742731+00:00",
+      "completed_at": "2026-10-21T09:03:15.451968+00:00",
+      "exit_code": 0,
+      "stdout": {
+        "path": "25.stdout.txt",
+        "sha256": "1b12ba098ccb599b8beceae3889dfcd32d45c9b6ac4ab38b64386f281a140e14",
+        "bytes": 277
+      },
+      "stderr": {
+        "path": "25.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "normal_python_methods": 66,
+  "optimized_python_methods": 66,
+  "docker_calls": 0,
+  "database_calls": 0,
+  "provider_calls": 0,
+  "real_DELETE": 0
+}

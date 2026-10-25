@@ -1,0 +1,80 @@
+{
+  "schema": "EXACT_TWO_RETENTION_EXTENSION_PREPARATION_V1",
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "authority": "PREPARATION_DIRECTION_ONLY",
+  "failed_execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
+  "failed_candidate": "candidate23/v33",
+  "objects": [
+    {
+      "group": "business-races",
+      "copy": {
+        "ID": "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+        "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "DatasetVersionID": "6837388a-80b1-4512-8976-ce2a7bae4e85",
+        "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+        "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+        "Namespace": "dpp-lifecycle307-quarantine",
+        "Key": "fixture/control-retention.csv",
+        "ProviderVersion": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+        "ContentSHA256": "51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183",
+        "ByteSize": 55
+      },
+      "source_native_cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "expected_mode": "GOVERNANCE",
+      "expected_legal_hold": false,
+      "historical_retain_until": "2026-10-23T06:25:44Z",
+      "new_retain_until": "2026-10-24T12:40:00Z",
+      "max_mutation_attempts": 1,
+      "sdk": "minio-go/v7.PutObjectRetention",
+      "sdk_options": {
+        "VersionID": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+        "Mode": "GOVERNANCE",
+        "RetainUntilDate": "2026-10-24T12:40:00Z",
+        "GovernanceBypass": false
+      }
+    },
+    {
+      "group": "mixed",
+      "copy": {
+        "ID": "13fd8ecf-07fd-4981-b553-5ce66b67444f",
+        "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+        "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+        "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+        "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+        "Namespace": "dpp-lifecycle307-quarantine",
+        "Key": "fixture/m1-c.csv",
+        "ProviderVersion": "81a8402e-390f-4247-9d34-552df5eadeb3",
+        "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+        "ByteSize": 40
+      },
+      "source_native_cid": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "expected_mode": "GOVERNANCE",
+      "expected_legal_hold": false,
+      "historical_retain_until": "2026-10-23T06:33:33Z",
+      "new_retain_until": "2026-10-24T12:40:00Z",
+      "max_mutation_attempts": 1,
+      "sdk": "minio-go/v7.PutObjectRetention",
+      "sdk_options": {
+        "VersionID": "81a8402e-390f-4247-9d34-552df5eadeb3",
+        "Mode": "GOVERNANCE",
+        "RetainUntilDate": "2026-10-24T12:40:00Z",
+        "GovernanceBypass": false
+      }
+    }
+  ],
+  "max_total_mutation_attempts": 2,
+  "unknown_retry": false,
+  "delete": 0,
+  "content_put": 0,
+  "hold_change": 0,
+  "bypass": 0,
+  "cleanup": 0,
+  "budget_reset": 0,
+  "pin_release": 0,
+  "old_authorization_reused": false,
+  "sdk_max_retries": 1,
+  "actual_source_write": false,
+  "new_delete_candidate": "NOT_CREATED",
+  "new_delete_execution": "NOT_CREATED",
+  "next_write_entry": "NOT_IMPLEMENTED_NOT_AUTHORIZED"
+}

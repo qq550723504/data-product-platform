@@ -1,0 +1,240 @@
+{
+  "status": "RESTORED_ORIGINAL_C20_RAW_BYTES_ONLY",
+  "repairs": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/result.json",
+      "checkout_sha256": "6c4dcdc9c81258d8bb986f73748e8f14182176414fd9b8ed50a62251ed08eeec",
+      "checkout_bytes": 2191,
+      "retained_original_sha256": "bb460a8121693e931db15b959721c70a0bc86417e00553ce77ec3b5256ef1bbd",
+      "retained_original_bytes": 2307,
+      "prior_Git_blob": "9d98674aa9ff6327487e7986ef498a099007e0ab",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_attest_remaining_executable-normal.stderr.txt",
+      "checkout_sha256": "f1261ef048eee191b93f3c08271e58fa7623e745a979a184fb12f78e8b557174",
+      "checkout_bytes": 102,
+      "retained_original_sha256": "11f6f4e43296cb0302d887c7b1dabb06b6a4c794fb11292fc08af355ce7c7869",
+      "retained_original_bytes": 107,
+      "prior_Git_blob": "c8f3d25898ad4ff359417d571eb0be137f7eaa3b",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_attest_remaining_executable-optimized.stderr.txt",
+      "checkout_sha256": "ba74f42bf8dbc0f6654d80fa8c74b22c72bc1d3c273ff8d48716113cca694ef1",
+      "checkout_bytes": 102,
+      "retained_original_sha256": "fd971508c0ce998f02321dd80706ba08d75d2f604844e12eb958696f06441966",
+      "retained_original_bytes": 107,
+      "prior_Git_blob": "c41ea7465bc6b370784b7b2e1029cf8961fd897e",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_execution_freeze-normal.stderr.txt",
+      "checkout_sha256": "e19ce96e230135e0a94f706b571725399d1dc35e7d60cf3a9638b25d9e07678b",
+      "checkout_bytes": 112,
+      "retained_original_sha256": "7c17b5fb97806c8ee82e7fbd252299d24eed4fcf0d15db8e466c65b7bfffe262",
+      "retained_original_bytes": 117,
+      "prior_Git_blob": "d0842f8d0be2eac1b72538ff305c7852b24e35f1",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_execution_freeze-optimized.stderr.txt",
+      "checkout_sha256": "112989280a1fdcefa4454d2090ad0c93183934d1c77a4d410fef9cebcccbf27e",
+      "checkout_bytes": 112,
+      "retained_original_sha256": "a44844aa67d3ba06e68204ce422351f7204b79cf71c14f9e5831edab0570d4fd",
+      "retained_original_bytes": 117,
+      "prior_Git_blob": "09632acd25f1e942a6f7062f901b9fe833ff2c07",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_freeze_six_candidate-normal.stderr.txt",
+      "checkout_sha256": "63cd093cf8e72e545cf868eabb03be56b8ecf75e5d884cc393b6892bf0365253",
+      "checkout_bytes": 98,
+      "retained_original_sha256": "5298e2e3fbc1b5e5d757229802243108004f6950317d5c9b12e1344f37bfe17e",
+      "retained_original_bytes": 103,
+      "prior_Git_blob": "441e0bc7268dac3f49357ca390933ebb7c18b891",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_freeze_six_candidate-normal.stdout.txt",
+      "checkout_sha256": "3459cad839585a4f2a0a9339e446c62fd659e70fdd3b5fd3132a3801acf39e4b",
+      "checkout_bytes": 188,
+      "retained_original_sha256": "b321ce72946bd4414b09cebc60756d6c739b5027787c92cd2068a3ee1edcadd1",
+      "retained_original_bytes": 189,
+      "prior_Git_blob": "dc0cc991c1c178bd2e2328878b93517666cc0fd5",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_freeze_six_candidate-optimized.stderr.txt",
+      "checkout_sha256": "11214fca7bb4efc32e36933e202cb89b1af9f34004f3eb0773853b9c8a54e15d",
+      "checkout_bytes": 98,
+      "retained_original_sha256": "6cfe252a48fa1cf65704842d260c8575478c4616edf09a2872e90182fd128a70",
+      "retained_original_bytes": 103,
+      "prior_Git_blob": "9148fc0caad5ff20ee853263f04ef57c49d49a48",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_freeze_six_candidate-optimized.stdout.txt",
+      "checkout_sha256": "7a6684b7c4e21c9decf52380b9dab5338445e9fc5eabebf8c751ecfdc06a7368",
+      "checkout_bytes": 188,
+      "retained_original_sha256": "80747c4f1be34ba873403a85fbac85e248d7a16ee76489a702c2a6bb92d09ce7",
+      "retained_original_bytes": 189,
+      "prior_Git_blob": "1f98a2db676acf17b6a2f5579286d98a6ce3e86c",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_remaining_six_window-normal.stderr.txt",
+      "checkout_sha256": "435a21552adc53e0f0d964c763b4d11480fe1c36b9d7c5c063b9e15db325b57a",
+      "checkout_bytes": 103,
+      "retained_original_sha256": "c37a43a464ec45cae4e0791f06c8d2deb890f5f3f927586e68ed1cb85493b1d8",
+      "retained_original_bytes": 108,
+      "prior_Git_blob": "48048a8aa0a39838010852d1b21318db26e71ec0",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_remaining_six_window-optimized.stderr.txt",
+      "checkout_sha256": "a8f4d5048fc0a13ec7c50055fcd3992152631bf6453c7018544f22a2e122deca",
+      "checkout_bytes": 103,
+      "retained_original_sha256": "3f0a1f1a087af45232662401c3da4b1a40ed8fdf98f416100097a3588e1edf9d",
+      "retained_original_bytes": 108,
+      "prior_Git_blob": "b9d3926770e7b0a44652866e09d9840258d53c4a",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_retained_v26-normal.stderr.txt",
+      "checkout_sha256": "8161c6a4218b3cfa80cd89705f36d21d7a0d579fdbd6e19e455a43f0b6a22926",
+      "checkout_bytes": 103,
+      "retained_original_sha256": "e7989f74da7d011efd14ab92ea0fa8444ad889d082c5cf2d26faba6dd9ae47d1",
+      "retained_original_bytes": 108,
+      "prior_Git_blob": "b7fbcf4d889d6e806a64293c45d4f4d1230004fc",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_retained_v26-optimized.stderr.txt",
+      "checkout_sha256": "34db93821c7a82ed53b76975453600123fe21eead84cf6347ad21fe25f009fd6",
+      "checkout_bytes": 103,
+      "retained_original_sha256": "b6ccbd0556f2048aad88379204b74ddf7c57b4ef812c652d542bef6af6271d54",
+      "retained_original_bytes": 108,
+      "prior_Git_blob": "77898eef38e65dc0b040465c4833d4c869a170f0",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_retained_v27-normal.stderr.txt",
+      "checkout_sha256": "1aa59be93e8debbd3583b155f22b05a8a8b5bd29acec323c963271d09788645f",
+      "checkout_bytes": 104,
+      "retained_original_sha256": "d291caab13e5e43865c8adea2bb57f0e23933c2d684a1e1f5fd505c5bf80178d",
+      "retained_original_bytes": 109,
+      "prior_Git_blob": "f3d30f998574fb59b3030c58080cfeb1798ff607",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_retained_v27-optimized.stderr.txt",
+      "checkout_sha256": "52ebaa49acbc5865a9d84b3cdb6692eb073808b6a4bdcecd7e8f8924485c366d",
+      "checkout_bytes": 104,
+      "retained_original_sha256": "5436912b86d27e0e35f390d04bf1a9e6c7e748bb0f9c5ab9abd59f277a1d99f6",
+      "retained_original_bytes": 109,
+      "prior_Git_blob": "d5719df35da70a9efd160cd35db7709efa8414a7",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_retained_v29-normal.stderr.txt",
+      "checkout_sha256": "08d4598105f26a23ceb371bdf62fe776d83b1085d2abc39530e76478e4bde415",
+      "checkout_bytes": 102,
+      "retained_original_sha256": "42d5f5fb8f29a0d3f1d77e1b35268eed4029fee175d65074f71f19b6f1e85ef4",
+      "retained_original_bytes": 107,
+      "prior_Git_blob": "3cd09072d478c82c8bbe3b1f5ffce9365a5a9a1e",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_retained_v29-optimized.stderr.txt",
+      "checkout_sha256": "004fe5204a42d3e46d8c743e57e2015ae8afa6844c04e3d7d28a3652faffff6b",
+      "checkout_bytes": 102,
+      "retained_original_sha256": "4839ae0586b42eb3d755cd5b0b83c74012df5e82657ebfea8ff347ac2c45299d",
+      "retained_original_bytes": 107,
+      "prior_Git_blob": "ab28e1a5b074a34e4a5e86d20c16b520346228c3",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_six_candidate_runtime-normal.stderr.txt",
+      "checkout_sha256": "ea5e88f60e1d98742bc64461c96e42d075d3fe971aa4f00469c001bd3cdaa894",
+      "checkout_bytes": 112,
+      "retained_original_sha256": "679c3b9f9bbd17b62c9f822735ac58c8699b19091872654c0fcb222b35e8efa5",
+      "retained_original_bytes": 117,
+      "prior_Git_blob": "7a5b4c3328c7ebd184be6e737aca84cc1977b178",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_six_candidate_runtime-optimized.stderr.txt",
+      "checkout_sha256": "54029e1b93bea39dd86a7ac2b53441083bb0d7ca69f20b39e5194618f0e0a696",
+      "checkout_bytes": 112,
+      "retained_original_sha256": "dbbdd00b7b66ac037e1a492c0af93c2d2b380e7129a204a656b762cab284f92e",
+      "retained_original_bytes": 117,
+      "prior_Git_blob": "efa4821f5867445411b1484a0a66f32136abe41c",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_six_native_entry-normal.stderr.txt",
+      "checkout_sha256": "37e2394ed52710c28beefc7f6530a657f123484544119a18d91d58bd899ec61f",
+      "checkout_bytes": 106,
+      "retained_original_sha256": "5d895faf95d1d1901be3295fda13a13ba691403d08a2ba4b9024c7fd06d1db3e",
+      "retained_original_bytes": 111,
+      "prior_Git_blob": "b1fc9fd17d78aa273c565c4999d1c14d48fb6610",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_six_native_entry-optimized.stderr.txt",
+      "checkout_sha256": "64e46dc7c5ce53c86658a4cb7e15e934662ee470a28e0b25c183c244d063b41e",
+      "checkout_bytes": 106,
+      "retained_original_sha256": "201d3bc67419f56e206dcf61b8b9dfb554cd862c8e3be3d0bb1837ceb8847286",
+      "retained_original_bytes": 111,
+      "prior_Git_blob": "bbdf879016235a7353ea125cecd8f351f4350122",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_verify_six_native-normal.stderr.txt",
+      "checkout_sha256": "2731dfa59ea5d4a6425da4c9ab3651f993f36ea73dabbeeb276840cc64090a88",
+      "checkout_bytes": 101,
+      "retained_original_sha256": "06e54e3c07c7f4264e697691c1aba8bebce747bee6a1aa2c6f4be69086a14bd8",
+      "retained_original_bytes": 106,
+      "prior_Git_blob": "2259e4f0aa899fc003c8807715ef7baf754ceaed",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_verify_six_native-optimized.stderr.txt",
+      "checkout_sha256": "b878c5c1556275cf3897d481b732981c90b89e119e20b44067dab34841bc70aa",
+      "checkout_bytes": 101,
+      "retained_original_sha256": "15a8ef82a2ab2a8a9c64049f89ee0c31a2f01f44108c5d7f1fa9415058d23548",
+      "retained_original_bytes": 106,
+      "prior_Git_blob": "462272bc2e807085d3c3f5f527cefadd8ae772b2",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_window_six_support-normal.stderr.txt",
+      "checkout_sha256": "f42038699adc70be84c0d7e000c33deeb988281139dfc4c470f7e109bd38aedb",
+      "checkout_bytes": 105,
+      "retained_original_sha256": "56addd4e4770276f16294e0080d53bbae8aca7271c7a2be47bc05a6caedba3a8",
+      "retained_original_bytes": 110,
+      "prior_Git_blob": "90d8a3dc2a7e9bcb9cc5a95b0f0b6bcceb390978",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-regression01/test_window_six_support-optimized.stderr.txt",
+      "checkout_sha256": "fd28dd67a3b5ce8965de4d6953e87e3029e8c3c2853f7cb9e2950f3509ab6d46",
+      "checkout_bytes": 105,
+      "retained_original_sha256": "981551cb77426d9b70101d57c0f1bdb1191b2f5e2df63a8922b6699818db8487",
+      "retained_original_bytes": 110,
+      "prior_Git_blob": "ae4430ed584136d15c13089fd92c12ac905a60a3",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/source-wiring01.json",
+      "checkout_sha256": "22770a6d0bd7a2fe75edbf590e8a8a6a5424d1cb2b2f666739e54d6759a59455",
+      "checkout_bytes": 2258,
+      "retained_original_sha256": "9a17b1709d4732d56a75f3a52e688b8f4ebacb1678632c5e9ec5de6027b9f148",
+      "retained_original_bytes": 2306,
+      "prior_Git_blob": "eafceaf04e12ddfac0ccdb7c896f9194c91fe178",
+      "reason": "restore original retained raw bytes; previous Git checkout normalized line endings; existing original unchanged"
+    }
+  ],
+  "old_checkout_modified": false
+}

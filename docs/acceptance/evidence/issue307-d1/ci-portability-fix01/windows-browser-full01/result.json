@@ -1,0 +1,16 @@
+{
+  "started_at": "2026-10-24T12:35:48.314039+00:00",
+  "finished_at": "2026-10-24T12:37:13.467631+00:00",
+  "command": [
+    "node",
+    "node_modules/playwright/cli.js",
+    "test",
+    "--retries=0",
+    "--output=C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/windows-browser-full01/test-results"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

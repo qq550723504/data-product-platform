@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "go",
+    "test",
+    "./cmd/lifecycle-fixture-reader",
+    "./internal/platform/storage",
+    "./internal/lifecycle/pilot"
+  ],
+  "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-protect\\apps\\platform",
+  "exit": 0,
+  "native_source_calls": 0,
+  "delete": 0,
+  "at": "2026-10-23T13:18:22.438561+00:00"
+}

@@ -1,0 +1,85 @@
+{
+  "scope": "local models only; no retained native/PG/IAM operations",
+  "runs": [
+    {
+      "module": "test_remaining_sequence",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_remaining_sequence",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_remaining_six_window",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_remaining_six_window",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_six_candidate_runtime",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_six_candidate_runtime",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_six_candidate",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_six_candidate",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_window_six_support",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_window_six_support",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_remaining_window",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_remaining_window",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_remaining_executable",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_freeze_remaining_executable",
+      "optimized": true,
+      "exit_code": 0
+    },
+    {
+      "module": "test_complete_remaining_preflight",
+      "optimized": false,
+      "exit_code": 0
+    },
+    {
+      "module": "test_complete_remaining_preflight",
+      "optimized": true,
+      "exit_code": 0
+    }
+  ]
+}

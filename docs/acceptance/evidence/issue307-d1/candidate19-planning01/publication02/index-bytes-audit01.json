@@ -1,0 +1,26 @@
+{
+  "status": "PASS_STAGED_EVIDENCE_RAW_EQUALS_GIT_BLOB",
+  "files": 2693,
+  "failures": [],
+  "scope": [
+    "docs/acceptance/evidence/issue307-d1/post-v28-core-audit01",
+    "docs/acceptance/evidence/issue307-d1/post-v28-restored-core01",
+    "docs/acceptance/evidence/issue307-d1/post-v28-restored-core02",
+    "docs/acceptance/evidence/issue307-d1/post-v28-restored-core03",
+    "docs/acceptance/evidence/issue307-d1/post-v28-business-closure01",
+    "docs/acceptance/evidence/issue307-d1/post-v28-seventeen01",
+    "docs/acceptance/evidence/issue307-d1/candidate19-planning01",
+    "docs/acceptance/evidence/issue307-d1/candidate19-source-review01",
+    "docs/acceptance/evidence/issue307-d1/candidate19-review01",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate19-freeze-failure01",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate19-preparation01",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate19",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate19-readonly01",
+    "docs/acceptance/issue307-d1-candidate19-confirmation.md",
+    "docs/acceptance/issue307-d1-v29-window-runbook.md",
+    "docs/acceptance/issue307-d1-v29-preparation.md"
+  ],
+  "self_excluded": true,
+  "runtime_raw_LF_Git_ZIP_semantics_separate": true,
+  "native_delete": 0
+}

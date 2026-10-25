@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "docker",
+    "volume",
+    "inspect",
+    "dpp-lifecycle307-754ea8f0-candidate20-objects"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T04:20:38.778359+00:00",
+  "stdout_sha256": "cfcb7605fdadb83b7b8d75fdeab427fa1c687e9ec6c6a4237c13cb94084af6a4",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

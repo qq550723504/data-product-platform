@@ -1,0 +1,39 @@
+{
+  "groups": [
+    {
+      "group": "business-races",
+      "wire_helper": "3b4df37bf3e08f030015a508203ade50d6d374058d74ab6ac16cb548a23e4823",
+      "volume": "dpp-lifecycle307-808a6960-candidate13-budget",
+      "uid": 10001,
+      "gid": 10001,
+      "mode": "0o755",
+      "members": 1,
+      "files": 0,
+      "archive_sha256": "6394dd7e1a436cccf09a106c054ed6a0ae40f9f8a0712e131c54762fbc2b0cc8"
+    },
+    {
+      "group": "late-hold",
+      "wire_helper": "dd929ecbf4c6a12bd9bf450af605989047883b7c1113091df255222e1a7db381",
+      "volume": "dpp-lifecycle307-754ea8f0-candidate13-budget",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "members": 1,
+      "files": 0,
+      "archive_sha256": "d1e1cb4cd7ef901796b94dbc6c16911ed4cec74a9f3f80a45c68b26f529532dc"
+    },
+    {
+      "group": "mixed",
+      "wire_helper": "ba3d2b0d4d32fc427316c1ef21fdc6a0ccdc25a3cf87a198701d64e9489a1d34",
+      "volume": "dpp-lifecycle307-dfda43b4-candidate13-budget",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "members": 1,
+      "files": 0,
+      "archive_sha256": "c55f7fd8287aa9c64de4982b74022a27a6df2118fab0c4794dacd380b1e8446e"
+    }
+  ],
+  "source_provider_io": 0,
+  "native_delete": 0
+}

@@ -1,0 +1,43 @@
+{
+  "status": "PASS_FRESH_EXACT_HEAD_PR_CI_THREADS_DRAFT_OPEN_AND_ACTUAL_AUTHORIZATION",
+  "at": "2026-10-21T14:02:13.707192+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "run": 39577806574,
+  "event": "pull_request",
+  "jobs": 13,
+  "unresolved_threads": 0,
+  "PR332": "DRAFT_OPEN_UNMERGED",
+  "Issue307": "OPEN",
+  "approved_reference_artifacts": 1062,
+  "actual_authorization_sha256": "0c9abefaade12fd59095f0a269ef052c8474e4692ae76b7a4982630ed81c9f21",
+  "main_ci": "NOT_CLAIMED",
+  "source_start": 0,
+  "native_delete": 0,
+  "read_times": {
+    "pr": {
+      "started_at": "2026-10-21T14:02:11.401483+00:00",
+      "finished_at": "2026-10-21T14:02:12.868481+00:00"
+    },
+    "issue": {
+      "started_at": "2026-10-21T14:02:11.401719+00:00",
+      "finished_at": "2026-10-21T14:02:12.410902+00:00"
+    },
+    "run": {
+      "started_at": "2026-10-21T14:02:11.402021+00:00",
+      "finished_at": "2026-10-21T14:02:12.819887+00:00"
+    },
+    "jobs": {
+      "started_at": "2026-10-21T14:02:11.402256+00:00",
+      "finished_at": "2026-10-21T14:02:13.706652+00:00"
+    },
+    "checks": {
+      "started_at": "2026-10-21T14:02:11.402675+00:00",
+      "finished_at": "2026-10-21T14:02:12.646069+00:00"
+    },
+    "threads": {
+      "started_at": "2026-10-21T14:02:11.402862+00:00",
+      "finished_at": "2026-10-21T14:02:12.384014+00:00"
+    }
+  }
+}

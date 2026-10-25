@@ -1,0 +1,108 @@
+{
+  "status": "PASS_BOUNDED_C20_SOURCE_PREPARATION_REVIEW",
+  "at": "2026-10-22T07:11:58.158882+00:00",
+  "source_head": "955e98a2338b7d22a0686866683fb4413bf8dcdd",
+  "execution": "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6",
+  "profile": "candidate20/v30",
+  "remaining_blockers": [],
+  "merge_contract": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/merge-contract.md",
+  "scope": "Independent source/preparation-wiring review. Does not accept native source/restore preparation, candidate freeze, final PR CI/branch lock, DELETE or scheduling authority.",
+  "reviewed_invariants": [
+    "New execution/profile and UTC10:00<=now<10:40 fixed window are compiled from one contract; readonly RecoveryEnd is UTC12:40. Six exact targets remain P2/T1/T2/H2A/M1A/M1B, P1 excluded, eleven survivors preserved.",
+    "Historical v29 is read-only and terminal: original FAILED_PR_HEAD_DRIFT_PHYSICALLY_SEALED_NO_DELETE and UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START are preserved; no old authorization is adopted.",
+    "retained_v29 pins terminal/readback/allocation/descriptor/124-member index hashes, checks 924 original approved references and private original authorization hashes, 30 false permissions, six revoked cases/recoveries and sealed gateways.",
+    "Historical gate reads fixed 820 closed CIDs, v29 topology descriptors, budget ownership/nonces and full mount membership; old 24 budget tar hashes and 57 backup hashes remain exact. New generation is never discovered into the old set.",
+    "Current six identities are new execution-owned users. Retained C19 six identities retain the actual DeleteObject+DeleteObjectVersion exact-version pair, earlier disabled generations retain Version-only; root preparation never rewrites those policies.",
+    "New budget/restore/queue volumes and owner labels use independent candidate20 allocation identity; restore subnet selection starts 218/219/220 with existing overlap rejection, never network reuse or old budget reset.",
+    "Full current source Core baseline is checked before PROVISION; source Core before/after must match. Preparation only provisions disabled current identities and reads source native. Business Commands remain confined to independent rehearsal Core, separate from clean restore and source.",
+    "Existing reviewed execution_freeze guard remains in complete entry, Host.check/H1 and attester. Final static commit and exact PR CI precede a new native root branch lock and separately SHA-bound new authorization. No automatic unlock, old-grant reuse or scheduling exists in this source step."
+  ],
+  "independent_regression": {
+    "Python_commands": 22,
+    "method_counts": {
+      "normal": 68,
+      "optimized": 68
+    },
+    "all_pass": true,
+    "skipped": 0,
+    "inputs_before_after_identical": true,
+    "python_receipt": "independent-python-regression01.json",
+    "Go_unit_tests": 3,
+    "Go_receipt": "independent-go-regression01.json",
+    "Go_filter": "^(TestRemaining|TestCurrentPolicyCheckpoint)",
+    "Go_network": "GOPROXY=off",
+    "native_integration_tests": "NOT_RUN_BY_FILTER"
+  },
+  "actual_policy_file_witness": {
+    "receipt": "independent-retained-policy-readback02.json",
+    "files": 6,
+    "C19": "three actual frozen delete policies have both actions with exact target/version conditions",
+    "C18": "three actual frozen delete policies remain Version-only",
+    "comparison": "Raw bytes match retained IAM policy-file hashes; official ParseConfig/IsAllowed behavior covered by Go tests. No live IAM query.",
+    "diagnostic_failure_preserved": "independent-policy-audit-failure01.json",
+    "diagnostic_resolution": "Read-only diagnostic recognized SDK-normalized singleton arrays rather than assuming scalar condition strings. No production or frozen file changed."
+  },
+  "actual_preallocation_receipt_review": {
+    "receipt": "docs/acceptance/evidence/issue307-d1/candidate20-planning01/preallocation-retention01/retained.json",
+    "status": "PASS_RETAINED_820_CLOSED",
+    "known_closed_CIDs": 820,
+    "budgets": 24,
+    "backups": 57,
+    "original_receipts": 124,
+    "historical_IAM": "UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START",
+    "new_allocations": 0,
+    "source": "Author actual readonly receipt reviewed as files; independent reviewer did not repeat Docker/runtime access."
+  },
+  "prerequisite_repair": {
+    "head": "22337ded634a87e7e761082a08b0a3635a3c2e4a",
+    "CI_run": 39736086917,
+    "event": "pull_request",
+    "jobs": 13,
+    "unresolved_threads": 0,
+    "receipt": "docs/acceptance/evidence/issue307-d1/execution-freeze-review01/publication01/checkpoint.json",
+    "meaning": "Bounded root repair publication fact, not candidate20 final HEAD CI or its execution lock."
+  },
+  "not_run_or_authorized": {
+    "candidate20_allocation": "NOT_RUN_AT_REVIEW",
+    "candidate20_native_source_restore": "NOT_RUN",
+    "candidate20_freeze": "NOT_RUN",
+    "candidate20_final_PR_CI": "NOT_RUN",
+    "candidate20_native_root_branch_lock": "NOT_RUN",
+    "authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "real_DELETE": "NOT_AUTHORIZED"
+  },
+  "selected_window": {
+    "not_before": "2026-10-22T10:00:00Z",
+    "not_after_exclusive": "2026-10-22T10:40:00Z",
+    "recovery_end": "2026-10-22T12:40:00Z",
+    "Singapore": "2026-10-22 18:00-18:40",
+    "window_selection_is_DELETE_authorization": false
+  },
+  "reviewed_inputs": {
+    "path": "independent-reviewed-inputs01.json",
+    "sha256": "35eb9fa5615c0010e6460ead1dd9d9ed9d1decc5e2facc4902527b72ec6003bb",
+    "bytes": 17153,
+    "count": 78
+  },
+  "reviewer_effects": {
+    "source_Docker_provider_IO": 0,
+    "source_start": 0,
+    "allocate": 0,
+    "IAM_enable": 0,
+    "DELETE": 0,
+    "budget_reset": 0,
+    "pin_release": 0,
+    "schedule": 0,
+    "GitHub_mutation": 0,
+    "source_modification": 0
+  },
+  "project_status_constraints": {
+    "PR332": "OPEN_DRAFT_UNMERGED",
+    "Issue307": "OPEN",
+    "old_authorization_reused": false,
+    "cleanup": 0,
+    "hold_release": 0,
+    "bypass": 0
+  }
+}

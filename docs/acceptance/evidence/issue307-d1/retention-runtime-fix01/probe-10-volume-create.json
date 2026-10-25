@@ -1,0 +1,13 @@
+{
+  "command": [
+    "docker",
+    "volume",
+    "create",
+    "--label",
+    "dpp.retention-maintenance=preparation-only",
+    "d1-retention-probe-output-4b5c79dde33b"
+  ],
+  "started_at": "2026-10-24T08:40:01.430447+00:00",
+  "finished_at": "2026-10-24T08:40:01.485930+00:00",
+  "returncode": 0
+}

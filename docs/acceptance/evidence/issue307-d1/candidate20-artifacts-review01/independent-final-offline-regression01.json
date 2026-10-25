@@ -1,0 +1,68 @@
+{
+  "at": "2026-10-22T08:00:05.703281+00:00",
+  "status": "PASS_INDEPENDENT_FINAL_DUAL_ARTIFACT_UNIT_CONTRACTS",
+  "source_head": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "scope": "Pure offline unit tests; no Docker/PG/provider calls. Native schema test explicitly excluded.",
+  "results": [
+    {
+      "name": "R-pilot",
+      "args": [
+        "go",
+        "test",
+        "./internal/lifecycle/pilot",
+        "-run",
+        "TestRemaining(FixtureSchemaSingleContract|Retained|DeletePolicy)",
+        "-count=1",
+        "-v"
+      ],
+      "exit": 0,
+      "source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+      "stdout_sha256": "f3853c318c002d3dfd64ba025086c93a1299542521912e1d16db06d09684bdff",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed_methods": 6
+    },
+    {
+      "name": "R-readonly-check",
+      "args": [
+        "go",
+        "test",
+        "./cmd/lifecycle-fixture-readonly-check",
+        "-count=1",
+        "-v"
+      ],
+      "exit": 0,
+      "source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+      "stdout_sha256": "d46559c896e5e9c594c8e81074465f437fe67292299f891323b90d8d051b12d6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed_methods": 84
+    },
+    {
+      "name": "P-artifacts-normal",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "exit": 0,
+      "source": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "25806a4c4d01bb5f40436eb2080c23a1ef3cce26012e17115753a8ac89eb64a8",
+      "methods": 3
+    },
+    {
+      "name": "P-artifacts-optimized",
+      "args": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_fixture_artifacts.py"
+      ],
+      "exit": 0,
+      "source": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ac1ab6b56fef5f4fe6ab45b26141cdd655f6a3aa46f99e8ac954ee5ae793bd2c",
+      "methods": 3
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "status": "PASS_OFFLINE_FROZEN_HEAD_TESTS",
+  "at": "2026-10-19T13:42:29.820552+00:00",
+  "source_head": "198cfbd474dda69c31c3f77c5ec1460d34bb8586",
+  "records": [
+    {
+      "scope": "Go",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-json",
+        "-overlay",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\go-final-overlay02.json",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-readonly-check"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "final-Go01-stdout.txt",
+          "sha256": "d556566b8bb55613493097a409fce06f64197344d63042a69217b86838dd540e",
+          "bytes": 134996
+        },
+        "stderr": {
+          "file": "final-Go01-stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "test_pass_events": 116,
+      "package_pass_events": 2,
+      "fail_events": 0,
+      "skip_events": 0
+    },
+    {
+      "scope": "host-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\run_final_host_guarded01.py"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "final-host-normal01-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "final-host-normal01-stderr.txt",
+          "sha256": "69f3ffc35f8125fc48b483c8f5fbfd6c4d833b32682981ebc39cb64b0e29ba09",
+          "bytes": 653
+        }
+      }
+    },
+    {
+      "scope": "host-optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\run_final_host_guarded01.py"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "final-host-optimized01-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "final-host-optimized01-stderr.txt",
+          "sha256": "42aa800887fc704560f321f62e75a6bb9df950c137105985696e549c6ea6e96f",
+          "bytes": 653
+        }
+      }
+    }
+  ],
+  "Python_global_unmodeled_subprocess_and_Popen_denied": true,
+  "Docker_provider_native_Core": 0
+}

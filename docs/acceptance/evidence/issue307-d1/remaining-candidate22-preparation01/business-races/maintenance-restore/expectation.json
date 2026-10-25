@@ -1,0 +1,16 @@
+{
+  "audit_id": "bbdc4bee-e70a-4e9f-98a1-0c6a743d5931",
+  "profile_sha256": "7beb7e20518363d932c15ce8f36a06cb03eaefded2b3704f01a90482d890518f",
+  "binary_sha256": "a192d8da28645d425273028bec49214063dcc680acd6caaa0fa0b794ca7d8c5a",
+  "candidate_sha256": "9aec8f6445021a3671b735de27637bf7dff8b99f6b103a2f31bc94688f27ee21",
+  "frozen_inventory_sha256": "6330308dafa1d377ed8dda5a4f869cd5d5df21583fa334f3493e739a112e8001",
+  "present_inventory_sha256": "8536a4828f6bb6699e952adf90b37bcc66d714b6018f3738cc513aa43da672fd",
+  "core": "fa001a060a120a82cd7a21a2b2f3fcc2d480f0a2907a63fcb2d82d46985a7159",
+  "native": "2326e46a16da7530a6ba04b050a8fb05ed6108778edd7b51f55a30585667faf7",
+  "network": "ea6d5538c2e14a07078257ebc43df773e745850f7b6750d3cf61f028d65e0590",
+  "not_before": "2026-10-23T05:43:38Z",
+  "expires_at": "2026-10-23T06:33:38Z",
+  "Execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "Profile": "candidate22/v32",
+  "Role": "RESTORE"
+}

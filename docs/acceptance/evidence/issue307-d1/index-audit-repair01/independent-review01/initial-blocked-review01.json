@@ -1,0 +1,134 @@
+{
+  "status": "BLOCKED_BOUNDED_INITIAL_REVIEW",
+  "source_head": "d049d004fe8269190b64e2cd02634bf637f90fdd",
+  "publication_head": "1944bfbea88f3306d879e0a706ad02b9f9c1a12f",
+  "normal": {
+    "methods": 50,
+    "pass": 49,
+    "skip": 1
+  },
+  "optimized": {
+    "methods": 50,
+    "pass": 49,
+    "skip": 1
+  },
+  "blockers": [
+    {
+      "id": "B1",
+      "classification": "BLOCKER",
+      "file": "examples/lifecycle-d1/verify-six-native.py",
+      "line": 31,
+      "contract": "reject aliased execution terminal before host gate",
+      "finding": "Only terminal itself is checked for links. An actual Windows junction at authorized-execution01 pointing to an empty directory is accepted as absence. Original FAILED record is retained separately in the reproduction fixture.",
+      "reproduction": "terminal-parent-junction-counterexample01.json",
+      "reproduction_sha256": "cf2ca98253f78b2f2feb537e3204ec4dc2959871b18fba504bea291e8c711e65",
+      "minimum_fix": "Check every terminal path component under fixed CONTROL before following paths or accepting missing terminal; add complete main zero-I/O parent-link counterexample."
+    },
+    {
+      "id": "B2",
+      "classification": "BLOCKER",
+      "file": "examples/lifecycle-d1/evidence_indexes.py",
+      "finding": "Canonical root and merely absolute plan are compared lexically. Windows RUNNER~1 short-name versus runneradmin long-name paths cause legitimate required CI audit plans to fail.",
+      "evidence": "../ci-windows-first-failure.json",
+      "evidence_sha256": "5eb8a7f6301c442dedc160f40e6e8069608878a44fa82d9b49e437aefbfa5142",
+      "observed_ci": {
+        "head": "1944bfbea88f3306d879e0a706ad02b9f9c1a12f",
+        "job": {
+          "id": 118581792456,
+          "head_sha": "1944bfbea88f3306d879e0a706ad02b9f9c1a12f",
+          "name": "temporary-container-contracts (windows-latest)",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      },
+      "minimum_fix": "Check original path components for links/traversal first, then resolve both trusted root and plan before containment comparison; preserve link rejection and add short/long-spelling combination."
+    }
+  ],
+  "ci_excerpts": [
+    {
+      "line": 232,
+      "context": [
+        "2026-10-20T10:35:41.5789293Z   File \"C:\\hostedtoolcache\\windows\\Python\\3.13.16\\x64\\Lib\\pathlib\\_local.py\", line 385, in relative_to",
+        "2026-10-20T10:35:41.5790074Z     raise ValueError(f\"{str(self)!r} is not in the subpath of {str(other)!r}\")",
+        "2026-10-20T10:35:41.5791041Z ValueError: 'C:\\\\Users\\\\RUNNER~1\\\\AppData\\\\Local\\\\Temp\\\\tmpg4upu59s\\\\plan.json' is not in the subpath of 'C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\tmpg4upu59s'",
+        "2026-10-20T10:35:41.5791775Z ",
+        "2026-10-20T10:35:41.5792033Z The above exception was the direct cause of the following exception:"
+      ]
+    },
+    {
+      "line": 241,
+      "context": [
+        "2026-10-20T10:35:41.5794813Z                              self.make_plan([spec]), self.candidate)",
+        "2026-10-20T10:35:41.5795603Z   File \"D:\\a\\data-product-platform\\data-product-platform\\examples\\lifecycle-d1\\evidence_indexes.py\", line 141, in audit_plan",
+        "2026-10-20T10:35:41.5796619Z     raise ValueError('evidence audit: plan is outside the repository') from error",
+        "2026-10-20T10:35:41.5797212Z ValueError: evidence audit: plan is outside the repository",
+        "2026-10-20T10:35:41.5797445Z "
+      ]
+    },
+    {
+      "line": 242,
+      "context": [
+        "2026-10-20T10:35:41.5795603Z   File \"D:\\a\\data-product-platform\\data-product-platform\\examples\\lifecycle-d1\\evidence_indexes.py\", line 141, in audit_plan",
+        "2026-10-20T10:35:41.5796619Z     raise ValueError('evidence audit: plan is outside the repository') from error",
+        "2026-10-20T10:35:41.5797212Z ValueError: evidence audit: plan is outside the repository",
+        "2026-10-20T10:35:41.5797445Z ",
+        "2026-10-20T10:35:41.5797655Z ======================================================================"
+      ]
+    },
+    {
+      "line": 253,
+      "context": [
+        "2026-10-20T10:35:41.5806159Z   File \"C:\\hostedtoolcache\\windows\\Python\\3.13.16\\x64\\Lib\\pathlib\\_local.py\", line 385, in relative_to",
+        "2026-10-20T10:35:41.5807238Z     raise ValueError(f\"{str(self)!r} is not in the subpath of {str(other)!r}\")",
+        "2026-10-20T10:35:41.5808579Z ValueError: 'C:\\\\Users\\\\RUNNER~1\\\\AppData\\\\Local\\\\Temp\\\\tmpg4upu59s\\\\plan.json' is not in the subpath of 'C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\tmpg4upu59s'",
+        "2026-10-20T10:35:41.5809597Z ",
+        "2026-10-20T10:35:41.5809925Z The above exception was the direct cause of the following exception:"
+      ]
+    },
+    {
+      "line": 262,
+      "context": [
+        "2026-10-20T10:35:41.5813726Z                              self.make_plan([spec]), self.candidate)",
+        "2026-10-20T10:35:41.5814889Z   File \"D:\\a\\data-product-platform\\data-product-platform\\examples\\lifecycle-d1\\evidence_indexes.py\", line 141, in audit_plan",
+        "2026-10-20T10:35:41.5816223Z     raise ValueError('evidence audit: plan is outside the repository') from error",
+        "2026-10-20T10:35:41.5817022Z ValueError: evidence audit: plan is outside the repository",
+        "2026-10-20T10:35:41.5818547Z "
+      ]
+    },
+    {
+      "line": 263,
+      "context": [
+        "2026-10-20T10:35:41.5814889Z   File \"D:\\a\\data-product-platform\\data-product-platform\\examples\\lifecycle-d1\\evidence_indexes.py\", line 141, in audit_plan",
+        "2026-10-20T10:35:41.5816223Z     raise ValueError('evidence audit: plan is outside the repository') from error",
+        "2026-10-20T10:35:41.5817022Z ValueError: evidence audit: plan is outside the repository",
+        "2026-10-20T10:35:41.5818547Z ",
+        "2026-10-20T10:35:41.5818729Z ======================================================================"
+      ]
+    },
+    {
+      "line": 272,
+      "context": [
+        "2026-10-20T10:35:41.5824793Z     with self.assertRaisesRegex(ValueError, 'linked evidence path'):",
+        "2026-10-20T10:35:41.5825457Z          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "2026-10-20T10:35:41.5825986Z AssertionError: ValueError not raised",
+        "2026-10-20T10:35:41.5826295Z ",
+        "2026-10-20T10:35:41.5826537Z ----------------------------------------------------------------------"
+      ]
+    },
+    {
+      "line": 277,
+      "context": [
+        "2026-10-20T10:35:41.5827114Z Ran 10 tests in 0.183s",
+        "2026-10-20T10:35:41.5827338Z ",
+        "2026-10-20T10:35:41.5827513Z FAILED (failures=1, errors=2)",
+        "2026-10-20T10:35:41.6065334Z ##[error]Process completed with exit code 1.",
+        "2026-10-20T10:35:41.6494776Z Post job cleanup."
+      ]
+    }
+  ],
+  "real_external_process_attempts": 0,
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "old_authorization_reused": false,
+  "repair_status": "AUTHOR_FIX_IN_PROGRESS_NOT_REVIEWED"
+}

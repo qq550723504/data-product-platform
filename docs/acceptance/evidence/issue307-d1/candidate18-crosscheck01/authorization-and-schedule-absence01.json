@@ -1,0 +1,47 @@
+{
+  "status": "PASS_NOT_AUTHORIZED_NOT_SCHEDULED",
+  "observed_at": "2026-10-21T10:06:10.290980+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "authorization_directory_exists": false,
+  "current_heartbeat_exists": false,
+  "old_heartbeats": [
+    {
+      "id": "307-d1-candidate07-v17",
+      "status": "PAUSED",
+      "sha256": "1a81f008d4018eba425eea649b1e68f8762ae3d9e3192db59f7c2dfa166b1650"
+    },
+    {
+      "id": "307-d1-candidate10-v20",
+      "status": "PAUSED",
+      "sha256": "1999c6b0be6b04ebd55369ab1688867702791541636f0bf54ef9573308dbb297"
+    },
+    {
+      "id": "307-d1-candidate11-v21",
+      "status": "PAUSED",
+      "sha256": "3e1fb7086374957ae885ed79c7d72236118dc14de9c69d26b1fef8405561cf27"
+    },
+    {
+      "id": "307-d1-candidate12-v22",
+      "status": "PAUSED",
+      "sha256": "fd57947cd1d9e8db76d19211acfba95f6698026adf07b8d9a93607fed75f4608"
+    },
+    {
+      "id": "307-d1-candidate15-v25",
+      "status": "PAUSED",
+      "sha256": "56e47d5aea1c21cfd787a97733e91a476182a88656240c508b78e6956d42923e"
+    },
+    {
+      "id": "307-d1-candidate16-v26",
+      "status": "PAUSED",
+      "sha256": "25277e43a7f7af0f46e24ea37e08512d856ffa56abe765fa458faa66e3d6949c"
+    },
+    {
+      "id": "307-d1-candidate17-v27",
+      "status": "PAUSED",
+      "sha256": "53c74daac04b2c754626f59817a49d6e938d0e44bcda6f43884321c6d644229d"
+    }
+  ],
+  "execution_authority": false,
+  "native_delete": 0,
+  "schedule_changed": false
+}

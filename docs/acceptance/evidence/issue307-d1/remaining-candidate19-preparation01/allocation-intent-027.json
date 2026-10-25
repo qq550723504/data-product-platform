@@ -1,0 +1,30 @@
+{
+  "role": "checkpoint-archive",
+  "group": "business-races",
+  "name": "dpp-lifecycle307-808a6960-candidate19-archive",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate19-archive",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-objects,target=/source,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate19\\business-races\\checkpoint,target=/backup",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-ec",
+    "test ! -e /backup/native.tar; exec tar -C /source -cpf /backup/native.tar ."
+  ]
+}

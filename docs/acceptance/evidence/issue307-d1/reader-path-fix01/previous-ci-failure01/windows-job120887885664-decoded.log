@@ -1,0 +1,1278 @@
+﻿2026-10-24T13:42:13.1429305Z Current runner version: '2.338.0'
+2026-10-24T13:42:13.1458620Z ##[group]Runner Image Provisioner
+2026-10-24T13:42:13.1459490Z Hosted Compute Agent
+2026-10-24T13:42:13.1460031Z Version: 20261021.618
+2026-10-24T13:42:13.1460775Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-24T13:42:13.1461455Z Build Date: 2026-10-21T00:45:21Z
+2026-10-24T13:42:13.1462083Z Worker ID: {00ead24b-b655-485a-b883-e2386558f735}
+2026-10-24T13:42:13.1462819Z Region: eastus
+2026-10-24T13:42:13.1463576Z Cloud: Azure
+2026-10-24T13:42:13.1464126Z ##[endgroup]
+2026-10-24T13:42:13.1465606Z ##[group]Operating System
+2026-10-24T13:42:13.1466224Z Microsoft Windows Server 2025
+2026-10-24T13:42:13.1466851Z 10.0.26100
+2026-10-24T13:42:13.1467711Z Datacenter
+2026-10-24T13:42:13.1468903Z ##[endgroup]
+2026-10-24T13:42:13.1469675Z ##[group]Runner Image
+2026-10-24T13:42:13.1470396Z Image: windows-2025-vs2026
+2026-10-24T13:42:13.1470990Z Version: 20261021.278.1
+2026-10-24T13:42:13.1472705Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261021.278/images/windows/Windows2025-VS2026-Readme.md
+2026-10-24T13:42:13.1474399Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261021.278
+2026-10-24T13:42:13.1475351Z ##[endgroup]
+2026-10-24T13:42:13.1476455Z ##[group]GITHUB_TOKEN Permissions
+2026-10-24T13:42:13.1478447Z Contents: read
+2026-10-24T13:42:13.1479071Z Metadata: read
+2026-10-24T13:42:13.1479574Z ##[endgroup]
+2026-10-24T13:42:13.1481845Z Secret source: Actions
+2026-10-24T13:42:13.1482736Z Cache mode: write
+2026-10-24T13:42:13.1483525Z Prepare workflow directory
+2026-10-24T13:42:13.1869864Z Prepare all required actions
+2026-10-24T13:42:13.1919241Z Getting action download info
+2026-10-24T13:42:13.3424549Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-24T13:42:13.4882403Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-24T13:42:13.7859240Z Complete job name: temporary-container-contracts (windows-latest)
+2026-10-24T13:42:13.9740728Z ##[group]Run actions/checkout@v4
+2026-10-24T13:42:13.9742382Z with:
+2026-10-24T13:42:13.9742995Z   repository: qq550723504/data-product-platform
+2026-10-24T13:42:13.9747742Z   token: ***
+2026-10-24T13:42:13.9748139Z   ssh-strict: true
+2026-10-24T13:42:13.9748539Z   ssh-user: git
+2026-10-24T13:42:13.9748939Z   persist-credentials: true
+2026-10-24T13:42:13.9749384Z   clean: true
+2026-10-24T13:42:13.9749785Z   sparse-checkout-cone-mode: true
+2026-10-24T13:42:13.9750273Z   fetch-depth: 1
+2026-10-24T13:42:13.9750669Z   fetch-tags: false
+2026-10-24T13:42:13.9751073Z   show-progress: true
+2026-10-24T13:42:13.9751482Z   lfs: false
+2026-10-24T13:42:13.9751866Z   submodules: false
+2026-10-24T13:42:13.9752278Z   set-safe-directory: true
+2026-10-24T13:42:13.9752749Z   allow-unsafe-pr-checkout: false
+2026-10-24T13:42:13.9753838Z ##[endgroup]
+2026-10-24T13:42:14.1404735Z Syncing repository: qq550723504/data-product-platform
+2026-10-24T13:42:14.1408338Z ##[group]Getting Git version info
+2026-10-24T13:42:14.1410267Z Working directory is 'D:\a\data-product-platform\data-product-platform'
+2026-10-24T13:42:14.2587075Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-24T13:42:14.6148901Z git version 2.56.0.windows.2
+2026-10-24T13:42:14.6206934Z ##[endgroup]
+2026-10-24T13:42:14.6230201Z Temporarily overriding HOME='D:\a\_temp\a2e444ee-2f82-4a88-b7d1-60b296a76ba4' before making global git config changes
+2026-10-24T13:42:14.6232685Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-24T13:42:14.6243161Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\data-product-platform\data-product-platform
+2026-10-24T13:42:14.6957521Z Deleting the contents of 'D:\a\data-product-platform\data-product-platform'
+2026-10-24T13:42:14.6963521Z ##[group]Initializing the repository
+2026-10-24T13:42:14.6972953Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\data-product-platform\data-product-platform
+2026-10-24T13:42:14.8000753Z Initialized empty Git repository in D:/a/data-product-platform/data-product-platform/.git/
+2026-10-24T13:42:14.8052628Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/qq550723504/data-product-platform
+2026-10-24T13:42:14.8790057Z ##[endgroup]
+2026-10-24T13:42:14.8791269Z ##[group]Disabling automatic garbage collection
+2026-10-24T13:42:14.8799520Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-24T13:42:14.9217297Z ##[endgroup]
+2026-10-24T13:42:14.9218670Z ##[group]Setting up auth
+2026-10-24T13:42:14.9231734Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-24T13:42:14.9657544Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-24T13:42:16.6004041Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-24T13:42:16.6424571Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-24T13:42:17.2859948Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-24T13:42:17.3281064Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-24T13:42:17.9539071Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-24T13:42:17.9985947Z ##[endgroup]
+2026-10-24T13:42:17.9986884Z ##[group]Fetching the repository
+2026-10-24T13:42:18.0003733Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0cf3b37005067eb8bd46e6891ff13f14fe250917:refs/remotes/pull/332/merge
+2026-10-24T13:42:21.0892510Z From https://github.com/qq550723504/data-product-platform
+2026-10-24T13:42:21.0893490Z  * [new ref]           0cf3b37005067eb8bd46e6891ff13f14fe250917 -> pull/332/merge
+2026-10-24T13:42:21.0941025Z ##[endgroup]
+2026-10-24T13:42:21.0941701Z ##[group]Determining the checkout info
+2026-10-24T13:42:21.0944389Z ##[endgroup]
+2026-10-24T13:42:21.0955567Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-24T13:42:21.1506018Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-24T13:42:21.1929105Z ##[group]Checking out the ref
+2026-10-24T13:42:21.1939903Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/332/merge
+2026-10-24T13:42:22.3448888Z Updating files:   7% (2959/39281)
+2026-10-24T13:42:22.4419906Z Updating files:   8% (3143/39281)
+2026-10-24T13:42:22.5373385Z Updating files:   9% (3536/39281)
+2026-10-24T13:42:22.6461090Z Updating files:  10% (3929/39281)
+2026-10-24T13:42:22.7440392Z Updating files:  11% (4321/39281)
+2026-10-24T13:42:22.8414634Z Updating files:  12% (4714/39281)
+2026-10-24T13:42:22.9543979Z Updating files:  13% (5107/39281)
+2026-10-24T13:42:23.0617044Z Updating files:  14% (5500/39281)
+2026-10-24T13:42:23.2162246Z Updating files:  15% (5893/39281)
+2026-10-24T13:42:23.3000761Z Updating files:  16% (6285/39281)
+2026-10-24T13:42:23.3188934Z Updating files:  16% (6602/39281)
+2026-10-24T13:42:23.4134586Z Updating files:  17% (6678/39281)
+2026-10-24T13:42:23.5200402Z Updating files:  18% (7071/39281)
+2026-10-24T13:42:23.6177766Z Updating files:  19% (7464/39281)
+2026-10-24T13:42:23.7159451Z Updating files:  20% (7857/39281)
+2026-10-24T13:42:23.8216053Z Updating files:  21% (8250/39281)
+2026-10-24T13:42:23.9258053Z Updating files:  22% (8642/39281)
+2026-10-24T13:42:24.0392967Z Updating files:  23% (9035/39281)
+2026-10-24T13:42:24.1535349Z Updating files:  24% (9428/39281)
+2026-10-24T13:42:24.2702876Z Updating files:  25% (9821/39281)
+2026-10-24T13:42:24.3002342Z Updating files:  26% (10214/39281)
+2026-10-24T13:42:24.3850480Z Updating files:  26% (10325/39281)
+2026-10-24T13:42:24.4967433Z Updating files:  27% (10606/39281)
+2026-10-24T13:42:24.6951470Z Updating files:  28% (10999/39281)
+2026-10-24T13:42:24.8073528Z Updating files:  29% (11392/39281)
+2026-10-24T13:42:24.9206478Z Updating files:  30% (11785/39281)
+2026-10-24T13:42:25.0466277Z Updating files:  31% (12178/39281)
+2026-10-24T13:42:25.1498332Z Updating files:  32% (12570/39281)
+2026-10-24T13:42:25.2560233Z Updating files:  33% (12963/39281)
+2026-10-24T13:42:25.3126569Z Updating files:  34% (13356/39281)
+2026-10-24T13:42:25.3688463Z Updating files:  34% (13550/39281)
+2026-10-24T13:42:25.4769309Z Updating files:  35% (13749/39281)
+2026-10-24T13:42:25.5895092Z Updating files:  36% (14142/39281)
+2026-10-24T13:42:25.7110964Z Updating files:  37% (14534/39281)
+2026-10-24T13:42:25.8290822Z Updating files:  38% (14927/39281)
+2026-10-24T13:42:26.0150831Z Updating files:  39% (15320/39281)
+2026-10-24T13:42:26.1263008Z Updating files:  40% (15713/39281)
+2026-10-24T13:42:26.2371995Z Updating files:  41% (16106/39281)
+2026-10-24T13:42:26.3258584Z Updating files:  42% (16499/39281)
+2026-10-24T13:42:26.3556348Z Updating files:  42% (16785/39281)
+2026-10-24T13:42:26.4653313Z Updating files:  43% (16891/39281)
+2026-10-24T13:42:26.5772996Z Updating files:  44% (17284/39281)
+2026-10-24T13:42:26.6886980Z Updating files:  45% (17677/39281)
+2026-10-24T13:42:26.8015733Z Updating files:  46% (18070/39281)
+2026-10-24T13:42:26.9115464Z Updating files:  47% (18463/39281)
+2026-10-24T13:42:27.0221555Z Updating files:  48% (18855/39281)
+2026-10-24T13:42:27.1340081Z Updating files:  49% (19248/39281)
+2026-10-24T13:42:27.2416277Z Updating files:  50% (19641/39281)
+2026-10-24T13:42:27.3418243Z Updating files:  51% (20034/39281)
+2026-10-24T13:42:27.4508178Z Updating files:  51% (20238/39281)
+2026-10-24T13:42:27.5837780Z Updating files:  52% (20427/39281)
+2026-10-24T13:42:27.6925318Z Updating files:  53% (20819/39281)
+2026-10-24T13:42:27.8183675Z Updating files:  54% (21212/39281)
+2026-10-24T13:42:27.9366593Z Updating files:  55% (21605/39281)
+2026-10-24T13:42:28.0456761Z Updating files:  56% (21998/39281)
+2026-10-24T13:42:28.1543822Z Updating files:  57% (22391/39281)
+2026-10-24T13:42:28.2642158Z Updating files:  58% (22783/39281)
+2026-10-24T13:42:28.3302952Z Updating files:  59% (23176/39281)
+2026-10-24T13:42:28.3752692Z Updating files:  59% (23405/39281)
+2026-10-24T13:42:28.4873338Z Updating files:  60% (23569/39281)
+2026-10-24T13:42:28.5963316Z Updating files:  61% (23962/39281)
+2026-10-24T13:42:28.7537293Z Updating files:  62% (24355/39281)
+2026-10-24T13:42:28.8714023Z Updating files:  63% (24748/39281)
+2026-10-24T13:42:28.9946212Z Updating files:  64% (25140/39281)
+2026-10-24T13:42:29.1056189Z Updating files:  65% (25533/39281)
+2026-10-24T13:42:29.2411729Z Updating files:  66% (25926/39281)
+2026-10-24T13:42:29.3308834Z Updating files:  67% (26319/39281)
+2026-10-24T13:42:29.3510929Z Updating files:  67% (26643/39281)
+2026-10-24T13:42:29.4606349Z Updating files:  68% (26712/39281)
+2026-10-24T13:42:29.5758185Z Updating files:  69% (27104/39281)
+2026-10-24T13:42:29.6854669Z Updating files:  70% (27497/39281)
+2026-10-24T13:42:29.7934090Z Updating files:  71% (27890/39281)
+2026-10-24T13:42:29.9038579Z Updating files:  72% (28283/39281)
+2026-10-24T13:42:30.0139620Z Updating files:  73% (28676/39281)
+2026-10-24T13:42:30.1796531Z Updating files:  74% (29068/39281)
+2026-10-24T13:42:30.2923782Z Updating files:  75% (29461/39281)
+2026-10-24T13:42:30.3310549Z Updating files:  76% (29854/39281)
+2026-10-24T13:42:30.4002387Z Updating files:  76% (29994/39281)
+2026-10-24T13:42:30.5082524Z Updating files:  77% (30247/39281)
+2026-10-24T13:42:30.6198438Z Updating files:  78% (30640/39281)
+2026-10-24T13:42:30.7320799Z Updating files:  79% (31032/39281)
+2026-10-24T13:42:30.8428359Z Updating files:  80% (31425/39281)
+2026-10-24T13:42:30.9540156Z Updating files:  81% (31818/39281)
+2026-10-24T13:42:31.0628430Z Updating files:  82% (32211/39281)
+2026-10-24T13:42:31.1717441Z Updating files:  83% (32604/39281)
+2026-10-24T13:42:31.2803671Z Updating files:  84% (32997/39281)
+2026-10-24T13:42:31.3374101Z Updating files:  85% (33389/39281)
+2026-10-24T13:42:31.3861569Z Updating files:  85% (33601/39281)
+2026-10-24T13:42:31.5730524Z Updating files:  86% (33782/39281)
+2026-10-24T13:42:31.6833011Z Updating files:  87% (34175/39281)
+2026-10-24T13:42:31.7928086Z Updating files:  88% (34568/39281)
+2026-10-24T13:42:31.9043841Z Updating files:  89% (34961/39281)
+2026-10-24T13:42:32.0174555Z Updating files:  90% (35353/39281)
+2026-10-24T13:42:32.1373527Z Updating files:  91% (35746/39281)
+2026-10-24T13:42:32.2384698Z Updating files:  92% (36139/39281)
+2026-10-24T13:42:32.3379485Z Updating files:  93% (36532/39281)
+2026-10-24T13:42:32.3411190Z Updating files:  93% (36914/39281)
+2026-10-24T13:42:32.4531850Z Updating files:  94% (36925/39281)
+2026-10-24T13:42:32.5842986Z Updating files:  95% (37317/39281)
+2026-10-24T13:42:32.6779052Z Updating files:  96% (37710/39281)
+2026-10-24T13:42:32.7762989Z Updating files:  97% (38103/39281)
+2026-10-24T13:42:32.9717279Z Updating files:  98% (38496/39281)
+2026-10-24T13:42:33.0732815Z Updating files:  99% (38889/39281)
+2026-10-24T13:42:33.0733360Z Updating files: 100% (39281/39281)
+2026-10-24T13:42:33.0733848Z Updating files: 100% (39281/39281), done.
+2026-10-24T13:42:33.1386473Z Note: switching to 'refs/remotes/pull/332/merge'.
+2026-10-24T13:42:33.1386939Z 
+2026-10-24T13:42:33.1387278Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-24T13:42:33.1388111Z changes and commit them, and you can discard any commits you make in this
+2026-10-24T13:42:33.1388917Z state without impacting any branches by switching back to a branch.
+2026-10-24T13:42:33.1389444Z 
+2026-10-24T13:42:33.1390088Z If you want to create a new branch to retain commits you create, you may
+2026-10-24T13:42:33.1390869Z do so (now or later) by using -c with the switch command. Example:
+2026-10-24T13:42:33.1391332Z 
+2026-10-24T13:42:33.1391562Z   git switch -c <new-branch-name>
+2026-10-24T13:42:33.1391858Z 
+2026-10-24T13:42:33.1392012Z Or undo this operation with:
+2026-10-24T13:42:33.1392298Z 
+2026-10-24T13:42:33.1392432Z   git switch -
+2026-10-24T13:42:33.1392615Z 
+2026-10-24T13:42:33.1392973Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-24T13:42:33.1393525Z 
+2026-10-24T13:42:33.1394165Z HEAD is now at 0cf3b370 Merge 16ec447f2c60ddf08a514207963f478bc70c7e09 into f7a90022aad5da4d67ea594ccb86f8b9925a3840
+2026-10-24T13:42:33.1528899Z ##[endgroup]
+2026-10-24T13:42:33.1974391Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-24T13:42:33.2357312Z 0cf3b37005067eb8bd46e6891ff13f14fe250917
+2026-10-24T13:42:33.2869932Z ##[group]Run actions/setup-python@v5
+2026-10-24T13:42:33.2870262Z with:
+2026-10-24T13:42:33.2870444Z   python-version: 3.13
+2026-10-24T13:42:33.2870897Z   check-latest: false
+2026-10-24T13:42:33.2873737Z   token: ***
+2026-10-24T13:42:33.2873934Z   update-environment: true
+2026-10-24T13:42:33.2874156Z   allow-prereleases: false
+2026-10-24T13:42:33.2874363Z   freethreaded: false
+2026-10-24T13:42:33.2874548Z ##[endgroup]
+2026-10-24T13:42:33.4642922Z ##[group]Installed versions
+2026-10-24T13:42:33.4805412Z (node:7916) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-24T13:42:33.4806268Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-24T13:42:33.4807637Z Successfully set up CPython (3.13.16)
+2026-10-24T13:42:33.4808492Z ##[endgroup]
+2026-10-24T13:42:33.5148704Z ##[group]Run python -m pip install 'cryptography==49.0.0'
+2026-10-24T13:42:33.5149255Z [36;1mpython -m pip install 'cryptography==49.0.0'[0m
+2026-10-24T13:42:33.5993100Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-24T13:42:33.5993575Z env:
+2026-10-24T13:42:33.5993931Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:33.5994597Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.13.16\x64/lib/pkgconfig
+2026-10-24T13:42:33.5995300Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:33.5995830Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:33.5996350Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:33.5996764Z ##[endgroup]
+2026-10-24T13:42:38.9480483Z Collecting cryptography==49.0.0
+2026-10-24T13:42:38.9862740Z   Downloading cryptography-49.0.0-cp311-abi3-win_amd64.whl.metadata (4.3 kB)
+2026-10-24T13:42:39.1567584Z Collecting cffi>=2.0.0 (from cryptography==49.0.0)
+2026-10-24T13:42:39.1639085Z   Downloading cffi-2.1.1-cp313-cp313-win_amd64.whl.metadata (2.6 kB)
+2026-10-24T13:42:39.2146194Z Collecting pycparser (from cffi>=2.0.0->cryptography==49.0.0)
+2026-10-24T13:42:39.2196738Z   Downloading pycparser-3.12-py3-none-any.whl.metadata (9.7 kB)
+2026-10-24T13:42:39.2509655Z Downloading cryptography-49.0.0-cp311-abi3-win_amd64.whl (3.8 MB)
+2026-10-24T13:42:39.3152407Z    ---------------------------------------- 3.8/3.8 MB 74.7 MB/s  0:00:00
+2026-10-24T13:42:39.3232854Z Downloading cffi-2.1.1-cp313-cp313-win_amd64.whl (185 kB)
+2026-10-24T13:42:39.3550738Z Downloading pycparser-3.12-py3-none-any.whl (62 kB)
+2026-10-24T13:42:39.5725758Z Installing collected packages: pycparser, cffi, cryptography
+2026-10-24T13:42:40.3316332Z 
+2026-10-24T13:42:40.3331958Z Successfully installed cffi-2.1.1 cryptography-49.0.0 pycparser-3.12
+2026-10-24T13:42:40.5609569Z ##[group]Run python -B examples/lifecycle-d1/test_evidence_indexes.py
+2026-10-24T13:42:40.5610259Z [36;1mpython -B examples/lifecycle-d1/test_evidence_indexes.py[0m
+2026-10-24T13:42:40.5610730Z [36;1mpython -O -B examples/lifecycle-d1/test_evidence_indexes.py[0m
+2026-10-24T13:42:40.5611160Z [36;1mpython -B examples/lifecycle-d1/test_six_native_entry.py[0m
+2026-10-24T13:42:40.5611609Z [36;1mpython -O -B examples/lifecycle-d1/test_six_native_entry.py[0m
+2026-10-24T13:42:40.5612029Z [36;1mpython -B examples/lifecycle-d1/test_retired_resources.py[0m
+2026-10-24T13:42:40.5612434Z [36;1mpython -O -B examples/lifecycle-d1/test_retired_resources.py[0m
+2026-10-24T13:42:40.5612836Z [36;1mpython -B examples/lifecycle-d1/test_retired_volumes.py[0m
+2026-10-24T13:42:40.5613230Z [36;1mpython -O -B examples/lifecycle-d1/test_retired_volumes.py[0m
+2026-10-24T13:42:40.5613638Z [36;1mpython -B examples/lifecycle-d1/test_retired_budget_bytes.py[0m
+2026-10-24T13:42:40.5614102Z [36;1mpython -O -B examples/lifecycle-d1/test_retired_budget_bytes.py[0m
+2026-10-24T13:42:40.5614556Z [36;1mpython -B examples/lifecycle-d1/test_successor_dependencies.py[0m
+2026-10-24T13:42:40.5615018Z [36;1mpython -O -B examples/lifecycle-d1/test_successor_dependencies.py[0m
+2026-10-24T13:42:40.5615439Z [36;1mpython -B examples/lifecycle-d1/test_retained_v26.py[0m
+2026-10-24T13:42:40.5615822Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v26.py[0m
+2026-10-24T13:42:40.5616196Z [36;1mpython -B examples/lifecycle-d1/test_retained_v29.py[0m
+2026-10-24T13:42:40.5616570Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v29.py[0m
+2026-10-24T13:42:40.5616934Z [36;1mpython -B examples/lifecycle-d1/test_retained_v30.py[0m
+2026-10-24T13:42:40.5617553Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v30.py[0m
+2026-10-24T13:42:40.5617925Z [36;1mpython -B examples/lifecycle-d1/test_retained_v31.py[0m
+2026-10-24T13:42:40.5618291Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v31.py[0m
+2026-10-24T13:42:40.5618896Z [36;1mpython -B examples/lifecycle-d1/test_retained_v32.py[0m
+2026-10-24T13:42:40.5619264Z [36;1mpython -O -B examples/lifecycle-d1/test_retained_v32.py[0m
+2026-10-24T13:42:40.5620462Z [36;1mpython -B examples/lifecycle-d1/test_receipt_bytes.py[0m
+2026-10-24T13:42:40.5620859Z [36;1mpython -O -B examples/lifecycle-d1/test_receipt_bytes.py[0m
+2026-10-24T13:42:40.5621256Z [36;1mpython -B examples/lifecycle-d1/test_fixture_artifacts.py[0m
+2026-10-24T13:42:40.5621698Z [36;1mpython -O -B examples/lifecycle-d1/test_fixture_artifacts.py[0m
+2026-10-24T13:42:40.5622107Z [36;1mpython -B examples/lifecycle-d1/test_preallocation_ci.py[0m
+2026-10-24T13:42:40.5622532Z [36;1mpython -O -B examples/lifecycle-d1/test_preallocation_ci.py[0m
+2026-10-24T13:42:40.5622966Z [36;1mpython -B examples/lifecycle-d1/test_six_candidate_runtime.py[0m
+2026-10-24T13:42:40.5623405Z [36;1mpython -O -B examples/lifecycle-d1/test_six_candidate_runtime.py[0m
+2026-10-24T13:42:40.5623843Z [36;1mpython -B examples/lifecycle-d1/test_native_protection.py[0m
+2026-10-24T13:42:40.5624251Z [36;1mpython -O -B examples/lifecycle-d1/test_native_protection.py[0m
+2026-10-24T13:42:40.5624755Z [36;1mpython -B examples/lifecycle-d1/test_retention_renewal.py[0m
+2026-10-24T13:42:40.5625223Z [36;1mpython -O -B examples/lifecycle-d1/test_retention_renewal.py[0m
+2026-10-24T13:42:40.5625671Z [36;1mpython -B examples/lifecycle-d1/test_retention_maintenance.py[0m
+2026-10-24T13:42:40.5626117Z [36;1mpython -O -B examples/lifecycle-d1/test_retention_maintenance.py[0m
+2026-10-24T13:42:40.5626571Z [36;1mpython -B examples/lifecycle-d1/test_retention_composition.py[0m
+2026-10-24T13:42:40.5627009Z [36;1mpython -O -B examples/lifecycle-d1/test_retention_composition.py[0m
+2026-10-24T13:42:40.5627434Z [36;1mpython -B examples/lifecycle-d1/test_verify_six_native.py[0m
+2026-10-24T13:42:40.5627845Z [36;1mpython -O -B examples/lifecycle-d1/test_verify_six_native.py[0m
+2026-10-24T13:42:40.5629982Z [36;1mpython -B examples/lifecycle-d1/test_retention_staging.py[0m
+2026-10-24T13:42:40.5630503Z [36;1mpython -O -B examples/lifecycle-d1/test_retention_staging.py[0m
+2026-10-24T13:42:40.5630975Z [36;1mpython -B examples/lifecycle-d1/test_execution_freeze.py[0m
+2026-10-24T13:42:40.5631395Z [36;1mpython -O -B examples/lifecycle-d1/test_execution_freeze.py[0m
+2026-10-24T13:42:40.5631812Z [36;1mpython -B examples/lifecycle-d1/test_freeze_six_candidate.py[0m
+2026-10-24T13:42:40.5632235Z [36;1mpython -O -B examples/lifecycle-d1/test_freeze_six_candidate.py[0m
+2026-10-24T13:42:40.5632663Z [36;1mpython -B examples/lifecycle-d1/test_window_six_support.py[0m
+2026-10-24T13:42:40.5633083Z [36;1mpython -O -B examples/lifecycle-d1/test_window_six_support.py[0m
+2026-10-24T13:42:40.5633533Z [36;1mpython -B examples/lifecycle-d1/test_attest_remaining_executable.py[0m
+2026-10-24T13:42:40.5634025Z [36;1mpython -O -B examples/lifecycle-d1/test_attest_remaining_executable.py[0m
+2026-10-24T13:42:40.5655978Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-10-24T13:42:40.5656501Z env:
+2026-10-24T13:42:40.5656995Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:40.5657567Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.13.16\x64/lib/pkgconfig
+2026-10-24T13:42:40.5658038Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:40.5658448Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:40.5658845Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.16\x64
+2026-10-24T13:42:40.5659150Z ##[endgroup]
+2026-10-24T13:42:41.3763496Z ............
+2026-10-24T13:42:41.3764009Z ----------------------------------------------------------------------
+2026-10-24T13:42:41.3764416Z Ran 12 tests in 0.175s
+2026-10-24T13:42:41.3764575Z 
+2026-10-24T13:42:41.3764650Z OK
+2026-10-24T13:42:42.4568971Z ............
+2026-10-24T13:42:42.4569453Z ----------------------------------------------------------------------
+2026-10-24T13:42:42.4569855Z Ran 12 tests in 0.177s
+2026-10-24T13:42:42.4570016Z 
+2026-10-24T13:42:42.4570092Z OK
+2026-10-24T13:42:43.8571246Z .........
+2026-10-24T13:42:43.8572267Z ----------------------------------------------------------------------
+2026-10-24T13:42:43.8572934Z Ran 9 tests in 0.997s
+2026-10-24T13:42:43.8573224Z 
+2026-10-24T13:42:43.8573329Z OK
+2026-10-24T13:42:45.6593010Z .........
+2026-10-24T13:42:45.6593422Z ----------------------------------------------------------------------
+2026-10-24T13:42:45.6593773Z Ran 9 tests in 0.980s
+2026-10-24T13:42:45.6593907Z 
+2026-10-24T13:42:45.6593979Z OK
+2026-10-24T13:42:46.6407569Z {"provider_delete":0,"removed":2,"total":2}
+2026-10-24T13:42:47.5869085Z ....................
+2026-10-24T13:42:47.5869558Z ----------------------------------------------------------------------
+2026-10-24T13:42:47.5869957Z Ran 20 tests in 1.609s
+2026-10-24T13:42:47.5870108Z 
+2026-10-24T13:42:47.5870224Z OK
+2026-10-24T13:42:48.8673723Z {"provider_delete":0,"removed":2,"total":2}
+2026-10-24T13:42:49.8405763Z ....................
+2026-10-24T13:42:49.8406109Z ----------------------------------------------------------------------
+2026-10-24T13:42:49.8406481Z Ran 20 tests in 1.629s
+2026-10-24T13:42:49.8406614Z 
+2026-10-24T13:42:49.8406683Z OK
+2026-10-24T13:42:50.0609549Z ......
+2026-10-24T13:42:50.0610290Z ----------------------------------------------------------------------
+2026-10-24T13:42:50.0610823Z Ran 6 tests in 0.049s
+2026-10-24T13:42:50.0611002Z 
+2026-10-24T13:42:50.0611090Z OK
+2026-10-24T13:42:50.5508444Z ......
+2026-10-24T13:42:50.5508806Z ----------------------------------------------------------------------
+2026-10-24T13:42:50.5509207Z Ran 6 tests in 0.045s
+2026-10-24T13:42:50.5509369Z 
+2026-10-24T13:42:50.5509446Z OK
+2026-10-24T13:42:50.7069948Z ...
+2026-10-24T13:42:50.7070318Z ----------------------------------------------------------------------
+2026-10-24T13:42:50.7071812Z Ran 3 tests in 0.002s
+2026-10-24T13:42:50.7071993Z 
+2026-10-24T13:42:50.7072076Z OK
+2026-10-24T13:42:51.1438228Z ...
+2026-10-24T13:42:51.1438601Z ----------------------------------------------------------------------
+2026-10-24T13:42:51.1439040Z Ran 3 tests in 0.002s
+2026-10-24T13:42:51.1439200Z 
+2026-10-24T13:42:51.1439275Z OK
+2026-10-24T13:42:54.6157022Z ................
+2026-10-24T13:42:54.6157480Z ----------------------------------------------------------------------
+2026-10-24T13:42:54.6157878Z Ran 16 tests in 3.156s
+2026-10-24T13:42:54.6158047Z 
+2026-10-24T13:42:54.6158129Z OK
+2026-10-24T13:42:58.4032512Z ................
+2026-10-24T13:42:58.4032928Z ----------------------------------------------------------------------
+2026-10-24T13:42:58.4033357Z Ran 16 tests in 3.123s
+2026-10-24T13:42:58.4033523Z 
+2026-10-24T13:42:58.4033610Z OK
+2026-10-24T13:42:59.0086125Z .....
+2026-10-24T13:42:59.0086509Z ----------------------------------------------------------------------
+2026-10-24T13:42:59.0086977Z Ran 5 tests in 0.192s
+2026-10-24T13:42:59.0087147Z 
+2026-10-24T13:42:59.0087233Z OK
+2026-10-24T13:42:59.9954027Z .....
+2026-10-24T13:42:59.9954484Z ----------------------------------------------------------------------
+2026-10-24T13:42:59.9954950Z Ran 5 tests in 0.188s
+2026-10-24T13:42:59.9955117Z 
+2026-10-24T13:42:59.9955203Z OK
+2026-10-24T13:43:31.1870178Z ...
+2026-10-24T13:43:31.1870717Z ----------------------------------------------------------------------
+2026-10-24T13:43:31.1871242Z Ran 3 tests in 30.860s
+2026-10-24T13:43:31.1871468Z 
+2026-10-24T13:43:31.1871586Z OK
+2026-10-24T13:44:02.3567006Z ...
+2026-10-24T13:44:02.3567494Z ----------------------------------------------------------------------
+2026-10-24T13:44:02.3567937Z Ran 3 tests in 30.544s
+2026-10-24T13:44:02.3568116Z 
+2026-10-24T13:44:02.3568209Z OK
+2026-10-24T13:44:08.0895282Z ....
+2026-10-24T13:44:08.0895735Z ----------------------------------------------------------------------
+2026-10-24T13:44:08.0896211Z Ran 4 tests in 5.421s
+2026-10-24T13:44:08.0896388Z 
+2026-10-24T13:44:08.0896470Z OK
+2026-10-24T13:44:14.2011003Z ....
+2026-10-24T13:44:14.2011605Z ----------------------------------------------------------------------
+2026-10-24T13:44:14.2012620Z Ran 4 tests in 5.473s
+2026-10-24T13:44:14.2012852Z 
+2026-10-24T13:44:14.2012978Z OK
+2026-10-24T13:44:18.3058068Z ..
+2026-10-24T13:44:18.3058637Z ----------------------------------------------------------------------
+2026-10-24T13:44:18.3059198Z Ran 2 tests in 3.789s
+2026-10-24T13:44:18.3059425Z 
+2026-10-24T13:44:18.3059550Z OK
+2026-10-24T13:44:22.9608762Z ..
+2026-10-24T13:44:22.9609152Z ----------------------------------------------------------------------
+2026-10-24T13:44:22.9609583Z Ran 2 tests in 3.988s
+2026-10-24T13:44:22.9609760Z 
+2026-10-24T13:44:22.9609840Z OK
+2026-10-24T13:44:25.9560038Z ......
+2026-10-24T13:44:25.9560413Z ----------------------------------------------------------------------
+2026-10-24T13:44:25.9560829Z Ran 6 tests in 2.677s
+2026-10-24T13:44:25.9560977Z 
+2026-10-24T13:44:25.9561059Z OK
+2026-10-24T13:44:29.4361465Z ......
+2026-10-24T13:44:29.4361996Z ----------------------------------------------------------------------
+2026-10-24T13:44:29.4362470Z Ran 6 tests in 2.862s
+2026-10-24T13:44:29.4362984Z 
+2026-10-24T13:44:29.4363066Z OK
+2026-10-24T13:44:32.3866684Z ...
+2026-10-24T13:44:32.3867115Z ----------------------------------------------------------------------
+2026-10-24T13:44:32.3867481Z Ran 3 tests in 2.791s
+2026-10-24T13:44:32.3867623Z 
+2026-10-24T13:44:32.3867704Z OK
+2026-10-24T13:44:35.5919923Z ...
+2026-10-24T13:44:35.5920775Z ----------------------------------------------------------------------
+2026-10-24T13:44:35.5921214Z Ran 3 tests in 2.767s
+2026-10-24T13:44:35.5921394Z 
+2026-10-24T13:44:35.5921480Z OK
+2026-10-24T13:44:36.7060361Z .C:\hostedtoolcache\windows\Python\3.13.16\x64\Lib\zipfile\__init__.py:1686: UserWarning: Duplicate name: 'apps/platform/a'
+2026-10-24T13:44:36.7061601Z   return self._open_to_write(zinfo, force_zip64=force_zip64)
+2026-10-24T13:44:37.5118922Z .fatal: git cat-file: could not get object info
+2026-10-24T13:44:39.8208643Z ..
+2026-10-24T13:44:39.8209112Z ----------------------------------------------------------------------
+2026-10-24T13:44:39.8209568Z Ran 4 tests in 3.928s
+2026-10-24T13:44:39.8209732Z 
+2026-10-24T13:44:39.8209807Z OK
+2026-10-24T13:44:41.2703918Z .C:\hostedtoolcache\windows\Python\3.13.16\x64\Lib\zipfile\__init__.py:1686: UserWarning: Duplicate name: 'apps/platform/a'
+2026-10-24T13:44:41.2705042Z   return self._open_to_write(zinfo, force_zip64=force_zip64)
+2026-10-24T13:44:42.0792982Z .fatal: git cat-file: could not get object info
+2026-10-24T13:44:44.4797147Z ..
+2026-10-24T13:44:44.4797968Z ----------------------------------------------------------------------
+2026-10-24T13:44:44.4799294Z Ran 4 tests in 4.015s
+2026-10-24T13:44:44.4799588Z 
+2026-10-24T13:44:44.4799757Z OK
+2026-10-24T13:44:45.4038417Z ......
+2026-10-24T13:44:45.4039053Z ----------------------------------------------------------------------
+2026-10-24T13:44:45.4039547Z Ran 6 tests in 0.527s
+2026-10-24T13:44:45.4039762Z 
+2026-10-24T13:44:45.4039855Z OK
+2026-10-24T13:44:46.7251261Z ......
+2026-10-24T13:44:46.7251847Z ----------------------------------------------------------------------
+2026-10-24T13:44:46.7252373Z Ran 6 tests in 0.559s
+2026-10-24T13:44:46.7252606Z 
+2026-10-24T13:44:46.7252740Z OK
+2026-10-24T13:44:47.6540011Z ................
+2026-10-24T13:44:47.6540466Z ----------------------------------------------------------------------
+2026-10-24T13:44:47.6540932Z Ran 16 tests in 0.512s
+2026-10-24T13:44:47.6541138Z 
+2026-10-24T13:44:47.6541238Z OK
+2026-10-24T13:44:48.9402590Z ................
+2026-10-24T13:44:48.9403537Z ----------------------------------------------------------------------
+2026-10-24T13:44:48.9404053Z Ran 16 tests in 0.524s
+2026-10-24T13:44:48.9404288Z 
+2026-10-24T13:44:48.9404402Z OK
+2026-10-24T13:44:49.1054443Z ....
+2026-10-24T13:44:49.1054976Z ----------------------------------------------------------------------
+2026-10-24T13:44:49.1055500Z Ran 4 tests in 0.009s
+2026-10-24T13:44:49.1055706Z 
+2026-10-24T13:44:49.1055848Z OK
+2026-10-24T13:44:49.4951921Z ....
+2026-10-24T13:44:49.4953461Z ----------------------------------------------------------------------
+2026-10-24T13:44:49.4954113Z Ran 4 tests in 0.009s
+2026-10-24T13:44:49.4954419Z 
+2026-10-24T13:44:49.4954803Z OK
+2026-10-24T13:44:49.6548905Z ....
+2026-10-24T13:44:49.6549381Z ----------------------------------------------------------------------
+2026-10-24T13:44:49.6549932Z Ran 4 tests in 0.018s
+2026-10-24T13:44:49.6550180Z 
+2026-10-24T13:44:49.6550292Z OK
+2026-10-24T13:44:50.0393148Z ....
+2026-10-24T13:44:50.0393556Z ----------------------------------------------------------------------
+2026-10-24T13:44:50.0393969Z Ran 4 tests in 0.018s
+2026-10-24T13:44:50.0394161Z 
+2026-10-24T13:44:50.0394283Z OK
+2026-10-24T13:44:51.5411245Z .........
+2026-10-24T13:44:51.5411773Z ----------------------------------------------------------------------
+2026-10-24T13:44:51.5412271Z Ran 9 tests in 1.190s
+2026-10-24T13:44:51.5412492Z 
+2026-10-24T13:44:51.5412595Z OK
+2026-10-24T13:44:51.5414515Z {"action": "check", "output_sha256": "7c2c8e5d1eef3145f7228ea57c343f4814e4b5ce62e5e6185ad6fb58cb62b027", "authority": "NO_ENABLE_NO_START_NO_DELETE"}
+2026-10-24T13:44:53.4689861Z .........
+2026-10-24T13:44:53.4690385Z ----------------------------------------------------------------------
+2026-10-24T13:44:53.4690939Z Ran 9 tests in 1.252s
+2026-10-24T13:44:53.4691184Z 
+2026-10-24T13:44:53.4691301Z OK
+2026-10-24T13:44:53.4693118Z {"action": "check", "output_sha256": "7c2c8e5d1eef3145f7228ea57c343f4814e4b5ce62e5e6185ad6fb58cb62b027", "authority": "NO_ENABLE_NO_START_NO_DELETE"}
+2026-10-24T13:44:57.1114769Z EEEEEEEEEEEEEEEEEEEEEE.EEEEEEEEEEEEEEEEEEEE
+2026-10-24T13:44:57.1115690Z ======================================================================
+2026-10-24T13:44:57.1117442Z ERROR: test_absent_unstarted_reader_facts_are_absent_not_unconfirmed (__main__.CompositionTests.test_absent_unstarted_reader_facts_are_absent_not_unconfirmed)
+2026-10-24T13:44:57.1119560Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1120338Z Traceback (most recent call last):
+2026-10-24T13:44:57.1131079Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 253, in test_absent_unstarted_reader_facts_are_absent_not_unconfirmed
+2026-10-24T13:44:57.1132785Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T13:44:57.1133416Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1134699Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1136034Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1137686Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1139727Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1141663Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1143435Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1145245Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1146801Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1148123Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1149083Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1151303Z 
+2026-10-24T13:44:57.1151526Z ======================================================================
+2026-10-24T13:44:57.1153213Z ERROR: test_complete_before_seventeen_two_ordered_workers_after_seventeen_and_closure (__main__.CompositionTests.test_complete_before_seventeen_two_ordered_workers_after_seventeen_and_closure)
+2026-10-24T13:44:57.1154965Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1155727Z Traceback (most recent call last):
+2026-10-24T13:44:57.1157805Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 160, in test_complete_before_seventeen_two_ordered_workers_after_seventeen_and_closure
+2026-10-24T13:44:57.1159657Z     entry,ops,args,*_=self.fixture(Path(d));entry.run(*args)
+2026-10-24T13:44:57.1160351Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1161434Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1162655Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1163845Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1165720Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1168350Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1169965Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1171504Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1172752Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1173915Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1174720Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1175285Z 
+2026-10-24T13:44:57.1175461Z ======================================================================
+2026-10-24T13:44:57.1177191Z ERROR: test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass (__main__.CompositionTests.test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass) (fault='reader-stop')
+2026-10-24T13:44:57.1179036Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1179626Z Traceback (most recent call last):
+2026-10-24T13:44:57.1181012Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 222, in test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass
+2026-10-24T13:44:57.1182404Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1182914Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1183941Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1185060Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1186173Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1188260Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1190124Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1191657Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1193145Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1194361Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1195430Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1196267Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1196832Z 
+2026-10-24T13:44:57.1197043Z ======================================================================
+2026-10-24T13:44:57.1198529Z ERROR: test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass (__main__.CompositionTests.test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass) (fault='reader-missing-registration')
+2026-10-24T13:44:57.1200056Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1200636Z Traceback (most recent call last):
+2026-10-24T13:44:57.1202191Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 222, in test_dynamic_reader_stop_unknown_and_missing_cid_never_become_seal_pass
+2026-10-24T13:44:57.1203636Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1204163Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1205183Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1206284Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1207403Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1209536Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1211185Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1212677Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1214138Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1215358Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1216485Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1217245Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1217740Z 
+2026-10-24T13:44:57.1217947Z ======================================================================
+2026-10-24T13:44:57.1219295Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='HEAD')
+2026-10-24T13:44:57.1220690Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1221523Z Traceback (most recent call last):
+2026-10-24T13:44:57.1222896Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1224272Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1224754Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1225727Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1226797Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1227846Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1229510Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1230463Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1231400Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1232275Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1233183Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1233868Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1234318Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1234639Z 
+2026-10-24T13:44:57.1234742Z ======================================================================
+2026-10-24T13:44:57.1235550Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='old-budget')
+2026-10-24T13:44:57.1236390Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1236723Z Traceback (most recent call last):
+2026-10-24T13:44:57.1237982Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1238811Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1239100Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1239696Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1240356Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1241201Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1242270Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1243200Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1244085Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1245129Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1245845Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1246484Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1246950Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1247257Z 
+2026-10-24T13:44:57.1247365Z ======================================================================
+2026-10-24T13:44:57.1248575Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='before-business-races')
+2026-10-24T13:44:57.1249528Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1249856Z Traceback (most recent call last):
+2026-10-24T13:44:57.1250675Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1251496Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1251797Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1252424Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1253086Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1253938Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1255036Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1255971Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1256866Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1257732Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1258667Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1259324Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1259781Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1260101Z 
+2026-10-24T13:44:57.1260202Z ======================================================================
+2026-10-24T13:44:57.1261026Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='before-late-hold')
+2026-10-24T13:44:57.1261879Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1262198Z Traceback (most recent call last):
+2026-10-24T13:44:57.1263049Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1263856Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1264136Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1264716Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1265529Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1266185Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1267243Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1268166Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1269442Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1270324Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1271035Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1271694Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1272153Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1272469Z 
+2026-10-24T13:44:57.1272569Z ======================================================================
+2026-10-24T13:44:57.1274339Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='before-mixed')
+2026-10-24T13:44:57.1275403Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1275750Z Traceback (most recent call last):
+2026-10-24T13:44:57.1276595Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1277407Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1277699Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1278291Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1278947Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1279609Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1280670Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1281598Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1282506Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1283364Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1284067Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1284698Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1285137Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1285610Z 
+2026-10-24T13:44:57.1285719Z ======================================================================
+2026-10-24T13:44:57.1286522Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='phase-alias')
+2026-10-24T13:44:57.1287344Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1287661Z Traceback (most recent call last):
+2026-10-24T13:44:57.1288462Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1289653Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1289951Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1290701Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1291422Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1292099Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1293163Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1294239Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1295156Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1296030Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1296739Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1297380Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1297824Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1298132Z 
+2026-10-24T13:44:57.1298242Z ======================================================================
+2026-10-24T13:44:57.1299038Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='new-budget')
+2026-10-24T13:44:57.1299856Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1300170Z Traceback (most recent call last):
+2026-10-24T13:44:57.1300983Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1301787Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1302066Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1302643Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1303295Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1303954Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1305013Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1306059Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1306969Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1308020Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1308748Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1309822Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1310269Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1310581Z 
+2026-10-24T13:44:57.1310684Z ======================================================================
+2026-10-24T13:44:57.1311506Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='start-unknown')
+2026-10-24T13:44:57.1312336Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1312649Z Traceback (most recent call last):
+2026-10-24T13:44:57.1313478Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1314424Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1314722Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1315313Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1315984Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1316655Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1317715Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1318634Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1319525Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1320405Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1321110Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1321748Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1322192Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1322504Z 
+2026-10-24T13:44:57.1322602Z ======================================================================
+2026-10-24T13:44:57.1323419Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='ready-missing')
+2026-10-24T13:44:57.1324513Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1324963Z Traceback (most recent call last):
+2026-10-24T13:44:57.1325773Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1326574Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1326855Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1327433Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1328088Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1328764Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1330254Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1331189Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1332089Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1332957Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1333833Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1334583Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1335093Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1335454Z 
+2026-10-24T13:44:57.1335576Z ======================================================================
+2026-10-24T13:44:57.1336442Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='ready-foreign')
+2026-10-24T13:44:57.1337368Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1337750Z Traceback (most recent call last):
+2026-10-24T13:44:57.1338586Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1339437Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1339774Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1340616Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1341403Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1342111Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1343243Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1344237Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1345216Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1347963Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1348791Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1349439Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1349998Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1350333Z 
+2026-10-24T13:44:57.1350475Z ======================================================================
+2026-10-24T13:44:57.1351359Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='ready-replayed')
+2026-10-24T13:44:57.1352257Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1352648Z Traceback (most recent call last):
+2026-10-24T13:44:57.1353543Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1354405Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1354750Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1355402Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1356121Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1357043Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1358429Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1359440Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1360403Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1361347Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1362159Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1362908Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1363408Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1363776Z 
+2026-10-24T13:44:57.1363898Z ======================================================================
+2026-10-24T13:44:57.1364795Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='window-after-proof')
+2026-10-24T13:44:57.1365737Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1366123Z Traceback (most recent call last):
+2026-10-24T13:44:57.1367344Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1368268Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1368603Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1369264Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1370197Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1370929Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1372054Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1373044Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1374003Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1374981Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1375756Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1376457Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1377211Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1377880Z 
+2026-10-24T13:44:57.1378115Z ======================================================================
+2026-10-24T13:44:57.1379943Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='first-UNKNOWN')
+2026-10-24T13:44:57.1381572Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1382206Z Traceback (most recent call last):
+2026-10-24T13:44:57.1383797Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1385380Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1385749Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1386466Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1387600Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1388376Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1389518Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1390518Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1391507Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1392434Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1393775Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1394960Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1395778Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1396612Z 
+2026-10-24T13:44:57.1396837Z ======================================================================
+2026-10-24T13:44:57.1398247Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='durability')
+2026-10-24T13:44:57.1399747Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1400304Z Traceback (most recent call last):
+2026-10-24T13:44:57.1401734Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1403278Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1403830Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1404927Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1406157Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1407681Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1409602Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1411455Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1413416Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1414977Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1416236Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1417429Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1418245Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1418787Z 
+2026-10-24T13:44:57.1419005Z ======================================================================
+2026-10-24T13:44:57.1420402Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='unconfirmed')
+2026-10-24T13:44:57.1421850Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1422437Z Traceback (most recent call last):
+2026-10-24T13:44:57.1423860Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1425232Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1425764Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1426796Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1428232Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1429334Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1431164Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1432952Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1434440Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1435950Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1437180Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1438268Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1439006Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1439567Z 
+2026-10-24T13:44:57.1439732Z ======================================================================
+2026-10-24T13:44:57.1441111Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='after-business-races')
+2026-10-24T13:44:57.1442664Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1443204Z Traceback (most recent call last):
+2026-10-24T13:44:57.1444582Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1446095Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1446576Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1447584Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1449199Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1450183Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1451618Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1452861Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1454804Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1456531Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1458273Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1459185Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1459785Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1460208Z 
+2026-10-24T13:44:57.1460338Z ======================================================================
+2026-10-24T13:44:57.1461690Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='after-mixed')
+2026-10-24T13:44:57.1462753Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1463613Z Traceback (most recent call last):
+2026-10-24T13:44:57.1464897Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1466645Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1467133Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1468646Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1470616Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1473183Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1475786Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1477483Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1479090Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1480612Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1483010Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1484154Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1484930Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1485501Z 
+2026-10-24T13:44:57.1485679Z ======================================================================
+2026-10-24T13:44:57.1487103Z ERROR: test_failures_never_enable_next_worker_and_preserve_partial_receipts (__main__.CompositionTests.test_failures_never_enable_next_worker_and_preserve_partial_receipts) (fault='closure')
+2026-10-24T13:44:57.1488988Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1489558Z Traceback (most recent call last):
+2026-10-24T13:44:57.1490420Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 173, in test_failures_never_enable_next_worker_and_preserve_partial_receipts
+2026-10-24T13:44:57.1491271Z     entry,ops,args,*_=self.fixture(Path(d),fault)
+2026-10-24T13:44:57.1491771Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1492718Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1493398Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1494085Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1495186Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1496126Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1497028Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1498062Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1498785Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1499422Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1500300Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1500685Z 
+2026-10-24T13:44:57.1500817Z ======================================================================
+2026-10-24T13:44:57.1501937Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='reader')
+2026-10-24T13:44:57.1503328Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1503739Z Traceback (most recent call last):
+2026-10-24T13:44:57.1504679Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 212, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T13:44:57.1505557Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T13:44:57.1505878Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1507023Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1507772Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1508861Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1510028Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1511051Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1512033Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1512943Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1513711Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1514410Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1514921Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1515286Z 
+2026-10-24T13:44:57.1515401Z ======================================================================
+2026-10-24T13:44:57.1516296Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='config')
+2026-10-24T13:44:57.1517174Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1517553Z Traceback (most recent call last):
+2026-10-24T13:44:57.1518416Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 212, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T13:44:57.1519277Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T13:44:57.1519593Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1520243Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1521061Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1521782Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1522840Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1523844Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1524800Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1525727Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1526887Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1527597Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1528131Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1528464Z 
+2026-10-24T13:44:57.1528603Z ======================================================================
+2026-10-24T13:44:57.1529588Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='baseline')
+2026-10-24T13:44:57.1530492Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1530866Z Traceback (most recent call last):
+2026-10-24T13:44:57.1531743Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 212, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T13:44:57.1532667Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T13:44:57.1532995Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1533636Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1534350Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1535063Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1536216Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1537195Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1538149Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1539074Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1539836Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1540551Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1541053Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1541471Z 
+2026-10-24T13:44:57.1541608Z ======================================================================
+2026-10-24T13:44:57.1542500Z ERROR: test_revalidation_rejects_reader_config_baseline_and_private_key_drift (__main__.CompositionTests.test_revalidation_rejects_reader_config_baseline_and_private_key_drift) (target='private-key')
+2026-10-24T13:44:57.1543408Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1543803Z Traceback (most recent call last):
+2026-10-24T13:44:57.1544709Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 212, in test_revalidation_rejects_reader_config_baseline_and_private_key_drift
+2026-10-24T13:44:57.1545560Z     entry,ops,args,*_=self.fixture(Path(d))
+2026-10-24T13:44:57.1545871Z                       ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1546872Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1547623Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1548383Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1549495Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1550454Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1551532Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1552470Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1553276Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1553945Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1554436Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1554795Z 
+2026-10-24T13:44:57.1554915Z ======================================================================
+2026-10-24T13:44:57.1555836Z ERROR: test_sha_pinned_anchor_closes_all_after_packet_drift_archive_failure_and_inspect_failure (__main__.CompositionTests.test_sha_pinned_anchor_closes_all_after_packet_drift_archive_failure_and_inspect_failure)
+2026-10-24T13:44:57.1556778Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1557186Z Traceback (most recent call last):
+2026-10-24T13:44:57.1558141Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 197, in test_sha_pinned_anchor_closes_all_after_packet_drift_archive_failure_and_inspect_failure
+2026-10-24T13:44:57.1559082Z     entry,ops,args,*_=self.fixture(Path(d),'closure')
+2026-10-24T13:44:57.1559407Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1560044Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1560789Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1561514Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1562650Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1563796Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1564756Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1565699Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1566474Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1567586Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1568097Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1568460Z 
+2026-10-24T13:44:57.1568583Z ======================================================================
+2026-10-24T13:44:57.1569626Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='MaxProviderDeletes')
+2026-10-24T13:44:57.1570703Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1571081Z Traceback (most recent call last):
+2026-10-24T13:44:57.1571980Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1573237Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1573841Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1574504Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1575218Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1575934Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1577054Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1578054Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1579042Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1579972Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1580732Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1581426Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1581928Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1582281Z 
+2026-10-24T13:44:57.1582423Z ======================================================================
+2026-10-24T13:44:57.1583443Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='MaxProtectionWrites')
+2026-10-24T13:44:57.1584611Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1584987Z Traceback (most recent call last):
+2026-10-24T13:44:57.1585887Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1587422Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1588039Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1588719Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1589435Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1590152Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1591309Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1592300Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1593249Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1594292Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1595073Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1595805Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1596311Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1596711Z 
+2026-10-24T13:44:57.1596861Z ======================================================================
+2026-10-24T13:44:57.1597864Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='SourceStart')
+2026-10-24T13:44:57.1598908Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1599307Z Traceback (most recent call last):
+2026-10-24T13:44:57.1600245Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1601383Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1601926Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1602522Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1603179Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1603855Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1604919Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1605846Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1606842Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1608087Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1608827Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1609466Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1609912Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1610231Z 
+2026-10-24T13:44:57.1610328Z ======================================================================
+2026-10-24T13:44:57.1611237Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='Phases')
+2026-10-24T13:44:57.1612168Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1612481Z Traceback (most recent call last):
+2026-10-24T13:44:57.1613322Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1614506Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1615060Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1615661Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1616318Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1616970Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1618027Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1618952Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1619855Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1620713Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1621411Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1622036Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1622475Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1622786Z 
+2026-10-24T13:44:57.1622890Z ======================================================================
+2026-10-24T13:44:57.1623827Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='ManifestSHA256')
+2026-10-24T13:44:57.1624790Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1625216Z Traceback (most recent call last):
+2026-10-24T13:44:57.1626082Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1627724Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1628365Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1629112Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1629906Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1630652Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1631829Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1632829Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1633894Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1634824Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1693097Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1693828Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1694296Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1694614Z 
+2026-10-24T13:44:57.1694727Z ======================================================================
+2026-10-24T13:44:57.1695702Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='read', field='OldAuthorizationReused')
+2026-10-24T13:44:57.1696713Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1697030Z Traceback (most recent call last):
+2026-10-24T13:44:57.1697906Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1698996Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1699540Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1700151Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1700803Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1701459Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1702507Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1703426Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1704502Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1705383Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1706527Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1707175Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1707615Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1707925Z 
+2026-10-24T13:44:57.1708030Z ======================================================================
+2026-10-24T13:44:57.1708951Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='RetainUntil')
+2026-10-24T13:44:57.1709904Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1710210Z Traceback (most recent call last):
+2026-10-24T13:44:57.1711056Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1712143Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1712676Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1713410Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1714068Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1714719Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1715773Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1716686Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1717582Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1718446Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1719149Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1719773Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1720213Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1720528Z 
+2026-10-24T13:44:57.1720629Z ======================================================================
+2026-10-24T13:44:57.1721544Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='MaxTotal')
+2026-10-24T13:44:57.1722473Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1722781Z Traceback (most recent call last):
+2026-10-24T13:44:57.1723607Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1724791Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1725328Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1726266Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1726947Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1727600Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1728663Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1729588Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1730473Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1731324Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1732024Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1732771Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1733299Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1733611Z 
+2026-10-24T13:44:57.1733716Z ======================================================================
+2026-10-24T13:44:57.1734647Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='MaxPerTarget')
+2026-10-24T13:44:57.1735605Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1735915Z Traceback (most recent call last):
+2026-10-24T13:44:57.1736765Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1737851Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1738383Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1738976Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1739617Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1740268Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1741313Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1742232Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1743116Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1744075Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1744773Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1745388Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1745818Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1746496Z 
+2026-10-24T13:44:57.1746598Z ======================================================================
+2026-10-24T13:44:57.1747507Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='Kind')
+2026-10-24T13:44:57.1748436Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1748744Z Traceback (most recent call last):
+2026-10-24T13:44:57.1749582Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1750656Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1751185Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1751776Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1752540Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1753212Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1754270Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1755189Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1756083Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1756942Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1757649Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1758271Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1758700Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1759007Z 
+2026-10-24T13:44:57.1759110Z ======================================================================
+2026-10-24T13:44:57.1760071Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='OldAuthorizationReused')
+2026-10-24T13:44:57.1761050Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1761355Z Traceback (most recent call last):
+2026-10-24T13:44:57.1762185Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1763410Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1763936Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1764523Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1765165Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1765812Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1767252Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1768182Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1769070Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1769924Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1770626Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1771253Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1771809Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1772136Z 
+2026-10-24T13:44:57.1772237Z ======================================================================
+2026-10-24T13:44:57.1773174Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='BindingsSHA256')
+2026-10-24T13:44:57.1774130Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1774448Z Traceback (most recent call last):
+2026-10-24T13:44:57.1775296Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1776378Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1776916Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1777499Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1778149Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1778813Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1779874Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1780795Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1781689Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1782552Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1784126Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1784772Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1785213Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1785522Z 
+2026-10-24T13:44:57.1785619Z ======================================================================
+2026-10-24T13:44:57.1787082Z ERROR: test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope (__main__.CompositionTests.test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope) (phase='write', field='HumanMessageSHA256')
+2026-10-24T13:44:57.1788096Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1788416Z Traceback (most recent call last):
+2026-10-24T13:44:57.1789367Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 189, in test_signed_read_write_authority_rejects_mismatched_dates_identity_reuse_scope
+2026-10-24T13:44:57.1790485Z     entry,ops,args,read,write,key=self.fixture(Path(d));body=copy.deepcopy(read if phase=='read' else write);body[field]=value
+2026-10-24T13:44:57.1791053Z                                   ~~~~~~~~~~~~^^^^^^^^^
+2026-10-24T13:44:57.1791681Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1792366Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1793236Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1794314Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1795458Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1796366Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1797231Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1797969Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1798607Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1799049Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1799360Z 
+2026-10-24T13:44:57.1799458Z ======================================================================
+2026-10-24T13:44:57.1800332Z ERROR: test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost (__main__.CompositionTests.test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost) (fault='intent-missing')
+2026-10-24T13:44:57.1801221Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1801529Z Traceback (most recent call last):
+2026-10-24T13:44:57.1802419Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 239, in test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost
+2026-10-24T13:44:57.1803279Z     entry,ops,args,*_=self.fixture(Path(d),'reader-stop')
+2026-10-24T13:44:57.1803586Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1804310Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1804961Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1805606Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1807084Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1808035Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1808927Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1809788Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1810496Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1811310Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1811755Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1812059Z 
+2026-10-24T13:44:57.1812162Z ======================================================================
+2026-10-24T13:44:57.1813153Z ERROR: test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost (__main__.CompositionTests.test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost) (fault='intent-corrupt')
+2026-10-24T13:44:57.1814077Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1814387Z Traceback (most recent call last):
+2026-10-24T13:44:57.1815231Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 239, in test_valid_reader_registration_still_closes_when_intent_or_main_packet_is_lost
+2026-10-24T13:44:57.1816088Z     entry,ops,args,*_=self.fixture(Path(d),'reader-stop')
+2026-10-24T13:44:57.1816392Z                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1816972Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\test_retention_composition.py", line 148, in fixture
+2026-10-24T13:44:57.1817616Z     entry=c.Composition(packet,packet_sha,ops,lambda:self.current)
+2026-10-24T13:44:57.1818257Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\retention_composition.py", line 313, in __init__
+2026-10-24T13:44:57.1819316Z     need(reader['native']==known[reader['group']]['Native'] and reader['intent']==str(destination/'reader-create-intent.json') and reader['registration']==str(destination/'reader-created.json') and
+2026-10-24T13:44:57.1820226Z     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1821101Z          reader['closure']==str(destination/'public/closure.json') and reader['profile']==str(destination/'private/retention-readonly.json'),'COMPOSITION_ANCHOR_READER_PATH_BINDING')
+2026-10-24T13:44:57.1821964Z          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T13:44:57.1822667Z   File "D:\a\data-product-platform\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+2026-10-24T13:44:57.1823406Z     raise ValueError('native protection required: ' + reason)
+2026-10-24T13:44:57.1823837Z ValueError: native protection required: COMPOSITION_ANCHOR_READER_PATH_BINDING
+2026-10-24T13:44:57.1824137Z 
+2026-10-24T13:44:57.1824702Z ----------------------------------------------------------------------
+2026-10-24T13:44:57.1825028Z Ran 9 tests in 3.278s
+2026-10-24T13:44:57.1825157Z 
+2026-10-24T13:44:57.1825228Z FAILED (errors=42)
+2026-10-24T13:44:57.1837801Z ##[error]Process completed with exit code 1.
+2026-10-24T13:44:57.2149857Z Post job cleanup.
+2026-10-24T13:44:57.4419039Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-24T13:44:57.4873528Z git version 2.56.0.windows.2
+2026-10-24T13:44:57.4959643Z Temporarily overriding HOME='D:\a\_temp\c773d2fd-bf8d-44aa-a0e2-1767016eacf0' before making global git config changes
+2026-10-24T13:44:57.4960870Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-24T13:44:57.4971742Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\data-product-platform\data-product-platform
+2026-10-24T13:44:57.5385922Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-24T13:44:57.5808428Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-24T13:44:58.2386728Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-24T13:44:58.2749804Z http.https://github.com/.extraheader
+2026-10-24T13:44:58.2804402Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-24T13:44:58.3274424Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-24T13:44:58.9554776Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-24T13:44:58.9978491Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-24T13:44:59.7873836Z Cleaning up orphan processes
+2026-10-24T13:44:59.8071329Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

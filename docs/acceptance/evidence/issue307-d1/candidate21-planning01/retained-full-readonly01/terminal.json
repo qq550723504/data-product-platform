@@ -1,0 +1,10 @@
+{
+  "status": "FAILED_HISTORY_READ_RETAINED",
+  "at": "2026-10-22T10:20:59.062270+00:00",
+  "error_type": "ValueError",
+  "error": "retained v29: pinned old fact changed: delete-confirmed-v29-execution01/window01/terminal.json",
+  "host_read_processes": 840,
+  "source_provider_actions": 0,
+  "new_resource_allocation": 0,
+  "native_delete": 0
+}

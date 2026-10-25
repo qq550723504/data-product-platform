@@ -1,0 +1,43 @@
+{
+  "status": "REVIEWER_HARNESS_ISOLATION_ERROR_CORRECTED",
+  "at": "2026-10-19T13:37:45.747848+00:00",
+  "first_test": "test_host_blockers01.py",
+  "cause": "Snapshot was captured after parent changed close_all to p1.close_known. First test patched host aliases only, not shared p1 aliases. Synthetic names one/two therefore reached real Docker inspect/stop.",
+  "actions": "Two modes each attempted stops for nonexistent synthetic one/two; all four stop_failed=true and no known/approved CID was targeted or successfully acted on. The p1.call failure diagnostics may have been appended in old closure03 private control directory and are not removed.",
+  "retention": "Original failing test and raw logs remain. No source/provider/start/secret read by these attempts. Corrected test02 patches both alias sets and p1.call refuses any real command.",
+  "records": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-blockers-normal02-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "host-blockers-normal02-stderr.txt",
+          "sha256": "28250c47788c214c20da3ca4fa5b0ec008390ffc9347c57a1ea68d5162613d7c",
+          "bytes": 529
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "host-blockers-optimized02-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "host-blockers-optimized02-stderr.txt",
+          "sha256": "de258f5151026bbcf81ee911c4313aa0e1ece78181c8faa49a89afafa7e2f63b",
+          "bytes": 529
+        }
+      }
+    }
+  ],
+  "snapshot_already_has_parent_B1_B3_fixes": true
+}

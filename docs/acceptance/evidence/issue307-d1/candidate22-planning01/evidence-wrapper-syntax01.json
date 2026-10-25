@@ -1,0 +1,75 @@
+{
+  "status": "PASS_CURRENT_EVIDENCE_WRAPPER_SYNTAX_ONLY",
+  "at": "2026-10-23T04:46:08.483750+00:00",
+  "count": 16,
+  "files": {
+    "capture-retained-c21-anchor01.py": {
+      "sha256": "c4a6baf766e16fac08f1d618b65ac7ce08ac0a42e9b7783aa1dbfc1e0ee266da",
+      "bytes": 6461
+    },
+    "capture-retained-c21-anchor02.py": {
+      "sha256": "fb3bd737137d6c4ebcb8cd40afca3b7df57501e2e80daf48a72f1da3030b7f4e",
+      "bytes": 8010
+    },
+    "finalize-static-bindings01.py": {
+      "sha256": "0624ca231478c58d51904b4dcd6a4f611eb1e1d26634c797e6607210b41a8f0c",
+      "bytes": 6005
+    },
+    "observe-backups75.py": {
+      "sha256": "616b1f633e05bee415c741c26f379e64ab35df599d18643699dc83cc66d6da0a",
+      "bytes": 1811
+    },
+    "observe-final-cold01.py": {
+      "sha256": "9b3becd3968ad76629397e424a6b82fe3a88f1a2205da60c161b99efb874ef79",
+      "bytes": 3684
+    },
+    "observe-host-bindings01.py": {
+      "sha256": "e3faeedd9efbddc094c7576b620da0daf7d9cd1fb56c34852cb666659261adf5",
+      "bytes": 3365
+    },
+    "protection-owner-maintenance01.py": {
+      "sha256": "77981215a2c2a6c00f0c24c3ab7aeb89d1e0338d38d8c373b88ac42242a8b837",
+      "bytes": 7536
+    },
+    "publish-source01.py": {
+      "sha256": "597204669a3a1a3ae3d6058f1d20713593723c420e6664e541844239bfb6153b",
+      "bytes": 2919
+    },
+    "run-complete-entry01.py": {
+      "sha256": "504a645cdd861dd2a8874983c84edadbbc656a961537cd3cc5f8f7d0997aac41",
+      "bytes": 2441
+    },
+    "run-preparation-phase.py": {
+      "sha256": "978ff39405049a95ad033fbd1a3e6119cab6b6b34a9aca8b0087ba1060a6f8a7",
+      "bytes": 2341
+    },
+    "scan-publication-secrets01.py": {
+      "sha256": "20ae3f3e41920a0d75003426720401d45d346a55b9e82c874622532544b737e5",
+      "bytes": 3018
+    },
+    "test_protection_owner_maintenance01.py": {
+      "sha256": "3fa799e3f8677acdac4413a0268843203cb0372ea87859b3ad0b57ba86138794",
+      "bytes": 5979
+    },
+    "verify-bounded-readiness01.py": {
+      "sha256": "a60b21a09791a94fae6b1a76015a09abacf756c8d9179e620eccff080132cee0",
+      "bytes": 3533
+    },
+    "watch-source-ci01.py": {
+      "sha256": "f1d0072d74efa552633b295f5e5d857c5ea8bdecb3202d920035eea5672c1fae",
+      "bytes": 866
+    },
+    "write-frozen-documents01.py": {
+      "sha256": "4106f0be497e41cce1e7295b21a18c6c415400789634ace4197e8c2970eaa30d",
+      "bytes": 19717
+    },
+    "write-postlock-confirmation01.py": {
+      "sha256": "e5d3501e6f562fcb7e9795866a8c97ed49eb9e312442d28f2ab31c549bab0dc9",
+      "bytes": 10269
+    }
+  },
+  "native_delete": 0,
+  "native_preparation": "NOT_RUN",
+  "source_compilation": "SEPARATE_SOURCE_REGRESSION03",
+  "authority": false
+}

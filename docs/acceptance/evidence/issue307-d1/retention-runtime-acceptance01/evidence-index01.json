@@ -1,0 +1,1409 @@
+{
+  "status": "PASS_BOUNDED_RUNTIME_PREPARATION_EVIDENCE",
+  "source_head": "d8b782183d49f201c105e90e4c5215c1b8d7d3f4",
+  "runtime_source": "53f6f8a6e69c17fa6896a40293d323f6ee9d0958",
+  "scope": "SOURCE_AND_LOCAL_NONDELETE_ONLY_NOT_EXECUTION_AUTHORITY",
+  "count": 350,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/01-before-host.json": {
+      "sha256": "b3d05a78fc6bc88e223209982b466e8fa3add616efc01fc09876b25c782a917d",
+      "bytes": 419
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/02-before-context.txt": {
+      "sha256": "1233a2024c180ddb12a93c69e1c96bd4cdb83791f59a59c4b9f2c6218d4e1d90",
+      "bytes": 323
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/03-before-version.txt": {
+      "sha256": "a5daa6955627dc8ec27b1024ef35654c15e9f7806c296355f9a3958bb2308680",
+      "bytes": 463
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/04-before-wsl.txt": {
+      "sha256": "9642ab572ac8a7fae66964aa958ea8e0b1fc32a8c8f30c5d21b025b21f5878f0",
+      "bytes": 90
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/05-before-events-install-disks.json": {
+      "sha256": "344e3e2eb1dc106f2c96fd1ff3428ad13158147a153b32d10608b2240831d1b5",
+      "bytes": 1098
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/06-historical-source-restart-policies.json": {
+      "sha256": "e1a876be94873923c0cdd6f7c4794b5c446f3f4d05b17c570cf091468bd58774",
+      "bytes": 957
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/07-action-start-desktop.json": {
+      "sha256": "ce7783a68b60eb41861c444194bb81f1511b5d66aca8e323d6af7c73bddfcdab",
+      "bytes": 336
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/08-daemon-polls.json": {
+      "sha256": "0490139ac41e530b4c3c5eb1730fc1acde8a3c484eab62a8f4d1b1d4daab2eb3",
+      "bytes": 1154
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/09-recent-source-prestart-snapshots.json": {
+      "sha256": "938e00d995cf4a3dcb19ba6cc0ec9cdd4b2957f6832af62aed12f5fb2cad9220",
+      "bytes": 1258
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/10-after-version.json": {
+      "sha256": "353700863285e40c6ef550dd7b7f7b90cf589c9c81ba02d4390dddb431186ac3",
+      "bytes": 1146
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/11-after-info-redacted.json": {
+      "sha256": "4fccd5be33799aad86c7cc37639ffcf223b78351f5791e79822261b09dd1ac85",
+      "bytes": 386
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/12-after-source-readback.json": {
+      "sha256": "ed293cc1e4ed33392e6865cfad1e95385f9f3712420baa8b357f91e98a9f7123",
+      "bytes": 4092
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/13-after-wsl.txt": {
+      "sha256": "a666b6ce0952f60fefefdf9219909bc7723bd3b4a57f23c5f1b5923dff80dcca",
+      "bytes": 90
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/14-verification-summary.json": {
+      "sha256": "d2f29947109414f8813a468dafacd1372e255c5f48a698528b89344a56ecaac8",
+      "bytes": 1958
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/15-after-host.json": {
+      "sha256": "47d29e643890f755e99c0de3c0b7140b7dca8efa4a7d60c7386f141b63364bbc",
+      "bytes": 4100
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/16-raw-custody.json": {
+      "sha256": "e70a38c2a35c845c5ab34d231e2bfefef8960dbca5a9c817034ebe899ff632b1",
+      "bytes": 3121
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/17-before-log-safe-excerpt.json": {
+      "sha256": "c9a241a7f4be90ff17ac3b09a9985fbc83adfa8b11044038766048e7a69bbde5",
+      "bytes": 902
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/18-public-evidence-safety-audit.json": {
+      "sha256": "21b400cd041dae75af94fc492267b22d23e4798cd327afdd9f4998434afa20f6",
+      "bytes": 2008
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/19-final-report.json": {
+      "sha256": "291761eab9034a16c6a9e1724e6da6e6139a2f580f30fa2eae2e36b2de3eb42c",
+      "bytes": 3401
+    },
+    "docs/acceptance/evidence/issue307-d1/docker-engine-repair01/20-public-sha256-manifest.json": {
+      "sha256": "78c62f9bc8bc55ff13a99a84d8b5cc2752286d3ef3d7285054f37e703d1395dd",
+      "bytes": 3216
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/01-r3-offline-ci.json": {
+      "sha256": "9a18b6a5020a73c9c35d6e47ba7a36dff6840a42ccb6e027fcfff4213d43c927",
+      "bytes": 434
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/01-r3-offline-ci.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/01-r3-offline-ci.stdout": {
+      "sha256": "bee6249b36156ad4216ded2b1f44532971d3204f47cd9528499894e017171a67",
+      "bytes": 868
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/02-python-normal.stderr": {
+      "sha256": "3acbcafe5285d10d7507ae1884e3ed3d2794cdd69c1e455ee7af64d8419d455b",
+      "bytes": 114
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/02-python-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/02-python-offline.json": {
+      "sha256": "581ccf9288a5798c5e9d4c7567153aa166db2d16566cca95e2ceb625058b7312",
+      "bytes": 458
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/02-python-optimized.stderr": {
+      "sha256": "e2b9b797fb319bd7782c562563d2c963da0443f6a8bb212f5939ae6d72b97cba",
+      "bytes": 114
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/02-python-optimized.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/03-input-audit-command.json": {
+      "sha256": "41c7094408a318c83e75df28d5cf52b65194a81bd5552c6f700bdedce5bc9e1d",
+      "bytes": 240
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/03-input-audit-rerun-command.json": {
+      "sha256": "01bbc71de95c9caef82fecb3dff519b9862fe0768efa684d527d81c2f2a3a6e1",
+      "bytes": 428
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/03-input-audit-rerun.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/03-input-audit-rerun.stdout": {
+      "sha256": "be8b611cb7d0774fafe7fa86767de213460c1fb7266bd2d4c6470353dac4fdb2",
+      "bytes": 1877
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/03-input-audit.json": {
+      "sha256": "bce0471ae34b9b3e080a806a84a2190947cf6212b21834fef799fd9984672f34",
+      "bytes": 1875
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/03-input-audit.stderr": {
+      "sha256": "32cd808f391de499b47916d6d240be63d3fca2f2a5369b4859c8241aa420afa3",
+      "bytes": 703
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/03-input-audit.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/04-input-hashes.json": {
+      "sha256": "0161082212b4e28ad75c95c2ab915de298ed1c86d908f0078ac2699825ffd5d3",
+      "bytes": 15943
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/05-independent-review.json": {
+      "sha256": "da1fdeae5513399cf9ce968bfcfae23dd051edf7482d4c67553a3399b04a2a42",
+      "bytes": 8331
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/06-public-safety.json": {
+      "sha256": "b4691f27f2ee8d62a866521d5da592cf429440996fbf31897de113be402bcc33",
+      "bytes": 1913
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/07-review-sha256.json": {
+      "sha256": "690d4dfa454638cc7bc5a6edd8ea7b824f69866c2bb456759791ab9ea9970636",
+      "bytes": 2901
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-final-review01/audit_inputs.py": {
+      "sha256": "b2949904452653257c4998469c5ab6c1bbcf4cc80688021a4df384c253f1bc83",
+      "bytes": 8897
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/001-intent.json": {
+      "sha256": "61b905866c867ea55409ce7e7d0811cc91c0beb5808995795bf8df3db325850d",
+      "bytes": 199
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/001-process.json": {
+      "sha256": "89e2df830bac05a6390322b95203db6674ee2b9e9160cac88354740a023ade80",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/001-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/001-stdout.json": {
+      "sha256": "988188f3bccd3a945be1d6ee9a74332bada7f83e010408490a7f08b00f40c81e",
+      "bytes": 4088
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/002-intent.json": {
+      "sha256": "b2eaaa4ea4fc201111da0ae47c7ed1456f6cf3e2d05cb5f3395d1bf36ccf45dd",
+      "bytes": 210
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/002-process.json": {
+      "sha256": "7e3fbb8d4c067bfd1dcfb6d013abfdabee9cb55cc5d07771d4ca1f2139dc131d",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/002-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/002-stdout.json": {
+      "sha256": "f3c1210200585247290bf1446ca03c079589b608215505f5bdc936bcbd690811",
+      "bytes": 784
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/003-intent.json": {
+      "sha256": "c387c0c746759f8d0f99d4d6eccb2062e545cb240096a41f367fc73b99c4da37",
+      "bytes": 484
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/003-process.json": {
+      "sha256": "82f3f6a037e94ba2d13fd0553707fa7182b18b0cc9316b77da0752b1862e226f",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/003-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/003-stdout.json": {
+      "sha256": "50280fb8113c505e2c0cf32661d12e8891b5e00b9eaec4d3bfedfa72a7a26821",
+      "bytes": 394
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/004-intent.json": {
+      "sha256": "d103d4c8993cc2df532e62dd93b03577dcb73a12fc62104127b2a9af6472b955",
+      "bytes": 157
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/004-process.json": {
+      "sha256": "88c7319811618b3f4369b4245a873323f7e35b445880a9345d0eef1635ef85d2",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/004-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/004-stdout.json": {
+      "sha256": "cca78325c6396af9e26300d457ac45d1ee206884ea13d318194ef051c179084e",
+      "bytes": 21023
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/005-intent.json": {
+      "sha256": "ce2ea715bbcaf1844478a8a2503d35680b5fb0d94d04657e0ccad3e76a054435",
+      "bytes": 158
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/005-process.json": {
+      "sha256": "662bbe188cc43b2e7b962534da9603182e00d7faab612cb249affdea4c94c1f9",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/005-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/005-stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/006-intent.json": {
+      "sha256": "18e17b8ddb179ea8ed45fd10e39d597059229eda79fa5a00e8126e6b479ee7e1",
+      "bytes": 220
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/006-process.json": {
+      "sha256": "36178f53c5d57d1524625e808404ac445756ec2d8e87db8ebc809af115cba4ed",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/006-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/006-stdout.json": {
+      "sha256": "9df650ef264d771c16bdf81ceebe7b5f7f2c113e72bc28a949f56e48f3eecebb",
+      "bytes": 51378
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/007-intent.json": {
+      "sha256": "911e1ff4e07cae38344d676b7f0d1a5a3ee104aaa508152a5182a97c824370f1",
+      "bytes": 242
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/007-process.json": {
+      "sha256": "3f254ef5921457bc2f46549d52b38eec2739b733e301a735759a4b31bb7779a2",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/007-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/007-stdout.json": {
+      "sha256": "abf1a0e80e9f0c0e30eab2376d988ff81521f5e65e3d529b2f6bf5e471c4b39a",
+      "bytes": 28620
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/008-intent.json": {
+      "sha256": "859ad61e9e07589d86cb6fbf030ca8cb64c939a7cfb9907ee696fbc877f80684",
+      "bytes": 201
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/008-process.json": {
+      "sha256": "fd2fe730dfb14bd2e6d2260aaad24a857bd06b0fe6407980c52a5e783b996c17",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/008-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/008-stdout.json": {
+      "sha256": "6b8aa4b3fd0ffff7efd18b24129a8fcf7554553825666f4a6270d3f6e7ca7cee",
+      "bytes": 40494
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/009-intent.json": {
+      "sha256": "67c5c0277ab31e5fd2bcb58785da939249457960f0da74f4e2963a69e09a3dca",
+      "bytes": 318
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/009-process.json": {
+      "sha256": "28e5d55615b2b9df18e9019c4f03e86e678ce64dd1116ef25b13d093c606e257",
+      "bytes": 75
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/009-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/009-stdout.json": {
+      "sha256": "41aeb6f0b1637a4efc5c37cb0e47797c832b8582b70af2ac844f38a484b3a0b8",
+      "bytes": 103
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/policy-except-lock01.json": {
+      "sha256": "59bccf0bafcf70351b8b99cf982d6eba35ba1232973d9fe5f014a39d0a9fbbee",
+      "bytes": 429
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/result.json": {
+      "sha256": "e3b27828926d7dfcf123eadef349f28f448cf172d2329f5d44c7b87da2e699e1",
+      "bytes": 656
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/reviews.json": {
+      "sha256": "daba885309d40206e3908f5a2aec74356ca9055b7affa30168b69d5da7e69611",
+      "bytes": 170
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/github-read01/snapshot.json": {
+      "sha256": "b560756a09025e5dfb7b54375c970b462038bf35702c52f35eb835c251257e6e",
+      "bytes": 9496
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/actual-r-fixed-ci-entry02.json": {
+      "sha256": "dcd371ab119b4e161f17b07760060c7e6c5e4ea0c0b0e7231a3a696804265509",
+      "bytes": 653
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/actual-r-fixed-ci-entry02.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/actual-r-fixed-ci-entry02.stdout": {
+      "sha256": "1c5626e2d783fca5500f04687234385a89ffd315675ff7ad3d49cc6ed6f09430",
+      "bytes": 868
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/actual-r-six-packages.json": {
+      "sha256": "9015660adad0edc3ba841fc9a44e608370309734bdc05b969b629a03e0ea5b07",
+      "bytes": 740
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/actual-r-six-packages.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/actual-r-six-packages.stdout": {
+      "sha256": "ffb1bfeca36937c4d5672353c5720848347a3a05d970a54879961d806b84f6d4",
+      "bytes": 34707
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/archive-audit01.json": {
+      "sha256": "67665a441414fbbb7e8f037388f410380e260f69e4ec77fdcc15aaa0a3189cc7",
+      "bytes": 1173
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/initial-harness-failure-analysis01.json": {
+      "sha256": "7e890ec224f6822bc5f0ab6ae9db11671d78ebd2021821f573d07b9093457892",
+      "bytes": 396
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/offline-regression01.json": {
+      "sha256": "c80d55d8c684f3428ce163a240927ac26800c83d08312dbdbe069101a1f7a711",
+      "bytes": 4974
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/probe-evidence-audit01.json": {
+      "sha256": "d8af2a08628c4d21c266cdcad74b3f383b01267378c2162ef30c85b623d8d46e",
+      "bytes": 1657
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/reviewed-inputs01.json": {
+      "sha256": "8be88c359efdb42c37c7ee1cf97d85c1e71410a177f54964233e9df9ce5d8bfd",
+      "bytes": 7554
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_evidence_indexes-normal.json": {
+      "sha256": "0a343a11267399b5af16591c81bf67b280008c3573f911654e1af6ff13ead161",
+      "bytes": 599
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_evidence_indexes-normal.stderr": {
+      "sha256": "e7aa81a5a18f6c122cec2b1edabffd6df4c828757dddc8d8c1d30c542e9fe4dc",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_evidence_indexes-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_evidence_indexes-optimized.json": {
+      "sha256": "5a433c39041bad75e66922b6ca0909582ef5d6b90c1b994f6618bf210b61a64f",
+      "bytes": 612
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_evidence_indexes-optimized.stderr": {
+      "sha256": "c4b267ae63aa3786989314092bf12b25a5707ef0f0bd296403fa534fc7df8b19",
+      "bytes": 128
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_evidence_indexes-optimized.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_maintenance-normal.json": {
+      "sha256": "da5f2df7ef12db354e73e19f3f11c5373a3869227c588d372b79c2dbb0d7bd05",
+      "bytes": 609
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_maintenance-normal.stderr": {
+      "sha256": "1b81be039f7a988c4c3ea2563ff1b590c02f526eb762fb86361794954e71d417",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_maintenance-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_maintenance-optimized.json": {
+      "sha256": "8e746790ef9b506567f4431a3ee8472afe34a46c0a4cee5ddf1eeb6ce6b59de4",
+      "bytes": 622
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_maintenance-optimized.stderr": {
+      "sha256": "6c2967f2dbd44ee286a0d7c46492e90f32d56e0ef5694e227339e9172d40cbc6",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_maintenance-optimized.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_staging-normal.json": {
+      "sha256": "4754b1f43da867352e9294f6602e4766db8d7e1143837d2334a5a7de19b97870",
+      "bytes": 601
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_staging-normal.stderr": {
+      "sha256": "60ce10399dac04e70cc4897f5ee1b41eb950c5a2b6d2b6e99df5dc50047f0ef8",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_staging-optimized.json": {
+      "sha256": "f06a5ad4eee316486f527920bb761d0fa6bffe051041f84d44d352f39f3ee335",
+      "bytes": 614
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_staging-optimized.stderr": {
+      "sha256": "db147cb6a9d4a07fa6279f3e36eb2717b1561eeda9c69dcbfc3fcb81e767bdd4",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/independent-review01/test_retention_staging-optimized.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/inspect-private-custody01.json": {
+      "sha256": "ddf3734026e7d6cddea6382aa7d87fdd530e54a125401e90e5352b480826f0b6",
+      "bytes": 6248
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/linux-probe01.json": {
+      "sha256": "601a911b1db619067216ac2450dd19f1d8d682cdad897661348775c09a92b706",
+      "bytes": 5045
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/local-checks01.json": {
+      "sha256": "548d5e94d23b7b735c87b0aef3d7553709e0603d89664f9a95b6195651de6df1",
+      "bytes": 1843
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-01-inspect.json": {
+      "sha256": "1b50d6f8d0da425d5ccd7c13bb72bb9dc04fffa824789b3d91c3cefc5564c54d",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-01-inspect.redacted.json": {
+      "sha256": "5bad155e09fc6e9aa1110442f22fa47789860d76761551ef8330521c25ec7653",
+      "bytes": 8112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-01-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-02-inspect.json": {
+      "sha256": "2a613af78227bff97d11142c930bcf465844906b6ea25e4ab0e4085b29ffeb79",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-02-inspect.redacted.json": {
+      "sha256": "4eef71f5d072cd9e568cbef108ac1fa3b3a58a69a79ce8582f8bd564d2a84dd3",
+      "bytes": 8111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-02-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-03-compile.json": {
+      "sha256": "4145b5d7f168155d16e13ff9d43e88d3f3576f8b5b227d9105a590ce57a61092",
+      "bytes": 336
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-03-compile.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-03-compile.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-04-volume-create.json": {
+      "sha256": "25dc805333a7be5204ebd29101de0b08403447c791c7ab8bd80dc6da4e503afc",
+      "bytes": 311
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-04-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-04-volume-create.stdout": {
+      "sha256": "d783f6dd7ebf5b34d5d06eb3690d8c23610c16875f134a146ca5803090ec0dab",
+      "bytes": 40
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-05-volume-inspect.json": {
+      "sha256": "2b5b787f7ff74dfa34f0a9c1f7d18fc6f14a53d3f2fb30b1459ce1370495e1d8",
+      "bytes": 245
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-05-volume-inspect.redacted.json": {
+      "sha256": "c683b8447a68d2504a9955b358c73e89eb44bb2d074ea0f3d8803ffbc679c20b",
+      "bytes": 517
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-05-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-06-empty.json": {
+      "sha256": "9ea0098c618bac4b489a965c3574b18582cd232d6e3d56dc456fef5836c72d3d",
+      "bytes": 329
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-06-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-06-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-07-initialize-new.json": {
+      "sha256": "d7553b7df29e9fce737e959052ce11b209b428a696e66a6f75186595f3c9a590",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-07-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-07-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-08-linux-snapshot.json": {
+      "sha256": "d15cf9893ca2c50b4cb5da7168f10633aa3cb7aad85cfd15e7611eda36629fbc",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-08-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-08-linux-snapshot.stdout": {
+      "sha256": "92275d0337fb3b1f96a76cb89e78cdd424d24e80ec3f66b22297bbde20f0a352",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-09-linux-snapshot.json": {
+      "sha256": "6de69ca9c2c180cd61066900683c6647e301c3541844cbf26c550255f60b61bb",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-09-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-09-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-10-volume-create.json": {
+      "sha256": "6c24237cc375ff3a80704075786d9f001c04c8b3dc90a55ed7297668b4ef6a5f",
+      "bytes": 310
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-10-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-10-volume-create.stdout": {
+      "sha256": "09e71396ebc715c8933d282f78537620daab8571651d98e1e955de209064afb9",
+      "bytes": 39
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-11-volume-inspect.json": {
+      "sha256": "6f6d795cd8d5dd8dc2849fd6b28b41f2fb2180c001ce7591603cf4d4b8c44113",
+      "bytes": 244
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-11-volume-inspect.redacted.json": {
+      "sha256": "daf07b8c9c80a1d362daae002392245377392fd37186a631bbea75b95c135bb6",
+      "bytes": 515
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-11-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-12-empty.json": {
+      "sha256": "e76cd9d44c47ba5c3f1277df0e594c4fd80577bf9e4075eccc4b4ed67606038e",
+      "bytes": 328
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-12-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-12-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-13-initialize-new.json": {
+      "sha256": "5d2743325c481dc341242593b434dc46c75318354cb0c579fa830cb742b4baad",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-13-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-13-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-14-linux-snapshot.json": {
+      "sha256": "ad78e68ac730ae7a5fc1b71906288bc93b4df9500d67cdf3c32dddabe1b1f7c1",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-14-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-14-linux-snapshot.stdout": {
+      "sha256": "9e788c5cbc0cfb34b125c668a567a096c8d43f3646ed3a8578a870a9fbc088b9",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-15-volume-create.json": {
+      "sha256": "d891d6dd5063f3312321b2daf5891d00f477f0064c98e9ead9924e858a6fc94b",
+      "bytes": 310
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-15-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-15-volume-create.stdout": {
+      "sha256": "91e31c24f6caa7f5c4f9a91c08087d85a3e589c925e3888b7e523a3ffd4d9f8d",
+      "bytes": 39
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-16-volume-inspect.json": {
+      "sha256": "d5f4e572eb165d8e3b09107b204160bcf5379eb679ce6021d805018a69a1fccd",
+      "bytes": 244
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-16-volume-inspect.redacted.json": {
+      "sha256": "82c523f662106c4b71fd27f9cd6569ffa439512e258602cbc677eb21ddce7850",
+      "bytes": 515
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-16-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-17-empty.json": {
+      "sha256": "001101e020e978499bd28bf19f07bdff5bb54dab7042773b56c306844d3e0ce0",
+      "bytes": 328
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-17-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-17-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-18-initialize-new.json": {
+      "sha256": "4c2883475ca1096d0da8c9a314d4e46c181c5f9ca73cd30eb6ca8efee1ebdb68",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-18-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-18-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-19-linux-snapshot.json": {
+      "sha256": "127d5ee912d41a2a059219c7c8628de7e9cad25a5482b35cabd784596ddc522f",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-19-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-19-linux-snapshot.stdout": {
+      "sha256": "9e788c5cbc0cfb34b125c668a567a096c8d43f3646ed3a8578a870a9fbc088b9",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-20-create.json": {
+      "sha256": "d4c90ce68692239c8db4dd0c0cc4b12999c57f6abf56804c177fe20c0b8f7a7b",
+      "bytes": 1339
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-20-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-20-create.stdout": {
+      "sha256": "d7c079f236fab71d1da35e4963fd658459fa0e176ed12742133817535f020cb1",
+      "bytes": 65
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-21-start-test.json": {
+      "sha256": "6871e9cac679027c7f174265c62b4f0564b799e0530d47ea8a6df92665823afe",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-21-start-test.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-21-start-test.stdout": {
+      "sha256": "8088d244ce652e317b5bad241b643f57b1babfe8b4cf9b6ca5e1d4c32029ee00",
+      "bytes": 8533
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-22-inspect.json": {
+      "sha256": "a536459416dfc0ba580d1bd5995ce192f0e9de315958093371ef784523fccce7",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-22-inspect.redacted.json": {
+      "sha256": "5fd8b26eea79f4dd6e3d98e5132a5163ddd2138f1fee079e6cb21a770619058d",
+      "bytes": 9281
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-22-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-23-linux-snapshot.json": {
+      "sha256": "ff8f423f2caeb5f5137eb3274579a80ea7ba91e630b66ab6893ba97476c4fecf",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-23-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-23-linux-snapshot.stdout": {
+      "sha256": "92275d0337fb3b1f96a76cb89e78cdd424d24e80ec3f66b22297bbde20f0a352",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-24-linux-snapshot.json": {
+      "sha256": "24d7345f2161684e66324b3d8c37a23b4177d9ab624dc3c61bee91ec690f518d",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-24-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-24-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-25-linux-snapshot.json": {
+      "sha256": "5e404671527e133999ab676194090a4f42295c40ade120728606b27ab88542bd",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-25-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-25-linux-snapshot.stdout": {
+      "sha256": "c66abe7622529eeda2efaada9e897034d7e0cf77e1aab3d0c34c74c3098916ee",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-26-linux-snapshot.json": {
+      "sha256": "25f526135e2a367d5658ba95bff3ff0c4c1c33b16d48cc016b0df47eff65ba4a",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-26-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-26-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-27-linux-snapshot.json": {
+      "sha256": "bfc72d7cedf0fd3cbd609417b998a43409e59f4cf5384d9b5b370b7b8cb4a7ce",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-27-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-27-linux-snapshot.stdout": {
+      "sha256": "c66abe7622529eeda2efaada9e897034d7e0cf77e1aab3d0c34c74c3098916ee",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-28-linux-snapshot.json": {
+      "sha256": "0265f8cc4f984f5f808633a6858e7ee503332d1ffb4db9b48f7a145427784969",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-28-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-28-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-29-linux-snapshot.json": {
+      "sha256": "17bfe9306e366659e600c8d5e573119e32a20ba54475c9e31c92acd732edc8ff",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-29-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-29-linux-snapshot.stdout": {
+      "sha256": "68ecd53f21c1b70f020af52ec4ab0956afaf36cb745f060c5f58d4afbd9d710c",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-30-linux-snapshot.json": {
+      "sha256": "e9581e049f034326de35373d03533918f27b1f5d9e742c486eaff2c6c2b6fd12",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-30-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-30-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-31-inspect.json": {
+      "sha256": "fc043313089569e33424cc7c51d4e2a9a5083fefe1367a693748aa1094582af8",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-31-inspect.redacted.json": {
+      "sha256": "5fd8b26eea79f4dd6e3d98e5132a5163ddd2138f1fee079e6cb21a770619058d",
+      "bytes": 9281
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-31-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-32-inspect.json": {
+      "sha256": "e38664f0773b1e609306e50173d3e8a4a232399954f5061b02f81e66f7770371",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-32-inspect.redacted.json": {
+      "sha256": "5bad155e09fc6e9aa1110442f22fa47789860d76761551ef8330521c25ec7653",
+      "bytes": 8112
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-32-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-33-inspect.json": {
+      "sha256": "37b0a522a3edefa63bdf24113e623c31d5469641c292449c10bbea3fd7da7ad3",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-33-inspect.redacted.json": {
+      "sha256": "4eef71f5d072cd9e568cbef108ac1fa3b3a58a69a79ce8582f8bd564d2a84dd3",
+      "bytes": 8111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe-33-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/probe_linux01.py": {
+      "sha256": "f60a1a429977615e02a4b8bd587d5e5de5fb730e26a1b1159041a51c63797a82",
+      "bytes": 6423
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-host-normal.stderr": {
+      "sha256": "238d3219c603ab347b7e00d863ee4ea4cffe88dbc6a184631723e59e25ca101b",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-host-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-host-optimized.stderr": {
+      "sha256": "7fa1d531b44cbf977e11e750b711bce6e3388a170e4b2ce7cc8ddc4e838d3acf",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-host-optimized.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-staging-normal.stderr": {
+      "sha256": "60ce10399dac04e70cc4897f5ee1b41eb950c5a2b6d2b6e99df5dc50047f0ef8",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-staging-optimized.stderr": {
+      "sha256": "390de4340115a2e6b0bff546fedeab321d289085049da0835ff51d87eeb2476e",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/python-staging-optimized.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/runtime-generation01.json": {
+      "sha256": "072dafec673d9ef1ccebdcd39abf1a9ba263c663c8f49d9d9478497a40093a68",
+      "bytes": 1449
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/runtime-successor-ci-local.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix01/runtime-successor-ci-local.stdout": {
+      "sha256": "71f0cf48e2d2fea3850692248d903699c69f3a9ecf3ea542f99de61b20a564c0",
+      "bytes": 868
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/engine-readback02.json": {
+      "sha256": "9059ac79550ae239268f8f8c827b0b9ca30fe2b119dfce1a1f00c780339ba409",
+      "bytes": 159
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/engine-readback02.stderr": {
+      "sha256": "e9133cf10b02b0b91c8b119848513db0ac541e7c3c19681266939e4b9952f7cc",
+      "bytes": 224
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/engine-readback02.stdout": {
+      "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+      "bytes": 5
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/local-checks02.json": {
+      "sha256": "01c0b36dbcee55c703d8985b0153896f6340b725c4f7ee2ab5fcc681e01751fb",
+      "bytes": 913
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/maintenance-packet-status01.json": {
+      "sha256": "a3bd9da98f7f2a149eadf669871f87ef1c350bc46f41e11daf2daa8acd7504eb",
+      "bytes": 5175
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/preserved-failures01.json": {
+      "sha256": "91bae31abaf65dc6ac56fa873a2c6171e80057432b47be9f5f6068fb20a6f9e4",
+      "bytes": 1091
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/probe-01-inspect.json": {
+      "sha256": "850b7a54bff2d1d26727f710eeadaa74089f093225085ed46412052219a8ef93",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/probe-01-inspect.stderr": {
+      "sha256": "e9133cf10b02b0b91c8b119848513db0ac541e7c3c19681266939e4b9952f7cc",
+      "bytes": 224
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/probe-01-inspect.stdout": {
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/probe_linux02.py": {
+      "sha256": "5897edc455497f31d560e315e61109c98b2b9cb3e93af0095579b95813f66bc3",
+      "bytes": 6423
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-host-normal.stderr": {
+      "sha256": "6d361ade9f1849b3b960b875488fdafe613050477c56620c9f0a97acc6be7050",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-host-normal.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-host-optimized.stderr": {
+      "sha256": "8b98520461a0f686a45618816d8b275106a408d07cabb8536604a5d0031b49b3",
+      "bytes": 111
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-host-optimized.stdout": {
+      "sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "bytes": 151
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-staging-normal.stderr": {
+      "sha256": "930f25f98ccae7d929aca483adda13142268010d59410634d2f6b0a6576f536a",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-staging-normal.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-staging-optimized.stderr": {
+      "sha256": "663029f13baed6093e92ce85ba48506b8493ce5641f1af95b9123497e9c7bedc",
+      "bytes": 105
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/python-staging-optimized.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/runtime-generation02.json": {
+      "sha256": "27d3c387806a8495d5e3fd06df2dd25fe7430984da0320b652e5e4e9cefcb933",
+      "bytes": 544
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/runtime-successor-ci-local.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/runtime-successor-ci-local.stdout": {
+      "sha256": "5eb8928b8bbad121c7440502dd5a99914f0a2b89a259a128d1d2b2f2667590a1",
+      "bytes": 868
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix02/source-commit01.json": {
+      "sha256": "e6ce58f41720e189afbddbad5396189592e18585d5530924ec0715ca79106f61",
+      "bytes": 387
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/git-preservation01.json": {
+      "sha256": "07be34a138a91c01003ffaef413733590f433534ad6afd8533e40a29d4254919",
+      "bytes": 488
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/linux-probe01.json": {
+      "sha256": "1095c30e2932ae105c8a842044545e12c8ba30d4c9ae8517821e27cc21462faa",
+      "bytes": 5045
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/maintenance-packet-status02.json": {
+      "sha256": "e02b8e9f1bd64b20b13832abcd6e8e773cf80a80ef2882705913eadb1e1e4191",
+      "bytes": 2152
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-01-inspect.json": {
+      "sha256": "7c4a2f0f7e2bd2138ae2f83f81000a4e3c4b9b0fd4a673dc47673f2c81ec98ea",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-01-inspect.redacted.json": {
+      "sha256": "d7011c0bda7d45b35087d5ff7999d77f539c675fead890c461ae4eaf65b98875",
+      "bytes": 8507
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-01-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-02-inspect.json": {
+      "sha256": "b6db67922bcf023446eb87f1ee48d120dde61afcd9d0960dc810d58f0264f156",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-02-inspect.redacted.json": {
+      "sha256": "dc933520eebb0dd43e272649fc53122221211cb92e27e23d3dc93375e067e8c4",
+      "bytes": 8506
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-02-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-03-compile.json": {
+      "sha256": "ad9151ca5cd0f46c232f6cdea99cf1d637e5a5408d719d595d57bdc438bdf31f",
+      "bytes": 336
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-03-compile.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-03-compile.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-04-volume-create.json": {
+      "sha256": "ae842c7a1a56e3d605a263b2a20d106e52d42e8be77daa28ce0bfb4823c9478f",
+      "bytes": 311
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-04-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-04-volume-create.stdout": {
+      "sha256": "ba4e9a765e559b4cc6b42d8e15c8e205e44baed0b8a2b9f1b6157a1825de8570",
+      "bytes": 40
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-05-volume-inspect.json": {
+      "sha256": "2e92940ba299aeba3170721ecde4330993b993d2c4af5200a91c49f9cae775da",
+      "bytes": 245
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-05-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-05-volume-inspect.stdout": {
+      "sha256": "0805eec01cef4c2f68a412617aa69bba1ac8e53e072b417f117d778f9d688e18",
+      "bytes": 383
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-06-empty.json": {
+      "sha256": "8c7f362c396783f990617ac4b46bfdcf103f3b2ee465962507b4427889b80630",
+      "bytes": 329
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-06-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-06-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-07-initialize-new.json": {
+      "sha256": "9e2a7ca7764fc04e2bba6c9448f4f171013398a282e00d792ff39f7f6b100c82",
+      "bytes": 353
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-07-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-07-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-08-linux-snapshot.json": {
+      "sha256": "ecd83045e9709b921f0447b631efb477d262fec9a12e7a774f473dc8c8bbd81a",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-08-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-08-linux-snapshot.stdout": {
+      "sha256": "3165f13f8470f6c635e39217bca857bbb67866fad60b747678cb93e0d94cbf69",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-09-linux-snapshot.json": {
+      "sha256": "9e79fd83a327edd7e9bb81d21436c435d29c367da4bf6e798f95b04f0835bf66",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-09-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-09-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-10-volume-create.json": {
+      "sha256": "945f954f857109765e1d7a753483d0a7f6077ad585114d58711aac7afd50e01a",
+      "bytes": 310
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-10-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-10-volume-create.stdout": {
+      "sha256": "48a6207b1ea68935dc4abb4de70e3b27cf5443230de3a23b8ad0b54de0dafef0",
+      "bytes": 39
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-11-volume-inspect.json": {
+      "sha256": "aeea45e3c0a99e3f4b0f096ee325ce121f92b7588fd0e864acb89aa5d4492e32",
+      "bytes": 244
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-11-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-11-volume-inspect.stdout": {
+      "sha256": "0a22bc71de5ffbc42ffc0807596e54bcb5ead54be4ec191a6b744df5e85b8f13",
+      "bytes": 381
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-12-empty.json": {
+      "sha256": "626b3dedd19e05fe018707d3c9cb76567fa2c3f7ea92a9a5d2484820e5ea10ed",
+      "bytes": 328
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-12-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-12-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-13-initialize-new.json": {
+      "sha256": "29a00cde85157515e11c9652029b6fd563ca3dce6a2939337e23424c075ce6bd",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-13-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-13-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-14-linux-snapshot.json": {
+      "sha256": "17e3bb21997edf05cbd8e37d7b83f76d5168c56812124ecad3b83b54329e26ab",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-14-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-14-linux-snapshot.stdout": {
+      "sha256": "9e788c5cbc0cfb34b125c668a567a096c8d43f3646ed3a8578a870a9fbc088b9",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-15-volume-create.json": {
+      "sha256": "5d701b11025e557873f203df80b490589da353f9100968675c0d1e43d1ed74b2",
+      "bytes": 310
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-15-volume-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-15-volume-create.stdout": {
+      "sha256": "10529b5d436a92a8e5f6a83ca9bb0476518eefad02fb09136b159d4c35b99c7e",
+      "bytes": 39
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-16-volume-inspect.json": {
+      "sha256": "9d8bdb6b314248d83a171ce13613a3ef676a7ffa795e9733915898c531c5fc93",
+      "bytes": 244
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-16-volume-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-16-volume-inspect.stdout": {
+      "sha256": "49ea60acf2c482ce6d8515d6ce3c1ee4cbe4765aacb206d2834cf1fd27617603",
+      "bytes": 381
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-17-empty.json": {
+      "sha256": "1fade6e2d7596b7603a982a782e4d05875eaa81752977b19521418c1923a1476",
+      "bytes": 328
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-17-empty.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-17-empty.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-18-initialize-new.json": {
+      "sha256": "226a57f623fc83222f0d1ee7134ef1b3ef5ff95e9c94baeb15e7372d7c016b7f",
+      "bytes": 352
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-18-initialize-new.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-18-initialize-new.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-19-linux-snapshot.json": {
+      "sha256": "2ec66daee8fc329c66ea9ff7eb5e8706fdc0e722cee8038bcc6fc071deb1b602",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-19-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-19-linux-snapshot.stdout": {
+      "sha256": "9e788c5cbc0cfb34b125c668a567a096c8d43f3646ed3a8578a870a9fbc088b9",
+      "bytes": 1536
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-20-create.json": {
+      "sha256": "8a50b068a57d4c83b1b6bf644542c3dd20ef30ae85a856eaa1af17cc069a6f3f",
+      "bytes": 1339
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-20-create.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-20-create.stdout": {
+      "sha256": "62008d2f3d1d538d80fb7bac9e0ab1517c3f7b37a0884674d15a7ffbeb888dae",
+      "bytes": 65
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-21-start-test.json": {
+      "sha256": "84025034639bd035259d9c83340a433ced65e3fee5c32b84815f324272e0682e",
+      "bytes": 264
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-21-start-test.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-21-start-test.stdout": {
+      "sha256": "3e4d524349106eda9f6ddf928fa14d145a922a1f4394037bc93d4f3a9a3832cf",
+      "bytes": 8887
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-22-inspect.json": {
+      "sha256": "f7568297c3b61ec88829f1dd18175ac37e3d07cad5bc4f4b771c90144f9d1437",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-22-inspect.redacted.json": {
+      "sha256": "5d02ad2280f6f74ffce2bb71d9bd27e333f3f8363250d9ad3485e3aad6d39fda",
+      "bytes": 9701
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-22-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-23-linux-snapshot.json": {
+      "sha256": "f725c0ad7d5d7953aaa1adef6c5a32e6d3f8644ea7244178bdc446ff3d04efee",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-23-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-23-linux-snapshot.stdout": {
+      "sha256": "3165f13f8470f6c635e39217bca857bbb67866fad60b747678cb93e0d94cbf69",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-24-linux-snapshot.json": {
+      "sha256": "1ff0acca2cfbbb06e32ea8d214496a03e50a3bc85e98c0edaea3370ae7ffeeee",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-24-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-24-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-25-linux-snapshot.json": {
+      "sha256": "71b4368c17c1573060e8cc397023bd3ba73c26735a4a94854872c918458c87c2",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-25-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-25-linux-snapshot.stdout": {
+      "sha256": "bc6637ae6ecbecc0f61ab0af7a9c91969a6ab5f34bd8ae372caa621035b77377",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-26-linux-snapshot.json": {
+      "sha256": "2c2976fe51d903fac8b0bd5c4153cd118b58ba5a6e7fed6f1041eea65fd4cb5f",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-26-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-26-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-27-linux-snapshot.json": {
+      "sha256": "002a012905de754d460a7431f1c498980077e7d63846612d96a0b872ab0de16b",
+      "bytes": 362
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-27-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-27-linux-snapshot.stdout": {
+      "sha256": "bc6637ae6ecbecc0f61ab0af7a9c91969a6ab5f34bd8ae372caa621035b77377",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-28-linux-snapshot.json": {
+      "sha256": "755d66415bf399b631cfe1aabd2a51dac526622ae298a8ce7840c60838163de3",
+      "bytes": 374
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-28-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-28-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-29-linux-snapshot.json": {
+      "sha256": "110868e26d75e75408341a7bc2aaf5f2cf19301846dcde99af26ef1f5d8c05cc",
+      "bytes": 363
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-29-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-29-linux-snapshot.stdout": {
+      "sha256": "cdab3752ee26d97f27065ae9ffdd2f30b656466eefe338cfa9fa2bf293a10cb4",
+      "bytes": 2560
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-30-linux-snapshot.json": {
+      "sha256": "30a82d79724d16a1dca6cc7fdbe4e6ad3169bd826769612c8e09033f6766a2fa",
+      "bytes": 367
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-30-linux-snapshot.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-30-linux-snapshot.stdout": {
+      "sha256": "20798aed8065a1d109bd0d80d23d8dcda93f4caeeb5a5e4c808606446cbb2319",
+      "bytes": 31
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-31-inspect.json": {
+      "sha256": "6eee8eb1e20777cbb04153531be11087ebfef7080361cd26c0f582d25f2ae42c",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-31-inspect.redacted.json": {
+      "sha256": "c50f6f75f4297e50b871ab5d3df24257318be2cc0f58387f2055c800d52cfbc7",
+      "bytes": 9701
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-31-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-32-inspect.json": {
+      "sha256": "38c2cbfa8c809496fb86dee095c601388cd4c456e12b3c28d8dbca664b1320ed",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-32-inspect.redacted.json": {
+      "sha256": "c76609d8e4dfee4dc615456f12815da584ba65a58a4cbce282ddaa8045ebc9ab",
+      "bytes": 8507
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-32-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-33-inspect.json": {
+      "sha256": "87b88d092957f060e568cd99a59ff4572056331f9bfc6e034416638508134299",
+      "bytes": 255
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-33-inspect.redacted.json": {
+      "sha256": "f38bdb1a2572f8308360cfee251f7d0f67a9c0409b2bed430238704128747964",
+      "bytes": 8506
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe-33-inspect.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/probe_linux03.py": {
+      "sha256": "0e66fb533cfb62f0e953aa51fda3e509416591203cc65f28a79773ef0792e571",
+      "bytes": 7225
+    },
+    "docs/acceptance/evidence/issue307-d1/retention-runtime-fix03/public-evidence-safety01.json": {
+      "sha256": "c32f0df254ae5e84027d3777d03515912be676e99fe016702320783b909cc271",
+      "bytes": 218
+    },
+    "docs/acceptance/issue307-d1-retention-runtime-fix01.md": {
+      "sha256": "716e856ef126d285fb4bd7c2293a19db53dadaa863add74c169f5cd5f4923d56",
+      "bytes": 9286
+    }
+  }
+}

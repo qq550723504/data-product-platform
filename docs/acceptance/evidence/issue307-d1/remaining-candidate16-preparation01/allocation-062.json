@@ -1,0 +1,17 @@
+{
+  "role": "recovery-redis",
+  "group": "mixed",
+  "cid": "2ef0c778dc3d510fdbad0e88f7526cd4ae350fe65e25b0f2b614f41ba44c25b6",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate16-recovery-redis",
+    "--network",
+    "77f72e9ef0781527a7e8e5ce4a6cd8d36018e527a9ea853ae72d5f8fff9ea0eb",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-dfda43b4-candidate16-recovery-redis,target=/data",
+    "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "redis-server",
+    "--appendonly",
+    "yes"
+  ]
+}

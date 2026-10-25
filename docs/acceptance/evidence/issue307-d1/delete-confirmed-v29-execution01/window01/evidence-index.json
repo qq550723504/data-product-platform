@@ -1,0 +1,115 @@
+{
+  "status": "C19_V29_WINDOW01_FAILED_HEAD_GATE_EVIDENCE_INDEX",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "count": 27,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/actual-head-commit01.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/actual-head-commit01.stdout.json": {
+      "sha256": "91392a925669ce0bf196dbbed9b6cd7fa7e356353005dd74fef79e0bae61adee",
+      "bytes": 718678
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/automation-before-delete.toml": {
+      "sha256": "708b290f9ed388011c39d1bc2b1b83f40209f8359eeeaa094509f79d0c880310",
+      "bytes": 16799
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/automation-delete-result.json": {
+      "sha256": "fc2bc3c750890013a653fbae59fe9e08c41800c0225ed6766eb7aa03bd29c967",
+      "bytes": 429
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/checks-fresh.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/checks-fresh.stdout.json": {
+      "sha256": "31dc17325d4b4b2aaba11df78b0fa50146a96fb048eef7d7156f2c25256eceb8",
+      "bytes": 47706
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/ci-fresh.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/ci-fresh.stdout.json": {
+      "sha256": "c18c51b3585d43f25f902fe1fcb6e328922daf5ec4d62840011264bd47cb84d7",
+      "bytes": 14575
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/failure-head-drift01.json": {
+      "sha256": "d469d743fd46fd040576d8169f0253f6005ae6d9745835cea554250830e74643",
+      "bytes": 748
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/failure-seal01.process.json": {
+      "sha256": "40ba569aa2590ba661b953e6fea31f7f8a8dd2bdc891d13f876528762fd3be4c",
+      "bytes": 232
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/failure-seal01.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/failure-seal01.stdout.json": {
+      "sha256": "715356c3d18050e9c50ed767e623c987d8fd02d6e884e597a2cadeb0b2f24b38",
+      "bytes": 23770
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/finalize-failure.py": {
+      "sha256": "7da0bac635e9c97e88d4791a35d6c39a3a43357785a46951d664a73eec5d8d93",
+      "bytes": 9892
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/head-drift-root-cause01.json": {
+      "sha256": "2b8b810193c6796b6fd2032787136e414b3b18df8e34a45d20c4bfd5c16ffe15",
+      "bytes": 5348
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/issue-fresh.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/issue-fresh.stdout.json": {
+      "sha256": "697c9a0ed1783c4c2f4a5d089e0a6ba321c41bce7616009b9978133760fb534a",
+      "bytes": 8489
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/jobs-fresh.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/jobs-fresh.stdout.json": {
+      "sha256": "a4c9b23683c206d486e2426bf5745fd0fbb6e5f910c790a972421e44bd03f101",
+      "bytes": 39927
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/original-preflight-tool-output.jsonl": {
+      "sha256": "fba7d8bd2f7ee351089a0366c09f6666521b98b4cdb0cf37808f7aa4c1490516",
+      "bytes": 1663
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/post-seal-readback.json": {
+      "sha256": "3ef20b945c510b9f8bc4698740b2e334d2d6c6405cce92e32f2f90d52d934784",
+      "bytes": 187952
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/post-seal-readback.py": {
+      "sha256": "0de4a09a1f494e8835803018160f54cf457e60ab6afc11f5a1426ccc6472e394",
+      "bytes": 6163
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/pr-fresh.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/pr-fresh.stdout.json": {
+      "sha256": "fa0d6744e6fb21212920e20ffcaebf5daed2da4de67a60f3c9cef0091f7a846f",
+      "bytes": 19198
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/preflight.py": {
+      "sha256": "c3a0a42bb325604e825a5c9897ac63d00b5fed49a6319c5337f2efdb800d1eca",
+      "bytes": 4983
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/threads-fresh.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/threads-fresh.stdout.json": {
+      "sha256": "41aeb6f0b1637a4efc5c37cb0e47797c832b8582b70af2ac844f38a484b3a0b8",
+      "bytes": 103
+    },
+    "docs/acceptance/issue307-d1-v29-window01.md": {
+      "sha256": "fea219346f07dedc37fc8d4be483065f81cdcbc1d8ce0a1f87b15aba6074e08c",
+      "bytes": 3229
+    }
+  }
+}

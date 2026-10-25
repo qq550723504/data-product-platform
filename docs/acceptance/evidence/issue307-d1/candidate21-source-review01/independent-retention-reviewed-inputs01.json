@@ -1,0 +1,56 @@
+{
+  "status": "C21_C20_RETENTION_REVIEWED_INPUTS",
+  "format": "files-map-v1",
+  "member_root": ".",
+  "count": 12,
+  "files": {
+    "examples/lifecycle-d1/retained_v30.py": {
+      "sha256": "bf7a4bea2bd103e8c8bc4df4f42e3495e3ba686412d1ec0864e402f310f69993",
+      "bytes": 11879
+    },
+    "examples/lifecycle-d1/test_retained_v30.py": {
+      "sha256": "c884f3761a5c3f9a8b1b4d27e391b7f484ca132721f16ed534b48927655c8a77",
+      "bytes": 11994
+    },
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "sha256": "42209840a428dd37e049cce694a1780530b8f62677dad7cd4921dce1b60374f0",
+      "bytes": 39413
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "5f147cfb8c6307f6314c327324ec7905b4282f971445cae945c9852b40d988b9",
+      "bytes": 17193
+    },
+    "examples/lifecycle-d1/remaining_sequence.py": {
+      "sha256": "0596c039e67cf386cde2b9dd0d870bd5646bb4a3e89553f849ecd70c1a429a1c",
+      "bytes": 7221
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "bytes": 8053
+    },
+    "docs/acceptance/issue307-d1-v31-preparation-contract.md": {
+      "sha256": "0940f42345b6a9803a25db3f404ea967a2b3364214a14bdf1db476353b208d46",
+      "bytes": 3042
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/retained-candidate20-anchor01.json": {
+      "sha256": "0a84e160225ad47940e3d4a170e94317d00adc85f53e6ce17e0f305eddeab2bd",
+      "bytes": 454999
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/retained-candidate20-public-index01.json": {
+      "sha256": "dd9c3b2caa77896f613e5af343a0a48e64b08d10614c04a58c97f2433a6add30",
+      "bytes": 203772
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/retained-c20-clone-state01.json": {
+      "sha256": "9186c45d000a20d6331faf7508698f1c2547a82d55a1495e909e81386827377f",
+      "bytes": 523
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/retained-c20-checkout-raw-restoration01.json": {
+      "sha256": "6e412540c0f1c75a556ac7bb779f1e19dee0329cbe34aaad25c5676500c48505",
+      "bytes": 15977
+    },
+    ".gitattributes": {
+      "sha256": "b48706e09795fcdf0895d795a6f6b0f9bc68068919b20475a8e401462bf3c258",
+      "bytes": 24756
+    }
+  }
+}

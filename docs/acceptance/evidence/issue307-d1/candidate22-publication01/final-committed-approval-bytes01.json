@@ -1,0 +1,44 @@
+{
+  "status": "PASS_ACTUAL_FINAL_COMMITTED_APPROVAL_BYTES",
+  "head": "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+  "count": 7,
+  "files": {
+    "docs/acceptance/.gitattributes": {
+      "sha256": "79ae2b7c123c2f8e8d03851fdcdd16784199ef059e2001a78ae70139a790b8e3",
+      "bytes": 514,
+      "actual_git_blob_equals_worktree": true
+    },
+    "docs/acceptance/issue307-d1-candidate22-confirmation.md": {
+      "sha256": "0231736f29a345ea9e71b5ca58c2f54dc7d03878d4694d37b20b82625c3b2875",
+      "bytes": 53053,
+      "actual_git_blob_equals_worktree": true
+    },
+    "docs/acceptance/issue307-d1-v32-window-runbook.md": {
+      "sha256": "009fab7c6aa81a16a3035d7a72797b02db3dfb2b12ae133e163a5382194a6f88",
+      "bytes": 9768,
+      "actual_git_blob_equals_worktree": true
+    },
+    "docs/acceptance/issue307-d1-v32-preparation-contract03.md": {
+      "sha256": "5137cfa2675583b036300eb5ab6a136ced54bae7396d10f1c17b690c295c8677",
+      "bytes": 2287,
+      "actual_git_blob_equals_worktree": true
+    },
+    "docs/acceptance/issue307-d1-v32-preparation.md": {
+      "sha256": "c041f6293bfa7e2ad0b738c1eb26bc53bc3b0930bb1465e246bce00053b308e4",
+      "bytes": 4183,
+      "actual_git_blob_equals_worktree": true
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/approval-reference-manifest01.json": {
+      "sha256": "7d75df3c48f8beca3c7bcedacad563a069112e0a2eae546afebaf1fcb321094e",
+      "bytes": 299410,
+      "actual_git_blob_equals_worktree": true
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate22-planning01/final-static-evidence-audit-plan01.json": {
+      "sha256": "9893a44b861cfcfd0d817e20e5e65b6e4cbcecca8bfc8edb881164f169206a5c",
+      "bytes": 3598,
+      "actual_git_blob_equals_worktree": true
+    }
+  },
+  "native_delete": 0,
+  "execution_authority": false
+}

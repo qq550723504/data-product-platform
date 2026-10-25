@@ -546,6 +546,56 @@ func execute(ctx context.Context, mode string) error {
 func main() {
 	mode := flag.String("mode", "", "bounded reader step")
 	flag.Parse()
+	if *mode == "six-restore-inspect-enable" || *mode == "six-restore-inspect-disable" {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		defer cancel()
+		if err := sixRestoreInspector(ctx, *mode == "six-restore-inspect-enable"); err != nil {
+			fmt.Println("Restore-only inspector preparation failed:", err, "; DELETE=0")
+			os.Exit(1)
+		}
+		fmt.Println("Restore-only read-only inspector status confirmed; DELETE=0")
+		return
+	}
+	if *mode == "six-provision-disabled" {
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+		defer cancel()
+		if err := sixProvisionDisabled(ctx); err != nil {
+			fmt.Println("Disabled-only preparation failed:", err, "; DELETE=0; retain all evidence")
+			os.Exit(1)
+		}
+		fmt.Println("New identities created disabled; DELETE=0")
+		return
+	}
+	if *mode == "retention-maintenance-verify-native" {
+		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
+		defer cancel()
+		if err := retentionVerifyNative(ctx); err != nil {
+			fmt.Println("Retention maintenance readonly verification failed; preserve evidence; DELETE=0")
+			os.Exit(1)
+		}
+		fmt.Println("Retention maintenance readonly verification complete; DELETE=0")
+		return
+	}
+	if *mode == "six-verify-native" {
+		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
+		defer cancel()
+		if err := sixVerifyNative(ctx); err != nil {
+			fmt.Println("Six target readonly verification failed:", err, "; DELETE=0")
+			os.Exit(1)
+		}
+		fmt.Println("Six target readonly verification complete; DELETE=0")
+		return
+	}
+	if *mode == "post-v22-verify-native" {
+		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
+		defer cancel()
+		if err := postV22Verify(ctx); err != nil {
+			fmt.Println("Post-v22 readonly verification failed:", err, "; DELETE=0; resources retained")
+			os.Exit(1)
+		}
+		fmt.Println("Post-v22 readonly verification complete; DELETE=0")
+		return
+	}
 	if strings.HasPrefix(*mode, "remaining-") {
 		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
 		defer cancel()

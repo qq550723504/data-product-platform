@@ -1,0 +1,118 @@
+{
+  "status": "PASS_C22_REPAIRED_SOURCE_NORMAL_FF_PUBLICATION_PENDING_EXACT_CI",
+  "old_head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "operations": [
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.autocrlf=false",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T04:59:57.382075+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.autocrlf=false",
+        "diff",
+        "--name-only",
+        "HEAD",
+        "--",
+        "apps/platform",
+        "examples/lifecycle-d1",
+        "migrations",
+        ".github/workflows/ci.yml"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T04:59:57.433319+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.autocrlf=false",
+        "ls-files",
+        "--others",
+        "--exclude-standard",
+        "--",
+        "apps/platform",
+        "examples/lifecycle-d1",
+        "migrations",
+        ".github/workflows/ci.yml"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T04:59:57.486039+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.autocrlf=false",
+        "ls-remote",
+        "origin",
+        "refs/heads/codex/issue307-post-v22-dispatch-closure"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T05:00:00.702584+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.autocrlf=false",
+        "merge-base",
+        "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+        "a50b5a6307e79896578669ed53a3e12f08a0a815"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T05:00:00.739917+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.autocrlf=false",
+        "push",
+        "origin",
+        "a50b5a6307e79896578669ed53a3e12f08a0a815:refs/heads/codex/issue307-post-v22-dispatch-closure"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T05:00:04.713497+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.autocrlf=false",
+        "ls-remote",
+        "origin",
+        "refs/heads/codex/issue307-post-v22-dispatch-closure"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T05:00:06.831748+00:00"
+    }
+  ],
+  "source_review": "PENDING_ROUND02",
+  "native_delete": 0,
+  "authorization": false
+}

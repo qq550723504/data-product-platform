@@ -1,0 +1,33 @@
+{
+  "role": "remaining-mixed",
+  "group": "mixed",
+  "cid": "631fa39cfe6be5f6731545b9b04aa8f5ca835ff1c26404fc40f4aafaf1f10a9a",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate17-case-mixed",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:03d05b60eb0fae4354bea096aeee46830470c2e186f5642675d771142803673d",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\mixed\\case-mixed,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\reader,target=/run/reader,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\mixed\\outputs\\case-mixed,target=/run/output",
+    "--entrypoint",
+    "/run/reader",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-mode",
+    "remaining-mixed"
+  ]
+}

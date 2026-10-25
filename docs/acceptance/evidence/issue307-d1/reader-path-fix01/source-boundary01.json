@@ -1,0 +1,20 @@
+{
+  "base": "16ec447f2c60ddf08a514207963f478bc70c7e09",
+  "changed_tracked_files": [
+    ".gitattributes",
+    "examples/lifecycle-d1/test_retention_composition.py"
+  ],
+  "only_executable_change": "test fixture normalization and regression methods",
+  "production_gate_diff": [],
+  "runtime_manifest_diff": [],
+  "export_members_verified": 202,
+  "source_sha256": {
+    "examples/lifecycle-d1/test_retention_composition.py": "536667d5d50c439e97b60651c40fe2003c795d4b416816a443b0dfdda677dcc9"
+  },
+  "root_source_start": 0,
+  "business_provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0,
+  "budget_reset": 0,
+  "pin_release": 0
+}

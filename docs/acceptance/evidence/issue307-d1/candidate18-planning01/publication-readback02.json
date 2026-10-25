@@ -1,0 +1,60 @@
+{
+  "status": "PASS_FINAL_HEAD_BOUND_EVIDENCE_RAW_AND_SOURCE_RAW_LF_GIT_READBACK",
+  "observed_at": "2026-10-21T09:37:18.174734+00:00",
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "source": "618f484061c3624ff2195c0b591e7d8e3d743ce1",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "manifest_sha256": "3b8e4c6351d7147fb604f64cee57b9d34482c90dc8a7e439570a963d6f03620b",
+  "approved_members": 1017,
+  "manifest_itself_verified": true,
+  "total_git_blobs_verified": 1018,
+  "exact_Git_raw_members": 1012,
+  "frozen_source_dual_hash_members": [
+    {
+      "path": "examples/lifecycle-d1/docker_host_paths.py",
+      "working_raw_sha256": "218d7b0f0ea51506aa1f93e43937a16d41f94de87fe1d340ec0c40bbe4142a0c",
+      "frozen_lf_sha256": "59d150e06a21c9b08484ddd1e0f526638174718b6ee90405d15775852a7d60ec",
+      "git_blob_sha256": "59d150e06a21c9b08484ddd1e0f526638174718b6ee90405d15775852a7d60ec",
+      "same_as_build_source_Git": true
+    },
+    {
+      "path": "examples/lifecycle-d1/evidence_indexes.py",
+      "working_raw_sha256": "1aca9273bc463dcc04542a1b38f657825fe2eec50dcf77241aba323a188c91e4",
+      "frozen_lf_sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "git_blob_sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "same_as_build_source_Git": true
+    },
+    {
+      "path": "examples/lifecycle-d1/remaining_sequence.py",
+      "working_raw_sha256": "0596c039e67cf386cde2b9dd0d870bd5646bb4a3e89553f849ecd70c1a429a1c",
+      "frozen_lf_sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "git_blob_sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "same_as_build_source_Git": true
+    },
+    {
+      "path": "examples/lifecycle-d1/remaining_six_window.py",
+      "working_raw_sha256": "8b9985eb2980f5d6d734af16eb1aa0220850916d3725dc3e082084fc95189494",
+      "frozen_lf_sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "git_blob_sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "same_as_build_source_Git": true
+    },
+    {
+      "path": "examples/lifecycle-d1/remaining_window.py",
+      "working_raw_sha256": "c856e3b8224fdfb2b17a9340c8577fbb3ef619e5c12be236152502fd5ab9790a",
+      "frozen_lf_sha256": "e2dd0f4efcf84cc26e7a5977c4a336051849926949eaf373a13e4253262b6cc0",
+      "git_blob_sha256": "e2dd0f4efcf84cc26e7a5977c4a336051849926949eaf373a13e4253262b6cc0",
+      "same_as_build_source_Git": true
+    },
+    {
+      "path": "examples/lifecycle-d1/retained_v26.py",
+      "working_raw_sha256": "c1c7fd485e1e030a25b1bfa72681358ddc659c5cf27534e0ea6994e80cf9693f",
+      "frozen_lf_sha256": "b7c973b61f8656fa5d4d730ae3fdd7cc164bc793b8842a7ca7dbf7139223d86b",
+      "git_blob_sha256": "b7c973b61f8656fa5d4d730ae3fdd7cc164bc793b8842a7ca7dbf7139223d86b",
+      "same_as_build_source_Git": true
+    }
+  ],
+  "source_or_gate_changed": false,
+  "native_io": 0,
+  "native_delete": 0,
+  "execution_authority": false
+}

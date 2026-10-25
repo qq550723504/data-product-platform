@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-24T14:18:23.032202+00:00",
+  "method": "POST",
+  "endpoint": "graphql",
+  "body": {
+    "query": "query($cursor:String){repository(owner:\"qq550723504\",name:\"data-product-platform\"){pullRequest(number:332){reviewThreads(first:100,after:$cursor){nodes{id isResolved isOutdated} pageInfo{hasNextPage endCursor}}}}}",
+    "variables": {
+      "cursor": null
+    }
+  }
+}

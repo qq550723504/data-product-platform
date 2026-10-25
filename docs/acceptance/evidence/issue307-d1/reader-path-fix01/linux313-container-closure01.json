@@ -1,0 +1,45 @@
+{
+  "cid": "f91f2bfb4fc2437ea0a2dbdb1c01749cb1cef563b93d1ebfd697c3fe173b5b5a",
+  "image": "sha256:a02a680a6d202ebc299fb1117f7daad8dab123e18c38c988c831fb7815b57715",
+  "state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-24T14:10:58.680706899Z",
+    "FinishedAt": "2026-10-24T14:11:51.491815108Z"
+  },
+  "network_mode": "none",
+  "user": "10001:10001",
+  "mounts": [
+    {
+      "Type": "bind",
+      "Source": "C:/Users/Henry/.codex/fixture-private/reader-path-fix01/linux313-output01",
+      "Destination": "/out",
+      "Mode": "",
+      "RW": true,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "C:/Users/Henry/.codex/fixture-private/reader-path-fix01/python-export01",
+      "Destination": "/work",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "cap_drop": [
+    "ALL"
+  ],
+  "security_opt": [
+    "no-new-privileges"
+  ],
+  "ports": {},
+  "retained_mounts": 0
+}

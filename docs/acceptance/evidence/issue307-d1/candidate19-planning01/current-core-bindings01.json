@@ -1,0 +1,20 @@
+{
+  "status": "EXACT_POST_V28_CORE_CHECKPOINTS",
+  "policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+  "policy_heads_changed": false,
+  "new_renew": 0,
+  "groups": {
+    "business-races": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v28-business-closure01/final-Core-fingerprint.json",
+      "sha256": "9fc524c5d2b84125815b8222c3d1ef70c77e3490c79428bee47e94d38f6c002e"
+    },
+    "late-hold": {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18/late-hold/core-readonly.json",
+      "sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b"
+    },
+    "mixed": {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate18/mixed/core-readonly.json",
+      "sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55"
+    }
+  }
+}

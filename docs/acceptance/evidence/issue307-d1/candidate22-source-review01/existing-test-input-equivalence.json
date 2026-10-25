@@ -1,0 +1,15 @@
+{
+  "status": "PASS_EXISTING_LOCAL_REGRESSION_INPUTS_CURRENT",
+  "at": "2026-10-23T04:43:12.816360+00:00",
+  "count": 2249,
+  "raw_matches": 2249,
+  "lf_only_matches": 0,
+  "mismatches": [],
+  "source_regression": "source-regression03;102 normal+102 optimized;one symlink skip in each;author run reviewed,not independently rerun in full",
+  "independent_targeted": "13 normal+13 optimized methods;no skips",
+  "runtime_Go": "author5packagesPASS;not independentGoexecution",
+  "host_Go": "author2packagesPASS;not independentGoexecution",
+  "CI": "NOT_ASSESSED",
+  "native": "NOT_RUN",
+  "provider_io": 0
+}

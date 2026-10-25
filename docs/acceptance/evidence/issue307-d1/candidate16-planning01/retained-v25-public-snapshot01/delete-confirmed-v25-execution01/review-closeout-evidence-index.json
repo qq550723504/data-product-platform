@@ -1,0 +1,184 @@
+{
+  "status": "REVIEW_CLOSEOUT_EVIDENCE_INDEX",
+  "at": "2026-10-20T01:48:26.701438+00:00",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "members": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/cli-regression-after-fix-normal.stderr.txt": {
+      "sha256": "22b6520d8d66d202d1d64ffe677488388c8c2f40b7db35a3b594034761e3e96f",
+      "bytes": 1331
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/cli-regression-after-fix-normal.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/cli-regression-after-fix-optimized.stderr.txt": {
+      "sha256": "d326452ec9a16f4b97724ef42daa461985f9d2f0117de8900b23e47140c83761",
+      "bytes": 1331
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/cli-regression-after-fix-optimized.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/cli-regression-before-fix.stderr.txt": {
+      "sha256": "073eea25f7c5065992f46cc79a07c318939b3ff569a2ac3cdaa8dc600d510add",
+      "bytes": 16923
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/cli-regression-before-fix.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/finalize_review.py": {
+      "sha256": "33e09395f64aeb802c5444dc2bdc7cf4f89c98356507a2173699350c5a5d640e",
+      "bytes": 9278
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/github-metadata-checkpoint.json": {
+      "sha256": "b88d3db6e58f45618846b7d7f3c255b7f62ed6d6c3e8fc7cdbaece6caac21abf",
+      "bytes": 765
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/github-tool-readback.json": {
+      "sha256": "664b86dab2008ee55bb918e24ded9f30c667092420bb9cee75a2006308fcc917",
+      "bytes": 15919
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/isolated-host-cli-repair.json": {
+      "sha256": "ae767502c2529f0ee05e73d7f5746bc145c1186ab7d0a8f46121d27a15658fb9",
+      "bytes": 2037
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/isolated-host-cli-repair.patch": {
+      "sha256": "b5226ec5f90719454ea3f46da35a497b14203f421e7f55d68bda82c7ddd6cf76",
+      "bytes": 7865
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/original-execution-matrix.md": {
+      "sha256": "6d32c5b71bba1cd5a836314b50d0e6bb8c46e93a975c84599944b92c4b47ce98",
+      "bytes": 4431
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/pause-readback.json": {
+      "sha256": "5eaa28c84ab4968b1c094838db53047b0a95981beffbbd6c9c451a8e24e40580",
+      "bytes": 583
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/pause-tool-receipt.json": {
+      "sha256": "9dc6e493d32a0fa7cd604b649a3c4a27e756cdaa644208cd26961ffdc0fbebc1",
+      "bytes": 263
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/paused-automation-snapshot.toml": {
+      "sha256": "56e47d5aea1c21cfd787a97733e91a476182a88656240c508b78e6956d42923e",
+      "bytes": 14334
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/pr-metadata.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/pr-metadata.stdout.json": {
+      "sha256": "971ce437afcff44cb18e20281ea2a02cf9033ee603e93a9159f8c7fae52728f0",
+      "bytes": 413
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/pr332-body-proposed.txt": {
+      "sha256": "cb5eaa2777c7f3cc5a32762da6072b8480018d3e8074c504feb8f5b4641e76e6",
+      "bytes": 2905
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/repair-publication-checkpoint.json": {
+      "sha256": "2152771970b41845dfb802479030ef6c9987c8b142154b176d052786e69c69a2",
+      "bytes": 14459
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/repair-review-threads-and-issue.json": {
+      "sha256": "6edfe0f70e9907dba5ef4d23c6f13ba88392f22d93fb88373a504b928ca41199",
+      "bytes": 501
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-preparation01/worktree-creation-failure.json": {
+      "sha256": "53b3aad386ae3ff47ec06fe47f357946baa8a33afa4423cdc50f4ee9dbf39ad4",
+      "bytes": 22562
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/actual-closed-root-contract01.json": {
+      "sha256": "e5844312600f7a113c1b9340fd54ea1c750a390c7af064b8b3f1bca6ce280794",
+      "bytes": 9288
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/authority-schedule-audit01.json": {
+      "sha256": "33ed2055b755ecc7b271ac3f2e67591625f82f07320a5d812c9504d82921db43",
+      "bytes": 19273
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/blocker-B1-cli-composition01.json": {
+      "sha256": "276517104afb27d32632835111731f7b98e2440ef3dcdd2f59466c0906f9ad0e",
+      "bytes": 1767
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/blocker-B1-direct-resolved-group-positive02.json": {
+      "sha256": "706eaba99ba95c3bcecf34c6be0335fdac5fce1bc56621e547dfb552cf94c260",
+      "bytes": 1524
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/human-thread-readback01.json": {
+      "sha256": "5d779247f9cce3b293503ea4d3e2177021c9b733dc9b5f441a7dbf72a6891d96",
+      "bytes": 2264
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/independent-authorization-window-review01.json": {
+      "sha256": "b0a4ef12e4b8604c2b18228ef1ce242b53c618df3dff56d4771b305d02c74331",
+      "bytes": 13920
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/independent-evidence-index01.json": {
+      "sha256": "7cd7803fbaba8308d32422be155cde267b3e46f92a94a719e1bc3c5ae07c0baf",
+      "bytes": 2020
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/independent-isolated-cli-repair-addendum02.json": {
+      "sha256": "966dd18c814bf6890ced56a3b81b4d7c807436089d15ae026f8c3853dd27acad",
+      "bytes": 7672
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/independent-repair-evidence-index02.json": {
+      "sha256": "eb949351ea6e1e90d85954159bcab8c882defa1d13443a7060e16449a97c7bb6",
+      "bytes": 3180
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/isolated-repair-normal01.json": {
+      "sha256": "6251b91e4220196cff6ff1f5d771485a09b29eae424ff17450186a3ba86d8318",
+      "bytes": 535
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/isolated-repair-normal01.txt": {
+      "sha256": "be1869712f487402955b2023e22fe4c7058308e63f172c5367b37e1a854962fd",
+      "bytes": 1319
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/isolated-repair-optimized01.json": {
+      "sha256": "80df7d6ce00da94372b058beff2ad28267f3755933df103449a0e7787488e85f",
+      "bytes": 538
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/isolated-repair-optimized01.txt": {
+      "sha256": "3fd61e577ac8ef91d13999075db806e60ffe575b575077d8ff492112688568a2",
+      "bytes": 1319
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/normal-mock-suites01.json": {
+      "sha256": "bfe22b8129256efc6218ecfb5e7cfd231d2a65db54a858d0bc19bb7461332294",
+      "bytes": 2909
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/optimized-mock-suites01.json": {
+      "sha256": "3aeb37475a55bcd59e75e88a431080034d97f972dd1b924291f7525af29cf7d3",
+      "bytes": 2912
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/retained-normal01.txt": {
+      "sha256": "9160c08fc4eb54a562910fa9d9d24f609936d6894f33f1ad94d1603a711c761c",
+      "bytes": 2031
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/retained-optimized01.txt": {
+      "sha256": "f9f894adc4f8ded575c6aa82765541027430d5dee4a35c69aa118fe3a7993648",
+      "bytes": 2031
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/run-frozen-mock-suites01.py": {
+      "sha256": "31e5727ad17c5d4b9a89de8012824d430d45b0cf14e7d8475c0f4d5f3b1472c3",
+      "bytes": 1966
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/run-isolated-repair-tests01.py": {
+      "sha256": "f111729b769c8286d39435e36a5404b099294c405320640428228517b773c76e",
+      "bytes": 1770
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/six-normal01.txt": {
+      "sha256": "653bdb116d8f6526303a933199edbde1939a323ee0855ec9e5e38c74de0d478c",
+      "bytes": 400
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-review01/six-optimized01.txt": {
+      "sha256": "0e38dc2c15b8d044a787ff6a963e965097dcdd7d59e362fb4596b9113a2f60c5",
+      "bytes": 400
+    },
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v25-execution01/review-blocked-terminal.json": {
+      "sha256": "938c36cc10beba27c608bc588ab3a24139d047d76b35a2d9390b92c4496e034f",
+      "bytes": 2048
+    }
+  },
+  "excludes": [
+    "this index",
+    "final checkpoint",
+    "editable current matrix"
+  ]
+}

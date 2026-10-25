@@ -1,0 +1,11 @@
+{
+  "name": "evidence_indexes-normal",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/test_evidence_indexes.py"
+  ],
+  "started_at": "2026-10-24T11:06:15.344934+00:00",
+  "finished_at": "2026-10-24T11:06:16.994542+00:00",
+  "returncode": 0
+}

@@ -1,0 +1,19 @@
+{
+  "status": "CONFLICTED_LOCAL_MERGE_TREE_PREVIEW",
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "merge-tree",
+    "--write-tree",
+    "--name-only",
+    "e54967e822847e97316e703ee413ffc1298cb627",
+    "be38a68ded0bd4267a2c7711b5c4bc8bd1012e60"
+  ],
+  "exit_code": 1,
+  "tree": "745b294391b959edf52570e08e89219fcdbc356f",
+  "branch_updated": false,
+  "worktree_updated": false,
+  "commit_created": false,
+  "remote_io": 0
+}

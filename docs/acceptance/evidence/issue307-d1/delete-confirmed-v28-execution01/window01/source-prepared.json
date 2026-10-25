@@ -1,0 +1,39 @@
+{
+  "status": "SOURCE_BUSINESS_NEW_ADMISSION_READY",
+  "at": "2026-10-21T14:12:07.349877+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "admission": {
+    "admitted": {
+      "P2": {
+        "EvaluationID": "89755447-5ef1-4add-8ee1-b8cb35f1473e",
+        "DispatchID": "eacd910a-3ecd-448e-9c87-13bdf14d8817",
+        "AttemptID": "4d930776-fd98-4a86-8ed2-0a1eaad7dd34",
+        "Admitted": true,
+        "Replayed": false,
+        "Blockers": []
+      },
+      "T1": {
+        "EvaluationID": "440a9c9a-4bf1-4001-ab9f-2e14e29daff9",
+        "DispatchID": "002be431-180b-44c3-9f0b-747aaeaaa17a",
+        "AttemptID": "4d5b1b64-fd97-4626-877f-09195725f11b",
+        "Admitted": true,
+        "Replayed": false,
+        "Blockers": []
+      },
+      "T2": {
+        "EvaluationID": "f6c0db72-5178-4e76-a0af-99f12eafbd32",
+        "DispatchID": "caade58d-9243-4bd3-b4c8-147d104858ca",
+        "AttemptID": "fc9aca0e-dd87-40cc-8cbc-b629a8c9e2c4",
+        "Admitted": true,
+        "Replayed": false,
+        "Blockers": []
+      }
+    },
+    "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+    "native_delete": 0,
+    "new_outputs": 0,
+    "old_business_owners_replayed": false,
+    "send_claims": 0
+  },
+  "real_delete": 0
+}

@@ -1,0 +1,125 @@
+{
+  "status": "PASS_INDEPENDENT_FINAL_SEAL_AND_RAW_CHANNEL_AUDIT",
+  "at": "2026-10-19T13:06:34.141504+00:00",
+  "audit_id": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+  "index02_sha256": "ca4f3eab783a82a0f561e7bac9eaff8e7a4081ad28f98a625aefd1287e0a06c1",
+  "index02_files": 40,
+  "indexed_raw_bytes_match": true,
+  "owner_raw_channels": [
+    {
+      "file": "owner-original-channels/check-disabled-wait-stdout.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "file": "owner-original-channels/check-disabled-wait-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "owner-original-channels/check-disabled-stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "owner-original-channels/check-disabled-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "owner-original-channels/observer-wait-stdout.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2
+    },
+    {
+      "file": "owner-original-channels/observer-wait-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "owner-original-channels/observer-stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "file": "owner-original-channels/observer-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "unique_CIDs_currently_closed": 87,
+  "original_old_CIDs": 77,
+  "prior_failed_CIDs": 6,
+  "allocation_regression_CID": 1,
+  "this_attempt_CIDs": 3,
+  "new_owner_states": [
+    {
+      "kind": "observer",
+      "cid": "5fcd0581355d90932c23e86ae5bc5807f76c94d0f132e25f8e5e3b8a6d4af9ac",
+      "stopped_PID0": true,
+      "RestartPolicy": "no",
+      "noports": true,
+      "state_exit": 0,
+      "started_at": "2026-10-19T13:00:40.371119811Z",
+      "finished_at": "2026-10-19T13:00:40.799798698Z",
+      "tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      },
+      "mounts": [
+        "/run/executor",
+        "/run/output",
+        "/run/private"
+      ]
+    },
+    {
+      "kind": "check-disabled",
+      "cid": "9821171f34a1cb5b24cdfde8093c9f7dadb2b9b73c08d3f4fe60e406b3842a0d",
+      "stopped_PID0": true,
+      "RestartPolicy": "no",
+      "noports": true,
+      "state_exit": 0,
+      "started_at": "2026-10-19T13:00:30.869052408Z",
+      "finished_at": "2026-10-19T13:00:31.217055639Z",
+      "tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      },
+      "mounts": [
+        "/run/executor",
+        "/run/output",
+        "/run/private"
+      ]
+    },
+    {
+      "kind": "disable-all",
+      "cid": "1b532b9de7a48ad961a0c44e35a944fae2c659f75b50d4deda9fa77c64d834db",
+      "stopped_PID0": true,
+      "RestartPolicy": "no",
+      "noports": true,
+      "state_exit": 0,
+      "started_at": "0001-01-01T00:00:00Z",
+      "finished_at": "0001-01-01T00:00:00Z",
+      "tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      },
+      "mounts": [
+        "/run/executor",
+        "/run/output",
+        "/run/private"
+      ]
+    }
+  ],
+  "source_Native_Core_PID0_bound_network_internal_empty": "PASS_ACTUAL_READONLY",
+  "retained_old_46controls_8profiles_9backups_3budgets_unchanged": true,
+  "prior_six_volumes_retained": 6,
+  "observer_profile_Enabled": false,
+  "observer_profile_actual_sha256": "494f2beda637b9ad9e47554c5f2dd80d13532872469d3c5c4892c5fd41813163",
+  "private_public_proof_same_bytes": true,
+  "new_nine_revocation_observation_release_rows_present_in_final_anchors": true,
+  "start_exec_sign_or_Core_query": 0,
+  "provider": 0,
+  "DELETE": 0,
+  "scope": "Read-only metadata/digests and already-authorized inspect only. No replay or business/environment execution."
+}

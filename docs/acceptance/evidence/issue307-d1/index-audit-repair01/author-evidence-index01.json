@@ -1,0 +1,235 @@
+{
+  "status": "PASS_AUTHOR_EVIDENCE_INDEX",
+  "members": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/actual-saved-evidence-audit01/evidence-audit.json",
+      "sha256": "7644f389e7963301cdb01d29508c12676164d95c85f9ec94ea5482af8a6360cf",
+      "bytes": 1322
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/development-failure01.json",
+      "sha256": "8d7e9a3884fae90b1aab183dc1320482a6ddc64d78f7bd2b1e5de687dba15d33",
+      "bytes": 680
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/historical-evidence-audit-plan.json",
+      "sha256": "8ad738b77b28f02c8c034fe88b6780608e30bf68ac78335f97e9a28b3936cd19",
+      "bytes": 1436
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/history-copy-index.json",
+      "sha256": "9b6e621df0045e8e7f7c379a14dd97349b898de8ff1d6eb83ed0c297f58b5fbd",
+      "bytes": 14187
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test-results.json",
+      "sha256": "87d036efc878fec646e5c63088ee13b4d3fb476235ee28de58f79dd6be7e2bbd",
+      "bytes": 1112
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_evidence_indexes.py.stderr.txt",
+      "sha256": "282cde0b2af3f8a7e83ce88758149508eebef43367325ba83cdc4ad700d66ae8",
+      "bytes": 126
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_evidence_indexes.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_freeze_six_candidate.py.stderr.txt",
+      "sha256": "4c4fce12266834705f7999c91be3748182cd62cde64f00b6b255c3558366acd6",
+      "bytes": 103
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_freeze_six_candidate.py.stdout.txt",
+      "sha256": "919178c6603654e90f06f92692841a3a862eabfeec11b1fb36b6007628c9f252",
+      "bytes": 189
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_remaining_sequence.py.stderr.txt",
+      "sha256": "9fffdea0efcd3158e0ccb98821834c20fd1bae324487987a4e66293ade84ab8b",
+      "bytes": 109
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_remaining_sequence.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_remaining_six_window.py.stderr.txt",
+      "sha256": "8d48f7fa0210547c484ca202a687b510c9dc93a0936c073f5d9fdd88dbebe51a",
+      "bytes": 108
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_remaining_six_window.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_six_candidate_runtime.py.stderr.txt",
+      "sha256": "59bbfb6476bd7672bc7c305b3ac31528def25624212dd6f7edafe117c726c4d9",
+      "bytes": 117
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_six_candidate_runtime.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_six_native_entry.py.stderr.txt",
+      "sha256": "281bb0f9cb0830df561881cc3b516b7f25fc1db86de509c6059caa1d05886810",
+      "bytes": 109
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_six_native_entry.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_verify_six_native.py.stderr.txt",
+      "sha256": "6ad146ba6d390ce9fafd5e9c35d74aeeb4a4bdad9c8a15a87a5e1a32042bd29e",
+      "bytes": 105
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_verify_six_native.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_window_six_support.py.stderr.txt",
+      "sha256": "d2891278a40073a560f88882074acde940ed1093c6e0fc8294916184e2036ae6",
+      "bytes": 110
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/normal-test_window_six_support.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test-results.json",
+      "sha256": "5adcac24c2d50af2a98fe1f2cdf48c570a5b42423aa40fb972703b79dc03693e",
+      "bytes": 1111
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_evidence_indexes.py.stderr.txt",
+      "sha256": "282cde0b2af3f8a7e83ce88758149508eebef43367325ba83cdc4ad700d66ae8",
+      "bytes": 126
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_evidence_indexes.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_freeze_six_candidate.py.stderr.txt",
+      "sha256": "b4cada96903ef63cb37994057414c899b014403d6387d34ada3931b44331bc7d",
+      "bytes": 103
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_freeze_six_candidate.py.stdout.txt",
+      "sha256": "f80e363d2d37a64e0231b0275d026a4fc64b01dee683cb7ef4be48049008c50b",
+      "bytes": 189
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_remaining_sequence.py.stderr.txt",
+      "sha256": "9fffdea0efcd3158e0ccb98821834c20fd1bae324487987a4e66293ade84ab8b",
+      "bytes": 109
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_remaining_sequence.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_remaining_six_window.py.stderr.txt",
+      "sha256": "8d48f7fa0210547c484ca202a687b510c9dc93a0936c073f5d9fdd88dbebe51a",
+      "bytes": 108
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_remaining_six_window.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_six_candidate_runtime.py.stderr.txt",
+      "sha256": "59bbfb6476bd7672bc7c305b3ac31528def25624212dd6f7edafe117c726c4d9",
+      "bytes": 117
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_six_candidate_runtime.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_six_native_entry.py.stderr.txt",
+      "sha256": "c1b720d150ab6f0cd1e4593be47c145f19963810620bcd25f65cc947671c0c1a",
+      "bytes": 109
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_six_native_entry.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_verify_six_native.py.stderr.txt",
+      "sha256": "24989c00267280d5ffe14920c7caf4295dc3f460ddce281d8080cbb7597552db",
+      "bytes": 105
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_verify_six_native.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_window_six_support.py.stderr.txt",
+      "sha256": "d2891278a40073a560f88882074acde940ed1093c6e0fc8294916184e2036ae6",
+      "bytes": 110
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/optimized-test_window_six_support.py.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/review-inputs.json",
+      "sha256": "dac1f9a64a6460d591ee6823f57b0e3e2f35e85b39dc8f3e98a19660f6003f6c",
+      "bytes": 2344
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/saved-cli-receipt.json",
+      "sha256": "f460ba26791a816a2cbbed9363ac292b2db8fd43cc4bce64ccdc43fbc154f517",
+      "bytes": 1203
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/saved-cli.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/saved-cli.stdout.txt",
+      "sha256": "ff58106e893b29efee28893a565a8bf527bd3376ed4e1b6dec9ff223a92d38d6",
+      "bytes": 362
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/terminal-cli-receipt.json",
+      "sha256": "6aec67fe19fb01c6723ee2a575c97b6f63fc197b20b3e235c279c048a907c18c",
+      "bytes": 1153
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/terminal-cli.stderr.txt",
+      "sha256": "dbccd4de32c4eaf2d8116f05dccaabedf23aa5e8d765d686a99a2dff556cf090",
+      "bytes": 776
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/index-audit-repair01/terminal-cli.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "excludes": [
+    "self",
+    "future independent review and CI"
+  ],
+  "source_Docker_provider_DELETE": 0
+}

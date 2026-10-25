@@ -1,0 +1,43 @@
+{
+  "status": "PASS_INDEPENDENT_C21_SHORT_LONG_PATH_FIX",
+  "source_head": "cef8a7f32133400f34ed2b1be0f2f4b635350190",
+  "rows": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "outputs": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "5ed949c21a0dd2c5cde07dea1af6fc8c4eab7bc91077487f180b0d318823499f",
+          "bytes": 107
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "outputs": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "sha256": "435c5c26f895786637147899e1167daffea221e765a54c7b289c4b5f5b0f6a8d",
+          "bytes": 107
+        }
+      }
+    }
+  ],
+  "actual_native_filesystem_proof": {
+    "actual_Win32_short_spelling": "C:\\Users\\Henry\\AppData\\Local\\Temp\\C21-IN~1\\RETAIN~1",
+    "actual_canonical_spelling": "C:\\Users\\Henry\\AppData\\Local\\Temp\\c21-independent-long-directory-i939z2fq\\retained original source",
+    "short_distinct": true,
+    "prior_implementation_reproduces_ValueError": true,
+    "current_all_three_spellings_equal": true,
+    "hardlink_rejected": true
+  },
+  "no_Docker_Core_provider_actions": true
+}

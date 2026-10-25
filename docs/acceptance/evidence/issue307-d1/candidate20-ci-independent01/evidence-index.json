@@ -1,0 +1,100 @@
+{
+  "status": "C20_REQUIRED_CI_DIAGNOSIS_EVIDENCE_INDEX",
+  "format": "files-map-v1",
+  "member_root": "docs/acceptance/evidence/issue307-d1/candidate20-ci-independent01",
+  "count": 23,
+  "files": {
+    "connector-log-errors01.json": {
+      "sha256": "d520507ae7f468c4c176196380df9bf38e1d4cbc8e940fa2183a369d652af688",
+      "bytes": 2484
+    },
+    "demo-logs01.stderr.raw": {
+      "sha256": "a798c68982954c4217f76721271bbf094bc0fed610daa11087d9d5b5a27cc6b1",
+      "bytes": 133
+    },
+    "demo-logs01.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "demo-logs02.stderr.raw": {
+      "sha256": "fa8f991f14d139526ad68443bd042e1cf64ad6a3ccb43f279fbce4613e091d33",
+      "bytes": 58
+    },
+    "demo-logs02.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-logs01.stderr.raw": {
+      "sha256": "1eb724b63d8c673f079bc046ff7890063e854f8257bebe8fe420bd27c4e005f5",
+      "bytes": 133
+    },
+    "go-logs01.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-logs02.stderr.raw": {
+      "sha256": "d4ed98eacb055c52b47a23b0d7a6ee07ee62c0f11a3417df055b4dafb8ec2e29",
+      "bytes": 58
+    },
+    "go-logs02.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "go-runview03.stderr.raw": {
+      "sha256": "ad478f402245f678132dfc5d29fe804fe3a175bf417d220326ba72615e3dc98d",
+      "bytes": 147
+    },
+    "go-runview03.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "host-logs01.stderr.raw": {
+      "sha256": "9636bd734b863e8409c22c1b55505e09e741b319ca443e71e158c4952d4124a1",
+      "bytes": 133
+    },
+    "host-logs01.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "host-logs02.stderr.raw": {
+      "sha256": "fa8f991f14d139526ad68443bd042e1cf64ad6a3ccb43f279fbce4613e091d33",
+      "bytes": 58
+    },
+    "host-logs02.stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "independent-ci-diagnosis01.json": {
+      "sha256": "87f1fa59c5ff5e9b1ce29c227fc40a13187b0a7f41c828178dbe41226865a528",
+      "bytes": 6119
+    },
+    "local-cache-readback01.json": {
+      "sha256": "7d50a560f892ee9668c138172cc4b1747c1f83d0eaf9f6b93f0af3fa8c040c0a",
+      "bytes": 3424
+    },
+    "result01.json": {
+      "sha256": "65836ea145c5b269bc35672808eb4414dd14b3465010531ac2a9bb5be248463e",
+      "bytes": 2047
+    },
+    "result02.json": {
+      "sha256": "ac7387c5d73d46146aac42b7c46a8d9b6c9af16534b3d5ab865f477f67a689e9",
+      "bytes": 1510
+    },
+    "result03.json": {
+      "sha256": "9367dd84128e531274105867077f307feeab244b6341dd03695ab9de3779f6bd",
+      "bytes": 611
+    },
+    "retained-v26-local01.json": {
+      "sha256": "c4d19087523515b1400cb9048eb8d96b8679557067f3b2e87f868ba91c0edd12",
+      "bytes": 344
+    },
+    "retained-v26-local01.stderr.txt": {
+      "sha256": "e510ee63629185e648c7790ecea9f48deb55f8340bbb6f582929f6fbfa9f3579",
+      "bytes": 16452
+    },
+    "retained-v26-local01.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "retention_composition-normal",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-B",
+    "examples/lifecycle-d1/test_retention_composition.py"
+  ],
+  "started_at": "2026-10-24T11:08:38.540488+00:00",
+  "finished_at": "2026-10-24T11:08:52.812131+00:00",
+  "returncode": 0
+}

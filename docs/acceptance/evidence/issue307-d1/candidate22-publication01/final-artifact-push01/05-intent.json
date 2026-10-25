@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "merge-base",
+    "a50b5a6307e79896578669ed53a3e12f08a0a815",
+    "8de3bc4c9f737c3c3e81fddb60491422ba6039f2"
+  ],
+  "at": "2026-10-23T06:12:38.423360+00:00"
+}

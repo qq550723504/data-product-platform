@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "docker",
+    "volume",
+    "inspect",
+    "dpp-lifecycle307-808a6960-candidate20-recovery-redis"
+  ],
+  "started_at": "2026-10-22T10:31:34.553368+00:00",
+  "observed_at": "2026-10-22T10:31:34.613430+00:00",
+  "exit": 0,
+  "stdout_sha256": "5a6ef83048634c7780aa2675f225d2b01db8979941b281fd0883ccd3b5b93400",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

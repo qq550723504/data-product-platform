@@ -1,0 +1,1084 @@
+{
+  "status": "PASS_INDEPENDENT_R_P_ARTIFACT_CLONE_EVIDENCE_AUDIT",
+  "at": "2026-10-22T07:58:38.538583+00:00",
+  "runtime_source": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "rehearsal_host_source": "a23316fec0e3085475ee84b5de956ab9123b298c",
+  "archive": {
+    "sha256": "1562acb9e667053b096f63bc6611d1f5084782b5089661cf1ebd1ce94b707bf6",
+    "bytes": 1821418,
+    "members": 769
+  },
+  "build_files": {
+    "reader": "4a00555dfc950ed3960563bf4a49277ee18142c71dc582f37e8db06dda862d0e",
+    "operator": "2389da9895f077312efe64c436242c87e6679d6ad7c84b4135de57103cc11fb8",
+    "owner": "815398e9c2ec7682587b73972c9fd19d5fc4ca8b46533c5f8a0e769718dd1f0c",
+    "readonly-check.exe": "7416d12a7311090fa0208545bd5f7228c720e4ac3c1a882ef8d28ad622d41da6",
+    "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "groups": [
+    {
+      "group": "business-races",
+      "exact_copies": 3,
+      "unchanged_original_relations": 194
+    },
+    {
+      "group": "late-hold",
+      "exact_copies": 1,
+      "unchanged_original_relations": 194
+    },
+    {
+      "group": "mixed",
+      "exact_copies": 2,
+      "unchanged_original_relations": 194
+    }
+  ],
+  "schema_gates": {
+    "ALLOW": 3,
+    "DENY": 3
+  },
+  "source_closed_observations": 12,
+  "command_counts": {
+    "inspect": 14,
+    "start": 1,
+    "exec": 37,
+    "stop": 1
+  },
+  "journal_commands": 53,
+  "source_start_exec": 0,
+  "source_migration": false,
+  "provider_delete": 0,
+  "reviewed_spec_from_commit": "a23316fec0e3085475ee84b5de956ab9123b298c",
+  "new_R72ec_test_only_delta_not_covered_by_historical_native_source_claim": true,
+  "scope": "Saved actual evidence audit only. No source/clone/container operation performed by reviewer. Original role/ACL preservation not claimed by --no-owner --no-acl clone restore. Native build witness used earlier P a233; R unchanged. Final P CI additions reviewed separately.",
+  "public_artifacts": {
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/actual-build.json": {
+      "sha256": "942b41ae54ce4e7ffae027975125f2c84daffd3591293c34576d5664eec30a80",
+      "bytes": 645546
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/ALLOW-schema-gate.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/ALLOW-schema-gate.stdout.txt": {
+      "sha256": "8365f3377aea409d0b1cd5e9787283cb973c752854d0acea685496c83211b869",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/copy-0.stdout.txt": {
+      "sha256": "d3c8ca706a626fded94126a6814a28f95e1d4e99d4f5f7a5cbb18ba94f5ed3b9",
+      "bytes": 330
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/copy-1.stdout.txt": {
+      "sha256": "079bad72341ba63ab873a9076a6c4117ababe30e234f23f14935e7d35c6cad65",
+      "bytes": 333
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/copy-2.stdout.txt": {
+      "sha256": "264b63ca29b4cd474fd45d256fad69a08d024169e716c54d3155b7d69fdcc6f8",
+      "bytes": 333
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/DENY-schema-gate.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/DENY-schema-gate.stdout.txt": {
+      "sha256": "690742ff82c4f7b56038780fe68c369b19719d6f07c0b85867fcfa62b93bb893",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/old-facts-after.json": {
+      "sha256": "879a718da44c70c48dfa4ba222acc82e6175b002775a105286173f44043770d1",
+      "bytes": 25987
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/business-races/old-facts-before.json": {
+      "sha256": "879a718da44c70c48dfa4ba222acc82e6175b002775a105286173f44043770d1",
+      "bytes": 25987
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/late-hold/ALLOW-schema-gate.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/late-hold/ALLOW-schema-gate.stdout.txt": {
+      "sha256": "1598e0195bcadd243aa96723b8ed3007030fe058f466a20e622438f71c1a2765",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/late-hold/copy-0.stdout.txt": {
+      "sha256": "7954a60dedc6936faf32f869e3cfe32dd6f4bb4d2134a2851b34cdd560a09e54",
+      "bytes": 331
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/late-hold/DENY-schema-gate.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/late-hold/DENY-schema-gate.stdout.txt": {
+      "sha256": "f2db7c5a1e40f293bbefcd7f148e59efdbd49a0b3a34967a16fc2ef3e40cdc3c",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/late-hold/old-facts-after.json": {
+      "sha256": "b54b7b2b9084a6f114a371c02340e752455441d69504ab54834e06257254f2ab",
+      "bytes": 25957
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/late-hold/old-facts-before.json": {
+      "sha256": "b54b7b2b9084a6f114a371c02340e752455441d69504ab54834e06257254f2ab",
+      "bytes": 25957
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/ALLOW-schema-gate.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/ALLOW-schema-gate.stdout.txt": {
+      "sha256": "8365f3377aea409d0b1cd5e9787283cb973c752854d0acea685496c83211b869",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/copy-0.stdout.txt": {
+      "sha256": "6ae621ec0285b3eb75287b2d461c51e4990a95f2a6c52411e878a95954485601",
+      "bytes": 331
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/copy-1.stdout.txt": {
+      "sha256": "5f612b3f2424fa84a0a7875bca38d90b0609744b779975ac5057bf65a9bf022e",
+      "bytes": 335
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/DENY-schema-gate.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/DENY-schema-gate.stdout.txt": {
+      "sha256": "0cbfa80d78838a1e17850627bed2449b40e6f7d2ba21a23f5182598206c5c806",
+      "bytes": 115
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/old-facts-after.json": {
+      "sha256": "dbf727a49b2337bdc1990661bce632bb7f9e4672e797bd9d94ba64b9b979063a",
+      "bytes": 25957
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/mixed/old-facts-before.json": {
+      "sha256": "dbf727a49b2337bdc1990661bce632bb7f9e4672e797bd9d94ba64b9b979063a",
+      "bytes": 25957
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/R-repository-query.sql": {
+      "sha256": "99ba3a98d8b950d69e7431d662d91c5ae32cc296d3869e912959624f2da64f66",
+      "bytes": 319
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/schema-test-build.stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/schema-test-build.stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate20-planning01/artifact-rehearsal01/terminal.json": {
+      "sha256": "e826cf4b8cd232d517634d07dadd51c61b18f42cf830a186811d697f3f00553b",
+      "bytes": 979
+    }
+  },
+  "private_artifacts": {
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\001.intent.json": {
+      "sha256": "24de9157c58cc01e2255c869848a1d78a0038add786cfc5e9e6176a5948f85b7",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\001.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\001.stdout.private": {
+      "sha256": "4567435145036a4d4aa2e26efe5721d196619305bf964e3e9148c9812dda0dc1",
+      "bytes": 9403
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\001.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\002.intent.json": {
+      "sha256": "c321c5891d59f2f12c4cc753b441397ccf3f18639a075bcb9d6aec305726f436",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\002.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\002.stdout.private": {
+      "sha256": "7dfd74f6f51bc9c2040be2ab128938fc87c7790fcd0f7ec07dbca1f660655b38",
+      "bytes": 9252
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\002.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\003.intent.json": {
+      "sha256": "32af3b4684a2f6927e0d3d931bd758ac24b5e35a870ad66d96bc7f11538068e3",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\003.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\003.stdout.private": {
+      "sha256": "9809c62ad528adf11f95daed480d93834e7b7124560380c28533b3ca01ab2be8",
+      "bytes": 9403
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\003.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\004.intent.json": {
+      "sha256": "86520b28cd181862741070f22638844767e898589dbec455ce910c014224c6ba",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\004.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\004.stdout.private": {
+      "sha256": "de71a2e49ca131a198a0f9fb6c94475e328053a992cf779ff10e737bcb957a50",
+      "bytes": 9252
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\004.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\005.intent.json": {
+      "sha256": "4f0592c3a02d2f2d1e9ab8e30c745dc233fb02ea53377b98c0a6d042ce3d8023",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\005.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\005.stdout.private": {
+      "sha256": "fc292011c21e486b7c98c31556b1a4eb340fe3c895443f4cbe580b3d6f99cd04",
+      "bytes": 9403
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\005.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\006.intent.json": {
+      "sha256": "7d0564305abcd2d18aba92324b4b195c7bafa9ef3307875a97f25e6ad52d97af",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\006.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\006.stdout.private": {
+      "sha256": "8567e2795d125855cc757b9d6e6c50f59f898b90cf2dba68bf46a29b409bc80b",
+      "bytes": 9252
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\006.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\007.intent.json": {
+      "sha256": "48aaa0d792ac2318f96fbb856105f07ee125813c857f63c55ef87ee5f5e12725",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\007.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\007.stdout.private": {
+      "sha256": "163d2549865d33185af8014c4a9576e995f19feb3cc6b288a30f49932296d04d",
+      "bytes": 11908
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\007.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\008.intent.json": {
+      "sha256": "44be74ee5f8a46af32ff2017a696a4b4a98dd04e454233f32ef4d2448c0b88cd",
+      "bytes": 162
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\008.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\008.stdout.private": {
+      "sha256": "4bf5d9a909799c176a1cef3a4abf5dc00301b1b5afbb3b4d8a2b877b6ae1f868",
+      "bytes": 65
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\008.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\009.intent.json": {
+      "sha256": "fcf4f3950ed68ad05a98d493fdf401693ad71f5a6962f10ca9ecdabe3b96523f",
+      "bytes": 230
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\009.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\009.stdout.private": {
+      "sha256": "6e168fc3b5a0662104b5e5da92e87b870e8b7c65fec827d267115b5123d18614",
+      "bytes": 49
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\009.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\010.intent.json": {
+      "sha256": "4c5bd63a8339651d055629db629869d7d51792927428e7556422f9459b62f7e3",
+      "bytes": 221
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\010.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\010.stdout.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\010.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\011.intent.json": {
+      "sha256": "d15f0f8af2e39fbe185fbeb4045aedc6dad354d004d6ed455e30fa4aecd5c71a",
+      "bytes": 322
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\011.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\011.stdout.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\011.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\012.intent.json": {
+      "sha256": "d8521a9b859d5f17addd7af83767495759d7acd47140f5e4a2113519a50d9c0b",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\012.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\012.stdout.private": {
+      "sha256": "611267b711f9c48bfaf82b59dc62260182c6393344ead598098ff6bbcc4c455a",
+      "bytes": 35583
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\012.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\013.intent.json": {
+      "sha256": "58700125335dd96723ae5a1d5e0e2abdc8a4aebecf03d9aeac58821782ae2b61",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\013.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\013.stdout.private": {
+      "sha256": "f470891ad58d4cd4461d9c59c3dc1799d8c4bdff337f29fa740ec743bada7f14",
+      "bytes": 256
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\013.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\014.intent.json": {
+      "sha256": "88ce93b43ecb8d5912abdba13576a118c57c7c7cfde0e38d66e6b0e5ed41e8ea",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\014.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\014.stdout.private": {
+      "sha256": "c5660c465cc2cbce2f87785ff979fe95b94f4c08cb79f73126698cfb07e7214d",
+      "bytes": 25402
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\014.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\015.intent.json": {
+      "sha256": "1ccf5ce9c9d5c4541a201accc00a91ddcc5d203a0e0ade251bec51b3fdcfaab4",
+      "bytes": 419
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\015.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\015.stdout.private": {
+      "sha256": "8365f3377aea409d0b1cd5e9787283cb973c752854d0acea685496c83211b869",
+      "bytes": 115
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\015.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\016.intent.json": {
+      "sha256": "36f4c9e8076072f6d4a401ff757382adfd6226d4f09b748fcd240df1f9f07e4d",
+      "bytes": 417
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\016.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\016.stdout.private": {
+      "sha256": "690742ff82c4f7b56038780fe68c369b19719d6f07c0b85867fcfa62b93bb893",
+      "bytes": 115
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\016.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\017.intent.json": {
+      "sha256": "f7e6b5872980b100ba56ad5e21ed693e65626a1b77cf43aac0e0823214bc663c",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\017.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\017.stdout.private": {
+      "sha256": "d3c8ca706a626fded94126a6814a28f95e1d4e99d4f5f7a5cbb18ba94f5ed3b9",
+      "bytes": 330
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\017.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\018.intent.json": {
+      "sha256": "97d6a13d58b5393e9e0f72d4ae75092dd5bd8ce1d70a86ac7a33ef60447d0586",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\018.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\018.stdout.private": {
+      "sha256": "079bad72341ba63ab873a9076a6c4117ababe30e234f23f14935e7d35c6cad65",
+      "bytes": 333
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\018.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\019.intent.json": {
+      "sha256": "521e2556c5ffa631efc3a8443d2dac380a9b903790e40a1cf85d32a86698c79b",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\019.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\019.stdout.private": {
+      "sha256": "264b63ca29b4cd474fd45d256fad69a08d024169e716c54d3155b7d69fdcc6f8",
+      "bytes": 333
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\019.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\020.intent.json": {
+      "sha256": "cc22de676eeabe0dbd2970f9b49cb7d489e008f1ad4ea1499ee121d2ca24a713",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\020.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\020.stdout.private": {
+      "sha256": "611267b711f9c48bfaf82b59dc62260182c6393344ead598098ff6bbcc4c455a",
+      "bytes": 35583
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\020.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\021.intent.json": {
+      "sha256": "2a20eed9c12af76f1f27ba5f18f1936ea7334a973d92ec28bdc90f7c4a5d90a0",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\021.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\021.stdout.private": {
+      "sha256": "f470891ad58d4cd4461d9c59c3dc1799d8c4bdff337f29fa740ec743bada7f14",
+      "bytes": 256
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\021.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\022.intent.json": {
+      "sha256": "40ae4120ae1290a9a18b2fe99f33853812f55df9546476f44d17a4fe59ea8ac6",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\022.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\022.stdout.private": {
+      "sha256": "c5660c465cc2cbce2f87785ff979fe95b94f4c08cb79f73126698cfb07e7214d",
+      "bytes": 25402
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\022.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\023.intent.json": {
+      "sha256": "8c73c9e5372a08c9b9bd032bb8a0a3f0ebf74316b892911bbda65a6755d22af5",
+      "bytes": 221
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\023.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\023.stdout.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\023.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\024.intent.json": {
+      "sha256": "9ac20f762c750276667b83ba84d1d0fc672c9df926bba5e0008575590967e5b0",
+      "bytes": 317
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\024.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\024.stdout.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\024.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\025.intent.json": {
+      "sha256": "3fa32ee6ffc3eb1a1e43243544fe202e05e55521bc64e982312eecded90ea4e3",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\025.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\025.stdout.private": {
+      "sha256": "611267b711f9c48bfaf82b59dc62260182c6393344ead598098ff6bbcc4c455a",
+      "bytes": 35583
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\025.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\026.intent.json": {
+      "sha256": "c1f5e5fd53ac9537daa464568ba0c4563519ea3077c6e699fd6c3fc069aa496f",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\026.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\026.stdout.private": {
+      "sha256": "f470891ad58d4cd4461d9c59c3dc1799d8c4bdff337f29fa740ec743bada7f14",
+      "bytes": 256
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\026.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\027.intent.json": {
+      "sha256": "2a46332cdad45fa70529a586a9226c8d539553f06041b91c97d9cc3f8516f93f",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\027.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\027.stdout.private": {
+      "sha256": "17c95313ebf2ba7dee9f863ee78329c1319457577068a8794fca601e31844f01",
+      "bytes": 25372
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\027.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\028.intent.json": {
+      "sha256": "08e24ee310c2b8db32d3bbcad4b9df13c2ac917c8c7359079f25d53467d97053",
+      "bytes": 419
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\028.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\028.stdout.private": {
+      "sha256": "1598e0195bcadd243aa96723b8ed3007030fe058f466a20e622438f71c1a2765",
+      "bytes": 115
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\028.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\029.intent.json": {
+      "sha256": "c74e0c15acb5e673e226125abc04dad838b94f91c43e05edd3170520b880b093",
+      "bytes": 417
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\029.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\029.stdout.private": {
+      "sha256": "f2db7c5a1e40f293bbefcd7f148e59efdbd49a0b3a34967a16fc2ef3e40cdc3c",
+      "bytes": 115
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\029.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\030.intent.json": {
+      "sha256": "3e3c0caa60d2e5505bb0bb84c7ecc556195ed0b3bd25b06d489c61cc4b4f83cf",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\030.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\030.stdout.private": {
+      "sha256": "7954a60dedc6936faf32f869e3cfe32dd6f4bb4d2134a2851b34cdd560a09e54",
+      "bytes": 331
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\030.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\031.intent.json": {
+      "sha256": "3f0bde77478bdca0d651ee55b2cb0a313ac1f03923974c876a38cdb4606e7773",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\031.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\031.stdout.private": {
+      "sha256": "611267b711f9c48bfaf82b59dc62260182c6393344ead598098ff6bbcc4c455a",
+      "bytes": 35583
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\031.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\032.intent.json": {
+      "sha256": "c2455158dd2fcc5a49c27f69044894baf8e73472518f93a546925287de853cf8",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\032.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\032.stdout.private": {
+      "sha256": "f470891ad58d4cd4461d9c59c3dc1799d8c4bdff337f29fa740ec743bada7f14",
+      "bytes": 256
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\032.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\033.intent.json": {
+      "sha256": "1d178d60856863b70622ebb7cfd96e09fcb58de0adfb8d670b7195cc4b17b9c4",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\033.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\033.stdout.private": {
+      "sha256": "17c95313ebf2ba7dee9f863ee78329c1319457577068a8794fca601e31844f01",
+      "bytes": 25372
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\033.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\034.intent.json": {
+      "sha256": "1a8da73d2bbec8c9e54d90138ff75c619e5c5f75b424b0fef06f18ce58ee4934",
+      "bytes": 221
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\034.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\034.stdout.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\034.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\035.intent.json": {
+      "sha256": "cb2df7a7534123effcb929652f6beb824d237db00828db5895de0a4068fce7f0",
+      "bytes": 313
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\035.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\035.stdout.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\035.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\036.intent.json": {
+      "sha256": "837fb84ac3ba2afab806162de44c51723690f8283e7d9bb7549b371cb58d9d6e",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\036.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\036.stdout.private": {
+      "sha256": "611267b711f9c48bfaf82b59dc62260182c6393344ead598098ff6bbcc4c455a",
+      "bytes": 35583
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\036.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\037.intent.json": {
+      "sha256": "c736b624883fae94197161ff62a49bd50b22e4786442d78a55a917295ecf80fe",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\037.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\037.stdout.private": {
+      "sha256": "f470891ad58d4cd4461d9c59c3dc1799d8c4bdff337f29fa740ec743bada7f14",
+      "bytes": 256
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\037.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\038.intent.json": {
+      "sha256": "75ac07066e556e53da8bb3bd0fb3eef24a6a1993cbce82c5280b9ecdc3e47ff1",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\038.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\038.stdout.private": {
+      "sha256": "7dcfc99e5a7d1b20c2af081272b5577b6b5c9f8bfc4aaf5736bba6d4477b2598",
+      "bytes": 25372
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\038.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\039.intent.json": {
+      "sha256": "0a1860883c5e755e84aee7e1c9edb54ffc744ab9934a9dc7a4a9a8989a7f9aa1",
+      "bytes": 419
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\039.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\039.stdout.private": {
+      "sha256": "8365f3377aea409d0b1cd5e9787283cb973c752854d0acea685496c83211b869",
+      "bytes": 115
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\039.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\040.intent.json": {
+      "sha256": "6db63ceac684eb9297f88565c5d87c487051021370adcf89d3138d7cb18109bf",
+      "bytes": 417
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\040.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\040.stdout.private": {
+      "sha256": "0cbfa80d78838a1e17850627bed2449b40e6f7d2ba21a23f5182598206c5c806",
+      "bytes": 115
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\040.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\041.intent.json": {
+      "sha256": "b9c09c1fc1fd1718a7a8af20068055de15027d4a8fdb0dce2ed6c02a82fcd6bd",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\041.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\041.stdout.private": {
+      "sha256": "6ae621ec0285b3eb75287b2d461c51e4990a95f2a6c52411e878a95954485601",
+      "bytes": 331
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\041.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\042.intent.json": {
+      "sha256": "f2e09d13942bb8d1835d7de6bd9b7206226179afef7c7502c6d24808532d3d53",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\042.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\042.stdout.private": {
+      "sha256": "5f612b3f2424fa84a0a7875bca38d90b0609744b779975ac5057bf65a9bf022e",
+      "bytes": 335
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\042.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\043.intent.json": {
+      "sha256": "f7f4d3681e434f004ebe794ea016a9d36a29c630b80f20b8ff912cf84ce4cfbc",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\043.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\043.stdout.private": {
+      "sha256": "611267b711f9c48bfaf82b59dc62260182c6393344ead598098ff6bbcc4c455a",
+      "bytes": 35583
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\043.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\044.intent.json": {
+      "sha256": "ca177340a1d65ab071abf4ed701a5bf75049215573adb253b21e66331d2763d7",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\044.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\044.stdout.private": {
+      "sha256": "f470891ad58d4cd4461d9c59c3dc1799d8c4bdff337f29fa740ec743bada7f14",
+      "bytes": 256
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\044.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\045.intent.json": {
+      "sha256": "dea8aa16ae8ecabc044bd80befa23632f50a84ff2258a46ba07df4dda14f78b2",
+      "bytes": 292
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\045.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\045.stdout.private": {
+      "sha256": "7dcfc99e5a7d1b20c2af081272b5577b6b5c9f8bfc4aaf5736bba6d4477b2598",
+      "bytes": 25372
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\045.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\046.intent.json": {
+      "sha256": "967db68ee81b4877cc037b538be9ca314dfa98eddab549cd07660ebd66434bd2",
+      "bytes": 185
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\046.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\046.stdout.private": {
+      "sha256": "15c0b608c5ca336f7e7d04098717f6efe736f5360edf5bf1780dff0233af77f4",
+      "bytes": 120
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\046.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\047.intent.json": {
+      "sha256": "80b39331425cae753ee9225cf4f438805e1ad7e3b2f376a2f5b3620662d28f4d",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\047.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\047.stdout.private": {
+      "sha256": "81eacfe40a921948285cd031e4a67084a543998bcc304c6d757385a566ca02ae",
+      "bytes": 11908
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\047.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\048.intent.json": {
+      "sha256": "972b471784e1cd6d61df4be8956634e5cfa3e12097e8d7209ee2582cbdfe8cad",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\048.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\048.stdout.private": {
+      "sha256": "4567435145036a4d4aa2e26efe5721d196619305bf964e3e9148c9812dda0dc1",
+      "bytes": 9403
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\048.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\049.intent.json": {
+      "sha256": "86f9e43034bea377113a9e2b0d317dfed14c103904f3106f9772779e2285b46d",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\049.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\049.stdout.private": {
+      "sha256": "7dfd74f6f51bc9c2040be2ab128938fc87c7790fcd0f7ec07dbca1f660655b38",
+      "bytes": 9252
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\049.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\050.intent.json": {
+      "sha256": "295a4c0d08d3ad11a0892e99627a6779eaf3108be8b630370d21834a17f86c85",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\050.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\050.stdout.private": {
+      "sha256": "9809c62ad528adf11f95daed480d93834e7b7124560380c28533b3ca01ab2be8",
+      "bytes": 9403
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\050.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\051.intent.json": {
+      "sha256": "68ec84c3ea4cb949878b1c75a8c8657e3de0d8a053b432a5857183b379d48558",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\051.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\051.stdout.private": {
+      "sha256": "de71a2e49ca131a198a0f9fb6c94475e328053a992cf779ff10e737bcb957a50",
+      "bytes": 9252
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\051.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\052.intent.json": {
+      "sha256": "0fd066c5f63df68853cf0fa6f126e4bb68a5330a294bf7de9faa988dd31e3b96",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\052.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\052.stdout.private": {
+      "sha256": "fc292011c21e486b7c98c31556b1a4eb340fe3c895443f4cbe580b3d6f99cd04",
+      "bytes": 9403
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\052.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\053.intent.json": {
+      "sha256": "46f402a6c96af766c62e529dc4858c3e04a2f4d0af75050b2fbebb281e8f46d1",
+      "bytes": 164
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\053.process.json": {
+      "sha256": "3e42a2ad3dbeab9d1167d20261ad6305bdea31103ffc09c30f25558345966de2",
+      "bytes": 16
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\053.stdout.private": {
+      "sha256": "8567e2795d125855cc757b9d6e6c50f59f898b90cf2dba68bf46a29b409bc80b",
+      "bytes": 9252
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\journal\\053.stderr.private": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\reader": {
+      "sha256": "4a00555dfc950ed3960563bf4a49277ee18142c71dc582f37e8db06dda862d0e",
+      "bytes": 38133215
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\operator": {
+      "sha256": "2389da9895f077312efe64c436242c87e6679d6ad7c84b4135de57103cc11fb8",
+      "bytes": 31795240
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\owner": {
+      "sha256": "815398e9c2ec7682587b73972c9fd19d5fc4ca8b46533c5f8a0e769718dd1f0c",
+      "bytes": 17854135
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\readonly-check.exe": {
+      "sha256": "7416d12a7311090fa0208545bd5f7228c720e4ac3c1a882ef8d28ad622d41da6",
+      "bytes": 9036800
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\reader-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\reader-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\operator-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\operator-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\owner-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\owner-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\checker-build.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\checker-build.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-artifact-rehearsal01\\approved-runtime-source.zip": {
+      "sha256": "1562acb9e667053b096f63bc6611d1f5084782b5089661cf1ebd1ce94b707bf6",
+      "bytes": 1821418
+    },
+    "C:\\Users\\Henry\\.codex\\fixture-private\\candidate20-schema-compatibility01\\tools\\fixture-schema.test": {
+      "sha256": "0fd893c0f787939caaebd4d350eb066e16860e91771fcc31b3fe38e3c39c5bf1",
+      "bytes": 17067181
+    }
+  }
+}

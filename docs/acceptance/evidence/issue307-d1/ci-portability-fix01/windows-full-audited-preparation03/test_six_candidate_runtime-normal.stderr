@@ -1,0 +1,72 @@
+......E..EF...F.
+======================================================================
+ERROR: test_dump_failure_stops_new_groups_and_closes_every_known_owner (__main__.SixHostTests.test_dump_failure_stops_new_groups_and_closes_every_known_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 354, in test_dump_failure_stops_new_groups_and_closes_every_known_owner
+    def test_dump_failure_stops_new_groups_and_closes_every_known_owner(self):self.composition(True)
+                                                                              ~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 332, in composition
+    with self.assertRaises(OSError):r.run_non_delete()
+                                    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 529, in run_non_delete
+    protection=native_protection.validate_group(group,load(target/'maintenance-source/files/six-native-verification.json'),now(),p.W['RecoveryEnd'])
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 43, in validate_group
+    need(at < horizon, 'REQUIRED_HORIZON_EXPIRED')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+    raise ValueError('native protection required: ' + reason)
+ValueError: native protection required: REQUIRED_HORIZON_EXPIRED
+
+======================================================================
+ERROR: test_full_three_group_source_backup_restore_sequence (__main__.SixHostTests.test_full_three_group_source_backup_restore_sequence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 353, in test_full_three_group_source_backup_restore_sequence
+    def test_full_three_group_source_backup_restore_sequence(self):self.composition()
+                                                                   ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 335, in composition
+    else:r.run_non_delete()
+         ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 529, in run_non_delete
+    protection=native_protection.validate_group(group,load(target/'maintenance-source/files/six-native-verification.json'),now(),p.W['RecoveryEnd'])
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 43, in validate_group
+    need(at < horizon, 'REQUIRED_HORIZON_EXPIRED')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\native_protection.py", line 17, in need
+    raise ValueError('native protection required: ' + reason)
+ValueError: native protection required: REQUIRED_HORIZON_EXPIRED
+
+======================================================================
+FAIL: test_mixed_expiry_rejects_before_any_backup_or_business_rehearsal (__main__.SixHostTests.test_mixed_expiry_rejects_before_any_backup_or_business_rehearsal)
+----------------------------------------------------------------------
+ValueError: native protection required: REQUIRED_HORIZON_EXPIRED
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 356, in test_mixed_expiry_rejects_before_any_backup_or_business_rehearsal
+    def test_mixed_expiry_rejects_before_any_backup_or_business_rehearsal(self):self.composition(expired=True)
+                                                                                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 334, in composition
+    with self.assertRaisesRegex(ValueError,'GOVERNANCE_RETENTION_EXPIRED'):r.run_non_delete()
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "GOVERNANCE_RETENTION_EXPIRED" does not match "native protection required: REQUIRED_HORIZON_EXPIRED"
+
+======================================================================
+FAIL: test_rehearsal_rechecks_restore_protection_before_inspector_enable (__main__.SixHostTests.test_rehearsal_rechecks_restore_protection_before_inspector_enable)
+----------------------------------------------------------------------
+ValueError: native protection required: REQUIRED_HORIZON_EXPIRED
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-ci-portability\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 363, in test_rehearsal_rechecks_restore_protection_before_inspector_enable
+    with self.assertRaisesRegex(ValueError,'GOVERNANCE_RETENTION_EXPIRED'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "GOVERNANCE_RETENTION_EXPIRED" does not match "native protection required: REQUIRED_HORIZON_EXPIRED"
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.849s
+
+FAILED (failures=2, errors=2)

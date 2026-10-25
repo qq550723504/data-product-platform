@@ -1,0 +1,7 @@
+test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics (__main__.PreparationClosureTests.test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics) ... ok
+test_stop_or_inspect_failure_continues_every_other_owner (__main__.PreparationClosureTests.test_stop_or_inspect_failure_continues_every_other_owner) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.028s
+
+OK

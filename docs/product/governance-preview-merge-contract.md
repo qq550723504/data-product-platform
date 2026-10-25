@@ -1,8 +1,14 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-当前业务确认表复审（2026-10-25，核对`f2117896`）：用户仅授权文档审查及精确HEAD的CI核对；在[原表](business-receipt-write-enablement-checklist-20261024.md#3-来源与依据的业务确认表)补清多职责确认各自留据、分阶段依据与逐域撤销窗口、后续读取/写入授权的精确版本及范围关联，不新增模型、接口、角色或Gate。仅2份Markdown；真实来源/人员/材料/结论均保持待定，写入口关闭，原库/Agent API/预览保留，模型/真实执行关闭，Draft不合并、不部署。
+当前main同步与冲突回归（2026-10-25，PR原HEAD `92f26e9b`，同步main `e0e4f77a576ea4572cf16b3a3475461127f44acc`）：用户单独授权处理依赖锁文件及两个Schema浏览器用例冲突，完成相关回归和新HEAD的CI；这是分支整合，不是新增业务功能或合并PR。手工冲突处置限`apps/web/package-lock.json`、`tests/browser/schema-attempts.spec.mjs`、`tests/browser/schema-requests.spec.mjs`，其余沿用main已有变更，不扩展领域/运行范围。
 
-本次CI定位基线：GitHub对`f2117896b62fd859bd24e27d73de6ab3029ba5c4`的workflow/check/status均无记录；PR显示`CONFLICTING / DIRTY`。只计算与当时main `e0e4f77a576ea4572cf16b3a3475461127f44acc`的合并树，冲突为`apps/web/package-lock.json`、`tests/browser/schema-attempts.spec.mjs`、`tests/browser/schema-requests.spec.mjs`，未实际合并、修改冲突文件或切换运行环境。[GitHub触发规则](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)说明有合并冲突时不运行pull_request工作流。本轮不借改触发事件、手工派发或旧HEAD绿色绕过；这些代码/依赖/测试集成不在当前文档修正范围，保留PR级CI阻断。修正后新HEAD须重新查询，精确状态归PR closure，不将无记录写为运行中/成功。
+锁文件沿用PR的Next/eslint-config-next `15.5.28`、PostCSS override `8.5.29`及既有OIDC/RP/PG依赖，由npm以`--package-lock-only --ignore-scripts`校验，未改依赖清单或已有node_modules。Schema用例保留新版`/core/workbench`入口及其他队列参数，并纳入main的精确分页就绪、受控延迟筛选、UNKNOWN/独立读取断言；不删main新增用例、不通过自动重试掩盖竞态。相关单测、夹具和独立构建/浏览器结果及精确HEAD CI终态归PR closure，不以本地绿色替代CI。
+
+Git对象比对确认业务确认表、可信依据/第一切片契约、原来源样例及Agent Q1/Q2目录/前端协议保留。浏览器只用既有合成夹具、独立构建目录与独立结果目录，不触及原库、Agent API运行环境或已保留预览；Next为隔离构建自动加入的类型路径已还原。来源UNCONFIGURED、业务写关闭，模型/真实执行关闭，继续Draft不合并、不部署。
+
+上一业务确认表复审（2026-10-25，核对`f2117896`）：用户仅授权文档审查及精确HEAD的CI核对；在[原表](business-receipt-write-enablement-checklist-20261024.md#3-来源与依据的业务确认表)补清多职责确认各自留据、分阶段依据与逐域撤销窗口、后续读取/写入授权的精确版本及范围关联，不新增模型、接口、角色或Gate。仅2份Markdown；真实来源/人员/材料/结论均保持待定，写入口关闭，原库/Agent API/预览保留，模型/真实执行关闭，Draft不合并、不部署。
+
+历史CI阻断定位：GitHub对`f2117896b62fd859bd24e27d73de6ab3029ba5c4`的workflow/check/status均无记录；当时PR显示`CONFLICTING / DIRTY`。只计算与当时main `e0e4f77a576ea4572cf16b3a3475461127f44acc`的合并树，冲突为`apps/web/package-lock.json`、`tests/browser/schema-attempts.spec.mjs`、`tests/browser/schema-requests.spec.mjs`，当轮未实际合并、修改冲突文件或切换运行环境。[GitHub触发规则](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)说明有合并冲突时不运行pull_request工作流。当轮保留阻断；现在用户已另行授权上面的分支整合，最新状态须按同步后的精确HEAD重新核对，不把旧HEAD的无记录或绿色延续为新结果。
 
 上一业务确认表设计（2026-10-25，核对`b85e63aa`）：用户仅授权将来源选择、责任人、原件核验和撤销窗口整理为可评审确认表，直接展开[现有启用清单第3节](business-receipt-write-enablement-checklist-20261024.md#3-来源与依据的业务确认表)，列明业务确认职责、依据提供/协同职责、必需材料、待填结论和变更追溯。D01–D04及T/R/G权威不变，不新增模型、接口、角色或审批产品；仅3份Markdown，真实来源/人员/依据/结论均保持未配置/待定/未确认。原库/Agent API/预览未操作，业务写关闭，模型/真实执行关闭，Draft不合并、不部署；填表或CI不构成业务批准、G2读取或后续写入授权。
 

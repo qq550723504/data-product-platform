@@ -1,0 +1,108 @@
+{
+  "at": "2026-10-22T09:34:11.365055+00:00",
+  "source_head": "923c06722f3099e9049894489006615f0f0e7ce2",
+  "status": "PASS_INDEPENDENT_FINAL_C20_CI_REPAIR_MODELS",
+  "scope": "Pure offline unit doubles; includes complete allocation fail-before-resources and rehashed source CI snapshot/run rejection. No Linux PR CI claim or native/provider work.",
+  "runs": [
+    {
+      "test": "test_fixture_artifacts.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 4,
+      "tested_input_sha256": "49861c133bd0ecbfbd19dd6c97b436ae667730d5c1ad977e1cf1ecab65da435e",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "0a5d0570616c139793c3e24720e9924ab9bf0ab18a2fab7cdd31c434ec262d08"
+    },
+    {
+      "test": "test_fixture_artifacts.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 4,
+      "tested_input_sha256": "49861c133bd0ecbfbd19dd6c97b436ae667730d5c1ad977e1cf1ecab65da435e",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "1f7beae0ec0a575f4b62232957437f4dd6b917c5c637cd3e0152a77a411eb132"
+    },
+    {
+      "test": "test_retained_v26.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 5,
+      "tested_input_sha256": "5bd1a925ac4f2fb6bd066b56d5e6b3837c990ad8d0aa27e6f27322187a8f3700",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "bd40bf063a6af591219e54d4a57dd0e0897c4b3e6e09eb3dee6afaa1f54d7195"
+    },
+    {
+      "test": "test_retained_v26.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 5,
+      "tested_input_sha256": "5bd1a925ac4f2fb6bd066b56d5e6b3837c990ad8d0aa27e6f27322187a8f3700",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "0110a12ee04ba5a893dd306a66e04ef59b714f517cfba9e2d03d4177f1a4e725"
+    },
+    {
+      "test": "test_preallocation_ci.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 3,
+      "tested_input_sha256": "2a03270382f46fd1e971df056604a8ab2d70529a702a7befdf0a0b19e4304bfe",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4d3da7fe88723d8527042ebd7e144a8b94a1f3f5c84324900ae5b89e4f7eb042"
+    },
+    {
+      "test": "test_preallocation_ci.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 3,
+      "tested_input_sha256": "2a03270382f46fd1e971df056604a8ab2d70529a702a7befdf0a0b19e4304bfe",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "98b2d50ba4fbcd79bb51f4031dee0c4e8f765d0fa9572ad37492374996997a9c"
+    },
+    {
+      "test": "test_six_candidate_runtime.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 14,
+      "tested_input_sha256": "01fd25e3a60fcb1a749854c584c3a085cd9568f6f48242846cf6321552f19d50",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "cf0cc1796eb044bee7eeac5e01ab0d51068491f13afadcd9445e6baba97fb1b9"
+    },
+    {
+      "test": "test_six_candidate_runtime.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 14,
+      "tested_input_sha256": "01fd25e3a60fcb1a749854c584c3a085cd9568f6f48242846cf6321552f19d50",
+      "same_input_after": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "94a3d36d2bda2d5b9e7499bd83b99580de739a729e9eb1b35204661e90e14b5b"
+    },
+    {
+      "test": "test_freeze_six_candidate.py",
+      "mode": "normal",
+      "exit": 0,
+      "methods": 1,
+      "tested_input_sha256": "0f2e43d09f0abf12e36c83618e135d8126e3dac31f752252e40141529cfda379",
+      "same_input_after": true,
+      "stdout_sha256": "f449a8c0b7a5c8ba51a86ee77b990530e48cc40b024fa472b8d935a30f2b0554",
+      "stderr_sha256": "e656bce968aa7ae8ab8a04763ac03ecb63819bf557e8146de4c17c5776b13c95"
+    },
+    {
+      "test": "test_freeze_six_candidate.py",
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 1,
+      "tested_input_sha256": "0f2e43d09f0abf12e36c83618e135d8126e3dac31f752252e40141529cfda379",
+      "same_input_after": true,
+      "stdout_sha256": "44edf2f7e5fe3ec33a118687eed18505458074adf766bc782fcbb494f0716667",
+      "stderr_sha256": "e9aeb29c98cbb17e61a7ce757b67206476b470a28dd3dc3033ca611eed21f9a1"
+    }
+  ]
+}

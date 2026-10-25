@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\capture-retained-c22.py", line 190, in <module>
+    if __name__ == '__main__':main()
+                              ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\capture-retained-c22.py", line 166, in main
+    need(destination.read_bytes() == raw, 'new checkout differs from issued C22 bytes: '+name)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\retained_v30.py", line 32, in need
+    if not ok:raise ValueError('retained v30: '+message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: retained v30: new checkout differs from issued C22 bytes: docs/acceptance/issue307-d1-v32-preparation-contract.md

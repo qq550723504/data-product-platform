@@ -1,0 +1,62 @@
+{
+  "status": "PASS_BOUNDED_C21_PREIMPLEMENTATION_CONTRACT_AND_ANCHOR_AUDIT",
+  "at": "2026-10-22T10:14:26.179715+00:00",
+  "base_host": "16aa4ec464a1fa14f1aa7ac21624b3855ecb39b3",
+  "base_runtime": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "new_execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "window": "PENDING_HUMAN_SELECTION",
+  "anchor_sha256": "0a84e160225ad47940e3d4a170e94317d00adc85f53e6ce17e0f305eddeab2bd",
+  "remaining_design_blockers": [],
+  "saved_anchor_counts": {
+    "owners": 86,
+    "permissions_false": 30,
+    "resources": 18,
+    "new_empty_budgets": 3,
+    "private_files": 939,
+    "schema_private_files": 292,
+    "read_calls": 41
+  },
+  "C20_user_names_to_prove_NoSuchUser": {
+    "business-races": [
+      "i5a54e01a808a6960",
+      "d5a54e01a808a6960"
+    ],
+    "late-hold": [
+      "i5a54e01a754ea8f0",
+      "d5a54e01a754ea8f0"
+    ],
+    "mixed": [
+      "i5a54e01adfda43b4",
+      "d5a54e01adfda43b4"
+    ]
+  },
+  "expected_future_absent_counts": {
+    "business-races": 3,
+    "late-hold": 6,
+    "mixed": 6,
+    "total": 15
+  },
+  "expected_future_present_total_after_only_C21_disabled_provision": 47,
+  "required_implementation_contract": [
+    "Pin the fixed C20 anchor/terminal/allocation/build/archive/revocation and directory file sets, never derive the retained set from new C21 artifacts.",
+    "Compare fresh C20 owner descriptors plus captured State including StartedAt/FinishedAt; a stop/start round trip is drift even if current PID is0.",
+    "Keep all18 resource descriptors/ownership/mount graphs and3budget original hashes/empty UID10001 facts; preserve network-none schema clone and its fixed private file set.",
+    "Do not invoke terminal C20 Host.state or validate its old P host snapshot against a later working checkout. Preserve the old allocation metadata, exact Git source and actual builds as historical inputs.",
+    "Append C20 six names to official NoSuchUser validation, not RetainedIdentities; preserve previous9 absent users and existing41 actual users/policies. Provision only6new current C21 users disabled.",
+    "C19 actual exact-version two-action delete policy remains paired, earlier actual frozen Version-only policies remain unchanged.",
+    "Derive R from existing schema69 artifact with reviewed finite current execution/window/absence changes; P retains protected identity model; shared scope/policy/current window bindings must agree and recipe remains UTC/LF/store.",
+    "Require exact P source PR CI before allocation and final static HEAD CI/native lock/new execution binding before requesting new authorization. No old window/authorization/schedule reuse."
+  ],
+  "limits": {
+    "source_implementation_review": "NOT_YET_PERFORMED_NEW_HEAD_REQUIRED",
+    "Docker_or_provider_actions_by_reviewer": 0,
+    "fresh_native_NoSuchUser_proof": "NOT_RUN",
+    "fresh_physical_state_by_reviewer": "NOT_OBSERVED_THIS_FILE_AUDIT",
+    "original41_host_read_calls": "Saved sanitized descriptors/state and response hashes; no provider/IAM/source start proof. Future fixed retention gate must observe Docker anew.",
+    "new_allocation": 0,
+    "new_authorization_or_schedule": 0,
+    "old_IAM_UNCONFIRMED": "PRESERVED_NO_RELABEL",
+    "PR332": "MUST_REMAIN_DRAFT",
+    "Issue307": "MUST_REMAIN_OPEN"
+  }
+}

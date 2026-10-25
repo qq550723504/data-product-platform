@@ -1,0 +1,39 @@
+Traceback (most recent call last):
+  File "<string>", line 19, in <module>
+    try:runpy.run_path(sys.argv[0],run_name='__main__')
+        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 566, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 563, in main
+    else:print(json.dumps(preparation_gate(state())))
+                                           ~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 101, in state
+    a=allocation_state();build_contract(a)
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 80, in allocation_state
+    need(p.historical_gate()==a['retained'],'retained history drift')
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 79, in historical_gate
+    base=prior.retained()
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\verify-post-v22-seventeen.py", line 59, in retained
+    old = closure.audit.retained(p1)
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\audit-old-business-dispatches.py", line 98, in retained
+    backup, budget = p1.backups(), p1.budgets()
+                                   ~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 121, in budgets
+    raw=docker('cp',cid+':/run/budget/.','-')
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 63, in docker
+    def docker(*args):return call(['docker',*args])
+                             ~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 37, in call
+    result=subprocess.run(list(map(str,args)),cwd=ROOT,input=data,capture_output=True)
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 14, in __init__
+    if not allow:raise RuntimeError('readonly allowlist denied '+str(v[:3]))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: readonly allowlist denied ['docker', 'cp', '04ce9972b7c2da4d2a540600d2fa853a282398dc8a94bb6918a365028a60b05f:/run/budget/.']

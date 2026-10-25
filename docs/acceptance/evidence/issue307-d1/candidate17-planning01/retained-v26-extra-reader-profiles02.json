@@ -1,0 +1,38 @@
+{
+  "status": "PASS_C16_TECHNICAL_PROFILE_REVOKE_EQUIVALENCE",
+  "readers": [
+    {
+      "cid": "13b0c8f156289347f1de32dc9e8b282c714dfe88a510462f4dc407fc6a128055",
+      "group": "business-races",
+      "current_profile_sha256": "b201f0c2c97413b14e73d6f1bf585c807fcf2df4fbcd86a54d9a4bc00fa08911",
+      "original_enabled_profile_sha256": "1516b702024ee2645a01ac0047afa6eecf571d9a7135b9c3bda9989761e6ac49",
+      "equals_original_allocated_profile": true,
+      "only_enabled_field_changed": true,
+      "current_enabled": false,
+      "max_provider_deletes": 0
+    },
+    {
+      "cid": "3ffcdfe2c7b17bec1107a6dbfc8815acf3575c0e7ba793df02636d8e63869d58",
+      "group": "late-hold",
+      "current_profile_sha256": "d7351e91fd29e60c2389a8768988fda2f185e9e86c044ff0f1e56660536fff75",
+      "original_enabled_profile_sha256": "51baef415326acd55e6cbae013fc3673bbcffcef7642fefd4f94cbe89dafb124",
+      "equals_original_allocated_profile": true,
+      "only_enabled_field_changed": true,
+      "current_enabled": false,
+      "max_provider_deletes": 0
+    },
+    {
+      "cid": "5dda981ac8c5efaf7d399ea9aebac572c7d51bf49bd90d625f4c237ce3c9722b",
+      "group": "mixed",
+      "current_profile_sha256": "6fb0599e9380669bc641754fadc31c8897394655b34fbfdd2e4cf32ddc79d7f5",
+      "original_enabled_profile_sha256": "454658c4bba35586aa57e66315c3b6ec411b4c24362d65904885d612e40e0d93",
+      "equals_original_allocated_profile": true,
+      "only_enabled_field_changed": true,
+      "current_enabled": false,
+      "max_provider_deletes": 0
+    }
+  ],
+  "file_changes": 0,
+  "provider_requests": 0,
+  "DELETE": 0
+}

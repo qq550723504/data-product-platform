@@ -1,0 +1,7 @@
+{
+  "status": "FAILED_CI_REHEARSAL_RETAINED",
+  "missing": "historical Go testdata excluded from R runtime archive",
+  "shared_git_shallow_effect": "depth=2 fetch introduced a260 boundary; restoring with native unshallow",
+  "source_started": false,
+  "native_delete": 0
+}

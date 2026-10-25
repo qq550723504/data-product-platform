@@ -1,0 +1,23 @@
+{
+  "status": "PASS_INDEPENDENT_ACTUAL_R_ARCHIVE",
+  "source": "215098f0bc36a7d88eb19d0f24ed148ef0fe238f",
+  "base_source": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d",
+  "archive_sha256": "6194b094b3727ee4d4bd569532ad51e6827f95f9fc42457ec5c77512f9718f30",
+  "archive_bytes": 6503726,
+  "files": 780,
+  "runtime_delta": [
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/retention_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/retention_verify_test.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/retention.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/retention_test.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/wait_test.go",
+    "apps/platform/internal/lifecycle/pilot/retention_maintenance.go"
+  ],
+  "shared_members": 22
+}

@@ -1,0 +1,31 @@
+{
+  "status": "PREPARED_LOCAL_R4_NOT_PUBLISHED",
+  "source": "0446fde5985b51de7da5863b45df3f1b47b6167c",
+  "parent": "53f6f8a6e69c17fa6896a40293d323f6ee9d0958",
+  "tree": "c573bc2b11dd3ba2fb4dd1ae2c08027c0971e715",
+  "archive_sha256": "a60ddfeb8a81d4414bc56e1ddd05fa01ca7f2e0e9579a7d403783bdd318d115a",
+  "archive_bytes": 6515425,
+  "members": 781,
+  "runtime_delta_files": [
+    "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/retention_verify.go",
+    "apps/platform/cmd/lifecycle-fixture-reader/retention_verify_test.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/retention.go",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/retention_test.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/main.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/main_test.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/testdata/approved-proposal.json",
+    "apps/platform/cmd/lifecycle-fixture-retention/wait_test.go",
+    "apps/platform/cmd/lifecycle-fixture-retention/window_v2_test.go",
+    "apps/platform/internal/lifecycle/pilot/retention_maintenance.go"
+  ],
+  "original_p": "f4e25a88f62da6bb14ed24da8b71b634be43f17a",
+  "execution": "NOT_CREATED",
+  "maintenance_authority": "NOT_GRANTED",
+  "source_start": 0,
+  "provider_io": 0,
+  "protection_write": 0,
+  "delete": 0,
+  "at": "2026-10-24T11:02:36.493206+00:00"
+}

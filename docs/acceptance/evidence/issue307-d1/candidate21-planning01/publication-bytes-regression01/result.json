@@ -1,0 +1,41 @@
+{
+  "status": "PASS_ACTUAL_C21_APPROVAL_BYTES_GIT_BLOB_ARCHIVE_CHECKOUT",
+  "files": {
+    "docs/acceptance/.gitattributes": {
+      "bytes": 227,
+      "sha256": "5663a2d642aaff3b9712742fe62adb176b204fbe827b008af743440de2836a3a",
+      "blob_equal": true,
+      "archive_equal": true,
+      "autocrlf_true_equal": true,
+      "autocrlf_false_equal": true
+    },
+    "docs/acceptance/issue307-d1-candidate21-confirmation.md": {
+      "bytes": 51800,
+      "sha256": "13ed713271888c8216ab15383fd6529d5d383f99378ad17bc3a6f9064e38d267",
+      "blob_equal": true,
+      "archive_equal": true,
+      "autocrlf_true_equal": true,
+      "autocrlf_false_equal": true
+    },
+    "docs/acceptance/issue307-d1-v31-window-runbook.md": {
+      "bytes": 9721,
+      "sha256": "bc82818172ba525059238ee453d265760874947a4908f93a6852b748c30b7120",
+      "blob_equal": true,
+      "archive_equal": true,
+      "autocrlf_true_equal": true,
+      "autocrlf_false_equal": true
+    },
+    "docs/acceptance/issue307-d1-v31-preparation-contract.md": {
+      "bytes": 3118,
+      "sha256": "0d54e272f87566c753fd844c69002d00982e0b3d8a66ba03deb1ed1ce8b3a365",
+      "blob_equal": true,
+      "archive_equal": true,
+      "autocrlf_true_equal": true,
+      "autocrlf_false_equal": true
+    }
+  },
+  "count": 4,
+  "source_Docker_provider_DELETE": 0,
+  "authority": false,
+  "runtime_source_changed": false
+}

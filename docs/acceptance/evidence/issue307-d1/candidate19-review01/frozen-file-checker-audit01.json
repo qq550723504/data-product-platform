@@ -1,0 +1,79 @@
+{
+  "status": "PASS_C19_FROZEN_FILE_AND_COMPLETE_CHECKER_AUDIT",
+  "runtime_source": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "packet_anchor": "749257f15e13ee7ab64b4b828857e2e88a054fbc",
+  "source_raw_LF_Git_ZIP_members": 2143,
+  "source_zip_sha256": "139662b5a908aacb59ba71a18132cc1480ba79d1eced71d31b43a516fe035a3a",
+  "source_zip_bytes": 3625455,
+  "source_zip_commit_comment": "a260cfd25c164652ee0e908c6e8fb65d1be9ec38",
+  "Git_vs_ZIP_raw_differ_but_LF_match": 1745,
+  "raw_Git_ZIP_identity_not_claimed": true,
+  "initial_build_members": 12,
+  "candidate_sha256": "af2499793a39b0515001fe11835305b73ef1055b76be2db929aada900e0acb98",
+  "bindings_sha256": "581bd79ce4074f130cd4841d617960078421546c0287d6deaec91af9dc8e55a1",
+  "template_sha256": "2e7090f4f6adedaa0c7693dfa72b660685f376770bc37ca17b3f7eb08107eb15",
+  "template_lines": 127,
+  "in_memory_confirmation_regeneration_and_display_equal": true,
+  "window_check": {
+    "status": "PASS_CURRENT_CROSS_FIELD_WINDOWS",
+    "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+    "candidate_use_until": "2026-10-22T06:40:00Z",
+    "recovery_until": "2026-10-22T08:40:00Z",
+    "cases": 6,
+    "recoveries": 6,
+    "provider_io": 0,
+    "current_policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8"
+  },
+  "host_members": 36,
+  "six_target_copies": [
+    "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+    "f48755f1-976b-4f47-98da-70ead936a4c3",
+    "e09fd433-54cf-4e82-b8c4-098472505fa2",
+    "c05307db-cb81-4220-b42e-be23f85821e3",
+    "5e712426-2109-4f0b-8791-df0a2be3a9f7",
+    "ad08947a-4c4d-4b0f-8c7e-2d89f287819f"
+  ],
+  "eleven_retained_copies": [
+    "91d954ee-cce5-4ceb-840d-fd6bdab778be",
+    "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+    "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+    "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+    "a01751a1-9311-4357-8fb2-c833de6b8fc4",
+    "b3c4e113-f5c5-4421-a9d6-08403b1b9d0a",
+    "0d8b77a8-195d-4a83-bd52-04f800d7dc68",
+    "e735d90a-8352-4a01-ad16-8573297bc684",
+    "a37c347d-dbff-492e-9c7a-317a1f188184",
+    "f3167994-3790-4a6c-918e-ea6d95248b79",
+    "13fd8ecf-07fd-4981-b553-5ce66b67444f"
+  ],
+  "complete_checker_replays": [
+    {
+      "group": "business-races",
+      "versions": 7,
+      "disabled": 17,
+      "starts": 59,
+      "stdout_sha256": "46fc2706ab92d8539aef505a07215fe75d2c120ed27c84c1ae592f3645866208"
+    },
+    {
+      "group": "late-hold",
+      "versions": 6,
+      "disabled": 12,
+      "starts": 48,
+      "stdout_sha256": "993d5a81f3b987eea3f715d2f9067cf74fb3e6c75730eb5208875a55246784d2"
+    },
+    {
+      "group": "mixed",
+      "versions": 4,
+      "disabled": 12,
+      "starts": 42,
+      "stdout_sha256": "18c94bc9dd81df25cf6b68ea41564524c3b8363c0139403f12addf91b8c82a7e"
+    }
+  ],
+  "native_delete": 0,
+  "remaining_blockers": [],
+  "reviewer_wrapper_corrections": [
+    "Separate raw Git/ZIP identities; all2143 LF contents verified with git cat-file --batch, ZIP SHA and commit comment;1745 EOL raw differences are expected.",
+    "Use actual CLI UTF8 mode for Chinese document/template.",
+    "Document build-table bare names resolve under private control, while runtime/packet members resolve under repo. No reviewed input or runtime changed."
+  ]
+}

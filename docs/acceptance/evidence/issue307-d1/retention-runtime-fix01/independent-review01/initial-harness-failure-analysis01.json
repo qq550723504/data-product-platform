@@ -1,0 +1,8 @@
+{
+  "status": "INDEPENDENT_HARNESS_FIXTURE_OMISSION_PRESERVED",
+  "initial_exit_code": 1,
+  "cause": "Direct extraction omitted separately archived historical docs testdata and ran all pilot tests rather than the fixed CI filter. Required fixed CI composition is rerun unchanged.",
+  "source_modified": false,
+  "original_outputs_overwritten": false,
+  "runtime_compile_failure_claimed": false
+}

@@ -1,0 +1,93 @@
+diff --git a/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go b/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go
+index 4b9f09a6..8351388c 100644
+--- a/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go
++++ b/apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go
+@@ -165,7 +165,7 @@ func TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory(t *test
+ 		if e != nil {
+ 			t.Fatal(e)
+ 		}
+-		if len(expected.Users) != map[string]int{"business-races": 19, "late-hold": 14, "mixed": 14}[group] {
++		if len(expected.Users) != map[string]int{"business-races": 21, "late-hold": 16, "mixed": 16}[group] {
+ 			t.Fatal("new IAM expectation incomplete")
+ 		}
+ 		for user, policy := range pilot.RemainingRetainedIdentities(group) {
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go b/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
+index ba1baaab..9e7d7e16 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
+@@ -63,7 +63,7 @@ func TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope(t *tes
+ 				target := cp.Key == "fixture/p2.csv" || cp.Key == "fixture/t1.csv" || cp.Key == "fixture/t2.csv" || cp.Key == "fixture/h2-a.csv" || cp.Key == "fixture/m1-a.csv" || cp.Key == "fixture/m1-b.csv"
+ 				for _, action := range []policy.Action{policy.DeleteObjectAction, policy.DeleteObjectVersionAction} {
+ 					for _, version := range []string{cp.ProviderVersion, "", "foreign"} {
+-						allowed := target && version == cp.ProviderVersion && (action == policy.DeleteObjectVersionAction || strings.HasPrefix(user, "da5d1e569"))
++						allowed := target && version == cp.ProviderVersion && (action == policy.DeleteObjectVersionAction || (strings.HasPrefix(user, "da5d1e569") || strings.HasPrefix(user, "d9ba214bd")))
+ 						if p.IsAllowed(policy.Args{Action: action, BucketName: cp.Namespace, ObjectName: cp.Key, ConditionValues: map[string][]string{"versionid": {version}}}) != allowed {
+ 							t.Fatal("actual retained policy/version semantics changed")
+ 						}
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_policies.go b/apps/platform/internal/lifecycle/pilot/remaining_policies.go
+index fc9d0e97..4b50254f 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_policies.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_policies.go
+@@ -99,7 +99,7 @@ func RemainingRetainedIdentities(group string) map[string]string {
+ 		}
+ 	}
+ 	if scope, err := RemainingScopeFor(group); err == nil {
+-		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7", "a5d1e569"} {
++		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7", "a5d1e569", "9ba214bd"} {
+ 			for _, prefix := range []string{"i", "d"} {
+ 				user := prefix + execution + scope.Run.String()[:8]
+ 				result[user] = "lifecycle307-six-" + user
+@@ -129,10 +129,14 @@ func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]str
+ 			kind = "inspect"
+ 		}
+ 		frozen := retained[RemainingPolicyName(group, kind)]
+-		// The real retained c19 policy already had the exact-version action
++		// The real retained c19/c21 policies already had the exact-version action
+ 		// pair. Audit its actual frozen semantics; never rewrite old IAM.
+-		if scope, scopeErr := RemainingScopeFor(group); scopeErr == nil && user == map[string]string{"inspect": "i", "delete": "d"}[kind]+"a5d1e569"+scope.Run.String()[:8] {
+-			frozen = policies[RemainingPolicyName(group, kind)]
++		if scope, scopeErr := RemainingScopeFor(group); scopeErr == nil {
++			for _, execution := range []string{"a5d1e569", "9ba214bd"} {
++				if user == map[string]string{"inspect": "i", "delete": "d"}[kind]+execution+scope.Run.String()[:8] {
++					frozen = policies[RemainingPolicyName(group, kind)]
++				}
++			}
+ 		}
+ 		policies[name] = append([]byte(nil), frozen...)
+ 	}
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go b/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
+index 229c5079..c4bb25cf 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
+@@ -7,9 +7,9 @@ import (
+ 
+ func TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users(t *testing.T) {
+ 	want := map[string][]string{
+-		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960", "iaa2605a5808a6960", "daa2605a5808a6960", "i6f40bca9808a6960", "d6f40bca9808a6960", "i4fd5a7e7808a6960", "d4fd5a7e7808a6960", "ia5d1e569808a6960", "da5d1e569808a6960"},
+-		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0", "iaa2605a5754ea8f0", "daa2605a5754ea8f0", "i6f40bca9754ea8f0", "d6f40bca9754ea8f0", "i4fd5a7e7754ea8f0", "d4fd5a7e7754ea8f0", "ia5d1e569754ea8f0", "da5d1e569754ea8f0"},
+-		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4", "iaa2605a5dfda43b4", "daa2605a5dfda43b4", "i6f40bca9dfda43b4", "d6f40bca9dfda43b4", "i4fd5a7e7dfda43b4", "d4fd5a7e7dfda43b4", "ia5d1e569dfda43b4", "da5d1e569dfda43b4"},
++		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960", "iaa2605a5808a6960", "daa2605a5808a6960", "i6f40bca9808a6960", "d6f40bca9808a6960", "i4fd5a7e7808a6960", "d4fd5a7e7808a6960", "ia5d1e569808a6960", "da5d1e569808a6960", "i9ba214bd808a6960", "d9ba214bd808a6960"},
++		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0", "iaa2605a5754ea8f0", "daa2605a5754ea8f0", "i6f40bca9754ea8f0", "d6f40bca9754ea8f0", "i4fd5a7e7754ea8f0", "d4fd5a7e7754ea8f0", "ia5d1e569754ea8f0", "da5d1e569754ea8f0", "i9ba214bd754ea8f0", "d9ba214bd754ea8f0"},
++		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4", "iaa2605a5dfda43b4", "daa2605a5dfda43b4", "i6f40bca9dfda43b4", "d6f40bca9dfda43b4", "i4fd5a7e7dfda43b4", "d4fd5a7e7dfda43b4", "ia5d1e569dfda43b4", "da5d1e569dfda43b4", "i9ba214bddfda43b4", "d9ba214bddfda43b4"},
+ 	}
+ 	for group, names := range want {
+ 		t.Run(group, func(t *testing.T) {
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_scope.go b/apps/platform/internal/lifecycle/pilot/remaining_scope.go
+index a9d03684..4e7ba3f8 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_scope.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_scope.go
+@@ -18,10 +18,10 @@ var remainingScopes []byte
+ 
+ // A different UTC slot requires a new frozen candidate/confirmation. It cannot
+ // be opened by editing a permission file or replaying an old confirmation text.
+-const RemainingExecution = "9ba214bd-a481-499b-bef6-ca7a789ef501"
+-const RemainingProfile = "candidate21/v31"
+-const RemainingNotBefore = "2026-10-22T14:00:00Z"
+-const RemainingNotAfter = "2026-10-22T14:40:00Z"
++const RemainingExecution = "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f"
++const RemainingProfile = "candidate22/v32"
++const RemainingNotBefore = "2026-10-23T10:00:00Z"
++const RemainingNotAfter = "2026-10-23T10:40:00Z"
+ 
+ // New execution-owned identities never reuse the retained v22 users. Policy
+ // construction and the root status owner share this one naming contract.

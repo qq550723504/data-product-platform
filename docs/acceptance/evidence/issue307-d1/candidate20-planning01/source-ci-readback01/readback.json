@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-22T08:11:15.769580+00:00",
+  "exit": 0,
+  "status": "completed",
+  "main_ci_claimed": false,
+  "conclusion": "failure",
+  "head": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "event": "pull_request",
+  "run": 39744232114
+}

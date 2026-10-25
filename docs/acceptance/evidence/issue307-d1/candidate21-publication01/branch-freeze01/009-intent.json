@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-10-22T12:04:50.187061+00:00",
+  "method": "POST",
+  "endpoint": "graphql",
+  "body": {
+    "query": "mutation($input:CreateBranchProtectionRuleInput!){createBranchProtectionRule(input:$input){branchProtectionRule{id pattern lockBranch isAdminEnforced lockAllowsFetchAndMerge allowsForcePushes allowsDeletions}}}",
+    "variables": {
+      "input": {
+        "repositoryId": "R_kgDOUdQLBg",
+        "pattern": "codex/issue307-post-v22-dispatch-closure",
+        "lockBranch": true,
+        "isAdminEnforced": true,
+        "lockAllowsFetchAndMerge": false,
+        "allowsForcePushes": false,
+        "allowsDeletions": false
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "status": "CONFIRMED_CURRENT_REQUIRED_PATH_BLOCKER",
+  "head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "id": "C22-SUBNET-REUSE",
+  "priority": "P1",
+  "file": "examples/lifecycle-d1/prepare-six-candidate.py",
+  "line": 365,
+  "gate_file": "examples/lifecycle-d1/prepare-remaining-runner.py",
+  "gate_lines": "66-74",
+  "retained_anchor": "candidate22-planning01/retained-candidate21-anchor02.json",
+  "counterexample": [
+    {
+      "group": "business-races",
+      "selected_by_bee86b": "10.246.221.0/28",
+      "retained_conflicts": [
+        {
+          "network": "dpp-lifecycle307-808a6960-candidate21-restore",
+          "subnet": "10.246.221.0/28"
+        }
+      ]
+    },
+    {
+      "group": "late-hold",
+      "selected_by_bee86b": "10.246.222.0/28",
+      "retained_conflicts": [
+        {
+          "network": "dpp-lifecycle307-754ea8f0-candidate21-restore",
+          "subnet": "10.246.222.0/28"
+        }
+      ]
+    },
+    {
+      "group": "mixed",
+      "selected_by_bee86b": "10.246.223.0/28",
+      "retained_conflicts": [
+        {
+          "network": "dpp-lifecycle307-dfda43b4-candidate21-restore",
+          "subnet": "10.246.223.0/28"
+        }
+      ]
+    }
+  ],
+  "root_cause": "New generation copied prior generation fixed subnet mapping. C21 networks must remain and match pinned anchor; check_subnet therefore rejects each proposed C22 restore network before create.",
+  "scope": "Current C22 allocation required path;valid AGENTS17 blocker. Does not require source retained-environment upgrade or deletion.",
+  "required_resolution": "Use an explicitly new per-generation fixed subnet plan;run existing overlap validation before first allocation side effect;cover nonoverlap and conflict in file-only current preallocation path tests. Re-review new P head and full exact-head CI;R fixture Go unchanged.",
+  "original_source_review": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate22-source-review01/independent-final-review01.json",
+    "sha256": "d5c8203c1b93375882281888819bbefedee26d9fb3f028ed099c4830e9cbfd48",
+    "preserved_bytes": true,
+    "current_approval": "SUPERSEDED_BY_THIS_CONFIRMED_BLOCKER_PENDING_NEW_SOURCE_REVIEW",
+    "reviewer_note": "Original source PASS missed cross-generation fixed-subnet collision. No historical report was edited."
+  },
+  "side_effects": {
+    "Docker_network_reads": 0,
+    "Docker_mutations": 0,
+    "source_edits": 0,
+    "refs_mutations": 0
+  }
+}

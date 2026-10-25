@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_OLD_BUSINESS_CORE_AUDIT_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T11:34:50.031398+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "scope": "Finite contract and fixed read-only Core audit entry for old v22 P2/T1/T2 only. Initial source B1 preservation baseline gap closed. No observer verifier, proof signing or NOT_SENT/business mutation is reviewed as implemented.",
+  "reviewed_files": {
+    "docs/acceptance/issue307-d1-post-v22-dispatch-closure.md": {
+      "sha256": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+      "lf_sha256": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+      "bytes": 4519
+    },
+    "examples/lifecycle-d1/audit-old-business-dispatches.py": {
+      "sha256": "7b852560253f911146351dee2180d1c395e706983cdb5471361bfa6779b572af",
+      "lf_sha256": "7b852560253f911146351dee2180d1c395e706983cdb5471361bfa6779b572af",
+      "bytes": 10888
+    },
+    "examples/lifecycle-d1/test_old_business_dispatch_audit.py": {
+      "sha256": "9f92628c7995c22e7475cb22822c93614264cd5fb43f0734dae396fdfe877420",
+      "lf_sha256": "9f92628c7995c22e7475cb22822c93614264cd5fb43f0734dae396fdfe877420",
+      "bytes": 11611
+    },
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py": {
+      "sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "lf_sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "bytes": 31241
+    },
+    "examples/lifecycle-d1/prepare-remaining-native.py": {
+      "sha256": "992c2e47239236da70bed97f8dfcda3175232afb7e266dad5d3edd9e046b662f",
+      "lf_sha256": "992c2e47239236da70bed97f8dfcda3175232afb7e266dad5d3edd9e046b662f",
+      "bytes": 19545
+    },
+    "examples/lifecycle-d1/complete-lc13-readonly.py": {
+      "sha256": "83165c84826b5a0632d8cd54d6d403096033ef498d15f34798c074089df4d1bf",
+      "lf_sha256": "83165c84826b5a0632d8cd54d6d403096033ef498d15f34798c074089df4d1bf",
+      "bytes": 20703
+    },
+    "migrations/000060_lifecycle_fixture_plan.up.sql": {
+      "sha256": "a90b55780c2a0fae2b38bd42da8906a1bfc0e9b43da231737a14462a3fced6b5",
+      "lf_sha256": "0aa69112c2369128519286ed5ee0d641caa10fd29ef548bb16489e52595039bc",
+      "bytes": 42886
+    },
+    "migrations/000061_lifecycle_scoped_completion.up.sql": {
+      "sha256": "2fc4cd6336663ae33cdcd617e17e7a7ebe70514ef39ae0a8289d91751cde6058",
+      "lf_sha256": "71030f44300a690b5575df0592f66f2823675a1eca88f0f7341a80e186caec02",
+      "bytes": 5973
+    },
+    "AGENTS.md": {
+      "sha256": "f39b6f980c3f30302c982dfb41bcc0f2e7977f8b5a39270b5df986f07de05481",
+      "lf_sha256": "aa6f2bae5d755a582d124d02fe1d4f0776cf93f4bf693a6194d06d7d9bbd4f4f",
+      "bytes": 37852
+    }
+  },
+  "frozen_inputs_reviewed": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01/remaining-business-regression.json": {
+      "sha256": "2eaf104c515e778894a6de0318d35953db6a733bb619d0713e49d0a0fe32894f",
+      "lf_sha256": "2eaf104c515e778894a6de0318d35953db6a733bb619d0713e49d0a0fe32894f",
+      "bytes": 4042
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json": {
+      "sha256": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+      "lf_sha256": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+      "bytes": 21046
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/bindings.json": {
+      "sha256": "8e54b47e4a1f83c7ce66555ed6ce2f3ec66c962a394a8fa1feb84eeaccd82fc5",
+      "lf_sha256": "8e54b47e4a1f83c7ce66555ed6ce2f3ec66c962a394a8fa1feb84eeaccd82fc5",
+      "bytes": 35544
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/preparation.json": {
+      "sha256": "08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c",
+      "lf_sha256": "08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c",
+      "bytes": 25269
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/post-close-physical-readback.json": {
+      "sha256": "f92175c272a46e7c287bee29e89ed25769eb40af176539c10f820feea0dba433",
+      "lf_sha256": "f92175c272a46e7c287bee29e89ed25769eb40af176539c10f820feea0dba433",
+      "bytes": 2293
+    }
+  },
+  "exact_cases": {
+    "P2": [
+      "bce1b1b1-d6e2-44fd-8b87-171142350ab9",
+      "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+      "670f5351-103f-472f-aeea-1f29213eda7c",
+      "73d9251e-a128-47b1-8f5a-eaa35603c233"
+    ],
+    "T1": [
+      "247a2ca9-d2f3-4384-bcee-b10add497175",
+      "f48755f1-976b-4f47-98da-70ead936a4c3",
+      "134315c3-bad8-4fda-a927-3ef71e2cca5e",
+      "bb6ecab6-53f1-4a9c-a333-f0cf6f4edd4a"
+    ],
+    "T2": [
+      "531c7b96-173f-4028-be97-2de9ed6c72f2",
+      "e09fd433-54cf-4e82-b8c4-098472505fa2",
+      "b9ebd875-8942-4303-8e17-41612dd8100c",
+      "933462ae-04d6-4da4-97de-067b62863e0a"
+    ]
+  },
+  "workspace": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+  "provider": "cc068c8c-4f00-44cd-a825-377631253d59",
+  "incarnation": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+  "old_execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "checks": {
+    "scope_and_identity": "Cases compile fixed plan/copy/dispatch/attempt. Dispatch/attempt exactly match original historical admission_after_owner_closure[1:4], plan/copy/workspace/provider/incarnation map to pinned frozen candidate/bindings, P1 is excluded. Actual classify validates exact workspace/plan/copy/dispatch/attempt and original approval basis/principal; multiplicity or mismatch fails closed. No CLI-supplied target or latest inference.",
+    "read_only": "Entry invokes the existing native.sql wrapper: psql -X ON_ERROR_STOP=1 -U fixture -d lifecycle307 with BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY, fixed query and ROLLBACK. Current SQL is SELECT/CTE only; no service, outbox dispatch or provider call path. SQL shape/schema checked statically and wrapper captured by mocks, not executed on PostgreSQL by reviewer.",
+    "retained_preconditions": "Pinned audit04 preparation SHA08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c binds old controls/owners, backup and budget exact bytes/SHA. Actual 77 bound owners must be closed; 46 original controls, three budget groups and nine backups are preserved. Each historical readonly private manifest equals public raw bytes; each of eight profiles must stay false and match its original hash or signed-off disabled-original complete semantics. Three gateways reuse the sealed Caddy SHA check.",
+    "start_boundary": "Only pinned business Core ID can be started after closed owner, fixed image/network, no privileged state, empty internal-network checks. No Native, IAM helper, queue, case, wire or sender start. Before/after complete Core relation/roles/ACL fingerprints must be equal.",
+    "finally": "Once start is attempted, fixed Core stop is attempted even if start/query fails; fresh physical readback is separate, unreadable PID state remains unconfirmed. Retained postcheck runs independently and terminal requires no failure, unchanged Core/retained facts and fresh stopped PID0. Reusing audit directory fails O_EXCL; old execution and nil audit UUID reject.",
+    "classification": "No-conflict result is only CORE_NO_CONFLICT_NOT_YET_TRUSTED_NOT_SENT, proof_signed=false, business_mutations=0. Any claim/observation/release/absence is CONFLICT_REQUIRES_REVIEW; actual row outputs retained. Even PASS_CORE_READONLY_AUDIT_ONLY is not a trusted NOT_SENT or release."
+  },
+  "closed_findings": [
+    {
+      "id": "B1",
+      "classification": "BLOCKER_CLOSED",
+      "initial_root_cause": "Initial retained() took an arbitrary current budget snapshot as its own before baseline, allowing a preexisting missing/changed consumed slot to remain unchanged through the audit and be called preserved.",
+      "root_fix": "Pin final audit04 preparation raw SHA and compare old controls, all backups and actual budget file byte counts/SHA against that authoritative preserved anchor before start and after closure; historical readonly manifests/profile identities are checked too.",
+      "independent_counterexamples": "Real retained() plus full run with missing budget file or altered budget SHA are rejected before any Docker command/start in both normal and -O.",
+      "pre_fix_execution": "NOT_RUN; initial issue was static review, not falsely presented as a live/pre-fix regression."
+    }
+  ],
+  "independent_actual_tests": [
+    {
+      "command": "python -B examples/lifecycle-d1/test_old_business_dispatch_audit.py -v",
+      "result": "PASS_11_TESTS",
+      "log": "normal-suite01.txt",
+      "Docker": "MOCKED",
+      "Core": "MOCKED"
+    },
+    {
+      "command": "python -B -O examples/lifecycle-d1/test_old_business_dispatch_audit.py -v",
+      "result": "PASS_11_TESTS",
+      "log": "optimized-suite01.txt",
+      "Docker": "MOCKED",
+      "Core": "MOCKED"
+    },
+    {
+      "command": "python -B test_independent_budget_anchor01.py",
+      "result": "PASS_1_TEST_2_MUTATIONS_DIRECT_RETAINED_AND_FULL_ENTRY",
+      "log": "normal-budget-counterexample01.txt",
+      "scope": "Actual frozen public budget baseline plus simulated missing slot/changed SHA; no private profiles opened or Docker calls"
+    },
+    {
+      "command": "python -B -O test_independent_budget_anchor01.py",
+      "result": "PASS_1_TEST_2_MUTATIONS_DIRECT_RETAINED_AND_FULL_ENTRY",
+      "log": "optimized-budget-counterexample01.txt",
+      "scope": "Same counterexamples, gates remain active under -O"
+    }
+  ],
+  "independent_artifacts": {
+    "normal-suite01.txt": {
+      "sha256": "9e6965028049f698d59533fecb969d5e60c14b8f5a1d76d953611a28b5952163",
+      "lf_sha256": "166354dde920c339cb4841f3a5b1bbd8b85a99ec1d422c00a1b329ca831e9a07",
+      "bytes": 3334
+    },
+    "optimized-suite01.txt": {
+      "sha256": "913406faa907df06fb2bbdbab74ed6aee4227ede6247c4190cea79498d082524",
+      "lf_sha256": "880cf2f0e180d6879fc8df719e6065e952608dd1e7a80089fa7d7e7d48185094",
+      "bytes": 3334
+    },
+    "normal-budget-counterexample01.txt": {
+      "sha256": "d2b76a5feb258d142cf2a06a7139807da59474cd1ce8de32d514a80da4a34c9f",
+      "lf_sha256": "514fce822f9e7ac1dbbd85d28bafc88a58c7d334c5ebe116f9a56ac6d5c2cf2f",
+      "bytes": 693
+    },
+    "optimized-budget-counterexample01.txt": {
+      "sha256": "9f83dfab01969efc3dae4314db252453282ca179fd23c014749bb338989108fe",
+      "lf_sha256": "72221536003d883b1f24bc36c94fdb3270741538fe95e1815655d1bf1de826c1",
+      "bytes": 693
+    },
+    "test_independent_budget_anchor01.py": {
+      "sha256": "1969080920653c87a0b0691ba0b6e9c83954c3db3a4cb083eac4c2ec7607f97f",
+      "lf_sha256": "1969080920653c87a0b0691ba0b6e9c83954c3db3a4cb083eac4c2ec7607f97f",
+      "bytes": 3071
+    }
+  },
+  "parent_offline_receipt_reviewed": {
+    "sha256": "ae3dc4265870bca83bd695e6ab060e8a6d31dfe86447f28c931e284da3f15698",
+    "lf_sha256": "f052735d0bee53b9ce880f0cacde4944390067bb7b516c6530762ee4627da399",
+    "bytes": 365
+  },
+  "deferred_contract_work_not_current_audit_blockers": [
+    {
+      "classification": "FOLLOW_UP_REQUIRED_BEFORE_ANY_NOT_SENT_MUTATION",
+      "item": "New bounded observer/verifier and trusted host proof with exact full identity/hash/source/owner/binary/evidence, at most one-minute freshness, no host key on worker, full IAM/policy/gateway/owner closure and in-transaction revalidation remain unimplemented and unreviewed."
+    },
+    {
+      "classification": "FOLLOW_UP_REQUIRED_BEFORE_ANY_RELEASE",
+      "item": "Current revoked approval, no claim/observation/release/absence and signed truthful no-send evidence must be established under existing service locks. Reuse existing observation/release/idempotency/fence/Outbox infrastructure, preserve old pins/budgets/cost/UNKNOWN and real per-item outcomes; required real PG/mutation counterexamples are not satisfied by this audit."
+    },
+    {
+      "classification": "FOLLOW_UP_AFTER_TRUSTED_CLOSURE",
+      "item": "New exact17-version bytes/SHA/inventory/protection, three Core sources, disabled IAM/gateway/topology/budget/backups and a six-target candidate/new execution/window/authorization remain NOT_RUN; do not project old18 checks into new17 PASS."
+    }
+  ],
+  "scope_limits": [
+    "Source/offline mock review only. The actual fixed Core-only audit has not run at this review time; no actual Core rows or current native/IAM state are certified.",
+    "Reviewer did not test Docker engine reachability, run PostgreSQL, read private credential values, sign proofs, enable identities, start/exec Docker, access retained Native/provider or write business facts/Git/GitHub. Only append-only review artifacts in the allowed independent evidence directory were written; tests used temporary files.",
+    "Contract documents future NOT_SENT closure preparation, but no verifier, signer, observer mutation or dispatch release implementation is present. This status approves only the finite audit entry source and its offline tests.",
+    "READ ONLY Core-query success or absent conflict/cost/wire data cannot prove a truthful NOT_SENT, no invocation or zero cost. All old v22 failures, ACCEPTED P1, consumed slots and pins remain immutable inputs."
+  ],
+  "reviewer_operations": {
+    "Docker": 0,
+    "provider": 0,
+    "PostgreSQL_real": 0,
+    "Native": 0,
+    "identity_enable": 0,
+    "secret_values_read": 0,
+    "proof_signing": 0,
+    "real_DELETE": 0,
+    "business_mutation": 0,
+    "implementation_write": 0,
+    "Git_write": 0,
+    "GitHub_write": 0
+  },
+  "actual_Core_audit": "NOT_RUN_AT_REVIEW",
+  "trusted_NOT_SENT_closure": "NOT_IMPLEMENTED_NOT_RUN",
+  "full_17_version_refresh": "NOT_RUN",
+  "new_delete_execution_window_authorization": "NONE",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

@@ -1,0 +1,82 @@
+{
+  "status": "PASS_INDEPENDENT_EXECUTION_INDEX_PROOF_IAM_CORE_EVIDENCE_AUDIT",
+  "at": "2026-10-19T13:05:29.452042+00:00",
+  "audit_id": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+  "index_sha256": "93c2548f9fef103796cf12fcde67e85c8f525c59e31b5412fda686daf7b5878c",
+  "indexed_files": 31,
+  "all_indexed_raw_hashes_match": true,
+  "Ed25519_actual_signature_valid": true,
+  "proof_body_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+  "proof_owners": 39,
+  "proof_start_age_seconds": 8.437427,
+  "IAM_actual_GET_requests": 8,
+  "IAM_HTTP200": 8,
+  "IAM_changes": 0,
+  "IAM_age_at_topology_seconds": 8.84841,
+  "IAM_amount": "NOT_ASSESSED",
+  "changed_relations": [
+    "audit_event",
+    "command_idempotency",
+    "delivery_authorization_fence",
+    "evidence",
+    "evidence_relation",
+    "lifecycle_approval_revocation",
+    "lifecycle_dispatch_release",
+    "lifecycle_provider_observation",
+    "outbox_event"
+  ],
+  "new_row_counts": {
+    "lifecycle_approval_revocation": 3,
+    "lifecycle_provider_observation": 3,
+    "lifecycle_dispatch_release": 3,
+    "command_idempotency": 6,
+    "audit_event": 9,
+    "evidence": 9,
+    "evidence_relation": 9,
+    "outbox_event": 9
+  },
+  "all_other_relation_and_roles_ACL_exactly_unchanged": true,
+  "old_target_rows_and_pins_exact": [
+    {
+      "case": "P2",
+      "old_approval_id": "77b4d18c-8f1d-44e4-8844-696ba44a9a0f",
+      "revocation_id": "25d63b01-82ec-4e81-8808-3885ced01c78",
+      "attempt_id": "73d9251e-a128-47b1-8f5a-eaa35603c233",
+      "observation_id": "92521ce8-2486-4b91-80ac-a14202de8786",
+      "dispatch_id": "670f5351-103f-472f-aeea-1f29213eda7c",
+      "proof_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+      "old_rows_equal_previous_actual_audit": true,
+      "old_pin_count": 0,
+      "unresolved": 0
+    },
+    {
+      "case": "T1",
+      "old_approval_id": "16df6254-abd2-419d-bf6d-99a9d1d675d0",
+      "revocation_id": "59cc1a3f-c7e5-4811-ac0a-af23a79f1cfb",
+      "attempt_id": "bb6ecab6-53f1-4a9c-a333-f0cf6f4edd4a",
+      "observation_id": "ac82beb2-cccd-4c82-ab90-2a941a0f7294",
+      "dispatch_id": "134315c3-bad8-4fda-a927-3ef71e2cca5e",
+      "proof_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+      "old_rows_equal_previous_actual_audit": true,
+      "old_pin_count": 3,
+      "unresolved": 0
+    },
+    {
+      "case": "T2",
+      "old_approval_id": "4a20d7d4-b0a8-4dde-9b20-f133f6355dda",
+      "revocation_id": "3d7802fe-ac55-4cb4-a640-273bc52e0bad",
+      "attempt_id": "933462ae-04d6-4da4-97de-067b62863e0a",
+      "observation_id": "7f7dc79d-28fc-4ca1-944a-8e4a5e76860c",
+      "dispatch_id": "b9ebd875-8942-4303-8e17-41612dd8100c",
+      "proof_sha256": "b21c6aac56feb178d53b3bc8cccb2e45bad68b8e867094eba567d88f0c4bfbcc",
+      "old_rows_equal_previous_actual_audit": true,
+      "old_pin_count": 0,
+      "unresolved": 0
+    }
+  ],
+  "prior_readonly_Core_after_equals_current_Core_before": true,
+  "full_append_old_multiset_boundary": "Frozen actual host gate checked its in-memory before row-hash multisets against final anchors and returned true. Public output contains final anchors but no serialized before-anchor multiset; reviewer independently recomputes all relation/count/ACL differences and exact three business identity/pin row preservation, without claiming to reconstruct missing archived before multisets.",
+  "provider_business_invocations": 0,
+  "DELETE": 0,
+  "reviewer_execution": 0
+}

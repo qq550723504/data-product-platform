@@ -1,0 +1,33 @@
+{
+  "status": "FAILED_OR_UNCONFIRMED_RETAINED",
+  "at": "2026-10-19T18:22:26.353140+00:00",
+  "failure": {
+    "type": "RuntimeError",
+    "message": "production native adapter contract failed; see retained channels"
+  },
+  "closure": [
+    {
+      "cid": "47c15c9c5d8e4cd9d96fb6449084103e28c680f74b3e7861deb1d4488b3374a3",
+      "closed": true,
+      "pid": 0,
+      "network": "container:eb16e41fc8f7c2d6ed80e4d30bd122a630e0b699d9fe6e1ae1ebbda3cf666e4f",
+      "noports": true,
+      "restart": "no"
+    },
+    {
+      "cid": "eb16e41fc8f7c2d6ed80e4d30bd122a630e0b699d9fe6e1ae1ebbda3cf666e4f",
+      "closed": true,
+      "pid": 0,
+      "network": "none",
+      "noports": true,
+      "restart": "no"
+    }
+  ],
+  "technical_starts": 8,
+  "observations": 8,
+  "amount": "NOT_ASSESSED",
+  "native_delete": 0,
+  "object_put": 0,
+  "source_calls": 0,
+  "resources_retained": true
+}

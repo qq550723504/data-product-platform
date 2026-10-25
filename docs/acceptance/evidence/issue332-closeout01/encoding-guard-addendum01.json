@@ -1,0 +1,23 @@
+{
+  "status": "PRECOMMIT_EXACT_BYTE_POLICY_CORRECTION_NO_RUNTIME_CHANGE",
+  "reason": "Git add warned new issue332 evidence would use checkout CRLF; issue307-only old rule did not cover this new folder.",
+  "old_index_is_historical_pre_encoding_guard": true,
+  "old_attributes_snapshot": "reviewed-attributes01.txt",
+  "correction": "One -text rule for this exact new evidence folder; existing files/rules, source behavior and original evidence unchanged.",
+  "original_public_members_replayed": 18,
+  "source_regressions_unchanged": true,
+  "approved_git_representations": {
+    ".gitattributes": {
+      "raw_sha256": "5331f8b44f850ed895d4ea51cc91bf7374c2ba30899a107a1adc59c3e19e8fed",
+      "lf_sha256": "b3401bfe09231d8f77d51fcd7797d387018e3209dfc0756bc279aa84b1becd9c"
+    },
+    "examples/lifecycle-d1/successor_dependencies.py": {
+      "raw_sha256": "0d00acfbae3da523f76d3e94118ecdeaea5a1c5527cbf5e8f5df3a2176933ec1",
+      "lf_sha256": "a3fba9a632afeb064df75ba528e627e765ec9fbcfbe9a110c577d8af35b0a4d9"
+    },
+    "examples/lifecycle-d1/test_successor_dependencies.py": {
+      "raw_sha256": "19ef9383f39d596eb27e79c078c1cb8baab02d079b8a2fb0a0941fffed489c6b",
+      "lf_sha256": "a6ac8f55852a6d7f8c5babec0858e307e8e59d665f18716719f2c02a47965a21"
+    }
+  }
+}

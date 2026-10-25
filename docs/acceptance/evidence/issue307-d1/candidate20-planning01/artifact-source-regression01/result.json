@@ -1,0 +1,116 @@
+{
+  "status": "PASS",
+  "runs": [
+    {
+      "test": "test_fixture_artifacts.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_six_candidate_runtime.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_freeze_six_candidate.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_six_native_entry.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_verify_six_native.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_execution_freeze.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_window_six_support.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_attest_remaining_executable.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_evidence_indexes.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_remaining_sequence.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_retained_v29.py",
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "test": "test_fixture_artifacts.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_six_candidate_runtime.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_freeze_six_candidate.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_six_native_entry.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_verify_six_native.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_execution_freeze.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_window_six_support.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_attest_remaining_executable.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_evidence_indexes.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_remaining_sequence.py",
+      "optimized": true,
+      "exit": 0
+    },
+    {
+      "test": "test_retained_v29.py",
+      "optimized": true,
+      "exit": 0
+    }
+  ],
+  "native_delete": 0
+}

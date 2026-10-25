@@ -1,0 +1,6 @@
+test_complete_six_packet_and_confirmation_with_eleven_survivors (__main__.FreezeSixTests.test_complete_six_packet_and_confirmation_with_eleven_survivors) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.339s
+
+OK

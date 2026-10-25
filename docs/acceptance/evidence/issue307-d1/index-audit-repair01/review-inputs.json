@@ -1,0 +1,55 @@
+{
+  "status": "AUTHOR_REVIEW_INPUTS_NONDELETE",
+  "at": "2026-10-20T10:34:32.515732+00:00",
+  "head": "d049d004fe8269190b64e2cd02634bf637f90fdd",
+  "base": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+  "files": {
+    ".github/workflows/ci.yml": {
+      "sha256": "def897919536f8d1e1890a5f2f24f79e08db23a4e8e5ce4bb7c18c4a8dd838dc",
+      "git_sha256": "806890ebf94de07e0fb5f63e40480353dd1a642a5949a6beefd717533a33d5a4",
+      "bytes": 31765
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "656458904a0f3aaa9acfa87ca3ebe4f7916c3c7a4038bfd75f88e549bba5d172",
+      "git_sha256": "bdb7d658be446197d4d33c7ff94a0c408f0d41c26ebe104f8b4b09ad01cdadc9",
+      "bytes": 6485
+    },
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "da90b671ffa721827ef72b678ff56d216d39ef778fe2337f4211c102c6afcfed",
+      "git_sha256": "da90b671ffa721827ef72b678ff56d216d39ef778fe2337f4211c102c6afcfed",
+      "bytes": 7300
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "ddb1e0952b26d1c46a4e7788aa2c4d42c333fce24a6a90b655b745d288340d83",
+      "git_sha256": "67661d1a75af396a42b852bcb8046edce09cf1ebc4812a66a77f5f1d39d0ab0f",
+      "bytes": 16031
+    },
+    "examples/lifecycle-d1/test_evidence_indexes.py": {
+      "sha256": "c773b36ad176c3cbf0ec054a4ce0639544abd16d8b593c835f5c485a94552656",
+      "git_sha256": "c773b36ad176c3cbf0ec054a4ce0639544abd16d8b593c835f5c485a94552656",
+      "bytes": 10456
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "50014a9c9af4f04c1db47b5606f6fda03414ea42be4fe38f66e9b7842ca8706d",
+      "git_sha256": "50014a9c9af4f04c1db47b5606f6fda03414ea42be4fe38f66e9b7842ca8706d",
+      "bytes": 14619
+    },
+    "docs/acceptance/issue307-d1-index-audit-repair.md": {
+      "sha256": "79ee33894c3664d7222c1e4041bec0ab8fdb62a128f4e875d888e140aa405bff",
+      "git_sha256": "79ee33894c3664d7222c1e4041bec0ab8fdb62a128f4e875d888e140aa405bff",
+      "bytes": 6015
+    }
+  },
+  "normal_methods": 50,
+  "normal_pass": 49,
+  "normal_skip": 1,
+  "optimized_methods": 50,
+  "optimized_pass": 49,
+  "optimized_skip": 1,
+  "real_saved_evidence_members": 84,
+  "actual_old_terminal_rejected": true,
+  "full_native_preflight": "NOT_RUN",
+  "source_Docker_provider_DELETE": 0,
+  "old_execution_or_authorization_reused": false,
+  "new_candidate_frozen": false
+}

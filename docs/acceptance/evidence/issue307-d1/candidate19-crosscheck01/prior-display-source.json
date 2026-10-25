@@ -1,0 +1,9 @@
+{
+  "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "turn_id": "01a16170-0730-7db3-b1ff-5301cd9358ac",
+  "message_id": "msg_099c3841d45c7835016ad975581020819984a6a4cc19d0cc01",
+  "source": "Codex read_thread exact agentMessage text field; rendering metadata excluded",
+  "phase": "final_answer",
+  "authorization": false,
+  "native_delete": 0
+}

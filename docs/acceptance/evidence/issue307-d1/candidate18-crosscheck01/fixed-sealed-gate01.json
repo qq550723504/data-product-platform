@@ -1,0 +1,20 @@
+{
+  "started_at": "2026-10-21T10:04:44.963459+00:00",
+  "finished_at": "2026-10-21T10:06:07.905404+00:00",
+  "entry_sha256": "67b8a6904b336d2c82f29f7c896f69e7d42d1fa4bdcc0eeaf1d8627ad6c99a2c",
+  "result": {
+    "status": "PASS_COMPLETE_SIX_SEALED_HOST_GATE",
+    "cases": 6,
+    "recoveries": 6,
+    "permissions_false": 30,
+    "owners_closed": 86,
+    "backup_hashes": 9,
+    "old_backups_retained": 27,
+    "budgets_empty": 3,
+    "native_delete": 0,
+    "source_provider_io": 0
+  },
+  "frozen_gate_modified": false,
+  "human_authorization_gate": "NOT_RUN_NOT_AUTHORIZED",
+  "native_preflight": "NOT_RUN"
+}

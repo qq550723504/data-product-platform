@@ -1,0 +1,24 @@
+{
+  "started_at": "2026-10-19T14:33:20.911105+00:00",
+  "exit_code": 0,
+  "command": [
+    "go",
+    "test",
+    "-count=1",
+    "-json",
+    "./internal/lifecycle/application",
+    "-run",
+    "Test(OldDispatchClosureAllowsOnlyFreshApprovalAndAttempt|OldDispatchClosureThreeCommandCompositionPreservesFacts|SequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim)$"
+  ],
+  "passed": [
+    "TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim",
+    "TestOldDispatchClosureThreeCommandCompositionPreservesFacts",
+    "TestOldDispatchClosureAllowsOnlyFreshApprovalAndAttempt"
+  ],
+  "skipped": [],
+  "cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "provider": "SYNTHETIC_FACTS_ONLY",
+  "retained_sources_started": false,
+  "native_delete": 0,
+  "log_sha256": "0168d6275a42843c631cc6152ccd9c96f5cbe6d6feb2d7c375333712053d96fb"
+}

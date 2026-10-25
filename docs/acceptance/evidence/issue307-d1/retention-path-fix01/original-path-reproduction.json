@@ -1,0 +1,31 @@
+{
+  "status": "REPRODUCED_SAME_DIRECTORY_ALIAS_FALSE_REJECTION",
+  "rows": [
+    {
+      "mode": "canonical",
+      "provided": "C:\\Users\\Henry\\AppData\\Local\\Temp\\retention-path-alias-8_cnarov",
+      "resolved": "C:\\Users\\Henry\\AppData\\Local\\Temp\\retention-path-alias-8_cnarov",
+      "same_actual_directory": true,
+      "source_mount": "C:\\Users\\Henry\\AppData\\Local\\Temp\\retention-path-alias-8_cnarov\\business-races",
+      "result": "PASS"
+    },
+    {
+      "mode": "upper-case",
+      "provided": "C:\\USERS\\HENRY\\APPDATA\\LOCAL\\TEMP\\RETENTION-PATH-ALIAS-6G_WQZ8X",
+      "resolved": "C:\\Users\\Henry\\AppData\\Local\\Temp\\retention-path-alias-6g_wqz8x",
+      "same_actual_directory": true,
+      "source_mount": "C:\\USERS\\HENRY\\APPDATA\\LOCAL\\TEMP\\RETENTION-PATH-ALIAS-6G_WQZ8X\\business-races",
+      "result": "native protection required: MAINTENANCE_MOUNT_DRIFT"
+    },
+    {
+      "mode": "short-name",
+      "provided": "C:\\Users\\Henry\\AppData\\Local\\Temp\\RETENT~1",
+      "resolved": "C:\\Users\\Henry\\AppData\\Local\\Temp\\retention-path-alias-q8yyyozm",
+      "same_actual_directory": true,
+      "source_mount": "C:\\Users\\Henry\\AppData\\Local\\Temp\\RETENT~1\\business-races",
+      "result": "native protection required: MAINTENANCE_MOUNT_DRIFT"
+    }
+  ],
+  "Docker_calls": 0,
+  "provider_calls": 0
+}

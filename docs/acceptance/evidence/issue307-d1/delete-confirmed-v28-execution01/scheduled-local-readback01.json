@@ -1,0 +1,89 @@
+{
+  "status": "PASS_ACTUAL_SINGLE_HEARTBEAT_FIXED_NEXT_RUN_AND_PREWINDOW_CLOSED",
+  "checked_at": "2026-10-21T10:47:15.334219+00:00",
+  "automation": {
+    "id": "307-d1-candidate18-v28",
+    "name": "#307 D1 candidate18/v28 固定窗口续跑",
+    "status": "ACTIVE",
+    "next_run_at": 1792591200000,
+    "next_run_nominal_at": 1792591200000,
+    "last_run_at": null,
+    "rrule": "FREQ=DAILY;COUNT=1;BYHOUR=22;BYMINUTE=0;BYSECOND=0",
+    "kind": "heartbeat",
+    "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+    "created_at": 1792579502678,
+    "updated_at": 1792579502678,
+    "model": null,
+    "reasoning_effort": null,
+    "notification_policy": null
+  },
+  "actual_prompt_sha256": "4aff23065dece624a93803763e906c736b54533ac646e21a78a0a43e46209d38",
+  "actual_prompt_utf8_bytes": 16282,
+  "actual_prompt_exact": true,
+  "saved_toml_sha256": "3f9ea815892bccaa8e4578600d4e695a5b83351cd4e04a7e57f1de155a1ebd84",
+  "next_run_utc": "2026-10-21T14:00:00+00:00",
+  "next_run_singapore": "2026-10-21T22:00:00+08:00",
+  "window_end_exclusive_utc": "2026-10-21T14:40:00Z",
+  "recovery_end_utc": "2026-10-21T16:40:00Z",
+  "automation_count_for_execution": 1,
+  "scheduler_runs": 0,
+  "old_heartbeats": [
+    {
+      "id": "307-d1-candidate07-v17",
+      "status": "PAUSED",
+      "next_run_at": null,
+      "next_run_nominal_at": null
+    },
+    {
+      "id": "307-d1-candidate10-v20",
+      "status": "PAUSED",
+      "next_run_at": null,
+      "next_run_nominal_at": null
+    },
+    {
+      "id": "307-d1-candidate11-v21",
+      "status": "PAUSED",
+      "next_run_at": null,
+      "next_run_nominal_at": null
+    },
+    {
+      "id": "307-d1-candidate12-v22",
+      "status": "PAUSED",
+      "next_run_at": null,
+      "next_run_nominal_at": null
+    },
+    {
+      "id": "307-d1-candidate15-v25",
+      "status": "PAUSED",
+      "next_run_at": null,
+      "next_run_nominal_at": null
+    },
+    {
+      "id": "307-d1-candidate16-v26",
+      "status": "PAUSED",
+      "next_run_at": null,
+      "next_run_nominal_at": null
+    },
+    {
+      "id": "307-d1-candidate17-v27",
+      "status": "PAUSED",
+      "next_run_at": null,
+      "next_run_nominal_at": null
+    }
+  ],
+  "head": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "tracked_modifications": 0,
+  "permissions_false": 30,
+  "known_cids_closed": 712,
+  "new_budgets_empty": 3,
+  "new_native_preflight": "NOT_RUN",
+  "source_start": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "verification_sources": [
+    "automation create/view",
+    "actual TOML exact prompt",
+    "SQLite read-only actual next_run_at/nominal/run/duplicate counts",
+    "actual 30 permissions,712 docker inspect and3budget tar readbacks"
+  ]
+}

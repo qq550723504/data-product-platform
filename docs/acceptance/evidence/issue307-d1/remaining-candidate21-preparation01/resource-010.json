@@ -1,0 +1,10 @@
+{
+  "volume": "dpp-lifecycle307-754ea8f0-candidate21-objects",
+  "driver": "local",
+  "scope": "local",
+  "labels": {
+    "lifecycle307.allocation": "e88a7b50-ee3a-4aa4-8da2-86ff50b1abae",
+    "lifecycle307.remaining": "9ba214bd-a481-499b-bef6-ca7a789ef501"
+  },
+  "mounted_cids": []
+}

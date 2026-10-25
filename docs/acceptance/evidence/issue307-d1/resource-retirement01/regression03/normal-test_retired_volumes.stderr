@@ -1,0 +1,11 @@
+test_budget_and_current_user_never_deleted (test_retired_volumes.VolumeProofTests.test_budget_and_current_user_never_deleted) ... ok
+test_empty_full_proof_accepted (test_retired_volumes.VolumeProofTests.test_empty_full_proof_accepted) ... ok
+test_intent_without_outcome_is_not_resent_or_accepted (test_retired_volumes.VolumeProofTests.test_intent_without_outcome_is_not_resent_or_accepted) ... ok
+test_rehashed_nonempty_links_and_special_nodes_reject (test_retired_volumes.VolumeProofTests.test_rehashed_nonempty_links_and_special_nodes_reject) ... ok
+test_unbound_decision_and_missing_candidate_reject (test_retired_volumes.VolumeProofTests.test_unbound_decision_and_missing_candidate_reject) ... ok
+test_wrong_identity_missing_proof_and_tamper_reject (test_retired_volumes.VolumeProofTests.test_wrong_identity_missing_proof_and_tamper_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.201s
+
+OK

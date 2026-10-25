@@ -1,0 +1,1 @@
+ERROR: column o.dispatch_id does not exist (SQLSTATE 42703)

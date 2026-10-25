@@ -1,0 +1,3033 @@
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 1 minute ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+* hop-smoke (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  * Run real PostgreSQL to Hop B1 extraction and fault matrix
+  * Preserve non-secret PostgreSQL ingestion evidence
+  * Setup Go for storage provider source build
+  * Run real isolated B2 object storage gate
+  * Preserve non-secret storage evidence
+  * Run real three-RAW Core batch acceptance and recovery
+  * Preserve non-secret Core batch receipt evidence
+  * Skip Hop runtime smoke when unrelated
+  * Post Checkout
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+* browser-contracts / web-browser-contracts (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  * Browser and Server Action contracts against local fixtures
+  * Preserve browser report and failure traces
+  * Post Run actions/setup-node@v4
+  * Post Run actions/checkout@v4
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+* demo / demo-lifecycle (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  * Confirmed disposal driver safety tests (no provider I/O)
+  * Check archived candidate04 with its frozen runtime (no provider I/O)
+  * Install isolated browser runner
+  * Install Chromium
+  * Build, migrate and initialize shipped Compose demo
+  * Review, advance, publish, verify and restart without losing history
+  * Collect service logs
+  * Preserve lifecycle evidence
+  * Remove only the disposable demo
+  * Post Run actions/setup-node@v4
+  * Post Run actions/checkout@v4
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 2 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+* hop-smoke (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  * Run real isolated B2 object storage gate
+  * Preserve non-secret storage evidence
+  * Run real three-RAW Core batch acceptance and recovery
+  * Preserve non-secret Core batch receipt evidence
+  * Skip Hop runtime smoke when unrelated
+  * Post Setup Go for storage provider source build
+  * Post Checkout
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+* demo / demo-lifecycle (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  * Check archived candidate04 with its frozen runtime (no provider I/O)
+  * Install isolated browser runner
+  * Install Chromium
+  * Build, migrate and initialize shipped Compose demo
+  * Review, advance, publish, verify and restart without losing history
+  * Collect service logs
+  * Preserve lifecycle evidence
+  * Remove only the disposable demo
+  * Post Run actions/setup-node@v4
+  * Post Run actions/checkout@v4
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 3 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+* hop-smoke (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  * Run real isolated B2 object storage gate
+  * Preserve non-secret storage evidence
+  * Run real three-RAW Core batch acceptance and recovery
+  * Preserve non-secret Core batch receipt evidence
+  * Skip Hop runtime smoke when unrelated
+  * Post Setup Go for storage provider source build
+  * Post Checkout
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+* demo / demo-lifecycle (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  * Build, migrate and initialize shipped Compose demo
+  * Review, advance, publish, verify and restart without losing history
+  * Collect service logs
+  * Preserve lifecycle evidence
+  * Remove only the disposable demo
+  * Post Run actions/setup-node@v4
+  * Post Run actions/checkout@v4
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 3 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+* hop-smoke (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  * Run real three-RAW Core batch acceptance and recovery
+  * Preserve non-secret Core batch receipt evidence
+  * Skip Hop runtime smoke when unrelated
+  * Post Setup Go for storage provider source build
+  * Post Checkout
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+* demo / demo-lifecycle (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  * Build, migrate and initialize shipped Compose demo
+  * Review, advance, publish, verify and restart without losing history
+  * Collect service logs
+  * Preserve lifecycle evidence
+  * Remove only the disposable demo
+  * Post Run actions/setup-node@v4
+  * Post Run actions/checkout@v4
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 4 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+* demo / demo-lifecycle (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  * Build, migrate and initialize shipped Compose demo
+  * Review, advance, publish, verify and restart without losing history
+  * Collect service logs
+  * Preserve lifecycle evidence
+  * Remove only the disposable demo
+  * Post Run actions/setup-node@v4
+  * Post Run actions/checkout@v4
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 4 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+* demo / demo-lifecycle (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  * Review, advance, publish, verify and restart without losing history
+  * Collect service logs
+  * Preserve lifecycle evidence
+  * Remove only the disposable demo
+  * Post Run actions/setup-node@v4
+  * Post Run actions/checkout@v4
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 5 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+demo / demo-lifecycle: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+demo / demo-lifecycle: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 5 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  * Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+demo / demo-lifecycle: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+demo / demo-lifecycle: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 6 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* go-platform (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  ✓ Test
+  * Complete lifecycle readonly preflight replay without Docker or credentials
+  * Build API / worker / migrate / operator tools
+  * Post Setup Go
+  * Post Checkout
+  * Stop containers
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+demo / demo-lifecycle: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+demo / demo-lifecycle: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 6 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ go-platform in 6m18s (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  ✓ Test
+  ✓ Complete lifecycle readonly preflight replay without Docker or credentials
+  ✓ Build API / worker / migrate / operator tools
+  ✓ Post Setup Go
+  ✓ Post Checkout
+  ✓ Stop containers
+  ✓ Complete job
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+demo / demo-lifecycle: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+demo / demo-lifecycle: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 7 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ go-platform in 6m18s (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  ✓ Test
+  ✓ Complete lifecycle readonly preflight replay without Docker or credentials
+  ✓ Build API / worker / migrate / operator tools
+  ✓ Post Setup Go
+  ✓ Post Checkout
+  ✓ Stop containers
+  ✓ Complete job
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+demo / demo-lifecycle: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+demo / demo-lifecycle: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 8 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ go-platform in 6m18s (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  ✓ Test
+  ✓ Complete lifecycle readonly preflight replay without Docker or credentials
+  ✓ Build API / worker / migrate / operator tools
+  ✓ Post Setup Go
+  ✓ Post Checkout
+  ✓ Stop containers
+  ✓ Complete job
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+demo / demo-lifecycle: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+demo / demo-lifecycle: .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 8 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ go-platform in 6m18s (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  ✓ Test
+  ✓ Complete lifecycle readonly preflight replay without Docker or credentials
+  ✓ Build API / worker / migrate / operator tools
+  ✓ Post Setup Go
+  ✓ Post Checkout
+  ✓ Stop containers
+  ✓ Complete job
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+* live-core / live-core-browser (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  * Real Core and PostgreSQL browser acceptance
+  * Save actual verification, screenshots, traces and service logs
+  * Post Run actions/setup-node@v4
+  * Post Run actions/setup-go@v5
+  * Post Run actions/checkout@v4
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+demo / demo-lifecycle: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+demo / demo-lifecycle: .github#1
+
+✓ codex/issue307-post-v22-dispatch-closure ci qq550723504/data-product-platform#332 · 39577806574
+Triggered via pull_request about 9 minutes ago
+
+JOBS
+✓ classify-changes in 9s (ID 119147591597)
+  ✓ Set up job
+  ✓ Checkout history for diff classification
+  ✓ Classify changed paths
+  ✓ Post Checkout history for diff classification
+  ✓ Complete job
+✓ label-studio-smoke in 6s (ID 119147678094)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Label Studio reference changes
+  - Setup Go
+  - Start pinned Label Studio reference runtime
+  - Bootstrap ephemeral Label Studio API token
+  - Run real Label Studio adapter smoke
+  ✓ Skip Label Studio runtime smoke when unrelated
+  - Preserve Label Studio logs on failure
+  - Stop Label Studio reference runtime
+  ✓ Post Checkout
+  ✓ Complete job
+✓ splink-smoke in 8s (ID 119147678099)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Splink adapter changes
+  - Setup Python
+  - Install pinned Splink runtime
+  - Verify Splink runtime/API imports
+  - Run Splink script unit tests
+  - Evaluate labelled company matching reference set
+  ✓ Skip Splink runtime smoke when unrelated
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (ubuntu-latest) in 22s (ID 119147678105)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  - Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ go-platform in 6m18s (ID 119147678188)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Checkout
+  ✓ Setup Go
+  ✓ Verify dependency lock is tidy
+  ✓ Format check
+  ✓ Vet
+  ✓ Validate local compose file
+  ✓ Apply database migrations
+  ✓ Test
+  ✓ Complete lifecycle readonly preflight replay without Docker or credentials
+  ✓ Build API / worker / migrate / operator tools
+  ✓ Post Setup Go
+  ✓ Post Checkout
+  ✓ Stop containers
+  ✓ Complete job
+✓ hop-smoke in 3m38s (ID 119147678190)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect Hop reference changes
+  ✓ Test trial image isolation runner contracts
+  ✓ Run pinned Apache Hop reference pipeline
+  ✓ Run real PostgreSQL to Hop B1 extraction and fault matrix
+  ✓ Preserve non-secret PostgreSQL ingestion evidence
+  ✓ Setup Go for storage provider source build
+  ✓ Run real isolated B2 object storage gate
+  ✓ Preserve non-secret storage evidence
+  ✓ Run real three-RAW Core batch acceptance and recovery
+  ✓ Preserve non-secret Core batch receipt evidence
+  - Skip Hop runtime smoke when unrelated
+  ✓ Post Setup Go for storage provider source build
+  ✓ Post Checkout
+  ✓ Complete job
+✓ temporary-container-contracts (windows-latest) in 35s (ID 119147678309)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-python@v5
+  ✓ Test explicit evidence indexes and complete readonly entry without Docker
+  ✓ Test completed helper ownership, archival, and safe collection
+  ✓ Test lifecycle wrapper default retirement and explicit retention without Docker
+  ✓ Test Windows archive ACL replacement on existing diagnostics
+  ✓ Post Run actions/setup-python@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ gx-smoke in 50s (ID 119147678343)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Detect GX adapter changes
+  ✓ Setup Python
+  ✓ Setup Go
+  ✓ Install pinned GX runtime
+  ✓ Run GX runtime unit tests
+  ✓ Start GX reference runtime
+  ✓ Run real GX adapter and Native contract
+  - Skip GX runtime smoke when unrelated
+  - Preserve GX logs on failure
+  ✓ Stop GX reference runtime
+  ✓ Post Setup Go
+  ✓ Post Setup Python
+  ✓ Post Checkout
+  ✓ Complete job
+✓ web-console in 1m17s (ID 119147678405)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Setup Node
+  ✓ Install web dependencies
+  ✓ Lint
+  ✓ Typecheck
+  ✓ Build
+  ✓ Smoke production console routes
+  ✓ Post Setup Node
+  ✓ Post Checkout
+  ✓ Complete job
+✓ browser-contracts / web-browser-contracts in 1m30s (ID 119147679067)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Install application and isolated browser-test dependencies
+  ✓ Fixture server contracts
+  ✓ Build real Next application and existing regression tests
+  ✓ Incomplete readiness regression tests
+  ✓ Install Chromium
+  ✓ Browser and Server Action contracts against local fixtures
+  ✓ Preserve browser report and failure traces
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ live-core / live-core-browser in 8m34s (ID 119147679402)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-go@v5
+  ✓ Run actions/setup-node@v4
+  ✓ Check new Go source formatting
+  ✓ Install application and isolated browser dependencies
+  ✓ Build and prepare actual standalone console
+  ✓ Install Chromium
+  ✓ Real Core and PostgreSQL browser acceptance
+  ✓ Save actual verification, screenshots, traces and service logs
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/setup-go@v5
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ demo / demo-lifecycle in 4m54s (ID 119147679517)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Demo command safety tests
+  ✓ Confirmed disposal driver safety tests (no provider I/O)
+  ✓ Check archived candidate04 with its frozen runtime (no provider I/O)
+  ✓ Install isolated browser runner
+  ✓ Install Chromium
+  ✓ Build, migrate and initialize shipped Compose demo
+  ✓ Review, advance, publish, verify and restart without losing history
+  ✓ Collect service logs
+  ✓ Preserve lifecycle evidence
+  ✓ Remove only the disposable demo
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ required in 11s (ID 119151418701)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Test fail-closed gate policy
+  ✓ Enforce required CI policy for this change class
+  ✓ Archive the verified source snapshot
+  ✓ Preserve verified source for review and reproduction
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+classify-changes: .github#4
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+classify-changes: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+label-studio-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+label-studio-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+splink-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+splink-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (ubuntu-latest): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+temporary-container-contracts (ubuntu-latest): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+temporary-container-contracts (windows-latest): .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+gx-smoke: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+gx-smoke: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+web-console: .github#3
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+web-console: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+browser-contracts / web-browser-contracts: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+browser-contracts / web-browser-contracts: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+live-core / live-core-browser: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+live-core / live-core-browser: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+required: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+required: .github#1
+

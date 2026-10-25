@@ -1,0 +1,114 @@
+{
+  "status": "OBSERVED_V29_RECEIPT_DRIFT_BEFORE_ALLOCATION",
+  "at": "2026-10-23T05:25:27.263604+00:00",
+  "members": 124,
+  "drift": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate19-crosscheck02/fixed-saved-audit01-stdout.txt",
+      "expected": {
+        "path": "docs/acceptance/evidence/issue307-d1/candidate19-crosscheck02/fixed-saved-audit01-stdout.txt",
+        "sha256": "914780eddbe6a90d70c8bb3ebcf1b03ddb799786ff26ba6ad1581759e31ec42b",
+        "bytes": 348
+      },
+      "current": {
+        "sha256": "332124eac9b63e7bf6335b00d797ba62ab14fd414c94636fb85305864459597a",
+        "bytes": 347,
+        "crlf": 0,
+        "lf": 1
+      },
+      "original": {
+        "sha256": "914780eddbe6a90d70c8bb3ebcf1b03ddb799786ff26ba6ad1581759e31ec42b",
+        "bytes": 348,
+        "crlf": 1,
+        "lf": 1
+      },
+      "lf_equivalent": true
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/authorized-static-audit01.stdout.json",
+      "expected": {
+        "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/authorized-static-audit01.stdout.json",
+        "sha256": "3e8107385b2288ebb846b2597463ba6312a37ba14d68cac6ee153e19d36edb1a",
+        "bytes": 362
+      },
+      "current": {
+        "sha256": "f84513c37209065bb6ec616a67af983f9364292cf28818f9489bdbaaaf67bf1e",
+        "bytes": 361,
+        "crlf": 0,
+        "lf": 1
+      },
+      "original": {
+        "sha256": "3e8107385b2288ebb846b2597463ba6312a37ba14d68cac6ee153e19d36edb1a",
+        "bytes": 362,
+        "crlf": 1,
+        "lf": 1
+      },
+      "lf_equivalent": true
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/host-check01.stdout.json",
+      "expected": {
+        "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/host-check01.stdout.json",
+        "sha256": "3c5192fcce66c0473f3ae0f65986c4ff1fe06d5f89971cde9e10a718c792d29e",
+        "bytes": 452
+      },
+      "current": {
+        "sha256": "a63df768b23e11e6a96b27f4e88285cbe027111ee43928c5cea81e6832ffc6d5",
+        "bytes": 451,
+        "crlf": 0,
+        "lf": 1
+      },
+      "original": {
+        "sha256": "3c5192fcce66c0473f3ae0f65986c4ff1fe06d5f89971cde9e10a718c792d29e",
+        "bytes": 452,
+        "crlf": 1,
+        "lf": 1
+      },
+      "lf_equivalent": true
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/scheduled-static-audit01.stdout.json",
+      "expected": {
+        "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/scheduled-static-audit01.stdout.json",
+        "sha256": "59033b9b22481db89dd8e578e22c3c61029a82369916a585eaf1f0df02752632",
+        "bytes": 361
+      },
+      "current": {
+        "sha256": "e0ed4d5e9a28fedc6e7d2d5018ccdb1661ed1c590fb36c99ae9c39ebbc381d1a",
+        "bytes": 360,
+        "crlf": 0,
+        "lf": 1
+      },
+      "original": {
+        "sha256": "59033b9b22481db89dd8e578e22c3c61029a82369916a585eaf1f0df02752632",
+        "bytes": 361,
+        "crlf": 1,
+        "lf": 1
+      },
+      "lf_equivalent": true
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/failure-seal01.stdout.json",
+      "expected": {
+        "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/window01/failure-seal01.stdout.json",
+        "sha256": "715356c3d18050e9c50ed767e623c987d8fd02d6e884e597a2cadeb0b2f24b38",
+        "bytes": 23770
+      },
+      "current": {
+        "sha256": "71e399c316cff9fc94514979326cefa7ffed6181dbe08300806eae8717b9a944",
+        "bytes": 23769,
+        "crlf": 0,
+        "lf": 1
+      },
+      "original": {
+        "sha256": "715356c3d18050e9c50ed767e623c987d8fd02d6e884e597a2cadeb0b2f24b38",
+        "bytes": 23770,
+        "crlf": 1,
+        "lf": 1
+      },
+      "lf_equivalent": true
+    }
+  ],
+  "native_delete": 0,
+  "resources_allocated": 0
+}

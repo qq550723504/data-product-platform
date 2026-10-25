@@ -1,0 +1,16 @@
+{
+  "status": "C20_SCHEMA_BLOCKER_APPENDIX_EVIDENCE_INDEX",
+  "format": "files-map-v1",
+  "member_root": "docs/acceptance/evidence/issue307-d1/candidate20-source-review01",
+  "count": 2,
+  "files": {
+    "independent-frozen-dump-schema01.json": {
+      "sha256": "8f882789c0c43f2312361924dc37770a71b3fbf99e444bccff859cf8bd080932",
+      "bytes": 7893
+    },
+    "independent-schema-blocker01.json": {
+      "sha256": "5e1cd8939efd9b0201bad6a6b1dfb40c48c741a0cc66d9edea55231e73e7eaed",
+      "bytes": 8366
+    }
+  }
+}

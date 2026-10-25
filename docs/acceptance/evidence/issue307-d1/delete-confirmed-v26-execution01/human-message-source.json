@@ -1,0 +1,14 @@
+{
+  "source": "direct user in this chat; original session response_item cross-checked with read_thread userMessage",
+  "human_message_id": "msg_01a157e7-325d-7f90-bf33-09006c69bc95",
+  "app_human_message_id": "01a157e7-325d-7f90-bf33-091cda20357e",
+  "human_turn_id": "01a157e7-3161-7201-bdd9-6e45b858289c",
+  "human_message_timestamp": "2026-10-20T06:02:11.933Z",
+  "verbatim": "授权\n",
+  "bytes": 7,
+  "sha256": "fce3771b1b29f5b8c466a7b4e76e01f1ab8436b481c706af4563f5819cc1e017",
+  "user_retyped_template": false,
+  "linked_plan": "docs/acceptance/issue307-d1-candidate16-confirmation.md",
+  "preceding_assistant_message_id": "msg_099c3841d45c7835016ad703c0eae48199b7254e7d14b16425",
+  "preceding_assistant_reference_sha256": "87b603abe923b354ef735ff2a18baec4c9347b82ad000fcd636d9dd1560c7842"
+}

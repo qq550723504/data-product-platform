@@ -1,0 +1,62 @@
+{
+  "status": "PASS_FRESH_EXTRA_READONLY_C16_CALLERS_CLOSED",
+  "gate_cids": 445,
+  "additional_technical_readers": 3,
+  "actual_retained_inventory": 448,
+  "readers": [
+    {
+      "group": "business-races",
+      "cid": "13b0c8f156289347f1de32dc9e8b282c714dfe88a510462f4dc407fc6a128055",
+      "PID": 0,
+      "restart": "no",
+      "mode": [
+        "-mode",
+        "six-verify-native"
+      ],
+      "profile_enabled": false,
+      "max_provider_deletes": 0,
+      "profile_sha256": "b201f0c2c97413b14e73d6f1bf585c807fcf2df4fbcd86a54d9a4bc00fa08911",
+      "binary_sha256": "7f8b11954e681970018c9c15da458afce07acec9234f1970e43dec98881805ff",
+      "private_profile": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\complete-1b25fc71563c443f933dbc0df17e5dc3\\business-races\\six-readonly.json",
+      "allocated_receipt_sha256": "09470993fed3c004e0d3057f22548fc38df5cb4823f6540acae72b1a52ffa53f",
+      "closure_sha256": "c78491cb7d87bba869eb5fdbf1ffa9bb0e5cde94e735f87814d9ccff6685f135"
+    },
+    {
+      "group": "late-hold",
+      "cid": "3ffcdfe2c7b17bec1107a6dbfc8815acf3575c0e7ba793df02636d8e63869d58",
+      "PID": 0,
+      "restart": "no",
+      "mode": [
+        "-mode",
+        "six-verify-native"
+      ],
+      "profile_enabled": false,
+      "max_provider_deletes": 0,
+      "profile_sha256": "d7351e91fd29e60c2389a8768988fda2f185e9e86c044ff0f1e56660536fff75",
+      "binary_sha256": "7f8b11954e681970018c9c15da458afce07acec9234f1970e43dec98881805ff",
+      "private_profile": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\complete-1b25fc71563c443f933dbc0df17e5dc3\\late-hold\\six-readonly.json",
+      "allocated_receipt_sha256": "2bf00b63c1198310f72e3748f99fd191777e68d1c5a9d6529e7fce0f87e005ba",
+      "closure_sha256": "11b5da4d06fb157907f6e770d67e336ed6e9bc32223bec42cf7a4cb8269cd4d8"
+    },
+    {
+      "group": "mixed",
+      "cid": "5dda981ac8c5efaf7d399ea9aebac572c7d51bf49bd90d625f4c237ce3c9722b",
+      "PID": 0,
+      "restart": "no",
+      "mode": [
+        "-mode",
+        "six-verify-native"
+      ],
+      "profile_enabled": false,
+      "max_provider_deletes": 0,
+      "profile_sha256": "6fb0599e9380669bc641754fadc31c8897394655b34fbfdd2e4cf32ddc79d7f5",
+      "binary_sha256": "7f8b11954e681970018c9c15da458afce07acec9234f1970e43dec98881805ff",
+      "private_profile": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate16\\complete-1b25fc71563c443f933dbc0df17e5dc3\\mixed\\six-readonly.json",
+      "allocated_receipt_sha256": "06e939aaa9a80cc2428c4c075ef4933570c2c2dfb2baffae0c209fc96891e9fe",
+      "closure_sha256": "8be4998970c716d1d96f8e8c2664e66933cce851b4e00f8d31eee4db2a408782"
+    }
+  ],
+  "source_start": 0,
+  "provider_DELETE": 0,
+  "original_445_receipt_preserved": true
+}

@@ -1,0 +1,2 @@
+{"status": "PASS_CANDIDATE05_PREPARED_NOT_AUTHORIZED", "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15", "old_raw": 344, "new_payloads": 35, "runtime": 317, "provider_io": 0, "db_io": 0, "container_starts": 0, "delete": 0}
+{"status": "PASS_CANDIDATE05_HISTORICAL_OFFLINE", "frozen_source": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9", "current_source_replaced": false, "current_historical_payloads_checked": 35, "runtime_hashes_checked": 317, "old_raw_checked": 344, "provider_io": 0, "db_io": 0, "delete": 0}

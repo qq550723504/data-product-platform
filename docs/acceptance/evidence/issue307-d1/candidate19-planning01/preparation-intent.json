@@ -1,0 +1,16 @@
+{
+  "profile": "candidate19/v29",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "window_singapore": "2026-10-22 14:00–14:40",
+  "not_before": "2026-10-22T06:00:00Z",
+  "not_after": "2026-10-22T06:40:00Z",
+  "scope": "6 targets, 11 survivors; only preparation",
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "old_authorization_reused": false,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "pins_release": 0,
+  "budget_refund": 0
+}

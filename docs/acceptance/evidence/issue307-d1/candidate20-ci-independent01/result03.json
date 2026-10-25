@@ -1,0 +1,20 @@
+{
+  "args": [
+    "gh",
+    "run",
+    "view",
+    "39744232114",
+    "--repo",
+    "qq550723504/data-product-platform",
+    "--job",
+    "119709178160",
+    "--log-failed"
+  ],
+  "GODEBUG": "http2client=0",
+  "exit": 1,
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 147,
+  "stderr_sha256": "ad478f402245f678132dfc5d29fe804fe3a175bf417d220326ba72615e3dc98d",
+  "stderr_text": "failed to get job: Get \"https://api.github.com/repos/qq550723504/data-product-platform/actions/jobs/119709178160\": net/http: TLS handshake timeout\n"
+}

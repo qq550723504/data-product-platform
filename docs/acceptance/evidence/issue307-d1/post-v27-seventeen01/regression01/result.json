@@ -1,0 +1,41 @@
+{
+  "status": "PASS_MODELED_ORCHESTRATION_AND_COLLECTOR_REGRESSION",
+  "methods_per_mode": 7,
+  "native": false,
+  "results": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-path\\data-product-platform\\examples\\lifecycle-d1\\test_verify_six_native.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-path\\data-product-platform\\examples\\lifecycle-d1\\test_post_v27_seventeen_refresh.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-path\\data-product-platform\\examples\\lifecycle-d1\\test_verify_six_native.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-path\\data-product-platform\\examples\\lifecycle-d1\\test_post_v27_seventeen_refresh.py"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "role": "checkpoint-core",
+  "group": "mixed",
+  "cid": "5f00caddad8f66da81ed8c17fd4a1181341e07d9a6ae54795e04b8aa5ebfd1c2",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate17-checkpoint",
+    "--network",
+    "a5f9b39f741435a2457e40812b75fb6970daec30b79b84d3a367f72f13fd0818",
+    "--env-file",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\mixed\\checkpoint\\postgres.env",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-dfda43b4-candidate17-checkpoint-core,target=/var/lib/postgresql/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\mixed\\checkpoint,target=/run/backup,readonly",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+  ]
+}

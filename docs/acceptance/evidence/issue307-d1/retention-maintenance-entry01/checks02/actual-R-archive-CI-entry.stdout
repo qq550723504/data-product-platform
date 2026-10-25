@@ -1,0 +1,9 @@
+R_ARCHIVE expected=df667c9ebddf6b2b5000c31ecdc5b2e867b51cfaab5ad890ab2fd8b9f6e1ead2 observed=df667c9ebddf6b2b5000c31ecdc5b2e867b51cfaab5ad890ab2fd8b9f6e1ead2 bytes=6479535
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	1.262s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	3.557s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	3.552s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	0.933s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	11.796s
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-retention [build failed]
+FAIL
+::error title=Separate fixture archive CI::CalledProcessError: Command '['go', 'test', './cmd/lifecycle-fixture-reader', './cmd/lifecycle-fixture-remaining', './cmd/lifecycle-fixture-remaining-iam', './cmd/lifecycle-fixture-readonly-check', './cmd/lifecycle-fixture-retention', '-count=1']' returned non-zero exit status 1.

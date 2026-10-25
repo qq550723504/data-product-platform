@@ -1,0 +1,307 @@
+{
+  "status": "PASS_ORIGINAL_BYTES_COPIED_NOT_REPLACED",
+  "source_worktree": "C:\\Users\\Henry\\.codex\\worktrees\\d1-cli-fix\\data-product-platform",
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/approved-reference-manifest.json",
+      "sha256": "1888154332d5904b60982ac3f888e7f007c097d2bf6cd3e3a2e5c54de5f4c3b3",
+      "bytes": 16719
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/authorization-checkpoint.json",
+      "sha256": "01a22d98767ffdfca2b5b4e231d13cc65baa97505c8beaaa44894cbdbad9f3e3",
+      "bytes": 1778
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/authorization-evidence-index01.json",
+      "sha256": "6d946f93a2c48e2c41bb1774732133c32ae19e508f277216444eeb0b64c3da36",
+      "bytes": 4857
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/authorization-fresh-github.json",
+      "sha256": "408ec1fb1af44fc3bd726c79df83e915adc20fee41f64135d4b268b33f3176a6",
+      "bytes": 2503
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/automation-tool-receipts.json",
+      "sha256": "081f926507a14da57eeecab2276f533fded0b68c65ac4c83ea5f4a07eccac39c",
+      "bytes": 462
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition/check-authorization.stderr.txt",
+      "sha256": "afc879e5e629874a8bea90457d94b747a048daf002af3124b925034daf9eccbc",
+      "bytes": 2271
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition/check-authorization.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition/check_authorization.py",
+      "sha256": "9fd5e75eb9a619fbaf9c1cd0b7e98b932307235950eaa1fa47147ea79f61e64d",
+      "bytes": 2373
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition/process-trace.json",
+      "sha256": "83b405faa8fd2148b1c26265012b60966e4b2d685c2477056dc0a966c2eea213",
+      "bytes": 58297
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition02/authorized-prewindow-check.json",
+      "sha256": "b7e83292b5327c4caf1a071ef20b7aa889776c8d7857c3957205062fe1110197",
+      "bytes": 779
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition02/check-authorization.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition02/check-authorization.stdout.txt",
+      "sha256": "6386a542b8c0e96431874ab2a761b9478918cfad9f43f19e843384327f519f0e",
+      "bytes": 706
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition02/check_authorization.py",
+      "sha256": "9fd5e75eb9a619fbaf9c1cd0b7e98b932307235950eaa1fa47147ea79f61e64d",
+      "bytes": 2373
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/composition02/process-trace.json",
+      "sha256": "2e66bd872e3ecc350bdff2d31c23ea86c48a0d757e111740e682e7b3bb03defc",
+      "bytes": 120092
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/human-authorization.json",
+      "sha256": "b09d9a5024ccb46a1c8dd8fd19cefa96085aa4ea89f5a4666fe33f1afb933d14",
+      "bytes": 19730
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/human-message-source.json",
+      "sha256": "a64074ae36be98fb0c7e75b6eed46c7bc7b2ab39926d3b4794a52da5244346a6",
+      "bytes": 800
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/pr-authorization-readback.json",
+      "sha256": "82fb41e90893f733b087505d0f8409ebd6f36f792a33275e1e8eecf6cbad4492",
+      "bytes": 2961
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/pr-body-authorization.txt",
+      "sha256": "739be62b324adf51836a180b9df3afde8108570eab31e46a28c64335ae996c55",
+      "bytes": 2726
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/pr-body-scheduled.txt",
+      "sha256": "ad6acf6bfa77f7e7e81a5272c0dd91ab3b37afa0b1742a89b31868e0c2c70485",
+      "bytes": 3214
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/pr-schedule-readback.json",
+      "sha256": "bcde571c1683eedd76d216a787b13919bcbb8da8b70becd3650596c5ef205614",
+      "bytes": 3556
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/retained-artifact-recovery-intent.json",
+      "sha256": "52135721c6e17d2b6c71ed9a7b965301f2c9dc274d2012d7f52416f69561fca3",
+      "bytes": 1225
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/retained-artifact-recovery-result.json",
+      "sha256": "d857d56f53f8b460297389a7e0a78caecbe8a1a0e7dc15faa7b2555fda63c4b9",
+      "bytes": 1433
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-client-diagnostic01.json",
+      "sha256": "2e8ed054acb9dd079eb9e5f75846d159c00953d11339bc3fa0a59b31d2446892",
+      "bytes": 434
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-evidence-index01.json",
+      "sha256": "332e833387d71f6cde672f537833c06e2f2ac480e0065e5c9f8e7fa20c587c24",
+      "bytes": 3116
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-final-checkpoint.json",
+      "sha256": "a23de01971cf44ad5be7b8a6e42ab3c91dd252244c79582c9be3939cbdd8de6b",
+      "bytes": 1255
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/schedule-human-authority.json",
+      "sha256": "fc67142925c8a3dbbf8f3ddea86728a9c5b9ea6687c1510aef25371408f59fef",
+      "bytes": 1867
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-automation-snapshot.toml",
+      "sha256": "90d9e5bfdf589c6dbeca67f94b641df14762e24f53d950f25155cc8810022e04",
+      "bytes": 13767
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-prompt-actual.txt",
+      "sha256": "5993bf6bff1948dbc4948d8a490fba9de252a7ccc0a883571f148ad979d93afd",
+      "bytes": 13405
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-prompt.txt",
+      "sha256": "5993bf6bff1948dbc4948d8a490fba9de252a7ccc0a883571f148ad979d93afd",
+      "bytes": 13405
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/scheduled-resume.json",
+      "sha256": "5e021271da0172772027c1c8db9f78eb31706a2c5797968f311b2e53c86a464c",
+      "bytes": 2661
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/business-races-closed-budget.tar",
+      "sha256": "3a59fd49e8308fb422a40019135759189797af2c9030c1e1d6898efbf43faaa9",
+      "bytes": 1536
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/evidence-index.json",
+      "sha256": "173243e234deca3db2112987edfc2272b3034296a7dc523151fdb0b75f2334c7",
+      "bytes": 4535
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/final-checkpoint.json",
+      "sha256": "67c101f63cdc1b2db03881e32efdf3d07b5bf42ec13b85b8a3f41a7d73118964",
+      "bytes": 866
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/fresh-github.json",
+      "sha256": "2382e40e55688c526f5b2e086865ffb69ccb6cf200284bb12fa90adacf636544",
+      "bytes": 2215
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/late-hold-closed-budget.tar",
+      "sha256": "ff269e622faf278403bf8bbe216e016b071c6799c58564b4fedd3261621844e5",
+      "bytes": 1536
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/mixed-closed-budget.tar",
+      "sha256": "dcdec53142e1c5641943edad37e5a042c6e8300cb70676b13056d5f62cb41874",
+      "bytes": 1536
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/offline-audit-failure.json",
+      "sha256": "b21d5c002f1db813cad63b758113fe17f7a8e40eff2b51b069959162bef54031",
+      "bytes": 1269
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/pause-tool-receipt.json",
+      "sha256": "e2996da59e78848c80fd16bd99bc3460ea775d37c7b1c23568f2502e928edd7e",
+      "bytes": 263
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/physical-closure-readback.json",
+      "sha256": "a015c6341159b0d28a44fc4707537844b9a8bdaa891b90dd28b6cdef6a5c45da",
+      "bytes": 87966
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/pr-body-outcome.txt",
+      "sha256": "88c0239be12d925a7d9d0839089149b35656d3d20e94bded8dbb15b6bf2f5db1",
+      "bytes": 3788
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/pr-outcome-readback.json",
+      "sha256": "a54a141c3ab729843d6564cc6ed7ddc0ae00db06ac31b241c8c61ad79f34f7eb",
+      "bytes": 4096
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/root-cause-diagnostic.json",
+      "sha256": "c5f5a681ea63d0ea4fe4d590378a09d0edfd308a7e797f8adfa3ee714a3a81f7",
+      "bytes": 694
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/schedule-paused-readback.json",
+      "sha256": "2efe1d0e6bdf9edc3c8542a3bc9053d22285d4f44756b41a33033648756edce5",
+      "bytes": 189
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal-private-index-receipt.json",
+      "sha256": "33666ad7a23c144b63cc2c9264c56f15f3b8de26b851e6286f74471a150f3d5a",
+      "bytes": 247
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal-process.json",
+      "sha256": "3bf6cb1ffd6fee7c0fdfc508d4a2584799685ff824d515e80765959742d8059b",
+      "bytes": 357
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal.stdout.json",
+      "sha256": "8f79cd05891253c679bf69501a890d98a791290d9ac2e9405c495b1331e13834",
+      "bytes": 23770
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/terminal.json",
+      "sha256": "f94fcc9d2ccb8074ce9c1810c085394a2ef61144a4bbf118db5c82d385cda8c2",
+      "bytes": 2212
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/authorization-recording-harness-failure01.json",
+      "sha256": "46aef516c9addf2ed852ddd90465d13e2117b012667396fc9499a1ab4cbf33eb",
+      "bytes": 864
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-delivery-checkpoint.json",
+      "sha256": "f1edc89080ae9fc35a85c3f8bd155abcf9c405feeff9e467b00d6df635b882fa",
+      "bytes": 1929
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-document-readback.json",
+      "sha256": "274afc254f4f16570dc5ba12acf407001575d4779cbdde9af8309b5f37731d92",
+      "bytes": 954
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-publication-ci-api-readback.json",
+      "sha256": "3bd9b749860f3959a154bf3168b9485c3adeb9e33a48d71963812e2a304e2ffe",
+      "bytes": 6880
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-review-threads.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/final-review-threads.stdout.json",
+      "sha256": "186fe9ac899814a0d0de518af128c57eef9d3a79ebd10722e745f7b4ebfe7c51",
+      "bytes": 259
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/post-publication-evidence-index.json",
+      "sha256": "cda1d32fbf2a20c0ba5f6f3dd6fcacf01ee2cf5a492ace9e65a128bb604d1ca2",
+      "bytes": 2087
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/publication-byte-audit-harness-failure01.json",
+      "sha256": "edc1daf1c88880c338728574a2a1d71b9e31a7aeaa7b8e1cb2dfe02641f61e9e",
+      "bytes": 473
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate16-planning01/publication-byte-readback02.json",
+      "sha256": "c64066a311f4b6dd2b1c8fcaf0d4cd63f6571b363bbc4ef1fcb70da3808fb19f",
+      "bytes": 2145
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v26-execution01.md",
+      "sha256": "6c38dfaff66b83c698fcc7a9ac2c8aa314463afe659e505fba3f45ad70510aa9",
+      "bytes": 4815
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v26-schedule01.md",
+      "sha256": "fbd8dad34e3e11c14fe8a40c21b71d5a63c0c9181a5716eb21f8c98f77cff709",
+      "bytes": 2712
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v26-window01-outcome.md",
+      "sha256": "24932cc5302f2dd12d0a5300f8b01619f5b5bc3907a9502fd86944e3f815a173",
+      "bytes": 2683
+    }
+  ],
+  "runtime_or_private_environment_mutations": 0
+}

@@ -1,0 +1,36 @@
+{
+  "status": "FINAL_SOURCE_INPUTS_AFTER_B1_B2_REPAIR",
+  "at": "2026-10-20T10:40:23.074043+00:00",
+  "head": "c1dd1b61495fd3150052744d6ba91e096a428b99",
+  "files": {
+    "examples/lifecycle-d1/evidence_indexes.py": {
+      "sha256": "af55198306e2ca4ad756cb5227bdbb564d721efbd332dbca1d95859dc60ab6fa",
+      "bytes": 7869
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "sha256": "84b205ea4f33a008fd4c5ab03a284d6e562f8e5c4e69cf9d1e7ff38b07382a7c",
+      "bytes": 16124
+    },
+    "examples/lifecycle-d1/test_evidence_indexes.py": {
+      "sha256": "e969e70aaf716e48021fb3802cae2f9bcd3d500a3b805d624a84280a2a417204",
+      "bytes": 11624
+    },
+    "examples/lifecycle-d1/test_six_native_entry.py": {
+      "sha256": "9cc9a41399949a05e7dda89b1495ea20a452fe1e135cac57503f2506098f4e1f",
+      "bytes": 15470
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "def897919536f8d1e1890a5f2f24f79e08db23a4e8e5ce4bb7c18c4a8dd838dc",
+      "bytes": 31765
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "656458904a0f3aaa9acfa87ca3ebe4f7916c3c7a4038bfd75f88e549bba5d172",
+      "bytes": 6485
+    }
+  },
+  "normal_and_optimized_methods": 52,
+  "pass_each": 51,
+  "explicit_skip_each": 1,
+  "old_source_worktree_preserved": true,
+  "full_native_preflight": "NOT_RUN"
+}

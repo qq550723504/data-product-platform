@@ -1,0 +1,1 @@
+{"status": "SIX_PACKET_FROZEN_NOT_AUTHORIZED", "candidate_sha256": "20d08f0a2d334e779b64f0c082515131c285d9fd005c6fbaa94294b147f38d42", "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453"}

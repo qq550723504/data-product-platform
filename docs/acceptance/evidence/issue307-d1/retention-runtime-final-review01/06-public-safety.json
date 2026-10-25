@@ -1,0 +1,80 @@
+{
+  "at_utc": "2026-10-24T09:18:32.0352579Z",
+  "scope": "Review output only",
+  "scan": [
+    {
+      "file": "01-r3-offline-ci.json",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "01-r3-offline-ci.stderr",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "01-r3-offline-ci.stdout",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "02-python-normal.stderr",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "02-python-normal.stdout",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "02-python-offline.json",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "02-python-optimized.stderr",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "02-python-optimized.stdout",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "03-input-audit-command.json",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "03-input-audit-rerun-command.json",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "03-input-audit-rerun.stderr",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "03-input-audit-rerun.stdout",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "03-input-audit.json",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "03-input-audit.stderr",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "03-input-audit.stdout",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "04-input-hashes.json",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "05-independent-review.json",
+      "credential_assignment_hits": 0
+    },
+    {
+      "file": "audit_inputs.py",
+      "credential_assignment_hits": 0
+    }
+  ],
+  "raw_inspect_copied": false,
+  "private_input_values_emitted": false
+}

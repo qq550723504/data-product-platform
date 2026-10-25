@@ -1,0 +1,7 @@
+{
+  "exit_code": 1,
+  "cause": "New output directory was passed to an existing-file path validator; full composition tests rejected it before gate I/O.",
+  "source_started": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

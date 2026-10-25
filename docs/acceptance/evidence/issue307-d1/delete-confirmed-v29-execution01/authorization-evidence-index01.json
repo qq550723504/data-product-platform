@@ -1,0 +1,35 @@
+{
+  "status": "C19_V29_ACTUAL_AUTHORIZATION_EVIDENCE_INDEX",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "count": 7,
+  "files": {
+    "record-human-authorization01.py": {
+      "sha256": "817aaf3f9b70edeaf08fbe0875ddef00506b8c9a32d5e58a8ae6cd35e3ed9ad8",
+      "bytes": 12303
+    },
+    "actual-app-authority-source01.json": {
+      "sha256": "86480aa20f22d436cf19d0ed3b90a25aa1f0969ecfb8dccae9187664cb99e41f",
+      "bytes": 763
+    },
+    "human-authorization.json": {
+      "sha256": "c4e37256edd4138f5d443287373efb6b0e1810c559fb0899caf014762840d858",
+      "bytes": 253230
+    },
+    "human-message-source.json": {
+      "sha256": "7cd1a5858df4f4f826b3073012ea29eb1749b28d01668f96dba26e896d7087fa",
+      "bytes": 1616
+    },
+    "user-message-verbatim.txt": {
+      "sha256": "b0c94da7bcacb7c9c0a3863fadfd5faba0418322cb603ed6e26e3ffb0c8993b3",
+      "bytes": 432
+    },
+    "actual-authorization-readback01.json": {
+      "sha256": "ce2369c74728d3d16e63502c533bc66913c078042ecc09ce03e476ad9fcd8f80",
+      "bytes": 2200
+    },
+    "audit-authorization01.py": {
+      "sha256": "b3a1ad26f74286854d09dd724bc044b3837d6e4d3b763f7cc520223ec1b87244",
+      "bytes": 5385
+    }
+  }
+}

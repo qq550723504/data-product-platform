@@ -1,0 +1,17 @@
+{
+  "started_at": "2026-10-24T14:08:34.217851+00:00",
+  "finished_at": "2026-10-24T14:09:05.964747+00:00",
+  "command": [
+    "docker",
+    "build",
+    "--pull=false",
+    "-t",
+    "dpp307-reader-path-python:31316",
+    "C:/Users/Henry/.codex/fixture-private/reader-path-fix01/python-image01"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

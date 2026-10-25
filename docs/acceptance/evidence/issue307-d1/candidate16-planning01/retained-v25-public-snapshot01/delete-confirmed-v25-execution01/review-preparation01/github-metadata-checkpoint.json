@@ -1,0 +1,24 @@
+{
+  "status": "PASS_REVIEW_CURRENT_HEAD_DRAFT_OPEN_THREADS",
+  "at": "2026-10-20T01:27:45.486184+00:00",
+  "pull_request": {
+    "state": "OPEN",
+    "isDraft": true,
+    "headRefOid": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+    "headRefName": "codex/issue307-post-v22-dispatch-closure",
+    "url": "https://github.com/qq550723504/data-product-platform/pull/332",
+    "reviewThreads": {
+      "pageInfo": {
+        "hasNextPage": false
+      },
+      "nodes": []
+    }
+  },
+  "issue": {
+    "state": "OPEN",
+    "url": "https://github.com/qq550723504/data-product-platform/issues/307"
+  },
+  "raw_sha256": "971ce437afcff44cb18e20281ea2a02cf9033ee603e93a9159f8c7fae52728f0",
+  "native_source_provider_delete": 0,
+  "transport_error_preserved_separately": true
+}

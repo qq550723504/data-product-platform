@@ -1,0 +1,117 @@
+{
+  "status": "FAILED_PRESERVED",
+  "commands": [
+    {
+      "name": "actual-r-six-packages",
+      "command": [
+        "go",
+        "test",
+        "./internal/lifecycle/pilot",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-remaining",
+        "./cmd/lifecycle-fixture-remaining-iam",
+        "./cmd/lifecycle-fixture-readonly-check",
+        "./cmd/lifecycle-fixture-retention",
+        "-count=1"
+      ],
+      "cwd": "C:\\Users\\Henry\\AppData\\Local\\Temp\\d1-review-retention-r215-9vrgpl_d\\apps\\platform",
+      "started_at": "2026-10-24T08:42:16.338799+00:00",
+      "finished_at": "2026-10-24T08:42:30.736213+00:00",
+      "returncode": 1,
+      "stdout_sha256": "ffb1bfeca36937c4d5672353c5720848347a3a05d970a54879961d806b84f6d4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "test_retention_maintenance-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_maintenance.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+      "started_at": "2026-10-24T08:42:30.736832+00:00",
+      "finished_at": "2026-10-24T08:42:31.698327+00:00",
+      "returncode": 0,
+      "stdout_sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "stderr_sha256": "1b81be039f7a988c4c3ea2563ff1b590c02f526eb762fb86361794954e71d417"
+    },
+    {
+      "name": "test_retention_maintenance-optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retention_maintenance.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+      "started_at": "2026-10-24T08:42:31.698861+00:00",
+      "finished_at": "2026-10-24T08:42:32.715982+00:00",
+      "returncode": 0,
+      "stdout_sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+      "stderr_sha256": "6c2967f2dbd44ee286a0d7c46492e90f32d56e0ef5694e227339e9172d40cbc6"
+    },
+    {
+      "name": "test_retention_staging-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_retention_staging.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+      "started_at": "2026-10-24T08:42:32.716493+00:00",
+      "finished_at": "2026-10-24T08:42:32.869435+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "60ce10399dac04e70cc4897f5ee1b41eb950c5a2b6d2b6e99df5dc50047f0ef8"
+    },
+    {
+      "name": "test_retention_staging-optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_retention_staging.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+      "started_at": "2026-10-24T08:42:32.870102+00:00",
+      "finished_at": "2026-10-24T08:42:33.009496+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "db147cb6a9d4a07fa6279f3e36eb2717b1561eeda9c69dcbfc3fcb81e767bdd4"
+    },
+    {
+      "name": "test_evidence_indexes-normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+      "started_at": "2026-10-24T08:42:33.010038+00:00",
+      "finished_at": "2026-10-24T08:42:33.719876+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e7aa81a5a18f6c122cec2b1edabffd6df4c828757dddc8d8c1d30c542e9fe4dc"
+    },
+    {
+      "name": "test_evidence_indexes-optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_evidence_indexes.py"
+      ],
+      "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-retention-runtime\\data-product-platform",
+      "started_at": "2026-10-24T08:42:33.720758+00:00",
+      "finished_at": "2026-10-24T08:42:34.116126+00:00",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "c4b267ae63aa3786989314092bf12b25a5707ef0f0bd296403fa534fc7df8b19"
+    }
+  ],
+  "Docker": 0,
+  "WSL": 0,
+  "real_provider": 0,
+  "metadata_write": 0,
+  "DELETE": 0
+}

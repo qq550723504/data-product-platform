@@ -1,0 +1,67 @@
+{
+  "at": "2026-10-22T07:51:47.442014+00:00",
+  "scope": "Pure offline tests; provisional WIP byte review, not final PASS",
+  "commands": [
+    {
+      "test": "test_fixture_artifacts",
+      "mode": "normal",
+      "exit": 0,
+      "stderr_tail": "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\zipfile\\__init__.py:1730: UserWarning: Duplicate name: 'apps/platform/a'\r\n  return self._open_to_write(zinfo, force_zip64=force_zip64)\r\n.fatal: git cat-file: could not get object info\n..\r\n----------------------------------------------------------------------\r\nRan 3 tests in 6.294s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_fixture_artifacts",
+      "mode": "optimized",
+      "exit": 0,
+      "stderr_tail": "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\zipfile\\__init__.py:1730: UserWarning: Duplicate name: 'apps/platform/a'\r\n  return self._open_to_write(zinfo, force_zip64=force_zip64)\r\n.fatal: git cat-file: could not get object info\n..\r\n----------------------------------------------------------------------\r\nRan 3 tests in 4.212s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_candidate_runtime",
+      "mode": "normal",
+      "exit": 0,
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.734s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_candidate_runtime",
+      "mode": "optimized",
+      "exit": 0,
+      "stderr_tail": ".............\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.490s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_freeze_six_candidate",
+      "mode": "normal",
+      "exit": 0,
+      "stderr_tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.679s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_freeze_six_candidate",
+      "mode": "optimized",
+      "exit": 0,
+      "stderr_tail": ".\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.514s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_verify_six_native",
+      "mode": "normal",
+      "exit": 0,
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.645s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_verify_six_native",
+      "mode": "optimized",
+      "exit": 0,
+      "stderr_tail": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.532s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_native_entry",
+      "mode": "normal",
+      "exit": 0,
+      "stderr_tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.988s\r\n\r\nOK\r\n"
+    },
+    {
+      "test": "test_six_native_entry",
+      "mode": "optimized",
+      "exit": 0,
+      "stderr_tail": "........\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.922s\r\n\r\nOK\r\n"
+    }
+  ],
+  "source_native_IO": 0
+}

@@ -1,0 +1,30 @@
+{
+  "status": "PASS_PRODUCTION_NATIVE_ADAPTER_CONTRACT",
+  "at": "2026-10-19T18:25:00.053814+00:00",
+  "failure": null,
+  "closure": [
+    {
+      "cid": "4870f0e31cb0cf00f60cf65b3621f55cf52397063ff8967f0a09126ee6c3c431",
+      "closed": true,
+      "pid": 0,
+      "network": "container:8ef2a47f2a0e9bc9f9952c6e2d15ef18b72f211a1ff31e9a09939cd04aa3ad24",
+      "noports": true,
+      "restart": "no"
+    },
+    {
+      "cid": "8ef2a47f2a0e9bc9f9952c6e2d15ef18b72f211a1ff31e9a09939cd04aa3ad24",
+      "closed": true,
+      "pid": 0,
+      "network": "none",
+      "noports": true,
+      "restart": "no"
+    }
+  ],
+  "technical_starts": 16,
+  "observations": 16,
+  "amount": "NOT_ASSESSED",
+  "native_delete": 0,
+  "object_put": 0,
+  "source_calls": 0,
+  "resources_retained": true
+}

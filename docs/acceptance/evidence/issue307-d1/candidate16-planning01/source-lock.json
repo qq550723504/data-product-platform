@@ -1,0 +1,17 @@
+{
+  "status": "SOURCE_LOCKED_BEFORE_SINGLE_ALLOCATION",
+  "source": "5472a583f86838df42a5ffd86bc366c166036efb",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "profile": "candidate16/v26",
+  "files": {
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "384057766e3d2ac27c92f5a98b300076fcbe256001760a1f225cba7568c7a350",
+    "examples/lifecycle-d1/window_six_support.py": "b0d8cc0d39a535c5e0aa995f435cf2a2e410b2e20103ad544bdf5b6d433d00fd",
+    "examples/lifecycle-d1/verify-six-native.py": "d232d50990045a6ab876901eead9807f3b1daa58dfcf77502b0c90d561c2f53d",
+    "examples/lifecycle-d1/prepare-six-candidate.py": "0f7412cba7b5951efee55fcd783f992f168d007b43d944c6da1f4946790adeae"
+  },
+  "Go": "274 PASS, 2 SKIP",
+  "Python": "normal and optimized each34 PASS",
+  "old_authorization_reused": false,
+  "deletion_authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED"
+}

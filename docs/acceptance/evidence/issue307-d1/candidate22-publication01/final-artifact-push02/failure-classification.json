@@ -1,0 +1,7 @@
+{
+  "status": "READONLY_HELPER_RELOCATION_PATH_FAILURE_BEFORE_PUSH",
+  "root_cause": "Retry wrapper retained relative HERE when moved from planning to publication folder",
+  "push_attempted": false,
+  "repair": "Explicit original planning path; no source or HEAD changes",
+  "path_probe": "PASS"
+}

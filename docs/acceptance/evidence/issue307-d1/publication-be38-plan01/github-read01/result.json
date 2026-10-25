@@ -1,0 +1,25 @@
+{
+  "status": "PASS_FRESH_PROTECTION_AND_CURRENT_HEAD_CI_READ_ONLY",
+  "head": "e54967e822847e97316e703ee413ffc1298cb627",
+  "rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "rule": {
+    "id": "BPR_kwDOUdQLBs4FE_7b",
+    "pattern": "codex/issue307-post-v22-dispatch-closure",
+    "lockBranch": true,
+    "isAdminEnforced": true,
+    "lockAllowsFetchAndMerge": false,
+    "allowsForcePushes": false,
+    "allowsDeletions": false
+  },
+  "CI_run": 39983308178,
+  "CI_attempt": 1,
+  "CI_event": "pull_request",
+  "CI_jobs": 13,
+  "Draft": true,
+  "PR": "open",
+  "merged": false,
+  "Issue307": "open",
+  "unresolved_threads": 0,
+  "observed_at": "2026-10-24T05:35:03.630055+00:00",
+  "mutation_performed": false
+}

@@ -1,0 +1,399 @@
+
+> data-product-platform-web@0.1.0 build
+> npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && npm run test:schema && next build
+
+
+> data-product-platform-web@0.1.0 test:reviews
+> tsc lib/review-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .review-tests && node --test tests/review-command.test.mjs
+
+✔ confirm: scope checked, server credential and trimmed reason forwarded once (19.542ms)
+✔ reject: scope checked, server credential and trimmed reason forwarded once (0.7485ms)
+✔ disabled: no upstream request (0.2072ms)
+✔ missing credential: no upstream request (0.1294ms)
+✔ blank credential: no upstream request (0.1063ms)
+✔ missing workspace: no upstream request (0.1165ms)
+✔ blank reason: no upstream request (0.1206ms)
+✔ long reason: no upstream request (0.0834ms)
+✔ path injection: no upstream request (0.0924ms)
+✔ invalid job: no upstream request (0.2189ms)
+✔ unknown decision: no upstream request (0.0849ms)
+✔ foreign workspace blocks even a valid candidate UUID (0.3267ms)
+✔ foreign candidate: never posts (0.4186ms)
+✔ foreign candidate job: never posts (0.3663ms)
+✔ already reviewed: never posts (0.1676ms)
+✔ missing entity: never posts (0.1951ms)
+✔ a pending candidate without an entity may be rejected, not confirmed (0.3069ms)
+✔ ambiguous candidate requires an explicit frozen alternative and forwards it (0.5618ms)
+✔ selection outside the frozen alternatives never posts (0.2269ms)
+✔ invalid candidate response blocks the command (0.1816ms)
+✔ candidate lookup is targeted, never the whole job queue (0.5198ms)
+✔ nested Core errors surface a safe code, not SQL or internal messages (0.3864ms)
+✔ an observed current decision is forwarded as an optimistic-concurrency token (0.2779ms)
+✔ no observed mapping keeps the request backwards compatible (0.2282ms)
+✔ placeholder token: rejected before any upstream request (0.109ms)
+✔ nil token: rejected before any upstream request (0.0435ms)
+✔ concurrent review conflict requires refresh and never retries (0.3312ms)
+✔ timeout after POST is ambiguous, not claimed as a failed write or retried (0.9554ms)
+✔ mismatched command result is not reported as success (0.2361ms)
+✔ read failure cannot trigger a write (0.1214ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 105.7354
+
+> data-product-platform-web@0.1.0 test:releases
+> tsc lib/release-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .release-tests && node --test tests/release-command.test.mjs tests/release-readiness.test.mjs
+
+✔ publish: scope/readiness checked and server actor/idempotency forwarded once (20.8876ms)
+✔ disabled: no upstream request (0.2149ms)
+✔ missing actor: no upstream request (0.0982ms)
+✔ invalid actor: no upstream request (0.7444ms)
+✔ nil actor: no upstream request (0.3656ms)
+✔ missing workspace: no upstream request (0.0961ms)
+✔ invalid product: no upstream request (0.1327ms)
+✔ path injection release: no upstream request (0.0748ms)
+✔ nil release: no upstream request (0.0911ms)
+✔ blank idempotency: no upstream request (0.1961ms)
+✔ foreign workspace product blocks before release lookup (0.3903ms)
+✔ missing product in workspace blocks before release lookup (0.2726ms)
+✔ release not in scoped product history blocks before global release read (0.4058ms)
+✔ release scoped to another product is blocked (0.4341ms)
+✔ global release response mismatch blocks readiness and write (0.2977ms)
+✔ readiness response mismatch blocks write (0.3887ms)
+✔ release is DRAFT: never posts (0.3402ms)
+✔ overall is NOT_READY: never posts (0.2538ms)
+✔ rights gate failed: never posts (0.7621ms)
+✔ evidence gate pending: never posts (0.4487ms)
+✔ 409 after publish requires refresh and never retries (0.8229ms)
+✔ timeout after POST is an unknown outcome and is never retried (0.6026ms)
+✔ invalid JSON after POST is an unknown outcome (1.0255ms)
+✔ mismatched published release is not reported as success (0.4252ms)
+✔ read failure cannot trigger a write (0.1228ms)
+✔ create release: preflights frozen facts and posts explicit bindings once (1.599ms)
+✔ create release: same releaseNo with identical frozen facts recovers without POST (0.4715ms)
+✔ create release: same releaseNo with different notes is a frozen-content conflict (0.4052ms)
+✔ create release: stale ProductVersion stops before binding reads (0.1677ms)
+✔ create release: DatasetVersion outside ProductVersion assets is blocked (0.5314ms)
+✔ create release: exactly one PRIMARY or OUTPUT is required before any Core request (0.1524ms)
+✔ create release: timeout after POST is ambiguous and never retried (0.5581ms)
+✔ empty checks: shared guard and Server Action boundary fail closed (22.0381ms)
+✔ missing checks: shared guard and Server Action boundary fail closed (1.3074ms)
+✔ null checks: shared guard and Server Action boundary fail closed (1.1459ms)
+✔ array checks: shared guard and Server Action boundary fail closed (0.3541ms)
+✔ missing blockers: shared guard and Server Action boundary fail closed (0.4207ms)
+✔ null blockers: shared guard and Server Action boundary fail closed (0.3559ms)
+✔ string blockers: shared guard and Server Action boundary fail closed (0.3622ms)
+✔ invalid blocker: shared guard and Server Action boundary fail closed (0.3302ms)
+✔ remaining blocker: shared guard and Server Action boundary fail closed (0.3161ms)
+✔ blank blocker: shared guard and Server Action boundary fail closed (0.7153ms)
+✔ unknown gate pending: shared guard and Server Action boundary fail closed (0.594ms)
+✔ extra gate FAIL: shared guard and Server Action boundary fail closed (1.1595ms)
+✔ extra gate REVIEW: shared guard and Server Action boundary fail closed (0.263ms)
+✔ extra gate null: shared guard and Server Action boundary fail closed (0.2608ms)
+✔ extra gate true: shared guard and Server Action boundary fail closed (0.2685ms)
+✔ missing production: shared guard and Server Action boundary fail closed (0.1848ms)
+✔ failed production: shared guard and Server Action boundary fail closed (0.1449ms)
+✔ missing dataset: shared guard and Server Action boundary fail closed (0.1542ms)
+✔ failed dataset: shared guard and Server Action boundary fail closed (0.2358ms)
+✔ missing rights: shared guard and Server Action boundary fail closed (0.3163ms)
+✔ failed rights: shared guard and Server Action boundary fail closed (0.3999ms)
+✔ missing quality: shared guard and Server Action boundary fail closed (0.2214ms)
+✔ failed quality: shared guard and Server Action boundary fail closed (0.1926ms)
+✔ missing compliance: shared guard and Server Action boundary fail closed (0.1875ms)
+✔ failed compliance: shared guard and Server Action boundary fail closed (0.1675ms)
+✔ missing contract: shared guard and Server Action boundary fail closed (0.1692ms)
+✔ failed contract: shared guard and Server Action boundary fail closed (0.1444ms)
+✔ missing evidence: shared guard and Server Action boundary fail closed (0.1402ms)
+✔ failed evidence: shared guard and Server Action boundary fail closed (0.135ms)
+✔ missing delivery: shared guard and Server Action boundary fail closed (0.8069ms)
+✔ failed delivery: shared guard and Server Action boundary fail closed (0.3209ms)
+✔ complete READY response is accepted (0.0699ms)
+✔ new passing Core gate is not rejected (0.0442ms)
+✔ inherited gates cannot satisfy required fields (0.0381ms)
+✔ invalid/not-ready response null (0.0255ms)
+✔ invalid/not-ready response undefined (0.0285ms)
+✔ invalid/not-ready response [] (0.0249ms)
+✔ invalid/not-ready response "READY" (0.0199ms)
+✔ invalid/not-ready response {"overall":"NOT_READY","checks":{"production":"PASS","dataset":"PASS","rights":"PASS","quality":"PASS","compliance":"PASS","contract":"PASS","evidence":"PASS","delivery":"PASS"},"blockers":[]} (0.0173ms)
+ℹ tests 71
+ℹ suites 0
+ℹ pass 71
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 131.447
+
+> data-product-platform-web@0.1.0 test:executions
+> tsc lib/execution-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .execution-tests && node --test tests/execution-command.test.mjs
+
+✔ retry preflights source and posts once with server actor/idempotency (20.1475ms)
+✔ non-retryable source never posts (0.3975ms)
+✔ idempotent recovery accepts the same child after lifecycle advances (0.5449ms)
+✔ mismatched child fails closed after write and requires refresh (0.6174ms)
+✔ disabled configuration performs no request (0.1302ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 100.9541
+
+> data-product-platform-web@0.1.0 test:dataset-versions
+> tsc lib/dataset-version-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .dataset-version-tests && node --test tests/dataset-version-command.test.mjs
+
+✔ invalidate preflights scope/status and posts trimmed reason with server actor (22.6501ms)
+✔ non-READY version never posts (0.5186ms)
+✔ blank reason fails before any Core request (0.1938ms)
+✔ mismatched invalidate response fails closed after write (0.5898ms)
+✔ disabled configuration fails closed (0.1389ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.3151
+
+> data-product-platform-web@0.1.0 test:quality
+> tsc lib/quality-command.ts lib/quality-attention.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .quality-tests && node --test tests/quality-command.test.mjs tests/quality-attention.test.mjs tests/quality-transport.test.mjs tests/quality-evidence-page.test.mjs
+
+✔ report navigation carries an exact assessment, independently of current/latest (2.0722ms)
+✔ case focus uses direct identity and rejects workspace/version/identity substitutions (0.3249ms)
+✔ bad identities never become navigation targets (0.2483ms)
+✔ quality view pagination preserves other queues and resets only its own offset (0.4665ms)
+✔ malformed query values cannot produce unsafe page offsets (0.2103ms)
+✔ new attempt posts exactly once with stable attempt id and server actor (24.988ms)
+✔ succeeded attempt recovers assessment without POST (0.6047ms)
+✔ active attempt never posts (0.5076ms)
+✔ failed attempt is terminal and never posts (0.481ms)
+✔ foreign attempt is blocked before write (0.5833ms)
+✔ non-usable DatasetVersion never looks up or posts attempt (0.276ms)
+✔ timeout after POST preserves attempt identity and never retries (0.5573ms)
+✔ disabled configuration fails before any Core request (0.1219ms)
+✔ independent history failure retains the exact successful historical report (93.8543ms)
+✔ independent summary failure retains the exact successful historical report (49.5578ms)
+✔ independent attempt failure retains the exact successful historical report (63.4177ms)
+✔ independent foreign-attempt failure retains the exact successful historical report (56.0549ms)
+✔ independent 44444444-4444-4444-8444-444444444444 failure retains the exact successful historical report (72.8487ms)
+✔ historical 401 stays UNKNOWN without loading latest as a substitute (94.077ms)
+✔ historical 403 stays UNKNOWN without loading latest as a substitute (64.7476ms)
+✔ historical 404 stays UNKNOWN without loading latest as a substitute (74.3587ms)
+✔ historical 503 stays UNKNOWN without loading latest as a substitute (63.7867ms)
+✔ first history page failure does not erase the independently successful latest summary (76.6721ms)
+✔ latest report failure is local when no explicit assessment is selected (60.7993ms)
+✔ provenance quality failure remains UNKNOWN and does not invent empty evidence (73.1058ms)
+✔ missing Quality credential never makes an anonymous read (1.6255ms)
+✔ Quality 401 preserves exact URL and never falls back or reveals upstream body (20.0708ms)
+✔ Quality 403 preserves exact URL and never falls back or reveals upstream body (0.2926ms)
+✔ Quality 404 preserves exact URL and never falls back or reveals upstream body (0.2162ms)
+✔ Quality 503 preserves exact URL and never falls back or reveals upstream body (0.2103ms)
+✔ missing command credential blocks before all Core requests (0.4096ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1555.9896
+
+> data-product-platform-web@0.1.0 test:compliance
+> tsc lib/compliance-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .compliance-tests && node --test tests/compliance-command.test.mjs
+
+✔ new attempt posts exactly once with stable attempt id and server actor (23.6937ms)
+✔ existing attempt recovers result without POST (0.6727ms)
+✔ attempt request identity mismatch is blocked (0.6077ms)
+✔ foreign attempt is blocked before write (0.4853ms)
+✔ non-usable DatasetVersion never looks up or posts attempt (0.452ms)
+✔ timeout after POST preserves attempt identity and never retries (0.6017ms)
+✔ disabled configuration fails before any Core request (0.1306ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 114.6047
+
+> data-product-platform-web@0.1.0 test:trace
+> tsc lib/trace-scope.ts lib/traceability.ts lib/pagination.ts lib/scoped-lookup.ts lib/workbench-read.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .trace-tests && node --test tests/trace-scope.test.mjs tests/pagination.test.mjs tests/scoped-lookup.test.mjs tests/workbench-read.test.mjs
+
+✔ collectAllPages drains every page using returned item count (3.3027ms)
+✔ collectAllPages accepts an empty collection (0.242ms)
+✔ collectAllPages rejects an empty page before reported total (0.424ms)
+✔ collectAllPages rejects an unexpected offset (0.1398ms)
+✔ collectAllPages rejects invalid limits before calling Core (0.2107ms)
+✔ parsePageOffset normalizes query values and rejects garbage (0.2167ms)
+✔ paginationWindow exposes explicit prev/next offsets (0.3686ms)
+✔ paginationWindow advances by returned rows and never loops on an empty page (0.1492ms)
+✔ paginationWindow tolerates invalid metadata without throwing (0.1454ms)
+✔ findAcrossPages resolves a record beyond the first page (1.5813ms)
+✔ findAcrossPages returns undefined when the record is absent (0.1959ms)
+✔ findAcrossPages keeps product scoping for release lookups (0.138ms)
+✔ findAcrossPages keeps draining when Core clamps the page size (0.1552ms)
+✔ findAcrossPages surfaces an empty premature page instead of truncating (0.4325ms)
+✔ matching scoped release trace is accepted (1.691ms)
+✔ release mismatch is rejected (0.566ms)
+✔ product mismatch is rejected (0.1537ms)
+✔ foreign evidence is rejected (0.1499ms)
+✔ foreign cost is rejected (0.1611ms)
+✔ foreign entity job is rejected (0.1238ms)
+✔ invalid context identifiers fail closed (0.207ms)
+✔ local read failures, invalid responses and deadlines remain unknown without carrying raw errors (3.4437ms)
+✔ incomplete counts never imply zero or a complete total (0.2702ms)
+✔ the shared summary is usable only with its complete valid counters and workspace (0.61ms)
+✔ page membership, offsets and release classifications cannot turn invalid data into an empty result (0.315ms)
+✔ only valid scoped primary identities can be retained when auxiliary labels fail (0.3018ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 125.1706
+
+> data-product-platform-web@0.1.0 test:ingest
+> tsc lib/ingest-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .ingest-tests && node --test tests/csv-inspection.test.mjs tests/ingest-command.test.mjs
+
+✔ CSV "\n" preserves byte inputs and previews quoted fields (1.6128ms)
+✔ CSV "\r\n" preserves byte inputs and previews quoted fields (0.1825ms)
+✔ CSV "﻿\n" preserves byte inputs and previews quoted fields (0.1272ms)
+✔ CSV "﻿\r\n" preserves byte inputs and previews quoted fields (0.1206ms)
+✔ empty is rejected (0.3509ms)
+✔ header only is rejected (0.6776ms)
+✔ missing field is rejected (0.1965ms)
+✔ duplicate header is rejected (0.0939ms)
+✔ empty header is rejected (0.1152ms)
+✔ ragged row is rejected (0.16ms)
+✔ blank key is rejected (0.0998ms)
+✔ blank name is rejected (0.1369ms)
+✔ duplicate key is rejected (0.164ms)
+✔ unclosed quote is rejected (0.1021ms)
+✔ bare quote is rejected (0.085ms)
+✔ trailing quote text is rejected (0.0645ms)
+✔ bare CR is rejected (0.0428ms)
+✔ control byte is rejected (0.0637ms)
+✔ oversized field is rejected (0.3968ms)
+✔ too many columns is rejected (0.1048ms)
+✔ too many rows is rejected (0.8843ms)
+✔ invalid UTF-8 is rejected, not replacement-decoded (0.4111ms)
+✔ oversized bytes are rejected before parsing (0.2524ms)
+✔ preview is bounded to five records while every record is validated (0.1185ms)
+✔ blank physical lines match Go CSV behavior (0.0904ms)
+✔ downloadable synthetic template satisfies the declared CSV format (0.6524ms)
+✔ upload preserves original bytes, scopes records and ignores browser actor/workspace (8.0652ms)
+✔ disabled prevents all network access (0.5283ms)
+✔ actor missing prevents all network access (0.2841ms)
+✔ workspace missing prevents all network access (0.3571ms)
+✔ actor invalid prevents all network access (0.355ms)
+✔ invalid form {"name":" "} never writes (0.3817ms)
+✔ invalid form {"source":""} never writes (0.1758ms)
+✔ invalid form {"purpose":" "} never writes (0.1155ms)
+✔ invalid form {"acknowledged":"no"} never writes (0.1129ms)
+✔ invalid form {"name":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"} never writes (0.1586ms)
+✔ extension blocked on server regardless of browser preview (0.4898ms)
+✔ empty blocked on server regardless of browser preview (0.2219ms)
+✔ invalid CSV blocked on server regardless of browser preview (0.3449ms)
+✔ size blocked on server regardless of browser preview (0.3425ms)
+✔ same operation with existing RAW never writes again (4.1503ms)
+✔ timeout: partial object identities survive, no blind retry (1.4104ms)
+✔ HTTP: partial object identities survive, no blind retry (1.287ms)
+✔ mismatched RAW checksum is not success (0.8719ms)
+✔ foreign creation response stops the chain (0.5815ms)
+✔ start verifies input scope and fixes policy/source role on server (0.7242ms)
+✔ foreign workspace never posts a parse job (0.2986ms)
+✔ foreign version dataset never posts a parse job (0.2073ms)
+✔ non RAW never posts a parse job (0.1883ms)
+✔ invalidated version never posts a parse job (0.2101ms)
+✔ wrong source never posts a parse job (0.2446ms)
+✔ wrong version identity never posts a parse job (0.1948ms)
+✔ reserved output prevents repeating job creation (0.2644ms)
+✔ job POST timeout keeps output identity and locks, not retry (0.3755ms)
+✔ wrong job scope is not reported as success (0.3525ms)
+✔ input enumeration drains more than the first page (0.4255ms)
+✔ empty incomplete page never reaches a write (0.2164ms)
+ℹ tests 57
+ℹ suites 0
+ℹ pass 57
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 137.515
+
+> data-product-platform-web@0.1.0 test:schema
+> tsc lib/schema-observation.ts lib/schema-exceptions.ts lib/schema-requests.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .schema-tests && node --test tests/schema-observation.test.mjs tests/schema-exceptions.test.mjs tests/schema-requests.test.mjs tests/schema-attempts.test.mjs
+
+✔ attempt collection validates scope, history, attempt identity and complete page counts (1.0809ms)
+✔ bounded attempt offsets survive all existing section navigation (0.6356ms)
+✔ typed evidence origin preserves selected attempt separately from observation identity (0.6388ms)
+✔ exception history accepts DENIED with and without an attempt and nullable scan times (0.9867ms)
+✔ foreign, duplicate, wrong status/filter/count/page and malformed attempt fail closed (1.0132ms)
+✔ empty page keeps global historical classification counts without inventing resolution (0.198ms)
+✔ exact evidence and return links preserve the history filter/page and existing queue state (0.8058ms)
+✔ exact history links bind resource, request and observation; unsafe identities never navigate (0.9702ms)
+✔ exact evidence rejects substitutions of every scope dimension and handling membership (0.2697ms)
+✔ summary validates workspace, DRIFT-only scope, counts and nonduplicated observations (0.3539ms)
+✔ schema and quality pagination preserve each other's selections and other queues (0.5736ms)
+✔ unobserved filters preserve independent queues and reject scope/count substitution (1.8938ms)
+✔ explicit attempt survives pagination and post-observation detail; never pick latest (0.9211ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.9105
+   ▲ Next.js 15.5.24
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 2.7s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/3) ...
+ ✓ Generating static pages (3/3)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                             Size  First Load JS
+┌ ƒ /                                                  185 B         106 kB
+├ ƒ /_not-found                                        995 B         104 kB
+├ ƒ /api/direct-data-deliveries                        127 B         103 kB
+├ ƒ /api/source-admissions                             127 B         103 kB
+├ ƒ /attention                                         185 B         106 kB
+├ ƒ /batches                                         1.03 kB         107 kB
+├ ƒ /batches/[id]                                    1.03 kB         107 kB
+├ ƒ /datasets                                          185 B         106 kB
+├ ƒ /datasets/[id]                                     185 B         106 kB
+├ ƒ /datasets/[id]/versions/[versionId]              6.23 kB         112 kB
+├ ƒ /datasets/[id]/versions/[versionId]/remediation  1.28 kB         107 kB
+├ ƒ /evidence                                          185 B         106 kB
+├ ƒ /ingest                                          4.49 kB         111 kB
+├ ƒ /production                                        185 B         106 kB
+├ ƒ /production/[id]                                  1.3 kB         107 kB
+├ ƒ /products                                          185 B         106 kB
+├ ƒ /products/[id]                                   5.41 kB         111 kB
+├ ƒ /products/[id]/releases/[releaseId]                185 B         106 kB
+├ ƒ /resources                                         185 B         106 kB
+├ ƒ /resources/[id]                                  1.39 kB         107 kB
+├ ƒ /reviews                                         3.44 kB         109 kB
+└ ƒ /source-admissions                               3.05 kB         109 kB
++ First Load JS shared by all                         103 kB
+  ├ chunks/255-c5a697ddbf82d774.js                   46.4 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js              54.2 kB
+  └ other shared chunks (total)                      2.02 kB
+
+
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,79 @@
+{
+  "format": "files-map-v1",
+  "count": 18,
+  "files": {
+    ".gitattributes": {
+      "sha256": "b4933383478bee36de34bf200e80d15f6be3d8851750e4dd5e652f6264e1da0e",
+      "bytes": 25979
+    },
+    "docs/acceptance/evidence/issue332-closeout01/actual-dns-readonly01.json": {
+      "sha256": "0f7106dbf07a9a24ac91ec3d12186d5946131085e78b114c279187d8d22ec040",
+      "bytes": 12020
+    },
+    "docs/acceptance/evidence/issue332-closeout01/actual-readonly01/result.json": {
+      "sha256": "a7cea78bcb0648230aa1cea764d7dde08563ec8c3df8c2b3c21afc78461ef817",
+      "bytes": 902
+    },
+    "docs/acceptance/evidence/issue332-closeout01/check_live_dns01.py": {
+      "sha256": "c86d63ac1741b7666de4475dd417ebe0f98a00cec235cc7d087b2d990c40a989",
+      "bytes": 2928
+    },
+    "docs/acceptance/evidence/issue332-closeout01/freeze_review01.py": {
+      "sha256": "7f0ec706fa2e9ea35cc5ae3d8238408c5cdf0f13c7112d3106fa3eb519c6b45b",
+      "bytes": 2056
+    },
+    "docs/acceptance/evidence/issue332-closeout01/independent-snapshot-binding01.json": {
+      "sha256": "0398dc440171ed15a60a178d1e2148a712499c767c8748def7cfa5f65c178ae1",
+      "bytes": 35900
+    },
+    "docs/acceptance/evidence/issue332-closeout01/original-rejection01.json": {
+      "sha256": "25aae106f37ba2cbb7ba72ef8ae1fb37c316771806f186fcef7364cc29b637a0",
+      "bytes": 10911
+    },
+    "docs/acceptance/evidence/issue332-closeout01/prepare_regressions01.py": {
+      "sha256": "8fd9ecf5b952d1a822c67c507cf865fff33eae1acdc52ada563f5852e42662fb",
+      "bytes": 3158
+    },
+    "docs/acceptance/evidence/issue332-closeout01/raw-evidence-binding01.json": {
+      "sha256": "ba31ff9be9104ec4918288339a6b8af03efcc01712b6c47c0815cdb572c2ffe0",
+      "bytes": 328
+    },
+    "docs/acceptance/evidence/issue332-closeout01/regression-summary01.json": {
+      "sha256": "60c0df57131a23a2035329191e6f7f16c9556714b40416fe6b34726ed5ccba05",
+      "bytes": 15909
+    },
+    "docs/acceptance/evidence/issue332-closeout01/summarize_regressions01.py": {
+      "sha256": "930a09eb5696f33c8d5c8d76db985f1f911775b74ad3fa826533762ba43b10fd",
+      "bytes": 2085
+    },
+    "docs/acceptance/issue332-closeout-acceptance01.md": {
+      "sha256": "b826e8a8ff0820c55fd99592f775c7769ed8304207eca218b7d69910462bdb12",
+      "bytes": 3533
+    },
+    "docs/acceptance/issue332-finite-merge-contract.md": {
+      "sha256": "d624b42f0a42081bdbe834c4a2e3d10ae79a1c627aad6c1628c1e6102ef80830",
+      "bytes": 3815
+    },
+    "examples/lifecycle-d1/fixture-runtime-artifact.json": {
+      "sha256": "7915856584bb83fad50982e2a0c95a6c930de3fbe8e36f842fdbae8bb9f5e0d9",
+      "bytes": 110507
+    },
+    "examples/lifecycle-d1/retired_resources.py": {
+      "sha256": "567576cf8e0cf9d83ca9c0fef613a7545b5f5ffce9afcfacd0f5163f4dd0a69d",
+      "bytes": 19687
+    },
+    "examples/lifecycle-d1/retirement_catalog.py": {
+      "sha256": "f3109da30aa7530f55327fa4b5f483ad03741cae8415dd794b58a3dd72d95255",
+      "bytes": 9579
+    },
+    "examples/lifecycle-d1/successor_dependencies.py": {
+      "sha256": "0d00acfbae3da523f76d3e94118ecdeaea5a1c5527cbf5e8f5df3a2176933ec1",
+      "bytes": 6783
+    },
+    "examples/lifecycle-d1/test_successor_dependencies.py": {
+      "sha256": "19ef9383f39d596eb27e79c078c1cb8baab02d079b8a2fb0a0941fffed489c6b",
+      "bytes": 26486
+    }
+  },
+  "self_reference": false
+}

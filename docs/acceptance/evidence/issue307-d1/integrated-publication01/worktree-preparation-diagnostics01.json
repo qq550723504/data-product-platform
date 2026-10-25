@@ -1,0 +1,12 @@
+{
+  "status": "LOCAL_WORKTREE_PREPARATION_DIAGNOSTICS_RETAINED",
+  "initial_app_worktree_operation": "0027b9b0-17f3-48ec-a73f-76e4bde8130b",
+  "initial_app_worktree_result": "FAILED_FILENAME_TOO_LONG_NO_COMMIT_CREATED",
+  "recovery": "native git -c core.longpaths=true worktree add with a new local branch; no global or local Git config change",
+  "integrated_worktree": "C:\\Users\\Henry\\.codex\\worktrees\\d1-integrated\\data-product-platform",
+  "app_attach_result": "checkout exists but is not a managed worktree; retained as native local Git worktree",
+  "original_worktrees_unchanged": true,
+  "remote_operations": 0,
+  "source_started": 0,
+  "note": "Original app failure remains in tool history; this is a summary, not an invented raw failure transcript."
+}

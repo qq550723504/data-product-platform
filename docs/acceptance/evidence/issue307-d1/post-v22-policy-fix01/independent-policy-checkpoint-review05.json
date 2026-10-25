@@ -1,0 +1,301 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_POLICY_CHECKPOINT_REPAIR_REVIEW",
+  "source_head": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "source_raw_sha256": {
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go": "c45e41d7ceaad4fa26ef3c81640628e9fa84c9725d18d691a7c4baf8668839ef",
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.json": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads_test.go": "96e51d2af38ca6f8d54bdd9b00673349e18b76c4fdc1b8d8bbad84f16a2c2592",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": "0c0bec0aec518a3b03a33b89b65de9a3691989c16615bdd9a245815ac00c113d",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "f404bb4d9e5fa4de4a2f99edc47cb223136b67012d000d0e172bd16942c19f65",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "956521917ee5465d87ea0915f8eaa00cc7ef6d06227006f89f3e9b914d162467",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_window_test.go": "d445609c3f975e0ff1845cadf8ecb864c51d62572bd0e584ebbdbe733747834c",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": "05a777b3701a8b6e09f9070d0c60cc47093019d703aedf49183d1ccae171376c",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main_test.go": "9098a98e7a22e3376037e03b5e469238aa3ef7c324946ab67dc9fcacf0766bdb",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": "037233b8325a3e4a2928a37837285783901353639f9a9582a803cdb18d0e4612",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": "1543b11da41de3ec0b98a43ce9037900b95183abe565735bc2d2a0fa62292858",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six.go": "e891e96e0066baba152bf787e5eae23bb2586cafcbff2ee7501872ff8ec90065",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": "277327eca8e1f63ba3a70b80af1637dd7fcead9b10a17c3e4394a88578525c93",
+    "examples/lifecycle-d1/prepare-six-candidate.py": "0d1e25bd2b4e3e465abb7187da614fd61441d536eca316f32f1b2d4124279c8a",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "0736a80b400b998016604c9aa710e0e2a5705af5f5b2b3f172e133ca1d3e256c",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "101f2412466921cf349a7ea01be511af61c05ebd71540b1ef8d0788a9287adbc",
+    "examples/lifecycle-d1/verify-six-native.py": "6a595020fb0c5b248b5a09d4eb0f18ade1b5e31da2dc1bec19797ff61a1c7f04",
+    "examples/lifecycle-d1/window_six_support.py": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+    "examples/lifecycle-d1/remaining_six_window.py": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "485be98f1923ac9be79fe364c35a0393209b693e94e001110878d87bd924d824",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "99947fc8f883917dcbfa664533ac7c76f5a7d04155eead51cbc25217308d9b66",
+    "examples/lifecycle-d1/test_verify_six_native.py": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+    "examples/lifecycle-d1/test_window_six_support.py": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+    "examples/lifecycle-d1/test_remaining_six_window.py": "b55c1daa1f8b352276a1f9ef3df14217cae6c83f40f0d65b2ff8a75df23dc075",
+    "examples/lifecycle-d1/remaining_sequence.py": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+    "examples/lifecycle-d1/test_remaining_sequence.py": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5"
+  },
+  "reviewed_at": "2026-10-19T19:35:35.272280+00:00",
+  "current_execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "current_profile": "candidate15/v25",
+  "contract": {
+    "goal": "Correct the actual stale-five-head generator failure through one immutable current policy checkpoint and preserve the failed generation; review only this finite source/offline slice.",
+    "window": "2026-10-20T06:00:00Z <= now < 2026-10-20T06:40:00Z; readonly recovery <=08:40Z; human preference only",
+    "no_new_authorization": true,
+    "no_schedule": true,
+    "no_Renew": true,
+    "no_old_execution_resume": true,
+    "not_a_native_PASS": true
+  },
+  "resolved_findings": [
+    {
+      "id": "C14_HEAD_BINDING",
+      "classification": "SOURCE_FIX_CLOSED",
+      "previous_failure": "candidate14 materialize copied obsolete candidate12 PolicyHeads instead of the actual v22 successors",
+      "source_result": "The exact actual checkpoint is shared by generator/window/full CLI, embedded Go validation, offline candidate validation and actual reader Core comparison. Drift guard remains mandatory.",
+      "native_revalidation": "NOT_RUN; required later on new candidate15 preparation."
+    }
+  ],
+  "checkpoint": {
+    "sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+    "embedded_JSON_raw_equals_original_observation": true,
+    "five_actual_successors_match_old_six_Renew_facts": true,
+    "five_supersedes_match_original_predecessors": true,
+    "SourceCoreSHA256": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8",
+    "source_core_workspace_CID_and_renewal_receipt_preserved": true,
+    "expired_use_restore_facts": "Remain historical; no new use/restore right or Renew is created."
+  },
+  "path_audit": {
+    "generation": "case_profile and materialize use shared exact five heads; allocation records immutable checkpoint SHA before any allocation helper call.",
+    "preparation_semantics": "preparation_gate validates actual case head identities before cold_topology and permission checks; actual Source Core fingerprint must equal accepted baseline plus exact policy checkpoint before IAM provision.",
+    "complete_main": "Actual verify-six-native.main validates supplied raw hashes then sealed_gate real packet/case semantics before state, permission or Docker; independent rehashed adversarial compositions prove this ordering.",
+    "offline_operator": "validateCandidate requires compiled checkpoint SHA and exact per-group head maps; current target membership still six and P1 excluded.",
+    "actual_business_reader": "ValidateRemainingPolicyHeads rejects stale ExpectedPolicyHeads before planeCopies/DB use; actual current head SQL retains workspace and exact dataset version match before fresh disposal admissions. Rich error keeps actual/expected/query cause.",
+    "no_business_replay": "Fresh P2/T1/T2 disposal admissions only, not producer/read/transfer replay. Old policy/rights/pins unchanged.",
+    "frozen_history": "Old checker/packet bytes not rewritten; current repair never relaxes stale historical expected heads."
+  },
+  "IAM_scope": {
+    "known_total": 17,
+    "sole_policy": 16,
+    "exact_partial_NONE": 1,
+    "exact_uncreated_absence": 9,
+    "known_by_group": {
+      "business-races": 9,
+      "late-hold": 4,
+      "mixed": 4
+    },
+    "absent_by_group": {
+      "business-races": 1,
+      "late-hold": 4,
+      "mixed": 4
+    },
+    "c14_retained_business_users": [
+      "iafc0e66c808a6960",
+      "dafc0e66c808a6960"
+    ],
+    "retained_c14_policy": "Read/compare existing disabled sole-policy, no-groups; never selected by new enable, worker or provisioning paths.",
+    "sole_NONE_exception": "Only fixed c13 inspector i4e524c04808a6960; no generic adoption/fallback.",
+    "current_enable_scope": "Transport selected() recognizes only new compiled inspect/delete identities; unit counterexamples reject enabling either c14 identity.",
+    "current_source_native_verification": "NOT_RUN; expected identities/absences are not fresh provider observations."
+  },
+  "c14_preservation": {
+    "failure_bundle_sha256": "2e2ebeb0946df534297bb306761cc14b992e50b559871098f2822e4312c3e704",
+    "private_fixed_members_hashes_checked": 25,
+    "old_allocation_terminal_index_450_and_binary_bytes": "Retained; prior independent04 remains unchanged",
+    "new_history_gate": "Pins failed terminal/allocation/budget/bundle/index members; checks all86 exact descriptors closed,30 permissions false,19 maintenance/rehearsal profiles false, three empty owned budgets and full mounted-CID sets.",
+    "parent_actual_retained_gate_receipt_sha256": "2af0c9266d0af1a797462405832dd73248689ba03e985d7edc446acbdb2f9291",
+    "parent_retained_closed_members": 270,
+    "this_review_live_Docker_reexecution": false,
+    "source_evidence_sha256": "7f774c86f883b18ea0ebd043a7b43c30ea00d64466a3c3ce07d65d6bc5439173"
+  },
+  "actual_independent_tests": {
+    "go": {
+      "scope": [
+        "./internal/lifecycle/pilot",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-readonly-check",
+        "./cmd/lifecycle-fixture-remaining",
+        "./cmd/lifecycle-fixture-remaining-iam"
+      ],
+      "count_flag": "-count=1",
+      "pass_test_events": 270,
+      "fail_test_events": 0,
+      "skip_test_events": 2,
+      "skipped": [
+        {
+          "package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+          "test": "TestPostV22NoSendPostgresEligibility"
+        },
+        {
+          "package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader",
+          "test": "TestSixNativeDisabledBootstrapContract"
+        }
+      ],
+      "raw_stdout_sha256": "49a4b78dd272c58b7a2cb84b6ea012713e526cec8444b55c8c2bd1b9efd6e860",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "TEST_POSTGRES_DSN": "REMOVED_FROM_CHILD_ENV",
+      "DPP307_SIX_NATIVE_CONTRACT": "REMOVED_FROM_CHILD_ENV"
+    },
+    "python": {
+      "normal_methods": 29,
+      "optimized_methods": 29,
+      "failures": 0,
+      "errors": 0,
+      "unmodeled_process_attempts": 0,
+      "six_sequence_methods_included": 6,
+      "scope": "Full host/window/freeze/collect composition uses process/provider doubles, actual file validators and temporary archives, not native Source.",
+      "raw_normal_stdout_sha256": "9b0f67faf16fbc8b07fe2503ccb3e2d5c5fe97e7e3170aa3ba9b9e2fda873aec",
+      "raw_normal_stderr_sha256": "1ce4c079eb1be6d54c7b90e4514c7a3c7ac7d423ea56788a1996805034218eed",
+      "raw_optimized_stdout_sha256": "608b1d4d0f7834b8c021fa957ab178f84e871815002a3288adffa9fb437bcd38",
+      "raw_optimized_stderr_sha256": "65198cbe614f92adfc68c342a2f59fbf0b5c39315af0e6cac54c0018503235fc"
+    },
+    "extra_actual_complete_main": {
+      "normal_cases": [
+        {
+          "fault": "positive",
+          "state_calls": 1,
+          "output_created": false,
+          "recomputed_candidate_sha256": "ae8e28f1c380dcda41feb33d66c74aa3e08ff845acd3f7c68bf2ce52a8ff9b29",
+          "result": "PASS"
+        },
+        {
+          "fault": "predecessor",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "2364cf201163e1d5089177feb0a2425a9f9ca85cac741af800f76805b11a3fc7",
+          "result": "PASS"
+        },
+        {
+          "fault": "foreign",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "aa851989ed9fdc25ef227e054bbd172228ecbf10f930d45a65d769cff5fb61fd",
+          "result": "PASS"
+        },
+        {
+          "fault": "missing",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "89b0c214d8e7eafa78591c30b0ad6d195bef8735cc6252bee09096c2b4e8ed3d",
+          "result": "PASS"
+        },
+        {
+          "fault": "extra",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "a466a8a8bb7526016d29b6b81d15b2a68fdd27772563c863053d4bcdc83b0141",
+          "result": "PASS"
+        },
+        {
+          "fault": "checkpoint",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "58fe8101cd6f8c80b439d0f92b1b456387d28979ad405ab0d427d6f9cea0ca1a",
+          "result": "PASS"
+        }
+      ],
+      "optimized_cases": [
+        {
+          "fault": "positive",
+          "state_calls": 1,
+          "output_created": false,
+          "recomputed_candidate_sha256": "ae8e28f1c380dcda41feb33d66c74aa3e08ff845acd3f7c68bf2ce52a8ff9b29",
+          "result": "PASS"
+        },
+        {
+          "fault": "predecessor",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "2364cf201163e1d5089177feb0a2425a9f9ca85cac741af800f76805b11a3fc7",
+          "result": "PASS"
+        },
+        {
+          "fault": "foreign",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "aa851989ed9fdc25ef227e054bbd172228ecbf10f930d45a65d769cff5fb61fd",
+          "result": "PASS"
+        },
+        {
+          "fault": "missing",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "89b0c214d8e7eafa78591c30b0ad6d195bef8735cc6252bee09096c2b4e8ed3d",
+          "result": "PASS"
+        },
+        {
+          "fault": "extra",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "a466a8a8bb7526016d29b6b81d15b2a68fdd27772563c863053d4bcdc83b0141",
+          "result": "PASS"
+        },
+        {
+          "fault": "checkpoint",
+          "state_calls": 0,
+          "output_created": false,
+          "recomputed_candidate_sha256": "58fe8101cd6f8c80b439d0f92b1b456387d28979ad405ab0d427d6f9cea0ca1a",
+          "result": "PASS"
+        }
+      ],
+      "rehashed_inputs": [
+        "candidate.json",
+        "case remaining.json",
+        "CaseConfigSHA256",
+        "profile-windows.json",
+        "ProfileWindowsSHA256"
+      ],
+      "positive": "Reaches sentinel at state after real semantics; no actual state/Docker invoked.",
+      "five_invalid_cases": "Predecessor, foreign, missing, extra and checkpoint mismatch all reject before state and no output creation.",
+      "normal_stdout_sha256": "ff62b6e65ba3b66a01ab3f5dc096129f7bd6117bb8588c7a244a6d2f107cf74a",
+      "optimized_stdout_sha256": "ff62b6e65ba3b66a01ab3f5dc096129f7bd6117bb8588c7a244a6d2f107cf74a"
+    },
+    "Go_loopback": "SDK/http tests may use httptest loopback; no real provider/native or retained Source is invoked.",
+    "real_Postgres": "NOT_RUN by reviewer; specific test skipped without DSN.",
+    "CI": "NOT_VERIFIED; source/local tests are distinct from PR and main CI."
+  },
+  "harness_history": {
+    "original_outputs_preserved": true,
+    "Popen_import_failure": "Initial reviewer-only guard replaced a class with a callable before Windows asyncio subclass import. Corrected by preimport and subclass guard; no process/provider called.",
+    "complete_main_first_attempt": "Temporary PACKET patch did not alter sealed_gate default captured at import; missing file rejected before state. Corrected only harness default to temporary packet, original failure retained.",
+    "unused_initial_runner": "Initial parent-index correction retained prior unexecuted runner bytes.",
+    "no_runtime_change_required": true
+  },
+  "git_binding": {
+    "runtime_base_and_review_head": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+    "all_26_source_working_raw_equals_Git_blob": true,
+    "all_26_source_raw_unchanged_before_after_tests": true,
+    "later_pure_evidence_commits": "Do not imply different runtime; future exact commit/readback must preserve these reviewed raw source bytes."
+  },
+  "remaining_blockers": [],
+  "followups": [],
+  "next_stage_not_yet_accepted": [
+    "Exact source PR CI result",
+    "New candidate15 cold allocation/profile/budgets and independent physical binding review",
+    "Actual Source17/17known+9absent, three Core fingerprints, nine backups and independent clean/trial restores/rehearsals",
+    "Frozen packet and full native read-only entry independent review",
+    "New full human exact authorization and separate schedule before any DELETE"
+  ],
+  "reviewer_actions": {
+    "file_Git_reads": true,
+    "runtime_files_modified": 0,
+    "active_preparation_files_modified": 0,
+    "Docker_commands": 0,
+    "Source_calls": 0,
+    "real_provider_calls": 0,
+    "HTTP_outside_unit_loopback": 0,
+    "container_start_stop_exec": 0,
+    "identity_enable_or_mutation": 0,
+    "proof_signing": 0,
+    "DELETE": 0,
+    "own_raw_reports": "O_EXCL under independent05 and designated report only"
+  },
+  "evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent05/independent-evidence-index05.json",
+    "sha256": "412f01276d59f6f2ecd8e19fcc26e2847ef21ba8351e50695d34ce1b23665e46",
+    "members": 28
+  },
+  "acceptance": {
+    "candidate15_native": "NOT_RUN",
+    "candidate15_frozen": "NOT_FROZEN",
+    "D1": "NOT_ACCEPTED",
+    "old_authorization_reused": false,
+    "new_authorization": "NOT_RECEIVED",
+    "PR332": "Draft constraint; no Ready/merge authority",
+    "Issue307": "OPEN constraint"
+  }
+}

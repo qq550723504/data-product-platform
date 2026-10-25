@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "python",
+    "-u",
+    "-B",
+    "examples/lifecycle-d1/verify-successor-history.py",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\d1-integrated\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\integrated-publication01\\fresh-successor01"
+  ],
+  "started_at": "2026-10-24T05:55:40.176724+00:00",
+  "observed_at": "2026-10-24T05:56:29.100608+00:00",
+  "exit_code": 0,
+  "source_started": 0,
+  "business_delete": 0,
+  "protection_write": 0
+}

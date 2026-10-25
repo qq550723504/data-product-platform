@@ -1,0 +1,66 @@
+{
+  "status": "C22_SOURCE_REVIEW_EVIDENCE_INDEX",
+  "count": 15,
+  "files": {
+    "current-document-attributes.json": {
+      "sha256": "c14d72646aa95ea7ab11c52792af1f352ade43556f8c6952fa4c3ac5cdd8c539",
+      "bytes": 723
+    },
+    "incremental-all-change-name-status.txt": {
+      "sha256": "2e335e38ccc83f290fdc3cb8a73512f6cec40f3a23009747b3a35f6664bf0396",
+      "bytes": 1825
+    },
+    "incremental-source.diff": {
+      "sha256": "2474809f59fc6b57ac9f7a3f422b4e53efc09f1247f01427dc02066e35f99487",
+      "bytes": 15573
+    },
+    "independent-subnet-and-stability-audit.json": {
+      "sha256": "c3949aa9000d93ac9dbad641cb2f31b07d7237295a7258a3e3c9ca6ac93e43be",
+      "bytes": 1131
+    },
+    "independent-targeted-tests.json": {
+      "sha256": "19e9297f4ee783f72b1e3abab4a30841fc831b9450d580ecdd82a5e8897c39ce",
+      "bytes": 1004
+    },
+    "independent_targeted_runner.py": {
+      "sha256": "55ecfd7a6eecc39f032f67ed8e27896a554e7c0aa7baa3e1ffaf2e2004601f95",
+      "bytes": 2387
+    },
+    "input-and-diff-sha256.json": {
+      "sha256": "d577507830cdb69cdee7de71cf812324fa5f26345b92f8828d89bf0a766c36e1",
+      "bytes": 5656
+    },
+    "new-host-source-snapshot.json": {
+      "sha256": "08493923a1e787cd8f3859b97a1185c06b97f84dd9375f8bb85dee070d920d5a",
+      "bytes": 627782
+    },
+    "normal.stderr.txt": {
+      "sha256": "8db6a61583b045cbd92a4c5c50bf01191f620dcf448ddc858959012f9479b95c",
+      "bytes": 6950
+    },
+    "normal.stdout.txt": {
+      "sha256": "902c278453c3b5b9ddc07b7e6862b7518a6a0380b11d1ae5f32f4abc815687ce",
+      "bytes": 189
+    },
+    "optimized.stderr.txt": {
+      "sha256": "9af115975cd4d993c1d16bdd03e9ae9b70baf46958b8a24de3a2dbd36d1fe515",
+      "bytes": 6950
+    },
+    "optimized.stdout.txt": {
+      "sha256": "14ebeb155a21a7f5f03fbcebe97d8896f8a1ec2bdf9d42c937d6349abac0785f",
+      "bytes": 189
+    },
+    "overall-source.diff": {
+      "sha256": "4a1ba17c709de28acc902767fc919fcf52c14e3aa560813a0066f97eeddcce36",
+      "bytes": 193882
+    },
+    "readonly-current-input-recheck.json": {
+      "sha256": "94669896ca3f9764b93fc0c3800975d1361eeacec5d0383ad0f984a6a033e9fd",
+      "bytes": 1202
+    },
+    "reviewed-artifacts01.json": {
+      "sha256": "43e570295477a0a4c42cb2d15e6e469cdd72442dbfa621b11fc3dc289cb83d19",
+      "bytes": 480229
+    }
+  }
+}

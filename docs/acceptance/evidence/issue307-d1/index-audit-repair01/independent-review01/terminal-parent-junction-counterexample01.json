@@ -1,0 +1,12 @@
+{
+  "case": "actual Windows junction in authorization parent",
+  "original_terminal_sha256": "26d59ad4b96d48a490d3cf007f4ec37c99c60872a9695d5e11427da87fcde36d",
+  "parent_is_junction": true,
+  "terminal_exists_through_alias": false,
+  "gate_error": null,
+  "gate_returned_successfully": true,
+  "expected": "reject aliased authorization parent before terminal absence",
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "external_process_attempts": []
+}

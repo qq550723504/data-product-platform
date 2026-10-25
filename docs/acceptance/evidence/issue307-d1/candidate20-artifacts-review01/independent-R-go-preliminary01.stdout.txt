@@ -1,0 +1,14 @@
+=== RUN   TestRemainingFixtureSchemaSingleContract
+--- PASS: TestRemainingFixtureSchemaSingleContract (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	2.667s
+=== RUN   TestResumeRejectsStaleCurrentPolicyCheckpointBeforeDatabase
+--- PASS: TestResumeRejectsStaleCurrentPolicyCheckpointBeforeDatabase (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	2.965s
+testing: warning: no tests to run
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	1.946s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	1.185s [no tests to run]

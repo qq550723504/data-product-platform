@@ -1,0 +1,16 @@
+{
+  "test": "test_receipt_bytes.py",
+  "root": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform",
+  "reads": [
+    ".gitattributes",
+    "docs/acceptance/.gitattributes",
+    "docs/acceptance/issue307-d1-v29-crosscheck01.md",
+    "docs/acceptance/issue307-d1-v29-execution01.md",
+    "docs/acceptance/issue307-d1-v29-schedule01.md",
+    "docs/acceptance/issue307-d1-v29-window01.md",
+    "docs/acceptance/issue307-d1-v31-preparation.md",
+    "examples/lifecycle-d1/test_receipt_bytes.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

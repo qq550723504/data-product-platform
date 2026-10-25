@@ -1,0 +1,21 @@
+{
+  "role": "checkpoint-native",
+  "group": "mixed",
+  "cid": "7fa2532960d2b53b815ddc9e473ee6ae5e3d9142ada6507044b1085a467e7268",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate14-native",
+    "--network",
+    "83a705329bd873425ebe266236cfee5b2436363ae11fa814c46209ee67db0b2d",
+    "--network-alias",
+    "minio",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-dfda43b4-candidate14-objects,target=/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\mixed\\restore-credentials,target=/run/credentials,readonly",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+    "/run/credentials/start.sh"
+  ]
+}

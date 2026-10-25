@@ -1,0 +1,1 @@
+{"status": "FRESH_TOPOLOGY_ATTESTED", "group": "business-races", "stage": "P2", "helper": "1e65f249b10abb3b2317d9ade3ca65d5719d5d8b92cc8f8eb879f378443121f8", "at": "2026-10-21T14:14:12.468800+00:00", "native_delete": 0}

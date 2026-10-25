@@ -1,0 +1,17 @@
+{
+  "status": "UNCONFIRMED_INSPECT_FAILED",
+  "at": "2026-10-19T12:52:25.278617+00:00",
+  "exit_code": 1,
+  "selected_fields_only": "Docker --format explicitly omits Config.Env and all private file content. No credential/key reads.",
+  "actual_helpers": 0,
+  "failed_helpers": 6,
+  "stopped_allocation_regression": 1,
+  "prior_P1_template_helpers": 3,
+  "retained_anonymous_volumes": [],
+  "records": [],
+  "stdout_sha256": "5330d986d85de5a946b8232b3974c7af591b601e7067cd6e568b2842359d89f8",
+  "stderr_sha256": "881c100a9ce73e0d385103350de665afaed4218a44ce743a4386c864555d707a",
+  "start_or_exec": 0,
+  "provider": 0,
+  "DELETE": 0
+}

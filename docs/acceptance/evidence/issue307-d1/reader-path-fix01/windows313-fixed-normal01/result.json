@@ -1,0 +1,14 @@
+{
+  "started_at": "2026-10-24T14:06:42.988160+00:00",
+  "finished_at": "2026-10-24T14:06:55.627559+00:00",
+  "command": [
+    "C:/Users/Henry/.codex/fixture-private/reader-path-fix01/windows-python313/python.exe",
+    "-B",
+    "examples/lifecycle-d1/test_retention_composition.py"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

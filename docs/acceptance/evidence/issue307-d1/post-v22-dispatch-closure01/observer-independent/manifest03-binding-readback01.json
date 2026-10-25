@@ -1,0 +1,319 @@
+{
+  "schema_version": 1,
+  "status": "PASS_INDEPENDENT_MANIFEST03_READONLY_BINDING_AUDIT",
+  "at": "2026-10-19T12:58:25.774370+00:00",
+  "manifest_sha256": "b6b92f1e87714799293f1cf68486e48802650741f985f11278aa60ed867c2684",
+  "audit_id": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+  "source_HEAD": "375ae03cee8789708d08dca84a34bf102cc094d6",
+  "source_files_matched": 605,
+  "source_frozen_gate": "PASS",
+  "input_sha256": {
+    "closure-disabled-original.json": "9b73f0ea76cf6e6cc5864048d6b70c3e3729634f520599199d3d22dffe51d50b",
+    "observer": "144465d5dd398eeefb5dc28dd28f581a91d0d6de2ea164227f21f87ce18ec865",
+    "root-private/candidate.json": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+    "root-private/iam.json": "51876faa99cd322649fa541ef295d8ec7a43f4a1b88e9fe7f255cd372507687e",
+    "root-private/root.json": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+    "worker-private/closure.json": "9b73f0ea76cf6e6cc5864048d6b70c3e3729634f520599199d3d22dffe51d50b",
+    "root-private/policies/lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5.json": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+    "root-private/policies/lifecycle307-remaining-business-remainput808a6960.json": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+    "root-private/policies/lifecycle307-remaining-business-remainread808a6960.json": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+    "root-private/policies/lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5.json": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf"
+  },
+  "profile_projection": {
+    "Enabled": false,
+    "AuditID": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+    "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+    "ActorID": "033a56ad-99c2-43e3-89e0-a749979a8644",
+    "Purpose": "POST_V22_BUSINESS_NOT_SENT_CLOSURE",
+    "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+    "BinarySHA256": "144465d5dd398eeefb5dc28dd28f581a91d0d6de2ea164227f21f87ce18ec865",
+    "PublicKey": "fedc1afd362991dad28b694a38a761acf1ea9e79d18c8f04e438da35f7668199",
+    "EvidenceSHA256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "NotBefore": "0001-01-01T00:00:00Z",
+    "ExpiresAt": "0001-01-01T00:00:00Z",
+    "MaxProviderDeletes": 0
+  },
+  "server_credential": "PRESENT_NOT_EMITTED",
+  "DSN_projection": {
+    "host": "dpp-lifecycle307-808a6960-postgres",
+    "port": 5432,
+    "database": "lifecycle307",
+    "user": "fixture",
+    "query": "sslmode=disable",
+    "password": "PRESENT_NOT_EMITTED"
+  },
+  "new_owners": {
+    "observer": {
+      "Id": "5fcd0581355d90932c23e86ae5bc5807f76c94d0f132e25f8e5e3b8a6d4af9ac",
+      "Image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "State": {
+        "Status": "created",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "User": "10001:10001",
+      "Entrypoint": [
+        "/run/executor"
+      ],
+      "Cmd": [
+        "post-v22-close"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      },
+      "NetworkMode": "container:9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "ReadonlyRootfs": true,
+      "CapDrop": [
+        "ALL"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "Ports": {},
+      "Mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure03\\observer",
+          "Destination": "/run/executor",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure03\\output-observer",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure03\\worker-private",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "binary_sha256": "144465d5dd398eeefb5dc28dd28f581a91d0d6de2ea164227f21f87ce18ec865",
+      "outputs_empty": true
+    },
+    "check-disabled": {
+      "Id": "9821171f34a1cb5b24cdfde8093c9f7dadb2b9b73c08d3f4fe60e406b3842a0d",
+      "Image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "State": {
+        "Status": "created",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "User": "10001:10001",
+      "Entrypoint": [
+        "/run/executor"
+      ],
+      "Cmd": [
+        "-action",
+        "check-disabled"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      },
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "CapDrop": [
+        "ALL"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "Ports": {},
+      "Mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate12\\owner",
+          "Destination": "/run/executor",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure03\\output-check-disabled",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure03\\root-private",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "binary_sha256": "b33199cff8fa0ae69f2418988b11cc2e3016f5f40bf1c969082a5b05bdb4eda8",
+      "outputs_empty": true
+    },
+    "disable-all": {
+      "Id": "1b532b9de7a48ad961a0c44e35a944fae2c659f75b50d4deda9fa77c64d834db",
+      "Image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "State": {
+        "Status": "created",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "User": "10001:10001",
+      "Entrypoint": [
+        "/run/executor"
+      ],
+      "Cmd": [
+        "-action",
+        "disable-all"
+      ],
+      "Tmpfs": {
+        "/tmp": "",
+        "/var/lib/postgresql/data": "size=1m"
+      },
+      "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ReadonlyRootfs": true,
+      "CapDrop": [
+        "ALL"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges"
+      ],
+      "RestartPolicy": {
+        "Name": "no",
+        "MaximumRetryCount": 0
+      },
+      "PortBindings": {},
+      "Ports": {},
+      "Mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate12\\owner",
+          "Destination": "/run/executor",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure03\\output-disable-all",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-business-closure03\\root-private",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "binary_sha256": "b33199cff8fa0ae69f2418988b11cc2e3016f5f40bf1c969082a5b05bdb4eda8",
+      "outputs_empty": true
+    }
+  },
+  "prior_failed_preparation": {
+    "01": {
+      "manifest_sha256": "0db3f1a118f660ac4d2f8b515334288e1ef880d915abdc733c90b730469636c4",
+      "terminal_sha256": "ea420fe2215894d65b1f10e040b8c4cae5b324d37ca18278c50741b2621ad084",
+      "closed_cids": [
+        "3d62276ce45023b6e0d3cd33d92565b3bf4909eaeab858459c47386b35efc37a",
+        "5f1b177db48e8b9b8e325cf5eb484e37f4617e7642cd3ddb32c6da18a978b327",
+        "c384af97be20bd3364ce7d6fd75264b6f377b04995acda9c5275b6281b724c16"
+      ],
+      "retained_volumes": [
+        "03d97d6363e7e276879062e4ad4e1efa4796c1f06a70ad483982e592a9ce8cca",
+        "4ebda3bc62cc8aa0ae370d29430f7ce6d0b813a80748e4fb4cb74a90c730d9a7",
+        "94a4ab71073b76dafdea974c6e5c73e3809995ba2f2c4ca15bdfd73fd13b0882"
+      ],
+      "inputs_unchanged": true,
+      "Enabled": false,
+      "proof_present": false
+    },
+    "02": {
+      "manifest_sha256": "a5adf3b5216382c013b2f5325dee04963ff744c975d28b84b81c119f8bf0fede",
+      "terminal_sha256": "ce9c6d859169974b05922bd75d096937d4ebf78f7a25dc84c263de46c40d8970",
+      "closed_cids": [
+        "03162d7ed2ac66d402adc1b78b87e9d04c7178c2ec883fb77e8fd3cb7aaa7290",
+        "09dc5f1ac450d8af3539d7efa7caa23981009fa6c7ccbd2c24af4169e6c379b5",
+        "dc6ca7d1a33a1f45593c53a4fecf22fc6947de12372e3fcfcdee92d6e4b8fe89"
+      ],
+      "retained_volumes": [
+        "d9160b37a20439a179955f94fb360382ab056d492fb5987c2c936a4804c54251",
+        "e2b3ccd5bed87ac7bb37a32f5a66c0178605fe7e3fdc307d7bb0247076c9231c",
+        "e91899f55e313788f0bb6ce099c7a73bba5c3062ea8cdded9ec3fba0560c5ee8"
+      ],
+      "inputs_unchanged": true,
+      "Enabled": false,
+      "proof_present": false
+    },
+    "allocation_contract": {
+      "receipt_sha256": "c9f97b18d64058bacf818de4a8852a1a60844593a1b638928f9c3dafad428817",
+      "closed_cid": "39cf3079786230c50f25c51062fdb12fbec9860f6957bd690466cc03ce3cd578",
+      "profile_disabled_unchanged": true
+    }
+  },
+  "retained_unchanged": true,
+  "retained_owner_count": 77,
+  "old_control_count": 46,
+  "old_readonly_profile_count": 8,
+  "old_backup_count": 9,
+  "source_prestart_topology": "PASS_ACTUAL_READONLY",
+  "proof_exists": false,
+  "new_terminal_exists": false,
+  "private_key_file_present_but_never_read": true,
+  "private_key_directory_not_mounted": true,
+  "go_binary_metadata": {
+    "exit": 0,
+    "stdout_sha256": "42ba794b14b7888a469e122250ee4964ccbf6f62d247876d3ca6756d8026e38e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "vcs_revision_present": false,
+    "limit": "Metadata proves main module/platform settings, not an embedded Git HEAD. Exact source605/HEAD/fixed reviewed build recipe and binary digest are separately bound."
+  },
+  "start_exec_sign_provider_Core_query": 0,
+  "DELETE": 0
+}

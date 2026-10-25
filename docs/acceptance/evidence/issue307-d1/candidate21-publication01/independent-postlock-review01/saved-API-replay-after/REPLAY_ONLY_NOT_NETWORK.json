@@ -1,0 +1,15 @@
+{
+  "mode": "SAVED_RAW_API_REPLY_REPLAY_ONLY_NOT_NETWORK_NOT_FRESH",
+  "source_indices": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "normalized_equals_native_saved_snapshot": true,
+  "live_GitHub_calls": 0
+}

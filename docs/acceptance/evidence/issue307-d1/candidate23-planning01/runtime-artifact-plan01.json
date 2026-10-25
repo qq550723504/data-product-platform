@@ -1,0 +1,33 @@
+{
+  "status": "PLANNED_C23_RUNTIME_ARTIFACT_NOT_ALLOCATED",
+  "at": "2026-10-23T11:30:58.058456+00:00",
+  "execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
+  "profile": "candidate23/v33",
+  "source": "6255b62b94ffdb2453b89c7caaa777e69cc6a6d8",
+  "base_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "archive_sha256": "0936e6cd685134d9b850b1a770e097bf3632e56a547b12460bdcb4b5ebe78e02",
+  "archive_bytes": 6428279,
+  "archive_members": 769,
+  "delta_files": [
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go"
+  ],
+  "schema": {
+    "max_version": 69,
+    "migration_members": 66,
+    "protected_identity": false
+  },
+  "scope": {
+    "Execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
+    "Profile": "candidate23/v33",
+    "NotBefore": "2026-10-24T10:00:00Z",
+    "NotAfter": "2026-10-24T10:40:00Z",
+    "RecoveryEnd": "2026-10-24T12:40:00Z"
+  },
+  "new_budget": "NOT_ALLOCATED",
+  "source_ci": "NOT_RUN",
+  "native_delete": 0
+}

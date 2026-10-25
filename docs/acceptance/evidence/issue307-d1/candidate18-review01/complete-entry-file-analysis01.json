@@ -1,0 +1,90 @@
+{
+  "status": "PASS_INDEPENDENT_C18_COMPLETE_ENTRY_AND_FINAL_CONTAINMENT_FILES",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "at": "2026-10-21T09:26:29.095592+00:00",
+  "fresh_complete_entry": {
+    "sha256": "1c293e5ec86e62bd9694ce900bf632d04cf43e9ad77d480f84ccbd51f728f291",
+    "bytes": 13976
+  },
+  "fresh_technical_journals": [
+    {
+      "group": "business-races",
+      "requests": 55,
+      "methods": {
+        "GET": 54,
+        "HEAD": 1
+      },
+      "http_statuses": {
+        "200": 41,
+        "400": 12,
+        "404": 2
+      }
+    },
+    {
+      "group": "late-hold",
+      "requests": 44,
+      "methods": {
+        "GET": 44
+      },
+      "http_statuses": {
+        "200": 29,
+        "404": 4,
+        "400": 11
+      }
+    },
+    {
+      "group": "mixed",
+      "requests": 38,
+      "methods": {
+        "GET": 38
+      },
+      "http_statuses": {
+        "200": 28,
+        "400": 6,
+        "404": 4
+      }
+    }
+  ],
+  "file_only_checker_replays": 3,
+  "postfreeze_attester_models": [
+    {
+      "optimized": false,
+      "exit_code": 0,
+      "methods": 3
+    },
+    {
+      "optimized": true,
+      "exit_code": 0,
+      "methods": 3
+    }
+  ],
+  "closed_cids": 712,
+  "permissions_false": 30,
+  "old_budgets_preserved": 18,
+  "new_budgets_empty": 3,
+  "actual_backups": {
+    "new": 9,
+    "old_complete": 36,
+    "old_partial": 3,
+    "total": 48
+  },
+  "host_bindings_verified": 35,
+  "service_image_cid_bindings_verified": 24,
+  "documents": {
+    "issue307-d1-candidate18-confirmation.md": {
+      "sha256": "d38318b208c24d9d0054fbf3bdf27f2911aa043fbb1db1ade2c2b94cc58ff35f",
+      "bytes": 41029
+    },
+    "issue307-d1-v28-window-runbook.md": {
+      "sha256": "e10480c9900c4b5663eb67bc06f06de32cd7495d14c72474e91c84ca6c5a4191",
+      "bytes": 9059
+    }
+  },
+  "machine_template_lines": 121,
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "old_schedules_paused": 7,
+  "reviewer_native_calls": 0,
+  "reviewer_DELETE": 0,
+  "limits": "Cold state is independently checked against the author recorded physical readback; reviewer does not inspect Docker. Final publishing HEAD PR CI and future human/schedule authorization remain separate gates."
+}

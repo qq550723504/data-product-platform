@@ -1,0 +1,11 @@
+{
+  "status": "FAILED_PR_HEAD_DRIFT_PHYSICALLY_SEALED_NO_DELETE",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "terminal_sha256": "7b9a17ff853b059c88fa0a05450bc1a1676bf9a51222cffaf529220e2f9a36f8",
+  "private_terminal_equal": true,
+  "evidence_index_sha256": "9ded75c065ed74e03fb1f267c2230f12905e1d1fdf949dfaa786e003cb7e638d",
+  "matrix_sha256": "fea219346f07dedc37fc8d4be483065f81cdcbc1d8ce0a1f87b15aba6074e08c",
+  "heartbeat_deleted": true,
+  "new_native_delete": 0,
+  "full_D1": "NOT_ACCEPTED"
+}

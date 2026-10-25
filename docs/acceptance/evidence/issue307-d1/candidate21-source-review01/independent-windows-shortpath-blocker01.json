@@ -1,0 +1,17 @@
+{
+  "status": "BLOCKED_CURRENT_WINDOWS_CI_SHORT_LONG_PATH_BASE_MISMATCH",
+  "source_head": "4420957157ac818cbed719d8a6b8d9c6ccc4b646",
+  "ci_run": 39765377836,
+  "required_path": "retained_v30.file_set",
+  "observed_error": "ValueError: canonical runneradmin child is not under original RUNNER~1 parent passed to relative_to",
+  "root_cause": "unlinked_absolute normalizes each member but file_set did not normalize its base folder",
+  "bounded_fix": "normalize folder once with existing evidence_indexes.unlinked_absolute before enumeration and relative_to; retain link/hardlink rejection",
+  "proof": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate21-planning01/source-ci-failure01/job-logs02.stdout.txt",
+    "sha256": "f34d865bc752fe1ff7e93ec52652769b894cb9842a961a902ca120617f5576c5",
+    "bytes": 28154
+  },
+  "source_report_PASS_withheld": true,
+  "new_allocation": 0,
+  "native_provider_actions": 0
+}

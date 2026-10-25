@@ -1,0 +1,13 @@
+{
+  "test": "test_retained_v29.py",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\ci-portability-fix01\\python-export02",
+  "reads": [
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/retained_v29.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/retained_v29.py",
+    "examples/lifecycle-d1/test_retained_v29.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

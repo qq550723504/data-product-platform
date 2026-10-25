@@ -1,0 +1,158 @@
+{
+  "at": "2026-10-22T09:40:23.822102+00:00",
+  "status": "PASS_REAL_LINUX_PINNED_R_ARCHIVE_STEP",
+  "head": "923c06722f3099e9049894489006615f0f0e7ce2",
+  "run": 39755999260,
+  "event": "pull_request",
+  "go_job": {
+    "completedAt": "2026-10-22T09:38:26Z",
+    "conclusion": "success",
+    "databaseId": 119748356256,
+    "name": "go-platform",
+    "startedAt": "2026-10-22T09:31:36Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completedAt": "2026-10-22T09:31:38Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "startedAt": "2026-10-22T09:31:36Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:31:50Z",
+        "conclusion": "success",
+        "name": "Initialize containers",
+        "number": 2,
+        "startedAt": "2026-10-22T09:31:38Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:31:54Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 3,
+        "startedAt": "2026-10-22T09:31:50Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:31:56Z",
+        "conclusion": "success",
+        "name": "Setup Go",
+        "number": 4,
+        "startedAt": "2026-10-22T09:31:54Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:31:59Z",
+        "conclusion": "success",
+        "name": "Verify dependency lock is tidy",
+        "number": 5,
+        "startedAt": "2026-10-22T09:31:56Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:32:00Z",
+        "conclusion": "success",
+        "name": "Format check",
+        "number": 6,
+        "startedAt": "2026-10-22T09:31:59Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:32:40Z",
+        "conclusion": "success",
+        "name": "Vet",
+        "number": 7,
+        "startedAt": "2026-10-22T09:32:00Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:32:40Z",
+        "conclusion": "success",
+        "name": "Validate local compose file",
+        "number": 8,
+        "startedAt": "2026-10-22T09:32:40Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:32:42Z",
+        "conclusion": "success",
+        "name": "Apply database migrations",
+        "number": 9,
+        "startedAt": "2026-10-22T09:32:40Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:37:47Z",
+        "conclusion": "success",
+        "name": "Test",
+        "number": 10,
+        "startedAt": "2026-10-22T09:32:42Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:37:55Z",
+        "conclusion": "success",
+        "name": "Complete lifecycle readonly preflight replay without Docker or credentials",
+        "number": 11,
+        "startedAt": "2026-10-22T09:37:47Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:37:59Z",
+        "conclusion": "success",
+        "name": "Build API / worker / migrate / operator tools",
+        "number": 12,
+        "startedAt": "2026-10-22T09:37:55Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:38:22Z",
+        "conclusion": "success",
+        "name": "Test the separately pinned retained fixture archive",
+        "number": 13,
+        "startedAt": "2026-10-22T09:37:59Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:38:22Z",
+        "conclusion": "success",
+        "name": "Post Setup Go",
+        "number": 24,
+        "startedAt": "2026-10-22T09:38:22Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:38:23Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 25,
+        "startedAt": "2026-10-22T09:38:22Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:38:24Z",
+        "conclusion": "success",
+        "name": "Stop containers",
+        "number": 26,
+        "startedAt": "2026-10-22T09:38:23Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-10-22T09:38:24Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 27,
+        "startedAt": "2026-10-22T09:38:24Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://github.com/qq550723504/data-product-platform/actions/runs/39755999260/job/119748356256"
+  },
+  "full_run_status": "in_progress",
+  "full_run_conclusion": "",
+  "scope": "Actual GitHub job/step API readback only. Full necessary CI still separately required; not main CI, native preparation or human authority.",
+  "native_delete": 0
+}

@@ -40,27 +40,27 @@ def compiled():
     values['RecoveryEnd'] = (end+dt.timedelta(hours=2)).isoformat().replace('+00:00', 'Z')
     return values
 
-def case_profile(template, heads, token, epoch):
+def case_profile(template, heads, token, epoch, *, expected_heads=6):
     w = compiled(); result = copy.deepcopy(template)
     result.update(Batch=w['Execution'], CandidateUseUntil=w['NotAfter'], ExpectedPolicyHeads=heads)
     result['Base'].update(StartedAt=w['NotBefore'], ExpiresAt=w['NotAfter'], Token=token, Epoch=epoch)
     result['Base'].pop('RootAccess', None); result['Base'].pop('RootSecret', None)
-    validate_case(result, w)
+    validate_case(result, w, expected_heads=expected_heads)
     return result
 
-def validate_case(profile, w):
+def validate_case(profile, w, *, expected_heads=6):
     need(profile['Batch'] == w['Execution'], 'case execution differs')
     need(profile['Base']['StartedAt'] == w['NotBefore'] and profile['Base']['ExpiresAt'] == w['NotAfter'], 'case Base window differs')
     need(profile['CandidateUseUntil'] == w['NotAfter'], 'CandidateUseUntil must equal window END')
     if profile.get('Group') == 'business-races':
-        need(len(profile['ExpectedPolicyHeads']) == 6, 'six expected policy heads required')
+        need(len(profile['ExpectedPolicyHeads']) == expected_heads, 'expected policy heads membership differs')
 
 def project_case(profile, group, stage, config_sha256):
     return {'group': group, 'stage': stage, 'config_sha256': config_sha256,
             'Batch': profile['Batch'], 'CandidateUseUntil': profile['CandidateUseUntil'],
             'Base': {key: profile['Base'][key] for key in ('StartedAt', 'ExpiresAt')}}
 
-def validate_packet(packet, owner_root=None):
+def validate_packet(packet, owner_root=None, *, case_modes=CASE_MODES, expected_recoveries=7, expected_heads=6, expected_case_count=7):
     """Semantic gate before Docker inspection/start; raw hashes cannot waive it."""
     w = compiled(); c = json.loads((packet/'candidate.json').read_bytes())
     for key in ('Execution', 'Profile', 'NotBefore', 'NotAfter'):
@@ -68,21 +68,21 @@ def validate_packet(packet, owner_root=None):
     path = packet/'profile-windows.json'; raw = path.read_bytes(); receipt = json.loads(raw)
     need(hashlib.sha256(raw).hexdigest() == c['ProfileWindowsSHA256'], 'profile window receipt anchor differs')
     cases, recoveries = receipt['cases'], receipt['recoveries']
-    expected_cases = {(g, stage) for g, modes in CASE_MODES.items() for stage in modes}
-    expected_recoveries = {(g['Group'], stage) for g in c['Groups'] for stage in g['Helpers'] if stage.startswith('recover-')}
-    need(len(cases) == 7 and {(r['group'], r['stage']) for r in cases} == expected_cases, 'case window membership differs')
-    need(len(recoveries) == 7 and len(expected_recoveries) == 7 and {(r['group'], r['stage']) for r in recoveries} == expected_recoveries, 'recovery window membership differs')
+    expected_cases = {(g, stage) for g, modes in case_modes.items() for stage in modes}
+    recovery_members = {(g['Group'], stage) for g in c['Groups'] for stage in g['Helpers'] if stage.startswith('recover-')}
+    need(len(cases) == expected_case_count and {(r['group'], r['stage']) for r in cases} == expected_cases, 'case window membership differs')
+    need(len(recoveries) == expected_recoveries and len(recovery_members) == expected_recoveries and {(r['group'], r['stage']) for r in recoveries} == recovery_members, 'recovery window membership differs')
     groups = {g['Group']: g for g in c['Groups']}
-    need(set(groups) == set(CASE_MODES) and len(c['Groups']) == 3, 'window group membership differs')
+    need(set(groups) == set(case_modes) and len(c['Groups']) == 3, 'window group membership differs')
     for row in cases:
         group, stage = row['group'], row['stage']; g = groups[group]
-        need(set(g['CaseHelpers']) == set(CASE_MODES[group]) == set(g['CaseConfigSHA256']), 'case binding membership differs')
+        need(set(g['CaseHelpers']) == set(case_modes[group]) == set(g['CaseConfigSHA256']), 'case binding membership differs')
         need(row['config_sha256'] == g['CaseConfigSHA256'][stage], 'case window config binding differs')
-        validate_case(dict(row, Group=group, ExpectedPolicyHeads=g['PolicyHeads']), w)
+        validate_case(dict(row, Group=group, ExpectedPolicyHeads=g['PolicyHeads']), w, expected_heads=expected_heads)
         if owner_root is not None:
             path = owner_root/group/('case-'+stage)/'remaining.json'; actual_raw = path.read_bytes(); actual = json.loads(actual_raw)
             need(hashlib.sha256(actual_raw).hexdigest() == row['config_sha256'], 'actual case config differs')
-            validate_case(actual, w)
+            validate_case(actual, w, expected_heads=expected_heads)
             need(actual['ExpectedPolicyHeads'] == g['PolicyHeads'], 'actual expected policy heads differ')
             need(actual['Group'] == group and project_case(actual, group, stage, row['config_sha256']) == row, 'actual case projection differs')
     for row in recoveries:

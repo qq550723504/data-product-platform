@@ -1,0 +1,125 @@
+.EEEEEE.
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='wire', desktop=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 207, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 193, in composition
+    m.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\attest-remaining-executable.py", line 74, in main
+    execution_freeze.authorized_gate(f.ROOT,f.PRIVATE,f.PUBLIC,candidate)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 281, in authorized_gate
+    need(match is not None, 'unsupported candidate profile')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 29, in need
+    raise ValueError(message)
+ValueError: unsupported candidate profile
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='wire', desktop=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 207, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 193, in composition
+    m.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\attest-remaining-executable.py", line 74, in main
+    execution_freeze.authorized_gate(f.ROOT,f.PRIVATE,f.PUBLIC,candidate)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 281, in authorized_gate
+    need(match is not None, 'unsupported candidate profile')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 29, in need
+    raise ValueError(message)
+ValueError: unsupported candidate profile
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='P2', desktop=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 207, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 193, in composition
+    m.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\attest-remaining-executable.py", line 74, in main
+    execution_freeze.authorized_gate(f.ROOT,f.PRIVATE,f.PUBLIC,candidate)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 281, in authorized_gate
+    need(match is not None, 'unsupported candidate profile')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 29, in need
+    raise ValueError(message)
+ValueError: unsupported candidate profile
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='P2', desktop=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 207, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 193, in composition
+    m.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\attest-remaining-executable.py", line 74, in main
+    execution_freeze.authorized_gate(f.ROOT,f.PRIVATE,f.PUBLIC,candidate)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 281, in authorized_gate
+    need(match is not None, 'unsupported candidate profile')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 29, in need
+    raise ValueError(message)
+ValueError: unsupported candidate profile
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='recover-P2', desktop=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 207, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 193, in composition
+    m.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\attest-remaining-executable.py", line 74, in main
+    execution_freeze.authorized_gate(f.ROOT,f.PRIVATE,f.PUBLIC,candidate)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 281, in authorized_gate
+    need(match is not None, 'unsupported candidate profile')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 29, in need
+    raise ValueError(message)
+ValueError: unsupported candidate profile
+
+======================================================================
+ERROR: test_complete_main_signs_native_and_docker_desktop_sources (__main__.AttesterTests.test_complete_main_signs_native_and_docker_desktop_sources) (stage='recover-P2', desktop=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 207, in test_complete_main_signs_native_and_docker_desktop_sources
+    self.composition(stage, desktop_sources=desktop_sources)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\test_attest_remaining_executable.py", line 193, in composition
+    m.main()
+    ~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\attest-remaining-executable.py", line 74, in main
+    execution_freeze.authorized_gate(f.ROOT,f.PRIVATE,f.PUBLIC,candidate)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 281, in authorized_gate
+    need(match is not None, 'unsupported candidate profile')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-lock\data-product-platform\examples\lifecycle-d1\execution_freeze.py", line 29, in need
+    raise ValueError(message)
+ValueError: unsupported candidate profile
+
+----------------------------------------------------------------------
+Ran 3 tests in 2.666s
+
+FAILED (errors=6)

@@ -1,0 +1,8 @@
+{
+  "scope": "HOST_ONLY_HISTORY_READ_NOT_CURRENT_CANDIDATE_RUNTIME",
+  "planned_execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "window": "2026-10-22T14:00Z/14:40Z_PREPARATION_ONLY",
+  "compiled_existing_profile": "candidate21/v31",
+  "source_provider_actions": 0,
+  "allocated_resources": 0
+}

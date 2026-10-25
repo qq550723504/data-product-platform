@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-10-24T13:13:25.244442+00:00",
+  "finished_at": "2026-10-24T13:14:41.762042+00:00",
+  "command": [
+    "docker",
+    "build",
+    "--pull=false",
+    "--network",
+    "none",
+    "-t",
+    "dpp307-ci-browser:portability04",
+    "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/browser-image04"
+  ],
+  "returncode": 0,
+  "retained_source_start": 0,
+  "provider_io": 0,
+  "business_protection_write": 0,
+  "delete": 0
+}

@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "args": [
+    "go",
+    "test",
+    "./internal/lifecycle/pilot",
+    "-run",
+    "^(TestRemaining|TestCurrentPolicyCheckpoint)",
+    "-count=1",
+    "-v"
+  ],
+  "GOPROXY": "off",
+  "started_at": "2026-10-22T07:06:46.401747+00:00",
+  "observed_at": "2026-10-22T07:06:50.716407+00:00",
+  "exit": 0,
+  "stdout_sha256": "5c79892a922c90fbf15cf92a3fb0f648b22009e95f504f4cc44b496c1a926f41",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_head": "955e98a2338b7d22a0686866683fb4413bf8dcdd",
+  "scope": "Exact unit name filter excludes all PostgreSQL/native provider integration functions",
+  "Docker_provider_IO": 0
+}

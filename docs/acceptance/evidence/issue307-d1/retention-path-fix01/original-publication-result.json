@@ -1,0 +1,13 @@
+{
+  "status": "PASS_EXACT_P_R_PUBLISHED_PENDING_EXACT_HEAD_CI_AND_RELOCK",
+  "at": "2026-10-23T15:33:43.197538+00:00",
+  "P": "f2dbe4106ff5c27ff6b250091bbf9f9d79d71665",
+  "R": "ecf40e6c7a9b3aa11166e6a56a5163a29a15691d",
+  "old_R_unchanged": true,
+  "protection_change": "lockBranch only",
+  "source_start": 0,
+  "metadata_write": 0,
+  "delete": 0,
+  "merge": false,
+  "CI": "PENDING_FRESH_OBSERVATION"
+}

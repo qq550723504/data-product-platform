@@ -1,0 +1,33 @@
+{
+  "role": "new-empty-budget-initializer",
+  "group": "mixed",
+  "cid": "f3f44b0b48e9194ac31590ab7e28adf21da088355d29e8404e2e2508292e110f",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-dfda43b4-candidate21-budget-init",
+    "--user",
+    "0:0",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--cap-add",
+    "CHOWN",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-dfda43b4-candidate21-budget,target=/run/budget",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate21\\mixed\\budget-init.sh,target=/run/budget-init.sh,readonly",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-e",
+    "/run/budget-init.sh"
+  ]
+}

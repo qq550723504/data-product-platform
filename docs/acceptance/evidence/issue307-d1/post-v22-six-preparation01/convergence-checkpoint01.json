@@ -1,0 +1,46 @@
+{
+  "status": "CONVERGENCE_CHECKPOINT_NONDELETE_IMPLEMENTATION",
+  "at": "2026-10-19T15:36:58.008189+00:00",
+  "goal": "Close the old P2/T1/T2 facts; preserve the accepted seventeen audit; prepare one strict six-target candidate for the selected Oct20 window without deletion or old authorization reuse.",
+  "authoritative_contract": "docs/acceptance/issue307-d1-post-v22-six-contract.md",
+  "proposal_execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "closed_blockers": [
+    "old-dispatch trusted NOT_SENT/release",
+    "seventeen source/manifest/result independent acceptance",
+    "six expected policy contract vs old actual receipt separation (B1)",
+    "unsupported metadata version condition: split key IAM plus exact adapter/gateway enforcement"
+  ],
+  "required_remaining": [
+    "fixed complete current host/native entry and its success/fault regression",
+    "stopped allocation manifest review; new disabled IAM and physical source/restore proof",
+    "same-source native backup/restore and non-delete new business admission with old policy/Rights/pins/budgets unchanged",
+    "freeze final source/binary/Core/IAM/gateway/topology/budget bindings and maintenance/seal entry",
+    "stable independent review and exact new confirmation text"
+  ],
+  "explicit_non_goals": [
+    "new workflow/queue/IAM engine",
+    "new production outputs or business replay",
+    "Renew copy use deadlines or create Rights facts for disposal",
+    "legacy authorization compatibility or old history rewriting",
+    "RCE-proof generalized sandboxing or future performance hardening",
+    "merge, real DELETE, rescheduling old windows"
+  ],
+  "actual_source_operations_this_stage": {
+    "native_delete": 0,
+    "native_iam_writes": 0,
+    "new_allocation": "NOT_RUN",
+    "native_backup_restore": "NOT_RUN",
+    "candidate_frozen": false,
+    "human_delete_authorization": "NOT_RECEIVED",
+    "new_automation": "NOT_CREATED"
+  },
+  "verification": {
+    "local_go_source_cut01": "216 pass test/subtest events; 1 PG adapter skipped without DSN; not native proof",
+    "actual_scratch_pg": "3 selected full-schema tests pass with no skip; synthetic provider verifier",
+    "python": "six sequence 6 and six window 3 methods plus historical 4/2/15 methods, each normal/-O pass"
+  },
+  "issue307": "OPEN",
+  "pr332": "DRAFT",
+  "pr323": "ALREADY_MERGED_UNDER_SEPARATE_HUMAN_AUTHORITY"
+}

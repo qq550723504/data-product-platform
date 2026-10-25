@@ -1,0 +1,19 @@
+{
+  "status": "PASS_ATTEMPTED_FAILED_NOT_RUN_SEPARATION",
+  "host_sha256": "c13d73337a78f1fc08e8e1c03ac363e81b262f8ae0501795cb7f69c10917b87c",
+  "test_sha256": "8df398013ef7d98da4750e0b12f51e9488b5038a2d38d2891efef408a22ecebf",
+  "results": [
+    {
+      "name": "normal",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "cd367606f50436008879f36a22b89a75e4e95cc1087f3de45a90aeef558569e0"
+    },
+    {
+      "name": "opt",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "c3bd7f920c3bef5f039f142712fdd1d8f61458780fb03aafbc18c2801e0f993f"
+    }
+  ]
+}

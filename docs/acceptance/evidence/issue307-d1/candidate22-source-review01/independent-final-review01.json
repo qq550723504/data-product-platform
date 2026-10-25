@@ -1,0 +1,60 @@
+{
+  "status": "PASS_BOUNDED_C22_DUAL_ARTIFACT_PREPARATION_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-23T04:45:41.143655+00:00",
+  "source_head": "bee86b7961ee77eaa611f9ef8b8540362e8f6038",
+  "source_base": "f4f27c789f53b6c45910f55f83bee6cabfdee4f6",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "runtime_parent": "514843da1a143fba537c1668483fe95800ddd992",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "profile": "candidate22/v32",
+  "window": {
+    "not_before": "2026-10-23T10:00:00Z",
+    "not_after": "2026-10-23T10:40:00Z",
+    "read_only_not_after": "2026-10-23T12:40:00Z",
+    "human_selected_for_preparation_only": true
+  },
+  "remaining_blockers": [],
+  "scope": "Finite source,preallocation clean-source CI ordering,dual-artifact and retained expired C21 preservation review. Native/source/provider acceptance,new resources,final frozen packet,exact head PR CI,final lock,human deletion authority and scheduling remain separate later gates.",
+  "verified_contracts": [
+    "P/R Go execution,profile,UTC window and shared scope/policies match; R is one direct fixture descendant with exactly5 reviewed delta files,schema max69/66 migration members/no protected identity. P retains protected identity_kind predicate; no source upgrade/fallback.",
+    "Native Git TZ=UTC/store-only runtime ZIP exactly matches769 members,6428089 bytes and SHAaca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698; no P substitution.",
+    "Strict host_snapshot rejects dirty tracked runtime or untracked host module before CI API/history/build. Failed,pending,foreign/unknown CI fails before allocation. Built P must match CI head and captured host raw/LF bytes before first resource creation.",
+    "C21 public index6061 files matches exact current P and original retained C21 byte/size facts; pinned anchor contains2257 private files. 907 prior plus86 C21 allocated plus3 technical gives996 identities with disjoint membership.15volume/3network and3 budget complete mounts cross-bind to original allocation. Actual live resource checks remain required by historical_gate.",
+    "retained_v31 reuses strict typed index/unlinked path/bytes-only Docker wrapper/owner/resource/budget contracts. Normal and optimized fault composition rejects old byte/terminal/authority/state/topology/resource/mount/budget ownership/nonempty/bytes-str failures.",
+    "C22 six new IAM names remain separate from actual disabled C21 users. Retained C21/C19 retain exact-version two-action native semantics; earlier Version-only policies stay historical; C20 never-created identities still require fresh official NoSuchUser.",
+    "v31 historical Markdown exact -text rule preserves raw bytes through Git blob/archive/autocrlf true and false checkouts. Prior normalizing-rule counterexamples remain effective; no LF-equivalence waiver of issued raw SHA.",
+    "New execution retains six exact targets max1/globalmax6,P1 excluded,UNKNOWN no resend,eleven survivors,old budgets/pins/failure/cost history,no cleanup/hold release/bypass."
+  ],
+  "independent_checks": {
+    "targeted_file_only": "13 methods normal PASS and13 methods optimized PASS,no skips; stdout/stderr and argv retained",
+    "raw_public_byte_and_static_mount_audit": "readonly-input-bindings.json;6061 original/current matches,3budget15volume3network crossbindings;no Docker/provider",
+    "runtime_archive": "769members and original ZIP SHA/size independently recomputed from exact R commit",
+    "author_regression_input_equivalence": "2249raw source inputs match source-regression03; author102normal+102optimized each1symlink skip,5RGo+2PGo package PASS are reviewed evidence,not rerun/CI/native",
+    "input_stability": "34selected reviewed raw inputs unchanged at end; no source/ref changes by reviewer"
+  },
+  "provenance_boundaries": {
+    "source_CI": "NOT_ASSESSED_BY_THIS_REVIEW; exact P head all necessary pull_request CI must PASS before actual history/build/allocation; final review-head CI and main CI are distinct",
+    "independent_Docker_Core_provider_io": 0,
+    "independent_native_delete": 0,
+    "C22_allocation": "NOT_RUN_AT_SOURCE_REVIEW",
+    "native_preparation": "NOT_RUN",
+    "final_frozen_candidate": "NOT_CREATED",
+    "branch_lock": "FINAL_RELOCK_AND_NEW_EXECUTION_BINDING_STILL_REQUIRED",
+    "delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "old_authorization_reused": false,
+    "source_upgrade": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "live_retained_resource_IAM": "NOT_INDEPENDENTLY_OBSERVED; source/file audit and local tests do not upgrade original UNKNOWN/NOT_RUN facts"
+  },
+  "reviewed_artifacts_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate22-source-review01/reviewed-artifacts01.json",
+    "sha256": "f807bb5d419ad402077ff5d5361d8d62271a3967c6296b2b1570acbaf5cf4a20",
+    "count": 2307
+  },
+  "evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/candidate22-source-review01/evidence-index.json",
+    "sha256": "80a70490206aeccb141cb37c8acfd53ed6a7ac38ed60400a8eede7028dd4b749",
+    "count": 16
+  },
+  "forbidden_actions_performed": []
+}

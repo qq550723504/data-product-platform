@@ -1,0 +1,14 @@
+{
+  "status": "BLOCKED_INDEXED_CHILD_ATTRIBUTES_OWN_RAW_CHECKOUT_DRIFT",
+  "scope": "The new child attribute file is itself a host-index member; its three MD rules did not preserve its own LF bytes",
+  "original_bytes": 205,
+  "original_sha256": "fd17145dea3a684208a9408a33b1992257e83d24a8867fb5841dd1be54dbd465",
+  "clone_bytes": 209,
+  "clone_sha256": "ff26dd5c8f35eb42cf4444efb235b25cc1028068ad5925b5fbdede2cc19ade77",
+  "original_CRLF": 0,
+  "clone_CRLF": 4,
+  "real_Git_clone_autocrlf_true": true,
+  "actual_Docker_Core_provider_actions": 0,
+  "candidate_runtime_unchanged": true,
+  "smallest_fix": "Give this child metadata file its own -text rule; retain root/source-index bytes and test all four exact indexed files."
+}

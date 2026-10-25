@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "rev-parse",
+    "HEAD"
+  ],
+  "exit": 0,
+  "at": "2026-10-23T03:15:37.906005+00:00",
+  "stdout_sha256": "7e48e1931d06b93d649eb962ae436a9ed86a200e08ab1e6b353a68419eb1ea18",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

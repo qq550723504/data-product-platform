@@ -1,0 +1,11 @@
+{
+  "test": "../temporary_containers_test.py",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\ci-portability-fix01\\python-export02",
+  "reads": [
+    "examples/__pycache__/temporary_containers.cpython-314.pyc",
+    "examples/temporary_containers.py",
+    "examples/temporary_containers_test.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

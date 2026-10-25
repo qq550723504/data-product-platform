@@ -1,0 +1,108 @@
+{
+  "cases": [
+    {
+      "group": "business-races",
+      "stage": "business",
+      "config_sha256": "342494a6d760eec3d37b9a37aa60349d16c23d2b6202820034bb16f2a0abe6fe",
+      "Batch": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+      "CandidateUseUntil": "2026-10-22T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-22T06:00:00Z",
+        "ExpiresAt": "2026-10-22T06:40:00Z"
+      }
+    },
+    {
+      "group": "late-hold",
+      "stage": "late",
+      "config_sha256": "b65091b9bc2ee2efe3e857eeda73610bc52ec5c7c17bc79d282d2c7f023670e6",
+      "Batch": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+      "CandidateUseUntil": "2026-10-22T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-22T06:00:00Z",
+        "ExpiresAt": "2026-10-22T06:40:00Z"
+      }
+    },
+    {
+      "group": "late-hold",
+      "stage": "close-H1",
+      "config_sha256": "d7bedf61002053915813feacc4d897f2e227d915644cc5a17639da82a9e38b1e",
+      "Batch": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+      "CandidateUseUntil": "2026-10-22T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-22T06:00:00Z",
+        "ExpiresAt": "2026-10-22T06:40:00Z"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed",
+      "config_sha256": "a27a13a9ff34c276077b6e388e4852f4e8fea2214adaf25bf9302e715265e3cc",
+      "Batch": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+      "CandidateUseUntil": "2026-10-22T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-22T06:00:00Z",
+        "ExpiresAt": "2026-10-22T06:40:00Z"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-b",
+      "config_sha256": "a27a13a9ff34c276077b6e388e4852f4e8fea2214adaf25bf9302e715265e3cc",
+      "Batch": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+      "CandidateUseUntil": "2026-10-22T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-22T06:00:00Z",
+        "ExpiresAt": "2026-10-22T06:40:00Z"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-c",
+      "config_sha256": "a27a13a9ff34c276077b6e388e4852f4e8fea2214adaf25bf9302e715265e3cc",
+      "Batch": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+      "CandidateUseUntil": "2026-10-22T06:40:00Z",
+      "Base": {
+        "StartedAt": "2026-10-22T06:00:00Z",
+        "ExpiresAt": "2026-10-22T06:40:00Z"
+      }
+    }
+  ],
+  "recoveries": [
+    {
+      "group": "business-races",
+      "stage": "recover-P2",
+      "config_sha256": "baef92ba7823bd94a84a03fe2db08e871fa4a15463bcc6bfd31535084dfdc88d",
+      "ValidUntil": "2026-10-22T08:40:00Z"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T1",
+      "config_sha256": "baef92ba7823bd94a84a03fe2db08e871fa4a15463bcc6bfd31535084dfdc88d",
+      "ValidUntil": "2026-10-22T08:40:00Z"
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T2",
+      "config_sha256": "baef92ba7823bd94a84a03fe2db08e871fa4a15463bcc6bfd31535084dfdc88d",
+      "ValidUntil": "2026-10-22T08:40:00Z"
+    },
+    {
+      "group": "late-hold",
+      "stage": "recover-H2",
+      "config_sha256": "d45bbce4c41a6b2c74c12dc88e312bce86c271364df4ce29cae50c9985fb57d4",
+      "ValidUntil": "2026-10-22T08:40:00Z"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1A",
+      "config_sha256": "b0d6ce7bf495536b8e233216f98687ae371da691251443d5ddb1dfec7b9cfda2",
+      "ValidUntil": "2026-10-22T08:40:00Z"
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1B",
+      "config_sha256": "b0d6ce7bf495536b8e233216f98687ae371da691251443d5ddb1dfec7b9cfda2",
+      "ValidUntil": "2026-10-22T08:40:00Z"
+    }
+  ]
+}

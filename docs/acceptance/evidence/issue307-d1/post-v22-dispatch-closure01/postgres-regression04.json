@@ -1,0 +1,20 @@
+{
+  "status": "PASS_REAL_POSTGRES_THREE_CLOSURE_COMMAND_COMPOSITION",
+  "at": "2026-10-19T12:32:54.564492+00:00",
+  "exit": 0,
+  "scratch_cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "pass": [
+    "TestOldDispatchClosureThreeCommandCompositionPreservesFacts",
+    null
+  ],
+  "skip": [],
+  "failure_output": [],
+  "channels": {
+    "stdout": "4588dc930c0a9d6c12e865ad79223d65cc4b880a36afb5165781e11a6f216f0d",
+    "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_environment_changes": 0,
+  "provider_DELETE": 0,
+  "prior_failed_03": "Synthetic reader had not terminated before admission. Test now records historical synthetic termination before baseline, never releases original pins.",
+  "scratch_stopped_PID0": true
+}

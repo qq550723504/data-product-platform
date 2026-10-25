@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "push",
+    "origin",
+    "8de3bc4c9f737c3c3e81fddb60491422ba6039f2:refs/heads/codex/issue307-post-v22-dispatch-closure"
+  ],
+  "at": "2026-10-23T06:14:34.072429+00:00"
+}

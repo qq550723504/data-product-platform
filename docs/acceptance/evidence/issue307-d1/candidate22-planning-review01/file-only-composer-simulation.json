@@ -1,0 +1,35 @@
+{
+  "status": "PASS_SIMULATED_FILE_ONLY_NOT_NATIVE_NOT_ISSUED",
+  "runs": [
+    {
+      "optimize": 0,
+      "status": "PASS_FILE_ONLY_TYPED_PLAN_AND_MANIFEST_SIMULATION",
+      "audit_indexes": 8,
+      "members_verified": 31,
+      "manifest_members": 25,
+      "native": "NOT_RUN",
+      "allocation": "NOT_RUN"
+    },
+    {
+      "optimize": 0,
+      "status": "PASS_FOREIGN_HOST_REJECTED_BEFORE_COMPOSER_OUTPUT",
+      "native": "NOT_RUN"
+    },
+    {
+      "optimize": 2,
+      "status": "PASS_FILE_ONLY_TYPED_PLAN_AND_MANIFEST_SIMULATION",
+      "audit_indexes": 8,
+      "members_verified": 31,
+      "manifest_members": 25,
+      "native": "NOT_RUN",
+      "allocation": "NOT_RUN"
+    },
+    {
+      "optimize": 2,
+      "status": "PASS_FOREIGN_HOST_REJECTED_BEFORE_COMPOSER_OUTPUT",
+      "native": "NOT_RUN"
+    }
+  ],
+  "actual_phase_entry_executions": 0,
+  "actual_Docker_provider_io": 0
+}

@@ -1,0 +1,94 @@
+{
+  "mode": "normal",
+  "suites": [
+    {
+      "suite": "six",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "pass": true,
+      "source_sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+      "log_sha256": "653bdb116d8f6526303a933199edbde1939a323ee0855ec9e5e38c74de0d478c"
+    },
+    {
+      "suite": "retained",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "pass": true,
+      "source_sha256": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+      "log_sha256": "9160c08fc4eb54a562910fa9d9d24f609936d6894f33f1ad94d1603a711c761c"
+    }
+  ],
+  "actual_subprocesses": [
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/bindings.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/bindings.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/bindings.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/bindings.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/bindings.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/candidate.json"
+    ],
+    [
+      "git",
+      "show",
+      "30e954027bc1d5a74d683f0dcd8bd141aa7a678b:docs/acceptance/evidence/issue307-d1/remaining-candidate12/bindings.json"
+    ]
+  ],
+  "actual_Docker_Source_provider_enable_sign_DELETE": 0,
+  "temporary_mock_signing_only": true
+}

@@ -1,0 +1,25 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "headRefOid": "4d126c60687830416b2697ab4b120e4323682eda",
+        "headRefName": "codex/issue307-post-v22-dispatch-closure",
+        "state": "OPEN",
+        "isDraft": true,
+        "mergedAt": null,
+        "url": "https://github.com/qq550723504/data-product-platform/pull/332",
+        "reviewThreads": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": null
+          },
+          "nodes": []
+        }
+      },
+      "issue": {
+        "state": "OPEN",
+        "url": "https://github.com/qq550723504/data-product-platform/issues/307"
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS_NO_ACTUAL_SOURCE_SECRET_BYTES_IN_NEW_PUBLIC_EVIDENCE",
+  "files": 348,
+  "secret_values_considered": 0,
+  "matches": [],
+  "raw_inspect": "PRIVATE_O_EXCL_WITH_SHA_CUSTODY",
+  "source_io": 0
+}

@@ -1,0 +1,113 @@
+{
+  "status": "PASS_CANONICAL_AUDIT_ONLY_AND_THREE_SAVED_FILE_AGGREGATIONS",
+  "runs": [
+    {
+      "kind": "canonical_audit_only",
+      "argv": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "examples/lifecycle-d1/verify-six-native.py",
+        "--candidate-sha256",
+        "d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db",
+        "--bindings-sha256",
+        "e63b908ca5269853478f7d5a65621327bc5f52ff2ff389de96707e0a137296af",
+        "--checker-sha256",
+        "15367f67aa6fabadbbd1796f31a9d5743a245681482f20316f151c24c18da586",
+        "--evidence-audit-plan",
+        "docs/acceptance/evidence/issue307-d1/remaining-candidate22/preparation-evidence-audit-plan.json",
+        "--evidence-audit-plan-sha256",
+        "4fe01568288b9aa5bb2b3e542d8f4cb7f31aa0dda3284f34b6eef017e6a5a4c5",
+        "--output",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\candidate22-artifacts-review01\\canonical-audit-only01",
+        "--audit-only"
+      ],
+      "exit": 0,
+      "at": "2026-10-23T05:58:14.795298+00:00"
+    },
+    {
+      "kind": "saved_file_aggregation_replay",
+      "group": "business-races",
+      "argv": [
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\readonly-check.exe",
+        "-six",
+        "-baseline",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22\\business-races\\expectation",
+        "-fresh",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22-readonly01\\business-races\\files",
+        "-group",
+        "business-races",
+        "-expectation",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22-readonly01\\business-races\\expectation.json",
+        "-inventory",
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\business-races\\present-inventory.json",
+        "-mapping",
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\six-map.json"
+      ],
+      "exit": 0,
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 7,
+      "policy_semantics_count": 21,
+      "all_official_equals": true,
+      "native_reexecution": false,
+      "provider_io": 0
+    },
+    {
+      "kind": "saved_file_aggregation_replay",
+      "group": "late-hold",
+      "argv": [
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\readonly-check.exe",
+        "-six",
+        "-baseline",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22\\late-hold\\expectation",
+        "-fresh",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22-readonly01\\late-hold\\files",
+        "-group",
+        "late-hold",
+        "-expectation",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22-readonly01\\late-hold\\expectation.json",
+        "-inventory",
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\late-hold\\present-inventory.json",
+        "-mapping",
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\six-map.json"
+      ],
+      "exit": 0,
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 6,
+      "policy_semantics_count": 16,
+      "all_official_equals": true,
+      "native_reexecution": false,
+      "provider_io": 0
+    },
+    {
+      "kind": "saved_file_aggregation_replay",
+      "group": "mixed",
+      "argv": [
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\readonly-check.exe",
+        "-six",
+        "-baseline",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22\\mixed\\expectation",
+        "-fresh",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22-readonly01\\mixed\\files",
+        "-group",
+        "mixed",
+        "-expectation",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-c22\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate22-readonly01\\mixed\\expectation.json",
+        "-inventory",
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\mixed\\present-inventory.json",
+        "-mapping",
+        "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate22\\six-map.json"
+      ],
+      "exit": 0,
+      "status": "PASS_COMPLETE_SIX_NATIVE_AGGREGATION",
+      "copies": 4,
+      "policy_semantics_count": 16,
+      "all_official_equals": true,
+      "native_reexecution": false,
+      "provider_io": 0
+    }
+  ],
+  "live_native_provider_reexecution": false,
+  "actual_Docker_SQL_HTTP_calls": 0
+}

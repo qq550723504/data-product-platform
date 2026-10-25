@@ -1,0 +1,104 @@
+{
+  "status": "PASS_TERMINAL_FAILURE_EVIDENCE_INDEX",
+  "execution": "aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a",
+  "at": "2026-10-20T10:07:19.189575+00:00",
+  "members": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/business-races-closed-budget.tar",
+      "sha256": "3a59fd49e8308fb422a40019135759189797af2c9030c1e1d6898efbf43faaa9",
+      "bytes": 1536
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/final-checkpoint.json",
+      "sha256": "67c101f63cdc1b2db03881e32efdf3d07b5bf42ec13b85b8a3f41a7d73118964",
+      "bytes": 866
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/fresh-github.json",
+      "sha256": "2382e40e55688c526f5b2e086865ffb69ccb6cf200284bb12fa90adacf636544",
+      "bytes": 2215
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/late-hold-closed-budget.tar",
+      "sha256": "ff269e622faf278403bf8bbe216e016b071c6799c58564b4fedd3261621844e5",
+      "bytes": 1536
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/mixed-closed-budget.tar",
+      "sha256": "dcdec53142e1c5641943edad37e5a042c6e8300cb70676b13056d5f62cb41874",
+      "bytes": 1536
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/offline-audit-failure.json",
+      "sha256": "b21d5c002f1db813cad63b758113fe17f7a8e40eff2b51b069959162bef54031",
+      "bytes": 1269
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/pause-tool-receipt.json",
+      "sha256": "e2996da59e78848c80fd16bd99bc3460ea775d37c7b1c23568f2502e928edd7e",
+      "bytes": 263
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/physical-closure-readback.json",
+      "sha256": "a015c6341159b0d28a44fc4707537844b9a8bdaa891b90dd28b6cdef6a5c45da",
+      "bytes": 87966
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/pr-body-outcome.txt",
+      "sha256": "88c0239be12d925a7d9d0839089149b35656d3d20e94bded8dbb15b6bf2f5db1",
+      "bytes": 3788
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/pr-outcome-readback.json",
+      "sha256": "a54a141c3ab729843d6564cc6ed7ddc0ae00db06ac31b241c8c61ad79f34f7eb",
+      "bytes": 4096
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/root-cause-diagnostic.json",
+      "sha256": "c5f5a681ea63d0ea4fe4d590378a09d0edfd308a7e797f8adfa3ee714a3a81f7",
+      "bytes": 694
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/schedule-paused-readback.json",
+      "sha256": "2efe1d0e6bdf9edc3c8542a3bc9053d22285d4f44756b41a33033648756edce5",
+      "bytes": 189
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal-private-index-receipt.json",
+      "sha256": "33666ad7a23c144b63cc2c9264c56f15f3b8de26b851e6286f74471a150f3d5a",
+      "bytes": 247
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal-process.json",
+      "sha256": "3bf6cb1ffd6fee7c0fdfc508d4a2584799685ff824d515e80765959742d8059b",
+      "bytes": 357
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/seal.stdout.json",
+      "sha256": "8f79cd05891253c679bf69501a890d98a791290d9ac2e9405c495b1331e13834",
+      "bytes": 23770
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/window01/terminal.json",
+      "sha256": "f94fcc9d2ccb8074ce9c1810c085394a2ef61144a4bbf118db5c82d385cda8c2",
+      "bytes": 2212
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v26-window01-outcome.md",
+      "sha256": "24932cc5302f2dd12d0a5300f8b01619f5b5bc3907a9502fd86944e3f815a173",
+      "bytes": 2683
+    }
+  ],
+  "excludes": [
+    "self",
+    "private secret bytes"
+  ],
+  "execution_outcome": "FAILED_NOT_RUN",
+  "native_delete": 0,
+  "overall_seal": "UNCONFIRMED"
+}

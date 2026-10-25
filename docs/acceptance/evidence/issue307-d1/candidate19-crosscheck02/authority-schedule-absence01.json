@@ -1,0 +1,44 @@
+{
+  "status": "OBSERVED_NEW_AUTHORIZATION_AND_SCHEDULE_ABSENT",
+  "observed_at": "2026-10-22T02:47:06.989488+00:00",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "authorization": "NOT_RECEIVED",
+  "schedule": "NOT_CREATED",
+  "old_schedules": [
+    {
+      "id": "307-d1-candidate07-v17",
+      "status": "PAUSED"
+    },
+    {
+      "id": "307-d1-candidate10-v20",
+      "status": "PAUSED"
+    },
+    {
+      "id": "307-d1-candidate11-v21",
+      "status": "PAUSED"
+    },
+    {
+      "id": "307-d1-candidate12-v22",
+      "status": "PAUSED"
+    },
+    {
+      "id": "307-d1-candidate15-v25",
+      "status": "PAUSED"
+    },
+    {
+      "id": "307-d1-candidate16-v26",
+      "status": "PAUSED"
+    },
+    {
+      "id": "307-d1-candidate17-v27",
+      "status": "PAUSED"
+    },
+    {
+      "id": "307-d1-candidate18-v28",
+      "status": "DELETED"
+    }
+  ],
+  "permission_enabled": false,
+  "execution_authority": false,
+  "native_delete": 0
+}

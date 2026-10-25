@@ -1,0 +1,24 @@
+{
+  "creation": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Created automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"307-d1-candidate16-v26\",\"mode\":\"create\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  },
+  "view": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Rendered automation card in the app."
+      }
+    ],
+    "isError": false
+  }
+}

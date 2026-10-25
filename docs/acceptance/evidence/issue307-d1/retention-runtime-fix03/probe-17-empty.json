@@ -1,0 +1,14 @@
+{
+  "command": [
+    "wsl",
+    "-d",
+    "docker-desktop",
+    "--",
+    "ls",
+    "-A",
+    "/mnt/docker-desktop-disk/data/docker/volumes/d1-retention-probe-budget-975765abf52d/_data"
+  ],
+  "started_at": "2026-10-24T09:01:19.778662+00:00",
+  "finished_at": "2026-10-24T09:01:19.924912+00:00",
+  "returncode": 0
+}

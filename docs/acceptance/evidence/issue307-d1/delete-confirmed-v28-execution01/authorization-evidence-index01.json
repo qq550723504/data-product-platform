@@ -1,0 +1,29 @@
+{
+  "status": "C18_V28_ACTUAL_AUTHORIZATION_EVIDENCE_INDEX",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "count": 5,
+  "files": {
+    "record-human-authorization01.py": {
+      "sha256": "62eb13093766c4646e12e1b22b56201ab9fc08b335fed654233764e0cbcb2d2b",
+      "bytes": 12421
+    },
+    "human-authorization.json": {
+      "sha256": "0c9abefaade12fd59095f0a269ef052c8474e4692ae76b7a4982630ed81c9f21",
+      "bytes": 282131
+    },
+    "human-message-source.json": {
+      "sha256": "58a901ccd9a8fa16a22a82a7cef6014ab864ed1ba0c7c19ad7242a78c53532f5",
+      "bytes": 1329
+    },
+    "user-message-verbatim.txt": {
+      "sha256": "3cd9468fcb8cfec8b8777020bb71c02f8e506ffb2033ac35fc8ddcd966e33fb9",
+      "bytes": 432
+    },
+    "approved-artifacts-index01.json": {
+      "sha256": "9cc1fc5a238343506fffcef7a4bd345c2591e743473bce731da842b7ca1b2478",
+      "bytes": 278132
+    }
+  },
+  "schedule": "NOT_CREATED",
+  "native_delete": 0
+}

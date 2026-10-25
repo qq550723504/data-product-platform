@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "purpose": "RETAINED_D1_FIXTURE_ONLY",
+  "source": "81a083751c01a281d42df594f6e91012255081f1",
+  "base_source": "514843da1a143fba537c1668483fe95800ddd992",
+  "execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "profile": "candidate22/v32",
+  "not_before": "2026-10-23T10:00:00Z",
+  "not_after": "2026-10-23T10:40:00Z",
+  "schema": {
+    "max_version": 69,
+    "migration_members": 66,
+    "protected_identity": false
+  },
+  "runtime_delta_files": [
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies_test.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go"
+  ],
+  "shared_contract_files": [
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.json",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+    "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go"
+  ],
+  "archive_sha256": "aca7e358da5181f43a148c40416a4c096c7b4735a25c3057f83e24b524a75698",
+  "archive_bytes": 6428089,
+  "archive_recipe": "GIT_ZIP_STORE_UTC_LF_V1",
+  "status": "PLANNED_RUNTIME_ARTIFACT_NOT_PUBLISHED_BUILD_NOT_ALLOCATION",
+  "selected_runtime_members": 769,
+  "native_delete": 0
+}

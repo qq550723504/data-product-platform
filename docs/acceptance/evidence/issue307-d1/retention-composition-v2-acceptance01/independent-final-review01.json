@@ -1,0 +1,50 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_RETENTION_V2_SOURCE_AND_NONDELETE_REVIEW",
+  "reviewer": "/root/docker_linux_engine_repair",
+  "recorded_by": "/root; recorded from independent agent tool responses, not agent-authored file",
+  "published_baseline": "f4e25a88f62da6bb14ed24da8b71b634be43f17a",
+  "runtime_source": "0446fde5985b51de7da5863b45df3f1b47b6167c",
+  "runtime_archive_sha256": "a60ddfeb8a81d4414bc56e1ddd05fa01ca7f2e0e9579a7d403783bdd318d115a",
+  "remaining_blockers": [],
+  "scope": "BOUNDED_SOURCE_AND_NONDELETE_READINESS_ONLY",
+  "closed_blockers": [
+    {
+      "id": "B1",
+      "severity": "P1",
+      "finding": "Static nine-CID closure omitted runtime-created readonly readers and could claim physical PASS while reader remained running.",
+      "resolution": "Approved six fixed nonce/name/native/profile/intent/registration/closure identities. Signed intent precedes create; signed actual CID registration precedes start. Independent anchor containment validates each registration and attempts every known reader plus static nine resources. Missing/unknown registration or closure is UNCONFIRMED.",
+      "re_review": "PASS"
+    },
+    {
+      "id": "B1a",
+      "severity": "P1",
+      "root_cause": "B1 closure dependency composition",
+      "finding": "Corrupt/missing intent masked a separately valid signed registration, preventing attempted reader stop. Missing files also escaped present() absence handling.",
+      "resolution": "Independent intent and registration validation; valid signed CID is always attempted despite earlier intent error, retaining UNCONFIRMED. Path normalization participates in missing-file handling. Complete missing/corrupt intent and reader-stop recovery counterexamples pass.",
+      "re_review": "PASS"
+    }
+  ],
+  "final_raw_sha256": {
+    "examples/lifecycle-d1/retention_composition.py": "b15ac3a0987f4eb121f00244ddef6cda865b068013a6b20f6e9ba790b7b96081",
+    "examples/lifecycle-d1/verify-six-native.py": "ce2a47ffd079526a1be38a6a63be378117134fa9f76bbd56272218f8b685ede8",
+    "examples/lifecycle-d1/test_retention_composition.py": "867656ec58a486d0eec2af59b6d315a15fa703bde29e487d7b270317c66e7634",
+    "examples/lifecycle-d1/test_verify_six_native.py": "31efe0d2a7cfb89870dd479202027a1c073ca690a7dd6786c20a784ae4c70cbe"
+  },
+  "independent_final_test_methods_each_mode": 13,
+  "independent_modes": ["normal", "-O"],
+  "whole_closure_reviewed": [
+    "V2 dates shared across proposal/grant/writer/reader/actual receipt/checker; later deletion RecoveryEnd remains independent",
+    "false -> wait-ready -> topology attestation -> final authority/window -> enable",
+    "first failure or UNKNOWN cannot advance second worker; immutable budgets/failed facts remain",
+    "both bounded dynamic-reader containment defects closed without trusting damaged main packet",
+    "branch gate reuses exact HEAD/PR CI, tracked/untracked HOST_PATHS, actual locked protection and full review threads",
+    "R4 archive recomputed, 6515425 bytes/781 members, shared contracts match",
+    "actual R4 local CI entry and isolated Linux and Windows UNC fsync PASS evidence checked"
+  ],
+  "actual_maintenance": "NOT_AUTHORIZED",
+  "operational_packet": "NOT_CREATED",
+  "native_seventeen_before_after": "NOT_RUN",
+  "new_head_pr_ci": "NOT_RUN",
+  "reviewer_mutations": 0,
+  "reviewer_docker_wsl_source_provider_calls": 0
+}

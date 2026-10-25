@@ -1,0 +1,6 @@
+{
+  "status": "PASS_EXACT_NONLOCK_POLICY_SEMANTICS",
+  "policy_except_lock_branch_sha256": "77b0679be0f70f7858a864fd66c90aec78e63dbd387029919ad7a1693c6fc6ab",
+  "canonical_recipe": "UTF8_JSON_SORTED_COMPACT_ASCII",
+  "note": "result.json nonlock_policy_sha256 used existing policy_without_freeze (excludes five freeze flags); this receipt separately binds every field except lock_branch; both immutable recipes retained"
+}

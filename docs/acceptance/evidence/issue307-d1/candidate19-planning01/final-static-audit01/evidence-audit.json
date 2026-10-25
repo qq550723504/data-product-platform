@@ -1,0 +1,61 @@
+{
+  "status": "PASS_EXPLICIT_EVIDENCE_INDEX_AUDIT",
+  "execution": "a5d1e569-f80e-4b38-8f32-d8139a30a077",
+  "plan_sha256": "8aaa293c19ba94f03127ccfb013a59d44c5926a36e883f067b14e12773cbb80d",
+  "candidate_sha256": "af2499793a39b0515001fe11835305b73ef1055b76be2db929aada900e0acb98",
+  "indexes": [
+    {
+      "id": "source-review",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate19-source-review01/evidence-index.json",
+      "sha256": "8f425ccb50dab473794b8fdbedb5f725a519069126339990b43c80c81a6884e5",
+      "members_verified": 20
+    },
+    {
+      "id": "nondelete-preparation",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate19-preparation01/non-delete-evidence-index.json",
+      "sha256": "0f9adc090e07a6c47dd09758850016def766de3cfda68b2f510ada045bc08927",
+      "members_verified": 1340
+    },
+    {
+      "id": "source-review-report-binding",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/remaining-candidate19/source-review-binding-index.json",
+      "sha256": "0b19f0eaa561ee5641129fc59ed5b96878474a29200dbc0defe325c10814c38d",
+      "members_verified": 2
+    },
+    {
+      "id": "frozen-host-bindings",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate19-planning01/candidate19-host-bindings01.json",
+      "sha256": "ab19edfd18341479b83c4edc343f95facf956b54f11770c3d164cc5473da26a3",
+      "members_verified": 36
+    },
+    {
+      "id": "packet-independent-review",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate19-review01/evidence-index.json",
+      "sha256": "b813759e17bd035799c19177cb85a6eebf932e9a3f2e1d0410b9e70c625ca1bb",
+      "members_verified": 5
+    },
+    {
+      "id": "independent-reviewed-external-artifacts",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate19-review01/reviewed-artifacts01.json",
+      "sha256": "58a41aa3d10bcbd4834c0b3af637094e7d003e45dac81ed5ce7e29a0f4ba3e2a",
+      "members_verified": 2245
+    },
+    {
+      "id": "final-static-references",
+      "format": "files-map-v1",
+      "index": "docs/acceptance/evidence/issue307-d1/candidate19-planning01/final-static-reference-index01.json",
+      "sha256": "27ac74c267afe34007fd414562048cfc7d6c9277e51bacd968e5790a9d35eb4c",
+      "members_verified": 891
+    }
+  ],
+  "members_verified": 4539,
+  "source_provider_io": 0,
+  "native_delete": 0,
+  "execution_authority": false
+}

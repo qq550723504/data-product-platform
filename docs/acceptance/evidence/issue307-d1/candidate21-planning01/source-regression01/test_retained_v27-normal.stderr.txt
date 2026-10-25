@@ -1,0 +1,11 @@
+test_core_checkpoint_bytes_and_live_core_are_independent_of_old_policy_fact (test_retained_v27.RetainedV27Tests.test_core_checkpoint_bytes_and_live_core_are_independent_of_old_policy_fact) ... ok
+test_new_generation_does_not_enter_the_fixed_old_profile_set (test_retained_v27.RetainedV27Tests.test_new_generation_does_not_enter_the_fixed_old_profile_set) ... ok
+test_old_bindings_are_an_explicit_ordered_list_not_a_metadata_object (test_retained_v27.RetainedV27Tests.test_old_bindings_are_an_explicit_ordered_list_not_a_metadata_object) ... ok
+test_old_budget_must_keep_its_complete_exact_mount_graph (test_retained_v27.RetainedV27Tests.test_old_budget_must_keep_its_complete_exact_mount_graph) ... ok
+test_old_budget_volume_identity_cannot_be_relabelled_or_redirected (test_retained_v27.RetainedV27Tests.test_old_budget_volume_identity_cannot_be_relabelled_or_redirected) ... ok
+test_old_profile_change_or_expansion_cannot_be_hidden_by_new_generation (test_retained_v27.RetainedV27Tests.test_old_profile_change_or_expansion_cannot_be_hidden_by_new_generation) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.111s
+
+OK

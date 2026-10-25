@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-19T20:14:04.346121+00:00",
+  "source_head": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "ci": 39311610413,
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "examples/lifecycle-d1/verify-six-native.py",
+    "--candidate-sha256",
+    "0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99",
+    "--bindings-sha256",
+    "d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0",
+    "--checker-sha256",
+    "871fd13c6a5f16c614dff199f5b00c744a30a1b40fd894035bbd172b5cd46057",
+    "--output",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate15-readonly01"
+  ],
+  "delete_authorization": "NOT_RECEIVED",
+  "native_delete": 0
+}

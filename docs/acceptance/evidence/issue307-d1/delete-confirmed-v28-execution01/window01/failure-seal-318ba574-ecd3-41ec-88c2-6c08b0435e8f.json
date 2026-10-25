@@ -1,0 +1,1082 @@
+{
+  "at": "2026-10-21T14:14:14.305958+00:00",
+  "execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "steps": [
+    {
+      "step": "permission:business-races:P2",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.312632+00:00",
+        "before_sha256": "6a9171dd22d39bf075ef2fe8e74026574eac80f5212bf8224a34fad5d2483360",
+        "disabled_sha256": "2236ea806d8771bd6d42205a4a7dde09848f5c2fbd3871f88a8a1a60a34e8724",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "permission:business-races:T1",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:business-races:T2",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:business-races:recover-P2",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:business-races:recover-T1",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:business-races:recover-T2",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:business-races:root-check-disabled",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:business-races:root-disable-all",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:business-races:root-disable-send",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:business-races:root-enable-read",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "da9c4d94ed614326c4747c589e36ee9eb213ebaa96b8bd9b00030cb4b1404a0f"
+      }
+    },
+    {
+      "step": "permission:business-races:root-enable-send",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "fdefdb7257374ae9556e0835ae6274a71d1dbc242db74147be4052e729adf457"
+      }
+    },
+    {
+      "step": "permission:business-races:wire",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.319677+00:00",
+        "before_sha256": "d16812a5c0646a418bac2beacf48e70fe606498d3be36884f89f94bda8d609f4",
+        "disabled_sha256": "10310c28a47a7f7f15314e4c111cebbe3fc1ed22fb99b0b52c1056df05e952f9",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "recovery-revoke:business-races:recover-P2",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.326244+00:00",
+        "before_sha256": "574ae085bddb9c6856e69861ecc608fa8d125f42fe8613e75a29bcf0631bf75d",
+        "disabled_sha256": "13b4c846d85025a62f105b0d9386e9ed89626a69c07895be2ed4bbd3b72631d9",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "recovery-revoke:business-races:recover-T1",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.328274+00:00",
+        "before_sha256": "574ae085bddb9c6856e69861ecc608fa8d125f42fe8613e75a29bcf0631bf75d",
+        "disabled_sha256": "13b4c846d85025a62f105b0d9386e9ed89626a69c07895be2ed4bbd3b72631d9",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "recovery-revoke:business-races:recover-T2",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.329942+00:00",
+        "before_sha256": "574ae085bddb9c6856e69861ecc608fa8d125f42fe8613e75a29bcf0631bf75d",
+        "disabled_sha256": "13b4c846d85025a62f105b0d9386e9ed89626a69c07895be2ed4bbd3b72631d9",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "case-revoke:business-races:business",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.336836+00:00",
+        "before_sha256": "ed69224f03d35012e3c97aace1e3f925f1e1f82aadab8ca06c9b8b9884c1c151",
+        "disabled_sha256": "94a389c5169594cca30e3bca98cf5f42392ba8f34330503568f0c0054bc75843",
+        "field": "Base.Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "permission:late-hold:H2",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:late-hold:recover-H2",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:late-hold:root-check-disabled",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:late-hold:root-disable-all",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:late-hold:root-disable-send",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:late-hold:root-enable-read",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "6c009184911619fc9e37ac056635c2c36ab4ca6258f650b392992a2d37be7347"
+      }
+    },
+    {
+      "step": "permission:late-hold:root-enable-send",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:late-hold:wire",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "recovery-revoke:late-hold:recover-H2",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.344108+00:00",
+        "before_sha256": "66f4176d36d86fa86198051c2558625c5489854eae2ec5a6ff65e76616c57978",
+        "disabled_sha256": "bfb35b63cd40fbfc3d3e5fa04eeea8005081edd841a46332612a3c7c6b69adff",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "case-revoke:late-hold:late",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.349910+00:00",
+        "before_sha256": "b6371f3a49c450a1f6abbc1e60fd2e9d12782d3833fe1f0fdc62725bbd3bd66c",
+        "disabled_sha256": "da8e041d3b9856811703211fae4849b89c8132977aa4cdedbb475ac960f22c8b",
+        "field": "Base.Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "case-revoke:late-hold:close-H1",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.356464+00:00",
+        "before_sha256": "fb2e82fcfa1e6e88fa4783d1c3ffaf8c4ac24ccbaf6f229cacc4d7107a95a051",
+        "disabled_sha256": "a82b9f1d506d27d02563f1258d2e0ecf94792754c50b7bd6afa2ed08ff6746fe",
+        "field": "Base.Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "permission:mixed:M1A",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:mixed:M1B",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:mixed:recover-M1A",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:mixed:recover-M1B",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "permission:mixed:root-check-disabled",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:mixed:root-disable-all",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:mixed:root-disable-send",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:mixed:root-enable-read",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "d1326172b439c273d092444fd760fa8567a6242d01d5bc03a4547f9d81e80a03"
+      }
+    },
+    {
+      "step": "permission:mixed:root-enable-send",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "40da4a7ed2773c821fa1ce3e8d616f8259015efc8de12aebe45c255b1d042c5b"
+      }
+    },
+    {
+      "step": "permission:mixed:wire",
+      "ok": true,
+      "result": {
+        "already_disabled": true,
+        "sha256": "ff7a48add80e28e93fc403d0ff84d9ea883c4b159dcc71e76b18431d2771d5ab"
+      }
+    },
+    {
+      "step": "recovery-revoke:mixed:recover-M1A",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.363656+00:00",
+        "before_sha256": "76caa1860580664f676db9f3043700b328d0c53caf14880dae1edef5289ded69",
+        "disabled_sha256": "6d7332077552352416a6e791f21100c39f172dcb4ca9dc1f51aa4361693ef378",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "recovery-revoke:mixed:recover-M1B",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.365591+00:00",
+        "before_sha256": "76caa1860580664f676db9f3043700b328d0c53caf14880dae1edef5289ded69",
+        "disabled_sha256": "6d7332077552352416a6e791f21100c39f172dcb4ca9dc1f51aa4361693ef378",
+        "field": "Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "case-revoke:mixed:mixed",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.372021+00:00",
+        "before_sha256": "b9e2da6ae5fcd2288ccfa24e60d4854d23f4302c240df2d52ba007190728fb1a",
+        "disabled_sha256": "347b92ac7f8b556b298b2585b9392c497037248170f776fb8bdea5c681a77652",
+        "field": "Base.Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "case-revoke:mixed:mixed-b",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.374222+00:00",
+        "before_sha256": "b9e2da6ae5fcd2288ccfa24e60d4854d23f4302c240df2d52ba007190728fb1a",
+        "disabled_sha256": "347b92ac7f8b556b298b2585b9392c497037248170f776fb8bdea5c681a77652",
+        "field": "Base.Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "case-revoke:mixed:mixed-c",
+      "ok": true,
+      "result": {
+        "at": "2026-10-21T14:14:14.376106+00:00",
+        "before_sha256": "b9e2da6ae5fcd2288ccfa24e60d4854d23f4302c240df2d52ba007190728fb1a",
+        "disabled_sha256": "347b92ac7f8b556b298b2585b9392c497037248170f776fb8bdea5c681a77652",
+        "field": "Base.Enabled",
+        "before": true,
+        "after": false,
+        "other_fields_equal": true
+      }
+    },
+    {
+      "step": "stop-operator:business-races:wire",
+      "ok": true,
+      "result": {
+        "id": "6343435807d33922d91fe22134164882f0562ad1ba79d254aff1094b8b1f1a21",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:business-races:P2",
+      "ok": true,
+      "result": {
+        "id": "1e65f249b10abb3b2317d9ade3ca65d5719d5d8b92cc8f8eb879f378443121f8",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:business-races:recover-P2",
+      "ok": true,
+      "result": {
+        "id": "9807e16d917da339d608d9363bb543d78b94ea3699f42c04e1b590e1a5f698a0",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:business-races:T1",
+      "ok": true,
+      "result": {
+        "id": "42b73eb9b7d1fd175341a6ba1bfbcd1dfacda692d572ace3411df4d542c6e0db",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:business-races:recover-T1",
+      "ok": true,
+      "result": {
+        "id": "790bac346e48692682bafd0148447333ebce79f706859a1ad0957846b3a847ff",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:business-races:T2",
+      "ok": true,
+      "result": {
+        "id": "02ff3331bbd91be5e2f33ff7f2711a644094fd51990ff5a42d133fe2a35d2c53",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:business-races:recover-T2",
+      "ok": true,
+      "result": {
+        "id": "b6e257e14be54683b6d5117ef8b5da4c6dd4d502d02ceae2179d74d31e1d5b37",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:business-races:case-business",
+      "ok": true,
+      "result": {
+        "id": "04401eaf716a29bab813eddbfc22b9746c383bd64cd0541bacfd868172ef0db0",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-enable:business-races:enable-read",
+      "ok": true,
+      "result": {
+        "id": "af8eea4463a7d16e54dae67db6d5240620dfd54832c24d9dd75cae9d0ed9bdb2",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-enable:business-races:enable-send",
+      "ok": true,
+      "result": {
+        "id": "b0bd0e6c4ed1b9b1e2e8da0b1f4f620c42c8ab8b67eb1001d76cdc6d3ba75ace",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:late-hold:wire",
+      "ok": true,
+      "result": {
+        "id": "82211587ef0c0161ac18983a295d1933e172e10e10e2d59150a3faaf43018b0b",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:late-hold:H2",
+      "ok": true,
+      "result": {
+        "id": "31f858fc25ed5fc3e908f51ba08da64661ac91c90bddc76a1979f61f79daded6",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:late-hold:recover-H2",
+      "ok": true,
+      "result": {
+        "id": "a5dc0e92ae7c81c64da6b67119c0709257fb8cdedfa7bd0cc50a4473d8d695e4",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:late-hold:case-late",
+      "ok": true,
+      "result": {
+        "id": "d857561742e95936c0e02145aadb6aaa9542d720d2da4bf608936081b4720301",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:late-hold:case-close-H1",
+      "ok": true,
+      "result": {
+        "id": "7cd6619e435f3d45213f28a5039b65cb63a937a1033a9ea6fe27312aba6fb538",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-enable:late-hold:enable-read",
+      "ok": true,
+      "result": {
+        "id": "e6704d3a65fef39c48674de551910ee154e83948500fb204afa15634cad53631",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-enable:late-hold:enable-send",
+      "ok": true,
+      "result": {
+        "id": "f2256a6ee4271a6e75cf771f8a0f2e20a4eb6d1361d5c92f74be0a9d7de351e9",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:wire",
+      "ok": true,
+      "result": {
+        "id": "b0369cf1339e05c5262a762322ab25bc45d961922bce2fd6a992e1cb5ea7ef3c",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:M1A",
+      "ok": true,
+      "result": {
+        "id": "df52f2d5ccb14071075b6239a0afec66fef55b07173c83c1e13fe5c1b8b8824d",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:recover-M1A",
+      "ok": true,
+      "result": {
+        "id": "32c0318a0673bebe2d49448993f4431a835d1e8d8e09077ee57bee53c5cc8696",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:M1B",
+      "ok": true,
+      "result": {
+        "id": "40307622d7033373fe7ee341c5cc8ea0868be744dc1f1566f1a54565e72e25a4",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:recover-M1B",
+      "ok": true,
+      "result": {
+        "id": "dcf03bd0c2789566906b7ef305a09d7cc56eaabe6974ac8aea124f350a17b2be",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:case-mixed",
+      "ok": true,
+      "result": {
+        "id": "0f9043f5b5f8dc68e2745263021ac7e3e81994c486c780f245696e71d03da49e",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:case-mixed-b",
+      "ok": true,
+      "result": {
+        "id": "b41054bf3726b367a75a3f27904e0375aff0b3be62d96979862021f2a2701d67",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-operator:mixed:case-mixed-c",
+      "ok": true,
+      "result": {
+        "id": "3eb003e2713e19733731e42658c643b4bc9689e777c3a0faa3640152e466fc72",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-enable:mixed:enable-read",
+      "ok": true,
+      "result": {
+        "id": "b3c2cd1ce5342c56ff291a334f9c6ed9d71456c40f5aee1baaeb8c5ac6004a88",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-enable:mixed:enable-send",
+      "ok": true,
+      "result": {
+        "id": "a2740a76634b9985bef4ae5ba57f80fa9ec2e3b68cc0cea66828beb026da932d",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "disable-all:business-races",
+      "ok": true,
+      "result": {
+        "identity_disable_confirmed": true,
+        "last_readback_all_disabled": true,
+        "enablers_closed": true,
+        "enablers": [
+          {
+            "step": "enabler:enable-read",
+            "ok": true,
+            "result": true
+          },
+          {
+            "step": "enabler:enable-send",
+            "ok": true,
+            "result": true
+          }
+        ],
+        "archive": {
+          "complete": true,
+          "receipt": {
+            "rotated": []
+          }
+        },
+        "stale_summary_rejected": false,
+        "policy_validation_passed": true,
+        "helper_exit": 0,
+        "status_changes_sha256": "6043c9a79b2a0a5fc19c1be1b5698455bcee37886ce977831e24776b64778ceb"
+      }
+    },
+    {
+      "step": "disable-all:late-hold",
+      "ok": true,
+      "result": {
+        "identity_disable_confirmed": true,
+        "last_readback_all_disabled": true,
+        "enablers_closed": true,
+        "enablers": [
+          {
+            "step": "enabler:enable-read",
+            "ok": true,
+            "result": true
+          },
+          {
+            "step": "enabler:enable-send",
+            "ok": true,
+            "result": true
+          }
+        ],
+        "archive": {
+          "complete": true,
+          "receipt": {
+            "rotated": []
+          }
+        },
+        "stale_summary_rejected": false,
+        "policy_validation_passed": true,
+        "helper_exit": 0,
+        "status_changes_sha256": "926b2292b5bf62ac22e4e400ef2a8c8c3cba891ccae441d6f1404f261b4fb3e2"
+      }
+    },
+    {
+      "step": "disable-all:mixed",
+      "ok": true,
+      "result": {
+        "identity_disable_confirmed": true,
+        "last_readback_all_disabled": true,
+        "enablers_closed": true,
+        "enablers": [
+          {
+            "step": "enabler:enable-read",
+            "ok": true,
+            "result": true
+          },
+          {
+            "step": "enabler:enable-send",
+            "ok": true,
+            "result": true
+          }
+        ],
+        "archive": {
+          "complete": true,
+          "receipt": {
+            "rotated": []
+          }
+        },
+        "stale_summary_rejected": false,
+        "policy_validation_passed": true,
+        "helper_exit": 0,
+        "status_changes_sha256": "258aeb8ac0bf48fb3be29b0d76253f6377b82f15c24dca710a1a844ce49587cb"
+      }
+    },
+    {
+      "step": "stop-gateway:business-races",
+      "ok": true,
+      "result": {
+        "id": "b5612c385a45a414f15f21d64668f3376d99ae95cfdef132d93ecff1be42c744",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "seal-gateway:business-races",
+      "ok": true,
+      "result": {
+        "gateway_stopped_and_sealed": true
+      }
+    },
+    {
+      "step": "stop-final:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "ok": true,
+      "result": {
+        "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "ok": true,
+      "result": {
+        "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:e5161e9d4c3c002452b053af4007980f95c86a27664cd58dc96f015529ce1828",
+      "ok": true,
+      "result": {
+        "id": "e5161e9d4c3c002452b053af4007980f95c86a27664cd58dc96f015529ce1828",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:00bf8e43582ad9f8ecd0964ed9c023c5ad2d8b67f8e97af72fbab0d5537e9f9f",
+      "ok": true,
+      "result": {
+        "id": "00bf8e43582ad9f8ecd0964ed9c023c5ad2d8b67f8e97af72fbab0d5537e9f9f",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:af8eea4463a7d16e54dae67db6d5240620dfd54832c24d9dd75cae9d0ed9bdb2",
+      "ok": true,
+      "result": {
+        "id": "af8eea4463a7d16e54dae67db6d5240620dfd54832c24d9dd75cae9d0ed9bdb2",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:b0bd0e6c4ed1b9b1e2e8da0b1f4f620c42c8ab8b67eb1001d76cdc6d3ba75ace",
+      "ok": true,
+      "result": {
+        "id": "b0bd0e6c4ed1b9b1e2e8da0b1f4f620c42c8ab8b67eb1001d76cdc6d3ba75ace",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:518e9f6e2ed736268023a450071459fe78bad3f91de1068681055ae7861a7325",
+      "ok": true,
+      "result": {
+        "id": "518e9f6e2ed736268023a450071459fe78bad3f91de1068681055ae7861a7325",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:331803e66f79f84a71c19e36af9177d7e921bad0d17be8540168bd43800953a7",
+      "ok": true,
+      "result": {
+        "id": "331803e66f79f84a71c19e36af9177d7e921bad0d17be8540168bd43800953a7",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-gateway:late-hold",
+      "ok": true,
+      "result": {
+        "id": "2466efd456ba1a70b14c2b947940a019d7794a17fcbcb904d22986768171cd46",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "seal-gateway:late-hold",
+      "ok": true,
+      "result": {
+        "gateway_stopped_and_sealed": true
+      }
+    },
+    {
+      "step": "stop-final:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "ok": true,
+      "result": {
+        "id": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "ok": true,
+      "result": {
+        "id": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:91d2930be98105cecd492775681941dad9c428b481f178fc2d2f8d39f17d2ae7",
+      "ok": true,
+      "result": {
+        "id": "91d2930be98105cecd492775681941dad9c428b481f178fc2d2f8d39f17d2ae7",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:9c905ed942f19f060df843f33a40c8fb66516456fcd0e66a997b2aa15fe9668d",
+      "ok": true,
+      "result": {
+        "id": "9c905ed942f19f060df843f33a40c8fb66516456fcd0e66a997b2aa15fe9668d",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:e6704d3a65fef39c48674de551910ee154e83948500fb204afa15634cad53631",
+      "ok": true,
+      "result": {
+        "id": "e6704d3a65fef39c48674de551910ee154e83948500fb204afa15634cad53631",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:f2256a6ee4271a6e75cf771f8a0f2e20a4eb6d1361d5c92f74be0a9d7de351e9",
+      "ok": true,
+      "result": {
+        "id": "f2256a6ee4271a6e75cf771f8a0f2e20a4eb6d1361d5c92f74be0a9d7de351e9",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:050ea6e087bb02585cadf322a7bbbeb90442ad5059794f92f3723e9e095ef645",
+      "ok": true,
+      "result": {
+        "id": "050ea6e087bb02585cadf322a7bbbeb90442ad5059794f92f3723e9e095ef645",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:9d614de44c0b2f76824acef11ed8f6b30f1ac91f91af772f7df4224439f132af",
+      "ok": true,
+      "result": {
+        "id": "9d614de44c0b2f76824acef11ed8f6b30f1ac91f91af772f7df4224439f132af",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-gateway:mixed",
+      "ok": true,
+      "result": {
+        "id": "f7389a9fcbb291df1f35306a9dc9e3c9ebf46c849d6c8e9372d372423236d8d7",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "seal-gateway:mixed",
+      "ok": true,
+      "result": {
+        "gateway_stopped_and_sealed": true
+      }
+    },
+    {
+      "step": "stop-final:66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "ok": true,
+      "result": {
+        "id": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "ok": true,
+      "result": {
+        "id": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:6dbb9c008c072bd9140cc5dffb5ca08e37dbba5d5594a9c748ddfa13f8962bfa",
+      "ok": true,
+      "result": {
+        "id": "6dbb9c008c072bd9140cc5dffb5ca08e37dbba5d5594a9c748ddfa13f8962bfa",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:de86765eefa7ec00816d7d2c97e145d03253513d7ea9e558e5edc8ff804805d5",
+      "ok": true,
+      "result": {
+        "id": "de86765eefa7ec00816d7d2c97e145d03253513d7ea9e558e5edc8ff804805d5",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:b3c2cd1ce5342c56ff291a334f9c6ed9d71456c40f5aee1baaeb8c5ac6004a88",
+      "ok": true,
+      "result": {
+        "id": "b3c2cd1ce5342c56ff291a334f9c6ed9d71456c40f5aee1baaeb8c5ac6004a88",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:a2740a76634b9985bef4ae5ba57f80fa9ec2e3b68cc0cea66828beb026da932d",
+      "ok": true,
+      "result": {
+        "id": "a2740a76634b9985bef4ae5ba57f80fa9ec2e3b68cc0cea66828beb026da932d",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:d352e77c4098d6d4a34f2c8b8dcf33d2e75ebaea2d5758477bb29dc80bc9e82e",
+      "ok": true,
+      "result": {
+        "id": "d352e77c4098d6d4a34f2c8b8dcf33d2e75ebaea2d5758477bb29dc80bc9e82e",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-final:ebe90588ac9c3f1826c04d0ef725e4efaa8b47283deda8262c705f272fece194",
+      "ok": true,
+      "result": {
+        "id": "ebe90588ac9c3f1826c04d0ef725e4efaa8b47283deda8262c705f272fece194",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    },
+    {
+      "step": "stop-business-redis",
+      "ok": true,
+      "result": {
+        "id": "25a4e218f72527e8f93a1df2eeb7a09833e5028c03d5ee178009bd9c71ee33e6",
+        "stopped_pid_zero": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    }
+  ],
+  "mode": "CONTAINMENT_ONLY",
+  "new_delete": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "all_steps_confirmed": true
+}

@@ -1,0 +1,36 @@
+{
+  "status": "C21_HELPER_STATIC_REVIEW_INPUTS",
+  "format": "files-map-v1",
+  "member_root": ".",
+  "count": 7,
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/run-preparation-phase.py": {
+      "sha256": "eaae936a771bd130057eda4c2c8fb702b5ff2ab4651829a36a0f508f52615023",
+      "bytes": 2287
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/observe-host-bindings01.py": {
+      "sha256": "7dc1b267edaf899858434db983ea2da90b202839c6ebe823f7405c52e9cd5a38",
+      "bytes": 3365
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/observe-backups66.py": {
+      "sha256": "2a1f23fa62fefb64d2820be5f03bf316dfa4681e1359ebce46db3093a6d92f11",
+      "bytes": 1811
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/observe-final-cold01.py": {
+      "sha256": "0838fc7d4b5dbc97fc0dee2100bb78ac6734a7b56b5f94fdd9a1bb47dbb3c736",
+      "bytes": 3671
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/write-frozen-documents01.py": {
+      "sha256": "3e0baab40fa34a44ff3bd9320fb68b16da396721371f31d4f0a976a1b3dd2727",
+      "bytes": 19599
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/finalize-static-bindings01.py": {
+      "sha256": "b489ce27690d70b2f0db1a392e821bdb5951485d0909eae8f32c85fd7cadce0a",
+      "bytes": 6003
+    },
+    "docs/acceptance/evidence/issue307-d1/candidate21-planning01/scan-publication-secrets01.py": {
+      "sha256": "cda79c1ed22fa93cad4077ab3a19a063727860caf0c4a0229684c5d240f164e3",
+      "bytes": 2869
+    }
+  }
+}

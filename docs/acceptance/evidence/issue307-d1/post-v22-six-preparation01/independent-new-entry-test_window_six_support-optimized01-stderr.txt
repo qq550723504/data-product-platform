@@ -1,0 +1,6 @@
+test_fresh_four_identity_h1_closure_and_current_counterexamples (__main__.SixSupportTests.test_fresh_four_identity_h1_closure_and_current_counterexamples) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.246s
+
+OK

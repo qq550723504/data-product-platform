@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\capture-retained-c22.py", line 186, in <module>
+    if __name__ == '__main__':main()
+                              ~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\capture-retained-c22.py", line 73, in main
+    base = p.historical_gate_before_c22()
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 151, in historical_gate_before_c22
+    c21=retained_v31.verify(ROOT,inspect,closed,project_owner,docker,sequence,ids,p1.PRIVATE,p1.hostpath)
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\retained_v31.py", line 31, in verify
+    audit.audit_index(root,dict(id='retained-c21-public',index=(evidence/INDEX).relative_to(root).as_posix(),
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        sha256=INDEX_SHA256,format=audit.FILES_MAP,member_root='.',expected_count=index['count'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        expected_status='C21_ORIGINAL_PUBLIC_EVIDENCE_INDEX'))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 143, in audit_index
+    raw = checked_bytes(path, attributes['sha256'])
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 89, in checked_bytes
+    need(digest(raw) == expected, 'pinned file SHA256 differs: ' + path.name)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-c23\data-product-platform\examples\lifecycle-d1\evidence_indexes.py", line 19, in need
+    raise ValueError('evidence audit: ' + message)
+ValueError: evidence audit: pinned file SHA256 differs: issue307-d1-candidate21-final-confirmation01.md

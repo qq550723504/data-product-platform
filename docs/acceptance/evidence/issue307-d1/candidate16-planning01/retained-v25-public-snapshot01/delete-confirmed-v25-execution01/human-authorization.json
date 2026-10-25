@@ -1,0 +1,343 @@
+{
+  "status": "RECEIVED_EXPLICIT_USER_AUTHORIZATION_BY_REFERENCE",
+  "recorded_at": "2026-10-20T01:13:52.964274+00:00",
+  "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+  "profile": "candidate15/v25",
+  "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "human_message_id": "msg_01a156dd-1747-7c41-9657-8014bddc9df4",
+  "human_turn_id": "01a156dd-1652-7023-a8be-e08f86ea7906",
+  "human_message_timestamp": "2026-10-20T01:11:32.423Z",
+  "user_message_verbatim": "授权按已核对的 candidate15/v25 完整方案及全部冻结绑定执行，execution 9f9c67d7-8a09-45a8-897f-9e3077b60980。仅在2026年10月20日新加坡14:00–14:40、全部新鲜前置通过后删除所列6份目标，每份最多一次、全局最多6次，UNKNOWN不重发；遵守全部保留限制，失败或过窗立即封存，不延长窗口，旧授权不复用。#332保持Draft、不合并，#307保持OPEN。\n",
+  "user_message_sha256": "645250401988c564929ad4437358e8c42bd8dfa1b3fda87413d5eea63e33efd4",
+  "user_message_utf8_bytes": 432,
+  "user_retyped_template": false,
+  "approved_reference": "The candidate15/v25 full exact machine template and all frozen bindings pasted in this thread, its 50-member immutable index plus index itself and final HEAD/CI receipt, explicitly stated host/window contracts, and immediately preceding exact confirmation audit; actual human wording is preserved separately.",
+  "candidate_sha256": "0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99",
+  "bindings_sha256": "d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0",
+  "referenced_template_sha256": "492a83604d1c32589d5dbb3aa97d4f40a618e5a6bf86e9c0123c80fc67f3609a",
+  "source": "f6acb072db9881e7b1cfd72003d4ef616955947b",
+  "source_freeze_sha256": "db12be33765b0d392d2fc9f3331ec1813b3af6c6fb1d9da1d06fc4e0642a3fac",
+  "profile_windows_sha256": "c8b3f64761408118dc1574440ddd729a1724e2474d1a381da0b42ccf047379b1",
+  "reader_binary_sha256": "610ebda75f8e5e4b75fa66100ea53b836bf2223682c572c11212ea91be5224e2",
+  "sender_wire_recovery_binary_sha256": "cbdaf78ab885aaefd47309a92eaf26ff4fc39c3f22ae8e0f104216e4830b21b4",
+  "owner_binary_sha256": "7d3706a8ad456ed17fed2ddffc8d7add52b41ab22dd756699dde8d23fe968019",
+  "target_digest": "2a3b9c31e27de4bdf0185c3500600093356410b2f87ea0e4809863b78c2dacf4",
+  "final_approved_head": "a63fd5275f5fd26c832cb9664eb8b64b0f5e15bf",
+  "final_head_PR_CI": 39320908916,
+  "packet_containment_anchor": "dcf6f4f50939090144d8299ab841b3b30d8eff34",
+  "not_before": "2026-10-20T06:00:00Z",
+  "not_after": "2026-10-20T06:40:00Z",
+  "readonly_recovery_not_after": "2026-10-20T08:40:00Z",
+  "max_per_target": 1,
+  "max_total": 6,
+  "targets": 6,
+  "survivors": 11,
+  "unknown_resend": false,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "old_authorization_reused": false,
+  "keep_old_pins": true,
+  "keep_old_budgets": true,
+  "keep_all_backups": true,
+  "keep_failure_unknown_attempt_cost_evidence": true,
+  "keep_other_environments": true,
+  "failure_or_expiry": "stop new enable/send and continue all bound groups containment; no extending shifting reopening or resend",
+  "authorization_envelope_sha256": "4235c092505088510bbb505796f3481ff62cdff085e64de674eba98a0d05363c",
+  "additional_host_bindings_sha256": "6a1fc20cf9c21612bb902b4253f68ada379800d6947783bc378fe05058002b14",
+  "approved_reference_manifest_sha256": "8cfc25db8269a9e7a7de514d00546a167bed6e5bd05273253a2537efc0c13f1f",
+  "approved_full_assistant_confirmation_sha256": "0cbf38be0bc9b19cf2eda9740e2296d17d192f79974274a13e873bf059b80e3d",
+  "original_frozen_reference_index_sha256": "2974089b38aa9481ef06d529295481d6c8fd0cae53dcf0605d90dc9633a676be",
+  "confirmation_audit_sha256": "b089ff10b3b563aaba9da0b7e507f05a80145e3794d290ee9ee6d2335f4060af",
+  "approved_reference_artifact_count": 56,
+  "approved_reference_artifacts": [
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go",
+      "sha256": "956521917ee5465d87ea0915f8eaa00cc7ef6d06227006f89f3e9b914d162467",
+      "bytes": 15578
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/remaining_window_test.go",
+      "sha256": "d445609c3f975e0ff1845cadf8ecb864c51d62572bd0e584ebbdbe733747834c",
+      "bytes": 1552
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-readonly-check/six.go",
+      "sha256": "e891e96e0066baba152bf787e5eae23bb2586cafcbff2ee7501872ff8ec90065",
+      "bytes": 7651
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go",
+      "sha256": "277327eca8e1f63ba3a70b80af1637dd7fcead9b10a17c3e4394a88578525c93",
+      "bytes": 8682
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go",
+      "sha256": "037233b8325a3e4a2928a37837285783901353639f9a9582a803cdb18d0e4612",
+      "bytes": 12434
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go",
+      "sha256": "1543b11da41de3ec0b98a43ce9037900b95183abe565735bc2d2a0fa62292858",
+      "bytes": 3020
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-remaining/main.go",
+      "sha256": "05a777b3701a8b6e09f9070d0c60cc47093019d703aedf49183d1ccae171376c",
+      "bytes": 23047
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-remaining/main_test.go",
+      "sha256": "9098a98e7a22e3376037e03b5e469238aa3ef7c324946ab67dc9fcacf0766bdb",
+      "bytes": 5746
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_policies.go",
+      "sha256": "0c0bec0aec518a3b03a33b89b65de9a3691989c16615bdd9a245815ac00c113d",
+      "bytes": 5292
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.go",
+      "sha256": "c45e41d7ceaad4fa26ef3c81640628e9fa84c9725d18d691a7c4baf8668839ef",
+      "bytes": 1458
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_policy_heads.json",
+      "sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+      "bytes": 3953
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_policy_heads_test.go",
+      "sha256": "96e51d2af38ca6f8d54bdd9b00673349e18b76c4fdc1b8d8bbad84f16a2c2592",
+      "bytes": 2184
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/remaining_scope.go",
+      "sha256": "f404bb4d9e5fa4de4a2f99edc47cb223136b67012d000d0e172bd16942c19f65",
+      "bytes": 2366
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate15-confirmation-audit01/audit.json",
+      "sha256": "b089ff10b3b563aaba9da0b7e507f05a80145e3794d290ee9ee6d2335f4060af",
+      "bytes": 5459
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/candidate15-confirmation-audit01/evidence-index.json",
+      "sha256": "302e3fd889df1f8f07ef236375605d88c53b9422f6c029859833d28b574a002e",
+      "bytes": 1737
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/candidate15-approval-reference-index01.json",
+      "sha256": "2974089b38aa9481ef06d529295481d6c8fd0cae53dcf0605d90dc9633a676be",
+      "bytes": 11066
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/confirmation-parent-audit01.json",
+      "sha256": "c4dc0f9379df832ac1320015763d10340a4c05d9347a5fcf4a0cf6ed1ac7025c",
+      "bytes": 3302
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/final-delivery-checkpoint01.json",
+      "sha256": "b2fe905946ae961941f98d37104a0aa629a9266f831f3ee80d3bd6ada637bc45",
+      "bytes": 3008
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/frozen-complete-parent-readback01.json",
+      "sha256": "83da3642290f0b38cd3243b4fb39b2d43a7b910f740736439c0516987bcf55cb",
+      "bytes": 40707
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/frozen-independent07/independent-evidence-index07.json",
+      "sha256": "487d0d202088df49a85aabd1127c0bc50995d2ac14bf48cfb10d72fae6d8b1e4",
+      "bytes": 2468
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/host-anchor-readback01.json",
+      "sha256": "97e20c37c3b479457623a71c073c9ab463947d43bb69481ad25d8113f25dc3f6",
+      "bytes": 728
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent-frozen-confirmation-review07.json",
+      "sha256": "eaceae8610b25302b4ab83cc3441203c3b3f38a451d546bb6c5e644f39d9872b",
+      "bytes": 21342
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent-policy-checkpoint-review05.json",
+      "sha256": "7b8b5e63663d90acdc1d5b512c18349daf0f454ac904e65f99258dd47241325e",
+      "bytes": 16850
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/independent-source-restore-review06.json",
+      "sha256": "a59f23dc692ea8f4adfccf529284633f58939c7a94d27f8de12ed2085b640728",
+      "bytes": 38379
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-policy-heads01/policy-heads.json",
+      "sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+      "bytes": 3953
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/failure.json",
+      "sha256": "51f40145c340f491b2c86770fdd53aceab85290f08f668fa316cb48fb01aa652",
+      "bytes": 4289
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-freeze-failure01/scoped-host-repair02.json",
+      "sha256": "39175d01bf199ec76af7b80d046f661bb4e4133b093a48e880f249b0ad3853c0",
+      "bytes": 852
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-preparation01/non-delete-evidence-index.json",
+      "sha256": "60f04003a59cbf29e2522a74781d70e8869b225d18731a4bb39489efe3437ab6",
+      "bytes": 156162
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-preparation01/non-delete-terminal.json",
+      "sha256": "921d7ed8b98974841c03de58efb7a53ef58198701236ead19765ea63d30087c4",
+      "bytes": 19163
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15-readonly01/complete.json",
+      "sha256": "e2129d7abae7e3de937b801b952d31dd35516e096306f0311f89573358aff325",
+      "bytes": 6906
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/bindings.json",
+      "sha256": "d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0",
+      "bytes": 274170
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/candidate.json",
+      "sha256": "0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99",
+      "bytes": 20540
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/confirmation-template.txt",
+      "sha256": "492a83604d1c32589d5dbb3aa97d4f40a618e5a6bf86e9c0123c80fc67f3609a",
+      "bytes": 26764
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/offline-validator/owner.json",
+      "sha256": "bd3b76d2da681a8275b3920e07f6901f3d2983a100b2875a2556bde65d652541",
+      "bytes": 302
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/offline-validator/stdout.txt",
+      "sha256": "bae077fbd34f4cff09b12d68e3ccf73a069b814a0efbc7d9dfef8181e61ddd1f",
+      "bytes": 55
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/profile-windows.json",
+      "sha256": "c8b3f64761408118dc1574440ddd729a1724e2474d1a381da0b42ccf047379b1",
+      "bytes": 3527
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/source-freeze.json",
+      "sha256": "db12be33765b0d392d2fc9f3331ec1813b3af6c6fb1d9da1d06fc4e0642a3fac",
+      "bytes": 593984
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/remaining-candidate15/status.json",
+      "sha256": "896bbe55f258d8c6516fc08e65a2b0be3f8eb1619bceb10f93c6480082f705d3",
+      "bytes": 738
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-candidate15-confirmation.md",
+      "sha256": "1a2aacb75a405867dce8d5c2255c70afd205515f4030a07185f58b26b5269340",
+      "bytes": 36353
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-post-v22-six-contract.md",
+      "sha256": "f5bbf32530d5f55b1a82b6795d418ccf9cb9915474f81ae557ed81eeddf36f8f",
+      "bytes": 13803
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v25-window-runbook.md",
+      "sha256": "843b3a23269cb3c7c808f2c4658426fa44d32131f6d469c5456b9bca2ce9def2",
+      "bytes": 12311
+    },
+    {
+      "path": "examples/lifecycle-d1/attest-remaining-executable.py",
+      "sha256": "9472bf1be278fca84a70a0211ef0ecabea713b84ac202a389b7dcd3d45c92259",
+      "bytes": 11354
+    },
+    {
+      "path": "examples/lifecycle-d1/freeze-six-candidate.py",
+      "sha256": "101f2412466921cf349a7ea01be511af61c05ebd71540b1ef8d0788a9287adbc",
+      "bytes": 20240
+    },
+    {
+      "path": "examples/lifecycle-d1/prepare-six-candidate.py",
+      "sha256": "0d1e25bd2b4e3e465abb7187da614fd61441d536eca316f32f1b2d4124279c8a",
+      "bytes": 31620
+    },
+    {
+      "path": "examples/lifecycle-d1/remaining_sequence.py",
+      "sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "bytes": 7093
+    },
+    {
+      "path": "examples/lifecycle-d1/remaining_six_window.py",
+      "sha256": "bc8182d1305fc5e9cde70826fddcf4f7d865daf78fcb675e034885d19b7ebafd",
+      "bytes": 1931
+    },
+    {
+      "path": "examples/lifecycle-d1/remaining_window.py",
+      "sha256": "e2dd0f4efcf84cc26e7a5977c4a336051849926949eaf373a13e4253262b6cc0",
+      "bytes": 6470
+    },
+    {
+      "path": "examples/lifecycle-d1/six_candidate_runtime.py",
+      "sha256": "0736a80b400b998016604c9aa710e0e2a5705af5f5b2b3f172e133ca1d3e256c",
+      "bytes": 42862
+    },
+    {
+      "path": "examples/lifecycle-d1/test_freeze_six_candidate.py",
+      "sha256": "99947fc8f883917dcbfa664533ac7c76f5a7d04155eead51cbc25217308d9b66",
+      "bytes": 6813
+    },
+    {
+      "path": "examples/lifecycle-d1/test_remaining_sequence.py",
+      "sha256": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5",
+      "bytes": 5894
+    },
+    {
+      "path": "examples/lifecycle-d1/test_remaining_six_window.py",
+      "sha256": "b55c1daa1f8b352276a1f9ef3df14217cae6c83f40f0d65b2ff8a75df23dc075",
+      "bytes": 6266
+    },
+    {
+      "path": "examples/lifecycle-d1/test_six_candidate_runtime.py",
+      "sha256": "485be98f1923ac9be79fe364c35a0393209b693e94e001110878d87bd924d824",
+      "bytes": 24376
+    },
+    {
+      "path": "examples/lifecycle-d1/test_verify_six_native.py",
+      "sha256": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+      "bytes": 8595
+    },
+    {
+      "path": "examples/lifecycle-d1/test_window_six_support.py",
+      "sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+      "bytes": 7973
+    },
+    {
+      "path": "examples/lifecycle-d1/verify-six-native.py",
+      "sha256": "6a595020fb0c5b248b5a09d4eb0f18ade1b5e31da2dc1bec19797ff61a1c7f04",
+      "bytes": 14571
+    },
+    {
+      "path": "examples/lifecycle-d1/window_six_support.py",
+      "sha256": "18eb0e8eb022a328d37908d0423a5289b843e5b608ed3437bb06b9c178c46542",
+      "bytes": 12745
+    }
+  ],
+  "operator_root_permission_enabled": false,
+  "source_start_or_enable": false,
+  "native_delete": 0,
+  "scheduler_authority": "NOT_RECEIVED; frozen runbook requires separate human request",
+  "schedule": "NOT_CREATED",
+  "PR332": "DRAFT_OPEN_NO_READY_NO_MERGE",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

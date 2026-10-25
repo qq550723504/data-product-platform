@@ -1,0 +1,13 @@
+{
+  "status": "MATCH_PERSISTED_ORIGINAL_OBSERVATION_PROOF",
+  "attempt_id": "4d930776-fd98-4a86-8ed2-0a1eaad7dd34",
+  "http_status": 403,
+  "certaintly": "CONFIRMED",
+  "outcome": "DENIED",
+  "observed_at": "2026-10-21T14:14:14.058613Z",
+  "original_proof_sha256": "d41fbc8ab1286069830157251e7d3d1fd00ca61be7325c9671dc7a49a4653680",
+  "derivation": "Exact original ObservationHash JSON struct Attempt/Status/Outcome/Observed; no provider query or inference about body",
+  "response_body_or_provider_code": "NOT_RETAINED_BY_FROZEN_DELETE_TRANSPORT",
+  "source_start": 0,
+  "native_delete": 0
+}

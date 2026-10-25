@@ -1,0 +1,13 @@
+{
+  "test": "test_retired_resources.py",
+  "root": "C:\\Users\\Henry\\.codex\\fixture-private\\ci-portability-fix01\\python-export02",
+  "reads": [
+    "examples/lifecycle-d1/__pycache__/evidence_indexes.cpython-314.pyc",
+    "examples/lifecycle-d1/__pycache__/retired_resources.cpython-314.pyc",
+    "examples/lifecycle-d1/evidence_indexes.py",
+    "examples/lifecycle-d1/retired_resources.py",
+    "examples/lifecycle-d1/test_retired_resources.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

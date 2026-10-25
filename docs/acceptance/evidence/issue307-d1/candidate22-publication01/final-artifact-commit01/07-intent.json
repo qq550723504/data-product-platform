@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.longpaths=true",
+    "-c",
+    "core.autocrlf=false",
+    "diff",
+    "--cached",
+    "--name-only",
+    "--",
+    "apps/platform",
+    "examples/lifecycle-d1",
+    "migrations",
+    ".github/workflows/ci.yml"
+  ],
+  "at": "2026-10-23T06:12:23.423482+00:00"
+}

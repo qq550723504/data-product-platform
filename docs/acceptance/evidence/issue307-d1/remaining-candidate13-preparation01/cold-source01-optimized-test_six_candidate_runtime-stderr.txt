@@ -1,0 +1,15 @@
+test_actual_created_network_prebinding_and_attached_identity_counterexamples (test_six_candidate_runtime.SixHostTests.test_actual_created_network_prebinding_and_attached_identity_counterexamples) ... ok
+test_actual_initializer_canonical_capability_and_expansion_counterexamples (test_six_candidate_runtime.SixHostTests.test_actual_initializer_canonical_capability_and_expansion_counterexamples) ... ok
+test_case_cross_field_failure_precedes_permission_and_docker (test_six_candidate_runtime.SixHostTests.test_case_cross_field_failure_precedes_permission_and_docker) ... ok
+test_current_checkpoint_is_mandatory_preserves_initial_allocation_and_rejects_cross_binding (test_six_candidate_runtime.SixHostTests.test_current_checkpoint_is_mandatory_preserves_initial_allocation_and_rejects_cross_binding) ... ok
+test_dump_failure_stops_new_groups_and_closes_every_known_owner (test_six_candidate_runtime.SixHostTests.test_dump_failure_stops_new_groups_and_closes_every_known_owner) ... ok
+test_existing_or_wrong_owner_volume_never_starts_or_is_adopted (test_six_candidate_runtime.SixHostTests.test_existing_or_wrong_owner_volume_never_starts_or_is_adopted) ... ok
+test_fixed_docker_bytes_wrapper_preserves_streamed_dump (test_six_candidate_runtime.SixHostTests.test_fixed_docker_bytes_wrapper_preserves_streamed_dump) ... ok
+test_full_three_group_source_backup_restore_sequence (test_six_candidate_runtime.SixHostTests.test_full_three_group_source_backup_restore_sequence) ... ok
+test_owner_success_and_wait_logs_write_failure_always_close (test_six_candidate_runtime.SixHostTests.test_owner_success_and_wait_logs_write_failure_always_close) ... ok
+test_source_contract_allows_only_reviewed_host_repair_not_compiled_or_other_host_drift (test_six_candidate_runtime.SixHostTests.test_source_contract_allows_only_reviewed_host_repair_not_compiled_or_other_host_drift) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.237s
+
+OK

@@ -1,0 +1,41 @@
+{
+  "status": "PROPOSED_NOT_AUTHORIZED_NOT_EXECUTED",
+  "scope": "candidate23/v33 non-delete preparation only",
+  "execution": "4fad1007-6595-4037-a7a5-1d8d38cb8bcc",
+  "repository": "qq550723504/data-product-platform",
+  "pull_request": 332,
+  "issue": 307,
+  "expected_remote_branch": "codex/issue307-post-v22-dispatch-closure",
+  "expected_remote_head": "8de3bc4c9f737c3c3e81fddb60491422ba6039f2",
+  "expected_rule_id": "BPR_kwDOUdQLBs4FE_7b",
+  "runtime_source": "6255b62b94ffdb2453b89c7caaa777e69cc6a6d8",
+  "runtime_branch": "codex/issue307-candidate23-runtime",
+  "local_host_branch": "codex/issue307-candidate23",
+  "host_source": "BIND_EXACT_REVIEWED_LOCAL_COMMIT_AFTER_COMMIT",
+  "proposed_window_utc": ["2026-10-24T10:00:00Z", "2026-10-24T10:40:00Z"],
+  "authority_required": "New direct human maintenance instruction; candidate22-specific permission is not reused",
+  "before_unlock": [
+    "Verify expired unauthorized candidate22 terminal and fresh physical closure; no running old schedule",
+    "Verify current exact PR head, native rule ID and full protection; stop on unknown or drift",
+    "Verify #332 OPEN/Draft/unmerged and #307 OPEN"
+  ],
+  "only_protection_mutation": "Existing exact GraphQL rule: lockBranch=false during maintenance; all other protection fields unchanged; no rule recreation",
+  "publication": [
+    "Publish the reviewed immutable runtime commit on its separate branch",
+    "Fast-forward only the existing PR branch to the reviewed local host source; no force push or main merge",
+    "Require successful necessary pull_request CI for that exact host source before history/build/resource allocation",
+    "Run the reviewed finite non-delete allocation, independent budgets, 17-version native verification and independent candidate review",
+    "Commit actual preparation, frozen bindings and final confirmation; require exact final PR HEAD CI",
+    "Set only lockBranch=true on the same rule, compare all other protection fields and perform post-lock HEAD/CI checks before new execution-binding"
+  ],
+  "failure": "Stop and retain original facts; close any resources through fixed containment; do not weaken gates or reuse candidate22 authority",
+  "preserve": ["candidate22", "all old budgets", "all pins", "all failed and UNKNOWN evidence", "all backups", "all survivor versions", "all other environments"],
+  "pull_request_draft": true,
+  "issue_open": true,
+  "merge": false,
+  "real_delete": false,
+  "schedule": false,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0
+}

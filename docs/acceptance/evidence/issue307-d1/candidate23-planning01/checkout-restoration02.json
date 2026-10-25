@@ -1,0 +1,26 @@
+{
+  "status": "COMPLETE_C22_ORIGINAL_RECEIPT_SET_RAW_PROTECTED",
+  "checked_files": 5364,
+  "restorations": [
+    {
+      "path": "docs/acceptance/issue307-d1-v32-preparation-contract.md",
+      "before": "e91c4e34d18ba0fed283e6a4367a8379b6820e02a29a87a7a046374998aa5667",
+      "issued": "127dd47f9ad7e9d6f31e32ae642be48a166613b798591ed7f6f1812f28c09582",
+      "lf_equal": true
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v32-preparation-contract02.md",
+      "before": "4d55482e3419a73c902832d04f776e0137873666b033238e974f48227ffe389f",
+      "issued": "598f407a2a3f0600e74331b7ebdb6a015bbccbd73fcd9efe60a10c5aad63143c",
+      "lf_equal": true
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-v32-preparation-matrix01.md",
+      "before": "b92250cc0ff893738c18d80da6ee34c31bc03aaf55efc3e2f570d048f73eeee5",
+      "issued": "52ec0d60a4dd33d54f30b0071fe5a5d5c5e416ffa717f9996475c4ab8b3abdec",
+      "lf_equal": true
+    }
+  ],
+  "native_delete": 0,
+  "source_start": 0
+}

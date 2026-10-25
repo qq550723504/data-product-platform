@@ -1,0 +1,62 @@
+{
+  "status": "FAILED_BUDGET_VALIDATOR_AFTER_FIRST_INITIALIZER",
+  "observed_at": "2026-10-19T17:26:26.324904+00:00",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "source": "355717c022fe36052dcf8b3cc37ceeef901286f7",
+  "source_checkpoint01_sha256": "03596768d01cec5793319fcbc94e2fbf93dcc6ab390c3331c6c9755719e0e649",
+  "allocation_sha256": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+  "first_failure": "KeyError: 'Helpers' in remaining_sequence.targets called from budget_archive; synthetic candidate projection omitted Helpers",
+  "raw_failure_stderr_sha256": "dad0652347be07f7f325a16a550079b4854913ce6f9ca2bd0a2d35b4062053d1",
+  "raw_host_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "original_initialization_receipt_sha256": "2c35a3570b8b3a8073bd00c5163b4a4d8200aff52288b9a55e73a749155a5e67",
+  "completed_business_owner_receipt_sha256": "a569a5ced7696eb6483a5ad52a965431fd340dd2a9a1f88c9a512fd234572ebe",
+  "completed_business_wait_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "original_business_tar_sha256": "6394dd7e1a436cccf09a106c054ed6a0ae40f9f8a0712e131c54762fbc2b0cc8",
+  "initializers": [
+    {
+      "group": "business-races",
+      "cid": "3564e947a1e76aa2335d63eb6476e8638f89c099ce4f474e96b9d500bae84d62",
+      "state": {
+        "Status": "exited",
+        "Running": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "StartedAt": "2026-10-19T17:21:26.165224087Z",
+        "FinishedAt": "2026-10-19T17:21:26.246558794Z"
+      },
+      "network_mode": "none"
+    },
+    {
+      "group": "late-hold",
+      "cid": "0496f48ba1cff8a998fc4f407fa319be050e9ff06645d37fd39a25b0fc2ccddc",
+      "state": {
+        "Status": "created",
+        "Running": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "network_mode": "none"
+    },
+    {
+      "group": "mixed",
+      "cid": "f2c44a5d65f730b7245fda236dbb4ab141eace90511773f10af15a595a7fbdd9",
+      "state": {
+        "Status": "created",
+        "Running": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "network_mode": "none"
+    }
+  ],
+  "source_started": false,
+  "identity_enabled": false,
+  "native_delete": 0,
+  "old_budget_changed": false,
+  "budget_files_consumed": 0,
+  "continuation": "NOT_RUN; preserve business initializer completion, original tariff and all raw records; only a separately reviewed fixed continuation may initialize never-started remaining owners"
+}

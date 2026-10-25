@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-19T18:07:48.514188031Z",
+  "id": "a0972d58-1ceb-4484-b8f2-3a0fc6b7333d",
+  "method": "PUT",
+  "path": "/minio/admin/v3/add-canned-policy",
+  "query": "name=dpp307-contract-readonly"
+}

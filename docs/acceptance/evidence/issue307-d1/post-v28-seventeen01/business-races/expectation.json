@@ -1,0 +1,16 @@
+{
+  "audit_id": "b5651864-a9ca-4eaa-b3a4-61a90db8374e",
+  "profile_sha256": "386414ac327978aa321d7b23726411ba92106fe22f026d750e4ec0196902272d",
+  "binary_sha256": "b734902a527665abf04215ab5efb61d49b20667d7413d3641afaeaf85ddec84c",
+  "candidate_sha256": "e5b884e9ba0f7e357025627f0492cc486c4ac0e4e32ff626e8b4cb759c01566e",
+  "frozen_inventory_sha256": "6330308dafa1d377ed8dda5a4f869cd5d5df21583fa334f3493e739a112e8001",
+  "present_inventory_sha256": "8536a4828f6bb6699e952adf90b37bcc66d714b6018f3738cc513aa43da672fd",
+  "core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+  "native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+  "network": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+  "not_before": "2026-10-22T01:27:28Z",
+  "expires_at": "2026-10-22T02:17:05.266994Z",
+  "Execution": "4fd5a7e7-779e-41d7-a35a-3bab7dd615b5",
+  "Profile": "candidate18/v28",
+  "Role": "SOURCE"
+}

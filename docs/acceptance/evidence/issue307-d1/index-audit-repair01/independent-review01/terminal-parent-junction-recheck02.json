@@ -1,0 +1,9 @@
+{
+  "status": "CLOSED",
+  "parent_is_actual_junction": true,
+  "error": "terminal record or authorization directory is aliased",
+  "gate_entered": false,
+  "source_provider_io": 0,
+  "external_process_attempts": 0,
+  "original_fixture_and_record_preserved": true
+}

@@ -1,0 +1,46 @@
+{
+  "status": "PASS_BOUNDED_C21_C20_RETENTION_SOURCE_AND_OFFLINE_REVIEW",
+  "at": "2026-10-22T10:24:22.359326+00:00",
+  "new_execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "profile": "candidate21/v31",
+  "base_host": "16aa4ec464a1fa14f1aa7ac21624b3855ecb39b3",
+  "reviewed_implementation": "Working retention diff as pinned in independent-retention-reviewed-inputs01.json; not a committed full C21 source review.",
+  "remaining_blockers": [],
+  "reviewed_inputs_sha256": "13524190fa670d3910933596eba597e4c830fbfd5ae0541a9c86b9a959d083a6",
+  "independent_normal_methods": 3,
+  "independent_optimized_methods": 3,
+  "modeled_cases_per_mode": {
+    "full_success": 1,
+    "full_path_reject_subcases": 20,
+    "rehashed_budget_uid_or_nonempty_reject_subcases": 2
+  },
+  "conclusions": [
+    "retained_v30 composes only after the existing820 retained set and requires exact old membership before adding86 original C20 owners plus its separate clone to907. It never invokes terminal C20 Host/state/worker or mutating Docker verbs.",
+    "Original public pins/913typed public members, private939/schema292 complete file sets, immutable terminal/allocation/build/archive/revocation facts and30false permissions are fixed. New C21 paths do not expand old directory sets.",
+    "Fresh callback observations must match captured C20 owner topology and10State fields, including StartedAt/FinishedAt. The separately pinned clone State9186c45d also rejects a stopped-after-restart clone.",
+    "All18 resources require exact membership/ownership/descriptor, complete volume mount graphs,3internal network scope, and independent clone volume. Three old C20 budgets retain their original hashes and use the existing six budget parser to enforce UID/GID10001 plus empty initial content, including rehashed wrong-UID/nonempty counterexamples.",
+    "Old57backup summary is consistent with the existing authoritative retained57 set; this changes the displayed aggregate from the older48 subset and does not change native contents.",
+    "Original26 normalized checkout paths were restored in the new checkout only; independent comparison confirms exact d1-lock retained raw bytes, prior Git objects still exist and match the prior normalized bytes, and effective -text preserves the restored files. The913member typed index audits successfully."
+  ],
+  "saved_inputs": {
+    "anchor_sha256": "0a84e160225ad47940e3d4a170e94317d00adc85f53e6ce17e0f305eddeab2bd",
+    "public913_index_sha256": "dd9c3b2caa77896f613e5af343a0a48e64b08d10614c04a58c97f2433a6add30",
+    "clone_state_sha256": "9186c45d000a20d6331faf7508698f1c2547a82d55a1495e909e81386827377f"
+  },
+  "evidence": [
+    "independent-retention-offline01.json",
+    "independent-retention-input-audit01.json",
+    "independent-design-anchor-audit01.json"
+  ],
+  "limits": {
+    "new_physical907_readback_by_reviewer": "NOT_RUN_ROOT_EXECUTING_SEPARATELY",
+    "full_C21_source_R_P_window_review": "NOT_RUN_AWAIT_COMMITTED_HEAD_AND_HUMAN_WINDOW",
+    "candidate_native_preparation": "NOT_RUN",
+    "new_R_P_freeze_or_authority": "NOT_GRANTED",
+    "source_Docker_DB_provider_actions_by_reviewer": 0,
+    "old_C20_facts": "ORIGINAL_FAILURE_PRESERVED_NO_RELABEL_NO_REUSE",
+    "old_IAM_status": "UNCONFIRMED_HISTORY_NOT_REWRITTEN",
+    "PR332": "REMAIN_DRAFT_UNMERGED",
+    "Issue307": "REMAIN_OPEN"
+  }
+}

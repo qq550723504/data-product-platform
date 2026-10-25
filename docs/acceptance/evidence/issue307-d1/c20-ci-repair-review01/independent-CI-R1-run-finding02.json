@@ -1,0 +1,17 @@
+{
+  "status": "BLOCKED_PENDING_SOURCE_CI_RUN_CROSS_FIELD",
+  "root_id": "CI-R1",
+  "at": "2026-10-22T09:30:30.021284+00:00",
+  "source_commit": "0b48f5e93c04c9804fd1ab7274ca243c88aa0082",
+  "path": "examples/lifecycle-d1/six_candidate_runtime.py",
+  "raw_sha256": "546628f3dcf5a2b2ab9e28ffa9345c192dfddc6d033198f9c46f870633b3443e",
+  "observed_positive_fixture": {
+    "receipt_run": 100,
+    "source_ci_run": 100,
+    "snapshot_ci_id": 9,
+    "current_test": "test_current_exact_build_has_all_twelve_regular_unlinked_members",
+    "result": "Existing positive test passes although its receipt/run is not the run whose saved snapshot ready() verifies."
+  },
+  "minimal_fix": "Bind saved snapshot.ci.id to the same record.run/source_ci.run; correct positive fixture and reject rehashed mismatched run. The exact-head A\u2192B fix in0b48 is already accepted; this is the adjacent provenance equality in the same limited source_ci contract.",
+  "not_required": "No new mechanism, native rerun, authority widening or old preparation rewrite."
+}

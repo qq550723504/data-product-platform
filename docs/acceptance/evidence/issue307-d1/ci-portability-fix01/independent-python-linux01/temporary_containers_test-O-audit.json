@@ -1,0 +1,11 @@
+{
+  "test": "../temporary_containers_test.py",
+  "root": "/work",
+  "reads": [
+    "examples/__pycache__/temporary_containers.cpython-313.opt-1.pyc",
+    "examples/temporary_containers.py",
+    "examples/temporary_containers_test.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

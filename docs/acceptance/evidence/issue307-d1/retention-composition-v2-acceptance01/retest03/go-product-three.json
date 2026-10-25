@@ -1,0 +1,14 @@
+{
+  "name": "go-product-three",
+  "command": [
+    "go",
+    "test",
+    "./cmd/lifecycle-fixture-retention",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-readonly-check",
+    "-count=1"
+  ],
+  "started_at": "2026-10-24T11:09:33.042442+00:00",
+  "finished_at": "2026-10-24T11:09:59.692586+00:00",
+  "returncode": 0
+}

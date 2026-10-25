@@ -1,0 +1,8 @@
+test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build (test_preallocation_ci.PreallocationTests.test_ci_A_cannot_allocate_build_B_or_drifted_A_after_long_history_and_build) ... ok
+test_complete_allocate_rejects_failed_pending_foreign_and_unknown_ci_before_history_or_build (test_preallocation_ci.PreallocationTests.test_complete_allocate_rejects_failed_pending_foreign_and_unknown_ci_before_history_or_build) ... ok
+test_fresh_exact_source_success_records_provenance_without_lock_or_resources (test_preallocation_ci.PreallocationTests.test_fresh_exact_source_success_records_provenance_without_lock_or_resources) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.060s
+
+OK

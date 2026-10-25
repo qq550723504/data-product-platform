@@ -1,0 +1,14 @@
+{
+  "test": "test_native_protection.py",
+  "root": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform",
+  "reads": [
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.json",
+    "examples/lifecycle-d1/__pycache__/native_protection.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/__pycache__/protection_test_fixtures.cpython-314.opt-1.pyc",
+    "examples/lifecycle-d1/native_protection.py",
+    "examples/lifecycle-d1/protection_test_fixtures.py",
+    "examples/lifecycle-d1/test_native_protection.py"
+  ],
+  "forbidden_host_reads": [],
+  "code": 0
+}

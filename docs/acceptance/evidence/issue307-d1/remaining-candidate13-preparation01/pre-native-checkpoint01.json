@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-19T17:51:31.455024+00:00",
+  "head": "c72930430d1aeaf89f6af9be49881391405d9efa",
+  "pr_ci": 39296105088,
+  "event": "pull_request",
+  "jobs_success": 13,
+  "required_success": true,
+  "pr332": "DRAFT_OPEN",
+  "unresolved_threads": 0,
+  "issue307": "OPEN",
+  "reviews": {
+    "budget-source-independent-review05.json": "695c077f1bb774774e99822731e891877606ef35d31391152298c40ed984b87f",
+    "checkpoint02-independent-review06.json": "e1af2862659887e4289160fd91a3a64f4a7cd8b028a72f7f4c584e65dee4beaf",
+    "budget-actual-independent-review07.json": "c62b6639060d9f4a6e49eb560761af80064069495266606f46a1358b9eb7ed66"
+  },
+  "ci_raw_sha256": "66caef60dca3354a401bb8d8360c0b73118181916afc92e3f838ee54405ceee7",
+  "github_raw_sha256": "d80fc21df48b7f2ce355564e15bf80817ce449e09a676999716d22bc4a469d38",
+  "source_native_io_before_fixed_gate": 0,
+  "delete_authorization": "NONE",
+  "native_delete": 0
+}

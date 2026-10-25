@@ -1,0 +1,12 @@
+{
+  "status": "PASS_FIVE_EXACT_CURRENT_DOCUMENT_TEXT_UNSET",
+  "source_head": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "attributes": [
+    "docs/acceptance/issue307-d1-candidate22-confirmation.md: text: unset",
+    "docs/acceptance/issue307-d1-candidate22-final-confirmation01.md: text: unset",
+    "docs/acceptance/issue307-d1-v32-window-runbook.md: text: unset",
+    "docs/acceptance/issue307-d1-v32-preparation-contract03.md: text: unset",
+    "docs/acceptance/issue307-d1-v32-preparation.md: text: unset"
+  ],
+  "tests": "Actual temporary Git blob, archive, core.autocrlf true and false checkout; LF and CRLF prototypes pass independently in both Python modes. Future rendered payloads are not claimed created."
+}

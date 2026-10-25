@@ -1,0 +1,13 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Deleted automation in the app."
+    },
+    {
+      "type": "text",
+      "text": "{\"automationId\":\"307-d1-candidate18-v28\",\"mode\":\"delete\",\"deleteStatus\":\"deleted\",\"snapshot\":{\"kind\":\"heartbeat\",\"name\":\"#307 D1 candidate18/v28 固定窗口续跑\",\"rrule\":\"FREQ=DAILY;COUNT=1;BYHOUR=22;BYMINUTE=0;BYSECOND=0\"}}"
+    }
+  ],
+  "isError": false
+}

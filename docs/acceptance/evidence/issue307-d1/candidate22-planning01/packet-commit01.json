@@ -1,0 +1,13 @@
+{
+  "status": "LOCAL_C22_PACKET_CONTAINMENT_ANCHOR_NOT_AUTHORIZED",
+  "head": "10e39eede9c0b30f1cab1397a4a42c5698479862",
+  "parent": "a50b5a6307e79896578669ed53a3e12f08a0a815",
+  "runtime_source": "81a083751c01a281d42df594f6e91012255081f1",
+  "candidate_sha256": "d7976ba7462ae30f53783b5111ed84d0656a58e62b4c5610bc93a73e538183db",
+  "bindings_sha256": "e63b908ca5269853478f7d5a65621327bc5f52ff2ff389de96707e0a137296af",
+  "template_sha256": "4a2aeed1f62bb10883a8b9f37b5c4da817bddb3580c22f59f54e942b6dd1b34d",
+  "restored_v29_original_receipts_committed": 5,
+  "native_delete": 0,
+  "pushed": false,
+  "authorization": false
+}

@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-10-22T06:29:29.799184+00:00",
+  "method": "POST",
+  "endpoint": "graphql",
+  "body": {
+    "query": "mutation($input:CreateBranchProtectionRuleInput!){createBranchProtectionRule(input:$input){branchProtectionRule{id pattern lockBranch isAdminEnforced lockAllowsFetchAndMerge allowsForcePushes allowsDeletions}}}",
+    "variables": {
+      "input": {
+        "repositoryId": "R_kgDOUdQLBg",
+        "pattern": "codex/issue307-freeze-rehearsal-4047394d6311",
+        "lockBranch": true,
+        "isAdminEnforced": true,
+        "lockAllowsFetchAndMerge": false,
+        "allowsForcePushes": false,
+        "allowsDeletions": false
+      }
+    }
+  }
+}

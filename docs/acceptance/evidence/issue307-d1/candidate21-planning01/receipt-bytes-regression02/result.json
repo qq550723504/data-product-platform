@@ -1,0 +1,14 @@
+{
+  "status": "PASS_REAL_GIT_EVIDENCE_AND_INDEXED_MARKDOWN_BYTES",
+  "results": [
+    {
+      "mode": "normal",
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "exit": 0
+    }
+  ],
+  "native_provider_delete": 0
+}

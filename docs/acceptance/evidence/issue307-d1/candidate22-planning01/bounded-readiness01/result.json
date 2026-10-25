@@ -1,0 +1,23 @@
+{
+  "status": "PASS_EXISTING_BOUNDARIES_AND_OLD_TERMINAL_REJECTION",
+  "results": [
+    {
+      "mode": "normal",
+      "tests": 21,
+      "exit": 0
+    },
+    {
+      "mode": "optimized",
+      "tests": 21,
+      "exit": 0
+    }
+  ],
+  "old_resume": "DENIED_BEFORE_ALLOCATION_READ",
+  "new_execution": "0e5cb8f3-46a9-4339-88e4-7154d6ebe13f",
+  "candidate22_runtime": "NOT_IMPLEMENTED_NOT_FROZEN",
+  "source_start": 0,
+  "native_delete": 0,
+  "branch_unlock": 0,
+  "new_resource_allocation": 0,
+  "full_D1": "NOT_ACCEPTED"
+}

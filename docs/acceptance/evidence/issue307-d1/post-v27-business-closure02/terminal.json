@@ -1,0 +1,57 @@
+{
+  "native_delete": 0,
+  "pins_released": 0,
+  "budgets_refunded": 0,
+  "profile_disabled": true,
+  "final_Core": "OBSERVED_AFTER_OBSERVER_STOPPED",
+  "final_delta": {
+    "changed_relations": [
+      "audit_event",
+      "command_idempotency",
+      "delivery_authorization_fence",
+      "evidence",
+      "evidence_relation",
+      "lifecycle_approval_revocation",
+      "outbox_event"
+    ],
+    "new_row_counts": {
+      "lifecycle_approval_revocation": 1,
+      "lifecycle_provider_observation": 0,
+      "lifecycle_dispatch_release": 0,
+      "command_idempotency": 1,
+      "audit_event": 1,
+      "evidence": 1,
+      "evidence_relation": 1,
+      "outbox_event": 1
+    },
+    "old_rows_preserved": true,
+    "new_provider_Cost": 0,
+    "pins_released": 0
+  },
+  "identity_containment": "UNCHANGED_NO_ENABLE_PATH",
+  "closure": [
+    {
+      "cid": "819de63d8b44cafdfc8ddb52e1a4ac056ff33ac8668c21a3790a8d971e95650b",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "dea9470840cd172e59048297ffffdb63d35a75da8950087003273859d0b891b0",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "48d2f6b440e4bdf06c21d5dd3898ec564c5c8ea4dcb871009c96cfc53b2845c3",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "stopped_PID0": true
+    }
+  ],
+  "retained_unchanged": true,
+  "failure": "ValueError: bounded closure owner failed; see independent raw channel receipts",
+  "status": "FAILED_OR_UNCONFIRMED_KEEP_ALL_FACTS_NO_REPLAY"
+}

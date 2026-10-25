@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-19T16:30:25.884319+00:00",
+  "source_before": {
+    "verify-six-native.py": "bbddab99c8ca263588e4e2ea4cf0cf58a96b27375c93ceacb3114229daf8bce5",
+    "freeze-six-candidate.py": "6814e9a1117a7f40e33753e357b1589a3b6bfaf9f858458d41609ed2cd36ca22",
+    "window_six_support.py": "d4052b640e20406a344cc0653408270a07cb1187fca0580e81b2aa95d6579e8d",
+    "test_verify_six_native.py": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+    "test_freeze_six_candidate.py": "3f5c6bd1d8e6922cd0652169f866f652e7f058bf0bc0fc5d18cf1d07629d5c18",
+    "test_window_six_support.py": "b32947a09419d9dac772e0c96a35c54ca13ca9aa683477a8bd29f300f73dae4d"
+  },
+  "source_after": {
+    "verify-six-native.py": "bbddab99c8ca263588e4e2ea4cf0cf58a96b27375c93ceacb3114229daf8bce5",
+    "freeze-six-candidate.py": "6814e9a1117a7f40e33753e357b1589a3b6bfaf9f858458d41609ed2cd36ca22",
+    "window_six_support.py": "d4052b640e20406a344cc0653408270a07cb1187fca0580e81b2aa95d6579e8d",
+    "test_verify_six_native.py": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+    "test_freeze_six_candidate.py": "3f5c6bd1d8e6922cd0652169f866f652e7f058bf0bc0fc5d18cf1d07629d5c18",
+    "test_window_six_support.py": "b32947a09419d9dac772e0c96a35c54ca13ca9aa683477a8bd29f300f73dae4d"
+  },
+  "stable": true,
+  "changed_since_previous_tests": [
+    "freeze-six-candidate.py"
+  ],
+  "reason": "Only exact confirmation display of protection and complete disabled IAM policy binding appended; execution gates unchanged",
+  "tests": [
+    {
+      "mode": "normal",
+      "exit": 0,
+      "methods": 1,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-normal03-stdout.txt",
+          "sha256": "1c1208ebbe4d5f1fbe525285d24f38a1d87683ab52b26d0d21653e34fec39e8e"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-normal03-stderr.txt",
+          "sha256": "e1d9dd268bb8a3de654a485b349eeb51481a12428914684adc39185740cf8284"
+        }
+      }
+    },
+    {
+      "mode": "optimized",
+      "exit": 0,
+      "methods": 1,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-optimized03-stdout.txt",
+          "sha256": "f8a12ea54979179c39dcdf70aae6e194f60796dcca158e5fae3ba1afb0d720e7"
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/independent-new-entry-test_freeze_six_candidate-optimized03-stderr.txt",
+          "sha256": "44e951437e1ae86a6881f2ec875967830121c7e20f4b71cb04834f03ef208463"
+        }
+      }
+    }
+  ],
+  "actual_Docker_provider_source": 0
+}

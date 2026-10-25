@@ -1,0 +1,17 @@
+{
+  "original_PR_HEAD": "cf1322e11466bab1fd5990786a1eb38e23744ff0",
+  "original_PR_CI": 39561190084,
+  "failed_job": 119092650064,
+  "cause": "old complete-preflight test double omitted Docker bind mount Type",
+  "fix": "give the recording mount its real bind Type; keep runtime gate strict",
+  "runtime_or_provider_reexecution": 0,
+  "latest_local_normal_methods": 54,
+  "latest_local_optimized_methods": 54,
+  "remaining_CI_driver_commands": 30,
+  "remaining_CI_driver_failures": 0,
+  "old_index_preserved": true,
+  "new_candidate": false,
+  "new_window": false,
+  "source_native17": "NOT_RUN_THIS_SLICE",
+  "real_DELETE": 0
+}

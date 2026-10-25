@@ -1,0 +1,188 @@
+{
+  "status": "PASS_BOUNDED_P2_HTTP403_NONDELETE_REPAIR_REVIEW",
+  "remaining_blockers": [],
+  "at": "2026-10-21T14:56:27.065784+00:00",
+  "reviewer": "/root/c18_independent_review",
+  "reviewed_checkout_base": "a8930b31aa84fe0c003e2744253358e36c2f12f7",
+  "source_binding": "Current reviewed diff and new files are bound below by actual bytes; no new executable candidate/authorization is accepted.",
+  "reviewed_source_files": {
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return.go": {
+      "sha256": "e303ead95fb3b8dd91a44efea88e0fff09f4c2949da536c02db78c1583701f45",
+      "bytes": 4614
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return_test.go": {
+      "sha256": "5210251776bc293a01484ef8874a2642db1cb27b43fa5cedd3deae9e7f68f8db",
+      "bytes": 11164
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire.go": {
+      "sha256": "e36fce8044f5450ac4ecefc025e4a4f6202e5353b0ed58cb19a9cfdf99e730fa",
+      "bytes": 15040
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire_test.go": {
+      "sha256": "02efd0e23c32a535ad582591e706652e17263a5e441f4b400980364436a66a5d",
+      "bytes": 5597
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire_native_test.go": {
+      "sha256": "969244b12908b6e8105c7874416212e9c805447330a6592b3906e27453577eb3",
+      "bytes": 11630
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": {
+      "sha256": "dd280ca695f9b99dc7492a458972884bce52c953a4679d707048a4179a3ff92b",
+      "bytes": 6240
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go": {
+      "sha256": "23104732ce0f83fd5f4f94f8ce639545129882195974a8e4cf6ff8576c6dae31",
+      "bytes": 2287
+    },
+    "apps/platform/internal/platform/storage/lifecycle_delete.go": {
+      "sha256": "bb552594d94bd193d0dd49de27bad64d52f031da82b90e65cd191a6d0264738f",
+      "bytes": 7251
+    },
+    "apps/platform/internal/platform/storage/lifecycle_delete_response.go": {
+      "sha256": "d0c934073a645db7c27f8f2bac206f722ffcfdc9b8ea02401e147b25e2f85d8d",
+      "bytes": 2126
+    },
+    "apps/platform/internal/platform/storage/lifecycle_delete_response_test.go": {
+      "sha256": "e4d708932ff21f8b4bb255ec13312fd265d2c79001495123d784a727873b991f",
+      "bytes": 2856
+    },
+    "examples/lifecycle-d1/check-p2-permission-native.py": {
+      "sha256": "29cdd1f42cdd1194fb5e104efc94df008e8d45f0c1a6edbd7365b285878286de",
+      "bytes": 8513
+    }
+  },
+  "matrix": {
+    "path": "docs/acceptance/issue307-d1-p2-http403-repair01.md",
+    "sha256": "67c5645d5f545febf5b901edd3d9cf3e06544dd72bf8861837a9058ae1e4311c",
+    "bytes": 6820
+  },
+  "native_receipt_bindings": {
+    "path": "docs/acceptance/evidence/issue307-d1/p2-http403-repair01/independent-receipt-bindings01.json",
+    "sha256": "8f7f443922e8c45a83e642d41487cfcf537f8dffcbbe38279088e47f2be9a514",
+    "bytes": 108243
+  },
+  "native_source": {
+    "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+    "module": "v0.0.0-20251015172955-9e49d5e7a648",
+    "origin": "9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a",
+    "module_sum": "h1:6TdolSCLSs2nwm8i0PpWDqf9iX2Ty9WQK8wmr7dCnUM=",
+    "binary_sha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+    "handler_sha256": "07e6c703d32974e4a0eee631e55b2c1bef412b0e29d187d39458888e10f9363e",
+    "auth_sha256": "d79e454532b17d89e3dd5e0216c91b1e3d2741c3aff3aa7b291f84497692c27b"
+  },
+  "root_cause": {
+    "status": "CONFIRMED_POLICY_CONTRACT_DEFECT_WITH_SAME_IMAGE_NON_MUTATING_REPRODUCTION",
+    "finding": "The actual MinIO handler authorizes DeleteObject before object mutation. Version-only policy omits that entry action; adding DeleteObject under the same exact namespace/key/version conditions allows the permission-only handler path. Retained policies keep their original Version-only semantics. Existing repository implementation and official SDK policy evaluator are reused.",
+    "official_handler": "https://github.com/minio/minio/blob/9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a/cmd/object-handlers.go",
+    "official_auth": "https://github.com/minio/minio/blob/9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a/cmd/auth-handler.go",
+    "historical_P2_XML_Code": "UNKNOWN_NOT_RETAINED_BY_FROZEN_TRANSPORT",
+    "historical_fact_boundary": "The original P2 remains CONFIRMED DENIED with its old proof hash, used sender/wire budgets and terminal seal. New AccessDenied reproduction is not backfilled as the old XML Code."
+  },
+  "checks": [
+    {
+      "status": "PASS",
+      "subject": "Policy scope and actual historical IAM",
+      "finding": "Both current delete actions share the same exact resource and s3:versionid condition; wrong/bare version, foreign key/bucket and survivors remain denied. RemainingAuditPolicies reproduces old retained Version-only policy bytes semantically rather than expanding them. Repair source still uses old c18 compile constants and must not be run to update that old source IAM."
+    },
+    {
+      "status": "PASS",
+      "subject": "Safe adapter diagnostics and immutable proof binding",
+      "finding": "At most 64KiB+1 bytes are read; status, a closed allowlist Code, body digest and completeness flag are retained. Unknown/reflected codes and free-form Message/Resource/CanonicalRequest/Authorization are never persisted. New observation proof hashes bind the diagnostic summary; typed failure survives SDK/adapter to sender receipt. Existing proof hashes and facts are not rewritten."
+    },
+    {
+      "status": "PASS",
+      "subject": "Wire provenance and no resend",
+      "finding": "Local admission/target/attempt/budget refusals and received upstream non204 responses have separate signed append-only receipts. Upstream budget is consumed before forwarding. The denied-return path preserves its original observation/cost/reservation facts and does not auto resend or recover. Signed local/upstream receipt safety and verification pass independent unit tests."
+    },
+    {
+      "status": "PASS",
+      "subject": "Non-mutating native success and counterexamples",
+      "finding": "Actual binary module and exact source are pinned before the check. Every HTTP DELETE includes the signed native replication-check header, rechecked by transport; the actual handler returns before delOpts/DeleteObject. There is no unguarded DELETE positive control. The old/fixed exact and relay differential, eleven survivor refusals, foreign/bare version, foreign key/bucket, bad secret and changed Host all pass on the isolated native image."
+    },
+    {
+      "status": "PASS",
+      "subject": "Preserved inventory, retained state and costs",
+      "finding": "All seventeen new synthetic object versions and bytes remain intact with no delete markers. The new server/runner are stopped with PID0/noports/no restart. Before/after records retain 715 old c18 CIDs closed; 1064 copied c18 history members and all 970 failed-window index members match actual bytes; three used-budget archive digests remain unchanged. No old source is started, no old IAM enabled, no pins released and no old authorization reused."
+    }
+  ],
+  "independent_unit": {
+    "path": "docs/acceptance/evidence/issue307-d1/p2-http403-repair01/independent-tests01/result.json",
+    "sha256": "f83259108d99f5a890e6100ab37b61f20ba4572a49e737d824592269e8d02464",
+    "bytes": 6538,
+    "packages": 3,
+    "storage_tests_and_subtests": 14,
+    "policy_tests": 1,
+    "wire_return_tests_and_subtests": 12,
+    "count": 1,
+    "native_configuration_removed": true,
+    "real_PostgreSQL": "NOT_RUN",
+    "reviewer_Docker_calls": 0,
+    "reviewer_provider_calls": 0
+  },
+  "native03": {
+    "permission_cases": 118,
+    "permission_probe_backend_requests": 118,
+    "guarded_DELETE_transport_roundtrips_including_frontend": 130,
+    "all_HTTP_transport_pairs": 205,
+    "loopback_wire_frontend_roundtrips": 12,
+    "native_backend_roundtrips": 193,
+    "native_setup_readback_roundtrips": 75,
+    "HTTP_methods": {
+      "DELETE": 130,
+      "PUT": 47,
+      "GET": 28
+    },
+    "all_start_observation_pairs_verified": true,
+    "amount": "NOT_ASSESSED",
+    "native_backend_HTTP_responses": 192,
+    "native_backend_failed_readiness_transport_attempts": 1,
+    "readiness_failure": {
+      "id": "e17d2fe4-0962-4f1c-914d-7a68d0fcdc67",
+      "status": 0,
+      "transport_error": true,
+      "recovered_before_permission_cases": true,
+      "meaning": "205 and 193 are transport-attempt counts; this failed connection is not evidence of a server-received native HTTP invocation."
+    },
+    "objects_unchanged": 17,
+    "ordinary_DELETE_requests": 0,
+    "actual_object_deletions": 0,
+    "wire_signed_samples_retained": 12,
+    "native_sample_offline_crypto_verification": "NOT_CLAIMED_EPHEMERAL_PUBLIC_KEY_NOT_PERSISTED; unit actual signature verification passes"
+  },
+  "original_window_index_audit": {
+    "id": "original-c18-failed-window",
+    "format": "members-list-v1",
+    "index": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v28-execution01/window01/evidence-index.json",
+    "sha256": "07782a1a8d8c3636c3ce29e450866063a2cecc4a32f3f662aff52a5a84730821",
+    "members_verified": 970
+  },
+  "current_stopped_budget_readback": {
+    "path": "docs/acceptance/evidence/issue307-d1/p2-http403-repair01/actual-used-budget-readback01.json",
+    "sha256": "32532740b2d00770c5be348c372a5eb73029a849512db18367bd6877dcb68dbe",
+    "bytes": 577,
+    "original_two_consumed_members_match": true,
+    "reviewer_Docker_calls": 0
+  },
+  "earlier_receipts": {
+    "native01": "Original wrong-module assumption failure retained with no resources allocated.",
+    "native02": "Earlier 94-case PASS and known 106 probe transport roundtrips retained. The later native03 journal does not imply that earlier setup/readback requests or costs never occurred.",
+    "formatting": "Author records native03 followed only by gofmt on send_return.go and wire_native_test.go. Final formatted source was independently unit-tested; native03 raw build bytes are not falsely claimed equal to final formatting."
+  },
+  "reviewer_audit_failure": {
+    "path": "independent-audit-failure01.json",
+    "meaning": "Original reviewer script/error are retained. The assumption that all readiness attempts received HTTP was corrected; native facts, runtime gates and source were not changed."
+  },
+  "outside_this_review": {
+    "new_execution": "NOT_PREPARED",
+    "new_candidate": "NOT_FROZEN",
+    "new_window": "NOT_AUTHORIZED",
+    "new_budget": "NOT_ALLOCATED",
+    "six_source_target_deletions": "NOT_RUN",
+    "new_Core_recovery": "NOT_RUN",
+    "full_D1": "NOT_ACCEPTED",
+    "merge": "NOT_AUTHORIZED",
+    "PR332": "DRAFT_UNMERGED_REQUIRED",
+    "Issue307": "OPEN_REQUIRED"
+  },
+  "next_boundary": "Any later source execution requires current Core dispatch handling, new execution/identities/independent budgets, frozen candidate/window/precise plan, fresh prerequisite checks and new direct human authorization. Do not use old c18 authority or alter frozen old bytes."
+}

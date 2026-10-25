@@ -1,0 +1,532 @@
+commit 955e98a2338b7d22a0686866683fb4413bf8dcdd
+Author:     Henry <xuweitm@gmail.com>
+AuthorDate: Thu Oct 22 15:03:58 2026 +0800
+Commit:     Henry <xuweitm@gmail.com>
+CommitDate: Thu Oct 22 15:03:58 2026 +0800
+
+    chore(lifecycle): wire v30 preparation and preserve terminal v29
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index a1da2eed..0132b398 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -100,6 +100,8 @@ jobs:
+           python -O -B examples/lifecycle-d1/test_six_native_entry.py
+           python -B examples/lifecycle-d1/test_retained_v26.py
+           python -O -B examples/lifecycle-d1/test_retained_v26.py
++          python -B examples/lifecycle-d1/test_retained_v29.py
++          python -O -B examples/lifecycle-d1/test_retained_v29.py
+           python -B examples/lifecycle-d1/test_execution_freeze.py
+           python -O -B examples/lifecycle-d1/test_execution_freeze.py
+           python -B examples/lifecycle-d1/test_freeze_six_candidate.py
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go b/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
+index 301a4a28..ba1baaab 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_delete_policy_test.go
+@@ -4,6 +4,7 @@ import (
+ 	"bytes"
+ 	"encoding/json"
+ 	"os"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/minio/pkg/v3/policy"
+@@ -59,8 +60,14 @@ func TestRemainingDeletePolicyCoversNativeEntryWithoutExpandingExactScope(t *tes
+ 				t.Fatal(e)
+ 			}
+ 			for _, cp := range present {
+-				if p.IsAllowed(policy.Args{Action: policy.DeleteObjectAction, BucketName: cp.Namespace, ObjectName: cp.Key, ConditionValues: map[string][]string{"versionid": {cp.ProviderVersion}}}) {
+-					t.Fatal("retained frozen policy widened")
++				target := cp.Key == "fixture/p2.csv" || cp.Key == "fixture/t1.csv" || cp.Key == "fixture/t2.csv" || cp.Key == "fixture/h2-a.csv" || cp.Key == "fixture/m1-a.csv" || cp.Key == "fixture/m1-b.csv"
++				for _, action := range []policy.Action{policy.DeleteObjectAction, policy.DeleteObjectVersionAction} {
++					for _, version := range []string{cp.ProviderVersion, "", "foreign"} {
++						allowed := target && version == cp.ProviderVersion && (action == policy.DeleteObjectVersionAction || strings.HasPrefix(user, "da5d1e569"))
++						if p.IsAllowed(policy.Args{Action: action, BucketName: cp.Namespace, ObjectName: cp.Key, ConditionValues: map[string][]string{"versionid": {version}}}) != allowed {
++							t.Fatal("actual retained policy/version semantics changed")
++						}
++					}
+ 				}
+ 			}
+ 		}
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_policies.go b/apps/platform/internal/lifecycle/pilot/remaining_policies.go
+index 483527c0..79871e74 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_policies.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_policies.go
+@@ -85,7 +85,7 @@ func RemainingUncreatedIdentities(group string) []string {
+ 	return []string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}
+ }
+ 
+-// These actual c14/c15/c16/c17/c18 users remain disabled with a sole policy and no groups.
++// These actual c14/c15/c16/c17/c18/c19 users remain disabled with a sole policy and no groups.
+ // Current workers and enable paths select only the new execution's identities.
+ func RemainingRetainedIdentities(group string) map[string]string {
+ 	result := map[string]string{}
+@@ -96,7 +96,7 @@ func RemainingRetainedIdentities(group string) map[string]string {
+ 		}
+ 	}
+ 	if scope, err := RemainingScopeFor(group); err == nil {
+-		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7"} {
++		for _, execution := range []string{"9f9c67d7", "aa2605a5", "6f40bca9", "4fd5a7e7", "a5d1e569"} {
+ 			for _, prefix := range []string{"i", "d"} {
+ 				user := prefix + execution + scope.Run.String()[:8]
+ 				result[user] = "lifecycle307-six-" + user
+@@ -125,7 +125,13 @@ func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]str
+ 		if user[0] == 'i' {
+ 			kind = "inspect"
+ 		}
+-		policies[name] = append([]byte(nil), retained[RemainingPolicyName(group, kind)]...)
++		frozen := retained[RemainingPolicyName(group, kind)]
++		// The real retained c19 policy already had the exact-version action
++		// pair. Audit its actual frozen semantics; never rewrite old IAM.
++		if scope, scopeErr := RemainingScopeFor(group); scopeErr == nil && user == map[string]string{"inspect": "i", "delete": "d"}[kind]+"a5d1e569"+scope.Run.String()[:8] {
++			frozen = policies[RemainingPolicyName(group, kind)]
++		}
++		policies[name] = append([]byte(nil), frozen...)
+ 	}
+ 	if user, name := RemainingDormantIdentity(group); user != "" {
+ 		users[user] = ""
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go b/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
+index 97e39ffe..04e437c6 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_policies_test.go
+@@ -7,9 +7,9 @@ import (
+ 
+ func TestRemainingRetainedIdentitiesKeepActualC14C15C16AndTerminalC17C18Users(t *testing.T) {
+ 	want := map[string][]string{
+-		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960", "iaa2605a5808a6960", "daa2605a5808a6960", "i6f40bca9808a6960", "d6f40bca9808a6960", "i4fd5a7e7808a6960", "d4fd5a7e7808a6960"},
+-		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0", "iaa2605a5754ea8f0", "daa2605a5754ea8f0", "i6f40bca9754ea8f0", "d6f40bca9754ea8f0", "i4fd5a7e7754ea8f0", "d4fd5a7e7754ea8f0"},
+-		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4", "iaa2605a5dfda43b4", "daa2605a5dfda43b4", "i6f40bca9dfda43b4", "d6f40bca9dfda43b4", "i4fd5a7e7dfda43b4", "d4fd5a7e7dfda43b4"},
++		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960", "iaa2605a5808a6960", "daa2605a5808a6960", "i6f40bca9808a6960", "d6f40bca9808a6960", "i4fd5a7e7808a6960", "d4fd5a7e7808a6960", "ia5d1e569808a6960", "da5d1e569808a6960"},
++		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0", "iaa2605a5754ea8f0", "daa2605a5754ea8f0", "i6f40bca9754ea8f0", "d6f40bca9754ea8f0", "i4fd5a7e7754ea8f0", "d4fd5a7e7754ea8f0", "ia5d1e569754ea8f0", "da5d1e569754ea8f0"},
++		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4", "iaa2605a5dfda43b4", "daa2605a5dfda43b4", "i6f40bca9dfda43b4", "d6f40bca9dfda43b4", "i4fd5a7e7dfda43b4", "d4fd5a7e7dfda43b4", "ia5d1e569dfda43b4", "da5d1e569dfda43b4"},
+ 	}
+ 	for group, names := range want {
+ 		t.Run(group, func(t *testing.T) {
+diff --git a/apps/platform/internal/lifecycle/pilot/remaining_scope.go b/apps/platform/internal/lifecycle/pilot/remaining_scope.go
+index 0ceeb7d3..a9ec4f07 100644
+--- a/apps/platform/internal/lifecycle/pilot/remaining_scope.go
++++ b/apps/platform/internal/lifecycle/pilot/remaining_scope.go
+@@ -18,10 +18,10 @@ var remainingScopes []byte
+ 
+ // A different UTC slot requires a new frozen candidate/confirmation. It cannot
+ // be opened by editing a permission file or replaying an old confirmation text.
+-const RemainingExecution = "a5d1e569-f80e-4b38-8f32-d8139a30a077"
+-const RemainingProfile = "candidate19/v29"
+-const RemainingNotBefore = "2026-10-22T06:00:00Z"
+-const RemainingNotAfter = "2026-10-22T06:40:00Z"
++const RemainingExecution = "5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6"
++const RemainingProfile = "candidate20/v30"
++const RemainingNotBefore = "2026-10-22T10:00:00Z"
++const RemainingNotAfter = "2026-10-22T10:40:00Z"
+ 
+ // New execution-owned identities never reuse the retained v22 users. Policy
+ // construction and the root status owner share this one naming contract.
+diff --git a/examples/lifecycle-d1/freeze-six-candidate.py b/examples/lifecycle-d1/freeze-six-candidate.py
+index 67edf42e..ec0a9042 100644
+--- a/examples/lifecycle-d1/freeze-six-candidate.py
++++ b/examples/lifecycle-d1/freeze-six-candidate.py
+@@ -1,4 +1,4 @@
+-"""Freeze candidate19 only after actual bounded non-delete preparation.
++"""Freeze candidate20 only after actual bounded non-delete preparation.
+ 
+ No IAM enable, deletion, authorization or scheduling function exists here.
+ The only container run is the already allocated network-none file validator.
+@@ -36,9 +36,9 @@ def audit_preparation_index():
+ def preparation_audit_plan(candidate):
+     # Source review and preparation exist now. Later human authorization and
+     # schedule indexes do not: they are never invented or rewritten here.
+-    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate19-source-review01'
++    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate20-source-review01'
+     report=load(review/'independent-final-review01.json')
+-    need(report['status']=='PASS_BOUNDED_C19_SOURCE_PREPARATION_REVIEW' and report['remaining_blockers']==[]
++    need(report['status']=='PASS_BOUNDED_C20_SOURCE_PREPARATION_REVIEW' and report['remaining_blockers']==[]
+          and report['source_head']==candidate['Source'],'independent current-source review incomplete')
+     index=review/'evidence-index.json';document=load(index)
+     audit_preparation_index()
+@@ -76,7 +76,7 @@ def source_freeze(a):
+                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
+                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
+                                     'initial_allocation_build_source':a['source'],'initial_build_files':a['build_files'],
+-                                    'retained_failed_generation':'candidate13/v23 through candidate18/v28; immutable failures including v28 CONFIRMED DENIED, used budgets, pins and terminal facts; never execution authority'})
++                                    'retained_failed_generation':'candidate13/v23 through candidate19/v29; immutable failures including v28 CONFIRMED DENIED, used budgets, pins and terminal facts; never execution authority'})
+ 
+ 
+ def main():
+diff --git a/examples/lifecycle-d1/prepare-six-candidate.py b/examples/lifecycle-d1/prepare-six-candidate.py
+index 205b9d82..bc1251cb 100644
+--- a/examples/lifecycle-d1/prepare-six-candidate.py
++++ b/examples/lifecycle-d1/prepare-six-candidate.py
+@@ -1,4 +1,4 @@
+-"""Finite candidate19 preparation. Allocate stopped owners; never send/enable DELETE.
++"""Finite candidate20 preparation. Allocate stopped owners; never send/enable DELETE.
+ 
+ Allocation, source/restore non-delete verification and final freeze are distinct
+ checkpoints. A stopped allocation is not a native PASS or deletion permission.
+@@ -136,7 +136,10 @@ def historical_gate():
+     import retained_v28
+     c18=retained_v28.verify(ROOT,inspect,closed,docker,ids,p1.PRIVATE,p1.hostpath)
+     need(len(ids)==731,'retained post-v28 closed owner count differs')
+-    return {'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_731_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
++    import retained_v29
++    c19=retained_v29.verify(ROOT,inspect,closed,project_owner,docker,ids,p1.PRIVATE,p1.hostpath)
++    need(len(ids)==820,'retained post-v29 closed owner count differs')
++    return {'c19':c19,'c18':c18,'c17':c17,'c16':c16,'c15':c15,'c14':c14,'status':'PASS_RETAINED_820_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
+ 
+ 
+ def retained_c14(ids):
+@@ -314,7 +317,7 @@ def build(destination=CONTROL):
+ 
+ def allocate():
+     window.policy_checkpoint()
+-    need(PROFILE=='candidate19/v29' and EXECUTION=='a5d1e569-f80e-4b38-8f32-d8139a30a077','only the new proposed execution is supported')
++    need(PROFILE=='candidate20/v30' and EXECUTION=='5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6','only the new proposed execution is supported')
+     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
+     # Verify retained history before allocating any owner or volume.
+     retained=historical_gate()
+@@ -333,7 +336,7 @@ def allocate():
+             config=load(p1.PRIVATE/project/'config.json')
+             need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
+             pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
+-            subnet='10.246.'+str(215+n)+'.0/28'
++            subnet='10.246.'+str(218+n)+'.0/28'
+             # Reuse the existing subnet overlap check; never attach to another run.
+             runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
+             network=a.network(prefix+'-restore',subnet)
+diff --git a/examples/lifecycle-d1/retained_v29.py b/examples/lifecycle-d1/retained_v29.py
+new file mode 100644
+index 00000000..13a27c8d
+--- /dev/null
++++ b/examples/lifecycle-d1/retained_v29.py
+@@ -0,0 +1,113 @@
++"""Read-only retention of the real v29 HEAD-drift failure; never resume it."""
++import hashlib
++import json
++from pathlib import Path
++import evidence_indexes as audit
++
++EXECUTION='a5d1e569-f80e-4b38-8f32-d8139a30a077'
++OLD_ROOT=Path('C:/Users/Henry/.codex/worktrees/d1-c19/data-product-platform')
++REL='docs/acceptance/evidence/issue307-d1'
++PINS={
++ 'delete-confirmed-v29-execution01/window01/terminal.json':'7b9a17ff853b059c88fa0a05450bc1a1676bf9a51222cffaf529220e2f9a36f8',
++ 'delete-confirmed-v29-execution01/window01/post-seal-readback.json':'3ef20b945c510b9f8bc4698740b2e334d2d6c6405cce92e32f2f90d52d934784',
++ 'remaining-candidate19-preparation01/allocation.json':'232409f09247252a8526ee23f59f4a8ea00bb6b592f8985e2ba3ffdb0fe0bec8',
++ 'remaining-candidate19-preparation01/owner-descriptors.json':'eefd51e3ee7ea643f397820664c15d0ac0ec783fb828a167971166dc31a4d607',
++ 'execution-freeze-review01/retained-v29-receipt-index.json':'5c5c9ef750d90d1a70597797b71fea6b02c3f3a2a17695556bf852e173ec708d',
++}
++
++def need(ok,message):
++    if not ok:raise ValueError('retained v29: '+message)
++
++def sha(path):return hashlib.sha256(audit.unlinked_absolute(path).read_bytes()).hexdigest()
++def load(path):return audit.decode(audit.unlinked_absolute(path).read_bytes())
++
++def closed_members(rows,expected,closed):
++    need(len(rows)==len(expected)==len({x['Id'] for x in rows})
++         and {x['Id'] for x in rows}==set(expected),'owner observation membership differs')
++    need(all(closed(x) for x in rows),'retained owner active/exposed/restarting')
++
++def budget_owner(volume,name,nonce):
++    need(volume['Name']==name and volume['Driver']=='local' and volume['Scope']=='local'
++         and not volume.get('Options') and volume['Labels'].get('lifecycle307.remaining')==EXECUTION
++         and volume['Labels'].get('lifecycle307.allocation')==nonce,'v29 budget ownership differs')
++
++def budget_mounts(expected,current):
++    need(len(current)==len(set(current)) and set(current)==set(expected),'old budget mount graph differs')
++
++def verify(root,inspect,closed,project_owner,docker,ids,private,hostpath):
++    evidence=root/REL
++    for name,digest in PINS.items():need(sha(evidence/name)==digest,'pinned old fact changed: '+name)
++    terminal=load(evidence/'delete-confirmed-v29-execution01/window01/terminal.json')
++    facts=load(evidence/'delete-confirmed-v29-execution01/window01/post-seal-readback.json')
++    need(terminal['execution']==EXECUTION and terminal['status']=='FAILED_PR_HEAD_DRIFT_PHYSICALLY_SEALED_NO_DELETE'
++         and terminal['terminal'] is True and terminal['retry_allowed'] is False and terminal['old_authorization_reusable'] is False
++         and terminal['new_native_delete']==terminal['new_Core_commands']==terminal['physical_provider_DELETE_attempts']==0,
++         'v29 original terminal/unused execution changed')
++    need(terminal['fresh_IAM_disable']==facts['fresh_IAM_disable']=='UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START'
++         and facts['all_steps_confirmed'] is False,'historical unconfirmed IAM was relabelled')
++    old=private/'remaining-candidate19';grant=old/'authorized-execution01'
++    need(sha(grant/'terminal.json')==PINS['delete-confirmed-v29-execution01/window01/terminal.json'],'private terminal differs')
++    copied=load(evidence/'execution-freeze-review01/retained-v29-receipt-index.json')
++    need(copied['count']==len(copied['members'])==124,'original receipt membership differs')
++    for row in copied['members']:
++        a,b=audit.bound_path(root,row['path']),audit.bound_path(OLD_ROOT,row['path'])
++        need(a.read_bytes()==b.read_bytes() and sha(a)==row['sha256'] and a.stat().st_size==row['bytes'],'original v29 receipt byte drift')
++    auth=load(OLD_ROOT/REL/'delete-confirmed-v29-execution01/human-authorization.json')
++    need(auth['execution']==EXECUTION and auth['user_retyped_template'] is False
++         and len(auth['approved_reference_artifacts'])==924,'actual old authorization changed')
++    for row in auth['approved_reference_artifacts']:
++        path=audit.bound_path(OLD_ROOT,row['path'])
++        need(sha(path)==row['sha256'] and path.stat().st_size==row['bytes'],'original approved byte drift')
++    for name,key in [('user-message-verbatim.txt','user_message_sha256'),('authorization-envelope.txt','authorization_envelope_sha256')]:
++        need(sha(grant/name)==auth[key],'old human text/envelope drift')
++    allocation=load(evidence/'remaining-candidate19-preparation01/allocation.json')
++    need(sha(old/'allocation.json')==PINS['remaining-candidate19-preparation01/allocation.json'],'private allocation changed')
++    for name,digest in allocation['build_files'].items():need(sha(old/name)==digest,'v29 original build bytes changed')
++    permissions=facts['permissions_false']
++    need(len(permissions)==30 and len(facts['cases_revoked'])==len(facts['recoveries_revoked'])==6,'sealed control membership differs')
++    actual=set()
++    for group in allocation['groups']:
++        folder=old/group['group']
++        actual.update(path.resolve() for path in folder.glob('*/permission.json'))
++        for name in ('candidate.json','bindings.json','confirmation-template.txt'):
++            # Public immutable packet is retained independently of revoked profiles.
++            need(sha(evidence/'remaining-candidate19'/name)==sha(OLD_ROOT/REL/'remaining-candidate19'/name),'old packet changed')
++    expected={Path(row['path']).resolve() for row in permissions}
++    need(actual==expected,'old permission file set expanded/missing')
++    for row in permissions:
++        path=audit.unlinked_absolute(Path(row['path']))
++        need(path.is_relative_to(old.resolve()) and sha(path)==row['sha256'] and load(path)['Enabled'] is False
++             and not (path.parent/'human-confirmation.txt').exists(),'old worker permission/approval changed')
++    for key in ('cases_revoked','recoveries_revoked'):
++        for row in facts[key]:
++            folder=old/row['group']
++            path=folder/('case-'+row['stage'])/'remaining.json' if key=='cases_revoked' else folder/row['stage']/'recovery.json'
++            value=load(path);enabled=value['Base']['Enabled'] if key=='cases_revoked' else value['Enabled']
++            need(enabled is False and sha(path)==row['sha256'],'old revoked case/recovery changed')
++    for row in facts['gateways']:need(sha(old/row['group']/'gateway.Caddyfile')==row['sha256'] and row['sealed'] is True,'old gateway changed')
++    known=[row['cid'] for row in facts['owners']]
++    need(len(known)==len(set(known))==820 and ids.issubset(known),'retained v29 fixed owner set differs')
++    observed=[]
++    for n in range(0,len(known),64):observed.extend(json.loads(docker('inspect',*known[n:n+64])))
++    closed_members(observed,known,closed)
++    by_id={x['Id']:x for x in observed}
++    descriptors=load(evidence/'remaining-candidate19-preparation01/owner-descriptors.json')
++    for cid,descriptor in descriptors.items():need(project_owner(by_id[cid])==descriptor,'retained v29 owner topology changed')
++    for group in allocation['groups']:
++        name=group['volumes']['budget'];volume=json.loads(docker('volume','inspect',name))[0]
++        budget_owner(volume,name,allocation['allocation_nonce'])
++    need(len(facts['budget_readbacks'])==24 and len(facts['backup_readbacks'])==57,'old budget/backup membership differs')
++    for row in facts['budget_readbacks']:
++        current=docker('cp',row['mounted_cids'][0]+':/run/budget','-')
++        need(hashlib.sha256(current).hexdigest()==row['sha256'],'old consumed/empty budget bytes changed')
++        mounted=docker('ps','-aq','--no-trunc','--filter','volume='+row['volume']).decode('utf8','strict').split()
++        budget_mounts(row['mounted_cids'],mounted)
++    for row in facts['backup_readbacks']:
++        path=audit.bound_path(private,row['private_relative_path'])
++        need(sha(path)==row['sha256'] and path.stat().st_size==row['bytes'],'retained backup changed')
++    ids.update(known)
++    return dict(status='PASS_RETAINED_V29_PHYSICAL_AND_BYTES_820',closed_cids=sorted(ids),
++                terminal_sha256=PINS['delete-confirmed-v29-execution01/window01/terminal.json'],
++                historical_IAM=facts['fresh_IAM_disable'],original_receipts=124,
++                budgets_preserved=24,backups_preserved=57,authorization_reusable=False,
++                pins_released=0,budgets_refunded=0,native_delete=0)
+diff --git a/examples/lifecycle-d1/six_candidate_runtime.py b/examples/lifecycle-d1/six_candidate_runtime.py
+index f8a73574..38089c36 100644
+--- a/examples/lifecycle-d1/six_candidate_runtime.py
++++ b/examples/lifecycle-d1/six_candidate_runtime.py
+@@ -1,4 +1,4 @@
+-"""Fixed non-delete preparation primitives for candidate19.
++"""Fixed non-delete preparation primitives for candidate20.
+ 
+ No send permission writer, authorization loader or S3 DELETE exists here.
+ Allocation, budget initialization, native preparation and freeze are separate
+diff --git a/examples/lifecycle-d1/test_freeze_six_candidate.py b/examples/lifecycle-d1/test_freeze_six_candidate.py
+index dbc9071e..7a1bd6dc 100644
+--- a/examples/lifecycle-d1/test_freeze_six_candidate.py
++++ b/examples/lifecycle-d1/test_freeze_six_candidate.py
+@@ -69,7 +69,7 @@ class FreezeSixTests(unittest.TestCase):
+             self.assertEqual(c['Execution'],f.p.EXECUTION)
+             self.assertEqual(text.count('删除目标 '),6);self.assertEqual(text.count('保留版本 '),11)
+             self.assertNotIn('删除目标 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/p1.csv',text)
+-            self.assertIn('全局至多六次',text);self.assertIn('2026-10-22 14:00–14:40',text)
++            self.assertIn('全局至多六次',text);self.assertIn('2026-10-22 18:00–18:40',text)
+             self.assertEqual(calls,[allocation['offline_validator']])
+             self.assertEqual(f.load(packet/'status.json')['human_confirmation'],'NOT_RECEIVED')
+             self.assertEqual(f.p.window.validate_packet(packet,control)['cases'],6)
+diff --git a/examples/lifecycle-d1/test_retained_v26.py b/examples/lifecycle-d1/test_retained_v26.py
+index 47af0811..0435ed6c 100644
+--- a/examples/lifecycle-d1/test_retained_v26.py
++++ b/examples/lifecycle-d1/test_retained_v26.py
+@@ -43,22 +43,22 @@ class RetainedV26Tests(unittest.TestCase):
+                 with self.assertRaises(ValueError):retained.revoked(raw(before),raw(after),record,digest(raw(before)),'Base.Enabled')
+ 
+     def test_only_new_execution_window_and_identities_are_selected(self):
+-        self.assertEqual(f.p.PROFILE,'candidate19/v29')
+-        self.assertEqual(f.p.EXECUTION,'a5d1e569-f80e-4b38-8f32-d8139a30a077')
+-        self.assertEqual(f.p.W['NotBefore'],'2026-10-22T06:00:00Z')
+-        self.assertEqual(f.p.W['NotAfter'],'2026-10-22T06:40:00Z')
+-        self.assertEqual(f.p.W['RecoveryEnd'],'2026-10-22T08:40:00Z')
++        self.assertEqual(f.p.PROFILE,'candidate20/v30')
++        self.assertEqual(f.p.EXECUTION,'5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6')
++        self.assertEqual(f.p.W['NotBefore'],'2026-10-22T10:00:00Z')
++        self.assertEqual(f.p.W['NotAfter'],'2026-10-22T10:40:00Z')
++        self.assertEqual(f.p.W['RecoveryEnd'],'2026-10-22T12:40:00Z')
+         self.assertNotEqual(f.p.EXECUTION,retained.EXECUTION)
+ 
+     def fixture(self,root):
+-        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate19-source-review01'
++        public=root/'preparation';packet=root/'packet';review=root/'docs/acceptance/evidence/issue307-d1/candidate20-source-review01'
+         for directory in (public,packet,review):directory.mkdir(parents=True)
+         candidate={'Execution':f.p.EXECUTION,'Source':'f'*40}
+         f.save(packet/'candidate.json',candidate)
+-        for directory,name,status in [(public,'non-delete-evidence-index.json','SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX'),(review,'evidence-index.json','C19_SOURCE_REVIEW_EVIDENCE_INDEX')]:
++        for directory,name,status in [(public,'non-delete-evidence-index.json','SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX'),(review,'evidence-index.json','C20_SOURCE_REVIEW_EVIDENCE_INDEX')]:
+             (directory/'source.txt').write_bytes(b'recorded-only')
+             f.save(directory/name,{'status':status,'count':1,'files':{'source.txt':{'sha256':f.sha(directory/'source.txt'),'bytes':13}}})
+-        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C19_SOURCE_PREPARATION_REVIEW','source_head':'f'*40,'remaining_blockers':[]})
++        f.save(review/'independent-final-review01.json',{'status':'PASS_BOUNDED_C20_SOURCE_PREPARATION_REVIEW','source_head':'f'*40,'remaining_blockers':[]})
+         return public,packet,review,candidate
+ 
+     def test_current_source_report_and_preparation_form_exact_typed_plan(self):
+diff --git a/examples/lifecycle-d1/test_retained_v27.py b/examples/lifecycle-d1/test_retained_v27.py
+index 54172aa3..5a02cf29 100644
+--- a/examples/lifecycle-d1/test_retained_v27.py
++++ b/examples/lifecycle-d1/test_retained_v27.py
+@@ -66,7 +66,7 @@ class RetainedV27Tests(unittest.TestCase):
+                 path.write_bytes(raw+b' ')
+                 with self.assertRaises(ValueError):r.baseline_core(group)
+         self.assertEqual(r.p.window.POLICY_CHECKPOINT_SHA256,'aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8')
+-        self.assertEqual(r.p.EXECUTION,'a5d1e569-f80e-4b38-8f32-d8139a30a077')
++        self.assertEqual(r.p.EXECUTION,'5a54e01a-657e-4b8a-ae67-a2d6fd5be8f6')
+         self.assertNotEqual(r.p.EXECUTION,old.EXECUTION)
+ 
+ 
+diff --git a/examples/lifecycle-d1/test_retained_v29.py b/examples/lifecycle-d1/test_retained_v29.py
+new file mode 100644
+index 00000000..08f9a2fc
+--- /dev/null
++++ b/examples/lifecycle-d1/test_retained_v29.py
+@@ -0,0 +1,123 @@
++"""Full retained-v29 read path and rejection cases; explicit file/Docker doubles."""
++from contextlib import ExitStack
++import copy
++import hashlib
++import json
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++import retained_v29 as r
++
++def dump(path,value):
++    path.parent.mkdir(parents=True,exist_ok=True)
++    path.write_bytes((json.dumps(value,ensure_ascii=False,separators=(',',':'))+'\n').encode())
++
++class RetainedV29Tests(unittest.TestCase):
++    def composition(self,fault=None):
++        with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
++            root=Path(tmp)/'current';original=Path(tmp)/'original';private=Path(tmp)/'private'
++            evidence=root/r.REL;old=private/'remaining-candidate19';grant=old/'authorized-execution01'
++            grant.mkdir(parents=True)
++            base='delete-confirmed-v29-execution01/window01/'
++            terminal=dict(execution=r.EXECUTION,status='FAILED_PR_HEAD_DRIFT_PHYSICALLY_SEALED_NO_DELETE',
++                terminal=True,retry_allowed=False,old_authorization_reusable=False,new_native_delete=0,
++                new_Core_commands=0,physical_provider_DELETE_attempts=0,
++                fresh_IAM_disable='UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START')
++            dump(evidence/(base+'terminal.json'),terminal)
++            dump(grant/'terminal.json',terminal)
++            facts=dict(fresh_IAM_disable=terminal['fresh_IAM_disable'],all_steps_confirmed=False,
++                permissions_false=[],cases_revoked=[],recoveries_revoked=[],gateways=[],
++                owners=[],budget_readbacks=[],backup_readbacks=[])
++            states=[dict(Id=hashlib.sha256(str(n).encode()).hexdigest(),closed=True,descriptor={'recorded':n}) for n in range(820)]
++            facts['owners']=[{'cid':x['Id']} for x in states]
++            groups=[];volumes={}
++            for n,name in enumerate(('business-races','late-hold','mixed')):
++                folder=old/name
++                for k in range(10):
++                    path=folder/('worker-'+str(k))/'permission.json';dump(path,dict(Enabled=False))
++                    facts['permissions_false'].append(dict(path=str(path),sha256=r.sha(path),Enabled=False))
++                for k in range(2):
++                    stage=str(k);case=folder/('case-'+stage)/'remaining.json';recovery=folder/('recover-'+stage)/'recovery.json'
++                    dump(case,dict(Base=dict(Enabled=False),Batch=r.EXECUTION));dump(recovery,dict(Enabled=False,ValidUntil='old'))
++                    facts['cases_revoked'].append(dict(group=name,stage=stage,sha256=r.sha(case)))
++                    facts['recoveries_revoked'].append(dict(group=name,stage='recover-'+stage,sha256=r.sha(recovery)))
++                gateway=folder/'gateway.Caddyfile';gateway.write_bytes(b'sealed recorded fixture')
++                facts['gateways'].append(dict(group=name,sha256=r.sha(gateway),sealed=True))
++                volume='old-volume-'+name
++                groups.append(dict(group=name,volumes={'budget':volume}))
++                volumes[volume]=dict(Name=volume,Driver='local',Scope='local',Options=None,
++                    Labels={'lifecycle307.remaining':r.EXECUTION,'lifecycle307.allocation':'old-nonce'})
++            for n in range(24):
++                facts['budget_readbacks'].append(dict(volume='budget-'+str(n),sha256=hashlib.sha256(b'old budget').hexdigest(),mounted_cids=[states[n]['Id']]))
++            for n in range(57):
++                name='backups/'+str(n);path=private/name;path.parent.mkdir(exist_ok=True);path.write_bytes(b'preserved backup')
++                facts['backup_readbacks'].append(dict(private_relative_path=name,sha256=r.sha(path),bytes=path.stat().st_size))
++            allocation=dict(groups=groups,build_files={},allocation_nonce='old-nonce')
++            dump(evidence/'remaining-candidate19-preparation01/allocation.json',allocation)
++            dump(old/'allocation.json',allocation)
++            dump(evidence/'remaining-candidate19-preparation01/owner-descriptors.json',{x['Id']:x['descriptor'] for x in states[-86:]})
++            for name in ('candidate.json','bindings.json','confirmation-template.txt'):
++                dump(evidence/'remaining-candidate19'/name,dict(recorded=True))
++                dump(original/r.REL/'remaining-candidate19'/name,dict(recorded=True))
++            members=[]
++            for n in range(124):
++                name='receipt-'+str(n);path=root/name;path.write_bytes(b'original recorded receipt')
++                (original/name).write_bytes(path.read_bytes())
++                members.append(dict(path=name,sha256=r.sha(path),bytes=path.stat().st_size))
++            dump(evidence/'execution-freeze-review01/retained-v29-receipt-index.json',dict(count=124,members=members))
++            references=[]
++            for n in range(924):
++                path=original/('reference-'+str(n));path.write_bytes(b'approved old bytes')
++                references.append(dict(path=path.name,sha256=r.sha(path),bytes=path.stat().st_size))
++            for name in ('user-message-verbatim.txt','authorization-envelope.txt'):(grant/name).write_bytes(b'old authority')
++            auth=dict(execution=r.EXECUTION,user_retyped_template=False,approved_reference_artifacts=references,
++                user_message_sha256=r.sha(grant/'user-message-verbatim.txt'),authorization_envelope_sha256=r.sha(grant/'authorization-envelope.txt'))
++            dump(original/r.REL/'delete-confirmed-v29-execution01/human-authorization.json',auth)
++            dump(evidence/(base+'post-seal-readback.json'),facts)
++            pins={name:r.sha(evidence/name) for name in r.PINS}
++            stack.enter_context(patch.object(r,'PINS',pins));stack.enter_context(patch.object(r,'OLD_ROOT',original))
++            calls=[]
++            def docker(*args):
++                calls.append(args)
++                if args[0]=='inspect':return json.dumps([next(x for x in states if x['Id']==cid) for cid in args[1:]]).encode()
++                if args[:2]==('volume','inspect'):return json.dumps([volumes[args[2]]]).encode()
++                if args[0]=='cp':return b'changed budget' if fault=='budget-bytes' else b'old budget'
++                if args[0]=='ps':
++                    n=int(args[-1].split('-')[-1]);cid=states[n]['Id']
++                    return ((cid+'\n')*(2 if fault=='duplicate-mount' else 1)+('f'*64+'\n' if fault=='expanded-mount' else '')).encode()
++                raise AssertionError('mutation or unexpected Docker verb')
++            if fault=='active-owner':states[0]['closed']=False
++            elif fault=='topology':states[-1]['descriptor']={'foreign':True}
++            elif fault=='volume-owner':next(iter(volumes.values()))['Labels']['lifecycle307.remaining']='new-execution'
++            elif fault=='permission':dump(Path(facts['permissions_false'][0]['path']),dict(Enabled=True))
++            elif fault=='backup':(private/'backups/0').write_bytes(b'changed')
++            elif fault=='old-approved':(original/'reference-0').write_bytes(b'changed')
++            elif fault=='original-receipt':(original/'receipt-0').write_bytes(b'changed')
++            ids={x['Id'] for x in states[:731]}
++            result=r.verify(root,None,lambda x:x['closed'],lambda x:x['descriptor'],docker,ids,private,None)
++            self.assertEqual(len(ids),820)
++            self.assertTrue(all(x[0] in ('inspect','volume','cp','ps') for x in calls))
++            return result
++
++    def test_full_retained_read_success_never_adopts_old_authority(self):
++        result=self.composition()
++        self.assertEqual(result['budgets_preserved'],24)
++        self.assertFalse(result['authorization_reusable'])
++        self.assertEqual(result['historical_IAM'],'UNCONFIRMED_NATIVE_STOPPED_NO_SOURCE_START')
++
++    def test_changed_old_fact_owner_budget_mount_control_or_backup_rejected(self):
++        for fault in ('active-owner','topology','volume-owner','permission','backup','old-approved',
++                      'original-receipt','budget-bytes','duplicate-mount','expanded-mount'):
++            with self.subTest(fault=fault),self.assertRaises(ValueError):self.composition(fault)
++
++    def test_owner_membership_and_budget_contract_reject_missing_duplicate_foreign_or_expanded(self):
++        good=[dict(Id='a',closed=True),dict(Id='b',closed=True)]
++        r.closed_members(good,['a','b'],lambda x:x['closed'])
++        for rows in (good[:1],good+[good[0]],[good[0],dict(Id='c',closed=True)]):
++            with self.assertRaises(ValueError):r.closed_members(rows,['a','b'],lambda x:x['closed'])
++        r.budget_mounts(['a','b'],['b','a'])
++        for mounts in (['a'],['a','b','c'],['a','b','b']):
++            with self.assertRaises(ValueError):r.budget_mounts(['a','b'],mounts)
++
++if __name__=='__main__':unittest.main()
+diff --git a/examples/lifecycle-d1/window_six_support.py b/examples/lifecycle-d1/window_six_support.py
+index f23b0e5e..f28b78cf 100644
+--- a/examples/lifecycle-d1/window_six_support.py
++++ b/examples/lifecycle-d1/window_six_support.py
+@@ -1,4 +1,4 @@
+-"""Finite candidate19 host maintenance, reusing the reviewed containment tools.
++"""Finite candidate20 host maintenance, reusing the reviewed containment tools.
+ 
+ No enable, sender, deletion or scheduling operation is exposed. Archive/revoke/
+ H1 proof/seal retain the prior contracts; current identities, mounts and six
+@@ -30,7 +30,7 @@ def configure():
+     anchor=load(PRIVATE/'host-anchor.json')
+     need(anchor['execution']==p.EXECUTION and anchor['profile']==p.PROFILE,'new host anchor scope differs')
+     base.ROOT=ROOT;base.PACKET=PACKET;base.PACKET_RELATIVE=PACKET.relative_to(ROOT).as_posix()+'/'
+-    base.AUTHORIZATION_PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v29-execution01/human-authorization.json'
++    base.AUTHORIZATION_PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v30-execution01/human-authorization.json'
+     base.PRIVATE=PRIVATE;base.CONTROL=CONTROL;base.EXECUTION=p.EXECUTION
+     base.CANDIDATE=anchor['candidate_sha256'];base.BINDINGS=anchor['bindings_sha256'];base.TEMPLATE=anchor['template_sha256'];base.PACKET_ANCHOR=anchor['packet_commit']
+     base.START=p.window.instant(p.W['NotBefore']);base.END=p.window.instant(p.W['NotAfter'])

@@ -1,0 +1,13 @@
+
+Running 8 tests using 1 worker
+
+  ok 1 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.6s)
+  ok 2 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.6s)
+  ok 3 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.4s)
+  ok 4 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.2s)
+  ok 5 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.6s)
+  ok 6 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.3s)
+  ok 7 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.3s)
+  ok 8 ..\..\..\..\..\fixture-private\ci-portability-fix01\windows-client-diagnostic01\schema-attempts.spec.mjs:52:1 › compact and existing section filters keep attempt counts separate and preserve its page (1.7s)
+
+  8 passed (20.6s)

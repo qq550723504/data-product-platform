@@ -1,0 +1,1 @@
+{"at": "2026-10-24T13:03:41.906221+00:00", "command": ["npm.cmd", "pack", "next@15.5.28", "--pack-destination", "C:/Users/Henry/.codex/fixture-private/ci-portability-fix01/upstream-packs01", "--silent"], "cwd": "C:\\Users\\Henry\\.codex\\worktrees\\d1-ci-portability\\data-product-platform", "retained_source_start": 0}

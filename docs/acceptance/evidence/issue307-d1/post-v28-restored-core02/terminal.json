@@ -1,0 +1,23 @@
+{
+  "native_delete": 0,
+  "source_Native_started": false,
+  "source_business_mutations": 0,
+  "HEAD_oracle": "TEST_HTTP_ONLY_NOT_NATIVE_ACCEPTANCE",
+  "closure": [
+    {
+      "cid": "1f15a4b689a06a9926549fa9008a22b904a96c162831f960b61f3ed66d9d3662",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "c68cdf7858eb631e9268868fb14df18c424ed15a8b7bbeba3d20417753057072",
+      "stopped_PID0": true
+    },
+    {
+      "cid": "f73d049e0148d7a44f0ec6ee578ce4f34b9c192dbb418f1d8ec78e7541df1a2e",
+      "stopped_PID0": true
+    }
+  ],
+  "source_retained_unchanged": true,
+  "failure": "ValueError: actual-schema mixed Commands failed",
+  "status": "FAILED_REHEARSAL_RETAINED_NO_SOURCE_COMMAND"
+}

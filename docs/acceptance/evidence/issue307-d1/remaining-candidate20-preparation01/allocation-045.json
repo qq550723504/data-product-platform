@@ -1,0 +1,33 @@
+{
+  "role": "root-disable-send",
+  "group": "late-hold",
+  "cid": "1f0874aa2d77e974dfc6e71e865b6497116d97634eee352e13ecd036eac44884",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate20-root-disable-send",
+    "--user",
+    "10001:10001",
+    "--network",
+    "container:f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\root-disable-send,target=/run/private,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20/owner,target=/run/owner,readonly",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate20\\late-hold\\outputs\\root-disable-send,target=/run/output",
+    "--entrypoint",
+    "/run/owner",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-action",
+    "disable-send"
+  ]
+}

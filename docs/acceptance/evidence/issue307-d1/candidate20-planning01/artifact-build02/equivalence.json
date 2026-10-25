@@ -1,0 +1,27 @@
+{
+  "status": "PASS_IDENTICAL_TWELVE_BUILD_MEMBERS_NEW_R_ARCHIVE",
+  "runtime_source": "72ec972570a6f10a916ace39d90ab0c5593e8dd4",
+  "host_source": "c79ad0c15062304e959d6dd1fc8baa6362abcf67",
+  "prior_runtime_source": "27cb345c48ea770b9565d8f76ab2b44c5af0b304",
+  "delta_files": [
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go"
+  ],
+  "actual_binary_and_log_sha256": {
+    "reader": "4a00555dfc950ed3960563bf4a49277ee18142c71dc582f37e8db06dda862d0e",
+    "operator": "2389da9895f077312efe64c436242c87e6679d6ad7c84b4135de57103cc11fb8",
+    "owner": "815398e9c2ec7682587b73972c9fd19d5fc4ca8b46533c5f8a0e769718dd1f0c",
+    "readonly-check.exe": "7416d12a7311090fa0208545bd5f7228c720e4ac3c1a882ef8d28ad622d41da6",
+    "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "all_twelve_identical": true,
+  "prior_native_proof_sha256": "e826cf4b8cd232d517634d07dadd51c61b18f42cf830a186811d697f3f00553b",
+  "source_started": false,
+  "native_delete": 0
+}

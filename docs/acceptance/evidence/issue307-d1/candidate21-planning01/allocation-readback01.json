@@ -1,0 +1,16 @@
+{
+  "status": "OBSERVED_SUCCESSFUL_STOPPED_ALLOCATION",
+  "observed_at": "2026-10-22T11:34:11.215232+00:00",
+  "execution": "9ba214bd-a481-499b-bef6-ca7a789ef501",
+  "source": "514843da1a143fba537c1668483fe95800ddd992",
+  "owners": 86,
+  "networks": 3,
+  "new_volumes": 15,
+  "frozen_build_members": 12,
+  "allocation_sha256": "56118ba233deee6962afda4a69cd4840a1e3d234805410817363c1dc123b9dc4",
+  "allocation_closure_sha256": "ae3302408bac50a6bcdf1ca4b43762efa010d72988478cc886f7577717ab65f0",
+  "provider_io": 0,
+  "native_delete": 0,
+  "authority": false,
+  "note": "Original allocation receipts retained; current stopped state is separately observed."
+}
