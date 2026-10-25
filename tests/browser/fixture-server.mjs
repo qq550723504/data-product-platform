@@ -49,6 +49,7 @@ const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-ch
 scenarios.add("isolation-empty");
 scenarios.add("isolation-validating");
 scenarios.add("agent-quality-pages");
+scenarios.add("leader-demo-quality");
 scenarios.add("modern-trace");scenarios.add("modern-trace-foreign");scenarios.add("modern-trace-extra");
 for(const s of ['acceptance-sources','acceptance-source-invalid','acceptance-source-foreign','acceptance-context-denied','acceptance-list-denied','acceptance-source-extra'])scenarios.add(s);
 for(const s of ['current','expired','revoked','ambiguous','conflict','mismatch','replaced','history'])scenarios.add('acceptance-binding-'+s);
@@ -165,7 +166,8 @@ async function bodyOf(req) {
   return text ? JSON.parse(text) : {};
 }
 
-export function createFixtureServer() {
+export function createFixtureServer(initialScenario = "ready") {
+  if (!scenarios.has(initialScenario)) throw new Error("Unknown initial fixture scenario");
   let state;
   const heldReads = new Set();
   const releaseReads = () => { for (const resolve of heldReads) resolve(); heldReads.clear(); };
@@ -173,7 +175,7 @@ export function createFixtureServer() {
     releaseReads();
     state = { scenario, candidateStatus: scenario === "isolation-empty" ? "REJECTED" : "PENDING", releaseStatus: (scenario === "isolation-empty" || scenario.startsWith("modern-trace")) ? "PUBLISHED" : scenario === "isolation-validating" ? "VALIDATING" : "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: scenario.startsWith("quality-attention"), complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [], readFaults: {} };
   };
-  reset();
+  reset(initialScenario);
   return createServer(async (req, res) => {
     const url = new URL(req.url, "http://127.0.0.1");
     const send = (status, value) => {
@@ -276,7 +278,7 @@ export function createFixtureServer() {
       };
       const goldDataset = {
         id: ids.goldDataset, workspaceId: ids.workspace, code: "GOLD_BROWSER_FIXTURE",
-        name: "Gold 浏览器验收数据集", description: "Synthetic Gold fixture", datasetType: "CURATED",
+        name: state.scenario === "leader-demo-quality" ? "园区能耗质量演示数据集" : "Gold 浏览器验收数据集", description: "Synthetic Gold fixture", datasetType: "CURATED",
         sourceResourceId: ids.sourceResource, lifecycleStatus: "ACTIVE", currentVersionId: ids.goldVersion, createdAt: stamp, updatedAt: stamp,
       };
       const goldVersion = {
@@ -289,11 +291,13 @@ export function createFixtureServer() {
       };
       const goldAssessment = {
         id: ids.goldAssessment, workspaceId: ids.workspace, datasetVersionId: ids.goldVersion,
-        ruleSetRef: "gold/quality/annotation-v1", ruleSetVersion: "1",
-        ruleSetContentSha256: "2".repeat(64), evaluatorName: "gold-quality", evaluatorVersion: "1",
-        gateDecision: "PASS",
-        metrics: { formalAssessment: true, productionBindingId: ids.goldBinding, annotationSnapshotId: ids.goldSnapshot },
-        dimensionSummary: {
+        ruleSetRef: state.scenario === "leader-demo-quality" ? "park/quality/enterprise-activity-quality-v1.yaml" : "gold/quality/annotation-v1", ruleSetVersion: "1",
+        ruleSetContentSha256: "2".repeat(64), evaluatorName: state.scenario === "leader-demo-quality" ? "synthetic-native" : "gold-quality", evaluatorVersion: "1",
+        gateDecision: state.scenario === "leader-demo-quality" ? "FAIL" : "PASS",
+        metrics: state.scenario === "leader-demo-quality" ? { synthetic: true, totalRows: 2, failedRows: 1 } : { formalAssessment: true, productionBindingId: ids.goldBinding, annotationSnapshotId: ids.goldSnapshot },
+        dimensionSummary: state.scenario === "leader-demo-quality" ? {
+          VALIDITY: { dimension: "VALIDITY", status: "FAIL", ruleCount: 26, evaluatedCount: 26, failedCount: 1 },
+        } : {
           COMPLETENESS: { dimension: "COMPLETENESS", status: "PASS", ruleCount: 2, evaluatedCount: 2, failedCount: 0 },
           TRACEABILITY: { dimension: "TRACEABILITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 },
         },
@@ -631,7 +635,7 @@ export function createFixtureServer() {
             ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
             createdAt: "2026-09-29T08:00:00Z",
           };
-          const items = state.scenario === "agent-quality-pages"
+          const items = ["agent-quality-pages", "leader-demo-quality"].includes(state.scenario)
             ? [generatedAssessment, ...Array.from({length:24},(_,i)=>({...goldAssessment,id:`a1100003-a101-4101-8101-${String(i+1).padStart(12,"0")}`,ruleSetRef:`fixture/history-${i+1}`})), goldAssessment]
             : state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
           return send(200, { datasetVersionId: ids.goldVersion, ...page(items) });
@@ -685,9 +689,10 @@ export function createFixtureServer() {
           });
         }
         if (url.pathname === `/api/v1/quality-assessments/${ids.goldAssessment}/report`) {
-          const findings = state.scenario === "agent-quality-pages" ? Array.from({length:26},(_,i)=>({
+          const findings = ["agent-quality-pages", "leader-demo-quality"].includes(state.scenario) ? Array.from({length:26},(_,i)=>({
             id:`a1100004-a101-4101-8101-${String(i+1).padStart(12,"0")}`,resultId:ids.goldAssessment,
             ruleId:`FIXTURE-${String(i+1).padStart(2,"0")}`,dimension:"COMPLETENESS",severity:"INFO",status:"PASS",reason:`分页验收记录 ${i+1}`,createdAt:stamp,
+            ...(state.scenario === "leader-demo-quality" ? { dimension: "VALIDITY", ...(i === 0 ? { id: ids.goldBinding, ruleId: "negative-energy", severity: "ERROR", status: "FAIL", reason: "合成能耗记录为负值，须人工审阅修复范围；本预览未执行修复" } : {}) } : {}),
           })) : [];
           return send(200, {
             ...goldAssessment,

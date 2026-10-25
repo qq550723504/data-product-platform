@@ -26,6 +26,7 @@ node_modules/
 .next-acceptance-identity*/
 .tsconfig.acceptance-identity-1a.json
 .tsconfig.acceptance-identity-1b.json
+.tsconfig.acceptance-identity-leader.json
 .next/
 out/
 .turbo/
