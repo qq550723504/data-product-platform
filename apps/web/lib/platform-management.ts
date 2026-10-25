@@ -1,11 +1,12 @@
 import type {Principal} from './iam-core';
 export const managementMenus=[['','设置总览'],['workspaces','工作空间'],['members','空间成员'],['users','用户目录'],['organizations','组织机构'],['roles','角色权限'],['audit','审计记录'],['logs','运行日志'],['configuration','基础配置']];
-export type ManagementSection='members'|'roles'|'audit'|'users';
+export type ManagementSection='members'|'roles'|'audit'|'users'|'workspaces';
 export type Member={id:string;userId:string;organizationId:string;projectId:string;displayName:string;loginName:string;roles:string[];state:'active'|'inactive';createdAt:string;changedAt:string;permissions:string[]};
 export type Role={id:string;name:string;permissions:string[]};
 export type Audit={id:string;actorId:string|null;actorType:'USER'|'SYSTEM'|'SERVICE';action:string;objectType:string;objectId:string;occurredAt:string};
 export type ManagementResult={profileVersion:'platform-management.v1';workspaceId:string;principalId:string;authorityRevision:string;evaluatedAt:string;source:'SYNTHETIC_FIXTURE'|'CONFIGURED';writeEnabled:false;data:{items:(Member|Role|Audit)[];total?:number;offset?:number;limit?:number;selected?:Member|null;roleDefinitions?:Role[];policySource?:string;next?:string}};
-export type ManagementSelection={offset:number;q?:string;role?:string;state?:string;memberId?:string;cursor?:string;userId?:string};
+export type ManagementSelection={offset:number;q?:string;role?:string;state?:string;memberId?:string;cursor?:string;userId?:string;from?:'workspace'};
+export type WorkspaceManagementResult=Omit<ManagementResult,'data'>&{data:{recordState:'UNCONFIGURED';confirmationExpiresAt:string;directory:{state:'CONFIGURED'|'UNCONFIGURED';source:'CONFIGURED'|'SYNTHETIC_FIXTURE'|'UNCONFIGURED';organizationId:string|null;projectId:string|null;availability:'NOT_CHECKED'};queries:{members:boolean;users:boolean;roles:boolean;audit:boolean}}};
 export type UserReference={id:string;displayName:string;loginName:string;membershipCount:number};
 export type UserProfile={id:string;organizationId:string;username:string;displayName:string;accountState:'active'|'inactive'|'locked'|'initial'|'deleted';createdAt:string;changedAt:string};
 export type UserIdentityLink={workspaceId:string;state:'UNCONFIGURED'|'UNLINKED'|'LINKED';actorId:string|null;revision:string;basisRef:string;expiresAt:string|null};
@@ -21,27 +22,31 @@ const permissions=(v:unknown):v is string[]=>Array.isArray(v)&&new Set(v).size==
 const roles=(v:unknown):v is Role[]=>Array.isArray(v)&&v.length>0&&v.length<=64&&new Set(v.map(r=>r.id)).size===v.length&&v.every(r=>r&&exact(r,'id,name,permissions')&&id(r.id)&&text(r.name,200)&&r.name.trim()&&permissions(r.permissions));
 function member(v:Member):boolean{return !!v&&exact(v,'id,userId,organizationId,projectId,displayName,loginName,roles,state,createdAt,changedAt,permissions')&&[v.id,v.userId,v.organizationId,v.projectId].every(id)&&text(v.displayName)&&text(v.loginName)&&Array.isArray(v.roles)&&v.roles.length<=32&&new Set(v.roles).size===v.roles.length&&v.roles.every(id)&&['active','inactive'].includes(v.state)&&time(v.createdAt)&&time(v.changedAt)&&permissions(v.permissions);}
 export function managementSelection(section:ManagementSection,q:Record<string,string|string[]|undefined>):ManagementSelection{
- const allowed=section==='members'?['offset','q','role','state','memberId']:section==='users'?['offset','q','userId']:section==='audit'?['cursor']:[];
+ const allowed=section==='members'?['offset','q','role','state','memberId','from']:section==='users'?['offset','q','userId','from']:section==='audit'?['cursor','from']:section==='roles'?['from']:[];
  for(const [k,v]of Object.entries(q))if(!allowed.includes(k)||typeof v!=='string'||!v&&!['q','state','role'].includes(k))throw Error('INVALID_QUERY');
  const offset=Number(q.offset??0),s:ManagementSelection={offset};
  if(!Number.isInteger(offset)||offset<0||offset>10000||q.offset!==undefined&&String(offset)!==q.offset)throw Error('INVALID_QUERY');
  for(const k of ['q','role','state','memberId','cursor','userId']as const){const v=q[k];if(typeof v==='string'&&v)s[k]=v;}
  if(s.q&&(!text(s.q,200)||!s.q.trim()||/[\u0000-\u001f\u007f]/.test(s.q))||s.role&&!id(s.role)||s.memberId&&!id(s.memberId)||s.userId&&!id(s.userId)||s.state&&!['active','inactive'].includes(s.state)||s.cursor&&(!/^[A-Za-z0-9_-]+$/.test(s.cursor)||s.cursor.length>1024))throw Error('INVALID_QUERY');
+ if(q.from!==undefined){if(q.from!=='workspace')throw Error('INVALID_QUERY');s.from='workspace'}
  return s;
 }
 export function managementQuery(s:ManagementSelection){const q=new URLSearchParams();if(s.offset)q.set('offset',String(s.offset));for(const k of ['q','role','state','memberId','cursor','userId']as const)if(s[k])q.set(k,s[k]!);return q.size?'?'+q:'';}
-function memberListSelection(s:ManagementSelection):ManagementSelection{return {offset:s.offset,q:s.q,role:s.role,state:s.state};}
+// Navigation context never enters an API query or selects a caller/workspace.
+export function managementPageQuery(s:ManagementSelection){const q=new URLSearchParams(managementQuery(s));if(s.from==='workspace')q.set('from','workspace');return q.size?'?'+q:'';}
+export function workspaceQueryHref(kind:'members'|'users'|'roles'|'audit'){if(!['members','users','roles','audit'].includes(kind))throw Error('INVALID_QUERY');return '/settings/'+kind+managementPageQuery({offset:0,from:'workspace'});}
+function memberListSelection(s:ManagementSelection):ManagementSelection{return {offset:s.offset,q:s.q,role:s.role,state:s.state,from:s.from};}
 export function managementMemberListHref(s:ManagementSelection,focusMemberId?:string){
  if(focusMemberId&&!id(focusMemberId))throw Error('INVALID_QUERY');
- return '/settings/members'+managementQuery(memberListSelection(s))+(focusMemberId?'#member-'+encodeURIComponent(focusMemberId):'');
+ return '/settings/members'+managementPageQuery(memberListSelection(s))+(focusMemberId?'#member-'+encodeURIComponent(focusMemberId):'');
 }
 export function managementMemberDetailHref(s:ManagementSelection,memberId:string){
  if(!id(memberId))throw Error('INVALID_QUERY');
- return '/settings/members'+managementQuery({...memberListSelection(s),memberId});
+ return '/settings/members'+managementPageQuery({...memberListSelection(s),memberId});
 }
 export function validManagement(raw:ManagementResult,p:Principal,kind:ManagementSection,s:ManagementSelection):boolean{
  try{
-  if(kind==='users')return false;
+  if(kind==='users'||kind==='workspaces')return false;
   if(!raw||!exact(raw,'profileVersion,workspaceId,principalId,authorityRevision,evaluatedAt,source,writeEnabled,data')||raw.profileVersion!=='platform-management.v1'||raw.workspaceId!==p.workspace_id||raw.principalId!==p.principal_id||raw.authorityRevision!==p.revision||!time(raw.evaluatedAt)||!['SYNTHETIC_FIXTURE','CONFIGURED'].includes(raw.source)||raw.writeEnabled!==false||!raw.data||!Array.isArray(raw.data.items))return false;
   const d=raw.data;
   if(kind==='members'){
@@ -56,10 +61,21 @@ export function validManagement(raw:ManagementResult,p:Principal,kind:Management
 }
 export function managementUserListHref(s:ManagementSelection,focusUserId?:string){
  if(focusUserId&&!id(focusUserId))throw Error('INVALID_QUERY');
- return '/settings/users'+managementQuery({offset:s.offset,q:s.q})+(focusUserId?'#user-'+encodeURIComponent(focusUserId):'');
+ return '/settings/users'+managementPageQuery({offset:s.offset,q:s.q,from:s.from})+(focusUserId?'#user-'+encodeURIComponent(focusUserId):'');
 }
 export function managementUserDetailHref(s:ManagementSelection,userId:string){
- if(!id(userId))throw Error('INVALID_QUERY');return '/settings/users'+managementQuery({offset:s.offset,q:s.q,userId});
+ if(!id(userId))throw Error('INVALID_QUERY');return '/settings/users'+managementPageQuery({offset:s.offset,q:s.q,userId,from:s.from});
+}
+export function validWorkspaceManagement(value:unknown,p:Principal):value is WorkspaceManagementResult{
+ try{
+  const r=value as WorkspaceManagementResult;
+  if(!r||!exact(r,'profileVersion,workspaceId,principalId,authorityRevision,evaluatedAt,source,writeEnabled,data')||r.profileVersion!=='platform-management.v1'||r.workspaceId!==p.workspace_id||r.principalId!==p.principal_id||r.authorityRevision!==p.revision||!time(r.evaluatedAt)||!['SYNTHETIC_FIXTURE','CONFIGURED'].includes(r.source)||r.writeEnabled!==false)return false;
+  const d=r.data;if(!d||!exact(d,'recordState,confirmationExpiresAt,directory,queries')||d.recordState!=='UNCONFIGURED'||!time(d.confirmationExpiresAt)||Date.parse(d.confirmationExpiresAt)<=Math.max(Date.now(),Date.parse(r.evaluatedAt)))return false;
+  const directory=d.directory,q=d.queries;
+  if(!directory||!exact(directory,'state,source,organizationId,projectId,availability')||directory.availability!=='NOT_CHECKED'||!q||!exact(q,'members,users,roles,audit')||!Object.values(q).every(v=>typeof v==='boolean'))return false;
+  if(directory.state==='UNCONFIGURED')return directory.source==='UNCONFIGURED'&&directory.organizationId===null&&directory.projectId===null&&Object.values(q).every(v=>v===false);
+  return directory.state==='CONFIGURED'&&['CONFIGURED','SYNTHETIC_FIXTURE'].includes(directory.source)&&id(directory.organizationId)&&id(directory.projectId)&&q.members===true&&q.roles===true;
+ }catch{return false;}
 }
 export function validUserManagement(value:unknown,p:Principal,s:ManagementSelection):value is UserManagementResult{
  try{

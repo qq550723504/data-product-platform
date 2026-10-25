@@ -23,11 +23,11 @@
 
 `POST /internal/identity/platform-management-principal` 是私有身份确认查询，严格复用已有 envelope，不是业务 Command。
 
-只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users}`；固定 limit=25，成员 offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义）。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
+只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users,workspace}`；成员和用户固定limit=25，成员offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义），workspace只返回当前已授权空间的概览且不接受参数。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
 
 响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI，权限必须命中显式自有键白名单，Object继承属性不能算权限。目录一次完整查询超过上限、超时，或检测到总数变化、短页、重复/乱序ID、错空间或原生筛选不符时必须失败，不返回部分成功。远端offset接口没有共同快照/修订号；相同总数下的并发替换不保证可检测，目录结果仅为查询视图，不是冻结成员事实，也不能作为后续写入授权。
 
-新版 `/settings`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。组织树、空间生命周期、运行日志和系统配置写入另属后续范围。
+新版 `/settings`、`/settings/workspaces`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。组织树、空间生命周期、运行日志和系统配置写入另属后续范围。
 
 角色→相关成员→成员详情→返回列表沿用同一成员GET接口：角色入口以`role`打开首页，列表组合`q/role/state`筛选，提交筛选显式回到首页；`offset`只在分页和详情往返时保留。`memberId`进入独立详情查看状态，不在列表下重复展示详情。返回链接固定指向`/settings/members`，仅保留原筛选与offset，并用浏览器fragment定位原成员行；fragment不发往API，不接受任意return URL或客户端身份参数。详情失效时提供保留条件的明确返回，超出结果页时由用户显式选择保留筛选回首页，不静默改查其他成员/页面。页面跳转链接继续完整GET重验当前身份，URL状态不构成资格；切换空间从既有身份流程重建上下文，旧详情引用在新空间拒绝。浏览器前进/后退的本轮验收单独覆盖撤权后的拒绝，不把此前已展示的查询视图当新的授权。
 
@@ -44,6 +44,18 @@
 可选`UserIdentityReader`只接收服务器管理的显式`native user ID → issuer/subject + basisRef`引用，再复用既有bindings.Store对精确workspace的当前actor/binding/grant查询。不得把native ID、登录名、邮箱或UUID外观猜成平台人员。未配置引用来源返回UNCONFIGURED；有来源但无显式匹配或当前关联已撤销/过期返回UNLINKED，均无actor/revision/依据/到期字段；只有当前有效关联返回LINKED及canonical actor/revision/依据/最短有效期。该结果是查询依据，不是当前caller或被查询用户的授权。独立验收仅为一名合成人员提供显式引用，该人员只有验收READ，没有管理READ；真实关联来源继续未配置。未做跨系统原子快照，详情不是冻结历史，后续查询必须重新核验。
 
 用户列表与详情沿用现有设置壳、筛选和分页，不使用浏览器副本。返回固定`/settings/users`，只恢复`q/offset`并用fragment定位原行，不接受任意return URL、subject或workspace参数。用户详情显示独立账号状态、身份关联及当前空间成员关系，提供成员/角色查询；浏览器返回重新核验原详情。页码越界和不可见详情提供保留条件的显式恢复。原生用户引用、平台人员和关联版本放在折叠依据区，未配置关联明示“未关联 / 关联来源未配置”。
+
+## 当前工作空间概览
+
+本片复用已有OIDC/RP、workspace grant、ValidateInTx、查询壳及成员/用户/角色/审计流程；不新增IAM、通用租户组件、账号/空间表或迁移。ZITADEL等现有身份方案继续拥有登录与原生目录；平台只投影已有当前授权与服务器接入配置。没有业务需求要求再引入一套租户运行时，因此不新增OSS组件或自建工作空间生命周期。
+
+`GET .../management/workspace`需要同一个`PLATFORM_MANAGEMENT_READ`及前后无缓存身份确认、当前PG只读事务门禁。它不要求人员目录已配置：将原共用目录前置要求限定在原成员/用户/角色/审计路径，空间概览独立使用身份来源。Handler必须显式配置`IdentitySource=CONFIGURED/SYNTHETIC_FIXTURE`，不能用原生目录来源推定身份来源；缺失返回SOURCE_UNCONFIGURED。身份、空间或revision在请求中变化时不公开概览，不接受URL参数、body、cookie或任意header提供身份/空间。
+
+响应沿用身份绑定Envelope。`data.recordState=UNCONFIGURED`明确表示尚未接入正式工作空间档案；没有owner、quota、createdAt或生命周期状态字段。`confirmationExpiresAt`来自最后一次ValidateInTx的ExpiresAt，受caller身份及当前binding/grant有效期约束，必须晚于查询时点及响应组装时点；只解释本次核验，不是后续操作的访问租约。空间名称仅在Web侧由已验证的当前空间配置匹配，标记“名称来源：接入配置”；不得把企业组织、UUID外观、目录负责人或成员状态补成空间档案。负责人、配额显示未提供，创建、邀请、修改授权与归档不开入口。
+
+`directory`只描述当前服务器配置是否满足既有查询路径要求：有效organization/project/source、Directory及Catalog齐备时为CONFIGURED，并返回折叠的外部引用；否则为UNCONFIGURED、source=UNCONFIGURED及null引用。`availability`始终NOT_CHECKED。`queries.members/roles`按同一完整配置判断，users另需UserReader、audit另需AuditReader；这些布尔值仅控制入口是否已配置，不能当作当前调用资格、远端健康或真实来源证明。概览不调用原生目录、账号资料、审计列表或外部provider；点击入口后由原接口独立核验。远端故障时概览仍可解释配置，原查询必须显示不可用，不给出“连接正常”或假空结果。
+
+页面`/settings/workspaces`只展示当前会话空间，不新增全局空间目录。其他空间仍从既有`/identity → /auth/login?workspaceId=...`重做登录和资格核验，配置中的候选名称不证明调用者可进入。空间→成员/用户/角色/审计沿用完整GET，并携带唯一导航标记`from=workspace`；各列表筛选/分页/清除、明确详情、角色相关成员及审计游标分页均保留该标记，返回固定`/settings/workspaces`。标记不传入API、不选择workspace/身份、不接受任意return URL，未知值/重复值拒绝。切空间后返回只查询新会话的当前空间，复制旧用户/游标仍按既有边界拒绝；撤权或到期后刷新及历史导航不能用旧查询结果获取新访问。
 
 ## 验证
 

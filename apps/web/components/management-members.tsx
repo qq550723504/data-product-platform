@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Full GET navigation revalidates privileged reads and avoids restoring cached member records. */
-import {managementMemberDetailHref,managementMemberListHref,permissionLabels,type ManagementResult,type ManagementSelection,type Member,type Role} from '@/lib/platform-management';
+import {managementMemberDetailHref,managementMemberListHref,managementPageQuery,permissionLabels,type ManagementResult,type ManagementSelection,type Member,type Role} from '@/lib/platform-management';
 
 export function ManagementMembers({result,selection:s}:{result:ManagementResult;selection:ManagementSelection}){
  const definitions=result.data.roleDefinitions!,selected=result.data.selected;
@@ -11,12 +11,13 @@ export function ManagementMembers({result,selection:s}:{result:ManagementResult;
   <details><summary>查看来源引用</summary><p>外部用户：{selected.userId}</p><p>成员关系：{selected.id}</p><p>所属组织：{selected.organizationId}</p><p>应用项目：{selected.projectId}</p></details>
  </section>;
  return <>
-  {s.role&&<p className="management-role-context">角色：<strong>{roleName(s.role)}</strong><a href="/settings/roles">返回角色权限 →</a></p>}
+  {s.role&&<p className="management-role-context">角色：<strong>{roleName(s.role)}</strong><a href={'/settings/roles'+managementPageQuery({offset:0,from:s.from})}>返回角色权限 →</a></p>}
   <form method="get" action="/settings/members" className="management-filters" aria-label="成员筛选">
+   {s.from&&<input type="hidden" name="from" value={s.from}/>}
    <label>搜索成员<input name="q" defaultValue={s.q} placeholder="姓名或登录名"/></label>
    <label>角色<select name="role" defaultValue={s.role??''}><option value="">全部角色</option>{definitions.map(role=><option key={role.id} value={role.id}>{role.name}</option>)}</select></label>
    <label>状态<select name="state" defaultValue={s.state??''}><option value="">全部</option><option value="active">启用</option><option value="inactive">停用</option></select></label>
-   <button className="button" type="submit">筛选</button><a href="/settings/members">清除条件</a>
+   <button className="button" type="submit">筛选</button><a href={managementMemberListHref({offset:0,from:s.from})}>清除条件</a>
   </form>
   <div className="management-count">共 {result.data.total} 名成员</div>
   <div className="table-wrap"><table aria-label="空间成员"><thead><tr><th>成员</th><th>角色</th><th>状态</th><th>操作</th></tr></thead><tbody>{(result.data.items as Member[]).map(member=><tr id={'member-'+member.id} tabIndex={-1} key={member.id}>
@@ -32,6 +33,6 @@ export function ManagementMembers({result,selection:s}:{result:ManagementResult;
  </>;
 }
 
-export function ManagementRoles({roles}:{roles:Role[]}){
- return <><p className="section-sub">下表为已配置的应用角色权限，成员资格仍须由当前身份与工作空间授权核验。</p><div className="table-wrap"><table aria-label="角色权限"><thead><tr><th>角色</th><th>可查看内容</th><th>操作</th></tr></thead><tbody>{roles.map(role=><tr key={role.id}><td>{role.name}</td><td>{role.permissions.map(permission=>permissionLabels[permission]).join('、')||'暂无权限'}</td><td><a href={managementMemberListHref({offset:0,role:role.id})}>查看相关成员</a></td></tr>)}</tbody></table></div></>;
+export function ManagementRoles({roles,selection}:{roles:Role[];selection?:ManagementSelection}){
+ return <><p className="section-sub">下表为已配置的应用角色权限，成员资格仍须由当前身份与工作空间授权核验。</p><div className="table-wrap"><table aria-label="角色权限"><thead><tr><th>角色</th><th>可查看内容</th><th>操作</th></tr></thead><tbody>{roles.map(role=><tr key={role.id}><td>{role.name}</td><td>{role.permissions.map(permission=>permissionLabels[permission]).join('、')||'暂无权限'}</td><td><a href={managementMemberListHref({offset:0,role:role.id,from:selection?.from})}>查看相关成员</a></td></tr>)}</tbody></table></div></>;
 }

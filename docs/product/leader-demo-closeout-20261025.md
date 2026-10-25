@@ -10,7 +10,7 @@
 |---|---|
 | 原冻结代码基线 | PR #363 `d2dd4fc9678bf5091506f81b4e21345ff534e2f2`；PR继续OPEN / Draft |
 | 候选CI | 精确候选的16项检查全部COMPLETED / SUCCESS；[主CI #2391](https://github.com/qq550723504/data-product-platform/actions/runs/40170104974)、[来源接纳](https://github.com/qq550723504/data-product-platform/actions/runs/40170104971)、[合约检查](https://github.com/qq550723504/data-product-platform/actions/runs/40170104964)。这是PR CI，不是main合并、生产或业务批准 |
-| 当前预览 | 4193页面及4493隔离GET夹具，构建目录`.next-acceptance-identity-management-users-final-20261025`。核验原进程归属后仅重启该独立预览；保留原库、其他预览和旧构建。系统设置进入`/settings`，真实来源未配置。最新用户目录及成员角色只读流程见[交付记录](platform-management-users-readonly-20261025.md)，上一轮身份/TLS复审见[复审记录](platform-management-readonly-review-20261025.md) |
+| 当前预览 | 4193页面及4493隔离GET夹具，构建目录`.next-acceptance-identity-management-workspace-final-20261025`。核验原进程归属后仅重启该独立预览；保留原库、其他预览和旧构建。系统设置进入`/settings`，真实来源未配置。最新工作空间及人员权限只读流程见[交付记录](platform-management-workspace-readonly-20261025.md)，上一轮身份/TLS复审见[复审记录](platform-management-readonly-review-20261025.md) |
 | 平台管理只读增量 | 复用shuomi-ai-commerce目录查询及Casbin角色投影方式，审计读取本平台AuditEvent。独立4300页面＋全新PG＋合成身份/目录的13项Edge验收通过；4193未配置状态1项、原弹窗5项及Agent/业务签收21步复验通过。见[实现、边界与证据](platform-management-readonly-20261025.md)；不把旧冻结候选CI算作本增量CI |
 | 工作空间弹窗修复 | 共用弹窗通过React Portal挂到页面顶层，避免顶部导航的背景模糊将定位范围缩成导航栏高度；按视口限制高度并保留内部滚动。独立Edge的5项新增浏览器用例通过，覆盖四种窗口尺寸、搜索、切换、取消、Escape与焦点恢复；Agent与业务签收既有21步路线复验通过，无页面错误、外部请求或业务写请求。现有前端回归344通过、2项原有数据库条件跳过，生产构建通过 |
 | 当前页面与截图 | [文案整理报告、67状态清单及前后截图](pr363-business-language-audit-20261025.md)；截图文件摘要见[当前截图清单](ui-language-audit-20261025/manifest.json)。捕获期证据与上述代码/CI分别记录，不把截图或工作树摘要当作运行构建认证 |

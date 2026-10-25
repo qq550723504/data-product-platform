@@ -1,5 +1,5 @@
 # Isolated, loopback-only leader demo. Never starts a DB, model or business API.
-param([switch]$Build,[switch]$Stop,[string]$DistName='.next-acceptance-identity-management-users-final-20261025')
+param([switch]$Build,[switch]$Stop,[string]$DistName='.next-acceptance-identity-management-workspace-final-20261025')
 $ErrorActionPreference='Stop'
 $repoRoot=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $webRoot=Join-Path $repoRoot 'apps/web'

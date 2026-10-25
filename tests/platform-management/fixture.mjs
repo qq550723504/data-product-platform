@@ -62,6 +62,7 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
    if(req.method==='POST'){
     const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail','holdList','userPermission','userForeign','userFail','userUnknown','holdUser','removeUser'])if(typeof b[k]==='boolean')state[k]=b[k];
     if(Object.hasOwn(labels,b.revokeSubject))for(const t of tokens.values())if(t.subject===b.revokeSubject)t.revoked=true;
+    if(Object.hasOwn(labels,b.expireSubject))for(const t of tokens.values())if(t.subject===b.expireSubject)t.expires=Math.floor(Date.now()/1000)-1;
     if(Object.hasOwn(labels,b.issueSubject)){testAccessToken=opaque();tokens.set(testAccessToken,{subject:b.issueSubject,expires:Math.floor(Date.now()/1000)+600})}
     if(!state.holdList)for(const release of held)release();
     if(!state.holdUser)for(const release of heldUsers)release();

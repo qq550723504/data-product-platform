@@ -16,6 +16,9 @@ type Handler struct {
 	Gate      Gate
 	Bindings  map[uuid.UUID]Binding
 	Audit     AuditReader
+	// Explicit provenance of the current identity in workspace-only projections.
+	// Kept separate from native directory configuration and availability.
+	IdentitySource string
 }
 
 func (h Handler) Register(mux *http.ServeMux) {
@@ -48,7 +51,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resource := r.PathValue("resource")
-	if resource != "members" && resource != "roles" && resource != "audit" && resource != "users" {
+	if resource != "members" && resource != "roles" && resource != "audit" && resource != "users" && resource != "workspace" {
 		failure(w, 404, "NOT_FOUND")
 		return
 	}
@@ -106,7 +109,12 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b, ok := h.Bindings[ws]
-	if !ok || b.Directory == nil || b.Catalog == nil || !IsIdentifier(b.OrganizationID) || !IsIdentifier(b.ProjectID) || (b.Source != "SYNTHETIC_FIXTURE" && b.Source != "CONFIGURED") {
+	if resource == "workspace" {
+		if h.IdentitySource != "SYNTHETIC_FIXTURE" && h.IdentitySource != "CONFIGURED" {
+			failure(w, 503, "SOURCE_UNCONFIGURED")
+			return
+		}
+	} else if !ok || b.Directory == nil || b.Catalog == nil || !IsIdentifier(b.OrganizationID) || !IsIdentifier(b.ProjectID) || (b.Source != "SYNTHETIC_FIXTURE" && b.Source != "CONFIGURED") {
 		failure(w, 503, "SOURCE_UNCONFIGURED")
 		return
 	}
@@ -231,6 +239,14 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	env := Envelope{"platform-management.v1", ws, p.ActorID, a.Principal.IdentityRevision, a.EvaluatedAt, b.Source, false}
+	if resource == "workspace" {
+		payload, err = workspaceOverview(b, h.Audit, a)
+		if err != nil {
+			failure(w, 503, "READ_UNAVAILABLE")
+			return
+		}
+		env.Source = h.IdentitySource
+	}
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(struct {
 		Envelope

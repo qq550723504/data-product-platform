@@ -3,16 +3,32 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fixture,MemoryStore} from './helpers/oidc-fixture.mjs';
 const require=createRequire(import.meta.url);
-const {managementSelection,managementQuery,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement}=require('../.iam-tests/platform-management.js');
+const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement,validWorkspaceManagement}=require('../.iam-tests/platform-management.js');
 test('management RP is disjoint and transport allows only exact readonly workspace queries',async t=>{
  const f=await fixture(t,new MemoryStore(),'platform-management'),start=await f.iam.start(),session=await f.iam.callback(f.callback(start),start.key),client=await f.iam.managementClient(session.key);
  assert.deepEqual(client.principal.capabilities,['PLATFORM_MANAGEMENT_READ']);await assert.rejects(f.iam.acceptanceClient(session.key));
  const base=client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/management/';let calls=0;
  f.state.businessHandler=async(req,res)=>{calls++;assert.equal(req.method,'GET');res.end('{}')};
- await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');assert.equal(calls,2);
+ await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');await client.request(base+'workspace');assert.equal(calls,3);
  for(const [url,init]of [[base+'members',{method:'POST'}],[base+'roles',{headers:{Authorization:'Bearer forged'}}],[base+'audit',{body:'x'}],[base.replace(client.principal.workspace_id,'44444444-4444-4444-8444-444444444444')+'members',{}],[client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/acceptance-context',{}]])await assert.rejects(client.request(url,init));
- assert.equal(calls,2);
- f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'users'));assert.equal(calls,3);
+ assert.equal(calls,3);
+ f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'workspace'));assert.equal(calls,4);
+});
+
+test('workspace origin is a fixed navigation marker excluded from API and restored across existing pages',()=>{
+ for(const kind of ['members','users','roles','audit']){const u=new URL(workspaceQueryHref(kind),'https://app.invalid');assert.equal(u.pathname,'/settings/'+kind);const s=managementSelection(kind,Object.fromEntries(u.searchParams));assert.equal(s.from,'workspace');assert.equal(managementQuery(s),'');assert.equal(managementPageQuery(s),'?from=workspace')}
+ const s={offset:25,q:'目标',role:'viewer',state:'active',from:'workspace'};
+ for(const href of [managementMemberListHref(s,'grant-1'),managementMemberDetailHref(s,'grant-1'),managementUserListHref(s,'user-1'),managementUserDetailHref(s,'user-1')])assert.equal(new URL(href,'https://app.invalid').searchParams.get('from'),'workspace');
+ assert.equal(managementQuery(s).includes('from'),false);assert.throws(()=>managementSelection('members',{from:'https://foreign.invalid'}));assert.throws(()=>managementSelection('workspaces',{workspaceId:'foreign'}));assert.throws(()=>managementSelection('workspaces',{from:'workspace'}));
+});
+
+test('workspace facts distinguish configured queries from availability and refuse invented lifecycle or scope',()=>{
+ const p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1'},now=new Date().toISOString();
+ const data={recordState:'UNCONFIGURED',confirmationExpiresAt:new Date(Date.now()+60000).toISOString(),directory:{state:'UNCONFIGURED',source:'UNCONFIGURED',organizationId:null,projectId:null,availability:'NOT_CHECKED'},queries:{members:false,users:false,roles:false,audit:false}};
+ const raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:now,source:'CONFIGURED',writeEnabled:false,data};assert.equal(validWorkspaceManagement(raw,p),true);
+ for(const patch of [{recordState:'ACTIVE'},{owner:'guessed'},{confirmationExpiresAt:now},{directory:{...data.directory,availability:'HEALTHY'}},{directory:{...data.directory,organizationId:'guessed-org'}},{queries:{...data.queries,members:true}}])assert.equal(validWorkspaceManagement({...raw,data:{...data,...patch}},p),false);
+ const configured={...data,directory:{state:'CONFIGURED',source:'SYNTHETIC_FIXTURE',organizationId:'org',projectId:'app',availability:'NOT_CHECKED'},queries:{members:true,users:true,roles:true,audit:true}};assert.equal(validWorkspaceManagement({...raw,data:configured},p),true);
+ for(const patch of [{workspaceId:p.principal_id},{authorityRevision:'2:1:1'},{writeEnabled:true},{principalId:p.workspace_id}])assert.equal(validWorkspaceManagement({...raw,...patch,data:configured},p),false);
 });
 
 test('user directory navigation preserves search page and row with no foreign selectors',()=>{

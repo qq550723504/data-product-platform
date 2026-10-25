@@ -1,0 +1,202 @@
+{
+  "recordedAt": "2026-10-25T12:17:12.148Z",
+  "base": "http://127.0.0.1:4193",
+  "worktreeReference": {
+    "head": "e51670d1787b987217c0dd3020b9dfc25330f0fa",
+    "sourceHashes": {
+      "apps/web/app/layout.tsx": "207f5ec4887881e131519fd095133968477755036fdf38e6d8aa37aa7c7b836b",
+      "apps/web/app/globals.css": "1759e4cb837f4bf37b2308e2c4999df97f3447f667a5921ee4a435cbbe2592d2",
+      "apps/web/components/shell.tsx": "a8eb07831b357b989edeaa4547eb27ff11ce3f8e7625b5b96ae797af1a0aec78",
+      "apps/web/components/governance-demo/App.jsx": "df4311fefb3a6fd7e7d3598db64ee2085e51791638d633cb0ac97b40edefcef2",
+      "apps/web/components/governance-demo/DemoState.jsx": "36f616f76be234d4078ea66992b1a0c331b480b7dc9cb41dbc118c87efc3190e",
+      "apps/web/components/governance-demo/WorkspaceContext.jsx": "6dd9838344117aaa79b0f000c0bdb0d0e706d9dad2c88abf26bc7789b0b7b676",
+      "apps/web/components/governance-demo/BusinessAcceptancePages.jsx": "5212a37adc2d4a494cab1df8c5a567d5868520689bb2416c2d4f068e59b32699",
+      "apps/web/components/governance-demo/ui.jsx": "64868fe735aca45716354f8b1ffcb9ffd7a1ce258c7e799a0517e88e09f97fd3",
+      "apps/web/components/governance-demo/styles.css": "af787246530bc5bd52e95c869dcce61d49ebdde1fe9cf546eef83d79a4d1e337",
+      "apps/web/components/governance-demo/DemoPages.jsx": "1e37262c682d29dc216234386f155084dbbe06744112602214be0d31ca2e7ce9",
+      "apps/web/components/governance-demo/AdminPages.jsx": "a017a6e768de92f640bfc99b84985bd3bbfcc6a4ce192cc28db1c5f9984ac102",
+      "apps/web/components/governance-demo/WorkspacePages.jsx": "b14e21256a0ed4186b8f2854ce9d8e189398d2a8b6744bab0b22dbc596d637e3",
+      "apps/web/components/governance-demo/WorkPages.jsx": "5069b66b48cf9bc4043938b1e28c7cc9c4fc2bda28363dadfdfc37d8284a22f9",
+      "apps/web/components/governance-demo/SectionPage.jsx": "0e12cab09d4df65aa36297e0793df73a735f52f3b979ddd4e6b0b49632c1ca90",
+      "apps/web/components/governance-demo/PipelineWorkspace.jsx": "962dedd5dafad9c288c4fd4d12e4a477a671d4bf5e1c4d4077a9d85bc5960eab",
+      "apps/web/components/governance-demo/GovernanceWorkspace.jsx": "1e332432019df27fbd4dafa0222ebea0dc83209973d674d9d23548abaef755d0",
+      "apps/web/app/agent/tasks/workbench.tsx": "1ab54b3de0acfbeff0dade574f8153f5e6b88203bdb0ab3cfebbf70ca581f69c",
+      "tests/leader-demo/readonly-fixture.mjs": "6d7cc098b705eb4c331294a582547f9df6a716470427c381a68d53681ca122f4",
+      "tests/browser/fixture-server.mjs": "54e30612cef84c65dd4de4c64a7378bf94dcbe3a47d6335743a716a610e74aec",
+      "tests/leader-demo/preview.ps1": "2c3432043b1a65f7bc94257bb80a52dafc42b198ccfebda291849ac734bd1f9b",
+      "tests/leader-demo/acceptance.mjs": "90d051a41ce6a24f0725faa4ee3d8fd757494e6025e7bfaafc35c035569ae0a0",
+      "tests/leader-demo/replay-output.mjs": "3c3be4fb0ef8aeeeed96fbc44d12363fa4c0df065a5efeee8234700f2172d284"
+    },
+    "scope": "WORKTREE_AT_CAPTURE_START_NOT_RUNTIME_BUILD_ATTESTATION",
+    "unchangedDuringCapture": true
+  },
+  "screenshots": {
+    "00-about-boundary.png": "9f6723e8114cce038419ae111662cc45e1c8db7074f962a39391a0dc230117d2",
+    "01-home.png": "fad4b4b323be75cf4ffa3f09b12b5dcdb09b3379f295978bb4a93ada8064c84f",
+    "02-agent.png": "5635b5e6a553a881f207ff9d9f90ba8a9e538a40981f23912f3baf342bd93d88",
+    "03-quality-focus.png": "413d2576f18076973118e877785f17731e9a73271f106e3e5f89ff10e5960328",
+    "03-quality-report.png": "8544709432560c865fda2bee3241da3ac241aaf404aa1862f9bb6e7d5e19b448",
+    "04-agent-repair.png": "31822e6ec1688a9edf23dfcce6cce053e75dcb399e4bc274aba8cdc3a9a08467",
+    "05-repair-readonly.png": "95d44a933e76fb08b58e362174bd8d96eade3d4b65f12559029388ac47264da8",
+    "06-unknown.png": "667af879a43bd48e2be36121e46a09475a85dc4e14b52ad6c1914c21b6ffe365",
+    "07-receipt-required.png": "65f189b2dc39cfb90555b6885f3e782598123cabd1cf075207a5df3076090af1",
+    "08-receipt.png": "c67245a53bd0ffdd8655ab3edc1e3793e177d24cb156faf5efcc340df909f872",
+    "09-acceptance.png": "cbb22d99f10daa3339b969ed2452ad44cd113b1e5c7c05383fff042df4ebc1f1",
+    "10-archive.png": "bf249784558146bf00dd8c34e07477bb0d6c65597ffa9e1beba7ea51bfa56c8e",
+    "11-invalidation.png": "d1a28bbf48a53f30c350af1a534d3d8f18685f6491e67a16325049ae52aee948",
+    "12-trace.png": "f15a8164e270b0f00c04ca84b3ee7c1a4eeda5658ef62b08975d24f351d95bd0",
+    "13-correction.png": "350a738614462e3e00f74d486cc20ffc7dc92f41c16a90a99e8d8f669a6b35f2",
+    "14-storage-unavailable.png": "b7a779a9a8cc0c98219ba0d46d351a7c680069d28fd3d5333256ddf7f962f480"
+  },
+  "browser": "Microsoft Edge via Playwright (fresh contexts)",
+  "source": "synthetic GET-only fixture and per-tab local demo",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": "DISABLED",
+  "model": "NOT_RUN",
+  "dispatch": "NOT_RUN",
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "verdict": "PASS",
+  "results": [
+    {
+      "step": 1,
+      "name": "首页统一新版与演示边界",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/",
+      "screenshot": "01-home.png"
+    },
+    {
+      "step": 2,
+      "name": "Agent 工作台：原控制器与关闭的保存入口",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent#agent-recent",
+      "screenshot": "02-agent.png"
+    },
+    {
+      "step": 3,
+      "name": "Agent 场景卡进入目录，选择明确版本",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/quality?datasetId=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa&versionId=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+    },
+    {
+      "step": 4,
+      "name": "可见评测均可打开，明确失败报告与依据一致",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/quality?datasetId=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa&versionId=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb&assessmentId=cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "screenshot": "03-quality-report.png"
+    },
+    {
+      "step": 5,
+      "name": "旧评测独立可读，刷新不替换为当前失败报告",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/quality?datasetId=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa&versionId=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb&assessmentId=47474747-4747-4747-8747-474747474747"
+    },
+    {
+      "step": 6,
+      "name": "Agent 任务详情、冻结修复范围与人工边界",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/tasks?taskId=a3630000-0000-4000-8000-000000000001",
+      "screenshot": "04-agent-repair.png"
+    },
+    {
+      "step": 7,
+      "name": "任务来源回跳保留版本及评测",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/tasks?taskId=a3630000-0000-4000-8000-000000000001"
+    },
+    {
+      "step": 8,
+      "name": "历史计划只读、任务刷新恢复及修复编辑页",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/tasks/repair?taskId=a3630000-0000-4000-8000-000000000001",
+      "screenshot": "05-repair-readonly.png"
+    },
+    {
+      "step": 9,
+      "name": "缺失质量对象显示 UNKNOWN，不回退合成成功",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/quality?versionId=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb&assessmentId=a3630000-0000-4000-8000-000000000001",
+      "screenshot": "06-unknown.png"
+    },
+    {
+      "step": 10,
+      "name": "API/BFF 写拒绝，跨空间对象与控制入口不可访问",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/agent/quality?versionId=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb&assessmentId=a3630000-0000-4000-8000-000000000001"
+    },
+    {
+      "step": 11,
+      "name": "业务验收缺少签收不可提交；非接收人不可签收",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-acceptances",
+      "screenshot": "07-receipt-required.png"
+    },
+    {
+      "step": 12,
+      "name": "部分收到阻断；补正追加完整签收",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-receipts",
+      "screenshot": "08-receipt.png"
+    },
+    {
+      "step": 13,
+      "name": "冻结提交与责任分离；未核验不能通过",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-acceptances"
+    },
+    {
+      "step": 14,
+      "name": "重新提交与逐项人工通过，原退回历史保留",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-acceptances",
+      "screenshot": "09-acceptance.png"
+    },
+    {
+      "step": 15,
+      "name": "独立归档与刷新恢复同一档案",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-archives",
+      "screenshot": "10-archive.png"
+    },
+    {
+      "step": 16,
+      "name": "空间切换不显示原空间档案，切回恢复",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-archives"
+    },
+    {
+      "step": 17,
+      "name": "决定作废追加处置，不覆盖原通过与归档",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-archives",
+      "screenshot": "11-invalidation.png"
+    },
+    {
+      "step": 18,
+      "name": "历史追溯锁定归档签收与明确提交",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-acceptances",
+      "screenshot": "12-trace.png"
+    },
+    {
+      "step": 19,
+      "name": "撤回、重新提交、取消保留两次冻结材料",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-acceptances"
+    },
+    {
+      "step": 20,
+      "name": "签收依据变化阻断通过；退回与补正不覆盖旧材料",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-acceptances",
+      "screenshot": "13-correction.png"
+    },
+    {
+      "step": 21,
+      "name": "会话存储写入失败明确警告，不能声称刷新已保存",
+      "status": "PASS",
+      "url": "http://127.0.0.1:4193/#business-receipts"
+    }
+  ]
+}
