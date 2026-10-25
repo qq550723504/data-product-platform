@@ -31,7 +31,7 @@ try {
   );
   const result = spawnSync(
     process.execPath,
-    ["--test", "tests/iam.test.mjs","tests/acceptance-identity.test.mjs","tests/acceptance-basis.test.mjs"],
+    ["--test", "tests/iam.test.mjs","tests/acceptance-identity.test.mjs","tests/acceptance-basis.test.mjs","tests/platform-management.test.mjs"],
     {
       stdio: "inherit",
       env: {

@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-10-25T09:13:34.503Z",
+  "sourceRepository": "qq550723504/shuomi-ai-commerce",
+  "sourceRef": "e29058c56df4294e1c612b3a705ab767bc333188",
+  "worktreeHeadBeforeCommit": "248ef1ed720b45d5946bd1b89fc54398512ee1f1",
+  "captureScope": "Modified worktree evidence; source hashes do not attest runtime compilation or CI",
+  "runtimeDist": ".next-acceptance-identity-management-final-20261025",
+  "browser": "Microsoft Edge, independent contexts",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "files": {
+    "audit.png": "e431defec288f54ef1d2e57ab6d710fb4bad82691c7ec52363e8dd29e9469262",
+    "browser-results.json": "8e0e4c4b611428e0b94c3a34c18471fe61491656523b95b369c2d89518f9a5fb",
+    "members.png": "be4f6480896b930f55c0cfe01eaa4dcfd4be6576d7289235e5a8bf22ce761462",
+    "mobile.png": "5d1839d39ae3a450b8f877ab53e6ad12f695dce204c523e322cacac68f52ecca",
+    "roles.png": "ea1075eb7639dfed12d9082e202848ddbbed93a005874446ee385a6b88851a89",
+    "unconfigured.png": "0125d29e310a2545565995a324de02f56d3a100a73b5fbaf9834dd8a09b7f585"
+  },
+  "sourceHashes": {
+    "apps/web/lib/iam-core.ts": "95e38b1e874b71bfb4eb48c37889397debc644f061404ff990cef00f561c08bb",
+    "apps/web/middleware.ts": "5826517939dfb0b389575094ef92b5b6456a4bd130ce8eacd80f27aa840ffe95",
+    "apps/web/lib/platform-management.ts": "6f98ce8b6795d9737885f9094aeae79c33b553182c6d733b1afae371c66fe431",
+    "apps/web/components/management-page.tsx": "62598470d6039363ed5b088c1f635a4d84b9a9ff7eb50591ee135b24e83bb3f6",
+    "apps/web/components/management-shell.tsx": "49e62fabb10935874f95644bacc0a5460fa6b11c9092a4cde456cfe3a587f16d",
+    "apps/platform/internal/platformmanagement/http.go": "6e52a647bf9f1e0ddd1e9d6c42cf61e3c684aa460c3faaa2aff9657ef5ff6a06",
+    "apps/platform/internal/platformmanagement/postgres.go": "465ee8c0fb5d3757fa86b7b2c8e82402f98228c3edb4bd9a104be2c6345d0ca3",
+    "apps/platform/internal/platformmanagement/roles.go": "6839058a986a464d9d322bb4721f80f78da9319b2bd5f622edcce53ef607ebec",
+    "apps/platform/internal/platformmanagement/zitadel/client.go": "b363939cfcf6d69b05288d8be12fa94465a297157a1c097f20cf9e2d29acac84",
+    "tests/platform-management/browser.mjs": "62da62aa582359d17ca83f36b821a4d39667ca2d98e1bbdd675e1a54a5461256"
+  }
+}

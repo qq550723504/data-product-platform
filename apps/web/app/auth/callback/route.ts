@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       request.cookies.get(cookieNames.session)?.value,
     );
     response = NextResponse.redirect(
-      new URL("/identity", iam.config.origin),
+      new URL(iam.config.profile==="platform-management"?"/settings":"/identity", iam.config.origin),
       303,
     );
     response.cookies.set(cookieNames.session, completed.key, {

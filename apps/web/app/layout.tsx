@@ -21,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN">
       <body>
-        {process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='business-acceptance'?<AcceptanceIdentityShell>{displayText(children)}</AcceptanceIdentityShell>:<ConsoleShell syntheticPreview={process.env.GOVERNANCE_PREVIEW_MODE==='synthetic-readonly'}>{displayText(children)}</ConsoleShell>}
+        {process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='business-acceptance'?<AcceptanceIdentityShell>{displayText(children)}</AcceptanceIdentityShell>:<ConsoleShell syntheticPreview={process.env.GOVERNANCE_PREVIEW_MODE==='synthetic-readonly'} managementIdentity={process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='platform-management'}>{displayText(children)}</ConsoleShell>}
       </body>
     </html>
   );

@@ -36,3 +36,8 @@ export async function currentAcceptanceClient(){
  const key=(await cookies()).get(cookieNames.session)?.value;if(!key)throw new IAMError();
  return (await browserIAM()).acceptanceClient(key);
 }
+export async function currentManagementClient(){
+ if((await headers()).has("authorization"))throw new IAMError();
+ const key=(await cookies()).get(cookieNames.session)?.value;if(!key)throw new IAMError();
+ return (await browserIAM()).managementClient(key);
+}

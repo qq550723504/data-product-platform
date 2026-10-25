@@ -157,3 +157,35 @@
 .governance-modal-root .modal{max-height:min(85dvh,calc(100dvh - 48px));white-space:normal;overscroll-behavior:contain}
 .governance-modal-root .modal-backdrop-agent-drawer{padding:0}
 .governance-modal-root .agent-drawer{max-height:100dvh}
+
+/* Management queries share the modern shell tokens and contain long references. */
+.governance-demo .management-shell .centers{align-items:center}
+.governance-demo .management-shell a{text-decoration:none}
+.governance-demo .management-shell .section-sidebar nav a{display:flex;align-items:center;gap:11px;padding:14px 15px;color:#7d8b80;border-radius:5px;margin:5px 0;font-size:14px}
+.governance-demo .management-shell .section-sidebar nav a.active{background:#e5f1e7;color:var(--green)}
+.governance-demo .management-page{margin-left:216px;max-width:none;padding:35px 60px}
+.governance-demo .management-state{padding:30px 0;border-top:1px solid var(--line);line-height:1.9;color:var(--muted)}
+.governance-demo .management-state h2{color:var(--ink)}
+.governance-demo .management-state p{margin:8px 0 14px}
+.governance-demo .management-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:30px}
+.governance-demo .management-cards>a{padding:24px;border:1px solid var(--line);border-radius:7px;background:white}
+.governance-demo .management-cards p{margin:10px 0 20px;color:var(--muted);line-height:1.8}
+.governance-demo .management-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:30px 0}
+.governance-demo .management-summary>div{display:grid;gap:14px;padding:10px 20px;border-right:1px solid var(--line);color:var(--muted)}
+.governance-demo .management-summary strong{font-size:23px;color:var(--ink)}
+.governance-demo .management-filters{display:flex;gap:18px;align-items:end;margin:28px 0;flex-wrap:wrap}
+.governance-demo .management-filters label{display:grid;gap:9px;color:var(--muted)}
+.governance-demo .management-filters input,.governance-demo .management-filters select{border:1px solid var(--line);padding:10px 12px;border-radius:5px;background:transparent;min-height:43px}
+.governance-demo .management-page .table-wrap{overflow:auto;margin-top:20px;border-bottom:1px solid var(--line)}
+.governance-demo .management-page table{width:100%;border-collapse:collapse;line-height:1.8;font-size:14px}
+.governance-demo .management-page th,.governance-demo .management-page td{padding:17px 14px;text-align:left;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.governance-demo .management-page th{color:var(--muted);font-weight:400;background:#f0f3ef}
+.governance-demo .management-page td small{display:block;color:var(--muted)}
+.governance-demo .management-page .pagination{display:flex;justify-content:space-between;gap:20px;margin:24px 0;color:var(--muted)}
+.governance-demo .management-source{font-size:12px;color:#8b713b;margin:18px 0}
+.governance-demo .management-detail{border-top:1px solid var(--line);padding-top:30px;margin-top:30px;line-height:1.9}
+.governance-demo .management-evidence{margin-top:28px;font-size:12px;line-height:1.9;color:var(--muted)}
+.governance-demo .management-page details{overflow-wrap:anywhere}
+.governance-demo .management-page summary{cursor:pointer;color:var(--green)}
+@media(max-width:900px){.governance-demo .management-page{margin-left:172px;padding:28px}.governance-demo .management-cards{grid-template-columns:1fr}.governance-demo .management-summary strong{font-size:17px}}
+@media(max-width:600px){.governance-demo .management-page{margin-left:0;padding:22px 18px}.governance-demo .management-shell .centers{display:none}.governance-demo .management-shell .section-sidebar nav{display:flex;overflow:auto}.governance-demo .management-shell .section-sidebar nav a{white-space:nowrap;flex-shrink:0}.governance-demo .management-summary{grid-template-columns:1fr;gap:15px}.governance-demo .management-filters{align-items:stretch}.governance-demo .management-page .table-wrap table{min-width:550px}}

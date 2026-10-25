@@ -34,7 +34,7 @@ export class MemoryStore {
     for(const [key,row] of this.values) if(row.scope===scope) this.values.delete(key);
   }
 }
-export async function fixture(t, store = new MemoryStore()) {
+export async function fixture(t, store = new MemoryStore(), profile = 'business-acceptance') {
   const { publicKey, privateKey } = await generateKeyPair("RS256");
   const jwk = await exportJWK(publicKey);
   jwk.kid = "fixture";
@@ -107,7 +107,7 @@ export async function fixture(t, store = new MemoryStore()) {
         );
         return;
       }
-      if (req.url === "/internal/identity/business-acceptance-principal") {
+      if (req.url === `/internal/identity/${profile}-principal`) {
         state.principalCalls.push(req.headers.authorization);
         let raw = "";
         for await (const chunk of req) raw += chunk;
@@ -127,14 +127,14 @@ export async function fixture(t, store = new MemoryStore()) {
           : "two";
         res.end(
           JSON.stringify({
-            profileVersion:"business-acceptance.v1",
+            profileVersion:`${profile}.v1`,
             principalId: people[subject],
             canonicalSubject:people[subject],
             workspaceId: cfg.workspaceId,
             issuer: cfg.issuer,
             subject,
             authorityRevision: state.revision,
-            capabilities: ["BUSINESS_ACCEPTANCE_READ"],
+            capabilities: [profile==='platform-management'?'PLATFORM_MANAGEMENT_READ':"BUSINESS_ACCEPTANCE_READ"],
             expiresAt: new Date(Date.now() + 60000).toISOString(),
             ...state.principalOverride,
           }),
@@ -150,7 +150,7 @@ export async function fixture(t, store = new MemoryStore()) {
   t.after(() => new Promise((resolve) => server.close(resolve)));
   const base = `https://127.0.0.1:${server.address().port}`;
   cfg = {
-    profile:"business-acceptance",
+    profile,
     origin: "https://console.example.test",
     issuer: "https://identity.example.test",
     clientId: "rp",
@@ -159,9 +159,9 @@ export async function fixture(t, store = new MemoryStore()) {
     tokenEndpoint: `${base}/token`,
     jwksURI: `${base}/jwks`,
     logoutEndpoint: `${base}/logout`,
-    principalEndpoint: `${base}/internal/identity/business-acceptance-principal`,
+    principalEndpoint: `${base}/internal/identity/${profile}-principal`,
     workspaceId: "33333333-3333-4333-8333-333333333333",
-    scope: "openid business-acceptance",
+    scope: `openid ${profile}`,
     encryptionKey: Buffer.alloc(32, 7),
   };
   const iam = new BrowserIAM(cfg, store);

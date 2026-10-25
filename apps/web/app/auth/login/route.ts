@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     checkBrowserRequest(iam.config, request);
     const csrf = randomKey();
     const response = new NextResponse(
-      `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>统一身份登录</title><h1>统一身份登录</h1><p>通过已配置的 OIDC 身份源确认本人及工作空间资格。此验收入口仅提供只读责任预检。</p><p>当前工作空间：${iam.config.workspaceId}</p><form method="post" action="/auth/login"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">使用统一身份登录</button></form><p>切换验收空间：</p>${workspaces().map(v=>`<p><a href="/auth/login?workspaceId=${v.id}">${v.id}</a></p>`).join('')}</html>`,
+      `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>统一身份登录</title><h1>统一身份登录</h1><p>通过已配置的身份服务确认本人及工作空间资格。${iam.config.profile==='platform-management'?'此入口仅提供系统设置查询。':'此入口仅提供验收责任查询。'}</p><p>当前工作空间：${iam.config.workspaceId}</p><form method="post" action="/auth/login"><input type="hidden" name="csrf" value="${csrf}"><button type="submit">使用统一身份登录</button></form><p>切换工作空间：</p>${workspaces().map(v=>`<p><a href="/auth/login?workspaceId=${v.id}">${v.id}</a></p>`).join('')}</html>`,
       {
         headers: { ...safeHeaders, "Content-Type": "text/html; charset=utf-8",
           "Content-Security-Policy": oidcFormPolicy(iam.config.authorizationEndpoint) },

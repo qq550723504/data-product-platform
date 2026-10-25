@@ -22,6 +22,7 @@ const CapabilityAcceptanceRead = "BUSINESS_ACCEPTANCE_READ"
 const CapabilityAcceptanceDraft = "BUSINESS_ACCEPTANCE_DRAFT"
 const CapabilityAcceptanceBasis = "BUSINESS_ACCEPTANCE_BASIS_CONFIRM"
 const CapabilityReceiptRecord = "BUSINESS_RECEIPT_RECORD"
+const CapabilityManagementRead = "PLATFORM_MANAGEMENT_READ"
 
 var ErrAuthorityUnavailable = errors.New("identity authority unavailable")
 

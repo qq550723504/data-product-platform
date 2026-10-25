@@ -12,6 +12,15 @@ import (
 
 // AcceptancePrincipal is a private, versioned RP confirmation, not a command.
 func (s *Store) AcceptancePrincipal(resolver principal.Resolver) http.HandlerFunc {
+	return s.principalConfirmation(resolver, principal.CapabilityAcceptanceRead, "business-acceptance.v1", []string{principal.CapabilityAcceptanceRead, principal.CapabilityAcceptanceDraft, principal.CapabilityAcceptanceBasis, principal.CapabilityReceiptRecord})
+}
+
+// ManagementPrincipal shares the RP confirmation envelope with a disjoint read profile.
+func (s *Store) ManagementPrincipal(resolver principal.Resolver) http.HandlerFunc {
+	return s.principalConfirmation(resolver, principal.CapabilityManagementRead, "platform-management.v1", []string{principal.CapabilityManagementRead})
+}
+
+func (s *Store) principalConfirmation(resolver principal.Resolver, capability, profile string, projected []string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "private, no-store")
 		deny := func(status int) { http.Error(w, "identity authority unavailable", status) }
@@ -53,7 +62,7 @@ func (s *Store) AcceptancePrincipal(resolver principal.Resolver) http.HandlerFun
 			deny(400)
 			return
 		}
-		p, err := resolver.Resolve(r, ws, principal.CapabilityAcceptanceRead)
+		p, err := resolver.Resolve(r, ws, capability)
 		if err != nil {
 			if errors.Is(err, principal.ErrAuthorityUnavailable) {
 				deny(503)
@@ -70,7 +79,7 @@ func (s *Store) AcceptancePrincipal(resolver principal.Resolver) http.HandlerFun
 			return
 		}
 		defer tx.Rollback(r.Context())
-		a, err := s.ValidateInTx(r.Context(), tx, p, principal.CapabilityAcceptanceRead)
+		a, err := s.ValidateInTx(r.Context(), tx, p, capability)
 		if err != nil {
 			if errors.Is(err, principal.ErrAuthorityUnavailable) {
 				deny(503)
@@ -84,7 +93,7 @@ func (s *Store) AcceptancePrincipal(resolver principal.Resolver) http.HandlerFun
 			return
 		}
 		caps := []string{}
-		for _, c := range []string{principal.CapabilityAcceptanceRead, principal.CapabilityAcceptanceDraft, principal.CapabilityAcceptanceBasis, principal.CapabilityReceiptRecord} {
+		for _, c := range projected {
 			if a.Principal.HasCapability(c) {
 				caps = append(caps, c)
 			}
@@ -101,6 +110,6 @@ func (s *Store) AcceptancePrincipal(resolver principal.Resolver) http.HandlerFun
 			Revision         string    `json:"authorityRevision"`
 			Capabilities     []string  `json:"capabilities"`
 			ExpiresAt        any       `json:"expiresAt"`
-		}{"business-acceptance.v1", p.ActorID, p.Subject, ws, p.IdentityIssuer, p.IdentitySubject, p.IdentityRevision, caps, a.ExpiresAt})
+		}{profile, p.ActorID, p.Subject, ws, p.IdentityIssuer, p.IdentitySubject, p.IdentityRevision, caps, a.ExpiresAt})
 	}
 }

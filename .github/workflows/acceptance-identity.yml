@@ -43,3 +43,24 @@ jobs:
             .data/acceptance-identity-1a/browser-results.json
             .data/acceptance-identity-1a/privilege-results.json
             .data/acceptance-identity-1a/screenshots/
+      - name: Prepare independent management query fixture
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+        run: |
+          python3 tests/platform-management/bootstrap.py
+          python3 tests/platform-management/start-web.py --build
+      - name: Management members roles audit and revocation browser acceptance
+        env:
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+        run: node tests/platform-management/browser.mjs
+      - name: Preserve non-secret management results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-management-readonly-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-readonly-20261025/browser-results.json
+            .data/management-readonly-20261025/screenshots/

@@ -98,7 +98,8 @@ export function validateConfig(c: IAMConfig): IAMConfig {
     ...(c.logoutEndpoint ? [c.logoutEndpoint] : []),
   ])
     httpsURL(u);
-  if(c.profile!=="business-acceptance" || c.backchannelLogoutEnabled || c.annotationWorkspaceId || new URL(c.principalEndpoint).pathname!=="/internal/identity/business-acceptance-principal" || !c.scope.split(" ").includes("business-acceptance")) throw new IAMError();
+  const profile=c.profile;
+  if(!profile||!["business-acceptance","platform-management"].includes(profile)||c.backchannelLogoutEnabled||c.annotationWorkspaceId||new URL(c.principalEndpoint).pathname!==`/internal/identity/${profile}-principal`||!c.scope.split(" ").includes(profile)||c.scope.split(" ").includes(profile==="business-acceptance"?"platform-management":"business-acceptance"))throw new IAMError();
   return c;
 }
 export function checkOrigin(c: IAMConfig, url: URL, origin?: string | null) {
@@ -414,9 +415,11 @@ export class BrowserIAM {
       body: JSON.stringify({ workspace_id: this.config.workspaceId }),
     });
     const wire = await response.json();
-    if(!wire || Object.keys(wire).sort().join(",")!=="authorityRevision,canonicalSubject,capabilities,expiresAt,issuer,principalId,profileVersion,subject,workspaceId" || wire.profileVersion!=="business-acceptance.v1") throw new IAMError();
+    const management=this.config.profile==="platform-management";
+    const allowedCaps=management?["PLATFORM_MANAGEMENT_READ"]:["BUSINESS_ACCEPTANCE_READ","BUSINESS_ACCEPTANCE_DRAFT","BUSINESS_ACCEPTANCE_BASIS_CONFIRM","BUSINESS_RECEIPT_RECORD"];
+    if(!wire || Object.keys(wire).sort().join(",")!=="authorityRevision,canonicalSubject,capabilities,expiresAt,issuer,principalId,profileVersion,subject,workspaceId" || wire.profileVersion!==`${this.config.profile}.v1`) throw new IAMError();
     const p:Principal={canonical_subject:wire.canonicalSubject,principal_id:wire.principalId,workspace_id:wire.workspaceId,issuer:wire.issuer,subject:wire.subject,revision:wire.authorityRevision,capabilities:wire.capabilities,expires_at:wire.expiresAt};
-    if(!uuid.test(p.principal_id) || p.principal_id==="00000000-0000-0000-0000-000000000000" || p.canonical_subject!==p.principal_id || p.workspace_id!==this.config.workspaceId || p.issuer!==issuer || p.subject!==subject || !/^[1-9][0-9]*:[1-9][0-9]*:[1-9][0-9]*$/.test(p.revision) || !Array.isArray(p.capabilities) || !p.capabilities.includes("BUSINESS_ACCEPTANCE_READ") || new Set(p.capabilities).size!==p.capabilities.length || p.capabilities.some(c=>!["BUSINESS_ACCEPTANCE_READ","BUSINESS_ACCEPTANCE_DRAFT","BUSINESS_ACCEPTANCE_BASIS_CONFIRM","BUSINESS_RECEIPT_RECORD"].includes(c)) || !Number.isFinite(Date.parse(p.expires_at)) || Date.parse(p.expires_at)<=Date.now() || Date.parse(p.expires_at)>Date.now()+300000) throw new IAMError();
+    if(!uuid.test(p.principal_id) || p.principal_id==="00000000-0000-0000-0000-000000000000" || p.canonical_subject!==p.principal_id || p.workspace_id!==this.config.workspaceId || p.issuer!==issuer || p.subject!==subject || !/^[1-9][0-9]*:[1-9][0-9]*:[1-9][0-9]*$/.test(p.revision) || !Array.isArray(p.capabilities) || !p.capabilities.includes(allowedCaps[0]) || new Set(p.capabilities).size!==p.capabilities.length || p.capabilities.some(c=>!allowedCaps.includes(c)) || !Number.isFinite(Date.parse(p.expires_at)) || Date.parse(p.expires_at)<=Date.now() || Date.parse(p.expires_at)>Date.now()+300000) throw new IAMError();
     return p;
   }
 
@@ -446,6 +449,7 @@ export class BrowserIAM {
     return {principal, csrf:session.csrf}; // Never export credentials to React/API callers.
   }
   async acceptanceClient(key: string) {
+    if(this.config.profile!=="business-acceptance")throw new IAMError();
     const {principal} = await this.authorizedSession(key);
     const apiBaseUrl=new URL(this.config.principalEndpoint).origin;
     const request:typeof fetch=async(input,init={})=>{
@@ -457,6 +461,20 @@ export class BrowserIAM {
       const {session}=await this.authorizedSession(key);
       h.set("Authorization",`Bearer ${session.accessToken}`);
       return this.reviewTransport(url,{...init,headers:h});
+    };
+    return {principal,apiBaseUrl,request};
+  }
+  async managementClient(key:string){
+    if(this.config.profile!=="platform-management")throw new IAMError();
+    const {principal}=await this.authorizedSession(key),apiBaseUrl=new URL(this.config.principalEndpoint).origin;
+    const request:typeof fetch=async(input,init={})=>{
+      const url=new URL(typeof input==="string"?input:input instanceof URL?input.href:input.url);
+      const prefix=`/api/v1/workspaces/${this.config.workspaceId}/management/`;
+      if(url.origin!==apiBaseUrl||url.username||url.password||url.hash||(init.method??"GET")!=="GET"||init.body!==undefined||[...new Headers(init.headers).keys()].length||!["members","roles","audit"].some(resource=>url.pathname===prefix+resource))throw new IAMError();
+      const {session}=await this.authorizedSession(key);
+      const response=await this.reviewTransport(url,{...init,method:"GET",cache:"no-store",headers:{Authorization:`Bearer ${session.accessToken}`}});
+      await this.authorizedSession(key);
+      return response;
     };
     return {principal,apiBaseUrl,request};
   }

@@ -1,5 +1,7 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
+当前授权增量（2026-10-25）：用户明确授权复用shuomi-ai-commerce成员目录、角色权限和审计只读能力，适配新版系统设置，并验收跨空间、撤权和分页。[平台管理只读契约](../architecture/platform-management-readonly-v1.md)拥有本增量的独立profile、查询能力、外部目录映射与投影范围；[实现记录](platform-management-readonly-20261025.md)拥有合成环境与本地证据。复用现有OIDC/RP、canonical actor/workspace grant、事务内fence和AuditEvent，新增仅查询能力，不导入电商邀请/修改/邮件/账本/执行装配。仅全新独立验收库应用DDL和测试控制；原库与既有Agent API保留，真实来源UNCONFIGURED、业务写入口关闭、模型和真实执行关闭，PR保持Draft不合并。下方旧轮次的“仅文档/不改后端或依赖”等表述只属于其对应历史授权，不限制或冒充本次新增的只读接入；旧CI和冻结全量审查不能覆盖本次增量。
+
 当前main同步与冲突回归（2026-10-25，PR原HEAD `92f26e9b`，同步main `e0e4f77a576ea4572cf16b3a3475461127f44acc`）：用户单独授权处理依赖锁文件及两个Schema浏览器用例冲突，完成相关回归和新HEAD的CI；这是分支整合，不是新增业务功能或合并PR。手工冲突处置限`apps/web/package-lock.json`、`tests/browser/schema-attempts.spec.mjs`、`tests/browser/schema-requests.spec.mjs`，其余沿用main已有变更，不扩展领域/运行范围。
 
 锁文件沿用PR的Next/eslint-config-next `15.5.28`、PostCSS override `8.5.29`及既有OIDC/RP/PG依赖，由npm以`--package-lock-only --ignore-scripts`校验，未改依赖清单或已有node_modules。Schema用例保留新版`/core/workbench`入口及其他队列参数，并纳入main的精确分页就绪、受控延迟筛选、UNKNOWN/独立读取断言；不删main新增用例、不通过自动重试掩盖竞态。相关单测、夹具和独立构建/浏览器结果及精确HEAD CI终态归PR closure，不以本地绿色替代CI。
