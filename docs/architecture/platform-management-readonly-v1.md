@@ -23,11 +23,11 @@
 
 `POST /internal/identity/platform-management-principal` 是私有身份确认查询，严格复用已有 envelope，不是业务 Command。
 
-只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users,workspace,organization}`；成员和用户固定limit=25，成员offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义），workspace与organization分别只返回当前已授权空间的概览和绑定组织，均不接受参数。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
+只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users,workspace,organization,configuration}`；成员和用户固定limit=25，成员offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义），workspace、organization与configuration分别只返回当前已授权空间的概览、绑定组织与公开配置，均不接受API参数。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
 
 响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI，权限必须命中显式自有键白名单，Object继承属性不能算权限。目录一次完整查询超过上限、超时，或检测到总数变化、短页、重复/乱序ID、错空间或原生筛选不符时必须失败，不返回部分成功。远端offset接口没有共同快照/修订号；相同总数下的并发替换不保证可检测，目录结果仅为查询视图，不是冻结成员事实，也不能作为后续写入授权。
 
-新版 `/settings`、`/settings/workspaces`、`/settings/organizations`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。企业部门树、空间生命周期、运行日志和系统配置写入另属后续范围。
+新版 `/settings`、`/settings/workspaces`、`/settings/organizations`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`、`/settings/configuration`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。企业部门树、空间生命周期、运行日志和系统配置写入另属后续范围。
 
 角色→相关成员→成员详情→返回列表沿用同一成员GET接口：角色入口以`role`打开首页，列表组合`q/role/state`筛选，提交筛选显式回到首页；`offset`只在分页和详情往返时保留。`memberId`进入独立详情查看状态，不在列表下重复展示详情。返回链接固定指向`/settings/members`，仅保留原筛选与offset，并用浏览器fragment定位原成员行；fragment不发往API，不接受任意return URL或客户端身份参数。详情失效时提供保留条件的明确返回，超出结果页时由用户显式选择保留筛选回首页，不静默改查其他成员/页面。页面跳转链接继续完整GET重验当前身份，URL状态不构成资格；切换空间从既有身份流程重建上下文，旧详情引用在新空间拒绝。浏览器前进/后退的本轮验收单独覆盖撤权后的拒绝，不把此前已展示的查询视图当新的授权。
 
@@ -69,7 +69,21 @@
 
 `departmentHierarchyState=UNCONFIGURED`为固定边界。目录组织、企业部门层级、法定主体和平台空间分别对待；目录启停状态是查询资料，不自动创建/归档空间、撤销成员或授予访问。没有企业来源时不返回部门树、负责人、法人关系或企业隶属事实。当前结果是查询视图，不是冻结历史或后续授权。
 
-`/settings/organizations`显示绑定组织资料、明确的目录状态及缺失字段，链接到原当前空间成员和用户列表。导航标记扩展为严格的`from=organization`，与原`from=workspace`并列；只允许成员/用户/角色/审计页面使用，组织资料页本身仍无参数。搜索、分页、详情、原行定位、角色相关成员及错误页返回继续保持原标记，返回固定`/settings/organizations`，不把标记传到API、不接受任意return URL。切空间后重读新绑定组织，旧成员/用户引用按原接口拒绝。默认无账号预览仍显示真实来源未配置，合成组织只在独立验收profile展示。
+`/settings/organizations`显示绑定组织资料、明确的目录状态及缺失字段，链接到原当前空间成员和用户列表。导航标记扩展为严格的`from=organization`，与原`from=workspace`并列；只允许成员/用户/角色/审计页面使用，组织资料页自身仅可另接受下节定义的固定`from=configuration`导航参数。搜索、分页、详情、原行定位、角色相关成员及错误页返回继续保持原标记，返回固定`/settings/organizations`，不把标记传到API、不接受任意return URL。切空间后重读新绑定组织，旧成员/用户引用按原接口拒绝。默认无账号预览仍显示真实来源未配置，合成组织只在独立验收profile展示。
+
+## 当前管理入口的公开配置
+
+复用现有Handler、DirectoryBinding、workspaceOverview、OIDC/RP、PLATFORM_MANAGEMENT_READ及ValidateInTx。仅从当前服务器已组装的Reader/Catalog计算公开入口状态，不引入配置中心、环境查看器、第二套IAM或新OSS，不增加配置表、迁移、远端查询和编辑Command。范围是当前空间的管理接口，不是整个平台或所有模块的配置、健康、写入和执行状态。
+
+`GET .../management/configuration`没有参数，复用当前身份前后无缓存确认、同一actor/issuer/subject/workspace/revision比较及两次只读事务门禁。即使没有配置目录，仍可以通过明确`IdentitySource=CONFIGURED/SYNTHETIC_FIXTURE`解释未接入状态；未知身份来源拒绝，不从目录来源猜测。撤权、到期、身份变化或门禁不可用时不返回data；Cookie、body、跨空间路径、未知/重复参数及非GET继续拒绝。
+
+Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`mode=QUERY_ONLY`、`directory={state,source,availability}`、`queries={workspace,organization,members,users,roles,audit}`及`rolePolicySource`。目录state/source采用现有完整配置判定，availability固定NOT_CHECKED。workspace=true代表当前查询入口；members/roles沿用workspaceOverview判定，organization另需OrganizationReader、users另需UserReader、audit另需AuditReader。roles已配置时policy来源为APPLICATION_CATALOG，否则null。这些字段不表示远端健康、企业角色接入、当前操作授权或全站写入口状态。配置存在时原生服务故障仍显示已配置，进入各查询后独立核验并显示故障；没有原生读请求，也不生成成功/可用判断。
+
+公开DTO禁止包含原生组织/project ID、原始或掩码URL、环境键值、连接字符串、文件路径、credential/session/token、密钥是否存在、部分密钥或整个配置对象。只允许显式组装本节字段；前端精确校验键集合、scope/mode、当前principal/workspace/revision、source及writeEnabled=false，拒绝额外字段和健康/全站能力宣称。最小身份Envelope中的canonical引用仍放在折叠查询依据，不是secret或外部配置。
+
+`/settings/configuration`只显示当前管理入口范围、登录方式、会话范围、查询方式、应用角色来源及六个查询入口。登录与会话说明来自已经成功建立的现有platform-management身份流程，不显示另设账号或登录开关。没有表单、保存、修改、重载和启用按钮。默认4193未接真实管理服务时仍显示真实来源未配置，不用独立夹具的配置结果填充。
+
+增加闭集导航`from=configuration`：只允许工作空间、组织资料、成员、用户、角色和审计页面使用；配置页本身不接受from。配置→工作空间/组织→下游查询，以及筛选、分页、明确详情、返回原行、角色相关成员、审计游标和错误页恢复都保留该来源，固定返回`/settings/configuration`。原from=workspace/organization行为保持。标记不进入API，不选择caller/workspace，不接受任意返回URL；刷新与历史导航仍完整GET重验资格。切换空间只显示新会话上下文，旧外部详情引用拒绝，恢复已撤权限不会复活旧会话。
 
 ## 验证
 

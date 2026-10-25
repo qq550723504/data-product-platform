@@ -1,0 +1,219 @@
+{
+  "recordedAt": "2026-10-25T13:41:10.874Z",
+  "browser": "msedge",
+  "source": "SYNTHETIC_FIXTURE",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "verdict": "PASS",
+  "results": [
+    {
+      "name": "minimal DB roles: API SELECT only, RP temporary sessions only",
+      "status": "PASS"
+    },
+    {
+      "name": "canonical individual RP session and modern management shell",
+      "status": "PASS"
+    },
+    {
+      "name": "member pagination covers 58 distinct records and exact detail survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "filter searches entire directory before paging; empty and unavailable stay distinct",
+      "status": "PASS"
+    },
+    {
+      "name": "role projection uses explicit readonly application catalog with no management writes",
+      "status": "PASS"
+    },
+    {
+      "name": "role to members to exact detail restores filters page and focused row after refresh",
+      "status": "PASS"
+    },
+    {
+      "name": "changing role filters resets the page while preserving the other selected conditions",
+      "status": "PASS"
+    },
+    {
+      "name": "unavailable detail and out-of-range page return explicitly without losing original filters",
+      "status": "PASS"
+    },
+    {
+      "name": "audit immutable references paginate 25/25/8 without raw payloads",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign member, duplicate query and unknown workspace selector fail without fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace without grant and ordinary acceptance-only user cannot enter management",
+      "status": "PASS"
+    },
+    {
+      "name": "role member navigation is reevaluated in the current workspace and copied foreign detail is refused",
+      "status": "PASS"
+    },
+    {
+      "name": "switching authorized workspaces clears old members and rejects caller/workspace cursors",
+      "status": "PASS"
+    },
+    {
+      "name": "revocation removes reads and restoration cannot resurrect old RP revision",
+      "status": "PASS"
+    },
+    {
+      "name": "native directory permission revocation and foreign responses discard data",
+      "status": "PASS"
+    },
+    {
+      "name": "direct API discards directory records when access token is revoked during the read",
+      "status": "PASS"
+    },
+    {
+      "name": "scoped user pages deduplicate references and restore search page and selected row",
+      "status": "PASS"
+    },
+    {
+      "name": "account status is separate from membership and canonical identity is explicit only",
+      "status": "PASS"
+    },
+    {
+      "name": "user to member and role queries return to exact user details and original list",
+      "status": "PASS"
+    },
+    {
+      "name": "user missing foreign owner unknown state and revoked native user-read discard records",
+      "status": "PASS"
+    },
+    {
+      "name": "user association is reevaluated on selected actor revocation without granting caller access",
+      "status": "PASS"
+    },
+    {
+      "name": "users remain workspace scoped after switch and unconfigured identity source stays explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "user detail returned after token revocation during native profile read is discarded",
+      "status": "PASS"
+    },
+    {
+      "name": "membership removed during account lookup cannot publish an orphan profile",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace overview projects current authority and configuration without calling native directory",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace member flow restores page filters row and workspace return through detail",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace users and role member links retain only the fixed workspace origin",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace audit cursor paging latest and refresh retain current-scope return",
+      "status": "PASS"
+    },
+    {
+      "name": "native source outage is distinct from workspace authority and configured entry readiness",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace switch reauthenticates and fixed return never resurrects the previous space",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace revocation and expired credentials discard overview and cannot revive old sessions",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile workspace query and return controls stay reachable without page overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "organization exact read projects only scoped directory facts and no department hierarchy",
+      "status": "PASS"
+    },
+    {
+      "name": "organization members restore filters second page explicit detail row and organization origin",
+      "status": "PASS"
+    },
+    {
+      "name": "organization user details and member lookup return to the same user page and organization",
+      "status": "PASS"
+    },
+    {
+      "name": "organization source errors revoked permission foreign extra unknown and spoofed selectors fail closed",
+      "status": "PASS"
+    },
+    {
+      "name": "organization absent names dates remain missing while native inactive status stays separate",
+      "status": "PASS"
+    },
+    {
+      "name": "organization switching uses current binding and refuses copied foreign member details",
+      "status": "PASS"
+    },
+    {
+      "name": "organization records are discarded when caller token is revoked during native read",
+      "status": "PASS"
+    },
+    {
+      "name": "native organization permission revoked during lookup discards data after the read",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile organization member and user return paths remain reachable",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration projects only public current management composition without native calls or secrets",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration six closed query entrypoints survive reload and return to the same origin",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration workspace member detail restores filters page focused row and origin",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration organization user member and workspace links preserve configuration origin",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration does not turn configured entrypoints into successful source health claims",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration workspace switch cannot retain foreign member facts or arbitrary selectors",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration revocation expiry and history never revive old grants or private configuration",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile configuration queries and return paths remain reachable without page overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "management profile has no business, model, Agent or write routes",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile management and read-only history remain intact after queries",
+      "status": "PASS"
+    }
+  ]
+}

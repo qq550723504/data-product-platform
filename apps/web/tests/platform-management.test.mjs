@@ -3,16 +3,31 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fixture,MemoryStore} from './helpers/oidc-fixture.mjs';
 const require=createRequire(import.meta.url);
-const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,organizationQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement}=require('../.iam-tests/platform-management.js');
+const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,organizationQueryHref,configurationQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement,validConfigurationManagement}=require('../.iam-tests/platform-management.js');
 test('management RP is disjoint and transport allows only exact readonly workspace queries',async t=>{
  const f=await fixture(t,new MemoryStore(),'platform-management'),start=await f.iam.start(),session=await f.iam.callback(f.callback(start),start.key),client=await f.iam.managementClient(session.key);
  assert.deepEqual(client.principal.capabilities,['PLATFORM_MANAGEMENT_READ']);await assert.rejects(f.iam.acceptanceClient(session.key));
  const base=client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/management/';let calls=0;
  f.state.businessHandler=async(req,res)=>{calls++;assert.equal(req.method,'GET');res.end('{}')};
- await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');await client.request(base+'workspace');await client.request(base+'organization');assert.equal(calls,4);
+ await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');await client.request(base+'workspace');await client.request(base+'organization');await client.request(base+'configuration');assert.equal(calls,5);
  for(const [url,init]of [[base+'members',{method:'POST'}],[base+'roles',{headers:{Authorization:'Bearer forged'}}],[base+'audit',{body:'x'}],[base.replace(client.principal.workspace_id,'44444444-4444-4444-8444-444444444444')+'members',{}],[client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/acceptance-context',{}]])await assert.rejects(client.request(url,init));
- assert.equal(calls,4);
- f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'organization'));assert.equal(calls,5);
+ assert.equal(calls,5);
+ f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'configuration'));assert.equal(calls,6);
+});
+
+test('configuration navigation retains its fixed origin through existing query flows without API parameters',()=>{
+ for(const kind of ['workspaces','organizations','members','users','roles','audit']){const u=new URL(configurationQueryHref(kind),'https://app.invalid'),s=managementSelection(kind,Object.fromEntries(u.searchParams));assert.equal(s.from,'configuration');assert.equal(managementQuery(s),'')}
+ assert.equal(workspaceQueryHref('members','configuration'),'/settings/members?from=configuration');assert.equal(organizationQueryHref('users','configuration'),'/settings/users?from=configuration');
+ for(const s of [{offset:25,q:'目标',role:'viewer',state:'active',from:'configuration'}])for(const href of [managementMemberListHref(s,'grant'),managementMemberDetailHref(s,'grant'),managementUserListHref(s,'native'),managementUserDetailHref(s,'native')])assert.equal(new URL(href,'https://app.invalid').searchParams.get('from'),'configuration');
+ for(const q of [{key:'DATABASE_URL'},{workspaceId:'foreign'},{from:'configuration'},{from:'//external.invalid'}])assert.throws(()=>managementSelection('configuration',q));
+});
+
+test('configuration DTO accepts only narrow public states and rejects secrets false health or global policy claims',()=>{
+ const p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1'};
+ const data={scope:'CURRENT_WORKSPACE_MANAGEMENT',mode:'QUERY_ONLY',directory:{state:'UNCONFIGURED',source:'UNCONFIGURED',availability:'NOT_CHECKED'},queries:{workspace:true,organization:false,members:false,users:false,roles:false,audit:false},rolePolicySource:null},raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:new Date().toISOString(),source:'SYNTHETIC_FIXTURE',writeEnabled:false,data};assert.equal(validConfigurationManagement(raw,p),true);
+ for(const patch of [{scope:'GLOBAL_PLATFORM'},{mode:'WRITE_ENABLED'},{databaseURL:'PRIVATE'},{clientSecret:'PRIVATE'},{rawEnvironment:{}},{directory:{...data.directory,availability:'HEALTHY'}},{directory:{...data.directory,organizationId:'PRIVATE'}},{queries:{...data.queries,users:true}},{rolePolicySource:'APPLICATION_CATALOG'}])assert.equal(validConfigurationManagement({...raw,data:{...data,...patch}},p),false);
+ const configured={...data,directory:{state:'CONFIGURED',source:'CONFIGURED',availability:'NOT_CHECKED'},queries:{workspace:true,organization:true,members:true,users:true,roles:true,audit:true},rolePolicySource:'APPLICATION_CATALOG'};assert.equal(validConfigurationManagement({...raw,data:configured},p),true);
+ for(const patch of [{workspaceId:p.principal_id},{principalId:p.workspace_id},{authorityRevision:'1:1:2'},{writeEnabled:true}])assert.equal(validConfigurationManagement({...raw,...patch},p),false);
 });
 
 test('organization origin preserves list conditions and rows without entering APIs or selecting another organization',()=>{

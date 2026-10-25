@@ -2,6 +2,8 @@
 
 2026-10-25，承接PR #363的`83e27ff91c8d166a7e56ae1aa8da9b4b16f4ca6f`。完成组织资料→当前空间成员/用户→明确详情→原页和组织资料返回。唯一查询合同为[平台管理只读契约](../architecture/platform-management-readonly-v1.md#当前目录组织资料)。保持Draft，不合并、不部署。
 
+当前新版预览已更新为[公开配置查询增量](platform-management-configuration-readonly-20261025.md)的构建。下文43项、旧构建及截图保留为本轮历史证据，不当作后续提交的CI或运行认证。
+
 ## 交付与复用
 
 - 复查固定shuomi-ai-commerce提交，没有找到独立组织资料Reader；复用已经接入的transport、原生权限前后确认、TLS、错误投影和成员/用户完整流程。新增最小OrganizationReader Port，沿用现有ZITADEL的官方Organization v2查询，没有新依赖、SDK、账号/组织表、迁移或组织同步服务。

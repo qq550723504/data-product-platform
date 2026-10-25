@@ -51,7 +51,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resource := r.PathValue("resource")
-	if resource != "members" && resource != "roles" && resource != "audit" && resource != "users" && resource != "workspace" && resource != "organization" {
+	if resource != "members" && resource != "roles" && resource != "audit" && resource != "users" && resource != "workspace" && resource != "organization" && resource != "configuration" {
 		failure(w, 404, "NOT_FOUND")
 		return
 	}
@@ -109,7 +109,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b, ok := h.Bindings[ws]
-	if resource == "workspace" {
+	if resource == "workspace" || resource == "configuration" {
 		if h.IdentitySource != "SYNTHETIC_FIXTURE" && h.IdentitySource != "CONFIGURED" {
 			failure(w, 503, "SOURCE_UNCONFIGURED")
 			return
@@ -254,6 +254,14 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	env := Envelope{"platform-management.v1", ws, p.ActorID, a.Principal.IdentityRevision, a.EvaluatedAt, b.Source, false}
 	if resource == "workspace" {
 		payload, err = workspaceOverview(b, h.Audit, a)
+		if err != nil {
+			failure(w, 503, "READ_UNAVAILABLE")
+			return
+		}
+		env.Source = h.IdentitySource
+	}
+	if resource == "configuration" {
+		payload, err = configurationOverview(b, h.Audit, a)
 		if err != nil {
 			failure(w, 503, "READ_UNAVAILABLE")
 			return
