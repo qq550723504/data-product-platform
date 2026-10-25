@@ -92,7 +92,7 @@ try{
    await expect(p.page.getByText('查看代表资格依据记录',{exact:true})).toHaveCount(6);
    await expect(p.page.getByText('查看标准适用依据记录',{exact:true})).toHaveCount(1);
    assert.ok((await p.page.textContent('body')).includes('平台标准适用绑定匹配'));
-   assert.ok((await p.page.textContent('body')).includes('当前交付为 BLOCKED'));
+   assert.ok((await p.page.textContent('body')).includes('当前交付为 已阻断'));
    assert.equal(await p.page.getByRole('button').count(),0);
   });
   await pass(name+' material pagination/detail/refresh and context return retain exact identities',async()=>{
@@ -125,7 +125,7 @@ try{
  });
  await pass('foreign, missing and one-sided material references are UNKNOWN without replacing known overview',async()=>{
   for(const materialId of ['74000000-0000-4000-8000-000000002100','74000000-0000-4000-8000-000000001104','74000000-0000-4000-8000-000000001105','74000000-0000-4000-8000-000000009999']){
-   await evidencePage.goto(basisURL(a,{materialId,materialOffset:'25'}));assert.ok((await evidencePage.getByRole('region',{name:'材料核对详情'}).textContent()).includes('UNKNOWN'));
+   await evidencePage.goto(basisURL(a,{materialId,materialOffset:'25'}));assert.ok((await evidencePage.getByRole('region',{name:'材料核对详情'}).textContent()).includes('无法确认'));
    assert.equal(await evidencePage.getByRole('region',{name:'收件材料引用'}).locator('article').count(),3);
   }
  });
@@ -149,7 +149,7 @@ try{
   await receiver.page.goto(basisURL(b,{materialId:'74000000-0000-4000-8000-000000002100'}));
   assert.ok((await receiver.page.getByRole('region',{name:'材料核对详情'}).textContent()).includes('平台记录完整'));
   await receiver.page.goto(basisURL(b,{materialId:'74000000-0000-4000-8000-000000001100'}));
-  assert.ok((await receiver.page.getByRole('region',{name:'材料核对详情'}).textContent()).includes('UNKNOWN'));
+  assert.ok((await receiver.page.getByRole('region',{name:'材料核对详情'}).textContent()).includes('无法确认'));
   await receiver.page.goto(basisURL(a));assert.equal(await receiver.page.getByRole('region',{name:'人员与责任依据'}).count(),0);
  });
  const narrow=await person('confirmer');await narrow.page.setViewportSize({width:390,height:844});
