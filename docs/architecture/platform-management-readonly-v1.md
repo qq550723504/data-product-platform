@@ -23,11 +23,11 @@
 
 `POST /internal/identity/platform-management-principal` 是私有身份确认查询，严格复用已有 envelope，不是业务 Command。
 
-只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users,workspace}`；成员和用户固定limit=25，成员offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义），workspace只返回当前已授权空间的概览且不接受参数。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
+只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users,workspace,organization}`；成员和用户固定limit=25，成员offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义），workspace与organization分别只返回当前已授权空间的概览和绑定组织，均不接受参数。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
 
 响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI，权限必须命中显式自有键白名单，Object继承属性不能算权限。目录一次完整查询超过上限、超时，或检测到总数变化、短页、重复/乱序ID、错空间或原生筛选不符时必须失败，不返回部分成功。远端offset接口没有共同快照/修订号；相同总数下的并发替换不保证可检测，目录结果仅为查询视图，不是冻结成员事实，也不能作为后续写入授权。
 
-新版 `/settings`、`/settings/workspaces`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。组织树、空间生命周期、运行日志和系统配置写入另属后续范围。
+新版 `/settings`、`/settings/workspaces`、`/settings/organizations`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。企业部门树、空间生命周期、运行日志和系统配置写入另属后续范围。
 
 角色→相关成员→成员详情→返回列表沿用同一成员GET接口：角色入口以`role`打开首页，列表组合`q/role/state`筛选，提交筛选显式回到首页；`offset`只在分页和详情往返时保留。`memberId`进入独立详情查看状态，不在列表下重复展示详情。返回链接固定指向`/settings/members`，仅保留原筛选与offset，并用浏览器fragment定位原成员行；fragment不发往API，不接受任意return URL或客户端身份参数。详情失效时提供保留条件的明确返回，超出结果页时由用户显式选择保留筛选回首页，不静默改查其他成员/页面。页面跳转链接继续完整GET重验当前身份，URL状态不构成资格；切换空间从既有身份流程重建上下文，旧详情引用在新空间拒绝。浏览器前进/后退的本轮验收单独覆盖撤权后的拒绝，不把此前已展示的查询视图当新的授权。
 
@@ -56,6 +56,20 @@
 `directory`只描述当前服务器配置是否满足既有查询路径要求：有效organization/project/source、Directory及Catalog齐备时为CONFIGURED，并返回折叠的外部引用；否则为UNCONFIGURED、source=UNCONFIGURED及null引用。`availability`始终NOT_CHECKED。`queries.members/roles`按同一完整配置判断，users另需UserReader、audit另需AuditReader；这些布尔值仅控制入口是否已配置，不能当作当前调用资格、远端健康或真实来源证明。概览不调用原生目录、账号资料、审计列表或外部provider；点击入口后由原接口独立核验。远端故障时概览仍可解释配置，原查询必须显示不可用，不给出“连接正常”或假空结果。
 
 页面`/settings/workspaces`只展示当前会话空间，不新增全局空间目录。其他空间仍从既有`/identity → /auth/login?workspaceId=...`重做登录和资格核验，配置中的候选名称不证明调用者可进入。空间→成员/用户/角色/审计沿用完整GET，并携带唯一导航标记`from=workspace`；各列表筛选/分页/清除、明确详情、角色相关成员及审计游标分页均保留该标记，返回固定`/settings/workspaces`。标记不传入API、不选择workspace/身份、不接受任意return URL，未知值/重复值拒绝。切空间后返回只查询新会话的当前空间，复制旧用户/游标仍按既有边界拒绝；撤权或到期后刷新及历史导航不能用旧查询结果获取新访问。
+
+## 当前目录组织资料
+
+复用检查固定shuomi-ai-commerce的同一提交：没有找到独立组织资料Reader，复用其已经适配的验证TLS transport、严格路径白名单、原生权限前后确认、错误投影及成员/用户完整查询流程。组织对象由现有ZITADEL负责，新增最小OrganizationReader Port和现有Adapter方法；不自建组织库、组织同步、租户/部门引擎，不引入新的SDK或服务。采用官方[Organization v2 ListOrganizations](https://zitadel.com/docs/reference/api/org/zitadel.org.v2.OrganizationService.ListOrganizations)，请求与状态字段核对官方[query.proto](https://github.com/zitadel/zitadel/blob/main/proto/zitadel/org/v2/query.proto)和[org.proto](https://github.com/zitadel/zitadel/blob/main/proto/zitadel/org/v2/org.proto)；不使用已弃用的Admin GetOrgByID或全局列表回退。
+
+`GET .../management/organization`只接受路径中的当前workspace，继续原PLATFORM_MANAGEMENT_READ、当前grant、读取前后无缓存OIDC与事务内ValidateInTx。组织ID只来自服务器DirectoryBinding.OrganizationID，是当前应用授权关系所在的effective组织，不能取被查询用户的home组织、workspace UUID或客户端organizationId。缺少OrganizationReader返回SOURCE_UNCONFIGURED，不以绑定引用补出资料。
+
+原生请求仅允许固定POST `/v2/organizations/_search`，固定`query={offset:"0",limit:1,asc:true}`、`sortingColumn=ORGANIZATION_FIELD_NAME_NAME`及唯一`queries=[{idQuery:{id:当前绑定组织}}]`；该POST是查询，不是业务写接口。transport要求专用的可比较请求类型与选定组织完全一致，拒绝任意map、额外predicate、其他组织或宽查询。每次读前/后在显式组织上下文确认bare `org.read`，不剥离带冒号的权限范围。总预算10秒，响应有体积上限并沿用验证TLS和不跟随重定向。
+
+响应必须有明确totalResult，0且无结果才是不可见；成功必须total=1、恰一条结果且ID精确匹配。额外/跨组织结果、未知状态、非法名字/日期、权限撤回或源错误均丢弃，不选择第一条回退。仅投影`id/name/state/createdAt/changedAt`；缺失名称/日期为null，不推定名称或创建时间；状态仅支持active/inactive/removed。忽略原生primaryDomain、metadata及resourceOwner等无关字段。object.resourceOwner可以描述组织或实例归属，不用于拼企业父子关系；本片作用域由显式组织ID及当前空间资格确定。
+
+`departmentHierarchyState=UNCONFIGURED`为固定边界。目录组织、企业部门层级、法定主体和平台空间分别对待；目录启停状态是查询资料，不自动创建/归档空间、撤销成员或授予访问。没有企业来源时不返回部门树、负责人、法人关系或企业隶属事实。当前结果是查询视图，不是冻结历史或后续授权。
+
+`/settings/organizations`显示绑定组织资料、明确的目录状态及缺失字段，链接到原当前空间成员和用户列表。导航标记扩展为严格的`from=organization`，与原`from=workspace`并列；只允许成员/用户/角色/审计页面使用，组织资料页本身仍无参数。搜索、分页、详情、原行定位、角色相关成员及错误页返回继续保持原标记，返回固定`/settings/organizations`，不把标记传到API、不接受任意return URL。切空间后重读新绑定组织，旧成员/用户引用按原接口拒绝。默认无账号预览仍显示真实来源未配置，合成组织只在独立验收profile展示。
 
 ## 验证
 

@@ -1,11 +1,12 @@
 import type {Principal} from './iam-core';
 export const managementMenus=[['','设置总览'],['workspaces','工作空间'],['members','空间成员'],['users','用户目录'],['organizations','组织机构'],['roles','角色权限'],['audit','审计记录'],['logs','运行日志'],['configuration','基础配置']];
-export type ManagementSection='members'|'roles'|'audit'|'users'|'workspaces';
+export type ManagementSection='members'|'roles'|'audit'|'users'|'workspaces'|'organizations';
 export type Member={id:string;userId:string;organizationId:string;projectId:string;displayName:string;loginName:string;roles:string[];state:'active'|'inactive';createdAt:string;changedAt:string;permissions:string[]};
 export type Role={id:string;name:string;permissions:string[]};
 export type Audit={id:string;actorId:string|null;actorType:'USER'|'SYSTEM'|'SERVICE';action:string;objectType:string;objectId:string;occurredAt:string};
 export type ManagementResult={profileVersion:'platform-management.v1';workspaceId:string;principalId:string;authorityRevision:string;evaluatedAt:string;source:'SYNTHETIC_FIXTURE'|'CONFIGURED';writeEnabled:false;data:{items:(Member|Role|Audit)[];total?:number;offset?:number;limit?:number;selected?:Member|null;roleDefinitions?:Role[];policySource?:string;next?:string}};
-export type ManagementSelection={offset:number;q?:string;role?:string;state?:string;memberId?:string;cursor?:string;userId?:string;from?:'workspace'};
+export type ManagementSelection={offset:number;q?:string;role?:string;state?:string;memberId?:string;cursor?:string;userId?:string;from?:'workspace'|'organization'};
+export type OrganizationManagementResult=Omit<ManagementResult,'data'>&{data:{organization:{id:string;name:string|null;state:'active'|'inactive'|'removed';createdAt:string|null;changedAt:string|null};departmentHierarchyState:'UNCONFIGURED'}};
 export type WorkspaceManagementResult=Omit<ManagementResult,'data'>&{data:{recordState:'UNCONFIGURED';confirmationExpiresAt:string;directory:{state:'CONFIGURED'|'UNCONFIGURED';source:'CONFIGURED'|'SYNTHETIC_FIXTURE'|'UNCONFIGURED';organizationId:string|null;projectId:string|null;availability:'NOT_CHECKED'};queries:{members:boolean;users:boolean;roles:boolean;audit:boolean}}};
 export type UserReference={id:string;displayName:string;loginName:string;membershipCount:number};
 export type UserProfile={id:string;organizationId:string;username:string;displayName:string;accountState:'active'|'inactive'|'locked'|'initial'|'deleted';createdAt:string;changedAt:string};
@@ -28,13 +29,14 @@ export function managementSelection(section:ManagementSection,q:Record<string,st
  if(!Number.isInteger(offset)||offset<0||offset>10000||q.offset!==undefined&&String(offset)!==q.offset)throw Error('INVALID_QUERY');
  for(const k of ['q','role','state','memberId','cursor','userId']as const){const v=q[k];if(typeof v==='string'&&v)s[k]=v;}
  if(s.q&&(!text(s.q,200)||!s.q.trim()||/[\u0000-\u001f\u007f]/.test(s.q))||s.role&&!id(s.role)||s.memberId&&!id(s.memberId)||s.userId&&!id(s.userId)||s.state&&!['active','inactive'].includes(s.state)||s.cursor&&(!/^[A-Za-z0-9_-]+$/.test(s.cursor)||s.cursor.length>1024))throw Error('INVALID_QUERY');
- if(q.from!==undefined){if(q.from!=='workspace')throw Error('INVALID_QUERY');s.from='workspace'}
+ if(q.from!==undefined){if(q.from!=='workspace'&&q.from!=='organization')throw Error('INVALID_QUERY');s.from=q.from}
  return s;
 }
 export function managementQuery(s:ManagementSelection){const q=new URLSearchParams();if(s.offset)q.set('offset',String(s.offset));for(const k of ['q','role','state','memberId','cursor','userId']as const)if(s[k])q.set(k,s[k]!);return q.size?'?'+q:'';}
 // Navigation context never enters an API query or selects a caller/workspace.
-export function managementPageQuery(s:ManagementSelection){const q=new URLSearchParams(managementQuery(s));if(s.from==='workspace')q.set('from','workspace');return q.size?'?'+q:'';}
+export function managementPageQuery(s:ManagementSelection){const q=new URLSearchParams(managementQuery(s));if(s.from==='workspace'||s.from==='organization')q.set('from',s.from);return q.size?'?'+q:'';}
 export function workspaceQueryHref(kind:'members'|'users'|'roles'|'audit'){if(!['members','users','roles','audit'].includes(kind))throw Error('INVALID_QUERY');return '/settings/'+kind+managementPageQuery({offset:0,from:'workspace'});}
+export function organizationQueryHref(kind:'members'|'users'){if(!['members','users'].includes(kind))throw Error('INVALID_QUERY');return '/settings/'+kind+managementPageQuery({offset:0,from:'organization'});}
 function memberListSelection(s:ManagementSelection):ManagementSelection{return {offset:s.offset,q:s.q,role:s.role,state:s.state,from:s.from};}
 export function managementMemberListHref(s:ManagementSelection,focusMemberId?:string){
  if(focusMemberId&&!id(focusMemberId))throw Error('INVALID_QUERY');
@@ -46,7 +48,7 @@ export function managementMemberDetailHref(s:ManagementSelection,memberId:string
 }
 export function validManagement(raw:ManagementResult,p:Principal,kind:ManagementSection,s:ManagementSelection):boolean{
  try{
-  if(kind==='users'||kind==='workspaces')return false;
+  if(kind==='users'||kind==='workspaces'||kind==='organizations')return false;
   if(!raw||!exact(raw,'profileVersion,workspaceId,principalId,authorityRevision,evaluatedAt,source,writeEnabled,data')||raw.profileVersion!=='platform-management.v1'||raw.workspaceId!==p.workspace_id||raw.principalId!==p.principal_id||raw.authorityRevision!==p.revision||!time(raw.evaluatedAt)||!['SYNTHETIC_FIXTURE','CONFIGURED'].includes(raw.source)||raw.writeEnabled!==false||!raw.data||!Array.isArray(raw.data.items))return false;
   const d=raw.data;
   if(kind==='members'){
@@ -57,6 +59,14 @@ export function validManagement(raw:ManagementResult,p:Principal,kind:Management
   }
   if(kind==='roles')return exact(d,'items,policySource')&&d.policySource==='APPLICATION_CATALOG'&&roles(d.items);
   return exact(d,'items,next')&&d.items.length<=25&&typeof d.next==='string'&&(!d.next||/^[A-Za-z0-9_-]{1,1024}$/.test(d.next)&&d.items.length===25)&&new Set(d.items.map(v=>v.id)).size===d.items.length&&d.items.every(v=>{const a=v as Audit;return exact(a,'id,actorId,actorType,action,objectType,objectId,occurredAt')&&uuid(a.id)&&(a.actorId===null||uuid(a.actorId))&&['USER','SYSTEM','SERVICE'].includes(a.actorType)&&text(a.action,128)&&!!a.action&&text(a.objectType,64)&&!!a.objectType&&uuid(a.objectId)&&time(a.occurredAt)});
+ }catch{return false;}
+}
+export function validOrganizationManagement(value:unknown,p:Principal):value is OrganizationManagementResult{
+ try{
+  const r=value as OrganizationManagementResult;
+  if(!r||!exact(r,'profileVersion,workspaceId,principalId,authorityRevision,evaluatedAt,source,writeEnabled,data')||r.profileVersion!=='platform-management.v1'||r.workspaceId!==p.workspace_id||r.principalId!==p.principal_id||r.authorityRevision!==p.revision||!time(r.evaluatedAt)||!['SYNTHETIC_FIXTURE','CONFIGURED'].includes(r.source)||r.writeEnabled!==false)return false;
+  const d=r.data;if(!d||!exact(d,'organization,departmentHierarchyState')||d.departmentHierarchyState!=='UNCONFIGURED')return false;
+  const o=d.organization;return !!o&&exact(o,'id,name,state,createdAt,changedAt')&&id(o.id)&&(o.name===null||text(o.name)&&!!o.name.trim()&&!/[\u0000-\u001f\u007f]/.test(o.name))&&['active','inactive','removed'].includes(o.state)&&(o.createdAt===null||time(o.createdAt))&&(o.changedAt===null||time(o.changedAt));
  }catch{return false;}
 }
 export function managementUserListHref(s:ManagementSelection,focusUserId?:string){

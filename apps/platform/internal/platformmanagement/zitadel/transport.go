@@ -14,7 +14,9 @@ import (
 func (c *Client) requestJSON(ctx context.Context, method, path string, body any, allowNotFound bool, organization ...string) ([]byte, error) {
 	permissionQuery := method == http.MethodPost && path == "/auth/v1/permissions/zitadel/me/_search" && !allowNotFound
 	userQuery := method == http.MethodGet && strings.HasPrefix(path, "/v2/users/") && domain.IsIdentifier(strings.TrimPrefix(path, "/v2/users/")) && allowNotFound && body == nil
-	if c == nil || c.http == nil || (!permissionQuery && !userQuery) || len(organization) != 1 || !domain.IsIdentifier(organization[0]) {
+	orgBody, typed := body.(organizationReadRequest)
+	orgQuery := method == http.MethodPost && path == "/v2/organizations/_search" && !allowNotFound && typed && len(organization) == 1 && orgBody == organizationRequest(organization[0])
+	if c == nil || c.http == nil || (!permissionQuery && !userQuery && !orgQuery) || len(organization) != 1 || !domain.IsIdentifier(organization[0]) {
 		return nil, domain.ErrInvalidRequest
 	}
 	raw, err := json.Marshal(body)

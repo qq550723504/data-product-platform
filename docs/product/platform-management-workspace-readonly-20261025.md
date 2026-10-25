@@ -1,5 +1,7 @@
 # 当前工作空间的只读管理入口
 
+本页保留该轮34项验收与旧构建。当前预览及新增目录组织资料见[组织只读交付](platform-management-organization-readonly-20261025.md)，不改写下述历史证据。
+
 2026-10-25，承接PR #363的`e51670d1787b987217c0dd3020b9dfc25330f0fa`。本轮完成当前空间概览→成员/用户/角色/审计查询→原列表或空间返回。权威查询合同为[平台管理只读契约](../architecture/platform-management-readonly-v1.md#当前工作空间概览)，保持Draft、不合并、不部署。
 
 ## 已完成与复用

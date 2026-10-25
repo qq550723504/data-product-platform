@@ -3,16 +3,31 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fixture,MemoryStore} from './helpers/oidc-fixture.mjs';
 const require=createRequire(import.meta.url);
-const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement,validWorkspaceManagement}=require('../.iam-tests/platform-management.js');
+const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,organizationQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement}=require('../.iam-tests/platform-management.js');
 test('management RP is disjoint and transport allows only exact readonly workspace queries',async t=>{
  const f=await fixture(t,new MemoryStore(),'platform-management'),start=await f.iam.start(),session=await f.iam.callback(f.callback(start),start.key),client=await f.iam.managementClient(session.key);
  assert.deepEqual(client.principal.capabilities,['PLATFORM_MANAGEMENT_READ']);await assert.rejects(f.iam.acceptanceClient(session.key));
  const base=client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/management/';let calls=0;
  f.state.businessHandler=async(req,res)=>{calls++;assert.equal(req.method,'GET');res.end('{}')};
- await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');await client.request(base+'workspace');assert.equal(calls,3);
+ await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');await client.request(base+'workspace');await client.request(base+'organization');assert.equal(calls,4);
  for(const [url,init]of [[base+'members',{method:'POST'}],[base+'roles',{headers:{Authorization:'Bearer forged'}}],[base+'audit',{body:'x'}],[base.replace(client.principal.workspace_id,'44444444-4444-4444-8444-444444444444')+'members',{}],[client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/acceptance-context',{}]])await assert.rejects(client.request(url,init));
- assert.equal(calls,3);
- f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'workspace'));assert.equal(calls,4);
+ assert.equal(calls,4);
+ f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'organization'));assert.equal(calls,5);
+});
+
+test('organization origin preserves list conditions and rows without entering APIs or selecting another organization',()=>{
+ for(const kind of ['members','users']){const u=new URL(organizationQueryHref(kind),'https://app.invalid');assert.equal(u.pathname,'/settings/'+kind);const s=managementSelection(kind,Object.fromEntries(u.searchParams));assert.equal(s.from,'organization');assert.equal(managementQuery(s),'')}
+ const s={offset:25,q:'目标',state:'active',from:'organization'};
+ for(const href of [managementMemberListHref(s,'grant'),managementMemberDetailHref(s,'grant'),managementUserListHref(s,'native'),managementUserDetailHref(s,'native')])assert.equal(new URL(href,'https://app.invalid').searchParams.get('from'),'organization');
+ for(const q of [{organizationId:'foreign'},{from:'organization'},{from:'//foreign.invalid'},{offset:'25'}])assert.throws(()=>managementSelection('organizations',q));
+ assert.throws(()=>managementSelection('members',{from:['organization','workspace']}));
+});
+
+test('organization DTO rejects foreign identity unexpected facts hierarchy and guessed state while preserving absent fields',()=>{
+ const p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1'};
+ const data={organization:{id:'org',name:null,state:'active',createdAt:null,changedAt:null},departmentHierarchyState:'UNCONFIGURED'},raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:new Date().toISOString(),source:'SYNTHETIC_FIXTURE',writeEnabled:false,data};assert.equal(validOrganizationManagement(raw,p),true);
+ for(const patch of [{state:'unknown'},{name:' '},{primaryDomain:'PRIVATE'},{createdAt:'not-a-date'},{parentId:'guessed-parent'}])assert.equal(validOrganizationManagement({...raw,data:{...data,organization:{...data.organization,...patch}}},p),false);
+ assert.equal(validOrganizationManagement({...raw,data:{...data,departmentHierarchyState:'CONFIGURED'}},p),false);assert.equal(validOrganizationManagement({...raw,workspaceId:p.principal_id},p),false);assert.equal(validOrganizationManagement({...raw,authorityRevision:'2:1:1'},p),false);assert.equal(validOrganizationManagement({...raw,writeEnabled:true},p),false);
 });
 
 test('workspace origin is a fixed navigation marker excluded from API and restored across existing pages',()=>{

@@ -470,7 +470,7 @@ export class BrowserIAM {
     const request:typeof fetch=async(input,init={})=>{
       const url=new URL(typeof input==="string"?input:input instanceof URL?input.href:input.url);
       const prefix=`/api/v1/workspaces/${this.config.workspaceId}/management/`;
-      if(url.origin!==apiBaseUrl||url.username||url.password||url.hash||(init.method??"GET")!=="GET"||init.body!==undefined||[...new Headers(init.headers).keys()].length||!["members","roles","audit","users","workspace"].some(resource=>url.pathname===prefix+resource))throw new IAMError();
+      if(url.origin!==apiBaseUrl||url.username||url.password||url.hash||(init.method??"GET")!=="GET"||init.body!==undefined||[...new Headers(init.headers).keys()].length||!["members","roles","audit","users","workspace","organization"].some(resource=>url.pathname===prefix+resource))throw new IAMError();
       const {session}=await this.authorizedSession(key);
       const response=await this.reviewTransport(url,{...init,method:"GET",cache:"no-store",headers:{Authorization:`Bearer ${session.accessToken}`}});
       await this.authorizedSession(key);

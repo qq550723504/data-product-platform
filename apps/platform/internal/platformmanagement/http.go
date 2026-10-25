@@ -51,7 +51,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resource := r.PathValue("resource")
-	if resource != "members" && resource != "roles" && resource != "audit" && resource != "users" && resource != "workspace" {
+	if resource != "members" && resource != "roles" && resource != "audit" && resource != "users" && resource != "workspace" && resource != "organization" {
 		failure(w, 404, "NOT_FOUND")
 		return
 	}
@@ -120,6 +120,19 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	var payload any
 	switch resource {
+	case "organization":
+		page, e := QueryOrganization(ctx, b)
+		if e != nil {
+			if errors.Is(e, ErrUnconfigured) {
+				failure(w, 503, "SOURCE_UNCONFIGURED")
+			} else if errors.Is(e, ErrNotFound) {
+				failure(w, 404, "ORGANIZATION_UNAVAILABLE")
+			} else {
+				failure(w, 503, "ORGANIZATION_DIRECTORY_UNAVAILABLE")
+			}
+			return
+		}
+		payload = page
 	case "users":
 		if b.Users == nil {
 			failure(w, 503, "SOURCE_UNCONFIGURED")

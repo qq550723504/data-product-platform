@@ -69,7 +69,7 @@ func main() {
 	native, e := directory.NewClient(c.Issuer, c.ReadCredential, "governance", client)
 	must(e)
 	links := management.BoundUserIdentities{Store: store, Workspace: wsA, References: map[string]management.UserSubjectReference{"person-a-2": {Issuer: c.Issuer, Subject: "directory-person-linked", BasisRef: "synthetic-user-link-v1"}}}
-	scopes := map[uuid.UUID]management.Binding{wsA: {OrganizationID: "organization-a", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, IdentityLinks: links, Catalog: catalog}, wsB: {OrganizationID: "organization-b", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, Catalog: catalog}}
+	scopes := map[uuid.UUID]management.Binding{wsA: {OrganizationID: "organization-a", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, IdentityLinks: links, Catalog: catalog, Organizations: native}, wsB: {OrganizationID: "organization-b", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, Catalog: catalog, Organizations: native}}
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /internal/identity/platform-management-principal", store.ManagementPrincipal(resolver))
 	management.Handler{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, Bindings: scopes, Audit: management.PostgresAudit{Pool: pool}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)

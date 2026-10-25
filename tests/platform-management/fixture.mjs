@@ -10,7 +10,7 @@ if(process.env.MANAGEMENT_FIXTURE_ACK!=='ISOLATED_READONLY_MANAGEMENT')throw Err
 const p=JSON.parse(readFileSync(process.env.MANAGEMENT_FIXTURE_PROFILE,'utf8'));
 if(p.issuer!=='https://localhost:19130'||p.origin!=='https://localhost:4300')throw Error('exact independent origin required');
 const {publicKey,privateKey}=await generateKeyPair('RS256'),jwk=await exportJWK(publicKey);jwk.kid='management-synthetic';
-const codes=new Map(),logins=new Map(),tokens=new Map(),held=new Set(),heldUsers=new Set();const state={permission:true,foreign:false,fail:false,holdList:false,waiting:0,reads:0,userPermission:true,userForeign:false,userFail:false,userUnknown:false,holdUser:false,userWaiting:0,userReads:0,removeUser:false};
+const codes=new Map(),logins=new Map(),tokens=new Map(),held=new Set(),heldUsers=new Set(),heldOrgs=new Set();const state={permission:true,foreign:false,fail:false,holdList:false,waiting:0,reads:0,userPermission:true,userForeign:false,userFail:false,userUnknown:false,holdUser:false,userWaiting:0,userReads:0,removeUser:false,orgPermission:true,orgForeign:false,orgFail:false,orgUnknown:false,orgMissing:false,orgSparse:false,orgExtra:false,holdOrg:false,orgWaiting:0,orgReads:0};
 const opaque=()=>randomBytes(32).toString('base64url');
 const json=(res,value,status=200)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(value))};
 async function body(req){let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>16000)throw Error('oversized fixture input')}return raw;}
@@ -40,7 +40,16 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
    if(!basic(req,'dpp-management-api',p.resourceSecret))return json(res,{},401);const b=new URLSearchParams(await body(req)),t=tokens.get(b.get('token'));if(!t||t.revoked||t.expires<=Date.now()/1000)return json(res,{active:false});return json(res,{active:true,iss:p.issuer,sub:t.subject,aud:['dpp-management-api'],client_id:'dpp-management-rp',scope:'openid platform-management',exp:t.expires,iat:t.expires-600,token_type:'Bearer'});
   }
   if(u.pathname==='/auth/v1/permissions/zitadel/me/_search'&&req.method==='POST'){
-   if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(req.headers['x-zitadel-orgid']))return json(res,{},403);return json(res,{result:[...(state.permission?['user.grant.read']:[]),...(state.userPermission?['user.read']:[])]});
+   if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(req.headers['x-zitadel-orgid']))return json(res,{},403);return json(res,{result:[...(state.permission?['user.grant.read']:[]),...(state.userPermission?['user.read']:[]),...(state.orgPermission?['org.read']:[])]});
+  }
+  if(u.pathname==='/v2/organizations/_search'&&req.method==='POST'){
+   const org=req.headers['x-zitadel-orgid'];if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(org))return json(res,{},403);
+   const q=JSON.parse(await body(req)),expected={query:{offset:'0',limit:1,asc:true},sortingColumn:'ORGANIZATION_FIELD_NAME_NAME',queries:[{idQuery:{id:org}}]};if(JSON.stringify(q)!==JSON.stringify(expected))return json(res,{},400);
+   state.orgReads++;if(state.orgFail)return json(res,{},503);
+   if(state.holdOrg){state.orgWaiting++;const released=await new Promise(resolve=>{const release=()=>{clearTimeout(timer);heldOrgs.delete(release);resolve(true)},timer=setTimeout(()=>{heldOrgs.delete(release);resolve(false)},5000);heldOrgs.add(release)});state.orgWaiting--;if(!released)return json(res,{},503)}
+   if(state.orgMissing)return json(res,{details:{totalResult:'0'},result:[]});
+   const record={id:state.orgForeign?'organization-foreign':org,state:state.orgUnknown?'ORGANIZATION_STATE_UNSPECIFIED':org==='organization-a'?'ORGANIZATION_STATE_ACTIVE':'ORGANIZATION_STATE_INACTIVE',...(state.orgSparse?{}:{name:org==='organization-a'?'甲方目录组织':'乙方目录组织',details:{creationDate:'2026-10-24T00:00:00Z',changeDate:'2026-10-25T00:00:00Z',resourceOwner:'synthetic-identity-instance'}}),primaryDomain:'PRIVATE_ORG_DOMAIN_NEVER_RENDER',metadata:{private:'PRIVATE_ORG_METADATA_NEVER_RENDER'}};
+   return json(res,{details:{totalResult:state.orgExtra?'2':'1'},result:state.orgExtra?[record,{...record,id:'organization-other'}]:[record]});
   }
   if(u.pathname.startsWith('/v2/users/')&&req.method==='GET'){
    const org=req.headers['x-zitadel-orgid'];if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(org))return json(res,{},403);
@@ -60,12 +69,13 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
   if(u.pathname==='/_control'&&req.headers['x-fixture-control']===p.control){
    let testAccessToken;
    if(req.method==='POST'){
-    const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail','holdList','userPermission','userForeign','userFail','userUnknown','holdUser','removeUser'])if(typeof b[k]==='boolean')state[k]=b[k];
+    const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail','holdList','userPermission','userForeign','userFail','userUnknown','holdUser','removeUser','orgPermission','orgForeign','orgFail','orgUnknown','orgMissing','orgSparse','orgExtra','holdOrg'])if(typeof b[k]==='boolean')state[k]=b[k];
     if(Object.hasOwn(labels,b.revokeSubject))for(const t of tokens.values())if(t.subject===b.revokeSubject)t.revoked=true;
     if(Object.hasOwn(labels,b.expireSubject))for(const t of tokens.values())if(t.subject===b.expireSubject)t.expires=Math.floor(Date.now()/1000)-1;
     if(Object.hasOwn(labels,b.issueSubject)){testAccessToken=opaque();tokens.set(testAccessToken,{subject:b.issueSubject,expires:Math.floor(Date.now()/1000)+600})}
     if(!state.holdList)for(const release of held)release();
     if(!state.holdUser)for(const release of heldUsers)release();
+    if(!state.holdOrg)for(const release of heldOrgs)release();
    }
    return json(res,{...state,...(testAccessToken?{testAccessToken}:{})});
   }

@@ -54,6 +54,7 @@ type Binding struct {
 	Catalog                           *Catalog
 	Users                             UserReader
 	IdentityLinks                     UserIdentityReader
+	Organizations                     OrganizationReader
 }
 type Gate interface {
 	Confirm(context.Context, principal.RequestPrincipal) (principal.Authority, error)
