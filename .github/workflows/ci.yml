@@ -128,6 +128,8 @@ jobs:
           python -O -B examples/lifecycle-d1/test_native_protection.py
           python -B examples/lifecycle-d1/test_retention_renewal.py
           python -O -B examples/lifecycle-d1/test_retention_renewal.py
+          python -B examples/lifecycle-d1/test_docker_host_paths.py
+          python -O -B examples/lifecycle-d1/test_docker_host_paths.py
           python -B examples/lifecycle-d1/test_retention_maintenance.py
           python -O -B examples/lifecycle-d1/test_retention_maintenance.py
           python -B examples/lifecycle-d1/test_retention_composition.py

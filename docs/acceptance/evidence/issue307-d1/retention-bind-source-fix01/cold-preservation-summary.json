@@ -1,0 +1,246 @@
+{
+  "status": "PASS_RETAINED_COLD_FIELDS_UNCHANGED",
+  "at": "2026-10-25T05:21:59.219716+00:00",
+  "rows": {
+    "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0": {
+      "descriptor_sha256": "ec9507c180de831f71774474d808766839152d99543f5c5a68cf62ef7b6a61ba",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:40:13.916891005Z",
+        "FinishedAt": "2026-10-23T12:40:39.895295784Z"
+      },
+      "RestartCount": 0
+    },
+    "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce": {
+      "descriptor_sha256": "6b925e5a22a6d0614bcc2a0d0ce37ecf64ff9917dd00b89dee35411bbc973409",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:40:14.119884474Z",
+        "FinishedAt": "2026-10-23T12:40:23.051952637Z"
+      },
+      "RestartCount": 0
+    },
+    "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db": {
+      "descriptor_sha256": "855ea8553c795b02bea8242320427aeae67ab76a2b751bafba8234d73c85de11",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:40:54.446866298Z",
+        "FinishedAt": "2026-10-23T12:41:15.807987071Z"
+      },
+      "RestartCount": 0
+    },
+    "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061": {
+      "descriptor_sha256": "c1868b6406229b31fe269bfdc6c877c122744f3cfe2d4b273440e673d9089be1",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:40:54.657910065Z",
+        "FinishedAt": "2026-10-23T12:41:03.099141998Z"
+      },
+      "RestartCount": 0
+    },
+    "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82": {
+      "descriptor_sha256": "9101f8d580c6323f8b878c6323ba1a7272f24acd18b8064be17b04372f217fff",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:41:29.803769938Z",
+        "FinishedAt": "2026-10-23T12:41:50.997255432Z"
+      },
+      "RestartCount": 0
+    },
+    "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d": {
+      "descriptor_sha256": "811d033ba60effff5c71669ddae9e44768ace5e5f8bff01b964e58dc69e532af",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-23T12:41:29.994764581Z",
+        "FinishedAt": "2026-10-23T12:41:38.26066002Z"
+      },
+      "RestartCount": 0
+    },
+    "25a4e218f72527e8f93a1df2eeb7a09833e5028c03d5ee178009bd9c71ee33e6": {
+      "descriptor_sha256": "a7f022bee735360a1a50fc490898367a244d4b48ed1a5ee8f21a115f0a2ca544",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-19T06:06:43.568846878Z",
+        "FinishedAt": "2026-10-19T06:08:47.078137884Z"
+      },
+      "RestartCount": 0
+    },
+    "979313f861b998cd2e56aaef53e8543a521cfd94709c54ebedb0981e57edccdd": {
+      "descriptor_sha256": "3fabc25b49c30cdee46cc957a72f6d25605bb915000d7101b5abe2de5bbc5d7d",
+      "State": {
+        "Status": "created",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "RestartCount": 0
+    },
+    "87642c57a3411c7a1403a3406b94965325aed5ef2b6e9bc2749ba09c4431a606": {
+      "descriptor_sha256": "ff030c9b76380ae5bda559c3892211732400bfa6f0eaaefa08c33cdbb5d17b73",
+      "State": {
+        "Status": "created",
+        "Running": false,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 0,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "RestartCount": 0
+    }
+  },
+  "files": {
+    "d1-retention-5974b008e9fe4d148ce9e92eee431743-business-races-private": {
+      "bindings.json": {
+        "sha256": "e2a14c66f98b9972ca424bc4f9ad64621ef8685c0e184fb14503ee7f1e0ee8e6",
+        "bytes": 106
+      },
+      "permission.json": {
+        "sha256": "7f6207ffe0a940f177ef97b195d3ac6112e5d76d4546f98f38fa30c01b45a892",
+        "bytes": 39
+      },
+      "topology.json": {
+        "sha256": "d1f102547890ec680d621131e7889feb68f71c674ed1d7a02173244a0d0fb822",
+        "bytes": 43
+      },
+      "host-public.key": {
+        "sha256": "5663ab535bd51327257089ca7a57199c60b1f516181637208b72732ddabb4cca",
+        "bytes": 32
+      },
+      "approved-proposal.json": {
+        "sha256": "c04bc807f1f31452538e6b62eda2c3dbc784391e4d54eeae7be99eb2b464938b",
+        "bytes": 52
+      },
+      "user-message-verbatim.txt": {
+        "sha256": "798db4092a523f1d082aade94b205b89dfc75f10a4dc70a142d26686972ed896",
+        "bytes": 446
+      },
+      "root.json": {
+        "sha256": "7f3e5ee89213ac1b5543f0ab19183446c70fe338a8e7e6e523ed33e705af92b6",
+        "bytes": 86
+      },
+      "authorization.json": {
+        "sha256": "deff8d53b8067fb152bf90df85ee9afdc98cb02cc468b0a7064091074852551c",
+        "bytes": 69
+      }
+    },
+    "d1-retention-5974b008e9fe4d148ce9e92eee431743-business-races-output": {},
+    "d1-retention-5974b008e9fe4d148ce9e92eee431743-mixed-private": {
+      "bindings.json": {
+        "sha256": "e2a14c66f98b9972ca424bc4f9ad64621ef8685c0e184fb14503ee7f1e0ee8e6",
+        "bytes": 106
+      },
+      "permission.json": {
+        "sha256": "7f6207ffe0a940f177ef97b195d3ac6112e5d76d4546f98f38fa30c01b45a892",
+        "bytes": 39
+      },
+      "topology.json": {
+        "sha256": "d1f102547890ec680d621131e7889feb68f71c674ed1d7a02173244a0d0fb822",
+        "bytes": 43
+      },
+      "host-public.key": {
+        "sha256": "5663ab535bd51327257089ca7a57199c60b1f516181637208b72732ddabb4cca",
+        "bytes": 32
+      },
+      "approved-proposal.json": {
+        "sha256": "c04bc807f1f31452538e6b62eda2c3dbc784391e4d54eeae7be99eb2b464938b",
+        "bytes": 52
+      },
+      "user-message-verbatim.txt": {
+        "sha256": "798db4092a523f1d082aade94b205b89dfc75f10a4dc70a142d26686972ed896",
+        "bytes": 446
+      },
+      "root.json": {
+        "sha256": "52c055817191590a1ca9a0175e1d34d56068ed6273961425946ef5c293751bab",
+        "bytes": 77
+      },
+      "authorization.json": {
+        "sha256": "deff8d53b8067fb152bf90df85ee9afdc98cb02cc468b0a7064091074852551c",
+        "bytes": 69
+      }
+    },
+    "d1-retention-5974b008e9fe4d148ce9e92eee431743-mixed-output": {},
+    "d1-retention-5974b008e9fe4d148ce9e92eee431743-budget": {}
+  },
+  "global_volume_names_count": 2971,
+  "global_volume_names_sha256": "73a06920df020905e472e2166c912b7d8a0911bf62503f111767a41c11f5ac50",
+  "source_before_sha256": "df5ae0603ea3e436db3236bb36f17a0bc5b122cdc508d01397b8d27d401a9aa7",
+  "source_after_sha256": "4f5c6a6a14bf01828bf7501a96c196f9ca442da1daa4d83a57f7a13823f7036c",
+  "original_cold_index_sha256": "47f5fc5efb19d5b24943715ad113f79063e8244fe65138cf3da9a6627326647e",
+  "before_after_compared_fields_equal": true,
+  "whole_before_after_json_bytes_equal": false,
+  "ownership_initialized": false,
+  "permissions_enabled": 0,
+  "source_start": 0,
+  "writer_start": 0,
+  "protection_write": 0,
+  "business_object_delete": 0,
+  "old_budget_pins": "not mounted by test helpers, not written; no claim of new Core/DB/pins byte audit"
+}

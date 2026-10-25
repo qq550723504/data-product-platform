@@ -1,0 +1,510 @@
+{
+  "status": "PASS_WINDOWS_LINUX_NORMAL_OPTIMIZED_NONDELETE",
+  "collections": {
+    "windows": {
+      "status": "PASS_EFFECTIVE_NONDELETE_COLLECTION",
+      "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "suites": 10,
+      "effective_commands": 20,
+      "actual_commands": 22,
+      "method_executions": 148,
+      "skip_executions": 6,
+      "records": [
+        {
+          "name": "test_retention_maintenance-normal",
+          "methods": 10,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "8e012b569f69cd7f8b9a8434abc0ed3a61554e48c26a0dbd2c908c665ea07dbc",
+          "stdout_sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+          "audit_sha256": "e6abbbda29485b8a47f4d0e25a5ee53b57bbe273936208e73b5297a84114bd9a"
+        },
+        {
+          "name": "test_retention_maintenance-O",
+          "methods": 10,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "5aeaebfedda3ab8d92f4434b13a1d1212f380235e6c9844ab534c8b4bfdd8871",
+          "stdout_sha256": "0793118e4aa7030205f13c2e80f6f24beacabc4a78007804885b8cd0e9eae963",
+          "audit_sha256": "d9b909726f44a9a52640317ec55cb4432c3f8c9dfd5b108f83a2f9bf2eea8401"
+        },
+        {
+          "name": "test_retention_composition-normal",
+          "methods": 13,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "4758eeffccc771eb833a496b17fd09222f5e7a9d09a14af271ed6c95b91b7537",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "cc39183bdf2acd2e94e64b5a10b0903594daaf6c3841b930b08586a8269e596b"
+        },
+        {
+          "name": "test_retention_composition-O",
+          "methods": 13,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "c42a4249f95df7d3d8b8bef70fa50353055450dddbb966e958c2425247b6bb12",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "0ffa90981569cafd061f7d874479477ec10f45b8aa2fe20bdf7bdca2da394cec"
+        },
+        {
+          "name": "test_retention_staging-normal",
+          "methods": 2,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "d276ce24f7df0df832d00f4a1a5c0f13780199247c21005b2c7d8868238f187a",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "efc125ce4950352e5fdd2987d251f516191ad39b0020263eea61efcf2b2419fb"
+        },
+        {
+          "name": "test_retention_staging-O",
+          "methods": 2,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "15fddb8c9ea5a76a5b502a02998ee6055b048ceed282f754d059590db40ed1d2",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "50a3257792457c327ca7642ddf0bfcc134de4af4da86bfdbda02fafbca97cbdf"
+        },
+        {
+          "name": "test_retention_renewal-normal",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "27391bb0cebb0cba9950981a4885160c5d3d11d8af0d5e98bfa2ed63b6b48572",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "17586e7a51cb18316ba6ac088eb7acc22efc9e61a0d81d265312021c4a40fc49"
+        },
+        {
+          "name": "test_retention_renewal-O",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "765bfbeec8fa40b0d2bdd456bfa7d87fc8b9f5adf038ddb904cbfb96f7e71f8f",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "5382ada5c1b411c2af39a83f6e7c30f794902ca64ab55729f8a71cf331e063b1"
+        },
+        {
+          "name": "test_attest_remaining_executable-normal",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "61520aea5e8ccc92e5e3980e8e88e14f5a9cc39cf5bfd443505e68904d494e05",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "5bea995cf8c676d2acc73a85b0d160e5b329452447e6f099e8361eac280c3690"
+        },
+        {
+          "name": "test_attest_remaining_executable-O",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "7b5b7e08a1de95397331cbef833d57c0dc98fba4efa92ecd6dfa1007b28ef15e",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "04443cae66d7baba567fcc91916648e8ca4d8eaf9f3a8f4495b366223c84f31b"
+        },
+        {
+          "name": "test_release_binding-normal",
+          "methods": 13,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "3969707a08e7c6a91cf8f4b492dafbc89031af8d69df7e68423f43db4a4d2ead",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "cb20178990d75df8a4a36dff2921ec39464a6b94cfee1d8257627585c06874e8"
+        },
+        {
+          "name": "test_release_binding-O",
+          "methods": 13,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "683298401ee1a25731adb7130186d72c5d9376972f6208b1370ff18db12ddb34",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "094071aa8ab59709dfe83cf0f6f0954b9c9ef3efd7bd606c325a0dcfbee9ee24"
+        },
+        {
+          "name": "test_evidence_indexes-normal",
+          "methods": 12,
+          "skipped": 1,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "26bf97936a4db7fc2b599aabb3ab881c9d50ade72eea7b21d235b5acf6099a68",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "56ce75300ab1d6809c3241165965bd2b3acb06510a09617fed90486c7a7908c2"
+        },
+        {
+          "name": "test_evidence_indexes-O",
+          "methods": 12,
+          "skipped": 1,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "7304e2a4b897891237c6414654954fad13b5e9c0787e3519daf8de8c7a0c5f00",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "11e050f306d2f4fa128ab7799ed104db9d81d3219b64aea22932941c6be5e652"
+        },
+        {
+          "name": "test_fixture_artifacts-normal",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "e5aae2ec868a8d0bcc9a572de47eee1fbd17339ec96a159095aeb130bceb27e9",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "6d8ff40b5dd5855fa50c5c02cf08469cbe00093bb28146aeceafce5240a9714a"
+        },
+        {
+          "name": "test_fixture_artifacts-O",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "80dc7d49804d2a84a7b491f790ab66a753505b3136f66ce67f85328e702380a2",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "f64d28a429836db6ec212a4903df4edbb4570b58b70e27a235ec0993c38d3264"
+        },
+        {
+          "name": "test_receipt_bytes-normal",
+          "methods": 3,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "c639638d90f1f2c60c5bd10b2992e15b316f84518fb19ab190b2a792ab9c01ac",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "3f096245a9aae73a7b01155d59a0eea540b965c553830899203a3cd836a3686d"
+        },
+        {
+          "name": "test_receipt_bytes-O",
+          "methods": 3,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output01",
+          "stderr_sha256": "c9c1f1f72b148e69999d8d413d3ee4002a67777253b549e5bc85717fa43970f1",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "3f096245a9aae73a7b01155d59a0eea540b965c553830899203a3cd836a3686d"
+        },
+        {
+          "name": "test_docker_host_paths-normal",
+          "methods": 9,
+          "skipped": 2,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output02",
+          "stderr_sha256": "30f2dc45d1af3f0591de2b093c67bef5d5f98a6133e1524a7cd38408df2bcb8e",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "e0e9375e8f2322e55f3fed79a7f1b5c1e379b9ed27aed160507699130bc56603"
+        },
+        {
+          "name": "test_docker_host_paths-O",
+          "methods": 9,
+          "skipped": 2,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\windows-output02",
+          "stderr_sha256": "a1eca9e7308de3309f183511ff487973594b40b7892a9d31ab5dfda9a3ab7a13",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "6d515fd70d11235a647ae73120d5101dc4da4a70d62103785ef8bf830a4236ba"
+        }
+      ],
+      "first_collection_sha256": "3d90deafc4565e7333024d31dc1d376a2a6154a90ca13068aebc8d870a8a6bd5",
+      "affected_collection_sha256": "8c5403035089c9b210e486a5456e851b596518519bb6c5a31ec4c95647da888b",
+      "explanation": "Only the bound-file test changed after the first all-pass run: unavailable Windows symlink privilege is now reported as an explicit skip; other 18 commands unchanged"
+    },
+    "linux": {
+      "status": "PASS_EFFECTIVE_NONDELETE_COLLECTION",
+      "python": "3.13.16 (main, Oct 21 2026, 01:08:44) [GCC 14.2.0]",
+      "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+      "suites": 10,
+      "effective_commands": 20,
+      "actual_commands": 22,
+      "method_executions": 148,
+      "skip_executions": 6,
+      "records": [
+        {
+          "name": "test_retention_maintenance-normal",
+          "methods": 10,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "da1d9bc9a6c92dff632aa4e2694d102670473b20759dcbfc59cbe4e5ef3489c6",
+          "stdout_sha256": "6acbd090ac49b526cd94d1312dfaa8d9c25addf1fafc50a1380fb84c5ba0d31a",
+          "audit_sha256": "f517d4ef337ddf01feb2c832432dc2c90ff3eb8772957a3575906ab0cef65de1"
+        },
+        {
+          "name": "test_retention_maintenance-O",
+          "methods": 10,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "5c4f65b7ea5493018e56c4ebd41448980f468be63381bd489dfdd2800e3abc2f",
+          "stdout_sha256": "6acbd090ac49b526cd94d1312dfaa8d9c25addf1fafc50a1380fb84c5ba0d31a",
+          "audit_sha256": "4babf715bb381f342e61b1db075c942be0458b70a4be839d0721a597d7cfaaba"
+        },
+        {
+          "name": "test_retention_composition-normal",
+          "methods": 13,
+          "skipped": 1,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "3f81a440a956959e284df3269a5b82982e0a5830672eec26f898154d576263b2",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "240417913eb667f019a914c33daf13af1b13757808686c43cf6d464c602cca6f"
+        },
+        {
+          "name": "test_retention_composition-O",
+          "methods": 13,
+          "skipped": 1,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "7c887822a240cfb16f60a82fa1b299376f70007830df03b2a2aaebcd7d4095c5",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "186140a3334e5e8140a32beedc790ededb3185864f94686d5072d0790687ddfa"
+        },
+        {
+          "name": "test_retention_staging-normal",
+          "methods": 2,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "676a0aadd135df7cde80def0f660798438ba02f191e738822317d7a40c14b531",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "fc0e9778d7c1fd17cee8eaf6f3b248534010e9c9a16bc3588badc9d5c89d1c9f"
+        },
+        {
+          "name": "test_retention_staging-O",
+          "methods": 2,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "557dec0c6553b01d3ce9c6d8156cbb00ac828efa8745c48799e8352ce0c09b22",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "5b150ae1dc6ba6d6bed1eae4b730bd61d3240072106f82918de8bd4c877ddc2a"
+        },
+        {
+          "name": "test_retention_renewal-normal",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "b38f2b893e3e33ca97c4883cd6ae772a46d442d243bf7de2b9de4ec5d1f0bb8c",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "73ff027a75ea20cae418c65d841f0533131a7669b0e77be0583a3318a27bea30"
+        },
+        {
+          "name": "test_retention_renewal-O",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "f00757733f8983beaed785ceed5e02468b6740331d5e6bcff1cadb6fe899bc22",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "07132c7a5fa1994c22ad0d8eb13b46524a28e474abd108014285edf84cd1c24a"
+        },
+        {
+          "name": "test_attest_remaining_executable-normal",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "2e3c03b5e83c9f009b390f9e21d732e6d77efab2689abcc81b4d304b096d3e08",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "b418b22fe2f0701edcb218fc9528486d45a379256d487818a2f6713c69d68cf3"
+        },
+        {
+          "name": "test_attest_remaining_executable-O",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "6b3ff5da8bab4cb704a69cf55004f5f80c2267b05c3cab7a4c0abfada411b253",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "fdc8ecdde37fb783d20529f039307863d726fbc8fae210a29a37fabe79edbf7a"
+        },
+        {
+          "name": "test_release_binding-normal",
+          "methods": 13,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "c74cc4bcb00ae943c7efe31df40ab75d5f0dcb9c6ddb2e9bdd7b78e87d6ed755",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "f21646d61c0011d4a8ca067a67872f76fcfbdd7ac51e4083e313e7fcf1d1083a"
+        },
+        {
+          "name": "test_release_binding-O",
+          "methods": 13,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "a8d265995768920218282a8b54e81eed4cb083fe38c2d2fd68ac09445643b141",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "acd0a9c024272cef93f586407fa391c1611adb938be214c99384723d9c0a025e"
+        },
+        {
+          "name": "test_evidence_indexes-normal",
+          "methods": 12,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "ed4fe7ff5ce9fb47715e62351a4fe94ebf3328bac3e2a0cf42130179b3ba6191",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "76ee5b8ac88a3b27d03a7636a1692e5e39ee2bb2046cce4236be6e060063c638"
+        },
+        {
+          "name": "test_evidence_indexes-O",
+          "methods": 12,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "c3c2dfb9b1da0c21bbab6e57c155a69c54ef5ca3fcf1eb1d605838e17e8d521b",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "857880fb258ad7234226855ffdd8500a6a673cd585d318b5f4d273504dff9e97"
+        },
+        {
+          "name": "test_fixture_artifacts-normal",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "e2f2a443589c07dd66750d0089657767176626eef153505b81d244bd7f42dbd7",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "53ae8434e83fa087cf3445d78f407b44e1f6e1abd794c9d6c8e47edc0ccd50ef"
+        },
+        {
+          "name": "test_fixture_artifacts-O",
+          "methods": 4,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "bbc60891bf9b6a559901a7a3199e9b196a9d4e15319dc99c9aa5e07394cc5f8f",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "78fca494a73b3c9f538246136bf040068553354977d44038cc434ba04435e8cd"
+        },
+        {
+          "name": "test_receipt_bytes-normal",
+          "methods": 3,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "0079369c7aa86711d240d7e07c9a391159279bbd4d573b0f43e917e55a7d5f0b",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "b66f8ca1da15d0725a4fed5ce6bacdd4a1f862ddebd62a63d6ec4ef3c7f8ff46"
+        },
+        {
+          "name": "test_receipt_bytes-O",
+          "methods": 3,
+          "skipped": 0,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output01\\collection01",
+          "stderr_sha256": "1d7edcf61eaba0339c2b856748832fbe2b28c94c97e3e8640d91c7794781ef96",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "b66f8ca1da15d0725a4fed5ce6bacdd4a1f862ddebd62a63d6ec4ef3c7f8ff46"
+        },
+        {
+          "name": "test_docker_host_paths-normal",
+          "methods": 9,
+          "skipped": 2,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output02\\collection01",
+          "stderr_sha256": "9e27cd6e3560f99825787e829da549fe4595e31b0b93f0f87ceeb86af9abb156",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "ac0dd9aae466d68d1e111fdcbe0b36aa433b968afd4f7453b7b96c62c45f2b75"
+        },
+        {
+          "name": "test_docker_host_paths-O",
+          "methods": 9,
+          "skipped": 2,
+          "returncode": 0,
+          "forbidden_retained_reads": [],
+          "folder": "C:\\Users\\Henry\\.codex\\fixture-private\\retention-mount-fix01\\linux-output02\\collection01",
+          "stderr_sha256": "615d8c205a4fb025e143c86a407a94076c31bbe15066a6b8ace9ef1ee388613c",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "audit_sha256": "d2871997428f0622386ac12556d6c22542eeffbfbeab7ce22ff881f0ab47840a"
+        }
+      ],
+      "first_collection_sha256": "1ae5b2ef3d96b0f2d14a3080fe220a00ee0865f624d052ea23445ffac0d7fac8",
+      "affected_collection_sha256": "2726a460cff441f570000c63cc769f60f7bcfe2dee5758efa6dcd78389bf7b1c",
+      "explanation": "Only the bound-file test changed after the first all-pass run: unavailable Windows symlink privilege is now reported as an explicit skip; other 18 commands unchanged"
+    }
+  },
+  "source_review_manifest_sha256": "3d0289afae0dbcb2e27d32d95f84a06966a23a16c89bfba03465475dc385d6dd",
+  "exports": {
+    "test-export-index01.json": "209a92f5055ff379210cf900283a294d31d02470b32e5240c477db19728bb756",
+    "test-export-index02.json": "c445a468d2a1c1140e54d74566dd80cf9c5751c2336ab2d3b7fa8a7108c305fb"
+  },
+  "helper_closure": [
+    {
+      "status": "REMOVED",
+      "id": "a6641df56950c5fac8c55308f90d793e9c0c78d12e54b9498c73c96252104ddb",
+      "volumes_removed": 0,
+      "images_removed": 0,
+      "networks_removed": 0
+    },
+    {
+      "status": "REMOVED",
+      "id": "4b6cd69cae2a2fcd7aed8f02c7f3827abbad0810a2b2c4fd174cda2fffeea370",
+      "volumes_removed": 0,
+      "images_removed": 0,
+      "networks_removed": 0
+    }
+  ],
+  "native_cold": "PASS_TWO_ACTUAL_COLD_BIND_FILE_IDENTITIES_ONLY",
+  "cold_before_after": true,
+  "source_start": 0,
+  "writer_start": 0,
+  "protection_write": 0,
+  "provider_delete": 0,
+  "ownership_initialized": false,
+  "windows_symlink": "NOT_RUN_PRIVILEGE_UNAVAILABLE_EXPLICIT_SKIP",
+  "windows_junction": "ACTUALLY_CREATED_AND_REJECTED",
+  "linux_symlink": "ACTUALLY_CREATED_AND_REJECTED",
+  "linux_desktop_drive_and_windows_junction": "NOT_APPLICABLE_EXPLICIT_SKIP",
+  "windows_python313": "NOT_RUN",
+  "PR_CI": "NOT_RUN_UNPUBLISHED",
+  "main_CI": "NOT_RUN_UNPUBLISHED"
+}

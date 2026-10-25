@@ -108,12 +108,22 @@ class CompositionTests(unittest.TestCase):
             return json.dumps([self.metadata[args[2]]]).encode()
         self.enterContext(patch.object(c.host,'docker',side_effect=docker))
 
-    def fixture(self,folder,fault=None):
+    def fixture(self,folder,fault=None,desktop_sources=False):
         # Freeze one canonical root before deriving paths or signing facts.
         # This also rejects links/traversal before fixture creation; resolving
         # each future reader file would be wrong because it does not exist yet.
         folder=c.indexes.unlinked_absolute(folder)
         b,h,items,self.current=host_tests.HostTests.fixture(self,folder)
+        if desktop_sources:
+            self.assertEqual(os.name,'nt')
+            for owner in b['Owners']:
+                actual=items[owner['CID']]
+                for mount in actual['Mounts']:
+                    if mount['Type']=='bind':
+                        native=Path(mount['Source']).as_posix()
+                        mount['Source']='/run/desktop/mnt/host/'+native[0].lower()+native[2:]
+                digest=c.host.sha(c.host.canonical(c.host.descriptor(actual)))
+                owner['DescriptorSHA256']=digest;h['owners'][owner['Group']]['descriptor_sha256']=digest
         private_base=folder/'controls';private_base.mkdir();control=private_base/b['MaintenanceID'];control.mkdir()
         self.enterContext(patch.object(c,'PRIVATE_BASE',private_base))
         key=Ed25519PrivateKey.generate();public=key.public_key().public_bytes(Encoding.Raw,PublicFormat.Raw)
@@ -189,6 +199,15 @@ class CompositionTests(unittest.TestCase):
                 entry.run(*args)
                 self.assertEqual(ops.enabled,['business-races','mixed'])
                 self.assertEqual(c.host.load(entry.control/'run/terminal.json')['status'],'PASS_MAINTENANCE_BEFORE_WRITE_AFTER_CLOSED')
+
+    @unittest.skipUnless(os.name=='nt','actual Docker Desktop drive sources require Windows')
+    def test_complete_desktop_bind_source_flow_with_physical_identity(self):
+        with tempfile.TemporaryDirectory(prefix='desktop full flow ') as directory:
+            entry,ops,args,*_=self.fixture(Path(directory),desktop_sources=True)
+            self.assertTrue(all('/run/desktop/mnt/host/' in ops.items[o['CID']]['Mounts'][3]['Source'] for o in entry.b['Owners']))
+            entry.run(*args)
+            self.assertEqual(ops.enabled,['business-races','mixed'])
+            self.assertEqual(c.host.load(entry.control/'run/terminal.json')['status'],'PASS_MAINTENANCE_BEFORE_WRITE_AFTER_CLOSED')
 
     def test_rehashed_reader_path_or_native_drift_still_rejects_before_operations(self):
         for fault in ('foreign-root','other-group','other-phase','traversal','raw-case','other-native'):

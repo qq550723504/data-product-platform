@@ -132,6 +132,23 @@ class HostTests(unittest.TestCase):
                 b,host,items,_=self.fixture(folder)
                 m.topology(b,host,'business-races',items.__getitem__,lambda:list(items.values()))
 
+    def test_rehashed_same_bytes_other_file_and_mount_expansion_still_reject(self):
+        for fault in ('identical-copy','binary-hardlink','extra-mount','duplicate-mount','writable-binary','wrong-type','extra-budget-owner'):
+            with self.subTest(fault=fault),tempfile.TemporaryDirectory() as directory:
+                folder=Path(directory).resolve();b,h,items,_=self.fixture(folder);owner=items['1'*64]
+                mount=owner['Mounts'][3];original=Path(h['binary'])
+                if fault=='identical-copy':other=folder/'copy';other.write_bytes(original.read_bytes());mount['Source']=str(other)
+                elif fault=='binary-hardlink':other=folder/'link';os.link(original,other);mount['Source']=str(other)
+                elif fault=='extra-mount':owner['Mounts'].append(dict(Destination='/extra',Type='bind',Source=str(folder),RW=False))
+                elif fault=='duplicate-mount':owner['Mounts'].append(copy.deepcopy(mount))
+                elif fault=='writable-binary':mount['RW']=True
+                elif fault=='wrong-type':mount['Type']='volume';mount['Name']='unapproved'
+                else:
+                    extra=copy.deepcopy(owner);extra['Id']='9'*64;items[extra['Id']]=extra
+                digest=m.sha(m.canonical(m.descriptor(owner)))
+                b['Owners'][0]['DescriptorSHA256']=digest;h['owners']['business-races']['descriptor_sha256']=digest;self.bind(b,h)
+                with self.assertRaises(ValueError):m.topology(b,h,'business-races',items.__getitem__,lambda:list(items.values()))
+
     def test_rehashed_wrong_and_linked_binary_mount_paths_still_rejected(self):
         for fault in ['wrong-directory','linked-alias']:
             with self.subTest(fault=fault),tempfile.TemporaryDirectory() as directory:

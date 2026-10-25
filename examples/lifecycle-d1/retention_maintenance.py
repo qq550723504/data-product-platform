@@ -16,6 +16,7 @@ import subprocess
 import uuid
 import retention_staging as staging
 from evidence_indexes import unlinked_absolute
+from docker_host_paths import bound_file_source
 
 ROOT=Path(__file__).resolve().parents[2]
 KIND='RETENTION_EXTENSION_EXACT_TWO_V2'
@@ -124,7 +125,10 @@ def topology(b,host,group,get=inspect,list_items=None):
     need(len(mounts)==len(actual['Mounts']) and set(mounts)==set(expected),'MAINTENANCE_MOUNT_SET')
     for dest,(source,rw,kind) in expected.items():
         m=mounts[dest];need(m['Type']==kind and m['RW'] is rw,'MAINTENANCE_MOUNT_DRIFT')
-        need((m['Name']==source and m['Source']==host['volume_metadata'][source]['Mountpoint']) if kind=='volume' else unlinked_absolute(m['Source'])==unlinked_absolute(source),'MAINTENANCE_MOUNT_DRIFT')
+        if kind=='volume':
+            need(m['Name']==source and m['Source']==host['volume_metadata'][source]['Mountpoint'],'MAINTENANCE_MOUNT_DRIFT')
+        else:
+            bound_file_source(m['Source'],source)
     for owner in b['Owners']:
         if owner['Group']!=group:
             previous=get(owner['CID']);need(closed(previous),'MAINTENANCE_OTHER_OWNER_ACTIVE')
