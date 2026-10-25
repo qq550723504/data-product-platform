@@ -23,6 +23,8 @@ if($Stop){
  Write-Output 'Stopped only recorded leader demo processes. All databases and other previews retained.'
  return
 }
+# Refuse before touching build output used by a running preview.
+foreach($port in @(4193,4493)){if(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue){throw "Port $port occupied; existing processes and builds retained."}}
 if($Build){
  $configName='.tsconfig.acceptance-identity-leader.json'
  $envFile=Join-Path $webRoot 'next-env.d.ts'
@@ -36,7 +38,6 @@ if($Build){
  }finally{[IO.File]::WriteAllBytes($envFile,$originalEnv);foreach($name in $previous.Keys){[Environment]::SetEnvironmentVariable($name,$previous[$name],'Process')}}
 }
 if(!(Test-Path -LiteralPath (Join-Path $webRoot "$DistName/BUILD_ID"))){throw 'Build the isolated web first with -Build.'}
-foreach($port in @(4193,4493)){if(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue){throw "Port $port occupied; existing processes retained."}}
 $standalone=Join-Path $webRoot "$DistName/standalone"
 if(!(Test-Path -LiteralPath (Join-Path $standalone 'server.js'))){throw 'Isolated standalone output missing.'}
 Copy-Item -LiteralPath (Join-Path $webRoot "$DistName/static") -Destination (Join-Path $standalone $DistName) -Recurse -Force
