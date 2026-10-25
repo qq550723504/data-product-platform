@@ -87,4 +87,6 @@ Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`m
 
 ## 验证
 
+运行日志的后续设计见[独立只读契约](platform-runtime-logs-readonly-v1.md)与[页面流程稿](../product/platform-runtime-logs-page-plan-20261025.md)。二者仅DESIGN ONLY，不扩展本文件已经实现的七项管理API、原管理读能力、公开配置六个查询键或当前页面；现有GET allowlist、migration 000077及源配置保持。运行日志、审计和业务执行事实分别处理，不能复用AuditReader冒充日志来源。
+
 复用源目录查询测试并补齐本平台绑定：跨组织/project 响应、完整筛选后分页、读前/后权限撤回、身份在读取中撤回、旧 revision 不复活、跨空间游标、错误/空页区分、深链接和刷新、只读方法 allowlist、无 secret 字段。真实 PG 核验最小权限和身份 fence；独立 Edge 走真实 RP SDK 登录、多人员/多空间、分页和撤权。测试 fixture 的配置/撤权是隔离测试控制，不作为产品写入口。CI、合成浏览器与真实来源验收分别报告。

@@ -24,7 +24,7 @@ V2 的新增产品范围见 [全生命周期蓝图](../product/full-lifecycle-go
 | Entity matching algorithm | External / pluggable engine | Rules + Splink Adapter；未来可替换 | Core 自有 MappingDecision / Evidence / Human Override 语义 |
 | Quality execution engine | Pluggable engine | Native / industry-pack；可接外部 engine | Core 自有 QualityAssessment 历史事实与 gate 语义 |
 | Annotation | External commodity | 官方 Label Studio CE reference；专用合成 Pilot 的受控 fork 准入见 [ADR-0013](../adr/0013-controlled-label-studio-submission-admission.md)；X-AnyLabeling 仍为后续候选 | 标注系统不成为 Core System of Record；Core 通过 provider-neutral Port/Adapter 持有业务审核、来源/快照及 Gold 契约 |
-| Observability | External commodity | OpenTelemetry + Prometheus/Grafana（按阶段引入） | Audit/Evidence 不是 observability 的替代品，反之亦然 |
+| Observability | External commodity | OpenTelemetry + Prometheus/Grafana（按阶段引入） | Audit/Evidence不是observability的替代品，反之亦然；[运行日志只读查询设计](platform-runtime-logs-readonly-v1.md)仅DESIGN ONLY，不表示已选定/部署日志服务或采集器 |
 | Resumable large-file upload | External commodity when needed | 先流式 HTTP；GB 级/断点需求再评估 tus/tusd | DatasetVersion 仍由 Core 在上传完成后建立业务事实 |
 | Database | External commodity | PostgreSQL | Domain invariant 仍由 Core + DB constraints 共同保证 |
 | Tenant DB isolation | Database capability | workspace-scoped repository；生产多租户阶段评估 PostgreSQL RLS | RLS 是兜底，不替代可信 Principal 与应用授权 |
