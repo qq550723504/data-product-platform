@@ -66,13 +66,13 @@ export function ScopeLinks({scope,navigate}){return <div className="capability-l
 export function SectionPage({id,navigate,components,onRules,onRights,onAttention}){
  const {Head,Table,Tag,Btn,Note}=components;
  const [view,setView]=useState(''),[search,setSearch]=useState('');
- const def=sectionDefs[id], flow=stages[id], ready=true;
+ const def=sectionDefs[id], flow=stages[id];
  const titles=id==='model'?['业务模型','维度模型','指标管理']:id==='standards'?['数据标准','标准表','标准检验']:id==='security'?['安全概览','使用依据','安全操作','安全活动','安全预警']:id==='my-work'?['待办事项','我的流程','我的取数']:[];
  const current=titles.includes(view)?view:titles[0];
  const action=(label,fn)=><Btn quiet onClick={fn}>{label} <ArrowRight size={16}/></Btn>;
- return <><Head crumb={def[0]+' / '+def[1]} title={def[1]} description={def[2]} badge={<Tag tone={ready?'blue':'gray'}>可交互演示</Tag>}/>
- {ready&&<div className="prototype-notice"><InfoText/>合成数据 · 本地演示交互 · 已保存的演示数据在切页后保留，可手动重置。</div>}
- {flow?<><div className="workflow-cards">{flow.map(([title,desc,target,state],i)=><section key={title} className="workflow-card"><span className="stage-number">阶段 0{i+1}</span><h2>{title}</h2><p>{desc}</p><Tag tone={state==='可交互演示'?'gray':'blue'}>{state}</Tag><div>{action('进入'+title,()=>navigate(target))}</div></section>)}</div><section className="bottom-section"><h2>阶段衔接</h2><p className="section-sub">准备条件、执行结果和验收依据分别记录；入口可用不等于阶段已完成。</p><Table headers={['阶段','建议交付物','进度依据']} rows={flow.map(([t,d,k,s])=>[t,({'调研规划':'现状底稿与治理计划','架构设计':'架构方案与主题域清单','环境搭建':'环境登记与接入记录','数据建模':'业务模型与指标定义','开发方案':'需求与验收清单','数据汇聚':'批次与输入版本','数据处理':'冻结输入与输出版本','数据发布':'发布检查与证据','数据监测':'独立评测与问题记录','数据资产':'资产责任与版本记录','标准建设':'标准版本与检验结果','知识沉淀':'案例与文档'}[t]),'尚未接入真实项目进度'])}/></section></>:
+ return <><Head crumb={def[0]+' / '+def[1]} title={def[1]} description={def[2]}/>
+
+ {flow?<><div className="workflow-cards">{flow.map(([title,desc,target,state],i)=><section key={title} className="workflow-card"><span className="stage-number">阶段 0{i+1}</span><h2>{title}</h2><p>{desc}</p>{state!=='可交互演示'&&<Tag tone="blue">{state}</Tag>}<div>{action('进入'+title,()=>navigate(target))}</div></section>)}</div><section className="bottom-section"><h2>阶段衔接</h2><p className="section-sub">准备条件、执行结果和验收依据分别记录；入口可用不等于阶段已完成。</p><Table headers={['阶段','建议交付物','进度依据']} rows={flow.map(([t,d,k,s])=>[t,({'调研规划':'现状底稿与治理计划','架构设计':'架构方案与主题域清单','环境搭建':'环境登记与接入记录','数据建模':'业务模型与指标定义','开发方案':'需求与验收清单','数据汇聚':'批次与输入版本','数据处理':'冻结输入与输出版本','数据发布':'发布检查与证据','数据监测':'独立评测与问题记录','数据资产':'资产责任与版本记录','标准建设':'标准版本与检验结果','知识沉淀':'案例与文档'}[t]),'尚未接入真实项目进度'])}/></section></>:
  <>{titles.length>0&&<div className="segmented module-switch" role="group" aria-label={def[1]+'分类'}>{titles.map(t=><button key={t} className={current===t?'active':''} aria-pressed={current===t} onClick={()=>setView(t)}>{t}</button>)}</div>}
  {id==='plan'?<DemandWorkspace components={components} navigate={navigate}/>:
  ['ingestion-report','processing-report','publish-report'].includes(id)?<PipelineReport key={id} id={id} components={components} navigate={navigate}/>:<DemoPage key={id} id={id} components={components} navigate={navigate}/>}

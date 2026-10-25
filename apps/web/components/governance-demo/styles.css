@@ -137,3 +137,16 @@
 .governance-demo .toast.error{background:#7f3b32}.governance-demo .toast>button{color:inherit;white-space:nowrap;text-decoration:underline;font-size:12px}.governance-demo .page-my-work td:last-child{min-width:210px}.governance-demo .page-publish .loop-context{margin-top:20px}.governance-demo .page-cost .demo-summary strong{overflow-wrap:anywhere}
 
 .governance-demo .demo-form>.check-label{flex-direction:row;align-items:center}.governance-demo .demo-form>.check-label input{width:17px;height:17px;accent-color:var(--green)}@media(min-width:700px){.governance-demo .access-preview-form{grid-template-columns:1fr 1fr;gap:14px 18px}.governance-demo .access-preview-form>.admin-access-result,.governance-demo .access-preview-form>.note,.governance-demo .access-preview-form>.button,.governance-demo .access-preview-form>.check-label{grid-column:1/-1}}
+
+/* Secondary explanations are available on demand; live warnings stay visible. */
+.governance-demo .note-disclosure{margin:14px 0;color:var(--muted);font-size:12px;line-height:1.7}
+.governance-demo .note-disclosure>summary{display:flex;align-items:center;gap:7px;width:fit-content;cursor:pointer;list-style:none}
+.governance-demo .note-disclosure>summary::-webkit-details-marker{display:none}
+.governance-demo .note-disclosure>summary::after{content:'＋';margin-left:3px}
+.governance-demo .note-disclosure[open]>summary::after{content:'−'}
+.governance-demo .note-disclosure>summary:hover{color:var(--green)}
+.governance-demo .note-disclosure>summary:focus-visible{outline:2px solid var(--green);outline-offset:4px}
+.governance-demo .note-disclosure-body{margin-top:10px;padding:12px 15px;border-left:2px solid var(--line);max-width:80ch;color:var(--muted)}
+.governance-demo .system-environment-details{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;line-height:1.9;color:var(--muted)}
+.governance-demo .field-help{font-size:12px;color:var(--muted)}
+.governance-demo .environment-status{font-size:12px;color:var(--muted)}

@@ -55,7 +55,7 @@ test('repair review card selects recent tasks instead of navigating to a blank d
 });
 test('prototype root stays synthetic; Core workbench uses server facts in the same modern shell',async({page,request})=>{
  await reset(request,'ready');await page.goto('/');
- await expect(page.getByText('本地交互演示',{exact:true})).toBeVisible();
+ await expect(page.getByText('本地预览',{exact:true})).toBeVisible();
  await expect(page.getByRole('button',{name:'重置演示',exact:true})).toBeVisible();
  expect(await calls(request)).toHaveLength(0);
  await page.getByRole('button',{name:'Core 待办',exact:true}).click();
