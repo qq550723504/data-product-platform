@@ -80,7 +80,9 @@ jobs:
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
     name: temporary-container-contracts (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 5
+    # Windows runs the complete normal and -O lifecycle suites sequentially.
+    # Keep all checks; allow time for the remaining ownership and ACL steps.
+    timeout-minutes: ${{ matrix.os == 'windows-latest' && 10 || 5 }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]

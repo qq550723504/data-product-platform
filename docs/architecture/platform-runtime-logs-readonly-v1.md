@@ -2,7 +2,7 @@
 
 状态：DESIGN ONLY，2026-10-25。核对基线为PR #363的`90643b8ed227c58fe386a5ee09b2758045db6cd6`。本稿拥有未来运行日志的来源准入、身份、空间、投影、查询及恢复约束；[管理只读契约](platform-management-readonly-v1.md)继续拥有已经实现的管理接口，[页面方案](../product/platform-runtime-logs-page-plan-20261025.md)拥有布局与交互。
 
-本轮只改文档，不实现或注册以下API、Port、权限、DDL、页面、配置或采集服务，不重启预览、不连接来源。真实来源保持UNCONFIGURED，业务写入口继续关闭；保留原库、OIDC/RP、Agent API和新版预览。PR保持Draft，不合并、不部署。
+本轮日志能力只做文档设计，不实现或注册以下API、Port、权限、DDL、页面、配置或采集服务，不重启预览、不连接来源。现有Windows CI的独立时限修正不改变测试内容或产品能力。真实来源保持UNCONFIGURED，业务写入口继续关闭；保留原库、OIDC/RP、Agent API和新版预览。PR保持Draft，不合并、不部署。
 
 ## 1. 目标与事实归属
 
