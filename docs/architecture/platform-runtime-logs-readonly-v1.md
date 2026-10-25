@@ -25,6 +25,8 @@
 - 优先适配已经部署且满足本稿的日志服务。Grafana Loki是待评估候选，不是本轮选型或部署决定；其[租户隔离](https://grafana.com/docs/loki/latest/operations/multi-tenancy/)和[查询API](https://grafana.com/docs/loki/latest/reference/loki-http-api/)不能替代平台认证和来源接纳。原生tenant header必须由受信服务端生成，禁止浏览器选择tenant或多租户联查。
 - 不自建collector、全文检索、索引库、轮转、长期保留、告警或日志任务队列。没有来源时停在未配置；不为了填满菜单增加第二套基础设施。选定新OSS前，另行补足license、版本、维护、部署成本、替换边界与Adapter合同；本稿不推定这些条件已满足。
 
+2026-10-25已完成[Loki v3.7.9纸面准入评审](../product/platform-runtime-logs-loki-admission-20261025.md)，固定上游commit、许可证、维护与协议证据。结论为保留候选、当前不接纳实际接入：观察时间、稳定occurrence/续读及精确详情仍需来源和Adapter证明；真实实例、维护方与责任未定。该评审不弱化本稿规则，不新增部署、Reader或采集服务，真实来源继续UNCONFIGURED。
+
 外部usage证据中的CONNECTOR_LOG仅是已接纳的normalized occurrence，不含原始运行正文，仍由[external usage契约](external-usage-evidence.md)拥有；不能把该导入/worker写链路挂到本片GET路径。
 
 ## 3. 来源接纳和当前配置

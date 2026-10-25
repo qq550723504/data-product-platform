@@ -1,0 +1,126 @@
+{
+  "reviewedAt": "2026-10-25",
+  "evidenceType": "PUBLIC_UPSTREAM_SOURCE_REVIEW_ONLY",
+  "platformBaseHEAD": "e287a67e0c6b18c1b3573ed6fa88a4a2f77d288b",
+  "tag": "v3.7.9",
+  "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+  "releasePublishedAtUTC": "2026-10-20T22:53:57Z",
+  "releasePublishedAtAsiaSingapore": "2026-10-21T06:53:57+08:00",
+  "realSource": "UNCONFIGURED",
+  "actualDeploymentVersion": null,
+  "operator": null,
+  "businessWrites": false,
+  "models": false,
+  "realExecutionDispatch": false,
+  "lokiRuntimeQueried": false,
+  "collectorStarted": false,
+  "adapterImplemented": false,
+  "logBrowserAcceptance": "NOT_RUN",
+  "notes": "Upstream Git blob and raw UTF-8 file SHA256 identify reviewed public source. No vendor source is copied into the platform. These are not runtime/provider attestation or product acceptance.",
+  "records": [
+    {
+      "path": "LICENSE",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "be3f7b28e564e7dd05eaf59d64adba1a4065ac0e",
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/LICENSE",
+      "bytes": 34523
+    },
+    {
+      "path": "README.md",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "146c430b6ebe86fb9bb0ecd9b09dbb5823edbadc",
+      "sha256": "af9e356ba4d99300f4e145be9c0b5885587b2ba8dbba89e2a5f149cd3572c04a",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/README.md",
+      "bytes": 8787
+    },
+    {
+      "path": "pkg/loghttp/query.go",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "e7b6f44b16857aea913ef955eab14b0e1cca89c0",
+      "sha256": "11a773ea4197d7ec1048a98ba7fad4782a0fa472f6fa508c466fde67b2a67000",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/pkg/loghttp/query.go",
+      "bytes": 18386
+    },
+    {
+      "path": "pkg/loghttp/entry.go",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "ec2c5f3b186a4838351985df5ef4f3d4ac456262",
+      "sha256": "eba4cd02dccd0b6ac27187200309cc4d24b8eff9800037a8db110ece2844034c",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/pkg/loghttp/entry.go",
+      "bytes": 6893
+    },
+    {
+      "path": "pkg/loghttp/params.go",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "6b289f445885f7bfbb13738438a5ed26b312f901",
+      "sha256": "0ef985467a9121e6ad312e7cc4245d863a7ba671c7365e652a685ae8e85fdab4",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/pkg/loghttp/params.go",
+      "bytes": 6691
+    },
+    {
+      "path": "pkg/loghttp/push/otlp.go",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "158c5525c20e11bd2fe570f75bd3f37a8446691a",
+      "sha256": "84b14b518a8dd16c331a7690703a47b3edf00b4f2c319208c4e2444d3b8c1da0",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/pkg/loghttp/push/otlp.go",
+      "bytes": 23416
+    },
+    {
+      "path": "pkg/logcli/query/query.go",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "0551e076f742e15fed5d4fa2331d6382408fc526",
+      "sha256": "9fa3ba34d9f9d22a34f69ede009b92a4d2664241c9c33a8e2ddba0d45cff8513",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/pkg/logcli/query/query.go",
+      "bytes": 16782
+    },
+    {
+      "path": "pkg/iter/entry_iterator.go",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "f86a42428fa74b33911e98111cb8da1a798ae821",
+      "sha256": "87906790842578c02f35a87b8a58c33eed3f72cc5d7a11ddb8f6e3fff0d96e94",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/pkg/iter/entry_iterator.go",
+      "bytes": 20085
+    },
+    {
+      "path": "docs/sources/operations/authentication.md",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "bb57aa0ce5a9cee206ffd46f414c0934676c2106",
+      "sha256": "05a45317b32482105f416a0fe672f04c1041088468a2ef1398e117120fbbe28a",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/docs/sources/operations/authentication.md",
+      "bytes": 8371
+    },
+    {
+      "path": "docs/sources/operations/storage/retention.md",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "81dbb0f5eaf30f236e0e1353e28a9bdfa30490af",
+      "sha256": "9f71d2fce13bfc05175d1e50bdc5322cd0e20b0a768c1cdf7781b90bcb1abe30",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/docs/sources/operations/storage/retention.md",
+      "bytes": 21032
+    },
+    {
+      "path": "LICENSING.md",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "4b9e6640a30af48b4fd36bd0130f0882dac1a8e2",
+      "sha256": "c1aaff28cf56f479037e014903ee05600511cb88daf113254e4e1f982fec9a7f",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/LICENSING.md",
+      "bytes": 522
+    },
+    {
+      "path": "docs/sources/reference/loki-http-api.md",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "6574460a6d1f0d90fd5f9db7d3337cd954433fe2",
+      "sha256": "902c42d54140059a9f1a5ba89d4bdbdf5abdbff5b19e3d7b27dce01ba121ab74",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/docs/sources/reference/loki-http-api.md",
+      "bytes": 60109
+    },
+    {
+      "path": "docs/sources/get-started/deployment-modes.md",
+      "commit": "d3b4a2f76bfc5625abee7ceb00b8896fa3c31549",
+      "gitBlob": "55cae5dd47ee3065980cda6723b5780dab38e2bd",
+      "sha256": "a50b551f88e83e9a962d9816eeb121317e0f2953e65aec56c134fd8cecce1dec",
+      "url": "https://github.com/grafana/loki/blob/d3b4a2f76bfc5625abee7ceb00b8896fa3c31549/docs/sources/get-started/deployment-modes.md",
+      "bytes": 6344
+    }
+  ]
+}

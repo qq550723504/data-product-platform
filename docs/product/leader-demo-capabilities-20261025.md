@@ -43,7 +43,7 @@
 | 标准建设 / 标准检验 | 标准版本、字段关联与检验 | 本地交互；企业标准来源尚未确定 |
 | 知识沉淀 | 案例与知识记录 | 本地交互；未连接知识库或模型 |
 | 设置总览 / 基础配置 / 当前工作空间 / 目录组织资料 / 用户目录 / 空间成员 / 角色权限 / 审计记录 | 新版管理查询入口；账号状态、成员关系和身份关联分开核验 | 已完成[公开配置及51项管理隔离验收](platform-management-configuration-readonly-20261025.md)，配置仅描述当前管理查询入口；4193真实来源未配置，4300独立合成验收；不产生管理或业务写入 |
-| 运行日志 | 现有未接入页面；[只读契约](../architecture/platform-runtime-logs-readonly-v1.md)和[页面方案](platform-runtime-logs-page-plan-20261025.md)为DESIGN ONLY | 来源未配置，日志读资格/API/Reader/采集服务均未实现；不展示服务器原文、不以审计或执行记录充数，本轮不更新预览 |
+| 运行日志 | 现有未接入页面；[只读契约](../architecture/platform-runtime-logs-readonly-v1.md)、[页面方案](platform-runtime-logs-page-plan-20261025.md)及[Loki纸面评审](platform-runtime-logs-loki-admission-20261025.md)为DESIGN ONLY | Loki保留候选但当前不接纳实际接入；真实来源未配置，日志读资格/API/Reader/采集服务均未实现；不以审计或执行记录充数，不更新预览 |
 | 企业部门树 / 空间生命周期 | 新版查询页面及尚未接入状态 | 未配置可信查询来源，不返回假人员；原hash路由的本地设置样例保留为历史演示，不是租户控制面 |
 
 ## 保留的独立 API 页面
