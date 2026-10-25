@@ -202,4 +202,4 @@ Finalize 在上述锁内重读完整事实，不使用事务外 preflight 作为
 
 本文件给出实施 contract，不预先提供全部表/API、更不宣称并发测试已通过。性能分片、多主标注者、仲裁、多轮 reopen、自动 retention 等只有真实场景要求时另立 Issue。
 
-新增受控 fork 合同存在明确实施差额：当前 service.go 的事务前及失败后 Result replay 尚未验证上述完整来源/SourceResultBinding 闭包；GetSnapshotIntegrity 尚未验证 source binding 与原始 immutable payload；现有 reconciler 的 REVIEWED/SEALED 跳过路径也未提供所需晚到留证。不得把本次文档修订或 #205/#208 历史 PASS 描述成这些能力已经实现。实施验收须覆盖同源同 label 但来源字段冲突、每个 replay 分支、binding/payload 丢失或篡改、CORRECT 闭包与 parent-first 竞争。
+截至 #293 文档准入基线，新增受控 fork 合同存在明确实施差额：该基线的 service.go 的事务前及失败后 Result replay 尚未验证上述完整来源/SourceResultBinding 闭包；GetSnapshotIntegrity 尚未验证 source binding 与原始 immutable payload；现有 reconciler 的 REVIEWED/SEALED 跳过路径也未提供所需晚到留证。不得把本次文档修订或 #205/#208 历史 PASS 描述成这些能力已经实现。实施验收须覆盖同源同 label 但来源字段冲突、每个 replay 分支、binding/payload 丢失或篡改、CORRECT 闭包与 parent-first 竞争。#294 的实现与逐项状态见 [实施验收记录](../acceptance/issue294-controlled-submission.md)；独立评审及新候选跨仓运行验收仍须完成。

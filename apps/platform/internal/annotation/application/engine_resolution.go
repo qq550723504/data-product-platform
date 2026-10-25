@@ -24,10 +24,19 @@ func (s *EngineService) persistEngineBindings(
 			return annotationdomain.ErrInvalidEngineBinding
 		}
 		binding := resolution.CampaignBinding
-		_, err := s.repo.InsertEngineCampaignBinding(
+		manifest, err := decodeCampaignManifest(operation)
+		if err != nil {
+			return err
+		}
+		if !frozenSourceContractEqual(manifest.SourceContract, binding.SourceContract) ||
+			binding.Provider != operation.Provider || binding.ProviderInstance != operation.ProviderInstanceRef || binding.RequestID != operation.RequestID {
+			return annotationdomain.ErrSourceIntegrity
+		}
+		_, err = s.repo.InsertEngineCampaignBinding(
 			ctx,
 			tx,
 			annotationdomain.EngineCampaignBinding{
+				SourceContract:    binding.SourceContract,
 				ID:                uuid.New(),
 				WorkspaceID:       operation.WorkspaceID,
 				CampaignID:        operation.CampaignID,
@@ -45,6 +54,16 @@ func (s *EngineService) persistEngineBindings(
 		binding, err := s.repo.GetEngineCampaignBindingTx(ctx, tx, operation.CampaignID)
 		if err != nil {
 			return err
+		}
+		manifest, err := decodeTasksManifest(operation)
+		if err != nil {
+			return err
+		}
+		if !frozenSourceContractEqual(manifest.Binding.SourceContract, binding.SourceContract) ||
+			manifest.Binding.Provider != binding.Provider || manifest.Binding.ProviderInstance != binding.ProviderInstance ||
+			manifest.Binding.ExternalProjectID != binding.ExternalProjectID || manifest.Binding.ConfigSHA256 != binding.ConfigSHA256 ||
+			manifest.Binding.RequestID != binding.RequestID {
+			return annotationdomain.ErrSourceIntegrity
 		}
 		if len(resolution.ExternalTaskIDs) == 0 {
 			return annotationdomain.ErrInvalidEngineBinding
@@ -122,4 +141,10 @@ func resolutionStatus(state EngineLookupState, err error, attemptKind string) (s
 		}
 		return annotationdomain.EngineOperationUnknown, annotationdomain.EngineAttemptUnknown
 	}
+}
+
+func frozenSourceContractEqual(a, b annotationdomain.SourceContract) bool {
+	a.AdmissionProtocol = a.Protocol()
+	b.AdmissionProtocol = b.Protocol()
+	return a == b
 }

@@ -37,13 +37,23 @@ func (s *EngineService) PrepareCampaign(
 		return annotationdomain.EngineOperation{}, annotationdomain.ErrInvalidCampaign
 	}
 
+	var sourceContract annotationdomain.SourceContract
+	if provider, ok := s.engine.(interface {
+		SourceContract() annotationdomain.SourceContract
+	}); ok {
+		sourceContract = provider.SourceContract()
+	}
+	if err := sourceContract.Validate(); err != nil {
+		return annotationdomain.EngineOperation{}, err
+	}
 	manifest := engineCampaignManifest{
-		Kind:          annotationdomain.EngineOperationEnsureCampaign,
-		WorkspaceID:   cmd.WorkspaceID.String(),
-		CampaignID:    cmd.CampaignID.String(),
-		Title:         cmd.Title,
-		SchemaContent: campaign.Schema.ContentSnapshot,
-		SchemaSHA256:  campaign.Schema.ContentSHA256,
+		SourceContract: sourceContract,
+		Kind:           annotationdomain.EngineOperationEnsureCampaign,
+		WorkspaceID:    cmd.WorkspaceID.String(),
+		CampaignID:     cmd.CampaignID.String(),
+		Title:          cmd.Title,
+		SchemaContent:  campaign.Schema.ContentSnapshot,
+		SchemaSHA256:   campaign.Schema.ContentSHA256,
 	}
 	return s.prepareOperation(ctx, campaign, cmd.RequestID, manifest, cmd.ActorID, cmd.TraceID)
 }
@@ -124,6 +134,7 @@ func (s *EngineService) PrepareTasks(
 		WorkspaceID: cmd.WorkspaceID.String(),
 		CampaignID:  cmd.CampaignID.String(),
 		Binding: engineBinding{
+			SourceContract:    binding.SourceContract,
 			Provider:          binding.Provider,
 			ProviderInstance:  binding.ProviderInstance,
 			ExternalProjectID: binding.ExternalProjectID,
