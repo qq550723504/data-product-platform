@@ -10,7 +10,7 @@ if(process.env.MANAGEMENT_FIXTURE_ACK!=='ISOLATED_READONLY_MANAGEMENT')throw Err
 const p=JSON.parse(readFileSync(process.env.MANAGEMENT_FIXTURE_PROFILE,'utf8'));
 if(p.issuer!=='https://localhost:19130'||p.origin!=='https://localhost:4300')throw Error('exact independent origin required');
 const {publicKey,privateKey}=await generateKeyPair('RS256'),jwk=await exportJWK(publicKey);jwk.kid='management-synthetic';
-const codes=new Map(),logins=new Map(),tokens=new Map(),held=new Set();const state={permission:true,foreign:false,fail:false,holdList:false,waiting:0,reads:0};
+const codes=new Map(),logins=new Map(),tokens=new Map(),held=new Set(),heldUsers=new Set();const state={permission:true,foreign:false,fail:false,holdList:false,waiting:0,reads:0,userPermission:true,userForeign:false,userFail:false,userUnknown:false,holdUser:false,userWaiting:0,userReads:0,removeUser:false};
 const opaque=()=>randomBytes(32).toString('base64url');
 const json=(res,value,status=200)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(value))};
 async function body(req){let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>16000)throw Error('oversized fixture input')}return raw;}
@@ -40,13 +40,19 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
    if(!basic(req,'dpp-management-api',p.resourceSecret))return json(res,{},401);const b=new URLSearchParams(await body(req)),t=tokens.get(b.get('token'));if(!t||t.revoked||t.expires<=Date.now()/1000)return json(res,{active:false});return json(res,{active:true,iss:p.issuer,sub:t.subject,aud:['dpp-management-api'],client_id:'dpp-management-rp',scope:'openid platform-management',exp:t.expires,iat:t.expires-600,token_type:'Bearer'});
   }
   if(u.pathname==='/auth/v1/permissions/zitadel/me/_search'&&req.method==='POST'){
-   if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(req.headers['x-zitadel-orgid']))return json(res,{},403);return json(res,{result:state.permission?['user.grant.read']:[]});
+   if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(req.headers['x-zitadel-orgid']))return json(res,{},403);return json(res,{result:[...(state.permission?['user.grant.read']:[]),...(state.userPermission?['user.read']:[])]});
+  }
+  if(u.pathname.startsWith('/v2/users/')&&req.method==='GET'){
+   const org=req.headers['x-zitadel-orgid'];if(req.headers.authorization!=='Bearer '+p.readCredential||!['organization-a','organization-b'].includes(org))return json(res,{},403);
+   state.userReads++;if(state.userFail)return json(res,{},503);const id=decodeURIComponent(u.pathname.slice('/v2/users/'.length)),row=rows(org).find(r=>r.user.id===id);if(!row)return json(res,{},404);
+   if(state.holdUser){state.userWaiting++;const released=await new Promise(resolve=>{const release=()=>{clearTimeout(timer);heldUsers.delete(release);resolve(true)},timer=setTimeout(()=>{heldUsers.delete(release);resolve(false)},5000);heldUsers.add(release)});state.userWaiting--;if(!released)return json(res,{},503)}
+   return json(res,{user:{userId:id,username:row.user.preferredLoginName,state:state.userUnknown?'USER_STATE_UNKNOWN':Number(id.split('-').at(-1))%5===0?'USER_STATE_INACTIVE':'USER_STATE_ACTIVE',details:{resourceOwner:state.userForeign?'organization-foreign':org,creationDate:row.creationDate,changeDate:row.changeDate},human:{profile:{displayName:row.user.displayName},email:{email:'PRIVATE_USER_EMAIL_NEVER_RENDER'},phone:{phone:'PRIVATE_USER_PHONE_NEVER_RENDER'}}}});
   }
   if(u.pathname==='/zitadel.authorization.v2.AuthorizationService/ListAuthorizations'&&req.method==='POST'){
    if(req.headers.authorization!=='Bearer '+p.readCredential)return json(res,{},403);state.reads++;if(state.fail)return json(res,{},503);const b=JSON.parse(await body(req)),filters=b.filters??[],org=filters.find(f=>f.organizationId)?.organizationId?.id,project=filters.find(f=>f.projectId)?.projectId?.id;
    if(!['organization-a','organization-b'].includes(org)||project!=='governance')return json(res,{},400);
    const role=filters.find(f=>f.roleKey)?.roleKey?.key,status=filters.find(f=>f.state)?.state?.state,ids=filters.find(f=>f.authorizationIds)?.authorizationIds?.ids;
-   const matched=rows(org).filter(r=>(!role||r.roles.some(v=>v.key===role))&&(!status||r.state===status)&&(!ids||ids.includes(r.id))),items=matched.slice(b.pagination.offset,b.pagination.offset+b.pagination.limit);
+   const matched=rows(org).filter(r=>(!state.removeUser||r.user.id!=='person-a-2')&&(!role||r.roles.some(v=>v.key===role))&&(!status||r.state===status)&&(!ids||ids.includes(r.id))),items=matched.slice(b.pagination.offset,b.pagination.offset+b.pagination.limit);
    if(state.holdList){state.waiting++;const released=await new Promise(resolve=>{const release=()=>{clearTimeout(timer);held.delete(release);resolve(true)},timer=setTimeout(()=>{held.delete(release);resolve(false)},5000);held.add(release)});state.waiting--;if(!released)return json(res,{},503)}
    if(state.foreign)for(const r of items)r.organization.id='organization-foreign';return json(res,{pagination:{totalResult:String(matched.length)},authorizations:items});
   }
@@ -54,10 +60,11 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
   if(u.pathname==='/_control'&&req.headers['x-fixture-control']===p.control){
    let testAccessToken;
    if(req.method==='POST'){
-    const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail','holdList'])if(typeof b[k]==='boolean')state[k]=b[k];
+    const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail','holdList','userPermission','userForeign','userFail','userUnknown','holdUser','removeUser'])if(typeof b[k]==='boolean')state[k]=b[k];
     if(Object.hasOwn(labels,b.revokeSubject))for(const t of tokens.values())if(t.subject===b.revokeSubject)t.revoked=true;
     if(Object.hasOwn(labels,b.issueSubject)){testAccessToken=opaque();tokens.set(testAccessToken,{subject:b.issueSubject,expires:Math.floor(Date.now()/1000)+600})}
     if(!state.holdList)for(const release of held)release();
+    if(!state.holdUser)for(const release of heldUsers)release();
    }
    return json(res,{...state,...(testAccessToken?{testAccessToken}:{})});
   }

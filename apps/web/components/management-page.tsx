@@ -2,9 +2,10 @@
 import {currentManagementClient} from '@/lib/iam-server';
 import {iamEnabled} from '@/lib/iam-mode';
 import {workspaces} from '@/lib/iam-workspace';
-import {managementMenus,managementSelection,managementQuery,managementMemberListHref,validManagement,type ManagementSection,type ManagementResult,type Role,type Audit} from '@/lib/platform-management';
+import {managementMenus,managementSelection,managementQuery,managementMemberListHref,managementUserListHref,validManagement,validUserManagement,type UserManagementResult,type ManagementSection,type ManagementResult,type Role,type Audit} from '@/lib/platform-management';
 import {ManagementMembers,ManagementRoles} from './management-members';
-const names=Object.fromEntries(managementMenus),supported=['members','roles','audit'];
+import {ManagementUsers} from './management-users';
+const names=Object.fromEntries(managementMenus),supported=['members','roles','audit','users'];
 const errors:Record<string,string>={SOURCE_UNCONFIGURED:'真实来源未配置',AUTHENTICATION_REQUIRED:'登录状态不可用',MANAGEMENT_ACCESS_DENIED:'没有当前空间的管理查询权限',IDENTITY_UNAVAILABLE:'当前身份无法核验',DIRECTORY_UNAVAILABLE:'成员目录暂时无法读取',INVALID_SOURCE_RESPONSE:'来源记录无法核验',AUDIT_UNAVAILABLE:'审计记录暂时无法读取',MEMBER_UNAVAILABLE:'指定成员不可见',INVALID_QUERY:'查询条件无效'};
 export async function ManagementPage({section='',query={}}:{section?:string;query?:Record<string,string|string[]|undefined>}){
  const title=names[section]??'系统设置',enabled=iamEnabled()&&process.env.BROWSER_IAM_PROFILE==='platform-management';
@@ -18,21 +19,22 @@ export async function ManagementPage({section='',query={}}:{section?:string;quer
  if(!supported.includes(section))return <>{context}{heading}<section className="management-state" role="status"><h2>尚未接入</h2><p>当前未配置{title}的可信查询来源。</p><a href="/settings">返回设置总览</a></section></>;
  const kind=section as ManagementSection;let s;
  try{s=managementSelection(kind,query)}catch{return <>{context}{heading}<section role="alert" className="management-state"><h2>查询条件无效</h2><a href={'/settings/'+section}>清除条件</a></section></>}
- let result:ManagementResult|undefined,error='当前记录无法读取';
+ let result:ManagementResult|undefined,users:UserManagementResult|undefined,error='当前记录无法读取';
  try{
   const response=await client.request(client.apiBaseUrl+`/api/v1/workspaces/${p.workspace_id}/management/${kind}`+managementQuery(s));
-  const raw=await response.json();if(!response.ok)error=errors[raw.code]??error;else if(validManagement(raw,p,kind,s))result=raw;
+  const raw=await response.json();if(!response.ok)error=({USER_UNAVAILABLE:'指定用户不可见',USER_DIRECTORY_UNAVAILABLE:'用户目录暂时无法读取'} as Record<string,string>)[raw.code]??errors[raw.code]??error;else if(kind==='users'){if(validUserManagement(raw,p,s))users=raw}else if(validManagement(raw,p,kind,s))result=raw;
  }catch{error='当前身份或记录无法核验'}
- const url='/settings/'+section,detail=kind==='members'&&!!s.memberId;
- const currentHeading=detail?<><div className="breadcrumb">系统设置 / 空间成员 / 成员详情</div><div className="page-heading"><div><h1>成员详情</h1><p>查看成员资料与当前角色权限。</p></div><span className="tag green">仅查询</span></div></>:heading;
+ const url='/settings/'+section,detail=kind==='members'&&!!s.memberId||kind==='users'&&!!s.userId,loaded=users??result;
+ const currentHeading=detail?<><div className="breadcrumb">系统设置 / {title} / {kind==='users'?'用户详情':'成员详情'}</div><div className="page-heading"><div><h1>{kind==='users'?'用户详情':'成员详情'}</h1><p>查看人员资料与当前空间的角色权限。</p></div><span className="tag green">仅查询</span></div></>:heading;
  return <>{context}{currentHeading}
- {!result?<section className="management-state" role="status"><h2>{error}</h2><p>没有用示例记录替代查询结果。</p><a href={url+managementQuery(s)}>重新查询</a>{detail&&<a className="management-back" href={managementMemberListHref(s)}>返回成员列表</a>}</section>:<>
- {result.source==='SYNTHETIC_FIXTURE'&&<p className="management-source">当前展示合成验收数据，真实来源未配置。</p>}
- {kind==='members'&&<ManagementMembers result={result} selection={s}/>}
- {kind==='roles'&&<ManagementRoles roles={result.data.items as Role[]}/>}
- {kind==='audit'&&<><div className="table-wrap"><table aria-label="空间审计记录"><thead><tr><th>时间</th><th>操作</th><th>业务对象</th><th>详情</th></tr></thead><tbody>{(result.data.items as Audit[]).map(a=><tr key={a.id}><td>{new Date(a.occurredAt).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai'})}</td><td>{auditName(a.action)}</td><td>{auditName(a.objectType)}</td><td><details><summary>查看记录</summary><dl><dt>记录引用</dt><dd>{a.id}</dd><dt>操作者引用</dt><dd>{a.actorId??'系统'}</dd><dt>对象引用</dt><dd>{a.objectId}</dd><dt>操作标识</dt><dd>{a.action}</dd></dl></details></td></tr>)}</tbody></table></div>{!result.data.items.length&&<p className="empty">当前页没有审计记录</p>}<nav className="pagination" aria-label="审计分页"><a href={url}>最新记录</a>{result.data.next?<a href={url+managementQuery({offset:0,cursor:result.data.next})}>更早记录</a>:<span>已到末页</span>}</nav><p className="section-sub">展示当前空间已记录的业务审计，不包含程序运行日志。</p></>}
- <details className="management-evidence"><summary>查看本次查询依据</summary><p>查询时间：{result.evaluatedAt}</p><p>空间引用：{result.workspaceId}</p><p>身份版本：{result.authorityRevision}</p></details>
+ {!loaded?<section className="management-state" role="status"><h2>{error}</h2><p>没有用示例记录替代查询结果。</p><a href={url+managementQuery(s)}>重新查询</a>{detail&&<a className="management-back" href={kind==='users'?managementUserListHref(s):managementMemberListHref(s)}>返回{kind==='users'?'用户目录':'成员列表'}</a>}</section>:<>
+ {loaded.source==='SYNTHETIC_FIXTURE'&&<p className="management-source">当前展示合成验收数据，真实来源未配置。</p>}
+ {users&&<ManagementUsers result={users} selection={s}/>}
+ {kind==='members'&&result&&<ManagementMembers result={result} selection={s}/>}
+ {kind==='roles'&&result&&<ManagementRoles roles={result.data.items as Role[]}/>}
+ {kind==='audit'&&result&&<><div className="table-wrap"><table aria-label="空间审计记录"><thead><tr><th>时间</th><th>操作</th><th>业务对象</th><th>详情</th></tr></thead><tbody>{(result.data.items as Audit[]).map(a=><tr key={a.id}><td>{new Date(a.occurredAt).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai'})}</td><td>{auditName(a.action)}</td><td>{auditName(a.objectType)}</td><td><details><summary>查看记录</summary><dl><dt>记录引用</dt><dd>{a.id}</dd><dt>操作者引用</dt><dd>{a.actorId??'系统'}</dd><dt>对象引用</dt><dd>{a.objectId}</dd><dt>操作标识</dt><dd>{a.action}</dd></dl></details></td></tr>)}</tbody></table></div>{!result.data.items.length&&<p className="empty">当前页没有审计记录</p>}<nav className="pagination" aria-label="审计分页"><a href={url}>最新记录</a>{result.data.next?<a href={url+managementQuery({offset:0,cursor:result.data.next})}>更早记录</a>:<span>已到末页</span>}</nav><p className="section-sub">展示当前空间已记录的业务审计，不包含程序运行日志。</p></>}
+ <details className="management-evidence"><summary>查看本次查询依据</summary><p>查询时间：{loaded.evaluatedAt}</p><p>空间引用：{loaded.workspaceId}</p><p>身份版本：{loaded.authorityRevision}</p></details>
  </>}</>;
 }
-function Links(){return <div className="management-cards">{[['members','空间成员','查看成员资料与当前角色'],['roles','角色权限','核对应用角色的可查看范围'],['audit','审计记录','按原始记录追溯当前空间操作']].map(([key,title,desc])=><a key={key} href={'/settings/'+key}><h2>{title}</h2><p>{desc}</p><span>进入 →</span></a>)}</div>}
+function Links(){return <div className="management-cards">{[['users','用户目录','核对账号资料、身份关联与空间成员关系'],['members','空间成员','查看成员资料与当前角色'],['roles','角色权限','核对应用角色的可查看范围'],['audit','审计记录','按原始记录追溯当前空间操作']].map(([key,title,desc])=><a key={key} href={'/settings/'+key}><h2>{title}</h2><p>{desc}</p><span>进入 →</span></a>)}</div>}
 function auditName(value:string){return ({MEMBER_READ:'查询成员',ROLE_READ:'查询角色',DATASET_CREATED:'登记数据集',Dataset:'数据集',Workspace:'工作空间',SOURCE_ADMITTED:'接纳数据来源',RESOURCE_REGISTERED:'登记数据资源',SYNTHETIC_REVIEW:'核对材料'} as Record<string,string>)[value]??'业务操作';}

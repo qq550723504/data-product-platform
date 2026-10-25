@@ -87,7 +87,7 @@ func setupManagement(t *testing.T) (*http.ServeMux, *testResolver, *testGate, *t
 		t.Fatal(err)
 	}
 	mux := http.NewServeMux()
-	Handler{Principal: r, Gate: g, Audit: testAudit{}, Bindings: map[uuid.UUID]Binding{ws: {"org", "project", "SYNTHETIC_FIXTURE", d, c}}}.Register(mux)
+	Handler{Principal: r, Gate: g, Audit: testAudit{}, Bindings: map[uuid.UUID]Binding{ws: {OrganizationID: "org", ProjectID: "project", Source: "SYNTHETIC_FIXTURE", Directory: d, Catalog: c}}}.Register(mux)
 	return mux, r, g, d
 }
 func TestManagementScopeRevocationAndProjection(t *testing.T) {

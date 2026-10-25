@@ -3,16 +3,36 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fixture,MemoryStore} from './helpers/oidc-fixture.mjs';
 const require=createRequire(import.meta.url);
-const {managementSelection,managementQuery,managementMemberListHref,managementMemberDetailHref,validManagement}=require('../.iam-tests/platform-management.js');
+const {managementSelection,managementQuery,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement}=require('../.iam-tests/platform-management.js');
 test('management RP is disjoint and transport allows only exact readonly workspace queries',async t=>{
  const f=await fixture(t,new MemoryStore(),'platform-management'),start=await f.iam.start(),session=await f.iam.callback(f.callback(start),start.key),client=await f.iam.managementClient(session.key);
  assert.deepEqual(client.principal.capabilities,['PLATFORM_MANAGEMENT_READ']);await assert.rejects(f.iam.acceptanceClient(session.key));
  const base=client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/management/';let calls=0;
  f.state.businessHandler=async(req,res)=>{calls++;assert.equal(req.method,'GET');res.end('{}')};
- await client.request(base+'members?offset=25');assert.equal(calls,1);
+ await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');assert.equal(calls,2);
  for(const [url,init]of [[base+'members',{method:'POST'}],[base+'roles',{headers:{Authorization:'Bearer forged'}}],[base+'audit',{body:'x'}],[base.replace(client.principal.workspace_id,'44444444-4444-4444-8444-444444444444')+'members',{}],[client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/acceptance-context',{}]])await assert.rejects(client.request(url,init));
- assert.equal(calls,1);
- f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'members'));assert.equal(calls,2);
+ assert.equal(calls,2);
+ f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'users'));assert.equal(calls,3);
+});
+
+test('user directory navigation preserves search page and row with no foreign selectors',()=>{
+ const s={offset:25,q:'成员 & 搜索',memberId:'grant',role:'viewer',cursor:'old',userId:'old'};
+ const detail=new URL(managementUserDetailHref(s,'native-user'),'https://console.example.invalid');
+ assert.deepEqual(managementSelection('users',Object.fromEntries(detail.searchParams)),{offset:25,q:s.q,userId:'native-user'});
+ const list=new URL(managementUserListHref(s,'native-user'),detail);assert.equal(list.hash,'#user-native-user');assert.deepEqual(managementSelection('users',Object.fromEntries(list.searchParams)),{offset:25,q:s.q});
+ for(const q of [{role:'viewer'},{memberId:'grant'},{returnTo:'//external.invalid'},{userId:'../x'},{userId:['one','two']}])assert.throws(()=>managementSelection('users',q));
+});
+
+test('user DTO separates account member and canonical identity facts and fails closed on wrong scope or private fields',()=>{
+ const p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1'},at=new Date().toISOString();
+ const m={id:'grant',userId:'native',organizationId:'org',projectId:'app',displayName:'Person',loginName:'login',roles:['viewer'],state:'inactive',createdAt:at,changedAt:at,permissions:['management.users.read']};
+ const selected={profile:{id:'native',organizationId:'org',username:'login',displayName:'Person',accountState:'active',createdAt:at,changedAt:at},memberships:[m],identity:{workspaceId:p.workspace_id,state:'UNCONFIGURED',actorId:null,revision:'',basisRef:'',expiresAt:null}};
+ const raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:at,source:'SYNTHETIC_FIXTURE',writeEnabled:false,data:{items:[{id:'native',displayName:'Person',loginName:'login',membershipCount:1}],total:1,offset:0,limit:25,selected,roleDefinitions:[{id:'viewer',name:'查询员',permissions:['management.users.read']}]}};
+ assert.equal(validUserManagement(raw,p,{offset:0,userId:'native'}),true);
+ const linked={...selected.identity,state:'LINKED',actorId:'44444444-4444-4444-8444-444444444444',revision:'2:3:4',basisRef:'explicit-source',expiresAt:new Date(Date.now()+300000).toISOString()};
+ assert.equal(validUserManagement({...raw,data:{...raw.data,selected:{...selected,identity:linked}}},p,{offset:0,userId:'native'}),true);
+ for(const selectedChange of [{profile:{...selected.profile,accountState:'unknown'}},{profile:{...selected.profile,email:'PRIVATE'}},{memberships:[{...m,organizationId:'foreign'}]},{identity:{...linked,workspaceId:p.principal_id}},{identity:{...linked,actorId:'native'}},{identity:{...selected.identity,actorId:linked.actorId}}])assert.equal(validUserManagement({...raw,data:{...raw.data,selected:{...selected,...selectedChange}}},p,{offset:0,userId:'native'}),false);
+ assert.equal(validUserManagement({...raw,data:{...raw.data,items:[{...raw.data.items[0],accountState:'active'}]}},p,{offset:0,userId:'native'}),false);
 });
 test('acceptance sessions cannot enter management and management confirms only its own profile',async t=>{
  const f=await fixture(t),start=await f.iam.start(),s=await f.iam.callback(f.callback(start),start.key);await assert.rejects(f.iam.managementClient(s.key));

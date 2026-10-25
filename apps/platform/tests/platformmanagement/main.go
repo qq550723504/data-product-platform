@@ -64,11 +64,12 @@ func main() {
 	store := bindings.NewStore(pool)
 	resolver, e := oidc.NewResolver(oidc.Config{Issuer: c.Issuer, TokenEndpoint: c.Issuer + "/token", IntrospectionEndpoint: c.Issuer + "/introspect", ClientID: "dpp-management-api", ClientSecret: c.ResourceSecret, Audience: "dpp-management-api", RequiredScope: "platform-management", AllowedClientIDs: []string{"dpp-management-rp"}}, store, client)
 	must(e)
-	catalog, e := management.NewCatalog([]management.Role{{ID: "management_viewer", Name: "管理查询员", Permissions: []string{"management.members.read", "management.roles.read", "management.audit.read"}}, {ID: "audit_viewer", Name: "审计观察员", Permissions: []string{"management.audit.read"}}})
+	catalog, e := management.NewCatalog([]management.Role{{ID: "management_viewer", Name: "管理查询员", Permissions: []string{"management.members.read", "management.roles.read", "management.audit.read", "management.users.read"}}, {ID: "audit_viewer", Name: "审计观察员", Permissions: []string{"management.audit.read"}}})
 	must(e)
 	native, e := directory.NewClient(c.Issuer, c.ReadCredential, "governance", client)
 	must(e)
-	scopes := map[uuid.UUID]management.Binding{wsA: {OrganizationID: "organization-a", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Catalog: catalog}, wsB: {OrganizationID: "organization-b", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Catalog: catalog}}
+	links := management.BoundUserIdentities{Store: store, Workspace: wsA, References: map[string]management.UserSubjectReference{"person-a-2": {Issuer: c.Issuer, Subject: "directory-person-linked", BasisRef: "synthetic-user-link-v1"}}}
+	scopes := map[uuid.UUID]management.Binding{wsA: {OrganizationID: "organization-a", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, IdentityLinks: links, Catalog: catalog}, wsB: {OrganizationID: "organization-b", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, Catalog: catalog}}
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /internal/identity/platform-management-principal", store.ManagementPrincipal(resolver))
 	management.Handler{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, Bindings: scopes, Audit: management.PostgresAudit{Pool: pool}}.Register(mux)
@@ -127,6 +128,15 @@ func prepare(c config) {
 			must(e)
 		}
 	}
+	// A directory reference is deliberately different from both the pairwise
+	// OIDC subject and canonical actor. This selected user has no management grant.
+	selected := uuid.MustParse("84000000-0000-4000-8000-000000000002")
+	_, e = pool.Exec(ctx, `INSERT INTO platform_actor_state(actor_id,enabled)VALUES($1,true)`, selected)
+	must(e)
+	_, e = pool.Exec(ctx, `INSERT INTO platform_subject_binding(id,issuer,subject,actor_id,valid_from,valid_until)VALUES($1,$2,'directory-person-linked',$3,now()-interval '1 hour',now()+interval '8 hours')`, uuid.New(), c.Issuer, selected)
+	must(e)
+	_, e = pool.Exec(ctx, `INSERT INTO platform_workspace_grant(id,actor_id,workspace_id,capabilities,valid_from,valid_until)VALUES($1,$2,$3,$4,now()-interval '1 hour',now()+interval '8 hours')`, uuid.New(), selected, wsA, []string{principal.CapabilityAcceptanceRead})
+	must(e)
 	for _, ws := range []uuid.UUID{wsA, wsB} {
 		for i := 0; i < 58; i++ {
 			_, e = pool.Exec(ctx, `INSERT INTO audit_event(id,workspace_id,actor_type,actor_id,action,object_type,object_id,metadata,occurred_at)VALUES($1,$2,'USER',$3,'SYNTHETIC_REVIEW','Dataset',$4,'{"private":"NEVER_RENDER_RAW_PAYLOAD"}',now()-($5::int*interval '1 minute'))`, uuid.New(), ws, people["both"], uuid.New(), i+1)

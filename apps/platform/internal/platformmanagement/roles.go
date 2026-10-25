@@ -21,7 +21,7 @@ e = some(where (p.eft == allow))
 m = (r.sub == p.sub || g(r.sub, p.sub)) && r.obj == p.obj
 `
 
-var permissionNames = map[string]string{"management.members.read": "查看空间成员", "management.roles.read": "查看应用角色权限", "management.audit.read": "查看空间审计"}
+var permissionNames = map[string]string{"management.members.read": "查看空间成员", "management.roles.read": "查看应用角色权限", "management.audit.read": "查看空间审计", "management.users.read": "查看用户目录"}
 
 type Role struct {
 	ID          string   `json:"id"`

@@ -52,6 +52,8 @@ type Binding struct {
 	OrganizationID, ProjectID, Source string
 	Directory                         Directory
 	Catalog                           *Catalog
+	Users                             UserReader
+	IdentityLinks                     UserIdentityReader
 }
 type Gate interface {
 	Confirm(context.Context, principal.RequestPrincipal) (principal.Authority, error)

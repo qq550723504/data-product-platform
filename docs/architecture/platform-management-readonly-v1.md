@@ -23,15 +23,27 @@
 
 `POST /internal/identity/platform-management-principal` 是私有身份确认查询，严格复用已有 envelope，不是业务 Command。
 
-只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit}`；固定 limit=25，成员 offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义）。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
+只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users}`；固定 limit=25，成员 offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义）。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
 
 响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI，权限必须命中显式自有键白名单，Object继承属性不能算权限。目录一次完整查询超过上限、超时，或检测到总数变化、短页、重复/乱序ID、错空间或原生筛选不符时必须失败，不返回部分成功。远端offset接口没有共同快照/修订号；相同总数下的并发替换不保证可检测，目录结果仅为查询视图，不是冻结成员事实，也不能作为后续写入授权。
 
-新版 `/settings`、`/settings/members`、`/settings/roles`、`/settings/audit`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。用户目录、组织树、空间生命周期、运行日志和系统配置写入另属后续范围。
+新版 `/settings`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。组织树、空间生命周期、运行日志和系统配置写入另属后续范围。
 
 角色→相关成员→成员详情→返回列表沿用同一成员GET接口：角色入口以`role`打开首页，列表组合`q/role/state`筛选，提交筛选显式回到首页；`offset`只在分页和详情往返时保留。`memberId`进入独立详情查看状态，不在列表下重复展示详情。返回链接固定指向`/settings/members`，仅保留原筛选与offset，并用浏览器fragment定位原成员行；fragment不发往API，不接受任意return URL或客户端身份参数。详情失效时提供保留条件的明确返回，超出结果页时由用户显式选择保留筛选回首页，不静默改查其他成员/页面。页面跳转链接继续完整GET重验当前身份，URL状态不构成资格；切换空间从既有身份流程重建上下文，旧详情引用在新空间拒绝。浏览器前进/后退的本轮验收单独覆盖撤权后的拒绝，不把此前已展示的查询视图当新的授权。
 
 默认预览继续无需登录；其管理入口显示真实来源未配置。独立管理 profile 只开放其设置查询和既有技术登录/退出路由，不开放 Agent 或业务 Command；4193 Agent 原运输方式不变。隔离浏览器使用合成 OIDC/目录夹具和独立 PG，不连接企业身份源、原库或 provider。
+
+## 用户目录与身份关联
+
+用户读取复用固定源版本的 `internal/integration/zitadel/membership/writer.go` 中 `ReadHuman` 的只读部分：原生 `user.read` 前后确认、精确用户ID、资源归属组织和Human类型核验。没有导入writer组装、邀请、账号配置或写方法。采用官方[GetUserByID](https://zitadel.com/docs/reference/api/user/zitadel.user.v2.UserService.GetUserByID)的User v2资料字段；既有验证TLS的transport仅增加固定 `/v2/users/{id}` GET，不支持任意路径、全局人员搜索或机器账号。没有新依赖、账号表、迁移或身份源。
+
+`users`仅接受`offset/q/userId`。完整读取当前服务器绑定的organization/project成员关系，在10000条和10秒总预算内验证分页、总数、排序、作用域及同用户引用一致性，按原生user ID去重后执行字面搜索和25条分页。列表仅返回`id/displayName/loginName/membershipCount`，不做逐人资料请求，也不从成员关系推断账号状态。不同原生ID即使同名也不能合并。
+
+明确`userId`必须先存在于本次完整可见关系集合，才允许请求原生资料；别的空间ID在请求资料前拒绝。资料精确校验user ID、owner organization、Human类型、有效日期及明确账号状态（active/inactive/locked/initial/deleted）；缺失、未知、错归属或权限撤回均不可用，不回退成员状态、缓存或示例。只投影最小资料，丢弃email、phone和其他原始字段。资料返回后重读该用户原先每条精确成员关系，重新检查作用域和应用角色映射；关系撤销/移出时丢弃整个详情，不能公开孤立账号资料。账号状态、成员状态和应用角色映射为三个独立事实，均不自动授予管理或业务资格。
+
+可选`UserIdentityReader`只接收服务器管理的显式`native user ID → issuer/subject + basisRef`引用，再复用既有bindings.Store对精确workspace的当前actor/binding/grant查询。不得把native ID、登录名、邮箱或UUID外观猜成平台人员。未配置引用来源返回UNCONFIGURED；有来源但无显式匹配或当前关联已撤销/过期返回UNLINKED，均无actor/revision/依据/到期字段；只有当前有效关联返回LINKED及canonical actor/revision/依据/最短有效期。该结果是查询依据，不是当前caller或被查询用户的授权。独立验收仅为一名合成人员提供显式引用，该人员只有验收READ，没有管理READ；真实关联来源继续未配置。未做跨系统原子快照，详情不是冻结历史，后续查询必须重新核验。
+
+用户列表与详情沿用现有设置壳、筛选和分页，不使用浏览器副本。返回固定`/settings/users`，只恢复`q/offset`并用fragment定位原行，不接受任意return URL、subject或workspace参数。用户详情显示独立账号状态、身份关联及当前空间成员关系，提供成员/角色查询；浏览器返回重新核验原详情。页码越界和不可见详情提供保留条件的显式恢复。原生用户引用、平台人员和关联版本放在折叠依据区，未配置关联明示“未关联 / 关联来源未配置”。
 
 ## 验证
 

@@ -48,7 +48,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resource := r.PathValue("resource")
-	if resource != "members" && resource != "roles" && resource != "audit" {
+	if resource != "members" && resource != "roles" && resource != "audit" && resource != "users" {
 		failure(w, 404, "NOT_FOUND")
 		return
 	}
@@ -60,6 +60,11 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if resource == "audit" {
 		allowed["cursor"] = true
+	}
+	if resource == "users" {
+		for _, k := range []string{"offset", "q", "userId"} {
+			allowed[k] = true
+		}
 	}
 	q, err := strictQuery(r, allowed)
 	if err != nil {
@@ -76,7 +81,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	request.Filter = ListFilter{q["q"], q["role"], q["state"]}
 	request, err = request.Normalize()
-	if err != nil || q["memberId"] != "" && !IsIdentifier(q["memberId"]) {
+	if err != nil || q["memberId"] != "" && !IsIdentifier(q["memberId"]) || q["userId"] != "" && !IsIdentifier(q["userId"]) {
 		failure(w, 400, "INVALID_QUERY")
 		return
 	}
@@ -107,6 +112,25 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	var payload any
 	switch resource {
+	case "users":
+		if b.Users == nil {
+			failure(w, 503, "SOURCE_UNCONFIGURED")
+			return
+		}
+		page, e := QueryUsers(ctx, ws, b, request, q["userId"])
+		if e != nil {
+			if errors.Is(e, ErrNotFound) {
+				failure(w, 404, "USER_UNAVAILABLE")
+			} else if errors.Is(e, ErrInvalidRequest) {
+				failure(w, 400, "INVALID_QUERY")
+			} else if errors.Is(e, ErrUnconfigured) {
+				failure(w, 503, "SOURCE_UNCONFIGURED")
+			} else {
+				failure(w, 503, "USER_DIRECTORY_UNAVAILABLE")
+			}
+			return
+		}
+		payload = page
 	case "members":
 		if request.Filter.Role != "" && !b.Catalog.Has(request.Filter.Role) {
 			failure(w, 400, "INVALID_QUERY")

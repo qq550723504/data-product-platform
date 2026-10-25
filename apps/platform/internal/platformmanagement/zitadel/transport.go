@@ -8,17 +8,24 @@ import (
 	domain "github.com/qq550723504/data-product-platform/apps/platform/internal/platformmanagement"
 	"io"
 	"net/http"
+	"strings"
 )
 
 func (c *Client) requestJSON(ctx context.Context, method, path string, body any, allowNotFound bool, organization ...string) ([]byte, error) {
-	if c == nil || c.http == nil || method != http.MethodPost || path != "/auth/v1/permissions/zitadel/me/_search" || allowNotFound || len(organization) != 1 || !domain.IsIdentifier(organization[0]) {
+	permissionQuery := method == http.MethodPost && path == "/auth/v1/permissions/zitadel/me/_search" && !allowNotFound
+	userQuery := method == http.MethodGet && strings.HasPrefix(path, "/v2/users/") && domain.IsIdentifier(strings.TrimPrefix(path, "/v2/users/")) && allowNotFound && body == nil
+	if c == nil || c.http == nil || (!permissionQuery && !userQuery) || len(organization) != 1 || !domain.IsIdentifier(organization[0]) {
 		return nil, domain.ErrInvalidRequest
 	}
 	raw, err := json.Marshal(body)
 	if err != nil {
 		return nil, domain.ErrInvalidRequest
 	}
-	req, err := http.NewRequestWithContext(ctx, method, c.origin+path, bytes.NewReader(raw))
+	var payload io.Reader = bytes.NewReader(raw)
+	if userQuery {
+		payload = nil
+	}
+	req, err := http.NewRequestWithContext(ctx, method, c.origin+path, payload)
 	if err != nil {
 		return nil, domain.ErrUnavailable
 	}
@@ -31,6 +38,9 @@ func (c *Client) requestJSON(ctx context.Context, method, path string, body any,
 		return nil, domain.ErrUnavailable
 	}
 	defer res.Body.Close()
+	if userQuery && res.StatusCode == 404 {
+		return nil, domain.ErrNotFound
+	}
 	if res.StatusCode != 200 {
 		return nil, domain.ErrUnavailable
 	}

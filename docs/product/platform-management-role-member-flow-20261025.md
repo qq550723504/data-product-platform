@@ -1,5 +1,7 @@
 # 角色、成员与详情的只读闭环
 
+本页保留该轮18项验收与旧构建记录。当前预览和新增用户目录见[用户目录只读交付](platform-management-users-readonly-20261025.md)，不改写下述历史证据。
+
 2026-10-25，承接PR #363的`f99889f8249ff8539fe13bba7da1ab466e32cbfd`。本轮只完成角色→相关成员→成员详情→返回原列表，查询合同继续归[平台管理只读契约](../architecture/platform-management-readonly-v1.md)。保持Draft，不合并、不部署。
 
 ## 已完成
