@@ -1,0 +1,23 @@
+{
+  "status": "PASS_TWO_OFFLINE_TEST_HELPERS_ARCHIVED_AND_REMOVED",
+  "closures": [
+    {
+      "status": "REMOVED",
+      "id": "a6641df56950c5fac8c55308f90d793e9c0c78d12e54b9498c73c96252104ddb",
+      "volumes_removed": 0,
+      "images_removed": 0,
+      "networks_removed": 0
+    },
+    {
+      "status": "REMOVED",
+      "id": "4b6cd69cae2a2fcd7aed8f02c7f3827abbad0810a2b2c4fd174cda2fffeea370",
+      "volumes_removed": 0,
+      "images_removed": 0,
+      "networks_removed": 0
+    }
+  ],
+  "network": "none",
+  "mount_scope": "independent test export and output only; no retained/source/volume mounts",
+  "original_resources_removed": 0,
+  "raw_ticket_env": "private; deliberately not copied to public evidence"
+}
