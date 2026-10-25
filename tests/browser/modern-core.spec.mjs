@@ -33,11 +33,24 @@ test('leader quality history opens each exact report and keeps the earlier resul
 });
 
 test('repair review card selects recent tasks instead of navigating to a blank diagnosis form',async({page,request})=>{
- await reset(request,'ready');await page.goto('/agent/tasks');
+ await reset(request,'ready');
+ // The shared Core fixture has no Agent task routes. This navigation-only
+ // contract supplies an explicit empty GET list; the leader replay exercises
+ // the real BFF against the separate readonly task fixture and opens a task.
+ const taskReads=[];
+ await page.route('**/api/agent-tasks**',async route=>{
+  const req=route.request(),url=new URL(req.url());taskReads.push({method:req.method(),path:url.pathname+url.search});
+  if(req.method()!=='GET')return route.abort();
+  if(url.pathname==='/api/agent-tasks/authority')return route.fulfill({status:401,json:{error:{code:'AUTHENTICATION_REQUIRED'}}});
+  if(url.pathname==='/api/agent-tasks'&&url.search==='?offset=0')return route.fulfill({json:{items:[],page:{offset:0,limit:25,total:0}}});
+  return route.abort();
+ });
+ await page.goto('/agent/tasks');
  const entry=page.getByRole('link',{name:/审阅修复计划/});
  await expect(entry).toHaveAttribute('href','#agent-recent');await entry.click();
  await expect(page).toHaveURL(/#agent-recent$/);
  await expect(page.locator('#agent-recent')).toBeInViewport();
+ expect(taskReads).toEqual([{method:'GET',path:'/api/agent-tasks?offset=0'},{method:'GET',path:'/api/agent-tasks/authority'}]);
  expect((await calls(request)).some(c=>c.method!=='GET')).toBe(false);
 });
 test('prototype root stays synthetic; Core workbench uses server facts in the same modern shell',async({page,request})=>{

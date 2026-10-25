@@ -29,4 +29,6 @@
 
 复用既有 Next/React、CoreQualityView、Agent BFF、sessionStorage、HTTP夹具及 Playwright/Edge；未新增依赖或平行基础设施。演示38/38、Agent20/20、夹具/输出保护21/21，隔离 Next 构建（类型/lint）通过。新增三条 CI 浏览器用例对应 F1/F2/F3；精确新 HEAD 的 CI 以 PR 最新运行结果为准，不继承基线绿色，也不宣称 main/push 通过。
 
+`68fa7226` 的全站浏览器127/128：新增入口用例误用没有 Agent task 路由的通用 Core 夹具，实际显示“未能读取委托记录”。保留失败运行与 artifact12585489501（ZIP SHA256 `830a37fe8a1f6ae3997cc1a8f36cadc9f6d7e0d36d489bbd7b9d627a5ea74013`），已检查原始截图和上下文。该导航用例改为显式空列表 GET 与401责任身份响应，核对两个请求均为 GET、原目标 hash 和任务区；完整任务/BFF查询仍由21步独立 Edge 路线覆盖。本地独立 Edge 在CI尺寸1280×720执行相同用例1/1通过。不放宽真实读取失败、权限、业务断言或添加重试。新提交的完整 CI 另核，旧失败不算 PASS。
+
 本轮有限交付一致性 blocker=0；不作独立全 PR 或业务批准。真实场景、接收组织、责任团队保持待定，人员/责任/标准/材料的真实来源仍未配置。可信依据、原件核验、撤销窗口与后续授权仍以[既有启用清单](business-receipt-write-enablement-checklist-20261024.md)及其权威契约为准；演示样例、证据快照、静态指纹、CI 和截图均不能代替正式业务事实或启用批准。PR 继续 Draft，不合并、不部署。
