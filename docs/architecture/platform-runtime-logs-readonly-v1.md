@@ -76,6 +76,8 @@
 
 摘要由Web固定业务词典生成，不接收来源的自由message或模板参数。首次范围无trace链接、原生属性、stack、请求/响应正文、姓名/邮箱、token/cookie、SQL/DSN、URL或原生配置字段；“掩码后原文”也不作为兜底。未知事件只显示未分类运行记录。rowKey用来源稳定身份做受保护的作用域化引用，不能用正文hash或行号代替来源identity；entryRef可以续期变化，不能作为稳定DOM定位键。
 
+已有业务event_id、aggregate_id、attempt和请求关联ID均不自动构成日志occurrence。平台现有X-Request-ID可由调用方提供，不能据此建立可信日志身份、空间或权限；同一业务事件/attempt也会有多次日志发生。产出/来源责任方须分别证明空间上下文、独立记录身份和观察点，Adapter不能从消息、任意Payload或缺失字段猜测。没有可信空间的启动/全局调度记录不进入某个workspace页面；字段证据与最小责任边界见[产出侧源码核对](../product/platform-runtime-logs-loki-admission-20261025.md#7-现有日志产出侧源码核对)。本补充不修改现有请求关联、业务事件或日志输出实现。
+
 ReadExact还需比较entryRef内的规范最小投影hash：相同原生身份若返回不同时间/服务/级别/事件投影，应报告记录变化，不用新内容冒充列表中那条记录。hash只核验本次短时查询的一致性，不是occurrence身份，也不建立平台历史快照；重新查询列表才可显式取得来源的当前投影。
 
 未来响应沿用现有Envelope对caller/workspace/revision/evaluatedAt/source/writeEnabled=false的绑定，并为日志数据使用独立严格字段验证。列表data为`{window,items,next}`；详情为`{window,item}`；window为`{start,end,asOf,timeBasis}`，timeBasis固定OBSERVED，items/item使用上表完整字段。next为受保护cursor或null，无total、页码总数、运行总分或健康结论。

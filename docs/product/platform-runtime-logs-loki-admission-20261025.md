@@ -2,6 +2,8 @@
 
 状态：DESIGN ONLY，2026-10-25。基线为PR #363的`e287a67e0c6b18c1b3573ed6fa88a4a2f77d288b`。本稿只评估一个开源候选的接口与现有契约是否相容，不指定真实实例或责任人，不选定部署方案。查询/身份/字段规则仍由[运行日志只读契约](../architecture/platform-runtime-logs-readonly-v1.md)拥有，页面仍由[流程方案](platform-runtime-logs-page-plan-20261025.md)拥有。
 
+2026-10-26补充：在`d9e3d36263140e28c5287a7281f6949785d7338e`上核对本仓库日志产出，以及原固定复用项目的日志管理器，结果见第7节。只增加源码依据，不读取实例日志、配置secret或数据库，不改变第1节固定的Loki版本及13份上游证据，也不启用日志接入。
+
 **结论：Loki可保留为日志存储与查询候选，当前不准入实际接入。** 原生接口尚不能证明观察时间窗口、稳定occurrence、同时间记录续读与精确详情全部满足本平台契约；真实来源和运维依据也未确定。不能只加HTTP查询就把菜单标为已接入，也不能降低契约、增加日志账本或Fork补齐。
 
 本轮仅查阅公开官方资料和固定版本源码，不安装依赖、不启动Loki/采集器、不读取本机或容器日志、不调用真实日志API，不开发Adapter/API/权限/页面，不更新预览进程。真实来源保持UNCONFIGURED；原库、OIDC/RP、Agent API和业务历史保持，业务写入口、模型与真实执行关闭。PR继续Draft，不合并、不部署。
@@ -91,3 +93,31 @@
 下一步最小范围是收齐第5节材料中的接口/字段说明，先核对时间依据、稳定身份和续读三个阻断项；没有实例时可以继续做协议层纸面核对，但不能将合成样例变为企业事实。只有证据证明满足现有契约后，才另行明确Adapter和独立合成验收范围。若已有路径不能满足，保留不接纳结论；不继续堆页面、制造虚假接入状态或建设新日志平台。
 
 本轮可核验的是公开资料版本、固定源码、契约一致性和文档链接。所有新日志API、双能力、源查询、浏览器路径和16组日志验收规格仍未实现/未运行；CI结果只证明本次PR既有检查，不证明真实来源准入或拟议能力上线。
+
+## 7. 现有日志产出侧源码核对
+
+核对日期2026-10-26。平台源码固定`d9e3d36263140e28c5287a7281f6949785d7338e`；复用项目仍固定`e29058c56df4294e1c612b3a705ab767bc333188`，没有切到其后续分支或导入实现。范围是受版本控制的API/worker日志装配、请求关联、Outbox输出、Schema错误处理、依赖/部署样例，以及复用项目的logging包；不从历史验收JSON、进程stdout、本机/容器日志或未提交配置推定实际部署状态。没有探测端口、运行配置加载器或连接服务。
+
+**产出侧结论：现有源码提供了日志输出基础，但不能证明已具备可接纳的工作空间日志来源。** 缺口同时涉及产出上下文和查询协议，不能只在Loki Reader、前端筛选或字段重命名处解决。以下是源码能力判断，不是已经证明有敏感信息泄漏、部署故障或真实人员越权。
+
+| 契约需要什么 | 当前源码证据 | 当前不能推定什么 / 后续边界 |
+|---|---|---|
+| 统一且可核验的输出规则 | API和worker分别建立局部[slog JSON logger](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/cmd/api/main.go#L87-L89)；[Schema错误](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/internal/metadata/transport/http/schema.go#L87-L91)调用包级slog入口，已查装配未见将两者统一的SetDefault | 不能因主入口使用JSON就假定所有包输出同一schema；复用当前框架，未来来源需证明其实际覆盖和版本，不在本轮改变全局logger |
+| 可信workspace | [PublishedEvent](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/internal/platform/outbox/publisher.go#L32-L40)没有强类型WorkspaceID，通用Payload不是可自动当作授权的空间字段；当前多处输出只带event/aggregate引用 | 不能从aggregate UUID、消息正文、任意payload字段、部署名称或目录组织猜空间；缺少可信空间的启动/全局调度记录继续留运维侧，不进入某空间UI |
+| 声明清楚的观察时间 | 日志框架的记录时间与来源观察点没有现成接纳规则；复用项目[格式器](https://github.com/qq550723504/shuomi-ai-commerce/blob/e29058c56df4294e1c612b3a705ab767bc333188/internal/platform/logging/manager.go#L214-L246)配置RFC3339输出，未定义观察时间字段或纳秒保留规则 | 不能直接把time/timestamp统一改名为recordedAt，也不能由查询时刻补齐；先由接纳来源明确观察点、精度及与发生时间的关系 |
+| 独立occurrence身份 | 同一[Outbox事件](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/internal/platform/outbox/dispatcher.go#L146-L152)会有多种输出，[失败重试](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/internal/platform/outbox/publisher.go#L331-L361)仍引用同一event_id；单次attempt也可能产生多条日志 | event_id/aggregate_id/attempt、event_id+level或正文hash都不能当一次日志发生的ID；不能修改不可变业务事件来凑日志身份或另建日志账本 |
+| 关联标识与可信身份分开 | [WithRequestID](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/internal/platform/httpserver/requestid.go#L14-L23)保留调用方X-Request-ID，缺失时才生成UUID；[HTTP装配](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/internal/platform/httpserver/server.go#L25-L46)使用该中间件 | 可复用请求关联，不是认证、空间、唯一日志ID或后续资格；现有行为本身不等于漏洞，本轮不更改其语义 |
+| 固定服务/安全事件投影 | [worker输出](https://github.com/qq550723504/data-product-platform/blob/d9e3d36263140e28c5287a7281f6949785d7338e/apps/platform/cmd/worker/main.go#L181)可能带地址/路径变量，错误输出包含error；复用项目[GetLogger](https://github.com/qq550723504/shuomi-ai-commerce/blob/e29058c56df4294e1c612b3a705ab767bc333188/internal/platform/logging/manager.go#L133-L136)仅增加component | component或程序名不自动等于可信服务/空间；原始msg/error/地址不进UI，不能从自由文本或级别推业务成功。无已接纳事件映射时沿用UNCLASSIFIED，不强行扩展事件码或业务状态 |
+| 来源查询与保留证明 | 已查受版本控制的deploy装配未找到可交给本Reader的Loki/Collector来源绑定；go.mod只有间接OpenTelemetry相关依赖。复用logging包的[职责](https://github.com/qq550723504/shuomi-ai-commerce/blob/e29058c56df4294e1c612b3a705ab767bc333188/internal/platform/logging/README.md)是日志bootstrap支持，manager还有文件输出/轮转 | 依赖、格式化或轮转不等于日志服务和稳定查询；不能凭源码搜索断言机器上没有别的服务，也不能从默认轮转参数承诺企业保留期。真实实例/维护方仍待定 |
+
+### 7.1 最小适配责任与停止点
+
+| 责任边界 | 可复用内容 | 将来需要的证明，不是本轮实现 |
+|---|---|---|
+| 应用产出责任方 | 当前slog及已核验的业务调用上下文 | 哪些记录确实属于当前空间；独立日志身份与同一次运输重放/新发生的区别；事件映射来自受控字段/模板，不从业务payload或错误正文猜身份 |
+| 来源/运维责任方 | 已有且满足要求的日志服务、成熟采集/传输能力 | 明确观察点、精度、稳定身份保存、可信空间注入、保留和只读查询；未确定前不自建采集器、不搬完整电商日志管理器或新建第二日志平台 |
+| 查询Adapter与页面 | 已有OIDC/RP、当前资格、受限transport、固定摘要、查询/详情返回流程 | 对来源事实做边界核验与最小投影，不制造缺失字段、补成功、跨空间搜全量或把关联ID转成授权；前端不承担可信字段生产 |
+
+下一步若进入实施评审，应先冻结一组有可信空间上下文的最小产出记录及其来源字段/运输语义，再明确独立合成环境的有限适配范围；不要求把全部启动、基础设施或第三方日志改成业务空间记录。任何产出字段、配置、Handler、权限、Adapter或采集改动都仍需明确实施范围，不因本次源码核对而执行。
+
+当前源码能提供的字段依据已汇总到本表，不重复增加同类评审文件。此表不能代替真实来源材料：观察点、可信空间链、独立身份/续读和保留仍未确认，Loki继续只保留候选，真实来源UNCONFIGURED。没有读取运行日志、执行业务、修改Outbox事实或创建新审计/证据对象，新的日志接口与浏览器验收仍NOT_RUN。
