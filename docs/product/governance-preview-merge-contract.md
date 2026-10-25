@@ -1,6 +1,10 @@
 # 新版治理原型与 Core 试点：评审 / 合并契约
 
-当前业务确认表设计（2026-10-25，核对`b85e63aa`）：用户仅授权将来源选择、责任人、原件核验和撤销窗口整理为可评审确认表，直接展开[现有启用清单第3节](business-receipt-write-enablement-checklist-20261024.md#3-来源与依据的业务确认表)，列明业务确认职责、依据提供/协同职责、必需材料、待填结论和变更追溯。D01–D04及T/R/G权威不变，不新增模型、接口、角色或审批产品；仅3份Markdown，真实来源/人员/依据/结论均保持未配置/待定/未确认。原库/Agent API/预览未操作，业务写关闭，模型/真实执行关闭，Draft不合并、不部署；填表或CI不构成业务批准、G2读取或后续写入授权。
+当前业务确认表复审（2026-10-25，核对`f2117896`）：用户仅授权文档审查及精确HEAD的CI核对；在[原表](business-receipt-write-enablement-checklist-20261024.md#3-来源与依据的业务确认表)补清多职责确认各自留据、分阶段依据与逐域撤销窗口、后续读取/写入授权的精确版本及范围关联，不新增模型、接口、角色或Gate。仅2份Markdown；真实来源/人员/材料/结论均保持待定，写入口关闭，原库/Agent API/预览保留，模型/真实执行关闭，Draft不合并、不部署。
+
+本次CI定位基线：GitHub对`f2117896b62fd859bd24e27d73de6ab3029ba5c4`的workflow/check/status均无记录；PR显示`CONFLICTING / DIRTY`。只计算与当时main `e0e4f77a576ea4572cf16b3a3475461127f44acc`的合并树，冲突为`apps/web/package-lock.json`、`tests/browser/schema-attempts.spec.mjs`、`tests/browser/schema-requests.spec.mjs`，未实际合并、修改冲突文件或切换运行环境。[GitHub触发规则](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)说明有合并冲突时不运行pull_request工作流。本轮不借改触发事件、手工派发或旧HEAD绿色绕过；这些代码/依赖/测试集成不在当前文档修正范围，保留PR级CI阻断。修正后新HEAD须重新查询，精确状态归PR closure，不将无记录写为运行中/成功。
+
+上一业务确认表设计（2026-10-25，核对`b85e63aa`）：用户仅授权将来源选择、责任人、原件核验和撤销窗口整理为可评审确认表，直接展开[现有启用清单第3节](business-receipt-write-enablement-checklist-20261024.md#3-来源与依据的业务确认表)，列明业务确认职责、依据提供/协同职责、必需材料、待填结论和变更追溯。D01–D04及T/R/G权威不变，不新增模型、接口、角色或审批产品；仅3份Markdown，真实来源/人员/依据/结论均保持未配置/待定/未确认。原库/Agent API/预览未操作，业务写关闭，模型/真实执行关闭，Draft不合并、不部署；填表或CI不构成业务批准、G2读取或后续写入授权。
 
 上一最小契约补充（2026-10-25，核对`c916d85a`）：用户仅授权收件材料接纳与失效处置设计；[可信依据契约](../architecture/business-receipt-trusted-basis-v1.md)第3.1/3.2及4.1节拥有最小事实、责任及失效规则，第一切片只引用消费边界，[原合成样例第7.1节](business-receipt-source-paths-review-20261024.md#71-最小接纳契约核对)拥有纸面核对。仅4份Markdown，不新增物理模型、Port/API、Case角色/Command或测试数据；T/R/G与P10编号、原样例80/266字节和hash不变。真实来源/人员/规则批准、持久化模型与窗口仍待定，写入口关闭；原库/Agent API/预览保留，模型/真实执行关闭，Draft不合并、不部署。静态/精确HEAD CI与现场执行分别记录，不把纸面分支算执行PASS。
 
