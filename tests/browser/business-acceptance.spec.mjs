@@ -1,5 +1,24 @@
 import {test,expect} from '@playwright/test';
 import {fixtureToken} from './fixture-server.mjs';
+
+test('storage refusal warns that local receipt changes are not saved and reload loses them',async({page,request})=>{
+ const control='http://127.0.0.1:4400/__control';
+ await request.post(control+'/reset',{headers:{'x-fixture-token':fixtureToken},data:{scenario:'ready'}});
+ await page.addInitScript(()=>{Storage.prototype.setItem=function(){throw new DOMException('Synthetic storage refusal','QuotaExceededError')};});
+ await page.goto('/#business-receipts');
+ await expect(page.getByRole('alert').filter({hasText:'本地会话存储不可用'})).toBeVisible();
+ await page.getByRole('combobox',{name:'演示办理身份',exact:true}).selectOption('receiver');
+ await page.getByRole('textbox',{name:'签收依据',exact:true}).fill('STORAGE-UNAVAILABLE');
+ await page.getByRole('textbox',{name:'签收说明',exact:true}).fill('合成存储故障');
+ await page.getByRole('button',{name:'保存签收记录',exact:true}).click();
+ await expect(page.getByText('演示记录已更新：签收登记',{exact:true})).toBeVisible();
+ await expect(page.getByText('演示记录已保存：签收登记',{exact:true})).toHaveCount(0);
+ await expect(page.getByRole('row').filter({hasText:'STORAGE-UNAVAILABLE'})).toHaveCount(1);
+ await page.reload();
+ await expect(page.getByRole('row').filter({hasText:'STORAGE-UNAVAILABLE'})).toHaveCount(0);
+ const state=await(await request.get(control+'/state',{headers:{'x-fixture-token':fixtureToken}})).json();
+ expect(state.requests).toHaveLength(0);
+});
 test('business receipt, return, resubmit, approve and archive stay local and retain history',async({page,request})=>{
  const control='http://127.0.0.1:4400/__control';
  await request.post(control+'/reset',{headers:{'x-fixture-token':fixtureToken},data:{scenario:'ready'}});

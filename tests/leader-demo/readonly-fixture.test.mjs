@@ -21,5 +21,8 @@ test('leader fixture has no commands/control surface and preserves exact scoped 
   assert.equal(report.gateDecision,'FAIL');assert.equal(report.dimensionSummary.VALIDITY.failedCount,1);
   assert.equal(current.plan.sourceAssessmentId,report.id);
   const finding=report.findings.items.find(f=>f.id===current.plan.findingId);assert.equal(finding.ruleId,'negative-energy');assert.equal(finding.status,'FAIL');
+  const history=await(await fetch(base+`/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments?workspaceId=${ids.workspace}`,{headers})).json();
+  assert.equal(history.page.total,2);
+  for(const entry of history.items){const response=await fetch(base+`/api/v1/quality-assessments/${entry.id}/report?workspaceId=${ids.workspace}`,{headers});assert.equal(response.status,200);const exact=await response.json();assert.equal(exact.id,entry.id);assert.equal(exact.gateDecision,entry.gateDecision);assert.equal(exact.createdAt,entry.createdAt);assert.deepEqual(exact.dimensionSummary,entry.dimensionSummary);}
  }finally{await new Promise(resolve=>server.close(resolve));}
 });

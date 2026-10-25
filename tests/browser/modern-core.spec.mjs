@@ -14,6 +14,32 @@ test('modern Agent preserves semantic failure colors and quality reads issue no 
  expect(failed.color).not.toBe(passed.color);expect(failed.background).not.toBe(passed.background);
  expect((await calls(request)).some(c=>c.method!=='GET')).toBe(false);
 });
+
+test('leader quality history opens each exact report and keeps the earlier result after reload',async({page,request})=>{
+ await reset(request,'leader-demo-quality');
+ await page.goto(`/agent/quality?versionId=${ids.goldVersion}`);
+ await expect(page.locator('a.agent-history-row')).toHaveCount(2);
+ for(const [id,decision] of [[ids.goldAssessment,'FAIL'],[ids.qualityAssessment,'PASS']]){
+  await page.locator(`a.agent-history-row[href*="assessmentId=${id}"]`).click();
+  await expect(page).toHaveURL(new RegExp(`assessmentId=${id}$`));
+  await expect(page.getByRole('heading',{name:'评测报告',exact:true})).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('UNKNOWN · 无法确认');
+  await expect(page.locator('.agent-history-row[aria-current="true"]')).toContainText(decision);
+ }
+ await page.reload();
+ await expect(page).toHaveURL(new RegExp(`assessmentId=${ids.qualityAssessment}$`));
+ await expect(page.locator('.agent-history-row[aria-current="true"]')).toContainText('PASS');
+ expect((await calls(request)).some(c=>c.method!=='GET')).toBe(false);
+});
+
+test('repair review card selects recent tasks instead of navigating to a blank diagnosis form',async({page,request})=>{
+ await reset(request,'ready');await page.goto('/agent/tasks');
+ const entry=page.getByRole('link',{name:/审阅修复计划/});
+ await expect(entry).toHaveAttribute('href','#agent-recent');await entry.click();
+ await expect(page).toHaveURL(/#agent-recent$/);
+ await expect(page.locator('#agent-recent')).toBeInViewport();
+ expect((await calls(request)).some(c=>c.method!=='GET')).toBe(false);
+});
 test('prototype root stays synthetic; Core workbench uses server facts in the same modern shell',async({page,request})=>{
  await reset(request,'ready');await page.goto('/');
  await expect(page.getByText('本地交互演示',{exact:true})).toBeVisible();

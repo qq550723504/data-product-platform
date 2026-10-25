@@ -8,11 +8,13 @@
 |---|---|
 | 统一能力清单 | [菜单、页面、接入情况与未开放能力](leader-demo-capabilities-20261025.md)，区分本地交互、已接查询与本轮验收 |
 | 新版预览 | 独立 Next standalone 构建与 loopback 合成只读夹具；保留原库、Agent API 与所有原预览会话 |
-| Agent 与业务签收路线 | Microsoft Edge 新上下文20步 PASS，详见下表与[原始 JSON](leader-demo-20261025/acceptance.json) |
+| Agent 与业务签收路线 | Microsoft Edge 新上下文21步 PASS，详见下表与[原始 JSON](leader-demo-20261025-reviewed/acceptance.json) |
 | 演示问题修复 | 数据来源标识、Agent 场景入口、明确版本/评测回跳、首页独立记录文案与夹具依据一致性已修复 |
-| 讲解与重演材料 | [8分钟讲解稿、确切操作、启动/停止/重演与故障恢复](leader-demo-talk-track-20261025.md)及14张原始截图 |
+| 讲解与重演材料 | [8分钟讲解稿、确切操作、启动/停止/重演与故障恢复](leader-demo-talk-track-20261025.md)及16张原始截图 |
 
 **这是一份可重演的界面交付。** 当前 Agent 读取合成 API 历史，业务签收使用当前标签页合成状态；没有执行模型、生产任务、真实交付或正式业务办理。真实场景、接收组织及责任团队仍待定，真实来源 UNCONFIGURED，业务写入口 DISABLED。PR #363 保持 Draft、不合并、不部署。
+
+本次对照复审见[五项根因与修复记录](leader-demo-review-20261025.md)。本页与能力清单、讲解稿统一指向新的 `leader-demo-20261025-reviewed/`；原 `leader-demo-20261025/` 保留为历史证据，不再作为当前预览截图。
 
 ## 审查与修复
 
@@ -27,15 +29,17 @@
 
 ## 逐步验收
 
+本轮新增修正：审阅卡定位最近任务；演示历史缩为两份可独立读取的报告；存储写入失败显示共享警告且不声称已保存；关于弹窗跟随合成预览边界；重演默认唯一目录并拒绝覆盖。通用分页 CI 场景不变。
+
 健康状态 PASS 仅针对下表列明的合成/只读条件；不代表真实业务准入或正式验收。请求拦截记录：浏览器业务 API 写请求0、外部服务请求0、未捕获页面错误0。另用单独请求验证 BFF403、夹具405、跨空间404和控制面404拒绝。
 
 | 步骤 | 用户路径 / 检查 | 健康状态 |
 |---|---|---|
-| 1 | 首页新版、真实来源未配置与独立记录文案 | PASS |
-| 2 | Agent 工作台、原控制器、保存关闭 | PASS |
+| 1 | 首页与关于弹窗一致、真实来源未配置与独立记录文案 | PASS |
+| 2 | Agent 工作台、审阅卡定位最近任务、原控制器、保存关闭 | PASS |
 | 3 | 场景卡 → 数据集 → 明确版本 | PASS |
-| 4 | 评测历史分页、精确报告、失败发现、语义颜色、展开证据 | PASS |
-| 5 | 发现项分页、刷新恢复同一评测 | PASS |
+| 4 | 两份可见评测均可打开、精确失败报告、语义颜色、展开证据 | PASS |
+| 5 | 旧通过报告独立可读、刷新仍为旧评测 | PASS |
 | 6 | 任务、冻结修复范围、上下文、确认与意图关闭 | PASS |
 | 7 | 来源回跳保留明确版本与评测 | PASS |
 | 8 | V1只读、V2恢复、历史视图与修复编辑页关闭保存 | PASS |
@@ -51,12 +55,13 @@
 | 18 | 追溯明确归档签收和冻结提交 | PASS |
 | 19 | 撤回、重提、取消保留两次材料 | PASS |
 | 20 | 签收依据变化阻断，通过退回补正保留原依据 | PASS |
+| 21 | 存储拒绝时明确警告、不宣称已保存，刷新不恢复本次签收 | PASS |
 
 Agent 路线闭环为“查询依据 → 审阅固定计划 → 人工办理边界 → 历史追溯”，**没有**创建、确认、意图保存或执行成功的本轮证据。业务签收路线闭环为“本地签收 → 冻结提交 → 人工判断 → 独立归档 → 历史追溯”，不构成正式业务验收事实。工作空间切换验证的是前端演示状态隔离；API跨空间拒绝验证的是该合成夹具，不能替代真实多人/跨租户安全验收。
 
-本地回归：演示38/38（含56入口渲染）、Agent20/20、原HTTP夹具19/19、新只读演示夹具1/1；独立 Next 构建通过（含类型与 lint）。桌面工具初始化失败后，经用户批准改用 Playwright 的 Microsoft Edge。测试过程中修正了回跳定位器的导航等待和签收编号选择器，并为实际组件测试补入已有 `agentHref` 模块；没有放宽生产契约、到期拒绝、权限或业务断言。
+本地回归：演示38/38（含56入口渲染）、Agent20/20、HTTP夹具及重演输出保护21/21；独立 Next 构建通过（含类型与 lint）。新增三条 CI 浏览器回归覆盖评测可读/刷新、修复卡入口、存储失败；独立 Edge21步还验证了任务详情与两条业务路线。桌面工具初始化失败后，经用户批准使用 Playwright 的 Microsoft Edge。
 
-验收 JSON 保存测试时的基线提交及相关源码 SHA256，不能将基线提交的旧 CI 视为本轮增量 CI。当前提交的 CI 应独立核对；本指南不宣称已合并或通过 main push CI。
+验收 JSON 保存捕获开始时的工作树提交及相关文件 SHA256、捕获期间一致性和每张 PNG 摘要；**不是运行构建的身份认证**。本次失败的首次重演保存在独立 `.data` 目录：底部滚动时表单标题仍在视口，已将无关的视口排斥断言改为核对目标 hash、任务区可见及后续明确任务打开。没有增加 sleep/retry 或弱化业务断言。最终交付包 verdict=PASS；精确新 HEAD 的 CI 独立核对，不继承旧提交绿色，不宣称 main/push 或业务启用通过。
 
 ## 截图索引
 
@@ -64,19 +69,21 @@ Agent 路线闭环为“查询依据 → 审阅固定计划 → 人工办理边�
 
 | 截图 | 用途 |
 |---|---|
-| [01 首页](leader-demo-20261025/01-home.png) | 导航与当前边界 |
-| [02 Agent 工作台](leader-demo-20261025/02-agent.png) | 场景入口、当前只读 |
-| [03 质量报告视口](leader-demo-20261025/03-quality-focus.png) / [完整页](leader-demo-20261025/03-quality-report.png) | 负能耗失败发现、明确评测与依据 |
-| [04 修复详情](leader-demo-20261025/04-agent-repair.png) | 固定依赖与人工办理边界 |
-| [05 修复页](leader-demo-20261025/05-repair-readonly.png) | 已有表单、保存关闭 |
-| [06 UNKNOWN](leader-demo-20261025/06-unknown.png) | 缺失报告不伪造成功 |
-| [07 提交前置](leader-demo-20261025/07-receipt-required.png) | 完整签收是前提 |
-| [08 签收历史](leader-demo-20261025/08-receipt.png) | 部分与完整两条独立记录 |
-| [09 验收通过](leader-demo-20261025/09-acceptance.png) | 原退回、重提、逐项判断 |
-| [10 独立归档](leader-demo-20261025/10-archive.png) | 明确提交/签收/标准/决定 |
-| [11 后续作废](leader-demo-20261025/11-invalidation.png) | 原决定与后续处置并存 |
-| [12 历史追溯](leader-demo-20261025/12-trace.png) | 明确提交及冻结材料 |
-| [13 依据补正](leader-demo-20261025/13-correction.png) | 新旧依据分别保留 |
+| [00 关于边界](leader-demo-20261025-reviewed/00-about-boundary.png) | 与顶部一致的合成只读、未连接与写入关闭说明 |
+| [01 首页](leader-demo-20261025-reviewed/01-home.png) | 导航与当前边界 |
+| [02 Agent 工作台](leader-demo-20261025-reviewed/02-agent.png) | 场景入口、当前只读 |
+| [03 质量报告视口](leader-demo-20261025-reviewed/03-quality-focus.png) / [完整页](leader-demo-20261025-reviewed/03-quality-report.png) | 负能耗失败发现、明确评测与依据 |
+| [04 修复详情](leader-demo-20261025-reviewed/04-agent-repair.png) | 固定依赖与人工办理边界 |
+| [05 修复页](leader-demo-20261025-reviewed/05-repair-readonly.png) | 已有表单、保存关闭 |
+| [06 UNKNOWN](leader-demo-20261025-reviewed/06-unknown.png) | 缺失报告不伪造成功 |
+| [07 提交前置](leader-demo-20261025-reviewed/07-receipt-required.png) | 完整签收是前提 |
+| [08 签收历史](leader-demo-20261025-reviewed/08-receipt.png) | 部分与完整两条独立记录 |
+| [09 验收通过](leader-demo-20261025-reviewed/09-acceptance.png) | 原退回、重提、逐项判断 |
+| [10 独立归档](leader-demo-20261025-reviewed/10-archive.png) | 明确提交/签收/标准/决定 |
+| [11 后续作废](leader-demo-20261025-reviewed/11-invalidation.png) | 原决定与后续处置并存 |
+| [12 历史追溯](leader-demo-20261025-reviewed/12-trace.png) | 明确提交及冻结材料 |
+| [13 依据补正](leader-demo-20261025-reviewed/13-correction.png) | 新旧依据分别保留 |
+| [14 存储失败](leader-demo-20261025-reviewed/14-storage-unavailable.png) | 警告仅在内存中，不能声称已保存 |
 
 ## 后续最小业务决策
 

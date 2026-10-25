@@ -296,7 +296,8 @@ export function createFixtureServer(initialScenario = "ready") {
         gateDecision: state.scenario === "leader-demo-quality" ? "FAIL" : "PASS",
         metrics: state.scenario === "leader-demo-quality" ? { synthetic: true, totalRows: 2, failedRows: 1 } : { formalAssessment: true, productionBindingId: ids.goldBinding, annotationSnapshotId: ids.goldSnapshot },
         dimensionSummary: state.scenario === "leader-demo-quality" ? {
-          VALIDITY: { dimension: "VALIDITY", status: "FAIL", ruleCount: 26, evaluatedCount: 26, failedCount: 1 },
+          VALIDITY: { dimension: "VALIDITY", status: "FAIL", ruleCount: 1, evaluatedCount: 1, failedCount: 1 },
+          TRACEABILITY: { dimension: "TRACEABILITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 },
         } : {
           COMPLETENESS: { dimension: "COMPLETENESS", status: "PASS", ruleCount: 2, evaluatedCount: 2, failedCount: 0 },
           TRACEABILITY: { dimension: "TRACEABILITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 },
@@ -635,7 +636,9 @@ export function createFixtureServer(initialScenario = "ready") {
             ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
             createdAt: "2026-09-29T08:00:00Z",
           };
-          const items = ["agent-quality-pages", "leader-demo-quality"].includes(state.scenario)
+          const items = state.scenario === "leader-demo-quality"
+            ? [goldAssessment, { ...goldAssessment, id: ids.qualityAssessment, gateDecision: "PASS", createdAt: "2026-09-01T08:00:00Z", metrics: { synthetic: true, totalRows: 2, failedRows: 0 }, dimensionSummary: { VALIDITY: { dimension: "VALIDITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 } } }]
+            : state.scenario === "agent-quality-pages"
             ? [generatedAssessment, ...Array.from({length:24},(_,i)=>({...goldAssessment,id:`a1100003-a101-4101-8101-${String(i+1).padStart(12,"0")}`,ruleSetRef:`fixture/history-${i+1}`})), goldAssessment]
             : state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
           return send(200, { datasetVersionId: ids.goldVersion, ...page(items) });
@@ -677,6 +680,9 @@ export function createFixtureServer(initialScenario = "ready") {
             createdAt: "2026-09-29T08:30:00Z",
           });
         }
+        if (url.pathname === `/api/v1/quality-assessments/${ids.qualityAssessment}/report` && state.scenario === "leader-demo-quality") {
+          return send(200, { ...goldAssessment, id: ids.qualityAssessment, gateDecision: "PASS", createdAt: "2026-09-01T08:00:00Z", metrics: { synthetic: true, totalRows: 2, failedRows: 0 }, dimensionSummary: { VALIDITY: { dimension: "VALIDITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 } }, findings: page([]), evidence: [], auditEvents: [] });
+        }
         if (url.pathname === `/api/v1/quality-assessments/${ids.qualityAssessment}/report` && state.qualityCompleted) {
           return send(200, {
             ...goldAssessment,
@@ -689,10 +695,12 @@ export function createFixtureServer(initialScenario = "ready") {
           });
         }
         if (url.pathname === `/api/v1/quality-assessments/${ids.goldAssessment}/report`) {
-          const findings = ["agent-quality-pages", "leader-demo-quality"].includes(state.scenario) ? Array.from({length:26},(_,i)=>({
+          const findings = state.scenario === "leader-demo-quality" ? [
+            { id: ids.goldBinding, resultId: ids.goldAssessment, ruleId: "negative-energy", dimension: "VALIDITY", severity: "ERROR", status: "FAIL", reason: "合成能耗记录为负值，须人工审阅修复范围；本预览未执行修复", createdAt: stamp },
+            { id: "a1100004-a101-4101-8101-000000000002", resultId: ids.goldAssessment, ruleId: "source-reference", dimension: "TRACEABILITY", severity: "INFO", status: "PASS", reason: "合成记录保留来源引用；不代表真实原件核验", createdAt: stamp },
+          ] : state.scenario === "agent-quality-pages" ? Array.from({length:26},(_,i)=>({
             id:`a1100004-a101-4101-8101-${String(i+1).padStart(12,"0")}`,resultId:ids.goldAssessment,
             ruleId:`FIXTURE-${String(i+1).padStart(2,"0")}`,dimension:"COMPLETENESS",severity:"INFO",status:"PASS",reason:`分页验收记录 ${i+1}`,createdAt:stamp,
-            ...(state.scenario === "leader-demo-quality" ? { dimension: "VALIDITY", ...(i === 0 ? { id: ids.goldBinding, ruleId: "negative-energy", severity: "ERROR", status: "FAIL", reason: "合成能耗记录为负值，须人工审阅修复范围；本预览未执行修复" } : {}) } : {}),
           })) : [];
           return send(200, {
             ...goldAssessment,

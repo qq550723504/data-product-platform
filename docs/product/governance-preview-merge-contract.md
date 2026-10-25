@@ -126,3 +126,7 @@ B01 补齐所有该组件直接渲染字段与所选上下文形状校验；实�
 ## 交付历史与证据归档增量（2026-10-24）
 
 直接用户授权继续只读接入交付记录与验收归档、补页面并完成浏览器验收。当前增量 contract 由 `governance-delivery-history-readonly-20261024.md` 拥有：仅现有 DeliveryOperation/gate/transition 和 EvidenceSnapshot 的 workspace-scoped 查询，不新增业务验收事实，不将 ISSUED/快照等同签收；不接模型、provider 或真实执行。原库保留；独立验收库准备一笔明确标记 synthetic BLOCKED 历史，读窗口无写入。保持 Draft，不含 merge/deploy。
+
+## 领导演示交付一致性复审（2026-10-25）
+
+用户授权隔离新版预览、独立 Edge 重演及本轮一致性修复。有限范围为能力清单、截图、讲解/重演与实际页面一致；[增量审查记录](leader-demo-review-20261025.md)拥有本轮五项发现及验证，[交付指南](leader-demo-closeout-20261025.md)索引当前21步/16张截图。旧截图包保留，新证据独立成包。复用原 Agent 只读组件与本地演示状态，不扩展业务实体、权限或生命周期。可信依据、签收写入与来源接纳的权威契约不变；原库及既有 Agent API 保留，真实来源未配置、业务写关闭、模型/真实执行未运行。精确新 HEAD CI 和独立全范围审查仍分别判断，继续 Draft、不合并、不部署。
