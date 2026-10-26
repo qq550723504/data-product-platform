@@ -17,6 +17,11 @@
       "sha256": "ec3ba941a398081aacb62dc2f1fefaf774d774235bd3c81fdf7f6eb25773802c"
     },
     {
+      "path": "ci-management-before-navigation-fix.json",
+      "bytes": 6344,
+      "sha256": "a1b5c4898065db7bcbcdbcecfbbf903f677816d153af50bc12e1f70366120d02"
+    },
+    {
       "path": "ci-runtime-before-react-fix.json",
       "bytes": 2933,
       "sha256": "10fd214857347486c7b3f9e4c06b19534d47e523c4b2af0862c867740e98d1b1"
@@ -52,6 +57,11 @@
       "sha256": "91f7fd21e61560958357b7cd6dfec8cb33c0daffea89aa1299395a10acfab59a"
     },
     {
+      "path": "management-browser-navigation-chromium.json",
+      "bytes": 7260,
+      "sha256": "cbc020c2ba2236a3beae3e01d08052391211217ae2bafa31df46e4fe2b92edd8"
+    },
+    {
       "path": "management-browser-results.json",
       "bytes": 7258,
       "sha256": "a687fb36d40393c3042b8a8f299a02a79ee1400f124847897a1457c6ae4fdf85"
@@ -65,6 +75,11 @@
       "path": "members-return.png",
       "bytes": 84210,
       "sha256": "2f1cf6d2ee72e89510ce9797f0fb97e621cd961ea66b279e00505fba0c872769"
+    },
+    {
+      "path": "navigation-fix.json",
+      "bytes": 1115,
+      "sha256": "35761fc1dc53b473937a3c9f674d95dcb91ceff9277a49e840171f4fe4b6cbd8"
     },
     {
       "path": "react-history-fix.json",

@@ -21,7 +21,7 @@ mkdirSync(new URL('screenshots',run),{recursive:true});
 async function person(label,ws=a){
  const context=await browser.newContext({ignoreHTTPSErrors:true,serviceWorkers:'block',viewport:{width:1600,height:950}});contexts.push(context);
  await context.route('**/*',route=>{const r=route.request(),u=new URL(r.url());if(![p.origin,p.issuer].includes(u.origin)){external.push(u.origin);return route.abort()}if(u.origin===p.origin&&!['GET','HEAD'].includes(r.method())&&!u.pathname.startsWith('/auth/')){writes.push(u.pathname);return route.abort()}return route.continue()});
- const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await login(page,label,ws);return {page,context};
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('crash',()=>errors.push('Browser page crashed during '+active));await login(page,label,ws);return {page,context};
 }
 async function login(page,label,ws=a){await page.goto(p.origin+'/auth/login?workspaceId='+ws);await page.getByRole('button',{name:'使用统一身份登录',exact:true}).click();await page.getByRole('button',{name:label,exact:true}).click();await page.waitForURL(p.origin+'/**');}
 async function control(data){const response=await browser.newContext({ignoreHTTPSErrors:true});try{const r=await response.request.post(p.issuer+'/_control',{headers:{'x-fixture-control':p.control},data});assert.equal(r.status(),200);return await r.json()}finally{await response.close()}}
@@ -240,7 +240,20 @@ try{
   assert.ok(!body.includes('organization-a')&&!body.includes('governance'));await page.screenshot({path:fileURLToPath(new URL('screenshots/configuration.png',run)),fullPage:true});
  });
  await pass('configuration six closed query entrypoints survive reload and return to the same origin',async()=>{
-  for(const label of ['工作空间概览','目录组织资料','空间成员','用户目录','角色权限','审计记录']){await page.goto(p.origin+'/settings/configuration');await configuration().getByRole('link',{name:'查看'+label,exact:true}).click();assert.equal(new URL(page.url()).searchParams.get('from'),'configuration');await page.reload();await page.getByRole('link',{name:'返回基础配置',exact:true}).click();await expect(configuration()).toBeVisible()}
+  for(const label of ['工作空间概览','目录组织资料','空间成员','用户目录','角色权限','审计记录']){
+   active='configuration entry '+label;
+   await page.goto(p.origin+'/settings/configuration');
+   const link=configuration().getByRole('link',{name:'查看'+label,exact:true}),target=new URL(await link.getAttribute('href'),p.origin).href;
+   await link.click();
+   // A committed URL is not proof that Chromium has attached the destination
+   // document. Verify the exact loaded route and its business return control
+   // before asking CDP to reload that document; never retry a failed reload.
+   await page.waitForURL(target,{waitUntil:'load'});
+   await expect(page.getByRole('link',{name:'返回基础配置',exact:true})).toBeVisible();
+   assert.equal(new URL(page.url()).searchParams.get('from'),'configuration');
+   await page.reload();
+   await page.getByRole('link',{name:'返回基础配置',exact:true}).click();await expect(configuration()).toBeVisible();
+  }
  });
  await pass('configuration workspace member detail restores filters page focused row and origin',async()=>{
   await configuration().getByRole('link',{name:'查看工作空间概览',exact:true}).click();await overview().getByRole('link',{name:/^空间成员/}).click();await page.getByRole('textbox',{name:'搜索成员',exact:true}).fill('空间甲成员');await page.getByRole('combobox',{name:'状态',exact:true}).selectOption('active');await page.getByRole('button',{name:'筛选',exact:true}).click();await page.getByRole('link',{name:'下一页',exact:true}).click();await expect(rows(page)).toHaveCount(24);const list=page.url(),id=await rows(page).last().getAttribute('id');await rows(page).last().getByRole('link',{name:'查看成员',exact:true}).click();configurationMemberURL=page.url();await page.reload();await page.getByRole('link',{name:'返回成员列表',exact:true}).click();assert.equal(new URL(page.url()).search,new URL(list).search);await expect(page.locator('tr:target')).toHaveAttribute('id',id);await page.getByRole('link',{name:'清除条件',exact:true}).click();assert.equal(new URL(page.url()).searchParams.get('from'),'configuration');await page.getByRole('link',{name:'返回基础配置',exact:true}).click();await expect(configuration()).toBeVisible();

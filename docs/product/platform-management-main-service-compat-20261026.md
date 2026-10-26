@@ -65,3 +65,12 @@
 首次CI错误的精确触发时序未在本机重现，不能把所有权单测当完整重现。补修后新独立构建实际Next+OIDC/PG+HTTP的[Edge19项](platform-management-main-service-compat-20261026/runtime-browser-react-edge.json)与[Chromium19项](platform-management-main-service-compat-20261026/runtime-browser-react-chromium.json)均PASS且pageErrors为空，新增受控pagehide清除和persisted pageshow触发真实新查询；[静态Edge16项](platform-management-main-service-compat-20261026/static-browser-react-results.json)和Web单测12项通过。没有屏蔽hydration警告、过滤pageerror、增加自动重试或放宽零错误断言。安全错误诊断只增加当前用例及pathname，不记录URL参数、引用、Cookie或令牌。
 
 [补修摘要与验证范围](platform-management-main-service-compat-20261026/react-history-fix.json) · [补修后保留比较](platform-management-main-service-compat-20261026/retained-react-comparison.json)。前述18项及截图是前一轮实际证据，继续保留；当前日志路线为19项。补修仅替换本轮经所有权核实的4370候选Web，旧构建/进程账本和其他预览保留。最终CI仍须匹配补修后的最新HEAD，不能继承8f303138结果。
+
+
+## 7. 配置导航验收的目的页就绪条件
+
+补修提交f1180600在CI已通过原日志19项、同宿主设置51项及首片组合18项；新组合Go/PG和负向HTTP10项也通过。新增设置路线完成42项后，在配置六入口的点击后立即reload处出现Chromium协议错误“Not attached to an active page”；剩余设置和共享日志步骤NOT_RUN。[原报告](platform-management-main-service-compat-20261026/ci-management-before-navigation-fix.json)保留，不能用前面步骤成功代替整体验收。
+
+该用例只核对提交后的URL就要求CDP reload，缺少目标文档加载/可操作的前置条件。现明确等待精确目标URL的load和“返回基础配置”业务控件可见，再执行一次reload；仍核验from、刷新、回跳和原列表。不增加sleep、重试或错误过滤，不改产品代码；增加入口名和页面crash诊断。原CDP异常精确时序未在本机重现，补齐的是已识别的用例就绪缺口。
+
+修正后同一独立新版Next/HTTP/OIDC/PG环境的[Chromium51项](platform-management-main-service-compat-20261026/management-browser-navigation-chromium.json)全部通过；[修复范围摘要](platform-management-main-service-compat-20261026/navigation-fix.json)。最终仍须核对新HEAD全部CI，原f1180600失败保留，不自动重跑旧失败或把其NOT_RUN视为PASS。
