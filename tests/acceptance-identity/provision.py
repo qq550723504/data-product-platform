@@ -1,8 +1,10 @@
 """One-time isolated Keycloak/TLS PostgreSQL fixture. Never touches retained DBs."""
-import json, os, secrets, subprocess, time, urllib.parse
+import json, os, secrets, subprocess, sys, time, urllib.parse
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT/'tests'))
+from fixture_preservation import container_metadata,capture_retained,verify_retained
 RUN=ROOT/'.data/acceptance-identity-1a'
 PG='dpp-acceptance-1a-postgres-20261024'
 IDP='dpp-acceptance-1a-keycloak-20261024'
@@ -16,16 +18,13 @@ def call(args,**kwargs):
     if p.returncode: raise RuntimeError('isolated preparation step failed; command output withheld')
     return p.stdout
 def metadata(name):
-    p=subprocess.run(['docker','inspect',name],capture_output=True,encoding='utf-8')
-    if p.returncode:return None
-    d=json.loads(p.stdout)[0]
-    return {'id':d['Id'],'image':d['Image'],'status':d['State']['Status'],'mounts':d['Mounts'],'startedAt':d['State']['StartedAt']}
+    return container_metadata(name,include_image=True)
 def main():
     if os.environ.get('ACCEPTANCE_IDENTITY_PREPARE_ACK')!='NEW_ISOLATED_1A_ONLY':raise RuntimeError('explicit isolated preparation required')
     if (RUN/'profile.json').exists() or metadata(PG) or metadata(IDP):raise RuntimeError('existing 1A resources found; inspect and reuse, never overwrite')
     os.umask(0o077)
     RUN.mkdir(parents=True,exist_ok=True,mode=0o700)
-    before={'original':metadata('dpp-agent-q2-test-postgres-20261023')}
+    before=capture_retained(('original',),RUN/'retained-comparison.json',observer=metadata)
     (RUN/'retained-before.json').write_text(json.dumps(before),encoding='utf-8')
     pw={name:secrets.token_urlsafe(24) for name in PEOPLE}
     profile={'database':DATABASE,'postgres':PG,'keycloak':IDP,'issuer':ISSUER,'origin':ORIGIN,'pgPassword':secrets.token_urlsafe(32),'apiPassword':secrets.token_urlsafe(32),'rpPassword':secrets.token_urlsafe(32),'rpSecret':secrets.token_urlsafe(32),'resourceSecret':secrets.token_urlsafe(32),'adminPassword':secrets.token_urlsafe(32),'encryptionKey':secrets.token_urlsafe(32),'people':{name:{'username':name,'password':pw[name],'subject':f'72000000-0000-4000-8000-{i+1:012d}','actor':f'73000000-0000-4000-8000-{i+1:012d}'} for i,name in enumerate(PEOPLE)}}
@@ -48,6 +47,6 @@ def main():
     user=['--user',str(os.getuid())+':0'] if hasattr(os,'getuid') and os.getuid()!=0 else []
     call(['docker','run','-d','--name',IDP,'--label','codex.scope=acceptance-identity-1a',*user,'--env-file',str(RUN/'idp.env'),'-p','127.0.0.1:19120:8443','--mount',f'type=bind,source={RUN}/server.crt,target=/tls/server.crt,readonly','--mount',f'type=bind,source={RUN}/server.key,target=/tls/server.key,readonly','--mount',f'type=bind,source={RUN}/realm.json,target=/opt/keycloak/data/import/dpp-acceptance-1a-realm.json,readonly',KEYCLOAK,'start-dev','--http-enabled=false','--hostname=https://localhost:19120','--https-certificate-file=/tls/server.crt','--https-certificate-key-file=/tls/server.key','--import-realm'])
     (RUN/'resources.json').write_text(json.dumps({'postgres':metadata(PG),'keycloak':metadata(IDP)},indent=2),encoding='utf-8')
-    assert metadata('dpp-agent-q2-test-postgres-20261023')==before['original'],'retained original changed'
+    verify_retained(before,RUN/'retained-comparison.json',observer=metadata)
     print('Isolated 1A PostgreSQL/Keycloak created; credentials remain in the ignored private profile. Retained original unchanged.')
 if __name__=='__main__':main()

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "fixture-preservation.v1",
+  "verdict": "PASS",
+  "resources": [
+    {
+      "resource": "management",
+      "changedFields": [],
+      "before": {
+        "present": true,
+        "sha256": "ff376b16ca79020a6cbde17f633f764116c18da64f31da9c58384968713be80b",
+        "mountCount": 2
+      },
+      "after": {
+        "present": true,
+        "sha256": "ff376b16ca79020a6cbde17f633f764116c18da64f31da9c58384968713be80b",
+        "mountCount": 2
+      },
+      "mountOrderOnly": false
+    }
+  ],
+  "probe": {
+    "samples": 65,
+    "rawVariants": 1,
+    "canonicalVariants": 1,
+    "orderOnlySamples": 0
+  }
+}

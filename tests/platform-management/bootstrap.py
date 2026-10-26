@@ -1,7 +1,9 @@
 """NEW independent synthetic management fixture. Never reuses original DB/session/IdP."""
-import json,os,secrets,subprocess,socket,ssl,time,urllib.parse,urllib.request
+import json,os,secrets,subprocess,socket,ssl,sys,time,urllib.parse,urllib.request
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT/'tests'))
+from fixture_preservation import container_metadata,capture_retained,verify_retained
 RUNTIME_LOGS=os.environ.get('MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK')=='ISOLATED_RUNTIME_LOG_READONLY'
 if os.environ.get('MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK') and not RUNTIME_LOGS:raise RuntimeError('invalid runtime fixture acknowledgement')
 RUN=ROOT/('.data/runtime-logs-api-20261026' if RUNTIME_LOGS else '.data/management-readonly-20261025')
@@ -15,9 +17,7 @@ def call(args,**kwargs):
   raise RuntimeError('isolated preparation failed in '+Path(args[0]).name+'; private diagnostics retained and withheld')
  return p.stdout
 def metadata(name):
- p=subprocess.run(['docker','inspect',name],capture_output=True,encoding='utf-8')
- if p.returncode:return None
- d=json.loads(p.stdout)[0];return {'id':d['Id'],'status':d['State']['Status'],'mounts':d['Mounts'],'startedAt':d['State']['StartedAt']}
+ return container_metadata(name)
 def env_clean():return {k:v for k,v in os.environ.items() if not k.startswith(('POC_','BROWSER_','AGENT_','PLATFORM_','HUMAN_DECISION_','DELIVERY_','SOURCE_ADMISSION_','GOVERNANCE_','OPENAI_','ANTHROPIC_','DASHSCOPE_','PG')) and k not in ['DATABASE_URL','REDIS_URL']}
 def spawn(name,args,env):
  with open(RUN/(name+'.log'),'w',encoding='utf-8') as log:p=subprocess.Popen(args,cwd=ROOT,env={**env_clean(),**env},stdout=log,stderr=log,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
@@ -29,7 +29,8 @@ def main():
   with socket.socket() as s:
    if s.connect_ex(('127.0.0.1',port))==0:raise RuntimeError('fixture port occupied; no process changed')
  os.umask(0o077);RUN.mkdir(parents=True,mode=0o700)
- (RUN/'retained-before.json').write_text(json.dumps({'original':metadata('dpp-agent-q2-test-postgres-20261023'),'management':metadata('dpp-management-readonly-20261025') if RUNTIME_LOGS else None}),encoding='utf-8')
+ retained=capture_retained(('original','management') if RUNTIME_LOGS else ('original',),RUN/'retained-comparison.json',observer=metadata)
+ (RUN/'retained-before.json').write_text(json.dumps(retained),encoding='utf-8')
  cert=RUN/'server.crt';key=RUN/'server.key';call(['openssl','req','-x509','-newkey','rsa:2048','-nodes','-days','3','-keyout',str(key),'-out',str(cert),'-subj','/CN=localhost','-addext','subjectAltName=DNS:localhost,IP:127.0.0.1'])
  p={k:secrets.token_urlsafe(32) for k in ['pgPassword','apiPassword','rpPassword','rpSecret','resourceSecret','readCredential','control','encryptionKey']};p.update({'issuer':f'https://localhost:{IDP_PORT}','origin':f'https://localhost:{WEB_PORT}','runtimeLogs':RUNTIME_LOGS,'cert':str(cert),'key':str(key),'database':DATABASE,'postgres':PG})
  def dsn(role,password):return 'postgres://'+role+':'+urllib.parse.quote(password,safe='')+f'@127.0.0.1:{PG_PORT}/'+p['database']
@@ -64,7 +65,6 @@ def main():
    except Exception:time.sleep(.25)
   else:raise RuntimeError('owned fixture endpoint unavailable; ledgers retained')
  retained=json.loads((RUN/'retained-before.json').read_text())
- assert metadata('dpp-agent-q2-test-postgres-20261023')==retained['original']
- if RUNTIME_LOGS:assert metadata('dpp-management-readonly-20261025')==retained['management']
+ verify_retained(retained,RUN/'retained-comparison.json',observer=metadata)
  print('Independent management PG, synthetic identity and query API prepared. Real sources UNCONFIGURED; business writes/models/dispatch absent.')
 if __name__=='__main__':main()

@@ -1,0 +1,15 @@
+{
+  "scope": "fixture-only preservation regression and read-only Docker metadata observations",
+  "files": [
+    {
+      "file": "local-readonly-probe.json",
+      "bytes": 629,
+      "sha256": "bb31b8e7bb5aa83451b9d92cf39273e14042ff96ac38390575c49940450f36b6"
+    },
+    {
+      "file": "results.json",
+      "bytes": 1108,
+      "sha256": "90f6a1fcf616100f8d042eb6865245bc542392a71d9ea0725e77c959d90f1816"
+    }
+  ]
+}

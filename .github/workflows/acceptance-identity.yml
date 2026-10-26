@@ -16,6 +16,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Container preservation regression including optimized Python
+        run: |
+          python3 -B -m unittest discover -s tests -p test_fixture_preservation.py -v
+          python3 -O -B -m unittest discover -s tests -p test_fixture_preservation.py -v
       - name: Install locked web and pinned browser dependencies
         run: |
           npm ci --ignore-scripts --prefix apps/web
@@ -43,6 +47,7 @@ jobs:
             .data/acceptance-identity-1a/browser-results.json
             .data/acceptance-identity-1a/privilege-results.json
             .data/acceptance-identity-1a/screenshots/
+            .data/acceptance-identity-1a/retained-comparison.json
       - name: Prepare independent management query fixture
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
@@ -64,6 +69,11 @@ jobs:
           path: |
             .data/management-readonly-20261025/browser-results.json
             .data/management-readonly-20261025/screenshots/
+            .data/management-readonly-20261025/retained-comparison.json
+      - name: Readonly repeated preservation observations of the owned management fixture
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+        run: python3 tests/platform-management/probe-preservation.py
       - name: Prepare independent runtime log API and permission fixture
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
@@ -95,3 +105,5 @@ jobs:
             .data/runtime-logs-api-20261026/screenshots/
             .data/management-readonly-runtime-review-20261026/browser-results.json
             .data/management-readonly-runtime-review-20261026/screenshots/
+            .data/runtime-logs-api-20261026/retained-comparison.json
+            .data/platform-management-preservation-20261026/retained-order-probe.json
