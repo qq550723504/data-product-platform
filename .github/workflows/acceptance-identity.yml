@@ -25,6 +25,17 @@ jobs:
           npm ci --ignore-scripts --prefix apps/web
           npm install --ignore-scripts --prefix tests/browser
           cd tests/browser && npx playwright install --with-deps chromium
+      - name: Verify full document readiness before readonly page refresh
+        run: node tests/browser/readonly-navigation.test.mjs
+      - name: Preserve non-secret readonly navigation results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: readonly-browser-navigation-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: .data/readonly-browser-navigation-20261026/results.json
       - name: Prepare NEW independent TLS IdP and readonly 1A fixture
         env:
           ACCEPTANCE_IDENTITY_PREPARE_ACK: NEW_ISOLATED_1A_ONLY

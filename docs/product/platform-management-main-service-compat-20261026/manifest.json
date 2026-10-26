@@ -22,6 +22,11 @@
       "sha256": "a1b5c4898065db7bcbcdbcecfbbf903f677816d153af50bc12e1f70366120d02"
     },
     {
+      "path": "ci-runtime-before-document-fix.json",
+      "bytes": 1293,
+      "sha256": "e086512d3172999f7479b378a42058be631951527d981eb160b555039f1f9775"
+    },
+    {
       "path": "ci-runtime-before-react-fix.json",
       "bytes": 2933,
       "sha256": "10fd214857347486c7b3f9e4c06b19534d47e523c4b2af0862c867740e98d1b1"
@@ -30,6 +35,16 @@
       "path": "configuration.png",
       "bytes": 78633,
       "sha256": "9f965a0f751c2490a9f7af22083a479ce64f04f5db496981af36812af9b38200"
+    },
+    {
+      "path": "document-readiness-chromium.json",
+      "bytes": 433,
+      "sha256": "f9f07ba8ab41d9be1c205ddfe5e0bf3c82179b9f8dd8a89601f0bda4841cdb4d"
+    },
+    {
+      "path": "document-readiness-edge.json",
+      "bytes": 431,
+      "sha256": "eac4bf1dc54dbae8704891e0c01d621179a5a8a57caae8fc542c46025052ddc1"
     },
     {
       "path": "failure-history.json",
@@ -55,6 +70,11 @@
       "path": "log-list.png",
       "bytes": 175106,
       "sha256": "91f7fd21e61560958357b7cd6dfec8cb33c0daffea89aa1299395a10acfab59a"
+    },
+    {
+      "path": "management-browser-document-chromium.json",
+      "bytes": 7260,
+      "sha256": "559cf1347267dc655f1909175d9c3b5348c36f633aa609e307609e112a0ec262"
     },
     {
       "path": "management-browser-navigation-chromium.json",
@@ -95,6 +115,11 @@
       "path": "retained-react-comparison.json",
       "bytes": 1790,
       "sha256": "808eb862d9c0c56b462690b2a1dbad8e0ce7502307213080f0234d744951830d"
+    },
+    {
+      "path": "runtime-browser-document-chromium.json",
+      "bytes": 2795,
+      "sha256": "641b544e0ba42760b25bb5ebb025ad6b9884b3d067a56c10d94b3699d6ff37c4"
     },
     {
       "path": "runtime-browser-react-chromium.json",

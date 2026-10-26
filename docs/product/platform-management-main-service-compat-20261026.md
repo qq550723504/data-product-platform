@@ -74,3 +74,12 @@
 该用例只核对提交后的URL就要求CDP reload，缺少目标文档加载/可操作的前置条件。现明确等待精确目标URL的load和“返回基础配置”业务控件可见，再执行一次reload；仍核验from、刷新、回跳和原列表。不增加sleep、重试或错误过滤，不改产品代码；增加入口名和页面crash诊断。原CDP异常精确时序未在本机重现，补齐的是已识别的用例就绪缺口。
 
 修正后同一独立新版Next/HTTP/OIDC/PG环境的[Chromium51项](platform-management-main-service-compat-20261026/management-browser-navigation-chromium.json)全部通过；[修复范围摘要](platform-management-main-service-compat-20261026/navigation-fix.json)。最终仍须核对新HEAD全部CI，原f1180600失败保留，不自动重跑旧失败或把其NOT_RUN视为PASS。
+
+
+## 8. 刷新验收的共享文档就绪边界
+
+提交79e0b140的原日志路线在“筛选提交后刷新”再次出现同类CDP协议错误；前6项通过，pageErrors为空，说明这次不是React异常。[原报告](platform-management-main-service-compat-20261026/ci-runtime-before-document-fix.json)保留。前一节仅补一个配置入口的等待条件不足以覆盖同类操作，不能声称协议问题已完整解决。
+
+已新增仅供验收的共享reloadReadOnly，在两条脚本全部刷新点等待目标load、确认当前执行上下文document.readyState=complete，再发一次Page.reload并等待load。没有catch/retry、sleep、浏览器开关、权限变化或错误过滤。新增受控流式HTTP文档回归：commit已发生但响应未结束时，禁止提前调用reload；文档完成后仅刷新一次并保留原查询/片段；就绪失败不得刷新或重试。它证明刷新前置条件，原CI瞬时协议错误的精确时序仍未在本机重现。
+
+[Edge文档就绪2项](platform-management-main-service-compat-20261026/document-readiness-edge.json)及[Chromium2项](platform-management-main-service-compat-20261026/document-readiness-chromium.json)通过；同一隔离新版环境串行[Chromium日志19项](platform-management-main-service-compat-20261026/runtime-browser-document-chromium.json)和[设置51项](platform-management-main-service-compat-20261026/management-browser-document-chromium.json)均通过。CI在身份环境准备前加入同一文档就绪回归并只上传安全结果。产品API/页面、全部原断言和先前失败继续保留，最终仍按新HEAD全量CI核对。
