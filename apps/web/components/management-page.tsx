@@ -7,18 +7,22 @@ import {ManagementMembers,ManagementRoles} from './management-members';
 import {ManagementUsers} from './management-users';
 import {ManagementWorkspace} from './management-workspace';
 import {ManagementOrganization} from './management-organization';
+import {RuntimeLogs} from './runtime-logs';
+import {loadRuntimeLogs} from '../lib/runtime-logs';
 import {ManagementConfiguration} from './management-configuration';
 const names=Object.fromEntries(managementMenus),supported=['members','roles','audit','users','workspaces','organizations','configuration'];
 const errors:Record<string,string>={SOURCE_UNCONFIGURED:'真实来源未配置',AUTHENTICATION_REQUIRED:'登录状态不可用',MANAGEMENT_ACCESS_DENIED:'没有当前空间的管理查询权限',IDENTITY_UNAVAILABLE:'当前身份无法核验',DIRECTORY_UNAVAILABLE:'成员目录暂时无法读取',INVALID_SOURCE_RESPONSE:'来源记录无法核验',AUDIT_UNAVAILABLE:'审计记录暂时无法读取',MEMBER_UNAVAILABLE:'指定成员不可见',INVALID_QUERY:'查询条件无效'};
 export async function ManagementPage({section='',query={}}:{section?:string;query?:Record<string,string|string[]|undefined>}){
  const title=names[section]??'系统设置',enabled=iamEnabled()&&process.env.BROWSER_IAM_PROFILE==='platform-management';
  const heading=<><div className="breadcrumb">系统设置 / {title}</div><div className="page-heading"><div><h1>{title}</h1><p>{section==='workspaces'?'核对当前空间的访问范围与接入情况。':section==='organizations'?'核对当前空间绑定的目录组织资料。':section==='configuration'?'核对当前空间的管理查询与接入配置。':'查看当前工作空间的人员、权限与操作记录。'}</p></div><span className="tag green">仅查询</span></div></>;
+ if(!enabled&&section==='logs')return <RuntimeLogs view={await loadRuntimeLogs(query,null)}/>;
  if(!enabled)return <>{heading}<section className="management-state" role="status"><h2>真实来源未配置</h2><p>尚未连接人员目录和管理查询服务，当前没有可核验的管理记录。</p><p>现有 Agent 和资产查询保持原有接入。</p></section><Links/></>;
  let client;
  try{client=await currentManagementClient()}catch{return <>{heading}<section className="management-state" role="status"><h2>登录状态不可用</h2><p>当前会话、空间资格或管理查询权限无法确认。</p><a href="/auth/login">重新登录</a></section></>}
  const p=client.principal,label=workspaces().find(w=>w.id===p.workspace_id)?.label??'当前空间';
  const context=<div className="workspace-scope-bar"><span>当前工作空间</span><strong>{label}</strong><a href="/identity">切换与核验身份 →</a></div>;
  if(!section)return <>{context}{heading}<section className="management-summary"><div><span>身份</span><strong>已核验</strong></div><div><span>管理范围</span><strong>{label}</strong></div><div><span>办理方式</span><strong>查询</strong></div></section><Links/><details className="management-evidence"><summary>查看身份与查询依据</summary><p>人员引用：{p.principal_id}</p><p>空间引用：{p.workspace_id}</p><p>权限版本：{p.revision}</p><p>管理查询不会创建账号、修改授权或办理业务签收。</p></details></>;
+ if(section==='logs')return <>{context}<RuntimeLogs view={await loadRuntimeLogs(query,null)}/></>;
  if(!supported.includes(section))return <>{context}{heading}<section className="management-state" role="status"><h2>尚未接入</h2><p>当前未配置{title}的可信查询来源。</p><a href="/settings">返回设置总览</a></section></>;
  const kind=section as ManagementSection;let s;
  try{s=managementSelection(kind,query)}catch{return <>{context}{heading}<section role="alert" className="management-state"><h2>查询条件无效</h2><a href={'/settings/'+section}>清除条件</a></section></>}

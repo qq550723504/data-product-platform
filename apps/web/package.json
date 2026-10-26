@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "start": "next start",
-    "build": "npm run test:iam && npm run test:demo && npm run test:history && npm run test:agent && npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && npm run test:schema && next build",
+    "build": "npm run test:iam && npm run test:runtime-logs && npm run test:demo && npm run test:history && npm run test:agent && npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && npm run test:schema && next build",
     "test:agent": "tsc lib/agent-quality.ts lib/agent-command-receipt.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .agent-tests && node --test tests/agent-quality.test.mjs tests/agent-command-receipt.test.mjs",
     "test:schema": "tsc lib/schema-observation.ts lib/schema-exceptions.ts lib/schema-requests.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .schema-tests && node --test tests/schema-observation.test.mjs tests/schema-exceptions.test.mjs tests/schema-requests.test.mjs tests/schema-attempts.test.mjs",
     "lint": "eslint . --max-warnings=0",
@@ -20,7 +20,8 @@
     "test:compliance": "tsc lib/compliance-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .compliance-tests && node --test tests/compliance-command.test.mjs",
     "test:demo": "node --test tests/governance-demo/*.test.mjs",
     "test:history": "tsc lib/acceptance-context.ts lib/delivery-history.ts lib/core-history.ts lib/quality-cost.ts lib/release-trace.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .history-tests && node --test tests/core-history.test.mjs tests/delivery-history.test.mjs tests/acceptance-context.test.mjs",
-    "test:iam": "tsc lib/iam-core.ts lib/iam-store.ts lib/iam-workspace.ts lib/acceptance-identity.ts lib/acceptance-basis.ts lib/platform-management.ts --target ES2022 --module commonjs --lib ES2022,DOM,DOM.Iterable --strict --esModuleInterop --skipLibCheck --outDir .iam-tests && node tests/run-iam-tests.mjs"
+    "test:iam": "tsc lib/iam-core.ts lib/iam-store.ts lib/iam-workspace.ts lib/acceptance-identity.ts lib/acceptance-basis.ts lib/platform-management.ts --target ES2022 --module commonjs --lib ES2022,DOM,DOM.Iterable --strict --esModuleInterop --skipLibCheck --outDir .iam-tests && node tests/run-iam-tests.mjs",
+    "test:runtime-logs": "tsc lib/runtime-logs.ts components/runtime-logs.tsx components/management-shell-view.tsx --target ES2017 --module commonjs --lib ES2022,DOM,DOM.Iterable --strict --esModuleInterop --skipLibCheck --jsx react-jsx --outDir .runtime-log-tests && node --test tests/runtime-logs.test.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",

@@ -42,6 +42,10 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Browser and Server Action contracts against local fixtures
         run: npm --prefix tests/browser test
+      - name: Runtime log screen and isolated synthetic readonly contracts
+        env:
+          RUNTIME_LOG_BROWSER_CHANNEL: chromium
+        run: node tests/runtime-logs/run.mjs
       - name: Preserve browser report and failure traces
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -52,3 +56,7 @@ jobs:
             tests/browser/playwright-report/
             tests/browser/test-results/
             tests/browser/package-lock.json
+            .data/runtime-logs-20261026/browser-results.json
+            .data/runtime-logs-20261026/screenshots/
+            .data/runtime-logs-20261026/traces/
+          include-hidden-files: true

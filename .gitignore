@@ -58,3 +58,5 @@ tmp/
 *.key
 *.p12
 *.pfx
+
+.runtime-log-tests/

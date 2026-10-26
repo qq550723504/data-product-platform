@@ -1,0 +1,25 @@
+{
+  "scope": "shared screen and synthetic contracts only; real sources UNCONFIGURED",
+  "files": [
+    {
+      "file": "detail.png",
+      "bytes": 50506,
+      "sha256": "658ea0b92779ec99ac48341cb5e487aaec1431dcf774f720d8910ba1e6c0e560"
+    },
+    {
+      "file": "list.png",
+      "bytes": 173969,
+      "sha256": "5eec80cba62280a3d171ac243df6a1aaf1094335a34b22c3cd7f8d57b823184d"
+    },
+    {
+      "file": "mobile.png",
+      "bytes": 29754,
+      "sha256": "f4d4c3187d69865690f3d6011088fd11a9972c5de475060c8a613eb0e48fc2a5"
+    },
+    {
+      "file": "results.json",
+      "bytes": 9787,
+      "sha256": "d2026ded723a7e58e3c301e108c380cdff87705f98a5137509c55b65d6d7c719"
+    }
+  ]
+}

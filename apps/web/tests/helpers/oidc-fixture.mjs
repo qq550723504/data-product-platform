@@ -34,7 +34,7 @@ export class MemoryStore {
     for(const [key,row] of this.values) if(row.scope===scope) this.values.delete(key);
   }
 }
-export async function fixture(t, store = new MemoryStore(), profile = 'business-acceptance') {
+export async function fixture(t, store = new MemoryStore(), profile = 'business-acceptance', workspaceId = '33333333-3333-4333-8333-333333333333') {
   const { publicKey, privateKey } = await generateKeyPair("RS256");
   const jwk = await exportJWK(publicKey);
   jwk.kid = "fixture";
@@ -147,7 +147,7 @@ export async function fixture(t, store = new MemoryStore(), profile = 'business-
     },
   );
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-  t.after(() => new Promise((resolve) => server.close(resolve)));
+  t.after(() => {server.closeAllConnections();return new Promise((resolve) => server.close(resolve))});
   const base = `https://127.0.0.1:${server.address().port}`;
   cfg = {
     profile,
@@ -160,7 +160,7 @@ export async function fixture(t, store = new MemoryStore(), profile = 'business-
     jwksURI: `${base}/jwks`,
     logoutEndpoint: `${base}/logout`,
     principalEndpoint: `${base}/internal/identity/${profile}-principal`,
-    workspaceId: "33333333-3333-4333-8333-333333333333",
+    workspaceId,
     scope: `openid ${profile}`,
     encryptionKey: Buffer.alloc(32, 7),
   };
