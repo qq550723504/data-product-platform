@@ -54,7 +54,8 @@ test('history guard delegates clearing to the renderer and persisted restore req
   // The guard must not query or delete renderer-owned nodes.
   globalThis.document={getElementById:id=>{assert.equal(id,'log-current');return {focus:()=>focused++}},querySelectorAll:()=>{throw Error('renderer ownership bypass')}};
   const cleanup=runtimeLogBrowserGuard(()=>cleared++);assert.equal(focused,1);
-  listeners.get('pagehide')();assert.equal(cleared,1);
+  listeners.get('pagehide')({persisted:false});assert.equal(cleared,0);
+  listeners.get('pagehide')({persisted:true});assert.equal(cleared,1);
   listeners.get('pageshow')({persisted:true});assert.equal(reloaded,1);assert.equal(focused,1);
   listeners.get('pageshow')({persisted:false});assert.equal(focused,2);
   cleanup();assert.equal(listeners.size,0);

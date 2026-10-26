@@ -67,3 +67,17 @@ CI加入同一实际入口准备、Go/PG、子进程、Web、浏览器及保留�
 实际场景、组织、工作空间、IdP和目录实例/版本、只读权限、映射和确认责任仍按[来源清单](platform-management-source-admission-20261026.md)待定，9类来源与12项材料无真实通过项。产品配置能力不是来源接纳，也不是运行启用授权。
 
 默认新版预览仍未接入，不替换原OIDC/RP或Agent API，不访问或迁移原库。用户详情、显式身份关联、日志产品配置、正式空间生命周期及管理/业务写入口均未在本片启用；模型和真实派发关闭。真实只读联调、部署/启用及合并另有边界，PR继续Draft。
+
+
+## 7. 本轮CI的历史缓存与登录落地补修
+
+提交d57bd10d的完整CI已完成：14项成功，identity及required失败。身份作业在既有日志19项验收的最后零错误断言捕获一次React 418，记录发生在资格/令牌到期后的登录路线；前18项通过，新增目录和后续共享组合步骤NOT_RUN。[原CI报告](platform-management-directory-product-20261026/ci-runtime-before-retention-fix.json)继续保留，不能用本机目录24项绿色代替。
+
+复核发现历史保护在pagehide.persisted=false的普通跳转也flushSync卸载树。已将卸载限定为浏览器保留文档的persisted=true：仍由React清空记录，pageshow.persisted仍强制完整GET重新核验；被丢弃的普通文档无须卸载。单测新增普通离开不得清空、保留离开必须清空；旧无条件实现触发确定失败，修复后12项PASS。
+
+本机原时序未精确复现418。补修后的首轮复核还出现新登录后身份状态而无记录（pageErrors为空），[该失败](platform-management-directory-product-20261026/local-runtime-before-landing-fix.json)与[先前默认时间窗诊断失败](platform-management-directory-product-20261026/local-runtime-before-retention-fix.json)保留，不混同为hydration重现。验收登录原先等待任意同源URL，可命中回调而非最终页；现统一等待固定/settings的load，日志路线额外核对既有“设置总览”标题后继续。期间一次标题预期误写“系统设置”，已修正测试且[保留失败](platform-management-directory-product-20261026/local-runtime-landing-label-failure.json)。未改产品文案、身份到期语义或放宽权限。
+
+在经PID、创建时间、绝对node/脚本路径和4370监听核实后，仅替换前片自己的候选Web为独立history02构建，保留旧账本、构建、API、IdP和新库。串行[Edge日志19项](platform-management-directory-product-20261026/runtime-history-edge.json)与[Chromium日志19项](platform-management-directory-product-20261026/runtime-history-chromium.json)全部PASS、pageErrors为空；覆盖普通pagehide保留当前页、保留pagehide清空、恢复后真实新查询以及原全部权限/分页/历史断言。[补修范围](platform-management-directory-product-20261026/runtime-history-fix.json)明确确定回归与未精确重现的区别；没有屏蔽错误、sleep或重试。最终以补修新HEAD完整CI及新目录产物核对，原失败和NOT_RUN不改判。
+
+
+登录就绪调整同步覆盖既有管理、首片main-service和本片目录脚本。故意拒绝的登录另以显式accepted=false等待/auth/callback并保留“登录未完成”断言，不把失败身份也当成成功落地；首次仅等待成功落地导致的[负向验收失败](platform-management-directory-product-20261026/management-landing-denial-failure.json)保留。最终[共享管理Chromium51项](platform-management-directory-product-20261026/management-landing-chromium.json)和[目录Chromium24项](platform-management-directory-product-20261026/directory-landing-chromium.json)全部PASS。目录复核继续使用本轮已运行的实际cmd/api/4380，不重置API、IdP、PG或过期会话；日志修复新构建在4370，共享设置也在该新构建验收。

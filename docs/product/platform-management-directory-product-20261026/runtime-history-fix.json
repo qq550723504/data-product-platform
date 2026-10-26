@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "runtime-history-fix.v1",
+  "failedHead": "d57bd10dcc928494803684082a3028410a8c8110",
+  "failedRun": 40314949731,
+  "unitTests": {
+    "pass": 12,
+    "failed": 0,
+    "oldUnconditionalClear": "EXPECTED_FAIL"
+  },
+  "edge": {
+    "pass": 19,
+    "failed": 0
+  },
+  "chromium": {
+    "pass": 19,
+    "failed": 0
+  },
+  "boundary": "Only pagehide.persisted unmounts React-owned results. A normal discarded document is left untouched. pageshow.persisted always reloads and revalidates.",
+  "diagnosticLimit": "The exact CI React 418 timing was not reproduced. Deterministic regression proves ordinary versus retained document ownership; browser checks retain zero-error and fresh-read assertions.",
+  "readiness": "Accepted management login waits for exact /settings and load. Explicit denied cases wait for /auth/callback and retain denial assertions; runtime login also checks settings-overview heading. No sleeps, retries or error filtering.",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "managementChromium": {
+    "pass": 51,
+    "failed": 0
+  },
+  "directoryChromium": {
+    "pass": 24,
+    "failed": 0
+  }
+}

@@ -19,7 +19,7 @@ const rows=page=>page.getByRole('table',{name:'运行日志',exact:true}).locato
 async function control(data={}){const r=await requests.request.post(p.issuer+'/_control',{headers:{'x-fixture-control':p.control},data});assert.equal(r.status(),200);return r.json()}
 async function token(subject='admin-a'){return (await control({issueSubject:subject})).testAccessToken}
 async function get(path,t,status=200,method='GET',headers={}){const r=await requests.request.fetch(path,{method,headers:{Authorization:'Bearer '+t,...headers}});assert.equal(r.status(),status,`HTTP status mismatch at ${new URL(path).pathname}`);assert.equal(r.headers()['cache-control'],'private, no-store');return r.json().catch(()=>({}))}
-async function login(page,label='查询人员 A',ws=a){await page.goto(p.origin+'/auth/login?workspaceId='+ws);await page.getByRole('button',{name:'使用统一身份登录',exact:true}).click();await page.getByRole('button',{name:label,exact:true}).click();await page.waitForURL(p.origin+'/**');await page.goto(logURL())}
+async function login(page,label='查询人员 A',ws=a){await page.goto(p.origin+'/auth/login?workspaceId='+ws);await page.getByRole('button',{name:'使用统一身份登录',exact:true}).click();await page.getByRole('button',{name:label,exact:true}).click();await page.waitForURL(p.origin+'/settings',{waitUntil:'load'});await expect(page.getByRole('heading',{name:'设置总览',exact:true})).toBeVisible();await page.goto(logURL())}
 async function person(label,ws=a){const context=await browser.newContext({ignoreHTTPSErrors:true,serviceWorkers:'block',viewport:{width:1600,height:950}});contexts.push(context);await context.route('**/*',route=>{const r=route.request(),u=new URL(r.url());if(![p.origin,p.issuer].includes(u.origin)){outside.push(u.origin);return route.abort()}if(u.origin===p.origin&&!['GET','HEAD'].includes(r.method())&&!u.pathname.startsWith('/auth/')){writes.push(u.pathname);return route.abort()}return route.continue()});const page=await context.newPage();page.on('pageerror',e=>{pageErrors.push(e.message);pageErrorContext.push({case:active,path:new URL(page.url()).pathname,message:e.message})});await login(page,label,ws);return page}
 async function grant(capabilities=['PLATFORM_MANAGEMENT_READ','PLATFORM_RUNTIME_LOG_READ'],valid='future'){await db.query(`UPDATE platform_workspace_grant SET capabilities=$3,valid_until=CASE WHEN $4='past' THEN now()-interval '1 second' ELSE now()+interval '1 hour' END,revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2`,[actor,a,capabilities,valid])}
 async function pass(name,fn){active=name;await fn();results.push({name,status:'PASS'});console.log('PASS '+name)}
@@ -45,6 +45,9 @@ try{
  await pass('default one-hour window is canonical and refresh does not silently move it',async()=>{await page.goto(p.origin+'/settings/logs');const u=new URL(page.url());assert.equal(Date.parse(u.searchParams.get('end'))-Date.parse(u.searchParams.get('start')),3600000);await reloadReadOnly(page);assert.equal(page.url(),u.href);await page.goto(logURL());await expect(rows(page)).toHaveCount(25)});
  await pass('React-owned history clearing removes records and persisted restore performs a fresh query',async()=>{
   const reads=(await control()).logReads;
+  await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:false})));
+  await expect(rows(page)).toHaveCount(25);
+  assert.deepEqual(pageErrors,[]);
   await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
   await expect(rows(page)).toHaveCount(0);assert.equal(await page.locator('[data-runtime-log-results]').count(),0);
   await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true})));

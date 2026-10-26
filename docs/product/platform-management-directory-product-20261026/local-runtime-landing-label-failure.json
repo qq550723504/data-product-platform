@@ -1,0 +1,23 @@
+{
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "minimum API role remains SELECT-only and RP remains session-only",
+      "status": "PASS"
+    },
+    {
+      "name": "management session keeps original capability projection while records enforce separate permission",
+      "status": "PASS"
+    },
+    {
+      "name": "management session keeps original capability projection while records enforce separate permission",
+      "status": "FAIL",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: '系统设置', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: '系统设置', exact: true }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: '系统设置', exact: true })\n"
+    }
+  ],
+  "pageErrors": [],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

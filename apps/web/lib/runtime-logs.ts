@@ -98,7 +98,10 @@ export function runtimeLogAPI(client:{principal:LogPrincipal;apiBaseUrl:string;r
 export function runtimeLogBrowserGuard(clearResults:()=>void){
  const focus=()=>{if(location.hash.startsWith('#log-'))document.getElementById(location.hash.slice(1))?.focus()};
  // The owner clears its own tree. Direct DOM deletion corrupts React hydration.
- const hide=()=>clearResults();
+ // Only a retained document can return with its existing tree. A discarded
+ // document needs no unmount; changing it during ordinary navigation can race
+ // the hydration of streamed server children.
+ const hide=(e:PageTransitionEvent)=>{if(e.persisted)clearResults()};
  const show=(e:PageTransitionEvent)=>{if(e.persisted)location.reload();else focus()};
  focus();window.addEventListener('pagehide',hide);window.addEventListener('pageshow',show);
  return ()=>{window.removeEventListener('pagehide',hide);window.removeEventListener('pageshow',show)};

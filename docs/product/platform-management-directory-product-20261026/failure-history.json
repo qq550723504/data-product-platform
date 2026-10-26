@@ -19,6 +19,36 @@
       "verdict": "FAIL",
       "evidence": "browser-grant-expectation-failure.json",
       "resolution": "Preserved existing 401 for disabled/expired workspace identity; added separate 403 capability removal case and independent grant-expiry cases. No permissive status set."
+    },
+    {
+      "name": "d57bd10d exact CI runtime hydration",
+      "verdict": "FAIL",
+      "evidence": "ci-runtime-before-retention-fix.json",
+      "resolution": "18 checks passed; pageerror 418 in expiry/fresh-login case failed final zero-error check. Required also failed; directory product and later shared steps NOT_RUN. Ordinary pagehide no longer unmounts discarded documents; persisted hide still clears through React and restore reloads. Exact original 418 timing not reproduced locally."
+    },
+    {
+      "name": "retained local default-window diagnostic",
+      "verdict": "FAIL",
+      "evidence": "local-runtime-before-retention-fix.json",
+      "resolution": "Default-window route returned authentication state during diagnostic, not canonical window. Preserved; not treated as reproduction of CI hydration."
+    },
+    {
+      "name": "first local retention fix expiry route",
+      "verdict": "FAIL",
+      "evidence": "local-runtime-before-landing-fix.json",
+      "resolution": "No pageerror, but fresh login did not yield records. Narrowed login wait from any same-origin callback path to final settings destination and visible landing. Preserved distinct failure without attributing it to hydration."
+    },
+    {
+      "name": "landing heading test expectation",
+      "verdict": "FAIL",
+      "evidence": "local-runtime-landing-label-failure.json",
+      "resolution": "Corrected test heading from system settings to existing settings overview; no product label changed."
+    },
+    {
+      "name": "shared landing wait negative-login expectation",
+      "verdict": "FAIL",
+      "evidence": "management-landing-denial-failure.json",
+      "resolution": "Success-only /settings wait cannot serve deliberately denied login. Test now explicitly selects accepted or denied destination, preserving negative heading and absence of access; subsequent full management 51 checks passed."
     }
   ],
   "realSources": "UNCONFIGURED",
