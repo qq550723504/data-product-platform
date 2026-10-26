@@ -2,6 +2,10 @@
 
 2026-10-25。用户授权：复用 shuomi-ai-commerce 成员目录、角色权限和审计只读能力，适配新版设置，验证跨空间、撤权和分页。PR #363 保持 Draft，不合并。本文件拥有本增量的查询合同。
 
+2026-10-26完成状态核对，代码基线`259eff895bb50bf688b795e52210a062161620ba`：七项管理查询与运行日志的独立查询、权限和新版页面均已完成隔离合成验收。二者目前注册在`apps/platform/tests/platformmanagement`独立验收宿主；`apps/platform/cmd/api`未因此完成系统设置的正式装配，真实企业身份/目录/日志来源仍未配置，默认预览保持未接入。代码、隔离验证、主服务装配、真实来源与启用授权分别记录，不能互相推定。
+
+当前状态及证据见[运行日志审查与系统设置整体验收](../product/platform-runtime-logs-readonly-review-20261026.md)；[来源、责任与首个候选核对表](../product/platform-management-source-admission-20261026.md)只拥有材料、确认职责与纸面准入记录，不另立HTTP、权限、状态机或启用合同。
+
 ## Reuse Check
 
 源代码固定 `qq550723504/shuomi-ai-commerce@e29058c56df4294e1c612b3a705ab767bc333188`，本地镜像目录仍名为 task-processor。复用其 `internal/integration/zitadel/membership/{client,query,permissions}.go` 的只读目录、完整过滤分页、前后权限确认，`internal/organization/membership/query.go` 的查询规范化，以及 Casbin 授权模型和角色投影方式。审计复用 accountaudit 的 scope-bound cursor、allowlisted projection 与失败不返回假空页原则；事实来源替换为本平台既有 AuditEvent，不能导入电商账本。
@@ -14,7 +18,7 @@
 - 每个查询需要 canonical actor + 当前 workspace grant 的 `PLATFORM_MANAGEMENT_READ`。Cookie/body/header 的用户、组织、workspace 均不能授予资格。单独增加该读能力，不把验收 READ 扩成管理员。
 - DirectoryBinding 为服务器配置的 workspace → provider organization/project 映射；企业不是工作空间。目录返回的 provider user/grant ID 只作外部引用，不能冒充本平台 actor UUID。Native provider 的只读 credential 与人的 RP token 分开。
 - 角色目录是应用配置的只读映射，名字/权限来自明确 catalog；不声称已经接入企业自定义角色。返回 `policySource=APPLICATION_CATALOG`。当前目录中未映射角色显示无已配置权限，不能放大 caller 资格。
-- 实际目录与角色来源保持 UNCONFIGURED；仅隔离验收显式配置 SYNTHETIC_FIXTURE。无配置、权限缺失、错空间、依赖失败分别返回拒绝/不可用；不能用演示数据补齐，也不能返回假 0。
+- 真实企业目录、企业自定义角色与真实人员关联来源保持 UNCONFIGURED；已实现的应用角色目录来自 APPLICATION_CATALOG，其具体业务映射仍需明确，不等于企业角色已接入或调用者已有资格。仅隔离验收显式配置 SYNTHETIC_FIXTURE。无配置、权限缺失、错空间、依赖失败分别返回拒绝/不可用；不能用演示数据补齐，也不能返回假 0。
 - 查询前后复用无缓存 OIDC resolver，并在 READ COMMITTED 只读事务复用 ValidateInTx。目录外部 I/O 不持数据库事务；结果公开前再次 introspect 访问令牌，并核对原 canonical actor、issuer/subject、workspace 和 authority revision，然后复查本地资格。读取中身份或版本变化时丢弃结果，不能用新资格追认旧读取；更短的重查有效期不得放大。远端权限在每页读取前后重新确认，无法证明跨系统分布式原子撤销。
 - 目录客户端沿用既有OIDC适配器的标准transport克隆、证书校验与响应头边界；拒绝关闭证书验证、绕过标准TLS握手的自定义DialTLS、错主机ServerName或不可确认的自定义RoundTripper，不继承cookie/重定向配置。测试故障注入只在同包测试内进行，不作为产品构造参数。
 - AuditEvent 仅按明确 workspace 投影 id、actor reference、action、object type/id、occurredAt；不返回自由文本、metadata、before/after 或 credential。历史不改写；没有新审计 owner 或业务写表。
@@ -27,7 +31,7 @@
 
 响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI，权限必须命中显式自有键白名单，Object继承属性不能算权限。目录一次完整查询超过上限、超时，或检测到总数变化、短页、重复/乱序ID、错空间或原生筛选不符时必须失败，不返回部分成功。远端offset接口没有共同快照/修订号；相同总数下的并发替换不保证可检测，目录结果仅为查询视图，不是冻结成员事实，也不能作为后续写入授权。
 
-新版 `/settings`、`/settings/workspaces`、`/settings/organizations`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`、`/settings/configuration`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。企业部门树、空间生命周期、运行日志和系统配置写入另属后续范围。
+新版 `/settings`、`/settings/workspaces`、`/settings/organizations`、`/settings/members`、`/settings/roles`、`/settings/audit`、`/settings/users`、`/settings/configuration`；筛选、明确详情、刷新和分页均保留 scope。切换空间经现有登录重新核验，旧会话/旧 revision/旧空间游标被拒绝。未配置仍展示可理解的空接入状态与返回入口，不展示合成人员。企业部门树、空间生命周期和系统配置写入仍属后续范围；运行日志页面及独立只读接口已实施，单独由[日志契约](platform-runtime-logs-readonly-v1.md)拥有，真实来源未接入。
 
 角色→相关成员→成员详情→返回列表沿用同一成员GET接口：角色入口以`role`打开首页，列表组合`q/role/state`筛选，提交筛选显式回到首页；`offset`只在分页和详情往返时保留。`memberId`进入独立详情查看状态，不在列表下重复展示详情。返回链接固定指向`/settings/members`，仅保留原筛选与offset，并用浏览器fragment定位原成员行；fragment不发往API，不接受任意return URL或客户端身份参数。详情失效时提供保留条件的明确返回，超出结果页时由用户显式选择保留筛选回首页，不静默改查其他成员/页面。页面跳转链接继续完整GET重验当前身份，URL状态不构成资格；切换空间从既有身份流程重建上下文，旧详情引用在新空间拒绝。浏览器前进/后退的本轮验收单独覆盖撤权后的拒绝，不把此前已展示的查询视图当新的授权。
 
@@ -87,6 +91,6 @@ Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`m
 
 ## 验证
 
-运行日志的后续设计见[独立只读契约](platform-runtime-logs-readonly-v1.md)与[页面流程稿](../product/platform-runtime-logs-page-plan-20261025.md)。二者仅DESIGN ONLY，不扩展本文件已经实现的七项管理API、原管理读能力、公开配置六个查询键或当前页面；现有GET allowlist、migration 000077及源配置保持。运行日志、审计和业务执行事实分别处理，不能复用AuditReader冒充日志来源。
+运行日志已完成共享页面、三项GET（来源状态、列表、精确详情）、独立日志读资格和隔离合成验收，见[独立只读契约](platform-runtime-logs-readonly-v1.md)、[页面流程稿](../product/platform-runtime-logs-page-plan-20261025.md)及[最新代码基线验收](../product/platform-runtime-logs-readonly-review-20261026.md)。日志查询不扩展本文件拥有的七项管理API、公开配置六个查询键或原`platform-management.v1`能力投影；日志记录API独立核验管理读与日志读双能力。migration 000077保持原管理能力，000078独立增加日志资格枚举；这两项实施记录不表示本轮为原库应用DDL。严格GET路径仍按各自合同分开，默认预览和真实来源保持未接入。运行日志、AuditEvent和业务执行事实分别处理，不能复用AuditReader冒充日志来源。
 
 复用源目录查询测试并补齐本平台绑定：跨组织/project 响应、完整筛选后分页、读前/后权限撤回、身份在读取中撤回、旧 revision 不复活、跨空间游标、错误/空页区分、深链接和刷新、只读方法 allowlist、无 secret 字段。真实 PG 核验最小权限和身份 fence；独立 Edge 走真实 RP SDK 登录、多人员/多空间、分页和撤权。测试 fixture 的配置/撤权是隔离测试控制，不作为产品写入口。CI、合成浏览器与真实来源验收分别报告。

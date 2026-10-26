@@ -2,6 +2,8 @@
 
 2026-10-25，承接PR #363的`be449a1ac3b534f96c51bf67e20dc7d0d5e26fe4`。本片补齐基础配置的只读概览，以及配置→查询→明确详情→返回原列表/配置的完整路径。权威查询合同为[平台管理只读契约](../architecture/platform-management-readonly-v1.md#当前管理入口的公开配置)，不另建平行配置体系。保持Draft，不合并、不部署。
 
+2026-10-26状态说明：本文保留当轮51项验收、旧构建与未接入声明的历史范围。后续运行日志的独立接口/权限/页面已实施并通过合成验收，当前状态见[来源与责任清单](platform-management-source-admission-20261026.md)和[整体验收记录](platform-runtime-logs-readonly-review-20261026.md)；真实来源与主服务装配仍未接入。公开配置仍只拥有原六项查询键，不因日志实施而自动扩展，也不证明来源健康或资格。
+
 ## 交付与复用
 
 - 复用已经接入的OIDC/RP、当前workspace grant、只读ValidateInTx、DirectoryBinding、workspaceOverview和现有六项管理查询。仅增加最小公开投影；没有新增依赖、配置中心、环境查看器、配置表、迁移或新身份系统。无需为当前公开查询引入第二套OSS配置服务。
