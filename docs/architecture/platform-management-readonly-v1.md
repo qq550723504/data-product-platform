@@ -6,6 +6,8 @@
 
 当前状态及证据见[运行日志审查与系统设置整体验收](../product/platform-runtime-logs-readonly-review-20261026.md)；[来源、责任与首个候选核对表](../product/platform-management-source-admission-20261026.md)只拥有材料、确认职责与纸面准入记录，不另立HTTP、权限、状态机或启用合同。
 
+2026-10-26主服务装配设计：以`48cde34853f8da73bfb07936e9906252c1ce2f09`核对现状，[只读装配方案](platform-management-main-service-readonly-v1.md)拥有未来组合根、默认关闭、依赖及验收条件；下文“审计独立装配目标”拥有解耦后的查询语义。两者均未实施，不改变现有代码、旧验收结果、来源配置、默认预览或业务写入边界。
+
 ## Reuse Check
 
 源代码固定 `qq550723504/shuomi-ai-commerce@e29058c56df4294e1c612b3a705ab767bc333188`，本地镜像目录仍名为 task-processor。复用其 `internal/integration/zitadel/membership/{client,query,permissions}.go` 的只读目录、完整过滤分页、前后权限确认，`internal/organization/membership/query.go` 的查询规范化，以及 Casbin 授权模型和角色投影方式。审计复用 accountaudit 的 scope-bound cursor、allowlisted projection 与失败不返回假空页原则；事实来源替换为本平台既有 AuditEvent，不能导入电商账本。
@@ -90,6 +92,26 @@ Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`m
 `/settings/configuration`只显示当前管理入口范围、登录方式、会话范围、查询方式、应用角色来源及六个查询入口。登录与会话说明来自已经成功建立的现有platform-management身份流程，不显示另设账号或登录开关。没有表单、保存、修改、重载和启用按钮。默认4193未接真实管理服务时仍显示真实来源未配置，不用独立夹具的配置结果填充。
 
 增加闭集导航`from=configuration`：只允许工作空间、组织资料、成员、用户、角色和审计页面使用；配置页本身不接受from。配置→工作空间/组织→下游查询，以及筛选、分页、明确详情、返回原行、角色相关成员、审计游标和错误页恢复都保留该来源，固定返回`/settings/configuration`。原from=workspace/organization行为保持。标记不进入API，不选择caller/workspace，不接受任意返回URL；刷新与历史导航仍完整GET重验资格。切换空间只显示新会话上下文，旧外部详情引用拒绝，恢复已撤权限不会复活旧会话。
+
+## 审计独立装配目标（待实施）
+
+本节是`48cde348`之后拟实施的明确目标，不描述当前运行行为。现有Handler、workspaceOverview和configurationOverview仍将audit依赖于完整DirectoryBinding/Catalog；本轮未移除该检查，也未重新运行解耦验收。其余各节的目录前置要求及旧证据继续按现状理解；只有未来审计分支和audit入口配置判定按本节解耦。
+
+**评审决定：审计不依赖Directory、Catalog、organization/project或原生目录权限。** AuditEvent的System of Record是平台数据库，源项目审计复用的是查询模式；以目录是否配置决定平台审计可读，是组合层耦合，不能作为长期前提。查询仍必须具有同一可信caller、当前workspace及`PLATFORM_MANAGEMENT_READ`，不另建身份或权限引擎，不把应用角色显示权限当caller授权。
+
+| 目标项 | 待实施合同 |
+|---|---|
+| 来源与作用域 | 由主服务受控装配明确启用的workspace集合、独立`AuditSource`及`AuditReader`组成；AuditSource仅CONFIGURED或tests专属SYNTHETIC_FIXTURE，不能从DirectoryBinding.Source、角色名或“Reader非nil”猜测。它是拟议装配输入，不新增公开DTO字段或审计事实 |
+| 启动和未配置 | 未显式启用或当前workspace无审计装配时，配置入口audit=false，实际audit GET在当前身份/空间核验后返回503 SOURCE_UNCONFIGURED。已声明接入却缺Reader、来源枚举非法或范围冲突时，候选装配启动失败，不静默当未配置 |
+| 单次查询 | 沿用当前Resolver及PG Gate在读取前后核验原actor、issuer/subject、workspace、revision和有效期；AuditReader只接收服务端ws与caller。成功和读取错误均先通过同一后置身份/资格检查，再决定公开结果或错误；当前代码部分错误提前返回，未来实现必须补齐，不能声称现状已全部满足 |
+| 运行故障 | 有效配置下Reader故障且当前资格仍有效才返回503 AUDIT_UNAVAILABLE，无data；读取中身份失效优先401/403/既有身份不可用，不能泄漏记录、存在性或内部错误。未知/错误cursor仍沿用400 INVALID_QUERY，不新增宽松恢复 |
+| Envelope.source | 该audit响应取独立AuditSource；workspace/configuration响应仍取IdentitySource，目录响应仍取目录Source。不新增PLATFORM_DB等第三种公开枚举，不沿用未配置目录Source导致DTO非法 |
+| 两个入口投影 | workspaceOverview.queries.audit和configurationOverview.queries.audit均按当前空间的独立审计装配判定；目录未配置但审计已配置时audit=true、directory=UNCONFIGURED，其他目录键按原合同false。两个投影和audit实际入口必须同步修改，不能只改Handler前置if |
+| 不变部分 | 七项GET、管理profile/version、确认capabilities、Envelope与data键、审计最小字段、25+1及(time,id)微秒排序、当前空间/caller游标检查均不变；只放开必要装配依赖，不生成/改写AuditEvent或任何验收/签收事实 |
+
+审计来源状态是当前部署/空间的显式配置声明，不是连接健康、已接纳真实来源或后续执行授权；公开availability仍NOT_CHECKED。真实审计查询宿主、范围、只读凭据和维护责任继续待定。角色、组织、成员、用户的目录前置依赖不因本节自动拆除；运行日志仍按独立契约查询和双权限判断。
+
+权限与验证要求见[装配方案](platform-management-main-service-readonly-v1.md)第4、8节。需特别覆盖audit-only无目录、目录故障但审计可用、缺审计来源、两个入口投影一致、Source来源正确、跨空间/跨caller游标、同微秒分页及读取成功/失败过程中撤权/到期。上述目标全部NOT_RUN，不继承旧51项通过结果；当前Base64游标不声称防篡改或跨页快照。
 
 ## 验证
 
