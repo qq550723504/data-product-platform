@@ -4,15 +4,16 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import bootstrap as b
 
-if not b.MAIN_SERVICE or os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('new isolated main service fixture required')
+if not (b.MAIN_SERVICE or b.COMPAT) or os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('new isolated main service fixture required')
 p=json.loads((b.RUN/'profile.json').read_text(encoding='utf-8'))
 u=urllib.parse.urlparse(p['adminDSN'])
-if u.hostname!='127.0.0.1' or u.port!=25560 or u.path!='/management_main_service_20261026' or u.username!='postgres':raise RuntimeError('isolated test target mismatch')
+if u.hostname!='127.0.0.1' or u.port!=b.PG_PORT or u.path!='/'+b.DATABASE or u.username!='postgres':raise RuntimeError('isolated test target mismatch')
 name=os.environ.get('MANAGEMENT_MAIN_SERVICE_GO_OUTPUT','go-regression')
 if not re.fullmatch(r'go-regression(?:-[a-z0-9-]+)?',name):raise RuntimeError('invalid regression evidence name')
 output=b.RUN/(name+'.json')
 if output.exists():raise RuntimeError('previous Go regression evidence retained')
-env={**b.env_clean(),'MANAGEMENT_FIXTURE_ACK':'ISOLATED_READONLY_MANAGEMENT','MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK':'ISOLATED_MAIN_SERVICE_READONLY','MANAGEMENT_FIXTURE_CONFIG':str(b.RUN/'api-config.json'),'TEST_POSTGRES_DSN':p['adminDSN']}
+ack={'MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK':'ISOLATED_MAIN_SERVICE_COMPAT_READONLY'} if b.COMPAT else {'MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK':'ISOLATED_MAIN_SERVICE_READONLY'}
+env={**b.env_clean(),**ack,'MANAGEMENT_FIXTURE_ACK':'ISOLATED_READONLY_MANAGEMENT','MANAGEMENT_FIXTURE_CONFIG':str(b.RUN/'api-config.json'),'TEST_POSTGRES_DSN':p['adminDSN']}
 r=subprocess.run(['go','test','-json','./internal/platformmanagement/...','./internal/platform/principal/bindings','./cmd/api','./tests/platformmanagement','-count=1'],cwd=b.ROOT/'apps/platform',env=env,capture_output=True,encoding='utf-8',timeout=180)
 (b.RUN/(name+'-private.log')).write_text(r.stdout+'\n'+r.stderr,encoding='utf-8')
 packages={};failed=[]

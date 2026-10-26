@@ -1,17 +1,18 @@
 // Real Next -> Go HTTP -> OIDC/RP + SELECT-only PostgreSQL -> synthetic source.
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
-const fixtureRun=new URL('../../.data/runtime-logs-api-20261026/',import.meta.url),p=JSON.parse(readFileSync(new URL('profile.json',fixtureRun),'utf8'));
-const output=process.env.RUNTIME_LOG_BROWSER_OUTPUT??'runtime-logs-api-20261026';assert.match(output,/^runtime-logs-(?:api|review)-[a-z0-9-]+$/);
-const run=new URL('../../.data/'+output+'/',import.meta.url);mkdirSync(run,{recursive:true});
-assert.equal(p.database,'runtime_logs_readonly_20261026');assert.equal(p.origin,'https://localhost:4350');assert.equal(p.issuer,'https://localhost:19150');
-const dbURL=new URL(p.adminDSN);assert.equal(dbURL.hostname,'127.0.0.1');assert.equal(dbURL.port,'25550');assert.equal(dbURL.pathname,'/runtime_logs_readonly_20261026');
+const compat=process.env.MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK==='ISOLATED_MAIN_SERVICE_COMPAT_READONLY';if(process.env.MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK&&!compat)throw Error('explicit compatibility fixture required');
+const fixtureRun=new URL('../../.data/'+(compat?'management-main-service-compat-20261026':'runtime-logs-api-20261026')+'/',import.meta.url),p=JSON.parse(readFileSync(new URL('profile.json',fixtureRun),'utf8'));
+const output=process.env.RUNTIME_LOG_BROWSER_OUTPUT??(compat?'runtime-logs-review-main-service-compat-20261026':'runtime-logs-api-20261026');assert.match(output,/^runtime-logs-(?:api|review)-[a-z0-9-]+$/);
+const run=new URL('../../.data/'+output+'/',import.meta.url);if(compat&&existsSync(run))throw Error('existing compatibility evidence retained');mkdirSync(run,{recursive:true});
+assert.equal(p.database,compat?'management_main_service_compat_20261026':'runtime_logs_readonly_20261026');assert.equal(p.origin,compat?'https://localhost:4370':'https://localhost:4350');assert.equal(p.issuer,compat?'https://localhost:19170':'https://localhost:19150');if(compat)assert.equal(p.mainServiceCompat,true);
+const dbURL=new URL(p.adminDSN);assert.equal(dbURL.hostname,'127.0.0.1');assert.equal(dbURL.port,compat?'25570':'25550');assert.equal(dbURL.pathname,'/'+p.database);
 const require=createRequire(new URL('../browser/package.json',import.meta.url)),{chromium,expect}=require('@playwright/test'),{Pool}=createRequire(new URL('../../apps/web/package.json',import.meta.url))('pg');
 const channel=process.env.RUNTIME_LOG_BROWSER_CHANNEL??'msedge';assert.ok(['msedge','chromium'].includes(channel));
 const browser=await chromium.launch({...channel==='msedge'?{channel}:{},headless:true}),db=new Pool({connectionString:p.adminDSN,ssl:{ca:readFileSync(p.cert),rejectUnauthorized:true}}),contexts=[],results=[],pageErrors=[],writes=[],outside=[];
-const requests=await browser.newContext({ignoreHTTPSErrors:true}),a='11111111-1111-4111-8111-111111111111',b='12121212-1212-4212-8212-121212121212',api='https://localhost:18550',prefix=ws=>api+'/api/v1/workspaces/'+ws+'/management/runtime-logs/';
+const requests=await browser.newContext({ignoreHTTPSErrors:true}),a='11111111-1111-4111-8111-111111111111',b='12121212-1212-4212-8212-121212121212',api=compat?'https://localhost:18570':'https://localhost:18550',prefix=ws=>api+'/api/v1/workspaces/'+ws+'/management/runtime-logs/';
 const actor='83000000-0000-4000-8000-000000000001',both='83000000-0000-4000-8000-000000000003';
 const rows=page=>page.getByRole('table',{name:'运行日志',exact:true}).locator('tbody tr');
 async function control(data={}){const r=await requests.request.post(p.issuer+'/_control',{headers:{'x-fixture-control':p.control},data});assert.equal(r.status(),200);return r.json()}

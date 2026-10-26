@@ -1,0 +1,81 @@
+{
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "minimum API role remains SELECT-only and RP remains session-only",
+      "status": "PASS"
+    },
+    {
+      "name": "management session keeps original capability projection while records enforce separate permission",
+      "status": "PASS"
+    },
+    {
+      "name": "default one-hour window is canonical and refresh does not silently move it",
+      "status": "PASS"
+    },
+    {
+      "name": "actual Next query page is canonical and 58 equal/adjacent nanosecond occurrences paginate without loss",
+      "status": "PASS"
+    },
+    {
+      "name": "second page exact detail reload browser history and return preserve cursor filters and focused row",
+      "status": "PASS"
+    },
+    {
+      "name": "changing filters clears old position and refresh retains the explicit window",
+      "status": "PASS"
+    },
+    {
+      "name": "HTTP references cannot cross caller workspace filters or purpose",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace switching clears records and copied old detail stays rejected in the current workspace",
+      "status": "PASS"
+    },
+    {
+      "name": "database grant removal during held source I/O discards the response and regrant cannot revive old references",
+      "status": "PASS"
+    },
+    {
+      "name": "source-body token revocation is rechecked after I/O and old browser history cannot restore records",
+      "status": "PASS"
+    },
+    {
+      "name": "grant and access-token expiry fail closed until a fresh valid login",
+      "status": "PASS"
+    },
+    {
+      "name": "source failure missing and changed details still recheck grants after I/O",
+      "status": "PASS"
+    },
+    {
+      "name": "access-token expiry during a successful or failed source read discards all observations",
+      "status": "PASS"
+    },
+    {
+      "name": "native wrong-space duplicate private incomplete and oversized responses expose no partial data",
+      "status": "PASS"
+    },
+    {
+      "name": "source timeout is bounded and cancellation returns no data",
+      "status": "PASS"
+    },
+    {
+      "name": "exact missing and changed record states return to the original list without replacing it",
+      "status": "PASS"
+    },
+    {
+      "name": "actual API rejects native selectors bodies cookies writes and ambiguous parameters",
+      "status": "PASS"
+    },
+    {
+      "name": "narrow Next layout and browser storage contain only safe fields with no business writes",
+      "status": "PASS"
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

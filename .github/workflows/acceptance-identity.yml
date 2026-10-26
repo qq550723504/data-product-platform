@@ -138,3 +138,40 @@ jobs:
             .data/management-main-service-20261026/retained-final-comparison.json
             .data/management-main-service-browser-20261026/main-service-browser-results.json
             .data/management-main-service-browser-20261026/screenshots/
+      - name: Prepare independent shared composition compatibility fixture
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_COMPAT_READONLY
+          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-main-service-compat-20261026
+        run: |
+          python3 tests/platform-management/bootstrap.py
+          python3 tests/platform-management/test-main-service.py
+          python3 tests/platform-management/start-web.py --build
+      - name: Shared composition directory and runtime log compatibility acceptance
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_COMPAT_READONLY
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+          RUNTIME_LOG_BROWSER_CHANNEL: chromium
+        run: |
+          node tests/platform-management/compat-boundaries.mjs
+          node tests/platform-management/browser.mjs
+          node tests/runtime-logs/api-browser.mjs
+          python3 tests/platform-management/verify-main-service.py
+      - name: Preserve non-secret shared composition compatibility results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-main-service-compat-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-main-service-compat-20261026/go-regression.json
+            .data/management-main-service-compat-20261026/retained-comparison.json
+            .data/management-main-service-compat-20261026/retained-final-comparison.json
+            .data/management-main-service-compat-boundaries-20261026/boundary-results.json
+            .data/management-readonly-main-service-compat-20261026/browser-results.json
+            .data/management-readonly-main-service-compat-20261026/screenshots/
+            .data/runtime-logs-review-main-service-compat-20261026/api-browser-results.json
+            .data/runtime-logs-review-main-service-compat-20261026/screenshots/

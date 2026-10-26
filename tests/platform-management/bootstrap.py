@@ -8,7 +8,9 @@ RUNTIME_LOGS=os.environ.get('MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK')=='ISOLATED_RUN
 if os.environ.get('MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK') and not RUNTIME_LOGS:raise RuntimeError('invalid runtime fixture acknowledgement')
 MAIN_SERVICE=os.environ.get('MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK')=='ISOLATED_MAIN_SERVICE_READONLY'
 if os.environ.get('MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK') and not MAIN_SERVICE:raise RuntimeError('invalid main service fixture acknowledgement')
-if RUNTIME_LOGS and MAIN_SERVICE:raise RuntimeError('fixture modes are disjoint')
+COMPAT=os.environ.get('MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK')=='ISOLATED_MAIN_SERVICE_COMPAT_READONLY'
+if os.environ.get('MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK') and not COMPAT:raise RuntimeError('invalid main service compatibility acknowledgement')
+if sum([RUNTIME_LOGS,MAIN_SERVICE,COMPAT])>1:raise RuntimeError('fixture modes are disjoint')
 RUN=ROOT/('.data/runtime-logs-api-20261026' if RUNTIME_LOGS else '.data/management-readonly-20261025')
 PG='dpp-runtime-logs-readonly-20261026' if RUNTIME_LOGS else 'dpp-management-readonly-20261025'
 PG_PORT,API_PORT,IDP_PORT,WEB_PORT=(25550,18550,19150,4350) if RUNTIME_LOGS else (25496,18499,19130,4300)
@@ -17,6 +19,10 @@ if MAIN_SERVICE:
  RUN=ROOT/'.data/management-main-service-20261026';PG='dpp-management-main-service-20261026'
  PG_PORT,API_PORT,IDP_PORT,WEB_PORT=25560,18560,19160,4360
  DATABASE='management_main_service_20261026'
+if COMPAT:
+ RUN=ROOT/'.data/management-main-service-compat-20261026';PG='dpp-management-main-service-compat-20261026'
+ PG_PORT,API_PORT,IDP_PORT,WEB_PORT=25570,18570,19170,4370
+ DATABASE='management_main_service_compat_20261026'
 def call(args,**kwargs):
  p=subprocess.run(args,capture_output=True,encoding='utf-8',**kwargs)
  if p.returncode:
@@ -36,10 +42,10 @@ def main():
   with socket.socket() as s:
    if s.connect_ex(('127.0.0.1',port))==0:raise RuntimeError('fixture port occupied; no process changed')
  os.umask(0o077);RUN.mkdir(parents=True,mode=0o700)
- retained=capture_retained(('original','management','runtime') if MAIN_SERVICE else ('original','management') if RUNTIME_LOGS else ('original',),RUN/'retained-comparison.json',observer=metadata)
+ retained=capture_retained(('original','management','runtime','main-service') if COMPAT else ('original','management','runtime') if MAIN_SERVICE else ('original','management') if RUNTIME_LOGS else ('original',),RUN/'retained-comparison.json',observer=metadata)
  (RUN/'retained-before.json').write_text(json.dumps(retained),encoding='utf-8')
  cert=RUN/'server.crt';key=RUN/'server.key';call(['openssl','req','-x509','-newkey','rsa:2048','-nodes','-days','3','-keyout',str(key),'-out',str(cert),'-subj','/CN=localhost','-addext','subjectAltName=DNS:localhost,IP:127.0.0.1'])
- p={k:secrets.token_urlsafe(32) for k in ['pgPassword','apiPassword','rpPassword','rpSecret','resourceSecret','readCredential','control','encryptionKey']};p.update({'issuer':f'https://localhost:{IDP_PORT}','origin':f'https://localhost:{WEB_PORT}','runtimeLogs':RUNTIME_LOGS,'mainService':MAIN_SERVICE,'cert':str(cert),'key':str(key),'database':DATABASE,'postgres':PG})
+ p={k:secrets.token_urlsafe(32) for k in ['pgPassword','apiPassword','rpPassword','rpSecret','resourceSecret','readCredential','control','encryptionKey']};p.update({'issuer':f'https://localhost:{IDP_PORT}','origin':f'https://localhost:{WEB_PORT}','runtimeLogs':RUNTIME_LOGS,'mainService':MAIN_SERVICE,'mainServiceCompat':COMPAT,'cert':str(cert),'key':str(key),'database':DATABASE,'postgres':PG})
  def dsn(role,password):return 'postgres://'+role+':'+urllib.parse.quote(password,safe='')+f'@127.0.0.1:{PG_PORT}/'+p['database']
  tls='?sslmode=verify-full&sslrootcert='+urllib.parse.quote(str(cert),safe='')
  p['adminDSN']=dsn('postgres',p['pgPassword'])+tls;(RUN/'profile.json').write_text(json.dumps(p),encoding='utf-8')
@@ -51,11 +57,12 @@ def main():
   time.sleep(.5)
  else:raise RuntimeError('new isolated database unavailable; no automatic restart')
  (RUN/'resources.json').write_text(json.dumps({'postgres':metadata(PG)}),encoding='utf-8')
- api={'DatabaseURL':dsn('management_api',p['apiPassword'])+tls,'Issuer':p['issuer'],'ResourceSecret':p['resourceSecret'],'ReadCredential':p['readCredential'],'Cert':str(cert),'Key':str(key),'CA':str(cert),'Root':str(ROOT),'RuntimeLogs':RUNTIME_LOGS,'MainService':MAIN_SERVICE,'APIPassword':p['apiPassword'],'RPPassword':p['rpPassword']}
+ api={'DatabaseURL':dsn('management_api',p['apiPassword'])+tls,'Issuer':p['issuer'],'ResourceSecret':p['resourceSecret'],'ReadCredential':p['readCredential'],'Cert':str(cert),'Key':str(key),'CA':str(cert),'Root':str(ROOT),'RuntimeLogs':RUNTIME_LOGS,'MainService':MAIN_SERVICE,'MainServiceCompat':COMPAT,'APIPassword':p['apiPassword'],'RPPassword':p['rpPassword']}
  api_path=RUN/'api-config.json';api_path.write_text(json.dumps(api),encoding='utf-8')
  binary=RUN/('api.exe' if os.name=='nt' else 'api');call(['go','build','-o',str(binary),'./tests/platformmanagement'],cwd=ROOT/'apps/platform')
  base={'MANAGEMENT_FIXTURE_ACK':'ISOLATED_READONLY_MANAGEMENT','MANAGEMENT_FIXTURE_CONFIG':str(api_path)}
  if MAIN_SERVICE:base['MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK']='ISOLATED_MAIN_SERVICE_READONLY'
+ if COMPAT:base['MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK']='ISOLATED_MAIN_SERVICE_COMPAT_READONLY'
  call([str(binary),'prepare'],env={**env_clean(),**base,'MANAGEMENT_FIXTURE_ADMIN_DSN':p['adminDSN']})
  # API runtime configuration carries no admin DSN or RP password.
  api['APIPassword']='';api['RPPassword']='';api_path.write_text(json.dumps(api),encoding='utf-8')
@@ -64,12 +71,13 @@ def main():
  web={'BROWSER_IAM_MODE':'oidc','BROWSER_IAM_PROFILE':'platform-management','BROWSER_IAM_ORIGIN':p['origin'],'BROWSER_IAM_ISSUER':p['issuer'],'BROWSER_IAM_CLIENT_ID':'dpp-management-rp','BROWSER_IAM_CLIENT_SECRET':p['rpSecret'],'BROWSER_IAM_AUTHORIZATION_ENDPOINT':p['issuer']+'/authorize','BROWSER_IAM_TOKEN_ENDPOINT':p['issuer']+'/token','BROWSER_IAM_JWKS_URI':p['issuer']+'/jwks','BROWSER_IAM_LOGOUT_ENDPOINT':p['issuer']+'/logout','BROWSER_IAM_PRINCIPAL_ENDPOINT':f'https://localhost:{API_PORT}/internal/identity/platform-management-principal','BROWSER_IAM_SCOPE':'openid platform-management','BROWSER_IAM_ENCRYPTION_KEY':p['encryptionKey'],'BROWSER_IAM_DATABASE_URL':dsn('management_rp',p['rpPassword']),'BROWSER_IAM_DATABASE_CA_FILE':str(cert),'BROWSER_IAM_WORKSPACE_ID':'11111111-1111-4111-8111-111111111111','BROWSER_IAM_WORKSPACES':json.dumps([{'id':'11111111-1111-4111-8111-111111111111','label':'管理工作空间 A'},{'id':'12121212-1212-4212-8212-121212121212','label':'管理工作空间 B'}]),'NODE_EXTRA_CA_CERTS':str(cert),'MANAGEMENT_WEB_CERT':str(cert),'MANAGEMENT_WEB_KEY':str(key),'NEXT_TELEMETRY_DISABLED':'1','AGENT_TASKS_UI_WRITE_ENABLED':'false','AGENT_TASKS_WRITE_ENABLED':'false'}
  if RUNTIME_LOGS:web['MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK']='ISOLATED_RUNTIME_LOG_READONLY'
  if MAIN_SERVICE:web['MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK']='ISOLATED_MAIN_SERVICE_READONLY'
+ if COMPAT:web['MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK']='ISOLATED_MAIN_SERVICE_COMPAT_READONLY'
  (RUN/'web-env.json').write_text(json.dumps(web),encoding='utf-8')
  ctx=ssl.create_default_context(cafile=str(cert))
  for port in [IDP_PORT,API_PORT]:
   for _ in range(60):
    try:
-    with urllib.request.urlopen(f'https://localhost:{port}'+('/health/ready' if MAIN_SERVICE and port==API_PORT else '/healthz'),context=ctx,timeout=2) as response:
+    with urllib.request.urlopen(f'https://localhost:{port}'+('/health/ready' if (MAIN_SERVICE or COMPAT) and port==API_PORT else '/healthz'),context=ctx,timeout=2) as response:
      if response.status==200:break
    except Exception:time.sleep(.25)
   else:raise RuntimeError('owned fixture endpoint unavailable; ledgers retained')

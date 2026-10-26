@@ -122,111 +122,119 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	var payload any
 	var auditErr error
-	switch resource {
-	case "organization":
-		page, e := QueryOrganization(ctx, b)
-		if e != nil {
-			if errors.Is(e, ErrUnconfigured) {
-				failure(w, 503, "SOURCE_UNCONFIGURED")
-			} else if errors.Is(e, ErrNotFound) {
-				failure(w, 404, "ORGANIZATION_UNAVAILABLE")
-			} else {
-				failure(w, 503, "ORGANIZATION_DIRECTORY_UNAVAILABLE")
-			}
-			return
-		}
-		payload = page
-	case "users":
-		if b.Users == nil {
-			failure(w, 503, "SOURCE_UNCONFIGURED")
-			return
-		}
-		page, e := QueryUsers(ctx, ws, b, request, q["userId"])
-		if e != nil {
-			if errors.Is(e, ErrNotFound) {
-				failure(w, 404, "USER_UNAVAILABLE")
-			} else if errors.Is(e, ErrInvalidRequest) {
-				failure(w, 400, "INVALID_QUERY")
-			} else if errors.Is(e, ErrUnconfigured) {
-				failure(w, 503, "SOURCE_UNCONFIGURED")
-			} else {
-				failure(w, 503, "USER_DIRECTORY_UNAVAILABLE")
-			}
-			return
-		}
-		payload = page
-	case "members":
-		if request.Filter.Role != "" && !b.Catalog.Has(request.Filter.Role) {
-			failure(w, 400, "INVALID_QUERY")
-			return
-		}
-		page, e := b.Directory.List(ctx, b.OrganizationID, request)
-		if e != nil {
-			failure(w, 503, "DIRECTORY_UNAVAILABLE")
-			return
-		}
-		if page.Total < 0 || page.Total > 10000 || len(page.Items) != min(25, max(0, page.Total-request.Offset)) {
-			failure(w, 503, "INVALID_SOURCE_RESPONSE")
-			return
-		}
-		seen := map[string]bool{}
-		for i := range page.Items {
-			m := &page.Items[i]
-			if !IsIdentifier(m.ID) || !IsIdentifier(m.UserID) || seen[m.ID] || !request.Filter.Matches(*m) || m.OrganizationID != b.OrganizationID || m.ProjectID != b.ProjectID {
-				failure(w, 503, "INVALID_SOURCE_RESPONSE")
-				return
-			}
-			seen[m.ID] = true
-			m.Permissions, e = b.Catalog.Permissions(m.Roles)
+	var sourceStatus int
+	var sourceCode string
+	reject := func(status int, code string) { sourceStatus, sourceCode = status, code }
+	// Defer every source outcome until the common post-I/O authority check.
+	// Error and missing-record responses must not bypass revocation or expiry.
+	observe := func() {
+		switch resource {
+		case "organization":
+			page, e := QueryOrganization(ctx, b)
 			if e != nil {
-				failure(w, 503, "INVALID_SOURCE_RESPONSE")
+				if errors.Is(e, ErrUnconfigured) {
+					reject(503, "SOURCE_UNCONFIGURED")
+				} else if errors.Is(e, ErrNotFound) {
+					reject(404, "ORGANIZATION_UNAVAILABLE")
+				} else {
+					reject(503, "ORGANIZATION_DIRECTORY_UNAVAILABLE")
+				}
 				return
 			}
-		}
-		var selected *Member
-		if id := q["memberId"]; id != "" {
-			m, e := b.Directory.Read(ctx, b.OrganizationID, id)
-			if errors.Is(e, ErrNotFound) {
-				failure(w, 404, "MEMBER_UNAVAILABLE")
+			payload = page
+		case "users":
+			if b.Users == nil {
+				reject(503, "SOURCE_UNCONFIGURED")
 				return
 			}
-			if e != nil || m.ID != id || m.OrganizationID != b.OrganizationID || m.ProjectID != b.ProjectID {
-				failure(w, 503, "DIRECTORY_UNAVAILABLE")
-				return
-			}
-			m.Permissions, e = b.Catalog.Permissions(m.Roles)
+			page, e := QueryUsers(ctx, ws, b, request, q["userId"])
 			if e != nil {
-				failure(w, 503, "INVALID_SOURCE_RESPONSE")
+				if errors.Is(e, ErrNotFound) {
+					reject(404, "USER_UNAVAILABLE")
+				} else if errors.Is(e, ErrInvalidRequest) {
+					reject(400, "INVALID_QUERY")
+				} else if errors.Is(e, ErrUnconfigured) {
+					reject(503, "SOURCE_UNCONFIGURED")
+				} else {
+					reject(503, "USER_DIRECTORY_UNAVAILABLE")
+				}
 				return
 			}
-			selected = &m
+			payload = page
+		case "members":
+			if request.Filter.Role != "" && !b.Catalog.Has(request.Filter.Role) {
+				reject(400, "INVALID_QUERY")
+				return
+			}
+			page, e := b.Directory.List(ctx, b.OrganizationID, request)
+			if e != nil {
+				reject(503, "DIRECTORY_UNAVAILABLE")
+				return
+			}
+			if page.Total < 0 || page.Total > 10000 || len(page.Items) != min(25, max(0, page.Total-request.Offset)) {
+				reject(503, "INVALID_SOURCE_RESPONSE")
+				return
+			}
+			seen := map[string]bool{}
+			for i := range page.Items {
+				m := &page.Items[i]
+				if !IsIdentifier(m.ID) || !IsIdentifier(m.UserID) || seen[m.ID] || !request.Filter.Matches(*m) || m.OrganizationID != b.OrganizationID || m.ProjectID != b.ProjectID {
+					reject(503, "INVALID_SOURCE_RESPONSE")
+					return
+				}
+				seen[m.ID] = true
+				m.Permissions, e = b.Catalog.Permissions(m.Roles)
+				if e != nil {
+					reject(503, "INVALID_SOURCE_RESPONSE")
+					return
+				}
+			}
+			var selected *Member
+			if id := q["memberId"]; id != "" {
+				m, e := b.Directory.Read(ctx, b.OrganizationID, id)
+				if errors.Is(e, ErrNotFound) {
+					reject(404, "MEMBER_UNAVAILABLE")
+					return
+				}
+				if e != nil || m.ID != id || m.OrganizationID != b.OrganizationID || m.ProjectID != b.ProjectID {
+					reject(503, "DIRECTORY_UNAVAILABLE")
+					return
+				}
+				m.Permissions, e = b.Catalog.Permissions(m.Roles)
+				if e != nil {
+					reject(503, "INVALID_SOURCE_RESPONSE")
+					return
+				}
+				selected = &m
+			}
+			payload = struct {
+				Items           []Member `json:"items"`
+				Total           int      `json:"total"`
+				Offset          int      `json:"offset"`
+				Limit           int      `json:"limit"`
+				Selected        *Member  `json:"selected"`
+				RoleDefinitions []Role   `json:"roleDefinitions"`
+			}{page.Items, page.Total, request.Offset, 25, selected, b.Catalog.Roles()}
+		case "roles":
+			payload = struct {
+				Items        []Role `json:"items"`
+				PolicySource string `json:"policySource"`
+			}{b.Catalog.Roles(), "APPLICATION_CATALOG"}
+		case "audit":
+			if !audit.Configured() {
+				reject(503, "SOURCE_UNCONFIGURED")
+				return
+			}
+			if !initial.ExpiresAt.After(time.Now()) {
+				reject(503, "READ_UNAVAILABLE")
+				return
+			}
+			page, e := audit.Reader.List(ctx, ws, p.ActorID, q["cursor"])
+			auditErr = e
+			payload = page
 		}
-		payload = struct {
-			Items           []Member `json:"items"`
-			Total           int      `json:"total"`
-			Offset          int      `json:"offset"`
-			Limit           int      `json:"limit"`
-			Selected        *Member  `json:"selected"`
-			RoleDefinitions []Role   `json:"roleDefinitions"`
-		}{page.Items, page.Total, request.Offset, 25, selected, b.Catalog.Roles()}
-	case "roles":
-		payload = struct {
-			Items        []Role `json:"items"`
-			PolicySource string `json:"policySource"`
-		}{b.Catalog.Roles(), "APPLICATION_CATALOG"}
-	case "audit":
-		if !audit.Configured() {
-			failure(w, 503, "SOURCE_UNCONFIGURED")
-			return
-		}
-		if !initial.ExpiresAt.After(time.Now()) {
-			failure(w, 503, "READ_UNAVAILABLE")
-			return
-		}
-		page, e := audit.Reader.List(ctx, ws, p.ActorID, q["cursor"])
-		auditErr = e
-		payload = page
 	}
+	observe()
 	// A local grant check cannot detect IdP token revocation during directory I/O.
 	// Reuse the uncached resolver, then validate the original authority revision;
 	// a newly granted identity must never legitimize data fetched under an old one.
@@ -247,8 +255,12 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		authorityFailure(w, err)
 		return
 	}
-	if ctx.Err() != nil {
+	if ctx.Err() != nil || !minTime(initial.ExpiresAt, a.ExpiresAt).After(time.Now()) {
 		failure(w, 503, "READ_UNAVAILABLE")
+		return
+	}
+	if sourceCode != "" {
+		failure(w, sourceStatus, sourceCode)
 		return
 	}
 	env := Envelope{"platform-management.v1", ws, p.ActorID, a.Principal.IdentityRevision, a.EvaluatedAt, b.Source, false}
@@ -287,7 +299,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Envelope
 		Data any `json:"data"`
 	}{env, payload})
-	if err != nil || resource == "audit" && !minTime(initial.ExpiresAt, a.ExpiresAt).After(time.Now()) {
+	if err != nil || !minTime(initial.ExpiresAt, a.ExpiresAt).After(time.Now()) {
 		failure(w, 503, "READ_UNAVAILABLE")
 		return
 	}

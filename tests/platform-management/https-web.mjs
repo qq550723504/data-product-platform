@@ -5,7 +5,7 @@ import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 const root=fileURLToPath(new URL('../../',import.meta.url)),require=createRequire(resolve(root,'apps/web/package.json')),next=require('next');
-const port=process.env.MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK==='ISOLATED_MAIN_SERVICE_READONLY'?4360:process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK==='ISOLATED_RUNTIME_LOG_READONLY'?4350:4300;
+const port=process.env.MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK==='ISOLATED_MAIN_SERVICE_COMPAT_READONLY'?4370:process.env.MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK==='ISOLATED_MAIN_SERVICE_READONLY'?4360:process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK==='ISOLATED_RUNTIME_LOG_READONLY'?4350:4300;
 if(process.env.BROWSER_IAM_ORIGIN!==`https://localhost:${port}`||process.env.BROWSER_IAM_PROFILE!=='platform-management')throw Error('independent management origin required');
 const dist=process.env.NEXT_DIST_DIR;if(!/^\.next-acceptance-identity-management-[a-z0-9-]+$/.test(dist??''))throw Error('independent build required');
 const app=next({dev:false,dir:resolve(root,'apps/web'),hostname:'localhost',port});await app.prepare();const handle=app.getRequestHandler();

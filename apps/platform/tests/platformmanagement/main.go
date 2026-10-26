@@ -27,7 +27,7 @@ import (
 
 type config struct {
 	DatabaseURL, Issuer, ResourceSecret, ReadCredential, Cert, Key, CA, Root, APIPassword, RPPassword string
-	RuntimeLogs, MainService                                                                          bool
+	RuntimeLogs, MainService, MainServiceCompat                                                       bool
 }
 
 var wsA = uuid.MustParse("11111111-1111-4111-8111-111111111111")
@@ -47,10 +47,16 @@ func main() {
 		issuer, dbName, apiPort = "https://localhost:19150", "runtime_logs_readonly_20261026", "18550"
 	}
 	if c.MainService {
-		if c.RuntimeLogs || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
+		if c.RuntimeLogs || c.MainServiceCompat || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
 			log.Fatal("disjoint main service fixture required")
 		}
 		issuer, dbName, apiPort = "https://localhost:19160", "management_main_service_20261026", "18560"
+	}
+	if c.MainServiceCompat {
+		if c.RuntimeLogs || c.MainService || os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_COMPAT_READONLY" {
+			log.Fatal("disjoint main service compatibility fixture required")
+		}
+		issuer, dbName, apiPort = "https://localhost:19170", "management_main_service_compat_20261026", "18570"
 	}
 	if c.Issuer != issuer {
 		log.Fatal("synthetic issuer required")
@@ -99,11 +105,11 @@ func main() {
 		_ = json.NewEncoder(w).Encode(map[string]any{"profile": "platform-management.v1", "realSources": "UNCONFIGURED", "businessWrites": false, "models": false, "dispatch": false})
 	})
 	next := onlyQueries(mux)
-	if c.MainService {
+	if c.MainService || c.MainServiceCompat {
 		must(managementservice.CheckDatabase(context.Background(), pool, dbName, "management_api", true))
 		next, e = managementservice.Compose(managementservice.Dependencies{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, IdentitySource: "SYNTHETIC_FIXTURE", Confirmation: store.ManagementPrincipal(resolver), Ready: func(ctx context.Context) error {
 			return managementservice.CheckDatabase(ctx, pool, dbName, "management_api", true)
-		}, Audits: map[uuid.UUID]management.AuditBinding{wsA: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}, wsB: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}}})
+		}, Bindings: scopes, RuntimeSources: runtimeSources(c, client), Audits: map[uuid.UUID]management.AuditBinding{wsA: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}, wsB: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}}})
 		must(e)
 	}
 	server := http.Server{Addr: "127.0.0.1:" + apiPort, Handler: next, ReadHeaderTimeout: 5 * time.Second, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12}}
@@ -130,10 +136,16 @@ func prepare(c config) {
 		expectedDB, expectedPort = "runtime_logs_readonly_20261026", 25550
 	}
 	if c.MainService {
-		if c.RuntimeLogs || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
+		if c.RuntimeLogs || c.MainServiceCompat || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
 			log.Fatal("main service prepare boundary")
 		}
 		expectedDB, expectedPort = "management_main_service_20261026", 25560
+	}
+	if c.MainServiceCompat {
+		if c.RuntimeLogs || c.MainService || os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_COMPAT_READONLY" {
+			log.Fatal("compatibility prepare boundary")
+		}
+		expectedDB, expectedPort = "management_main_service_compat_20261026", 25570
 	}
 	if cfg.ConnConfig.Database != expectedDB || cfg.ConnConfig.Host != "127.0.0.1" || cfg.ConnConfig.Port != expectedPort {
 		log.Fatal("prepare target differs")

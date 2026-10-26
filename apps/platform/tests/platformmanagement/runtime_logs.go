@@ -18,7 +18,7 @@ import (
 )
 
 func fixtureCapabilities(c config, name, cap string) []string {
-	if c.RuntimeLogs && name != "ordinary" && name != "admin-b" {
+	if (c.RuntimeLogs || c.MainServiceCompat) && name != "ordinary" && name != "admin-b" {
 		return []string{cap, principal.CapabilityRuntimeLogRead}
 	}
 	return []string{cap}
@@ -30,7 +30,7 @@ type syntheticLogSource struct {
 }
 
 func runtimeSources(c config, client *http.Client) management.RuntimeSources {
-	if !c.RuntimeLogs {
+	if !c.RuntimeLogs && !c.MainServiceCompat {
 		return nil
 	}
 	copy := *client

@@ -31,6 +31,8 @@
 
 只读 GET `/api/v1/workspaces/{workspaceId}/management/{members,roles,audit,users,workspace,organization,configuration}`；成员和用户固定limit=25，成员offset≤10000，q≤200 UTF-8 bytes、state=active/inactive、role=配置目录中的角色；拒绝未知、重复、空或非法参数。目录详情通过明确 memberId 选择，不以当前页第一条回退。角色无分页（最多64个显式定义），workspace、organization与configuration分别只返回当前已授权空间的概览、绑定组织与公开配置，均不接受API参数。审计采用 scope-bound cursor（workspace、caller、asOf、最后 time/id），微秒时间和稳定 ID 顺序，limit+1 判断下一页；不声称跨页数据库快照。
 
+成员、用户和组织读取成功、失败、缺失及非法结果均先经同一无缓存后置身份/资格检查，再输出记录或原来源错误；读取中失效的caller优先401/403且无data。所有管理响应均按初次和后查最短期限输出，后查不能续长原期限。
+
 响应绑定 workspaceId、principalId、authorityRevision、evaluatedAt、source、writeEnabled=false；仅已验证字段可进入 UI，权限必须命中显式自有键白名单，Object继承属性不能算权限。目录一次完整查询超过上限、超时，或检测到总数变化、短页、重复/乱序ID、错空间或原生筛选不符时必须失败，不返回部分成功。远端offset接口没有共同快照/修订号；相同总数下的并发替换不保证可检测，目录结果仅为查询视图，不是冻结成员事实，也不能作为后续写入授权。
 
 字段核验分层沿用现有实现：原生目录响应中的无关扩展字段可由Adapter忽略，但不能投影或据此推定身份、范围或组织归属；组织/项目/人员引用、状态、时间、总数等关键字段按各接口既有规则核验，非法结果拒绝。公开管理DTO及Web字段集合必须精确，额外公开键拒绝；不能把原生无关字段一律改成错误，也不新增“未知字段”错误码。未知目录角色仍按上文投影无已配置权限，不与非法状态或越权混为一类；日志Adapter仍遵循独立日志契约，不沿用本段原生目录规则。
@@ -111,7 +113,7 @@ Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`m
 
 审计来源状态是当前部署/空间的显式配置声明，不是连接健康、已接纳真实来源或后续执行授权；公开availability仍NOT_CHECKED。真实审计查询宿主、范围、只读凭据和维护责任继续待定。角色、组织、成员、用户的目录前置依赖不因本节自动拆除；运行日志仍按独立契约查询和双权限判断。
 
-权限与验证范围见[装配方案](platform-management-main-service-readonly-v1.md)和[本片实施记录](../product/platform-management-main-service-20261026.md)。audit-only、目录权限故障、未配置源、独立Source、投影/DTO、跨空间/caller游标、同微秒分页及读取成功/失败过程撤权/到期已获独立合成验证；不继承旧51项结果，不声称Base64游标防篡改或跨页快照。真实来源、完整目录/日志在新组合的兼容回归仍按分片单独记录。
+权限与验证范围见[装配方案](platform-management-main-service-readonly-v1.md)和[本片实施记录](../product/platform-management-main-service-20261026.md)。audit-only、目录权限故障、未配置源、独立Source、投影/DTO、跨空间/caller游标、同微秒分页及读取成功/失败过程撤权/到期已获独立合成验证；不继承旧51项结果，不声称Base64游标防篡改或跨页快照。第二切片完整目录/日志在共享组合的兼容回归已获独立合成验证，详见[第二切片记录](../product/platform-management-main-service-compat-20261026.md)；真实来源继续未接入。
 
 ## 验证
 

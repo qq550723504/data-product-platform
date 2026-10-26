@@ -21,19 +21,28 @@ import (
 )
 
 func TestIsolatedQueryRoleMetadataAndTLSAreValidated(t *testing.T) {
-	if os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
+	first := os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") == "ISOLATED_MAIN_SERVICE_READONLY"
+	compat := os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") == "ISOLATED_MAIN_SERVICE_COMPAT_READONLY"
+	if !first && !compat {
 		t.Skip("new isolated main service fixture required")
+	}
+	if first && compat {
+		t.Fatal("disjoint isolated fixture required")
+	}
+	expectedPort, expectedDatabase, expectedIssuer := "25560", "management_main_service_20261026", "https://localhost:19160"
+	if compat {
+		expectedPort, expectedDatabase, expectedIssuer = "25570", "management_main_service_compat_20261026", "https://localhost:19170"
 	}
 	var fixture struct {
 		DatabaseURL, CA, Issuer, ResourceSecret string
-		MainService                             bool
+		MainService, MainServiceCompat          bool
 	}
 	b, e := os.ReadFile(os.Getenv("MANAGEMENT_FIXTURE_CONFIG"))
-	if e != nil || json.Unmarshal(b, &fixture) != nil || !fixture.MainService {
+	if e != nil || json.Unmarshal(b, &fixture) != nil || fixture.MainService != first || fixture.MainServiceCompat != compat {
 		t.Fatal("independent fixture config unavailable")
 	}
 	u, e := url.Parse(fixture.DatabaseURL)
-	if e != nil || u.Hostname() != "127.0.0.1" || u.Port() != "25560" || u.Path != "/management_main_service_20261026" || u.User.Username() != "management_api" {
+	if e != nil || u.Hostname() != "127.0.0.1" || u.Port() != expectedPort || u.Path != "/"+expectedDatabase || u.User == nil || u.User.Username() != "management_api" {
 		t.Fatal("wrong fixture target")
 	}
 	u.RawQuery = ""
@@ -41,7 +50,7 @@ func TestIsolatedQueryRoleMetadataAndTLSAreValidated(t *testing.T) {
 	if os.WriteFile(file, []byte(u.String()), 0600) != nil {
 		t.Fatal("private fixture input")
 	}
-	d := Database{URLFile: file, CAFile: fixture.CA, Name: "management_main_service_20261026", Role: "management_api"}
+	d := Database{URLFile: file, CAFile: fixture.CA, Name: expectedDatabase, Role: "management_api"}
 	c, e := poolConfig(d)
 	if e != nil {
 		t.Fatal("verified pool configuration failed")
@@ -67,7 +76,7 @@ func TestIsolatedQueryRoleMetadataAndTLSAreValidated(t *testing.T) {
 		t.Fatal("isolated role controller unavailable")
 	}
 	a, e := url.Parse(profile.AdminDSN)
-	if e != nil || a.Hostname() != "127.0.0.1" || a.Port() != "25560" || a.Path != "/management_main_service_20261026" || a.User.Username() != "postgres" {
+	if e != nil || a.Hostname() != "127.0.0.1" || a.Port() != expectedPort || a.Path != "/"+expectedDatabase || a.User == nil || a.User.Username() != "postgres" {
 		t.Fatal("wrong role controller target")
 	}
 	admin, e := pgxpool.New(ctx, profile.AdminDSN)
@@ -88,7 +97,7 @@ func TestIsolatedQueryRoleMetadataAndTLSAreValidated(t *testing.T) {
 	}
 	// All optional readers absent: actual OIDC and current PG authority still
 	// explain configuration, without granting audit access or fabricating records.
-	if fixture.Issuer != "https://localhost:19160" {
+	if fixture.Issuer != expectedIssuer {
 		t.Fatal("wrong synthetic issuer")
 	}
 	ca, e := os.ReadFile(fixture.CA)

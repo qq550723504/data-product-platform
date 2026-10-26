@@ -2,6 +2,8 @@
 
 2026-10-26，承接设计提交`2a6f6099e7716dc4693db51147cfc88ab863b95c`，该文档HEAD的16项CI已完成并成功。本轮用户授权第一实施切片及独立合成验证；本实现提交的CI另按最新HEAD记录，不继承旧绿色。PR #363保持Draft，不合并、不部署。
 
+后续[第二切片](platform-management-main-service-compat-20261026.md)已补齐共享组合的完整目录/日志兼容及来源观察门禁，以下首片数据和NOT_RUN保留为当时记录，当前状态以装配矩阵为准。
+
 ## 1. 本片结果和边界
 
 已在[cmd/api](../../apps/platform/cmd/api/main.go)增加默认关闭的QUERY_ONLY分支，复用[共享组合](../../apps/platform/internal/platformmanagement/service/composition.go)、现有OIDC/RP、当前PG资格与管理/日志查询Handler。所选profile无效即拒绝启动，不回退全量主服务、默认DSN或fixture；默认未选不创建新增管理依赖。没有引入IAM、通用策略/HTTP框架、依赖、迁移、业务表或Command。

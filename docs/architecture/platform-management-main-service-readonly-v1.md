@@ -1,6 +1,6 @@
 # 系统设置接入主服务：只读装配方案
 
-2026-10-26。状态：**第一实施切片已完成隔离合成验证；主服务可选组合默认关闭，真实运行未启用**。设计源码基线为`48cde34853f8da73bfb07936e9906252c1ce2f09`，设计文档提交`2a6f6099e7716dc4693db51147cfc88ab863b95c`的16项CI已完成并成功。后续用户授权实施第一切片，当前结果见[实施及验收记录](../product/platform-management-main-service-20261026.md)；本次实现HEAD的CI单独记录，不继承前述绿色。
+2026-10-26。状态：**第一切片及第二切片共享组合兼容已完成隔离合成验证；主服务可选组合默认关闭，真实运行未启用**。设计源码基线为`48cde34853f8da73bfb07936e9906252c1ce2f09`，设计文档提交`2a6f6099e7716dc4693db51147cfc88ab863b95c`的16项CI已完成并成功。后续用户授权实施第一切片，当前结果见[实施及验收记录](../product/platform-management-main-service-20261026.md)；本次实现HEAD的CI单独记录，不继承前述绿色。第二切片复用既有目录/日志Port完成共享组合兼容及来源观察门禁修复，见[第二切片验收](../product/platform-management-main-service-compat-20261026.md)；产品profile仍不开放目录/日志配置。
 
 真实来源UNCONFIGURED，默认新版预览未接入；原库、OIDC/RP和Agent API保留，业务写入口、模型和真实执行关闭，PR #363保持Draft、不合并、不部署。
 
@@ -47,8 +47,8 @@ GET /health/live仅表示进程存活；GET /health/ready执行必需数据库/s
 | Gate | 每次读取复用当前资格/fence；读取前后核验同一actor、issuer/subject、workspace、revision及最短期限；原期限不得被后查延长 |
 | workspace/configuration | 身份可用即能解释来源未配置；不需要目录，不生成正式空间档案或健康断言；configuration仍为六个查询键 |
 | audit | 当前空间显式AuditBinding.Source/Reader，独立于Directory/Catalog；成功及失败观察均经后置身份检查，错误无data，输出前保留原期限 |
-| directory | 七项管理Handler仍复用现有Port和原生权限规则，但本片产品profile不组装Directory/Catalog/Users/Organizations/IdentityLinks |
-| logs | 共享日志Handler默认RuntimeSources=nil；source解释UNCONFIGURED，记录继续独立双权限及引用规则，不接真实日志 |
+| directory | 七项管理Handler复用现有Port和原生权限规则，第二切片已通过tests注入完成共享组合兼容；产品profile仍不组装Directory/Catalog/Users/Organizations/IdentityLinks |
+| logs | 产品默认RuntimeSources=nil；第二切片仅tests注入合成Reader验证共享日志Handler，source/记录继续独立双权限及引用规则，不接真实日志 |
 | Web | 复用现有管理RP、加密临时会话、同API origin的严格GET transport；无第二套IAM、无浏览器Bearer代理或业务写入口 |
 
 API角色只能读取platform_actor_state、platform_subject_binding、platform_workspace_grant；配置审计时另需audit_event。启动核验目标库/角色、TLS、主库、只读默认、必要字段、数据库/非系统schema创建、ownership、角色继承/提升、表及列级读写、序列与非系统schema函数权限。额外业务表/列SELECT、业务列UPDATE也拒绝。检查非系统schema可执行函数；不声称清空PostgreSQL全部内置系统能力，应用从不提供通用SQL入口，只执行固定查询。只读GUC不替代真实GRANT边界。
@@ -61,7 +61,7 @@ QUERY_ONLY不创建outbox obligation/router、队列/健康入队、对象存储
 
 封闭路由为管理七项GET、日志三项GET、私有POST /internal/identity/platform-management-principal及原health；识别路径的其他方法405，其他路径404。HEAD/OPTIONS不是GET兜底，编码/清理路径不得绕过，不能因是GET而允许Agent、下载、交付等副作用路由。私有POST继续严格body/Content-Type/单Bearer/无Cookie与当前空间核验；internal前缀不替代受控HTTPS和部署访问边界。
 
-默认4193预览保持管理IAM未接入，现有Agent运输方式不变。独立验收使用新的API/PG/IdP/Web/浏览器上下文和临时会话，当前合成Web为https://localhost:4360。未在现有Web进程切换profile；同hostname换端口不能隔离Cookie，真实运行前仍需确认hostname、会话及部署范围。真实地址/来源/配置位置/责任人继续待定。
+默认4193预览保持管理IAM未接入，现有Agent运输方式不变。独立验收使用新的API/PG/IdP/Web/浏览器上下文和临时会话，第一切片合成Web为https://localhost:4360，第二切片独立兼容Web为https://localhost:4370。未在现有Web进程切换profile；同hostname换端口不能隔离Cookie，真实运行前仍需确认hostname、会话及部署范围。真实地址/来源/配置位置/责任人继续待定。
 
 查询private,no-store；刷新、返回和前进后退重验当前资格，不复活旧会话或结果。URL/游标只恢复条件和位置，不授予范围；不批量删除其他profile会话。
 
@@ -74,7 +74,7 @@ QUERY_ONLY不创建outbox obligation/router、队列/健康入队、对象存储
 | 有身份、无目录 | workspace/configuration可解释；目录相关GET返回503 SOURCE_UNCONFIGURED，无假表格/假空页 |
 | 无当前空间审计Binding | queries.audit=false，audit为503 SOURCE_UNCONFIGURED |
 | 只有审计配置 | queries.audit=true、directory=UNCONFIGURED；审计不探测目录，Envelope.source取独立审计Source |
-| 审计读取失败 | 后置当前资格有效时503 AUDIT_UNAVAILABLE；资格失效优先拒绝，无data或内部错误 |
+| 来源观察失败 | 审计、成员、用户、组织的失败/缺失/非法结果均先经共同后置门禁；当前资格有效时返回原来源错误，失效优先401/403，无data或内部错误，原最短期限不能续长 |
 | 无日志来源 | source为200 UNCONFIGURED/NOT_CHECKED；entries/详情仍核验日志资格后按原合同拒绝，不能读stdout/Docker日志补齐 |
 | 身份/空间失效或读取中撤权 | 原401/403/身份不可用语义，无记录；恢复资格不恢复旧RP会话 |
 | 查询确实无匹配 | 只有当前门禁和完整查询成功才可空items，不能表示健康、无历史或验收通过 |
@@ -89,9 +89,9 @@ QUERY_ONLY不创建outbox obligation/router、队列/健康入队、对象存储
 
 ## 8. 验收条件与分片状态
 
-当前证据详见[实施记录](../product/platform-management-main-service-20261026.md)。下表不把已有其他宿主的路线当本组合验收；完整目录/日志兼容回归与真实来源接纳分别记录。
+当前证据详见[实施记录](../product/platform-management-main-service-20261026.md)。下表不把已有其他宿主的路线当本组合验收；第二切片[兼容证据](../product/platform-management-main-service-compat-20261026.md)与真实来源接纳分别记录。
 
-| 编号 | 最小验收条件 | 第一切片状态 |
+| 编号 | 最小验收条件 | 当前分片状态 |
 |---|---|---|
 | A01 | 未设profile不创建新增管理依赖，不改变原主服务路径 | 单元/真实main拒绝回退及代码边界通过；未替换原宿主 |
 | A02 | 无效/部分/未知/合成产品配置拒绝启动且不泄漏 | profile与main子进程回归通过 |
@@ -100,18 +100,18 @@ QUERY_ONLY不创建outbox obligation/router、队列/健康入队、对象存储
 | A05 | 伪造caller/空间/Cookie、其他profile或普通用户拒绝 | 单元、OIDC/PG及Edge通过 |
 | A06 | 全部可选来源关闭仍解释未配置，无假空记录 | 实际TLS HTTP/OIDC/PG共用组合及DTO单元通过 |
 | A07 | audit-only无Directory/Catalog可读，独立Source及两个投影一致 | API、DTO与Edge通过 |
-| A08 | 目录未接入/失败不影响审计，目录规则不放宽 | 无目录/权限故障Edge通过；本组合完整目录接入兼容仍后续 |
+| A08 | 目录未接入/失败不影响审计，目录规则不放宽 | 首片无目录/权限故障及第二片完整51项设置Edge通过；审计仍独立 |
 | A09 | 无审计空间/来源false；非法Reader/Source拒绝 | 组合、PG权限及查询回归通过 |
 | A10 | 成功/失败读取中撤权、到期、revision及原期限拒绝 | 单元、真实PG与Edge通过，不续原期限 |
 | A11 | 同微秒25/25/8无重漏，跨空间/跨caller游标拒绝 | 58条真实PG审计记录与Edge通过，不承诺快照/防篡改 |
-| A12 | 本组合完整目录/日志双权限及跨空间引用兼容 | 本片仅日志未配置/缺资格拒绝；完整路线NOT_RUN |
-| A13 | 本组合已配置日志的读取中到期、绑定变化、26条核验 | NOT_RUN；日志原契约及既有独立宿主回归保留 |
-| A14 | 新版审计分页/详情展开/返回/刷新/历史导航，及目录完整往返 | 审计与未配置入口通过；本组合目录完整往返NOT_RUN |
+| A12 | 本组合完整目录/日志双权限及跨空间引用兼容 | 第二片共享Compose的设置51项、日志18项Edge通过；原生规则、双权限和跨空间/caller引用保留 |
+| A13 | 本组合已配置日志的读取中到期、绑定变化、26条核验 | 第二片读取中到期Edge通过；共享Compose binding/rule变化与原期限单元、26条原生lookahead/HTTP回归通过；均仅合成 |
+| A14 | 新版审计分页/详情展开/返回/刷新/历史导航，及目录完整往返 | 首片审计18项通过；第二片目录角色→成员→详情→原筛选/第二页/选中行及组织/用户/配置往返Edge通过 |
 | A15 | 默认预览/Agent原接入不回退，无新增写入 | 默认配置与Agent代码/transport保留；原4193/4493现场本轮未重演 |
 | A16 | 新PG/IdP/API/Web/Edge隔离、原容器保留、旧失败留存 | 本片新环境与前后只读保留检查通过；无原库SQL/DDL |
 
 ## 9. 下一切片和授权边界
 
-本轮授权仅覆盖第一切片和独立合成验证。目录/日志产品配置、同进程全站并存、完整兼容路线、真实来源/版本/空间资料/责任人落实仍为后续工作，不由本次代码或CI自动启用。实际企业来源、受控地址和部署范围仍待定；产品正向真实来源启动、原库DDL、真实授权变更、默认预览切换、模型、派发、业务写入、合并/部署均未执行。
+第一切片后续已获第二切片共享组合兼容的独立合成验证授权，并完成上述有限回归。目录/日志产品配置、同进程全站并存、真实来源/版本/空间资料/责任人落实仍为后续工作，不由本次代码或CI自动启用。实际企业来源、受控地址和部署范围仍待定；产品正向真实来源启动、原库DDL、真实授权变更、默认预览切换、模型、派发、业务写入、合并/部署均未执行。
 
 出现身份/空间泄漏、真实保留元数据变化或UNKNOWN、权限扩大、错误源回退等必须停止，不降低门槛或补造成功。首次本地准备因权限检查SQL在非sequence对象调用sequence权限函数而失败，已改为显式CASE类型保护；实际写权限与元数据变化阻断均保留。失败和修复后验收分别留存，详见实施记录。

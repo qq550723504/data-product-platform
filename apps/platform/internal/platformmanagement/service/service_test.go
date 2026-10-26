@@ -26,12 +26,15 @@ func TestClosedProfileRejectsAmbiguousAndSyntheticConfiguration(t *testing.T) {
 	p := validProfile(t)
 	b, _ := json.Marshal(p)
 	for name, raw := range map[string][]byte{
-		"valid":            b,
-		"unknown":          []byte(strings.Replace(string(b), `"version":`, `"unknown":true,"version":`, 1)),
-		"duplicate":        []byte(strings.Replace(string(b), `"mode":`, `"mode":"QUERY_ONLY","mode":`, 1)),
-		"nested-duplicate": []byte(strings.Replace(string(b), `"source":`, `"source":"CONFIGURED","source":`, 1)),
-		"case-alias":       []byte(strings.Replace(string(b), `"version":`, `"Version":`, 1)),
-		"trailing":         append(append([]byte{}, b...), []byte(" {}")...),
+		"valid":              b,
+		"directory-unopened": []byte(strings.Replace(string(b), `"version":`, `"directory":{},"version":`, 1)),
+		"logs-unopened":      []byte(strings.Replace(string(b), `"version":`, `"runtimeSources":{},"version":`, 1)),
+		"fixture-switch":     []byte(strings.Replace(string(b), `"version":`, `"mainServiceCompat":true,"version":`, 1)),
+		"unknown":            []byte(strings.Replace(string(b), `"version":`, `"unknown":true,"version":`, 1)),
+		"duplicate":          []byte(strings.Replace(string(b), `"mode":`, `"mode":"QUERY_ONLY","mode":`, 1)),
+		"nested-duplicate":   []byte(strings.Replace(string(b), `"source":`, `"source":"CONFIGURED","source":`, 1)),
+		"case-alias":         []byte(strings.Replace(string(b), `"version":`, `"Version":`, 1)),
+		"trailing":           append(append([]byte{}, b...), []byte(" {}")...),
 	} {
 		t.Run(name, func(t *testing.T) {
 			file := filepath.Join(t.TempDir(), "profile.json")

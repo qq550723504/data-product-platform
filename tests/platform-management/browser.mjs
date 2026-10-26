@@ -1,16 +1,19 @@
 // Isolated Edge/CI Chromium: real RP SDK + canonical PG bindings + synthetic native directory.
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 const runtime=process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK==='ISOLATED_RUNTIME_LOG_READONLY';
 if(process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK&&!runtime)throw Error('explicit isolated fixture required');
-const root=fileURLToPath(new URL('../../',import.meta.url)),fixtureRun=new URL('../../.data/'+(runtime?'runtime-logs-api-20261026':'management-readonly-20261025')+'/',import.meta.url),api=runtime?'https://localhost:18550':'https://localhost:18499';
-const output=process.env.MANAGEMENT_BROWSER_OUTPUT??'management-readonly-20261025';if(!/^management-readonly-[a-z0-9-]+$/.test(output))throw Error('independent evidence directory required');
+const compat=process.env.MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK==='ISOLATED_MAIN_SERVICE_COMPAT_READONLY';
+if(process.env.MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK&&!compat||compat&&runtime)throw Error('disjoint compatibility fixture required');
+const root=fileURLToPath(new URL('../../',import.meta.url)),fixtureRun=new URL('../../.data/'+(compat?'management-main-service-compat-20261026':runtime?'runtime-logs-api-20261026':'management-readonly-20261025')+'/',import.meta.url),api=compat?'https://localhost:18570':runtime?'https://localhost:18550':'https://localhost:18499';
+const output=process.env.MANAGEMENT_BROWSER_OUTPUT??(compat?'management-readonly-main-service-compat-20261026':'management-readonly-20261025');if(!/^management-readonly-[a-z0-9-]+$/.test(output))throw Error('independent evidence directory required');
 const run=new URL('../../.data/'+output+'/',import.meta.url);
+if(compat&&existsSync(run))throw Error('existing compatibility evidence retained');
 const require=createRequire(new URL('../browser/package.json',import.meta.url)),{chromium,expect}=require('@playwright/test'),{Pool}=createRequire(new URL('../../apps/web/package.json',import.meta.url))('pg');
-const p=JSON.parse(readFileSync(new URL('profile.json',fixtureRun),'utf8'));assert.equal(p.origin,runtime?'https://localhost:4350':'https://localhost:4300');assert.equal(p.database,runtime?'runtime_logs_readonly_20261026':'management_readonly_20261025');
-const dbURL=new URL(p.adminDSN);assert.equal(dbURL.hostname,'127.0.0.1');assert.equal(dbURL.port,runtime?'25550':'25496');assert.equal(dbURL.pathname,'/'+p.database);
+const p=JSON.parse(readFileSync(new URL('profile.json',fixtureRun),'utf8'));assert.equal(p.origin,compat?'https://localhost:4370':runtime?'https://localhost:4350':'https://localhost:4300');assert.equal(p.database,compat?'management_main_service_compat_20261026':runtime?'runtime_logs_readonly_20261026':'management_readonly_20261025');if(compat)assert.equal(p.mainServiceCompat,true);
+const dbURL=new URL(p.adminDSN);assert.equal(dbURL.hostname,'127.0.0.1');assert.equal(dbURL.port,compat?'25570':runtime?'25550':'25496');assert.equal(dbURL.pathname,'/'+p.database);
 const db=new Pool({connectionString:p.adminDSN,ssl:{ca:readFileSync(p.cert),rejectUnauthorized:true}}),results=[],contexts=[],errors=[],writes=[],external=[];
 const channel=process.env.MANAGEMENT_BROWSER_CHANNEL??'msedge';if(!['msedge','chromium'].includes(channel))throw Error('explicit browser required');
 const browser=await chromium.launch({...(channel==='msedge'?{channel}:{}),headless:true}),a='11111111-1111-4111-8111-111111111111',b='12121212-1212-4212-8212-121212121212';

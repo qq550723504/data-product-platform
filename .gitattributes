@@ -340,3 +340,5 @@ docs/product/platform-runtime-logs-api-acceptance-20261026/*.json text eol=lf
 docs/product/platform-runtime-logs-readonly-review-20261026/*.json text eol=lf
 docs/product/platform-runtime-logs-fixture-preservation-20261026/*.json text eol=lf
 docs/product/platform-management-main-service-20261026/*.json text eol=lf
+
+docs/product/platform-management-main-service-compat-20261026/*.json text eol=lf
