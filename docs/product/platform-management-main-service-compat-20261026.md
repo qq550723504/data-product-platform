@@ -54,3 +54,14 @@
 [装配矩阵](../architecture/platform-management-main-service-readonly-v1.md#8-验收条件与分片状态)A08/A12/A13/A14已补齐本组合的有限合成证据。真实企业场景、组织、来源、维护方、版本和材料仍按[来源与责任清单](platform-management-source-admission-20261026.md)待定；9类来源和12项候选材料没有新增真实通过项。
 
 产品目录/日志配置、实际来源接纳、真实正向产品启动、同进程全站组合、默认预览切换及部署仍未执行；原4193/4493现场本轮未重演。不把本轮合成兼容、截图或CI当作真实接纳或启用授权。身份/空间泄漏、权限扩大、保留元数据真实变化/UNKNOWN、来源回退或业务历史变化即阻断，不放宽条件。无合并、原库变更、业务写入口、模型或真实执行授权。
+
+
+## 6. CI发现的页面还原异常及补修
+
+提交8f303138的16项CI中14项成功，identity及聚合required失败。身份作业121492917351在原有日志18项验收中，前17项通过，最终零浏览器错误断言捕获一次React hydration 418；新增共享组合步骤因此NOT_RUN。保留[原CI失败报告](platform-management-main-service-compat-20261026/ci-runtime-before-react-fix.json)，不因本地绿色或重跑抹去失败。
+
+复核确认旧pagehide保护直接replaceChildren删除React拥有的节点；针对渲染所有权的回归在旧函数上失败。已将清除操作交给RuntimeLogNavigation的React状态并flushSync卸载，pageshow.persisted仍重新加载、重新核验，不保留旧结果。静态测试宿主拥有独立DOM，显式提供其清除回调；两者复用同一历史监听器，没有新增运行开关、依赖、缓存或存储。
+
+首次CI错误的精确触发时序未在本机重现，不能把所有权单测当完整重现。补修后新独立构建实际Next+OIDC/PG+HTTP的[Edge19项](platform-management-main-service-compat-20261026/runtime-browser-react-edge.json)与[Chromium19项](platform-management-main-service-compat-20261026/runtime-browser-react-chromium.json)均PASS且pageErrors为空，新增受控pagehide清除和persisted pageshow触发真实新查询；[静态Edge16项](platform-management-main-service-compat-20261026/static-browser-react-results.json)和Web单测12项通过。没有屏蔽hydration警告、过滤pageerror、增加自动重试或放宽零错误断言。安全错误诊断只增加当前用例及pathname，不记录URL参数、引用、Cookie或令牌。
+
+[补修摘要与验证范围](platform-management-main-service-compat-20261026/react-history-fix.json) · [补修后保留比较](platform-management-main-service-compat-20261026/retained-react-comparison.json)。前述18项及截图是前一轮实际证据，继续保留；当前日志路线为19项。补修仅替换本轮经所有权核实的4370候选Web，旧构建/进程账本和其他预览保留。最终CI仍须匹配补修后的最新HEAD，不能继承8f303138结果。

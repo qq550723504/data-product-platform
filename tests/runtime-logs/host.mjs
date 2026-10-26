@@ -18,7 +18,7 @@ export async function startLogHost(){
    res.setHeader('Cache-Control','private, no-store');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('X-Content-Type-Options','nosniff');
    if(!['GET','HEAD'].includes(req.method)||req.headers.host!==new URL(origin).host||req.headers.authorization){res.writeHead(403);return res.end()}
    if(u.pathname==='/style.css'){res.setHeader('Content-Type','text/css');return res.end(css)}
-   if(u.pathname==='/guard.js'){res.setHeader('Content-Type','text/javascript');return res.end('('+runtimeLogBrowserGuard.toString()+')()')}
+   if(u.pathname==='/guard.js'){res.setHeader('Content-Type','text/javascript');return res.end('('+runtimeLogBrowserGuard.toString()+')(()=>document.querySelectorAll("[data-runtime-log-results]").forEach(el=>el.replaceChildren()))')}
    if(u.pathname==='/design/brand.png'){res.setHeader('Content-Type','image/png');return res.end(readFileSync(new URL('../../apps/web/public/design/brand.png',import.meta.url)))}
    if(u.pathname==='/favicon.ico'){res.writeHead(204);return res.end()}
    // Explicit synthetic sign-in exists only in this test host, never in Next/routes.

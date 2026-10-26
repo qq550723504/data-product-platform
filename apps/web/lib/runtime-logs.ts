@@ -95,9 +95,10 @@ export function runtimeLogAPI(client:{principal:LogPrincipal;apiBaseUrl:string;r
 }
 
 // Used by the Next client and the isolated browser host. No local/session storage.
-export function runtimeLogBrowserGuard(){
+export function runtimeLogBrowserGuard(clearResults:()=>void){
  const focus=()=>{if(location.hash.startsWith('#log-'))document.getElementById(location.hash.slice(1))?.focus()};
- const hide=()=>{document.querySelectorAll('[data-runtime-log-results]').forEach(el=>{el.replaceChildren()})};
+ // The owner clears its own tree. Direct DOM deletion corrupts React hydration.
+ const hide=()=>clearResults();
  const show=(e:PageTransitionEvent)=>{if(e.persisted)location.reload();else focus()};
  focus();window.addEventListener('pagehide',hide);window.addEventListener('pageshow',show);
  return ()=>{window.removeEventListener('pagehide',hide);window.removeEventListener('pageshow',show)};

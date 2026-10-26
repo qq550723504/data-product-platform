@@ -14,7 +14,7 @@ function Facts({item:e}:{item:LogEntry}){return <dl className="management-member
 export function RuntimeLogs({view}:{view:LogView}){
  const {selection:s,result,detail,code}=view;
  const title=s?.entryRef?'运行记录详情':'运行日志',loaded=result??detail;
- return <><RuntimeLogNavigation/><div className="breadcrumb">系统设置 / 运行日志{s?.entryRef?' / 运行记录详情':''}</div><div className="page-heading"><div><h1>{title}</h1><p>查看当前空间的服务运行记录。</p></div></div>
+ return <RuntimeLogNavigation><div className="breadcrumb">系统设置 / 运行日志{s?.entryRef?' / 运行记录详情':''}</div><div className="page-heading"><div><h1>{title}</h1><p>查看当前空间的服务运行记录。</p></div></div>
  {s?.from&&<a className="management-back" href="/settings/configuration"><span aria-hidden="true">← </span>返回基础配置</a>}
  {s&&!s.entryRef&&<Filters selection={s}/>}
  {code?<section role="status" className="management-state"><h2>{messages[code]??messages.LOG_SOURCE_UNAVAILABLE}</h2>{code==='LOG_SOURCE_UNCONFIGURED'&&<p>尚未配置当前空间的运行日志来源。</p>}
@@ -30,5 +30,5 @@ export function RuntimeLogs({view}:{view:LogView}){
  {s.focus&&!result.data.items.some(e=>e.rowKey===s.focus)&&<p role="status">原记录当前不可见</p>}
  <nav className="pagination" aria-label="运行日志分页"><a href={logHref(s,{cursor:undefined,focus:undefined})}>返回查询首页</a>{result.data.next?<a href={logHref(s,{cursor:result.data.next,focus:undefined})}>更早记录</a>:<span>已到末页</span>}</nav></>}
  <Evidence window={loaded.data.window}/></section>}
- </>;
+ </RuntimeLogNavigation>;
 }

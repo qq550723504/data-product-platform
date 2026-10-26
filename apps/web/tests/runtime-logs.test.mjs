@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {syntheticSource} from './helpers/runtime-log-source.mjs';
-const require=createRequire(import.meta.url),{runtimeLogAPI,logSelection,logHref,logListHref,logNow,logTime,loadRuntimeLogs,validLogList,validLogDetail}=require('../.runtime-log-tests/lib/runtime-logs.js');
+const require=createRequire(import.meta.url),{runtimeLogBrowserGuard,runtimeLogAPI,logSelection,logHref,logListHref,logNow,logTime,loadRuntimeLogs,validLogList,validLogDetail}=require('../.runtime-log-tests/lib/runtime-logs.js');
 function setup(){const source=syntheticSource(),p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1',expires_at:new Date(Date.now()+60000).toISOString(),capabilities:['PLATFORM_MANAGEMENT_READ']};return {source,p,reader:source.reader(async()=>p,'A'),q:source.window}}
 test('default entry stays unconfigured for every URL; no synthetic mode or data fallback',async()=>{for(const q of [{},{mode:'synthetic'},{start:'bad',entryRef:'forged'}])assert.deepEqual(await loadRuntimeLogs(q,null),{code:'LOG_SOURCE_UNCONFIGURED'})});
 test('HTTP adapter preserves management-only profile and excludes navigation markers from API requests',async()=>{
@@ -42,4 +42,21 @@ test('strict projections reject private fields wrong scope timestamps ordering d
 });
 test('expired changed deleted source errors and empty results retain distinct recovery states',async()=>{
  for(const state of ['expired','changed','deleted','empty','unavailable']){const {source,reader,q}=setup(),one=await loadRuntimeLogs(q,reader),e=one.result.data.items[0];if(state==='expired')source.state.version++;if(state==='changed')source.state.records.find(r=>source.rowKey(r)===e.rowKey).level='FATAL';if(state==='deleted')source.state.records=source.state.records.filter(r=>source.rowKey(r)!==e.rowKey);if(state==='empty')source.state.records=[];if(state==='unavailable')source.state.fault=()=>{throw Error('PRIVATE_PROVIDER_ERROR')};const v=await loadRuntimeLogs({...q,...state==='empty'||state==='unavailable'?{}:{entryRef:e.entryRef}},reader);assert.equal(v.code,({expired:'LOG_QUERY_EXPIRED',changed:'LOG_ENTRY_CHANGED',deleted:'LOG_ENTRY_UNAVAILABLE',empty:undefined,unavailable:'LOG_SOURCE_UNAVAILABLE'})[state]);if(state==='empty')assert.equal(v.result.data.items.length,0)}
+});
+
+
+test('history guard delegates clearing to the renderer and persisted restore requires revalidation',()=>{
+ const previous={window:globalThis.window,document:globalThis.document,location:globalThis.location};
+ const listeners=new Map();let cleared=0,reloaded=0,focused=0;
+ try{
+  globalThis.window={addEventListener:(name,fn)=>listeners.set(name,fn),removeEventListener:(name,fn)=>{assert.equal(listeners.get(name),fn);listeners.delete(name)}};
+  globalThis.location={hash:'#log-current',reload:()=>reloaded++};
+  // The guard must not query or delete renderer-owned nodes.
+  globalThis.document={getElementById:id=>{assert.equal(id,'log-current');return {focus:()=>focused++}},querySelectorAll:()=>{throw Error('renderer ownership bypass')}};
+  const cleanup=runtimeLogBrowserGuard(()=>cleared++);assert.equal(focused,1);
+  listeners.get('pagehide')();assert.equal(cleared,1);
+  listeners.get('pageshow')({persisted:true});assert.equal(reloaded,1);assert.equal(focused,1);
+  listeners.get('pageshow')({persisted:false});assert.equal(focused,2);
+  cleanup();assert.equal(listeners.size,0);
+ }finally{for(const [key,value] of Object.entries(previous)){if(value===undefined)delete globalThis[key];else globalThis[key]=value}}
 });
