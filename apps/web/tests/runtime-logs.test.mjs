@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
-import {syntheticSource} from '../../../tests/runtime-logs/source.mjs';
+import {syntheticSource} from './helpers/runtime-log-source.mjs';
 const require=createRequire(import.meta.url),{logSelection,logHref,logListHref,logNow,logTime,loadRuntimeLogs,validLogList,validLogDetail}=require('../.runtime-log-tests/lib/runtime-logs.js');
 function setup(){const source=syntheticSource(),p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1',expires_at:new Date(Date.now()+60000).toISOString(),capabilities:['PLATFORM_MANAGEMENT_READ']};return {source,p,reader:source.reader(async()=>p,'A'),q:source.window}}
 test('default entry stays unconfigured for every URL; no synthetic mode or data fallback',async()=>{for(const q of [{},{mode:'synthetic'},{start:'bad',entryRef:'forged'}])assert.deepEqual(await loadRuntimeLogs(q,null),{code:'LOG_SOURCE_UNCONFIGURED'})});

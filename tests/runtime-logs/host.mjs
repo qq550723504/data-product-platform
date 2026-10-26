@@ -4,7 +4,7 @@ import {createServer} from 'node:https';
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import {fixture,MemoryStore} from '../../apps/web/tests/helpers/oidc-fixture.mjs';
-import {syntheticSource} from './source.mjs';
+import {syntheticSource} from '../../apps/web/tests/helpers/runtime-log-source.mjs';
 const require=createRequire(new URL('../../apps/web/package.json',import.meta.url)),React=require('react'),{renderToStaticMarkup}=require('react-dom/server');
 const {RuntimeLogs}=require('../../apps/web/.runtime-log-tests/components/runtime-logs.js'),{ManagementShellView}=require('../../apps/web/.runtime-log-tests/components/management-shell-view.js'),{loadRuntimeLogs,runtimeLogBrowserGuard,LogReadError}=require('../../apps/web/.runtime-log-tests/lib/runtime-logs.js');
 const icons=await Promise.all(['GearSix','Buildings','Users','Users','TreeStructure','ShieldCheck','Clock','FileText','SlidersHorizontal'].map(async name=>(await import('../../apps/web/node_modules/@phosphor-icons/react/dist/csr/'+name+'.es.js'))[name]));

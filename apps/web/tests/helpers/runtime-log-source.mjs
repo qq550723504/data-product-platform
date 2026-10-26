@@ -2,7 +2,7 @@
 import {randomBytes,createHmac,createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
-const {LogReadError,logNow}=require('../../apps/web/.runtime-log-tests/lib/runtime-logs.js');
+const {LogReadError,logNow}=require('../../.runtime-log-tests/lib/runtime-logs.js');
 const opaque=()=>randomBytes(32).toString('base64url');
 export function syntheticSource(){
  const key=randomBytes(32),references=new Map();

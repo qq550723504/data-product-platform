@@ -21,7 +21,7 @@
     "test:demo": "node --test tests/governance-demo/*.test.mjs",
     "test:history": "tsc lib/acceptance-context.ts lib/delivery-history.ts lib/core-history.ts lib/quality-cost.ts lib/release-trace.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .history-tests && node --test tests/core-history.test.mjs tests/delivery-history.test.mjs tests/acceptance-context.test.mjs",
     "test:iam": "tsc lib/iam-core.ts lib/iam-store.ts lib/iam-workspace.ts lib/acceptance-identity.ts lib/acceptance-basis.ts lib/platform-management.ts --target ES2022 --module commonjs --lib ES2022,DOM,DOM.Iterable --strict --esModuleInterop --skipLibCheck --outDir .iam-tests && node tests/run-iam-tests.mjs",
-    "test:runtime-logs": "tsc lib/runtime-logs.ts components/runtime-logs.tsx components/management-shell-view.tsx --target ES2017 --module commonjs --lib ES2022,DOM,DOM.Iterable --strict --esModuleInterop --skipLibCheck --jsx react-jsx --outDir .runtime-log-tests && node --test tests/runtime-logs.test.mjs"
+    "test:runtime-logs": "tsc lib/runtime-logs.ts components/runtime-logs.tsx components/management-shell-view.tsx --target ES2017 --module commonjs --lib ES2022,DOM,DOM.Iterable --strict --esModuleInterop --skipLibCheck --jsx react-jsx --outDir .runtime-log-tests && node --test tests/runtime-logs.test.mjs tests/runtime-logs-package.test.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",

@@ -8,7 +8,7 @@
 - 查询保留明确UTC纳秒窗口、服务、级别；更早记录使用受保护位置引用。更改条件清除旧位置，刷新保持原窗口。第二页进入详情、刷新、历史导航和返回均保持条件及原行。
 - 页面仅接受严格的最小字段和固定业务摘要；不展示原始正文、堆栈、地址、人员资料或来源自由错误。查询错误、未配置、无匹配、撤权、位置过期、记录删除与投影变化分别显示。
 - 默认Next入口调用同一加载函数，Reader固定为null。URL、环境或角色名称均不能开启合成来源；没有新增生产配置开关、日志API、DDL或权限授予。
-- `tests/runtime-logs`中的内存Reader、短时随机引用和HTTPS宿主只用于合成验收，不被应用导入。宿主复用现有OIDC/RP SDK与合成IdP测试设施、MemoryStore及共享页面；合成日志资格单独建模，不扩展实际`platform-management.v1`或现有管理查询员权限。
+- `apps/web/tests/helpers/runtime-log-source.mjs`中的内存Reader/短时引用及`tests/runtime-logs`中的HTTPS宿主只用于合成验收，不被应用导入。宿主复用现有OIDC/RP SDK与合成IdP测试设施、MemoryStore及共享页面；合成日志资格单独建模，不扩展实际`platform-management.v1`或现有管理查询员权限。
 
 Build-vs-Buy沿用[权威契约](../architecture/platform-runtime-logs-readonly-v1.md#2-reuse-check与开源边界)：本轮没有采集、存储、索引或新密码设施；成熟OIDC/RP、React和Playwright继续复用。Loki仍是未准入的纸面候选，合成Reader的稳定身份、时间与分页不能补足其真实接入证明。
 
@@ -16,11 +16,11 @@ Build-vs-Buy沿用[权威契约](../architecture/platform-runtime-logs-readonly-
 
 | 验证 | 结果 | 证据范围 |
 |---|---|---|
-| 日志查询/投影单元测试 | 9 PASS | 纳秒窗口、58条续读、条件与焦点恢复、跨空间/人员、读取中撤权/版本变化、严格投影及异常恢复 |
+| 日志查询/投影单元测试 | 10 PASS | 纳秒窗口、58条续读、条件与焦点恢复、跨空间/人员、读取中撤权/版本变化、严格投影及异常恢复 |
 | 独立Edge合成页面 | 16 PASS，0重试/跳过 | 同一共享页面和加载器；本机临时TLS宿主、合成IdP及内存来源 |
 | 实际Next默认入口Edge验收 | 1 PASS | 通过全部设置菜单，日志保持未接入；无管理数据API请求、记录表格或写按钮，390px无整页溢出 |
 | 原有路线Edge回归 | 15 PASS | Agent质量读取、历史报告、修复计划入口、发布追溯、签收/补正/撤回/取消/验收/归档与跨空间演示历史 |
-| 全量前端构建 | PASS | 当次366项单元PASS、2项可选PG测试SKIP，Next编译/类型/静态检查成功；其后新增的读取中来源版本回归包含在上列9项中 |
+| 全量前端构建 | PASS | 当次366项单元PASS、2项可选PG测试SKIP，Next编译/类型/静态检查成功；其后新增的读取中来源版本及Web独立打包回归包含在上列10项中 |
 | 保留预览进程 | 身份核对一致 | 4193/4493的PID、启动时间、命令标记和监听归属与原ledger一致；没有重启或替换保留构建 |
 
 证据JSON按仓库既有做法固定为UTF-8/LF，并同时核对工作副本与Git对象的字节/hash，避免Windows换行转换改变清单。
@@ -30,6 +30,8 @@ Build-vs-Buy沿用[权威契约](../architecture/platform-runtime-logs-readonly-
 首轮Edge为11 PASS / 5 FAIL：返回箭头进入可访问名称导致2个用例失败；另3个只在测试结束清理HTTPS连接时超时，断言已通过。已将装饰箭头设为辅助技术忽略，并在测试专属宿主/IdP清理时关闭其自有连接；完整重跑16 PASS。首轮结果和trace仍保留在私有`.data/runtime-logs-20261026/failed-first-run*`。
 
 首次Next构建发现BigInt字面量不符合项目ES2017编译目标；改为等价BigInt构造，纳秒值不转换成浮点Number，也不降低时间精度。日志单元编译目标现与项目一致，重建成功；失败构建日志保留，现有CSS的autoprefixer提示不作为新增失败。
+
+PR CI在`aa2327ca`发现演示镜像构建失败：Web单元从仓库顶层导入合成Reader，超出`COPY apps/web/`的打包边界。已将Reader移入Web自有测试helper，同时保留镜像既有复制范围和应用/测试边界；新增“仅复制Web内三个必需文件到临时目录并执行整组日志单元”的回归，阻止仓库根目录再次成为隐式构建依赖。原失败作业为[121353296905](https://github.com/qq550723504/data-product-platform/actions/runs/40254349607/job/121353296905)，不能把它记作成功。
 
 ## 矩阵覆盖和未验证范围
 

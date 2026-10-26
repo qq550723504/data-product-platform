@@ -3,23 +3,23 @@
   "files": [
     {
       "file": "detail.png",
-      "bytes": 50506,
-      "sha256": "658ea0b92779ec99ac48341cb5e487aaec1431dcf774f720d8910ba1e6c0e560"
+      "bytes": 50227,
+      "sha256": "16432e446d916ea6a6892449fdeb188c52eb92b51b328c55b2a0ab868469c97a"
     },
     {
       "file": "list.png",
-      "bytes": 173969,
-      "sha256": "5eec80cba62280a3d171ac243df6a1aaf1094335a34b22c3cd7f8d57b823184d"
+      "bytes": 170903,
+      "sha256": "48edf971c501094d85350172816bb7214729412f8831582ad90387126e97ec20"
     },
     {
       "file": "mobile.png",
-      "bytes": 29754,
-      "sha256": "f4d4c3187d69865690f3d6011088fd11a9972c5de475060c8a613eb0e48fc2a5"
+      "bytes": 29929,
+      "sha256": "3a8b69d060bdf71276e5d1286c3690e2fb00d6e89928d0316fc156713edf6767"
     },
     {
       "file": "results.json",
-      "bytes": 9426,
-      "sha256": "1ca91be08d67097e31516ba17cc85a67fbf6321fc33158e2b225a3df04c2e92d"
+      "bytes": 9437,
+      "sha256": "7995636e099c99f2c71e180d97289fc78973b84c2ab40d589b42c975ea0e695a"
     }
   ]
 }
