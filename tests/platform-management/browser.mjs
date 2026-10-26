@@ -3,11 +3,14 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
-const root=fileURLToPath(new URL('../../',import.meta.url)),fixtureRun=new URL('../../.data/management-readonly-20261025/',import.meta.url);
+const runtime=process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK==='ISOLATED_RUNTIME_LOG_READONLY';
+if(process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK&&!runtime)throw Error('explicit isolated fixture required');
+const root=fileURLToPath(new URL('../../',import.meta.url)),fixtureRun=new URL('../../.data/'+(runtime?'runtime-logs-api-20261026':'management-readonly-20261025')+'/',import.meta.url),api=runtime?'https://localhost:18550':'https://localhost:18499';
 const output=process.env.MANAGEMENT_BROWSER_OUTPUT??'management-readonly-20261025';if(!/^management-readonly-[a-z0-9-]+$/.test(output))throw Error('independent evidence directory required');
 const run=new URL('../../.data/'+output+'/',import.meta.url);
 const require=createRequire(new URL('../browser/package.json',import.meta.url)),{chromium,expect}=require('@playwright/test'),{Pool}=createRequire(new URL('../../apps/web/package.json',import.meta.url))('pg');
-const p=JSON.parse(readFileSync(new URL('profile.json',fixtureRun),'utf8'));assert.equal(p.origin,'https://localhost:4300');
+const p=JSON.parse(readFileSync(new URL('profile.json',fixtureRun),'utf8'));assert.equal(p.origin,runtime?'https://localhost:4350':'https://localhost:4300');assert.equal(p.database,runtime?'runtime_logs_readonly_20261026':'management_readonly_20261025');
+const dbURL=new URL(p.adminDSN);assert.equal(dbURL.hostname,'127.0.0.1');assert.equal(dbURL.port,runtime?'25550':'25496');assert.equal(dbURL.pathname,'/'+p.database);
 const db=new Pool({connectionString:p.adminDSN,ssl:{ca:readFileSync(p.cert),rejectUnauthorized:true}}),results=[],contexts=[],errors=[],writes=[],external=[];
 const channel=process.env.MANAGEMENT_BROWSER_CHANNEL??'msedge';if(!['msedge','chromium'].includes(channel))throw Error('explicit browser required');
 const browser=await chromium.launch({...(channel==='msedge'?{channel}:{}),headless:true}),a='11111111-1111-4111-8111-111111111111',b='12121212-1212-4212-8212-121212121212';
@@ -21,10 +24,11 @@ async function login(page,label,ws=a){await page.goto(p.origin+'/auth/login?work
 async function control(data){const response=await browser.newContext({ignoreHTTPSErrors:true});try{const r=await response.request.post(p.issuer+'/_control',{headers:{'x-fixture-control':p.control},data});assert.equal(r.status(),200);return await r.json()}finally{await response.close()}}
 const rows=page=>page.getByRole('table',{name:'空间成员',exact:true}).locator('tbody tr');
 async function businessHash(){return (await db.query("SELECT md5(string_agg(row_to_json(t)::text,'|' ORDER BY id)) AS hash FROM audit_event t")).rows[0].hash}
+async function coreFacts(){const state={};for(const table of ['execution','agent_task','agent_action_request','delivery_provider_attempt','outbox_event'])state[table]=(await db.query("SELECT count(*)::text AS count,md5(COALESCE(string_agg(row_to_json(t)::text,'|' ORDER BY id),'')) AS hash FROM "+table+' t')).rows[0];return state}
 async function pass(name,fn){active=name;await fn();results.push({name,status:'PASS'});console.log('PASS '+name)}
 let active='setup';
 try{
- const before=await businessHash();
+ const before=await businessHash(),factsBefore=await coreFacts();
  await pass('minimal DB roles: API SELECT only, RP temporary sessions only',async()=>{
   for(const [role,table,permission,expected] of [['management_api','audit_event','SELECT',true],['management_api','audit_event','UPDATE',false],['management_api','platform_workspace_grant','UPDATE',false],['management_api','platform_browser_session','SELECT',false],['management_rp','platform_browser_session','INSERT',true],['management_rp','platform_workspace_grant','SELECT',false]])assert.equal((await db.query('SELECT has_table_privilege($1,$2,$3) AS allowed',[role,table,permission])).rows[0].allowed,expected);
   const flags=(await db.query("SELECT rolname,rolsuper,rolcreatedb,rolcreaterole,rolreplication,rolbypassrls FROM pg_roles WHERE rolname=ANY($1)",[['management_api','management_rp']])).rows;assert.equal(flags.length,2);for(const flag of flags)for(const [k,v]of Object.entries(flag))if(k!=='rolname')assert.equal(v,false);
@@ -111,7 +115,7 @@ try{
   const issued=await control({issueSubject:'admin-a',holdList:true});
   let pending;
   try{
-   pending=direct.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/members',{headers:{Authorization:'Bearer '+issued.testAccessToken}});
+   pending=direct.request.get(api+'/api/v1/workspaces/'+a+'/management/members',{headers:{Authorization:'Bearer '+issued.testAccessToken}});
    await expect.poll(async()=>(await control({})).waiting,{timeout:3000}).toBe(1);
    await control({revokeSubject:'admin-a',holdList:false});
    const response=await pending;assert.equal(response.status(),401);const denied=await response.json();assert.equal(denied.code,'AUTHENTICATION_REQUIRED');assert.equal(Object.hasOwn(denied,'data'),false);
@@ -150,12 +154,12 @@ try{
  });
  await pass('user detail returned after token revocation during native profile read is discarded',async()=>{
   const direct=await browser.newContext({ignoreHTTPSErrors:true}),issued=await control({issueSubject:'admin-a',holdUser:true});let pending;
-  try{pending=direct.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/users?userId=person-a-2',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).userWaiting,{timeout:3000}).toBe(1);await control({revokeSubject:'admin-a',holdUser:false});const response=await pending;assert.equal(response.status(),401);assert.equal(Object.hasOwn(await response.json(),'data'),false);await page.reload();await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await userDetail().count(),0);await login(page,'查询人员 A')}
+  try{pending=direct.request.get(api+'/api/v1/workspaces/'+a+'/management/users?userId=person-a-2',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).userWaiting,{timeout:3000}).toBe(1);await control({revokeSubject:'admin-a',holdUser:false});const response=await pending;assert.equal(response.status(),401);assert.equal(Object.hasOwn(await response.json(),'data'),false);await page.reload();await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await userDetail().count(),0);await login(page,'查询人员 A')}
   finally{await control({holdUser:false});if(pending)await pending.catch(()=>{});await direct.close()}
  });
  await pass('membership removed during account lookup cannot publish an orphan profile',async()=>{
   const direct=await browser.newContext({ignoreHTTPSErrors:true}),issued=await control({issueSubject:'admin-a',holdUser:true});let pending;
-  try{pending=direct.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/users?userId=person-a-2',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).userWaiting,{timeout:3000}).toBe(1);await control({removeUser:true,holdUser:false});const response=await pending;assert.equal(response.status(),404);assert.equal(Object.hasOwn(await response.json(),'data'),false)}
+  try{pending=direct.request.get(api+'/api/v1/workspaces/'+a+'/management/users?userId=person-a-2',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).userWaiting,{timeout:3000}).toBe(1);await control({removeUser:true,holdUser:false});const response=await pending;assert.equal(response.status(),404);assert.equal(Object.hasOwn(await response.json(),'data'),false)}
   finally{await control({holdUser:false,removeUser:false});if(pending)await pending.catch(()=>{});await direct.close()}
  });
  const overview=()=>page.getByRole('region',{name:'工作空间概览',exact:true});
@@ -213,12 +217,12 @@ try{
  });
  await pass('organization records are discarded when caller token is revoked during native read',async()=>{
   const direct=await browser.newContext({ignoreHTTPSErrors:true}),issued=await control({issueSubject:'admin-a',holdOrg:true});let pending;
-  try{pending=direct.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/organization',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).orgWaiting,{timeout:3000}).toBe(1);await control({revokeSubject:'admin-a',holdOrg:false});const response=await pending;assert.equal(response.status(),401);assert.equal(Object.hasOwn(await response.json(),'data'),false);await page.goto(p.origin+'/settings/organizations');await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await organization().count(),0);await login(page,'查询人员 A')}
+  try{pending=direct.request.get(api+'/api/v1/workspaces/'+a+'/management/organization',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).orgWaiting,{timeout:3000}).toBe(1);await control({revokeSubject:'admin-a',holdOrg:false});const response=await pending;assert.equal(response.status(),401);assert.equal(Object.hasOwn(await response.json(),'data'),false);await page.goto(p.origin+'/settings/organizations');await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await organization().count(),0);await login(page,'查询人员 A')}
   finally{await control({holdOrg:false});if(pending)await pending.catch(()=>{});await direct.close()}
  });
  await pass('native organization permission revoked during lookup discards data after the read',async()=>{
   const direct=await browser.newContext({ignoreHTTPSErrors:true}),issued=await control({issueSubject:'admin-a',holdOrg:true});let pending;
-  try{pending=direct.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/organization',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).orgWaiting,{timeout:3000}).toBe(1);await control({orgPermission:false,holdOrg:false});const response=await pending;assert.equal(response.status(),503);assert.equal((await response.json()).code,'ORGANIZATION_DIRECTORY_UNAVAILABLE')}
+  try{pending=direct.request.get(api+'/api/v1/workspaces/'+a+'/management/organization',{headers:{Authorization:'Bearer '+issued.testAccessToken}});await expect.poll(async()=>(await control({})).orgWaiting,{timeout:3000}).toBe(1);await control({orgPermission:false,holdOrg:false});const response=await pending;assert.equal(response.status(),503);assert.equal((await response.json()).code,'ORGANIZATION_DIRECTORY_UNAVAILABLE')}
   finally{await control({holdOrg:false,orgPermission:true});if(pending)await pending.catch(()=>{});await direct.close()}
  });
  await pass('mobile organization member and user return paths remain reachable',async()=>{
@@ -228,7 +232,7 @@ try{
  await pass('configuration projects only public current management composition without native calls or secrets',async()=>{
   const before=await control({});await page.goto(p.origin+'/settings/configuration');await expect(configuration()).toBeVisible();await expect(configuration().getByRole('table',{name:'管理查询配置'}).locator('tbody tr')).toHaveCount(6);await expect(configuration()).toContainText('当前工作空间的管理入口');await expect(configuration()).toContainText('统一身份登录');await page.reload();await expect(configuration()).toBeVisible();const after=await control({});for(const k of ['reads','userReads','orgReads'])assert.equal(after[k],before[k]);assert.equal(await configuration().locator('form,input,button').count(),0);
   const direct=await browser.newContext({ignoreHTTPSErrors:true});let body;
-  try{const issued=await control({issueSubject:'admin-a'}),response=await direct.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/configuration',{headers:{Authorization:'Bearer '+issued.testAccessToken}});assert.equal(response.status(),200);assert.equal(response.headers()['cache-control'],'private, no-store');body=await response.text();const dto=JSON.parse(body);assert.equal(dto.data.scope,'CURRENT_WORKSPACE_MANAGEMENT');assert.equal(dto.data.mode,'QUERY_ONLY');assert.equal(dto.data.directory.availability,'NOT_CHECKED');assert.equal(dto.writeEnabled,false)}finally{await direct.close()}
+  try{const issued=await control({issueSubject:'admin-a'}),response=await direct.request.get(api+'/api/v1/workspaces/'+a+'/management/configuration',{headers:{Authorization:'Bearer '+issued.testAccessToken}});assert.equal(response.status(),200);assert.equal(response.headers()['cache-control'],'private, no-store');body=await response.text();const dto=JSON.parse(body);assert.equal(dto.data.scope,'CURRENT_WORKSPACE_MANAGEMENT');assert.equal(dto.data.mode,'QUERY_ONLY');assert.equal(dto.data.directory.availability,'NOT_CHECKED');assert.equal(dto.writeEnabled,false)}finally{await direct.close()}
   const rendered=await page.content();for(const key of ['pgPassword','apiPassword','rpPassword','rpSecret','resourceSecret','readCredential','control','encryptionKey','adminDSN','cert','key']){const value=p[key];if(typeof value==='string'&&value.length>8)assert.ok(!rendered.includes(value)&&!body.includes(value),'private profile value leaked')}
   assert.ok(!body.includes('organization-a')&&!body.includes('governance'));await page.screenshot({path:fileURLToPath(new URL('screenshots/configuration.png',run)),fullPage:true});
  });
@@ -260,11 +264,11 @@ try{
  });
  await pass('management profile has no business, model, Agent or write routes',async()=>{
   for(const path of ['/settings/members','/api/agent-tasks','/api/v1/business-acceptances','/core/acceptance-context'])assert.equal((await one.context.request.post(p.origin+path,{data:{workspaceId:a}})).status(),403);
-  assert.equal((await one.context.request.get(p.origin+'/agent')).status(),403);assert.equal((await one.context.request.get('https://localhost:18499/api/v1/workspaces/'+a+'/management/members')).status(),400);
+  assert.equal((await one.context.request.get(p.origin+'/agent')).status(),403);assert.equal((await one.context.request.get(api+'/api/v1/workspaces/'+a+'/management/members')).status(),400);
  });
  await pass('mobile management and read-only history remain intact after queries',async()=>{
-  await page.setViewportSize({width:390,height:844});await page.goto(p.origin+'/settings/users');await expect(userRows()).toHaveCount(25);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:fileURLToPath(new URL('screenshots/mobile.png',run)),fullPage:true});assert.equal(await businessHash(),before);for(const table of ['execution','agent_task','agent_action_request','delivery_provider_attempt','outbox_event'])assert.equal(Number((await db.query('SELECT count(*) AS n FROM '+table)).rows[0].n),0);
+  await page.setViewportSize({width:390,height:844});await page.goto(p.origin+'/settings/users');await expect(userRows()).toHaveCount(25);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:fileURLToPath(new URL('screenshots/mobile.png',run)),fullPage:true});assert.equal(await businessHash(),before);assert.deepEqual(await coreFacts(),factsBefore);
  });
  assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);assert.deepEqual(external,[]);
-}catch(error){process.exitCode=1;results.push({name:'failure near '+active,status:'FAIL',error:String(error).slice(0,1300)});console.log('FAIL isolated management browser; non-secret failure details in result file');}
+}catch(error){process.exitCode=1;let message=String(error).replace(/Bearer\s+[^\s]+/gi,'Bearer [redacted]');for(const key of ['pgPassword','apiPassword','rpPassword','rpSecret','resourceSecret','readCredential','control','encryptionKey','adminDSN'])if(p[key])message=message.split(p[key]).join('[redacted]');results.push({name:'failure near '+active,status:'FAIL',error:message.slice(0,1300)});console.log('FAIL isolated management browser; non-secret failure details in result file');}
 finally{await control({permission:true,foreign:false,fail:false,holdList:false,userPermission:true,userForeign:false,userFail:false,userUnknown:false,holdUser:false,removeUser:false,orgPermission:true,orgForeign:false,orgFail:false,orgUnknown:false,orgMissing:false,orgSparse:false,orgExtra:false,holdOrg:false}).catch(()=>{});writeFileSync(new URL('browser-results.json',run),JSON.stringify({recordedAt:new Date().toISOString(),browser:channel,source:'SYNTHETIC_FIXTURE',realSources:'UNCONFIGURED',businessWrites:false,models:false,dispatch:false,errors,writes,external,verdict:process.exitCode?'FAIL':'PASS',results},null,2));await browser.close();await db.end()}

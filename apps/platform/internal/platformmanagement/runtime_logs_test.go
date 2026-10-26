@@ -29,6 +29,7 @@ type logTestSource struct {
 	after     func()
 	calls     int
 	malformed bool
+	err       error
 }
 
 func (s *logTestSource) Lookup(context.Context, uuid.UUID) (RuntimeBinding, bool) {
@@ -54,19 +55,94 @@ func (s *logTestSource) Query(_ context.Context, _ uuid.UUID, q RuntimeQuery) (R
 	if s.after != nil {
 		s.after()
 	}
-	return out, nil
+	return out, s.err
 }
 func (s *logTestSource) ReadExact(_ context.Context, _ uuid.UUID, id string) (RuntimeRecord, error) {
 	s.calls++
+	if s.after != nil {
+		defer s.after()
+	}
 	for _, r := range s.items {
 		if r.ID == id {
-			if s.after != nil {
-				s.after()
-			}
-			return r, nil
+			return r, s.err
 		}
 	}
 	return RuntimeRecord{}, LogMissing
+}
+
+func TestRuntimeLogSourceErrorsStillRecheckCurrentAuthority(t *testing.T) {
+	for _, operation := range []string{"query", "detail", "missing", "changed"} {
+		for _, change := range []string{"capability", "identity", "source"} {
+			t.Run(operation+"/"+change, func(t *testing.T) {
+				h, p, g, s, path := logTestSetup(t)
+				if operation != "query" {
+					first := logRequest(t, h, path, 200)
+					path = strings.Split(path, "entries?")[0] + "entries/" + first.Data.Items[0].EntryRef
+				}
+				switch operation {
+				case "query", "detail":
+					s.err = LogUnavailable
+				case "missing":
+					s.items = nil
+				case "changed":
+					s.items[0].Level = "FATAL"
+				}
+				want := 403
+				s.after = func() {
+					switch change {
+					case "capability":
+						g.allow = false
+					case "identity":
+						p.p.IdentityRevision = "1:1:2"
+					case "source":
+						s.binding.Version = "v2"
+					}
+				}
+				if change == "identity" {
+					want = 401
+				} else if change == "source" {
+					want = 409
+				}
+				wire := logRequest(t, h, path, want)
+				if wire.Data.Items != nil || wire.Data.Item.EntryRef != "" {
+					t.Fatal("failed current authority exposed source facts")
+				}
+			})
+		}
+	}
+}
+
+func TestRuntimeLogReferenceMustRemainValidThroughSourceRead(t *testing.T) {
+	for _, kind := range []string{"cursor", "entry"} {
+		t.Run(kind, func(t *testing.T) {
+			h, p, _, s, path := logTestSetup(t)
+			now := time.Now().UTC()
+			h.now = func() time.Time { return now }
+			first := logRequest(t, h, path, 200)
+			token := first.Data.Items[0].EntryRef
+			if kind == "cursor" {
+				token = *first.Data.Next
+			}
+			ref, err := h.decode(token, kind, p.p, s.binding)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ref.Expires = now.Add(time.Second)
+			token, err = h.encode(ref, kind)
+			if err != nil {
+				t.Fatal(err)
+			}
+			target := strings.Split(path, "entries?")[0] + "entries/" + token
+			if kind == "cursor" {
+				target = path + "&cursor=" + token
+			}
+			s.after = func() { now = ref.Expires }
+			wire := logRequest(t, h, target, 409)
+			if wire.Code != string(LogExpired) || wire.Data.Items != nil || wire.Data.Item.EntryRef != "" {
+				t.Fatal("expired reference exposed records or source state")
+			}
+		})
+	}
 }
 
 type logWire struct {
@@ -109,7 +185,11 @@ func logRequest(t *testing.T, h *RuntimeLogHandler, target string, want int) log
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, r)
 	if w.Code != want {
-		t.Fatalf("status=%d want=%d %s", w.Code, want, w.Body.String())
+		var reason struct {
+			Code string `json:"code"`
+		}
+		_ = json.Unmarshal(w.Body.Bytes(), &reason)
+		t.Fatalf("status=%d want=%d code=%s", w.Code, want, reason.Code)
 	}
 	if w.Header().Get("Cache-Control") != "private, no-store" {
 		t.Fatal("cacheable response")

@@ -79,6 +79,7 @@ type RuntimeLogHandler struct {
 	IdentitySource string
 	codec          *securecookie.SecureCookie
 	rowKey         []byte
+	now            func() time.Time
 }
 
 // Keys are process-local: restart invalidates short-lived references. No new key
@@ -89,7 +90,7 @@ func NewRuntimeLogHandler(resolver principal.Resolver, gate RuntimeGate, sources
 		return nil, err
 	}
 	codec := securecookie.New(key[:32], key[32:]).SetSerializer(securecookie.JSONEncoder{}).MaxAge(900).MaxLength(4096)
-	return &RuntimeLogHandler{resolver, gate, sources, identitySource, codec, key[:32]}, nil
+	return &RuntimeLogHandler{resolver, gate, sources, identitySource, codec, key[:32], time.Now}, nil
 }
 func (h *RuntimeLogHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/workspaces/{workspaceId}/management/runtime-logs/{kind}", h.ServeHTTP)
@@ -220,10 +221,10 @@ func (h *RuntimeLogHandler) decode(value, kind string, p principal.RequestPrinci
 	if ref.Caller != p.ActorID || ref.Workspace != p.WorkspaceID {
 		return ref, principal.ErrWorkspaceDenied
 	}
-	if ref.Revision != p.IdentityRevision || ref.Binding != b.ID || ref.Version != b.Version || ref.Rule != b.RuleVersion || !ref.Expires.After(time.Now()) {
+	if ref.Revision != p.IdentityRevision || ref.Binding != b.ID || ref.Version != b.Version || ref.Rule != b.RuleVersion || !ref.Expires.After(h.now()) {
 		return ref, LogExpired
 	}
-	if !ref.Start.Before(ref.End) || ref.End.Sub(ref.Start) > 24*time.Hour || ref.AsOf.After(time.Now()) || !logID.MatchString(ref.Position.ID) || ref.Position.At.Before(ref.Start) || !ref.Position.At.Before(ref.End) || ref.Position.At.After(ref.AsOf) || ref.Service != "" && !logService(ref.Service) || ref.Level != "" && !logLevel(ref.Level) {
+	if !ref.Start.Before(ref.End) || ref.End.Sub(ref.Start) > 24*time.Hour || ref.AsOf.After(h.now()) || !logID.MatchString(ref.Position.ID) || ref.Position.At.Before(ref.Start) || !ref.Position.At.Before(ref.End) || ref.Position.At.After(ref.AsOf) || ref.Service != "" && !logService(ref.Service) || ref.Level != "" && !logLevel(ref.Level) {
 		return ref, LogExpired
 	}
 	return ref, nil
@@ -260,15 +261,8 @@ func beforePosition(r RuntimeRecord, pos RuntimePosition) bool {
 	return r.RecordedAt.Before(pos.At) || r.RecordedAt.Equal(pos.At) && r.ID < pos.ID
 }
 func validRuntimePage(page RuntimePage, b RuntimeBinding, q RuntimeQuery) bool {
-	if !page.Complete || page.Items == nil || len(page.Items) > 25 {
+	if !page.Complete || len(page.Items) > 25 || !ValidRuntimeBatch(page.Items, b, q) {
 		return false
-	}
-	seen := map[string]bool{}
-	for i, r := range page.Items {
-		if !validRuntimeRecord(r, b, q) || seen[r.ID] || q.After != nil && !beforePosition(r, *q.After) || i > 0 && !beforePosition(r, RuntimePosition{page.Items[i-1].RecordedAt, page.Items[i-1].ID}) {
-			return false
-		}
-		seen[r.ID] = true
 	}
 	if page.Next != nil {
 		if len(page.Items) != 25 {
@@ -276,6 +270,23 @@ func validRuntimePage(page RuntimePage, b RuntimeBinding, q RuntimeQuery) bool {
 		}
 		last := page.Items[24]
 		return page.Next.At.Equal(last.RecordedAt) && page.Next.ID == last.ID
+	}
+	return true
+}
+
+// ValidRuntimeBatch checks the entire normalized source batch, including the
+// optional 26th lookahead record. Adapters must call this before truncating a
+// batch into a public page; an invalid lookahead cannot prove another page.
+func ValidRuntimeBatch(items []RuntimeRecord, b RuntimeBinding, q RuntimeQuery) bool {
+	if items == nil || len(items) > 26 {
+		return false
+	}
+	seen := map[string]bool{}
+	for i, r := range items {
+		if !validRuntimeRecord(r, b, q) || seen[r.ID] || q.After != nil && !beforePosition(r, *q.After) || i > 0 && !beforePosition(r, RuntimePosition{items[i-1].RecordedAt, items[i-1].ID}) {
+			return false
+		}
+		seen[r.ID] = true
 	}
 	return true
 }
@@ -312,7 +323,7 @@ func (h *RuntimeLogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var q RuntimeQuery
 	var cursor string
 	if records && detail == "" {
-		q, cursor, e = logQuery(values, time.Now())
+		q, cursor, e = logQuery(values, h.now())
 		if e != nil {
 			logFailure(w, e)
 			return
@@ -354,6 +365,7 @@ func (h *RuntimeLogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var page RuntimePage
 	var record RuntimeRecord
 	var ref runtimeRef
+	var readErr error
 	if records {
 		if detail != "" {
 			ref, e = h.decode(detail, "entry", p, binding)
@@ -389,14 +401,9 @@ func (h *RuntimeLogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		if e != nil {
-			if errors.Is(e, principal.ErrWorkspaceDenied) {
-				logAuthorityFailure(w, e)
-			} else {
-				logFailure(w, e)
-			}
-			return
-		}
+		// Source errors are observations too. Do not disclose existence/change or
+		// failure facts until the same post-I/O authority/binding gate has passed.
+		readErr = e
 	}
 	fresh, e := h.Principal.Resolve(r, ws, principal.CapabilityManagementRead)
 	if e != nil {
@@ -420,8 +427,20 @@ func (h *RuntimeLogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		logFailure(w, LogExpired)
 		return
 	}
-	if ctx.Err() != nil || !a.ExpiresAt.After(time.Now()) {
+	if ctx.Err() != nil || !a.ExpiresAt.After(h.now()) {
 		logFailure(w, LogUnavailable)
+		return
+	}
+	if !ref.Expires.IsZero() && !ref.Expires.After(h.now()) {
+		logFailure(w, LogExpired)
+		return
+	}
+	if readErr != nil {
+		if errors.Is(readErr, principal.ErrWorkspaceDenied) {
+			logAuthorityFailure(w, readErr)
+		} else {
+			logFailure(w, readErr)
+		}
 		return
 	}
 	var data any
@@ -437,7 +456,7 @@ func (h *RuntimeLogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}{state, "NOT_CHECKED"}
 	} else {
 		source = binding.Source
-		expires := minTime(time.Now().Add(15*time.Minute), a.ExpiresAt)
+		expires := minTime(h.now().Add(15*time.Minute), a.ExpiresAt)
 		if !ref.Expires.IsZero() {
 			expires = minTime(expires, ref.Expires)
 		}
@@ -504,6 +523,16 @@ func (h *RuntimeLogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil || len(bytes) > limit || ctx.Err() != nil {
 		logFailure(w, LogUnavailable)
+		return
+	}
+	// Serialization is still inside the same read: never release records with
+	// an expired authority or query reference, and never renew that reference.
+	if !a.ExpiresAt.After(h.now()) {
+		logFailure(w, LogUnavailable)
+		return
+	}
+	if !ref.Expires.IsZero() && !ref.Expires.After(h.now()) {
+		logFailure(w, LogExpired)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

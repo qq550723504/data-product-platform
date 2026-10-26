@@ -54,6 +54,7 @@
 2. 从服务端选取当前空间的确切来源绑定；用户的workspace/tenant/organization header、日志属性、trace ID和cursor都不授予资格。producer空间标记必须来自受信注入，不能信任用户请求字段或未经证明的日志标签。
 3. 用专用受限凭据查询同一来源和服务集合；不跨tenant、不查询宿主全量后在前端过滤，不跟随重定向，不接受任意provider URL或原生查询语言。
 4. 来源I/O后重新解析原身份并比较actor、issuer/subject、workspace和revision，再在只读事务核验两项能力及有效期；重新读取绑定版本和投影规则版本，任一变化即丢弃整次结果。外部I/O不持数据库事务。
+   成功和错误观察使用相同的后置门禁：来源失败、精确记录不存在或投影变化，也不能提前跳过当前身份/双权限/来源版本核验。当前资格失效时不得向原调用方披露记录存在、变化或来源错误的细节。
 5. 撤权/到期、来源权限撤销、来源绑定变化或核验失败时返回拒绝/不可用且无data；不能凭新资格追认旧读取。此机制不声称实现跨来源与PG的原子撤销。
 
 列表、详情、下一页、刷新和历史导航都走相同边界；不缓存身份、不复用旧门禁决定。日志GET不产生业务事实、Command、Outbox或任务，不在查询中“顺便”记录业务签收/执行/证据；访问遥测仍归现有可观测性owner，不用普通访问日志冒充AuditEvent。
@@ -63,6 +64,8 @@
 服务端RuntimeReader只提供Query和ReadExact。请求包含服务端解析的Scope、固定时间窗、允许的服务/级别、受保护continuation或精确occurrence引用；不接受通用SQL/LogQL、文件路径、容器名、tenant或任意attributes。Adapter负责来源协议，Core Domain不得依赖Loki/OpenTelemetry SDK。来源配置投影由现有管理层组装，不通过查询原生状态/配置端点生成。
 
 每页固定最多25条，整次来源读取预算5秒、响应上限256KiB；详情上限64KiB，无隐式retry。来源无法证明当前页查询完成、分页被截断、预算超限、重复/乱序记录、错空间或字段核验失败时丢弃整页，不返回部分成功或假空结果。
+
+采用25+1读取的Adapter必须在截成公开页前核验全部至多26条记录，包括第26条的身份、确定排序、空间、窗口/过滤及字段投影；无效的多取记录不能用来证明“还有下一页”。本轮复用同一`ValidRuntimeBatch`校验，再截取25条；没有另造宽松的Adapter规则。
 
 | 字段 | 约束 |
 |---|---|
@@ -95,6 +98,8 @@ ReadExact还需比较entryRef内的规范最小投影hash：相同原生身份�
 service可缺省或取第5节两值；level可缺省或取第5节五值。时间采用严格UTC RFC3339纳秒精度规范串，区间为`[start,end)`，按recordedAt过滤；不接受重复/未知/空参数、workspace/tenant选择、offset/limit、任意搜索表达式。当前UI的最近1小时默认值由Web服务端在首次查询前规范成显式start/end，刷新复用相同窗口，不把每次刷新偷换成新的“最近1小时”。来源状态未配置时不创建这个查询。
 
 cursor绑定caller/workspace/revision、来源/投影版本、完整规范过滤、asOf、确定排序位置及期限；有效期最多15分钟且不晚于当前身份/空间资格/来源访问期限。entryRef不晚于所属查询期限。复用成熟加密/认证能力的用途隔离做法，不新增自研密码学；现有审计cursor的Base64编码不是加密或完整性保护，不能原样用于携带原生日志位置/引用。cursor和entryRef即使被持有，也始终需要当前身份和双能力。
+
+引用在解码时、来源读取及后置门禁后、响应序列化后输出前均须仍在原期限内；到期边界为`now >= expires`。读取过程中到期返回409 `LOG_QUERY_EXPIRED`且无data，不因已经开始读取、生成新引用或重新授权而延长原查询期限。真实来源权限与PG之间仍不声称存在跨系统原子撤销。
 
 排序为`(recordedAt, stable occurrence identity)`降序，精度不能经过JavaScript Number或毫秒截断后再比较。来源只有时间戳、同时间大量记录不能安全续读，或没有稳定身份/精确读取时返回UNSUPPORTED；不能减1纳秒跳过同时间记录，也不能靠内容hash将相同正文的两次真实发生合并。原生query_range的limit/direction本身不是已证明的稳定续读协议；Adapter准入需单独证明。[Loki范围查询](https://grafana.com/docs/loki/latest/reference/loki-http-api/#query-logs-within-a-range-of-time)仅作候选协议参考，不预设可直接满足本稿。
 

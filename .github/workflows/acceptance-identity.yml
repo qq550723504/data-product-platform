@@ -76,6 +76,12 @@ jobs:
         env:
           RUNTIME_LOG_BROWSER_CHANNEL: chromium
         run: node tests/runtime-logs/api-browser.mjs
+      - name: Whole settings readonly acceptance on the same runtime log API host
+        env:
+          MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK: ISOLATED_RUNTIME_LOG_READONLY
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+          MANAGEMENT_BROWSER_OUTPUT: management-readonly-runtime-review-20261026
+        run: node tests/platform-management/browser.mjs
       - name: Preserve runtime log API acceptance results
         if: always()
         uses: actions/upload-artifact@v4
@@ -87,3 +93,5 @@ jobs:
           path: |
             .data/runtime-logs-api-20261026/api-browser-results.json
             .data/runtime-logs-api-20261026/screenshots/
+            .data/management-readonly-runtime-review-20261026/browser-results.json
+            .data/management-readonly-runtime-review-20261026/screenshots/

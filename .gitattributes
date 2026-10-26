@@ -337,3 +337,4 @@ docs/product/platform-runtime-logs-synthetic-acceptance-20261026/*.json text eol
 
 # Runtime-log HTTP and permission evidence is byte-stable on Windows and in Git.
 docs/product/platform-runtime-logs-api-acceptance-20261026/*.json text eol=lf
+docs/product/platform-runtime-logs-readonly-review-20261026/*.json text eol=lf

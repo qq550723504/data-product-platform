@@ -124,6 +124,10 @@ func (s *syntheticLogSource) Query(ctx context.Context, ws uuid.UUID, q manageme
 		}
 		page.Items = append(page.Items, r)
 	}
+	binding, ok := s.Lookup(ctx, ws)
+	if !ok || !management.ValidRuntimeBatch(page.Items, binding, q) {
+		return management.RuntimePage{}, management.LogUnavailable
+	}
 	if len(page.Items) == 26 {
 		page.Items = page.Items[:25]
 		last := page.Items[24]

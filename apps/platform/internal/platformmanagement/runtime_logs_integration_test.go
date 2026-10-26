@@ -2,6 +2,7 @@ package platformmanagement
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
@@ -59,4 +60,17 @@ func TestRuntimeLogPostgresDualAuthorityAndInFlightRevocation(t *testing.T) {
 	exec(`UPDATE platform_workspace_grant SET capabilities=$2,valid_until=now()-interval '1 second',revision=revision+1 WHERE id=$1`, grant, []string{principal.CapabilityManagementRead, principal.CapabilityRuntimeLogRead})
 	resolver.p.IdentityRevision = "1:1:5"
 	logRequest(t, h, path, 403)
+	for i, sourceErr := range []error{nil, LogUnavailable} {
+		exec(`UPDATE platform_workspace_grant SET valid_until=now()+interval '1 hour',revision=revision+1 WHERE id=$1`, grant)
+		resolver.p.IdentityRevision = fmt.Sprintf("1:1:%d", 6+i*2)
+		source.err = sourceErr
+		source.after = func() {
+			exec(`UPDATE platform_workspace_grant SET valid_until=now()-interval '1 second',revision=revision+1 WHERE id=$1`, grant)
+		}
+		wire := logRequest(t, h, path, 403)
+		if wire.Data.Items != nil {
+			t.Fatal("grant expiring during source I/O exposed observations")
+		}
+		source.after = nil
+	}
 }
