@@ -186,3 +186,36 @@ jobs:
             .data/management-readonly-main-service-compat-20261026/screenshots/
             .data/runtime-logs-review-main-service-compat-20261026/api-browser-results.json
             .data/runtime-logs-review-main-service-compat-20261026/screenshots/
+      - name: Prepare isolated product directory configuration and actual main entrypoint
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK: ISOLATED_DIRECTORY_PRODUCT_READONLY
+          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-directory-product-20261026
+        run: |
+          python3 tests/platform-management/bootstrap.py
+          python3 tests/platform-management/test-main-service.py
+          python3 tests/platform-management/directory-product-contract.py
+          python3 tests/platform-management/start-web.py --build
+      - name: Product directory organization members and current authority browser acceptance
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK: ISOLATED_DIRECTORY_PRODUCT_READONLY
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+        run: |
+          node tests/platform-management/directory-product-browser.mjs
+          python3 tests/platform-management/verify-main-service.py
+      - name: Preserve non-secret product directory acceptance results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-directory-product-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-directory-product-20261026/go-regression.json
+            .data/management-directory-product-20261026/product-contract-results.json
+            .data/management-directory-product-20261026/retained-comparison.json
+            .data/management-directory-product-20261026/retained-final-comparison.json
+            .data/management-directory-product-browser-20261026/browser-results.json
+            .data/management-directory-product-browser-20261026/screenshots/

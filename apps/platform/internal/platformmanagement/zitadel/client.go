@@ -24,6 +24,13 @@ type Client struct {
 	http                   *http.Client
 }
 
+// Release only this adapter's owned idle connections on composition shutdown.
+func (c *Client) CloseIdleConnections() {
+	if c != nil && c.http != nil {
+		c.http.CloseIdleConnections()
+	}
+}
+
 func (c *Client) Read(ctx context.Context, organization, id string) (domain.Member, error) {
 	if !domain.IsIdentifier(id) {
 		return domain.Member{}, domain.ErrInvalidRequest

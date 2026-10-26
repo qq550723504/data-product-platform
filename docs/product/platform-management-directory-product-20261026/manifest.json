@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "evidence-files.v1",
+  "files": [
+    {
+      "path": "browser-chromium-results.json",
+      "bytes": 3358,
+      "sha256": "2ea8ba4bb8e4a03df381be52b8ddf5d3af38709c3210808f7b4a5521d78fa4bf"
+    },
+    {
+      "path": "browser-edge-results.json",
+      "bytes": 3356,
+      "sha256": "3f77d3ed408b2139d9c6f190e6d66e194f67e610a24f7f3a4df1f83350c6788d"
+    },
+    {
+      "path": "browser-focus-before-fix.json",
+      "bytes": 1380,
+      "sha256": "fae4aa95305e38c45904ddd971c6ef5ebd572f1148ad88cb75c0b4728e5d43ea"
+    },
+    {
+      "path": "browser-grant-expectation-failure.json",
+      "bytes": 2228,
+      "sha256": "19a89fc963613e5a58cbdfbb343b2fa06ae892503a1bd320a6716c39a66f69d7"
+    },
+    {
+      "path": "configuration.png",
+      "bytes": 76658,
+      "sha256": "601e0ce69192f471e362e09a628ee9644805093b547a6102703da239f1e649f8"
+    },
+    {
+      "path": "failure-history.json",
+      "bytes": 1171,
+      "sha256": "2e33d8ac6682584f27b922c8b0d84994be4948bf7f1ceb6fff1ed87dd6227f2c"
+    },
+    {
+      "path": "go-regression.json",
+      "bytes": 738,
+      "sha256": "00c8fe2b64678510263897006c76943f98f09cbd68a41fbb7e83a5fdd5ca5d95"
+    },
+    {
+      "path": "member-detail.png",
+      "bytes": 55241,
+      "sha256": "00bb7498b3b9f960f4333bf69f1c626b36ddf091b281277f1c48fc635c81a6ae"
+    },
+    {
+      "path": "member-return.png",
+      "bytes": 82438,
+      "sha256": "97e2eb5dd1c4de66a93cd10bcfabd8254a7e9dd053d529d56fa94668025a6ec1"
+    },
+    {
+      "path": "mobile.png",
+      "bytes": 32927,
+      "sha256": "5bda67e2876dac5a1ce14b059c08a07e05cf10c9d24efe9e170c31a2d53e0b42"
+    },
+    {
+      "path": "organization.png",
+      "bytes": 66845,
+      "sha256": "02a3cecf725cb28e7c8c9f7b591f9a50cee31c7c07110439ce2c5ee460d3fbd8"
+    },
+    {
+      "path": "product-contract-results.json",
+      "bytes": 1227,
+      "sha256": "aa75809746a436d68fb43a389eb895ffebcd7c7758c4514958167fab866ea5c4"
+    },
+    {
+      "path": "retained-comparison.json",
+      "bytes": 2224,
+      "sha256": "50c3d71f958e66aa1cbb04fc7caadb180adaf8422b8357abddab409c507a375b"
+    }
+  ]
+}

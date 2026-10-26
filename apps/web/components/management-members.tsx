@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Full GET navigation revalidates privileged reads and avoids restoring cached member records. */
+import {ManagementRowFocus} from './management-row-focus';
 import {managementMemberDetailHref,managementMemberListHref,managementPageQuery,permissionLabels,type ManagementResult,type ManagementSelection,type Member,type Role} from '@/lib/platform-management';
 
 export function ManagementMembers({result,selection:s}:{result:ManagementResult;selection:ManagementSelection}){
@@ -22,7 +23,7 @@ export function ManagementMembers({result,selection:s}:{result:ManagementResult;
   <div className="management-count">共 {result.data.total} 名成员</div>
   <div className="table-wrap"><table aria-label="空间成员"><thead><tr><th>成员</th><th>角色</th><th>状态</th><th>操作</th></tr></thead><tbody>{(result.data.items as Member[]).map(member=><tr id={'member-'+member.id} tabIndex={-1} key={member.id}>
    <td><strong>{member.displayName||member.userId}</strong><small>{member.loginName}</small></td><td>{member.roles.map(roleName).join('、')||'未配置角色'}</td><td>{member.state==='active'?'启用':'停用'}</td><td><a href={managementMemberDetailHref(s,member.id)}>查看成员</a></td>
-  </tr>)}</tbody></table></div>
+  </tr>)}</tbody></table></div><ManagementRowFocus prefix="member-"/>
   {!result.data.items.length&&<p className="empty">当前条件下没有成员</p>}
   <nav className="pagination" aria-label="成员分页">
    {s.offset>0?<a href={managementMemberListHref({...s,offset:Math.max(0,s.offset-25)})}>上一页</a>:<span>已到首页</span>}

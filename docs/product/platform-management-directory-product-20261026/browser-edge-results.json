@@ -1,0 +1,111 @@
+{
+  "entrypoint": "cmd/api",
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "actual product binary and strict private profile are used, with no fixture runtime switch",
+      "status": "PASS"
+    },
+    {
+      "name": "API stays SELECT-only and RP has only technical session writes",
+      "status": "PASS"
+    },
+    {
+      "name": "new page projects only configured organization members roles and independent audit",
+      "status": "PASS"
+    },
+    {
+      "name": "58 native memberships paginate 25 25 8 without duplicates through product entrypoint",
+      "status": "PASS"
+    },
+    {
+      "name": "role member detail and return restore search role state second page and focused row after refresh",
+      "status": "PASS"
+    },
+    {
+      "name": "organization to members and back retains fixed origin and sparse facts are not invented",
+      "status": "PASS"
+    },
+    {
+      "name": "user profiles identity links logs and department hierarchy remain unconfigured",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace switching binds the configured organization and refuses copied foreign member detail",
+      "status": "PASS"
+    },
+    {
+      "name": "authorized workspace without a directory has no implicit default binding",
+      "status": "PASS"
+    },
+    {
+      "name": "caller authority is independent of native role membership and arbitrary selectors fail closed",
+      "status": "PASS"
+    },
+    {
+      "name": "native wrong-space responses permissions and outages expose no records and restoration is explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "members source failure still rechecks in-flight revoke",
+      "status": "PASS"
+    },
+    {
+      "name": "members source failure still rechecks in-flight expire",
+      "status": "PASS"
+    },
+    {
+      "name": "members source failure still rechecks in-flight grant",
+      "status": "PASS"
+    },
+    {
+      "name": "members source failure still rechecks in-flight capability",
+      "status": "PASS"
+    },
+    {
+      "name": "members source failure still rechecks in-flight grant-expiry",
+      "status": "PASS"
+    },
+    {
+      "name": "organization source failure still rechecks in-flight revoke",
+      "status": "PASS"
+    },
+    {
+      "name": "organization source failure still rechecks in-flight expire",
+      "status": "PASS"
+    },
+    {
+      "name": "organization source failure still rechecks in-flight grant",
+      "status": "PASS"
+    },
+    {
+      "name": "organization source failure still rechecks in-flight capability",
+      "status": "PASS"
+    },
+    {
+      "name": "organization source failure still rechecks in-flight grant-expiry",
+      "status": "PASS"
+    },
+    {
+      "name": "revoked and expired RP sessions cannot revive records through refresh or browser history",
+      "status": "PASS"
+    },
+    {
+      "name": "closed product routes reject business APIs native selectors cookies and writes",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile queries keep source secrets out of HTML storage and business facts",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "environment": "ISOLATED_SYNTHETIC",
+  "configuredDoesNotMeanAdmitted": true,
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

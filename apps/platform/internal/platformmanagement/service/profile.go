@@ -14,16 +14,18 @@ import (
 	"unicode/utf8"
 
 	"github.com/google/uuid"
+	management "github.com/qq550723504/data-product-platform/apps/platform/internal/platformmanagement"
 )
 
 type Profile struct {
-	Version  string    `json:"version"`
-	Mode     string    `json:"mode"`
-	Listen   string    `json:"listen"`
-	TLS      ServerTLS `json:"tls"`
-	Identity Identity  `json:"identity"`
-	Database Database  `json:"database"`
-	Audit    *Audit    `json:"audit"`
+	Version   string     `json:"version"`
+	Mode      string     `json:"mode"`
+	Listen    string     `json:"listen"`
+	TLS       ServerTLS  `json:"tls"`
+	Identity  Identity   `json:"identity"`
+	Database  Database   `json:"database"`
+	Audit     *Audit     `json:"audit"`
+	Directory *Directory `json:"directory"`
 }
 type ServerTLS struct {
 	CertFile string `json:"certFile"`
@@ -51,6 +53,27 @@ type Audit struct {
 	Source     string      `json:"source"`
 	Workspaces []uuid.UUID `json:"workspaces"`
 }
+
+// Private, startup-only adapter configuration. It never creates caller grants.
+type Directory struct {
+	Source     string               `json:"source"`
+	Provider   string               `json:"provider"`
+	Workspaces []DirectoryWorkspace `json:"workspaces"`
+}
+type DirectoryWorkspace struct {
+	WorkspaceID    uuid.UUID         `json:"workspaceId"`
+	Origin         string            `json:"origin"`
+	CAFile         string            `json:"caFile"`
+	CredentialFile string            `json:"credentialFile"`
+	OrganizationID string            `json:"organizationId"`
+	ProjectID      string            `json:"projectId"`
+	Roles          []management.Role `json:"roles"`
+}
+
+func (Directory) String() string              { return "Directory configuration (private)" }
+func (d Directory) GoString() string          { return d.String() }
+func (DirectoryWorkspace) String() string     { return "Directory workspace configuration (private)" }
+func (d DirectoryWorkspace) GoString() string { return d.String() }
 
 func (Profile) String() string     { return "Management profile (private)" }
 func (p Profile) GoString() string { return p.String() }
@@ -90,7 +113,7 @@ func strictProfile(b []byte, p *Profile) error {
 	if !utf8.Valid(b) {
 		return ErrConfiguration
 	}
-	allowed := strings.Fields("version mode listen tls identity database audit certFile keyFile source issuer tokenEndpoint introspectionEndpoint clientId clientSecretFile audience requiredScope allowedClientIds caFile urlFile name role workspaces")
+	allowed := strings.Fields("version mode listen tls identity database audit directory certFile keyFile source issuer tokenEndpoint introspectionEndpoint clientId clientSecretFile audience requiredScope allowedClientIds caFile urlFile name role workspaces provider workspaceId origin credentialFile organizationId projectId roles id permissions")
 	keys := map[string]bool{}
 	for _, k := range allowed {
 		keys[k] = true
@@ -194,6 +217,22 @@ func (p Profile) Validate() error {
 				return ErrConfiguration
 			}
 			seen[id] = true
+		}
+	}
+	if p.Directory != nil {
+		if p.Directory.Source != "CONFIGURED" || p.Directory.Provider != "ZITADEL" || len(p.Directory.Workspaces) == 0 || len(p.Directory.Workspaces) > 32 {
+			return ErrConfiguration
+		}
+		seen := map[uuid.UUID]bool{}
+		for _, b := range p.Directory.Workspaces {
+			u, e := url.Parse(b.Origin)
+			if b.WorkspaceID == uuid.Nil || seen[b.WorkspaceID] || !management.IsIdentifier(b.OrganizationID) || !management.IsIdentifier(b.ProjectID) || !filepath.IsAbs(b.CAFile) || !filepath.IsAbs(b.CredentialFile) || e != nil || u.Scheme != "https" || u.Hostname() == "" || u.User != nil || u.Opaque != "" || u.RawQuery != "" || u.ForceQuery || u.Fragment != "" || u.RawPath != "" || (u.Path != "" && u.Path != "/") {
+				return ErrConfiguration
+			}
+			if _, e := management.NewCatalog(b.Roles); e != nil {
+				return ErrConfiguration
+			}
+			seen[b.WorkspaceID] = true
 		}
 	}
 	return nil

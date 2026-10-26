@@ -23,22 +23,26 @@ import (
 func TestIsolatedQueryRoleMetadataAndTLSAreValidated(t *testing.T) {
 	first := os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") == "ISOLATED_MAIN_SERVICE_READONLY"
 	compat := os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") == "ISOLATED_MAIN_SERVICE_COMPAT_READONLY"
-	if !first && !compat {
+	directoryProduct := os.Getenv("MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK") == "ISOLATED_DIRECTORY_PRODUCT_READONLY"
+	if !first && !compat && !directoryProduct {
 		t.Skip("new isolated main service fixture required")
 	}
-	if first && compat {
+	if first && compat || directoryProduct && (first || compat) {
 		t.Fatal("disjoint isolated fixture required")
 	}
 	expectedPort, expectedDatabase, expectedIssuer := "25560", "management_main_service_20261026", "https://localhost:19160"
 	if compat {
 		expectedPort, expectedDatabase, expectedIssuer = "25570", "management_main_service_compat_20261026", "https://localhost:19170"
 	}
+	if directoryProduct {
+		expectedPort, expectedDatabase, expectedIssuer = "25580", "management_directory_product_20261026", "https://localhost:19180"
+	}
 	var fixture struct {
-		DatabaseURL, CA, Issuer, ResourceSecret string
-		MainService, MainServiceCompat          bool
+		DatabaseURL, CA, Issuer, ResourceSecret          string
+		MainService, MainServiceCompat, DirectoryProduct bool
 	}
 	b, e := os.ReadFile(os.Getenv("MANAGEMENT_FIXTURE_CONFIG"))
-	if e != nil || json.Unmarshal(b, &fixture) != nil || fixture.MainService != first || fixture.MainServiceCompat != compat {
+	if e != nil || json.Unmarshal(b, &fixture) != nil || fixture.MainService != first || fixture.MainServiceCompat != compat || fixture.DirectoryProduct != directoryProduct {
 		t.Fatal("independent fixture config unavailable")
 	}
 	u, e := url.Parse(fixture.DatabaseURL)

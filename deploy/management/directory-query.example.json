@@ -1,0 +1,38 @@
+{
+  "version": "platform-management-query.v1",
+  "mode": "QUERY_ONLY",
+  "listen": "127.0.0.1:18800",
+  "tls": { "certFile": "/PRIVATE/REPLACE/server.crt", "keyFile": "/PRIVATE/REPLACE/server.key" },
+  "identity": {
+    "source": "CONFIGURED",
+    "issuer": "https://identity.invalid",
+    "tokenEndpoint": "https://identity.invalid/token",
+    "introspectionEndpoint": "https://identity.invalid/introspect",
+    "clientId": "REPLACE_CLIENT_ID",
+    "clientSecretFile": "/PRIVATE/REPLACE/identity-secret",
+    "audience": "REPLACE_AUDIENCE",
+    "requiredScope": "platform-management",
+    "allowedClientIds": ["REPLACE_RP_CLIENT_ID"],
+    "caFile": "/PRIVATE/REPLACE/identity-ca.pem"
+  },
+  "database": {
+    "urlFile": "/PRIVATE/REPLACE/query-database-url",
+    "caFile": "/PRIVATE/REPLACE/database-ca.pem",
+    "name": "REPLACE_QUERY_DATABASE",
+    "role": "REPLACE_SELECT_ONLY_ROLE"
+  },
+  "audit": null,
+  "directory": {
+    "source": "CONFIGURED",
+    "provider": "ZITADEL",
+    "workspaces": [{
+      "workspaceId": "00000000-0000-0000-0000-000000000000",
+      "origin": "https://directory.invalid",
+      "caFile": "/PRIVATE/REPLACE/directory-ca.pem",
+      "credentialFile": "/PRIVATE/REPLACE/directory-readonly-credential",
+      "organizationId": "REPLACE_ORGANIZATION_ID",
+      "projectId": "REPLACE_PROJECT_ID",
+      "roles": [{ "id": "REPLACE_NATIVE_ROLE_KEY", "name": "REPLACE_ROLE_NAME", "permissions": ["management.members.read", "management.roles.read"] }]
+    }]
+  }
+}

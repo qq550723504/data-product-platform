@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Full GET navigation revalidates privileged records. */
+import {ManagementRowFocus} from './management-row-focus';
 import {managementUserListHref,managementUserDetailHref,managementMemberDetailHref,managementPageQuery,permissionLabels,type UserManagementResult,type ManagementSelection} from '@/lib/platform-management';
 
 const accountNames={active:'启用',inactive:'停用',locked:'锁定',initial:'待激活',deleted:'已删除'};
@@ -8,7 +9,7 @@ export function ManagementUsers({result,selection:s}:{result:UserManagementResul
   <a className="management-back" href={managementUserListHref(s,p.id)}><span aria-hidden="true">← </span>返回用户目录</a><h2>{p.displayName||p.username}</h2>
   <dl className="management-member-facts"><dt>登录名</dt><dd>{p.username}</dd><dt>账号状态</dt><dd>{accountNames[p.accountState]}</dd><dt>身份关联</dt><dd>{link.state==='LINKED'?'已关联':'未关联'}{link.state==='UNCONFIGURED'&&<small>关联来源未配置</small>}</dd></dl>
   <h3>当前空间的成员关系</h3>
-  <div className="table-wrap"><table aria-label="用户的空间成员关系"><thead><tr><th>成员关系状态</th><th>应用角色</th><th>已配置权限</th><th>操作</th></tr></thead><tbody>{memberships.map(m=><tr key={m.id}><td>{m.state==='active'?'启用':'停用'}</td><td>{m.roles.map(roleName).join('、')||'未配置角色'}</td><td>{m.permissions.map(k=>permissionLabels[k]).join('、')||'暂无映射'}</td><td><a href={managementMemberDetailHref({offset:0,from:s.from},m.id)}>查看成员</a></td></tr>)}</tbody></table></div>
+  <div className="table-wrap"><table aria-label="用户的空间成员关系"><thead><tr><th>成员关系状态</th><th>应用角色</th><th>已配置权限</th><th>操作</th></tr></thead><tbody>{memberships.map(m=><tr key={m.id}><td>{m.state==='active'?'启用':'停用'}</td><td>{m.roles.map(roleName).join('、')||'未配置角色'}</td><td>{m.permissions.map(k=>permissionLabels[k]).join('、')||'暂无映射'}</td><td><a href={managementMemberDetailHref({offset:0,from:s.from},m.id)}>查看成员</a></td></tr>)}</tbody></table></div><ManagementRowFocus prefix="user-"/>
   <p className="section-sub">账号状态、成员关系和应用角色分别核验。角色映射与身份关联不代替当前空间的访问授权。</p><a href={'/settings/roles'+managementPageQuery({offset:0,from:s.from})}>查看角色权限<span aria-hidden="true"> →</span></a>
   <details className="management-evidence"><summary>查看资料与身份关联依据</summary><p>目录用户：{p.id}</p><p>所属组织：{p.organizationId}</p><p>资料更新时间：{p.changedAt}</p>{link.state==='LINKED'&&<><p>平台人员：{link.actorId}</p><p>关联依据：{link.basisRef}</p><p>身份版本：{link.revision}</p><p>有效期至：{link.expiresAt}</p></>}</details>
  </section>}

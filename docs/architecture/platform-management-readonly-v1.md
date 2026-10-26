@@ -8,6 +8,8 @@
 
 2026-10-26第一实施切片：已在cmd/api接入默认关闭的独立QUERY_ONLY组合，并同步审计独立装配、两个概览及Web DTO校验。[只读装配方案](platform-management-main-service-readonly-v1.md)拥有组合/配置边界，下文“审计独立装配”拥有查询语义；[实施记录](../product/platform-management-main-service-20261026.md)分别记录共享组合的独立合成验收、产品入口拒绝回退及未运行的真实接入。产品profile首片不组装目录/日志，真实来源和默认预览仍未接入，不改旧证据或业务写边界。
 
+2026-10-26第三实施切片：产品profile现支持可省略的组织/成员/应用角色目录私有配置，实际cmd/api完成独立合成验收，见[记录](../product/platform-management-directory-product-20261026.md)和[配置合同](platform-management-main-service-readonly-v1.md#10-组织与成员目录的产品配置)。不开放用户资料/身份关联、日志配置、管理写入或真实来源启用。
+
 ## Reuse Check
 
 源代码固定 `qq550723504/shuomi-ai-commerce@e29058c56df4294e1c612b3a705ab767bc333188`，本地镜像目录仍名为 task-processor。复用其 `internal/integration/zitadel/membership/{client,query,permissions}.go` 的只读目录、完整过滤分页、前后权限确认，`internal/organization/membership/query.go` 的查询规范化，以及 Casbin 授权模型和角色投影方式。审计复用 accountaudit 的 scope-bound cursor、allowlisted projection 与失败不返回假空页原则；事实来源替换为本平台既有 AuditEvent，不能导入电商账本。
@@ -20,7 +22,7 @@
 - 每个查询需要 canonical actor + 当前 workspace grant 的 `PLATFORM_MANAGEMENT_READ`。Cookie/body/header 的用户、组织、workspace 均不能授予资格。单独增加该读能力，不把验收 READ 扩成管理员。
 - DirectoryBinding 为服务器配置的 workspace → provider organization/project 映射；企业不是工作空间。目录返回的 provider user/grant ID 只作外部引用，不能冒充本平台 actor UUID。Native provider 的只读 credential 与人的 RP token 分开。
 - 角色目录是应用配置的只读映射，名字/权限来自明确 catalog；不声称已经接入企业自定义角色。返回 `policySource=APPLICATION_CATALOG`。当前目录中未映射角色显示无已配置权限，不能放大 caller 资格。
-- 真实企业目录、企业自定义角色与真实人员关联来源保持 UNCONFIGURED；已实现的应用角色目录来自 APPLICATION_CATALOG，其具体业务映射仍需明确，不等于企业角色已接入或调用者已有资格。仅隔离验收显式配置 SYNTHETIC_FIXTURE。无配置、权限缺失、错空间、依赖失败分别返回拒绝/不可用；不能用演示数据补齐，也不能返回假 0。
+- 真实企业目录、企业自定义角色与真实人员关联来源保持 UNCONFIGURED；已实现的应用角色目录来自 APPLICATION_CATALOG，其具体业务映射仍需明确，不等于企业角色已接入或调用者已有资格。测试宿主可显式配置SYNTHETIC_FIXTURE；第三片实际产品入口只接受CONFIGURED，但其独立loopback来源仍是合成服务，报告和空间标签明确标记合成，不能把配置状态当真实来源接纳。无配置、权限缺失、错空间、依赖失败分别返回拒绝/不可用；不能用演示数据补齐，也不能返回假 0。
 - 查询前后复用无缓存 OIDC resolver，并在 READ COMMITTED 只读事务复用 ValidateInTx。目录外部 I/O 不持数据库事务；结果公开前再次 introspect 访问令牌，并核对原 canonical actor、issuer/subject、workspace 和 authority revision，然后复查本地资格。读取中身份或版本变化时丢弃结果，不能用新资格追认旧读取；更短的重查有效期不得放大。远端权限在每页读取前后重新确认，无法证明跨系统分布式原子撤销。
 - 目录客户端沿用既有OIDC适配器的标准transport克隆、证书校验与响应头边界；拒绝关闭证书验证、绕过标准TLS握手的自定义DialTLS、错主机ServerName或不可确认的自定义RoundTripper，不继承cookie/重定向配置。测试故障注入只在同包测试内进行，不作为产品构造参数。
 - AuditEvent 仅按明确 workspace 投影 id、actor reference、action、object type/id、occurredAt；不返回自由文本、metadata、before/after 或 credential。历史不改写；没有新审计 owner 或业务写表。

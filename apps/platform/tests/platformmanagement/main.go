@@ -27,7 +27,7 @@ import (
 
 type config struct {
 	DatabaseURL, Issuer, ResourceSecret, ReadCredential, Cert, Key, CA, Root, APIPassword, RPPassword string
-	RuntimeLogs, MainService, MainServiceCompat                                                       bool
+	RuntimeLogs, MainService, MainServiceCompat, DirectoryProduct                                     bool
 }
 
 var wsA = uuid.MustParse("11111111-1111-4111-8111-111111111111")
@@ -58,6 +58,12 @@ func main() {
 		}
 		issuer, dbName, apiPort = "https://localhost:19170", "management_main_service_compat_20261026", "18570"
 	}
+	if c.DirectoryProduct {
+		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || os.Getenv("MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK") != "ISOLATED_DIRECTORY_PRODUCT_READONLY" {
+			log.Fatal("disjoint directory product fixture required")
+		}
+		issuer, dbName, apiPort = "https://localhost:19180", "management_directory_product_20261026", "18580"
+	}
 	if c.Issuer != issuer {
 		log.Fatal("synthetic issuer required")
 	}
@@ -70,6 +76,9 @@ func main() {
 	if len(os.Args) == 2 && os.Args[1] == "prepare" {
 		prepare(c)
 		return
+	}
+	if c.DirectoryProduct {
+		log.Fatal("directory product runtime must use cmd/api with private profile")
 	}
 	pool, e := pgxpool.NewWithConfig(context.Background(), cfg)
 	must(e)
@@ -147,6 +156,12 @@ func prepare(c config) {
 		}
 		expectedDB, expectedPort = "management_main_service_compat_20261026", 25570
 	}
+	if c.DirectoryProduct {
+		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || os.Getenv("MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK") != "ISOLATED_DIRECTORY_PRODUCT_READONLY" {
+			log.Fatal("directory product prepare boundary")
+		}
+		expectedDB, expectedPort = "management_directory_product_20261026", 25580
+	}
 	if cfg.ConnConfig.Database != expectedDB || cfg.ConnConfig.Host != "127.0.0.1" || cfg.ConnConfig.Port != expectedPort {
 		log.Fatal("prepare target differs")
 	}
@@ -170,6 +185,9 @@ func prepare(c config) {
 		}
 		if name == "both" {
 			targets = append(targets, wsB)
+			if c.DirectoryProduct {
+				targets = append(targets, uuid.MustParse("13131313-1313-4313-8313-131313131313"))
+			}
 		}
 		cap := principal.CapabilityManagementRead
 		if name == "ordinary" {

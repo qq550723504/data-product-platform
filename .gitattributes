@@ -342,3 +342,5 @@ docs/product/platform-runtime-logs-fixture-preservation-20261026/*.json text eol
 docs/product/platform-management-main-service-20261026/*.json text eol=lf
 
 docs/product/platform-management-main-service-compat-20261026/*.json text eol=lf
+
+docs/product/platform-management-directory-product-20261026/*.json text eol=lf

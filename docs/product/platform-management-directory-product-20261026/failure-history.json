@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "directory-product-failure-history.v1",
+  "entries": [
+    {
+      "name": "native organization unit fixture enum",
+      "verdict": "FAIL",
+      "scope": "focused unit test output; no fixture DB or product run",
+      "observed": "Test fixture used ORG_STATE_ACTIVE instead of existing ORGANIZATION_STATE_ACTIVE.",
+      "resolution": "Corrected fixture enum; did not weaken native adapter."
+    },
+    {
+      "name": "first product Edge focus restoration",
+      "verdict": "FAIL",
+      "evidence": "browser-focus-before-fix.json",
+      "resolution": "Explicitly focus the exact already-rendered authorized member/user row after load/hash navigation; retained assertion and previous failure."
+    },
+    {
+      "name": "disabled grant error expectation",
+      "verdict": "FAIL",
+      "evidence": "browser-grant-expectation-failure.json",
+      "resolution": "Preserved existing 401 for disabled/expired workspace identity; added separate 403 capability removal case and independent grant-expiry cases. No permissive status set."
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

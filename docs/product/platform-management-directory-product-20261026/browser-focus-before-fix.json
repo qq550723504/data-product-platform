@@ -1,0 +1,36 @@
+{
+  "entrypoint": "cmd/api",
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "actual product binary and strict private profile are used, with no fixture runtime switch",
+      "status": "PASS"
+    },
+    {
+      "name": "API stays SELECT-only and RP has only technical session writes",
+      "status": "PASS"
+    },
+    {
+      "name": "new page projects only configured organization members roles and independent audit",
+      "status": "PASS"
+    },
+    {
+      "name": "58 native memberships paginate 25 25 8 without duplicates through product entrypoint",
+      "status": "PASS"
+    },
+    {
+      "name": "role member detail and return restore search role state second page and focused row after refresh",
+      "status": "FAIL",
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  locator('tr:target')\nExpected: focused\nReceived: inactive\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toBeFocused\" locator('tr:target') with timeout 5000ms\n  - waiting for locator('tr:target')\n    14 × locator resolved to <tr tabindex=\"-1\" id=\"member-grant-a-055\">…</tr>\n       - unexpected value \"inactive\"\n"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "environment": "ISOLATED_SYNTHETIC",
+  "configuredDoesNotMeanAdmitted": true,
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

@@ -140,6 +140,11 @@ func RunProfile(ctx context.Context, file string) (bool, error) {
 	if e != nil {
 		return true, e
 	}
+	directories, closeDirectories, e := directoryBindings(p.Directory)
+	if e != nil {
+		return true, ErrConfiguration
+	}
+	defer closeDirectories()
 	c, e := poolConfig(p.Database)
 	if e != nil {
 		return true, e
@@ -158,6 +163,7 @@ func RunProfile(ctx context.Context, file string) (bool, error) {
 		return true, ErrConfiguration
 	}
 	client := &http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{RootCAs: ca, MinVersion: tls.VersionTLS12}}, Timeout: 10 * time.Second}
+	defer client.CloseIdleConnections()
 	store := bindings.NewStore(pool)
 	resolver, e := oidc.NewResolver(oidc.Config{Issuer: p.Identity.Issuer, TokenEndpoint: p.Identity.TokenEndpoint, IntrospectionEndpoint: p.Identity.IntrospectionEndpoint, ClientID: p.Identity.ClientID, ClientSecret: strings.TrimSpace(string(secret)), Audience: p.Identity.Audience, RequiredScope: p.Identity.RequiredScope, AllowedClientIDs: p.Identity.AllowedClientIDs}, store, client)
 	if e != nil {
@@ -169,7 +175,7 @@ func RunProfile(ctx context.Context, file string) (bool, error) {
 			audits[ws] = management.AuditBinding{Source: p.Audit.Source, Reader: management.PostgresAudit{Pool: pool}}
 		}
 	}
-	h, e := Compose(Dependencies{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, Confirmation: store.ManagementPrincipal(resolver), Ready: check, IdentitySource: p.Identity.Source, Audits: audits})
+	h, e := Compose(Dependencies{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, Confirmation: store.ManagementPrincipal(resolver), Ready: check, IdentitySource: p.Identity.Source, Audits: audits, Bindings: directories})
 	if e != nil {
 		return true, ErrConfiguration
 	}

@@ -1,0 +1,57 @@
+{
+  "entrypoint": "cmd/api",
+  "results": [
+    {
+      "name": "actual main rejects partial",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects synthetic",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects provider",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects duplicate-workspace",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects zero-workspace",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects write-role",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects missing-credential",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects invalid-ca",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects users-unopened",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects logs-unopened",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main rejects fixture-switch",
+      "status": "PASS"
+    },
+    {
+      "name": "actual main accepts an omitted directory without enabling optional sources",
+      "status": "PASS"
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}
