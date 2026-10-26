@@ -331,3 +331,6 @@ docs/acceptance/issue307-d1-reader-path*.md -text
 # Keep this finite closeout's indexed contract and acceptance bytes exact.
 docs/acceptance/issue332-*.md -text
 docs/acceptance/evidence/issue332-closeout01/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab
+
+# Runtime-log acceptance manifests must match Windows checkout and Git blob bytes.
+docs/product/platform-runtime-logs-synthetic-acceptance-20261026/*.json text eol=lf

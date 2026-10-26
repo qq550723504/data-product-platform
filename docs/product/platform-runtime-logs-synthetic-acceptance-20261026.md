@@ -23,6 +23,8 @@ Build-vs-Buy沿用[权威契约](../architecture/platform-runtime-logs-readonly-
 | 全量前端构建 | PASS | 当次366项单元PASS、2项可选PG测试SKIP，Next编译/类型/静态检查成功；其后新增的读取中来源版本回归包含在上列9项中 |
 | 保留预览进程 | 身份核对一致 | 4193/4493的PID、启动时间、命令标记和监听归属与原ledger一致；没有重启或替换保留构建 |
 
+证据JSON按仓库既有做法固定为UTF-8/LF，并同时核对工作副本与Git对象的字节/hash，避免Windows换行转换改变清单。
+
 浏览器结果与截图：[结果摘要](platform-runtime-logs-synthetic-acceptance-20261026/results.json)、[文件校验清单](platform-runtime-logs-synthetic-acceptance-20261026/manifest.json)。测试使用Edge的`msedge`通道；CI使用其已有Chromium安装执行同组用例。PR CI结果以对应HEAD的GitHub检查为准，不能由本地结果推定。
 
 首轮Edge为11 PASS / 5 FAIL：返回箭头进入可访问名称导致2个用例失败；另3个只在测试结束清理HTTPS连接时超时，断言已通过。已将装饰箭头设为辅助技术忽略，并在测试专属宿主/IdP清理时关闭其自有连接；完整重跑16 PASS。首轮结果和trace仍保留在私有`.data/runtime-logs-20261026/failed-first-run*`。
