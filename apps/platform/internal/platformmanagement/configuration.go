@@ -25,7 +25,7 @@ type ConfigurationOverview struct {
 	RolePolicySource *string                `json:"rolePolicySource"`
 }
 
-func configurationOverview(b Binding, audit AuditReader, a principal.Authority) (ConfigurationOverview, error) {
+func configurationOverview(b Binding, audit AuditBinding, a principal.Authority) (ConfigurationOverview, error) {
 	w, err := workspaceOverview(b, audit, a)
 	if err != nil {
 		return ConfigurationOverview{}, err

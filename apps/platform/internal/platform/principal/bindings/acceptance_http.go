@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"io"
 	"net/http"
@@ -73,7 +74,7 @@ func (s *Store) principalConfirmation(resolver principal.Resolver, capability, p
 			}
 			return
 		}
-		tx, err := s.pool.Begin(r.Context())
+		tx, err := s.pool.BeginTx(r.Context(), pgx.TxOptions{IsoLevel: pgx.ReadCommitted, AccessMode: pgx.ReadOnly})
 		if err != nil {
 			deny(503)
 			return

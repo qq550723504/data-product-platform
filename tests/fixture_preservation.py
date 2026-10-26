@@ -13,6 +13,7 @@ import subprocess
 RETAINED = {
     'original': 'dpp-agent-q2-test-postgres-20261023',
     'management': 'dpp-management-readonly-20261025',
+    'runtime': 'dpp-runtime-logs-readonly-20261026',
 }
 
 

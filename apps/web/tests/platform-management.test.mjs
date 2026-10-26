@@ -22,6 +22,18 @@ test('configuration navigation retains its fixed origin through existing query f
  for(const q of [{key:'DATABASE_URL'},{workspaceId:'foreign'},{from:'configuration'},{from:'//external.invalid'}])assert.throws(()=>managementSelection('configuration',q));
 });
 
+test('audit-only DTOs allow independent audit readiness without enabling directory queries',()=>{
+ const p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1'},at=new Date().toISOString();
+ const envelope={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:at,source:'SYNTHETIC_FIXTURE',writeEnabled:false};
+ const directory={state:'UNCONFIGURED',source:'UNCONFIGURED',availability:'NOT_CHECKED'},queries={members:false,users:false,roles:false,audit:true};
+ const workspace={...envelope,data:{recordState:'UNCONFIGURED',confirmationExpiresAt:new Date(Date.now()+60000).toISOString(),directory:{...directory,organizationId:null,projectId:null},queries}};
+ const configuration={...envelope,data:{scope:'CURRENT_WORKSPACE_MANAGEMENT',mode:'QUERY_ONLY',directory,queries:{workspace:true,organization:false,...queries},rolePolicySource:null}};
+ assert.equal(validWorkspaceManagement(workspace,p),true);assert.equal(validConfigurationManagement(configuration,p),true);
+ for(const key of ['members','users','roles'])assert.equal(validWorkspaceManagement({...workspace,data:{...workspace.data,queries:{...queries,[key]:true}}},p),false);
+ for(const key of ['organization','members','users','roles'])assert.equal(validConfigurationManagement({...configuration,data:{...configuration.data,queries:{...configuration.data.queries,[key]:true}}},p),false);
+ assert.equal(validConfigurationManagement({...configuration,data:{...configuration.data,queries:{...configuration.data.queries,audit:'true'}}},p),false);
+});
+
 test('configuration DTO accepts only narrow public states and rejects secrets false health or global policy claims',()=>{
  const p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1'};
  const data={scope:'CURRENT_WORKSPACE_MANAGEMENT',mode:'QUERY_ONLY',directory:{state:'UNCONFIGURED',source:'UNCONFIGURED',availability:'NOT_CHECKED'},queries:{workspace:true,organization:false,members:false,users:false,roles:false,audit:false},rolePolicySource:null},raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:new Date().toISOString(),source:'SYNTHETIC_FIXTURE',writeEnabled:false,data};assert.equal(validConfigurationManagement(raw,p),true);

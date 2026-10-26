@@ -69,7 +69,7 @@ export function validConfigurationManagement(value:unknown,p:Principal):value is
   if(!r||!exact(r,'profileVersion,workspaceId,principalId,authorityRevision,evaluatedAt,source,writeEnabled,data')||r.profileVersion!=='platform-management.v1'||r.workspaceId!==p.workspace_id||r.principalId!==p.principal_id||r.authorityRevision!==p.revision||!time(r.evaluatedAt)||!['SYNTHETIC_FIXTURE','CONFIGURED'].includes(r.source)||r.writeEnabled!==false)return false;
   const d=r.data;if(!d||!exact(d,'scope,mode,directory,queries,rolePolicySource')||d.scope!=='CURRENT_WORKSPACE_MANAGEMENT'||d.mode!=='QUERY_ONLY')return false;
   const directory=d.directory,q=d.queries;if(!directory||!exact(directory,'state,source,availability')||directory.availability!=='NOT_CHECKED'||!q||!exact(q,'workspace,organization,members,users,roles,audit')||q.workspace!==true||!Object.values(q).every(v=>typeof v==='boolean'))return false;
-  if(directory.state==='UNCONFIGURED')return directory.source==='UNCONFIGURED'&&d.rolePolicySource===null&&Object.entries(q).every(([k,v])=>k==='workspace'||v===false);
+  if(directory.state==='UNCONFIGURED')return directory.source==='UNCONFIGURED'&&d.rolePolicySource===null&&Object.entries(q).every(([k,v])=>k==='workspace'||k==='audit'||v===false);
   return directory.state==='CONFIGURED'&&['CONFIGURED','SYNTHETIC_FIXTURE'].includes(directory.source)&&q.members===true&&q.roles===true&&d.rolePolicySource==='APPLICATION_CATALOG';
  }catch{return false;}
 }
@@ -95,7 +95,7 @@ export function validWorkspaceManagement(value:unknown,p:Principal):value is Wor
   const d=r.data;if(!d||!exact(d,'recordState,confirmationExpiresAt,directory,queries')||d.recordState!=='UNCONFIGURED'||!time(d.confirmationExpiresAt)||Date.parse(d.confirmationExpiresAt)<=Math.max(Date.now(),Date.parse(r.evaluatedAt)))return false;
   const directory=d.directory,q=d.queries;
   if(!directory||!exact(directory,'state,source,organizationId,projectId,availability')||directory.availability!=='NOT_CHECKED'||!q||!exact(q,'members,users,roles,audit')||!Object.values(q).every(v=>typeof v==='boolean'))return false;
-  if(directory.state==='UNCONFIGURED')return directory.source==='UNCONFIGURED'&&directory.organizationId===null&&directory.projectId===null&&Object.values(q).every(v=>v===false);
+  if(directory.state==='UNCONFIGURED')return directory.source==='UNCONFIGURED'&&directory.organizationId===null&&directory.projectId===null&&Object.entries(q).every(([k,v])=>k==='audit'||v===false);
   return directory.state==='CONFIGURED'&&['CONFIGURED','SYNTHETIC_FIXTURE'].includes(directory.source)&&id(directory.organizationId)&&id(directory.projectId)&&q.members===true&&q.roles===true;
  }catch{return false;}
 }

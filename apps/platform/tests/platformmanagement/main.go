@@ -14,6 +14,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal/bindings"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal/oidc"
 	management "github.com/qq550723504/data-product-platform/apps/platform/internal/platformmanagement"
+	managementservice "github.com/qq550723504/data-product-platform/apps/platform/internal/platformmanagement/service"
 	directory "github.com/qq550723504/data-product-platform/apps/platform/internal/platformmanagement/zitadel"
 	"log"
 	"net/http"
@@ -26,7 +27,7 @@ import (
 
 type config struct {
 	DatabaseURL, Issuer, ResourceSecret, ReadCredential, Cert, Key, CA, Root, APIPassword, RPPassword string
-	RuntimeLogs                                                                                       bool
+	RuntimeLogs, MainService                                                                          bool
 }
 
 var wsA = uuid.MustParse("11111111-1111-4111-8111-111111111111")
@@ -44,6 +45,12 @@ func main() {
 	issuer, dbName, apiPort := "https://localhost:19130", "management_readonly_20261025", "18499"
 	if c.RuntimeLogs {
 		issuer, dbName, apiPort = "https://localhost:19150", "runtime_logs_readonly_20261026", "18550"
+	}
+	if c.MainService {
+		if c.RuntimeLogs || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
+			log.Fatal("disjoint main service fixture required")
+		}
+		issuer, dbName, apiPort = "https://localhost:19160", "management_main_service_20261026", "18560"
 	}
 	if c.Issuer != issuer {
 		log.Fatal("synthetic issuer required")
@@ -72,22 +79,34 @@ func main() {
 	store := bindings.NewStore(pool)
 	resolver, e := oidc.NewResolver(oidc.Config{Issuer: c.Issuer, TokenEndpoint: c.Issuer + "/token", IntrospectionEndpoint: c.Issuer + "/introspect", ClientID: "dpp-management-api", ClientSecret: c.ResourceSecret, Audience: "dpp-management-api", RequiredScope: "platform-management", AllowedClientIDs: []string{"dpp-management-rp"}}, store, client)
 	must(e)
-	catalog, e := management.NewCatalog([]management.Role{{ID: "management_viewer", Name: "管理查询员", Permissions: []string{"management.members.read", "management.roles.read", "management.audit.read", "management.users.read"}}, {ID: "audit_viewer", Name: "审计观察员", Permissions: []string{"management.audit.read"}}})
-	must(e)
-	native, e := directory.NewClient(c.Issuer, c.ReadCredential, "governance", client)
-	must(e)
-	links := management.BoundUserIdentities{Store: store, Workspace: wsA, References: map[string]management.UserSubjectReference{"person-a-2": {Issuer: c.Issuer, Subject: "directory-person-linked", BasisRef: "synthetic-user-link-v1"}}}
-	scopes := map[uuid.UUID]management.Binding{wsA: {OrganizationID: "organization-a", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, IdentityLinks: links, Catalog: catalog, Organizations: native}, wsB: {OrganizationID: "organization-b", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, Catalog: catalog, Organizations: native}}
+	scopes := map[uuid.UUID]management.Binding{}
+	if !c.MainService {
+		catalog, e := management.NewCatalog([]management.Role{{ID: "management_viewer", Name: "管理查询员", Permissions: []string{"management.members.read", "management.roles.read", "management.audit.read", "management.users.read"}}, {ID: "audit_viewer", Name: "审计观察员", Permissions: []string{"management.audit.read"}}})
+		must(e)
+		native, e := directory.NewClient(c.Issuer, c.ReadCredential, "governance", client)
+		must(e)
+		links := management.BoundUserIdentities{Store: store, Workspace: wsA, References: map[string]management.UserSubjectReference{"person-a-2": {Issuer: c.Issuer, Subject: "directory-person-linked", BasisRef: "synthetic-user-link-v1"}}}
+		scopes = map[uuid.UUID]management.Binding{wsA: {OrganizationID: "organization-a", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, IdentityLinks: links, Catalog: catalog, Organizations: native}, wsB: {OrganizationID: "organization-b", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, Catalog: catalog, Organizations: native}}
+
+	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /internal/identity/platform-management-principal", store.ManagementPrincipal(resolver))
 	logs, e := management.NewRuntimeLogHandler(resolver, management.PostgresGate{Pool: pool, Store: store}, runtimeSources(c, client), "SYNTHETIC_FIXTURE")
 	must(e)
 	logs.Register(mux)
-	management.Handler{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, Bindings: scopes, Audit: management.PostgresAudit{Pool: pool}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)
+	management.Handler{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, Bindings: scopes, Audits: map[uuid.UUID]management.AuditBinding{wsA: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}, wsB: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"profile": "platform-management.v1", "realSources": "UNCONFIGURED", "businessWrites": false, "models": false, "dispatch": false})
 	})
-	server := http.Server{Addr: "127.0.0.1:" + apiPort, Handler: onlyQueries(mux), ReadHeaderTimeout: 5 * time.Second, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12}}
+	next := onlyQueries(mux)
+	if c.MainService {
+		must(managementservice.CheckDatabase(context.Background(), pool, dbName, "management_api", true))
+		next, e = managementservice.Compose(managementservice.Dependencies{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, IdentitySource: "SYNTHETIC_FIXTURE", Confirmation: store.ManagementPrincipal(resolver), Ready: func(ctx context.Context) error {
+			return managementservice.CheckDatabase(ctx, pool, dbName, "management_api", true)
+		}, Audits: map[uuid.UUID]management.AuditBinding{wsA: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}, wsB: {Source: "SYNTHETIC_FIXTURE", Reader: management.PostgresAudit{Pool: pool}}}})
+		must(e)
+	}
+	server := http.Server{Addr: "127.0.0.1:" + apiPort, Handler: next, ReadHeaderTimeout: 5 * time.Second, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12}}
 	log.Print("Independent management query host ready; real sources and business writes disabled")
 	must(server.ListenAndServeTLS(c.Cert, c.Key))
 }
@@ -106,7 +125,17 @@ func prepare(c config) {
 	raw := os.Getenv("MANAGEMENT_FIXTURE_ADMIN_DSN")
 	cfg, e := pgxpool.ParseConfig(raw)
 	must(e)
-	if cfg.ConnConfig.Database != map[bool]string{false: "management_readonly_20261025", true: "runtime_logs_readonly_20261026"}[c.RuntimeLogs] || cfg.ConnConfig.Host != "127.0.0.1" || cfg.ConnConfig.Port != map[bool]uint16{false: 25496, true: 25550}[c.RuntimeLogs] {
+	expectedDB, expectedPort := "management_readonly_20261025", uint16(25496)
+	if c.RuntimeLogs {
+		expectedDB, expectedPort = "runtime_logs_readonly_20261026", 25550
+	}
+	if c.MainService {
+		if c.RuntimeLogs || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
+			log.Fatal("main service prepare boundary")
+		}
+		expectedDB, expectedPort = "management_main_service_20261026", 25560
+	}
+	if cfg.ConnConfig.Database != expectedDB || cfg.ConnConfig.Host != "127.0.0.1" || cfg.ConnConfig.Port != expectedPort {
 		log.Fatal("prepare target differs")
 	}
 	pool, e := pgxpool.NewWithConfig(ctx, cfg)
@@ -148,9 +177,10 @@ func prepare(c config) {
 	must(e)
 	_, e = pool.Exec(ctx, `INSERT INTO platform_workspace_grant(id,actor_id,workspace_id,capabilities,valid_from,valid_until)VALUES($1,$2,$3,$4,now()-interval '1 hour',now()+interval '8 hours')`, uuid.New(), selected, wsA, []string{principal.CapabilityAcceptanceRead})
 	must(e)
+	auditAt := time.Now().UTC().Add(-time.Hour).Truncate(time.Microsecond)
 	for _, ws := range []uuid.UUID{wsA, wsB} {
 		for i := 0; i < 58; i++ {
-			_, e = pool.Exec(ctx, `INSERT INTO audit_event(id,workspace_id,actor_type,actor_id,action,object_type,object_id,metadata,occurred_at)VALUES($1,$2,'USER',$3,'SYNTHETIC_REVIEW','Dataset',$4,'{"private":"NEVER_RENDER_RAW_PAYLOAD"}',now()-($5::int*interval '1 minute'))`, uuid.New(), ws, people["both"], uuid.New(), i+1)
+			_, e = pool.Exec(ctx, `INSERT INTO audit_event(id,workspace_id,actor_type,actor_id,action,object_type,object_id,metadata,occurred_at)VALUES($1,$2,'USER',$3,'SYNTHETIC_REVIEW','Dataset',$4,'{"private":"NEVER_RENDER_RAW_PAYLOAD"}',CASE WHEN $6::boolean THEN $7::timestamptz ELSE now()-($5::int*interval '1 minute') END)`, uuid.New(), ws, people["both"], uuid.New(), i+1, c.MainService, auditAt)
 			must(e)
 		}
 	}

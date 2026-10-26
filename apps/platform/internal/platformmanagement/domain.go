@@ -75,6 +75,17 @@ type AuditPage struct {
 type AuditReader interface {
 	List(context.Context, uuid.UUID, uuid.UUID, string) (AuditPage, error)
 }
+
+// Audit configuration belongs to this workspace, independently of its directory.
+type AuditBinding struct {
+	Source string
+	Reader AuditReader
+}
+
+func (b AuditBinding) Configured() bool {
+	return b.Reader != nil && (b.Source == "CONFIGURED" || b.Source == "SYNTHETIC_FIXTURE")
+}
+
 type Envelope struct {
 	ProfileVersion    string    `json:"profileVersion"`
 	WorkspaceID       uuid.UUID `json:"workspaceId"`

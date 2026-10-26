@@ -2,11 +2,11 @@
 
 2026-10-25。用户授权：复用 shuomi-ai-commerce 成员目录、角色权限和审计只读能力，适配新版设置，验证跨空间、撤权和分页。PR #363 保持 Draft，不合并。本文件拥有本增量的查询合同。
 
-2026-10-26完成状态核对，代码基线`259eff895bb50bf688b795e52210a062161620ba`：七项管理查询与运行日志的独立查询、权限和新版页面均已完成隔离合成验收。二者目前注册在`apps/platform/tests/platformmanagement`独立验收宿主；`apps/platform/cmd/api`未因此完成系统设置的正式装配，真实企业身份/目录/日志来源仍未配置，默认预览保持未接入。代码、隔离验证、主服务装配、真实来源与启用授权分别记录，不能互相推定。
+2026-10-26完成状态核对，代码基线`259eff895bb50bf688b795e52210a062161620ba`：七项管理查询与运行日志的独立查询、权限和新版页面均已完成隔离合成验收。在该历史基线，二者注册在`apps/platform/tests/platformmanagement`独立验收宿主，`apps/platform/cmd/api`尚未装配，真实企业身份/目录/日志来源仍未配置，默认预览保持未接入。代码、隔离验证、主服务装配、真实来源与启用授权分别记录，不能互相推定。
 
 当前状态及证据见[运行日志审查与系统设置整体验收](../product/platform-runtime-logs-readonly-review-20261026.md)；[来源、责任与首个候选核对表](../product/platform-management-source-admission-20261026.md)只拥有材料、确认职责与纸面准入记录，不另立HTTP、权限、状态机或启用合同。
 
-2026-10-26主服务装配设计：以`48cde34853f8da73bfb07936e9906252c1ce2f09`核对现状，[只读装配方案](platform-management-main-service-readonly-v1.md)拥有未来组合根、默认关闭、依赖及验收条件；下文“审计独立装配目标”拥有解耦后的查询语义。两者均未实施，不改变现有代码、旧验收结果、来源配置、默认预览或业务写入边界。
+2026-10-26第一实施切片：已在cmd/api接入默认关闭的独立QUERY_ONLY组合，并同步审计独立装配、两个概览及Web DTO校验。[只读装配方案](platform-management-main-service-readonly-v1.md)拥有组合/配置边界，下文“审计独立装配”拥有查询语义；[实施记录](../product/platform-management-main-service-20261026.md)分别记录共享组合的独立合成验收、产品入口拒绝回退及未运行的真实接入。产品profile首片不组装目录/日志，真实来源和默认预览仍未接入，不改旧证据或业务写边界。
 
 ## Reuse Check
 
@@ -57,11 +57,11 @@
 
 本片复用已有OIDC/RP、workspace grant、ValidateInTx、查询壳及成员/用户/角色/审计流程；不新增IAM、通用租户组件、账号/空间表或迁移。ZITADEL等现有身份方案继续拥有登录与原生目录；平台只投影已有当前授权与服务器接入配置。没有业务需求要求再引入一套租户运行时，因此不新增OSS组件或自建工作空间生命周期。
 
-`GET .../management/workspace`需要同一个`PLATFORM_MANAGEMENT_READ`及前后无缓存身份确认、当前PG只读事务门禁。它不要求人员目录已配置：将原共用目录前置要求限定在原成员/用户/角色/审计路径，空间概览独立使用身份来源。Handler必须显式配置`IdentitySource=CONFIGURED/SYNTHETIC_FIXTURE`，不能用原生目录来源推定身份来源；缺失返回SOURCE_UNCONFIGURED。身份、空间或revision在请求中变化时不公开概览，不接受URL参数、body、cookie或任意header提供身份/空间。
+`GET .../management/workspace`需要同一个`PLATFORM_MANAGEMENT_READ`及前后无缓存身份确认、当前PG只读事务门禁。它不要求人员目录已配置：将目录前置要求限定在成员/用户/角色/组织路径；审计独立配置，空间概览独立使用身份来源。Handler必须显式配置`IdentitySource=CONFIGURED/SYNTHETIC_FIXTURE`，不能用原生目录来源推定身份来源；缺失返回SOURCE_UNCONFIGURED。身份、空间或revision在请求中变化时不公开概览，不接受URL参数、body、cookie或任意header提供身份/空间。
 
 响应沿用身份绑定Envelope。`data.recordState=UNCONFIGURED`明确表示尚未接入正式工作空间档案；没有owner、quota、createdAt或生命周期状态字段。`confirmationExpiresAt`来自最后一次ValidateInTx的ExpiresAt，受caller身份及当前binding/grant有效期约束，必须晚于查询时点及响应组装时点；只解释本次核验，不是后续操作的访问租约。空间名称仅在Web侧由已验证的当前空间配置匹配，标记“名称来源：接入配置”；不得把企业组织、UUID外观、目录负责人或成员状态补成空间档案。负责人、配额显示未提供，创建、邀请、修改授权与归档不开入口。
 
-`directory`只描述当前服务器配置是否满足既有查询路径要求：有效organization/project/source、Directory及Catalog齐备时为CONFIGURED，并返回折叠的外部引用；否则为UNCONFIGURED、source=UNCONFIGURED及null引用。`availability`始终NOT_CHECKED。`queries.members/roles`按同一完整配置判断，users另需UserReader、audit另需AuditReader；这些布尔值仅控制入口是否已配置，不能当作当前调用资格、远端健康或真实来源证明。概览不调用原生目录、账号资料、审计列表或外部provider；点击入口后由原接口独立核验。远端故障时概览仍可解释配置，原查询必须显示不可用，不给出“连接正常”或假空结果。
+`directory`只描述当前服务器配置是否满足既有查询路径要求：有效organization/project/source、Directory及Catalog齐备时为CONFIGURED，并返回折叠的外部引用；否则为UNCONFIGURED、source=UNCONFIGURED及null引用。`availability`始终NOT_CHECKED。`queries.members/roles`按同一完整配置判断，users另需UserReader；audit按当前空间独立AuditBinding配置判定；这些布尔值仅控制入口是否已配置，不能当作当前调用资格、远端健康或真实来源证明。概览不调用原生目录、账号资料、审计列表或外部provider；点击入口后由原接口独立核验。远端故障时概览仍可解释配置，原查询必须显示不可用，不给出“连接正常”或假空结果。
 
 页面`/settings/workspaces`只展示当前会话空间，不新增全局空间目录。其他空间仍从既有`/identity → /auth/login?workspaceId=...`重做登录和资格核验，配置中的候选名称不证明调用者可进入。空间→成员/用户/角色/审计沿用完整GET，并携带唯一导航标记`from=workspace`；各列表筛选/分页/清除、明确详情、角色相关成员及审计游标分页均保留该标记，返回固定`/settings/workspaces`。标记不传入API、不选择workspace/身份、不接受任意return URL，未知值/重复值拒绝。切空间后返回只查询新会话的当前空间，复制旧用户/游标仍按既有边界拒绝；撤权或到期后刷新及历史导航不能用旧查询结果获取新访问。
 
@@ -85,7 +85,7 @@
 
 `GET .../management/configuration`没有参数，复用当前身份前后无缓存确认、同一actor/issuer/subject/workspace/revision比较及两次只读事务门禁。即使没有配置目录，仍可以通过明确`IdentitySource=CONFIGURED/SYNTHETIC_FIXTURE`解释未接入状态；未知身份来源拒绝，不从目录来源猜测。撤权、到期、身份变化或门禁不可用时不返回data；Cookie、body、跨空间路径、未知/重复参数及非GET继续拒绝。
 
-Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`mode=QUERY_ONLY`、`directory={state,source,availability}`、`queries={workspace,organization,members,users,roles,audit}`及`rolePolicySource`。目录state/source采用现有完整配置判定，availability固定NOT_CHECKED。workspace=true代表当前查询入口；members/roles沿用workspaceOverview判定，organization另需OrganizationReader、users另需UserReader、audit另需AuditReader。roles已配置时policy来源为APPLICATION_CATALOG，否则null。这些字段不表示远端健康、企业角色接入、当前操作授权或全站写入口状态。配置存在时原生服务故障仍显示已配置，进入各查询后独立核验并显示故障；没有原生读请求，也不生成成功/可用判断。
+Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`mode=QUERY_ONLY`、`directory={state,source,availability}`、`queries={workspace,organization,members,users,roles,audit}`及`rolePolicySource`。目录state/source采用现有完整配置判定，availability固定NOT_CHECKED。workspace=true代表当前查询入口；members/roles沿用workspaceOverview判定，organization另需OrganizationReader、users另需UserReader；audit按当前空间独立AuditBinding配置判定。roles已配置时policy来源为APPLICATION_CATALOG，否则null。这些字段不表示远端健康、企业角色接入、当前操作授权或全站写入口状态。配置存在时原生服务故障仍显示已配置，进入各查询后独立核验并显示故障；没有原生读请求，也不生成成功/可用判断。
 
 公开DTO禁止包含原生组织/project ID、原始或掩码URL、环境键值、连接字符串、文件路径、credential/session/token、密钥是否存在、部分密钥或整个配置对象。只允许显式组装本节字段；前端精确校验键集合、scope/mode、当前principal/workspace/revision、source及writeEnabled=false，拒绝额外字段和健康/全站能力宣称。最小身份Envelope中的canonical引用仍放在折叠查询依据，不是secret或外部配置。
 
@@ -93,25 +93,25 @@ Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`m
 
 增加闭集导航`from=configuration`：只允许工作空间、组织资料、成员、用户、角色和审计页面使用；配置页本身不接受from。配置→工作空间/组织→下游查询，以及筛选、分页、明确详情、返回原行、角色相关成员、审计游标和错误页恢复都保留该来源，固定返回`/settings/configuration`。原from=workspace/organization行为保持。标记不进入API，不选择caller/workspace，不接受任意返回URL；刷新与历史导航仍完整GET重验资格。切换空间只显示新会话上下文，旧外部详情引用拒绝，恢复已撤权限不会复活旧会话。
 
-## 审计独立装配目标（待实施）
+## 审计独立装配
 
-本节是`48cde348`之后拟实施的明确目标，不描述当前运行行为。现有Handler、workspaceOverview和configurationOverview仍将audit依赖于完整DirectoryBinding/Catalog；本轮未移除该检查，也未重新运行解耦验收。其余各节的目录前置要求及旧证据继续按现状理解；只有未来审计分支和audit入口配置判定按本节解耦。
+本节为第一实施切片已落地的当前合同。原`48cde348`上的audit目录前置检查及两个投影限制已移除，审计使用独立workspace→AuditBinding；目录相关路径和旧验收证据不被改写。Handler、两个概览与Web DTO均按本节同步，默认预览不启用该组合。
 
 **评审决定：审计不依赖Directory、Catalog、organization/project或原生目录权限。** AuditEvent的System of Record是平台数据库，源项目审计复用的是查询模式；以目录是否配置决定平台审计可读，是组合层耦合，不能作为长期前提。查询仍必须具有同一可信caller、当前workspace及`PLATFORM_MANAGEMENT_READ`，不另建身份或权限引擎，不把应用角色显示权限当caller授权。
 
-| 目标项 | 待实施合同 |
+| 项目 | 当前合同 |
 |---|---|
-| 来源与作用域 | 由主服务受控装配明确启用的workspace集合、独立`AuditSource`及`AuditReader`组成；AuditSource仅CONFIGURED或tests专属SYNTHETIC_FIXTURE，不能从DirectoryBinding.Source、角色名或“Reader非nil”猜测。它是拟议装配输入，不新增公开DTO字段或审计事实 |
+| 来源与作用域 | 由主服务受控装配明确启用的workspace集合、独立`AuditBinding.Source`及`AuditReader`组成；AuditSource仅CONFIGURED或tests专属SYNTHETIC_FIXTURE，不能从DirectoryBinding.Source、角色名或“Reader非nil”猜测。它是私有装配输入，不新增公开DTO字段或审计事实 |
 | 启动和未配置 | 未显式启用或当前workspace无审计装配时，配置入口audit=false，实际audit GET在当前身份/空间核验后返回503 SOURCE_UNCONFIGURED。已声明接入却缺Reader、来源枚举非法或范围冲突时，候选装配启动失败，不静默当未配置 |
-| 单次查询 | 沿用当前Resolver及PG Gate在读取前后核验原actor、issuer/subject、workspace、revision和有效期；AuditReader只接收服务端ws与caller。成功和读取错误均先通过同一后置身份/资格检查，再决定公开结果或错误；当前代码部分错误提前返回，未来实现必须补齐，不能声称现状已全部满足 |
+| 单次查询 | 沿用当前Resolver及PG Gate在读取前后核验原actor、issuer/subject、workspace、revision和有效期；AuditReader只接收服务端ws与caller。成功和读取错误均先通过同一后置身份/资格检查，再决定公开结果或错误；读取错误已改为与成功共用后置门禁；输出前仍按初次和后查的最短期限拒绝，不续期 |
 | 运行故障 | 有效配置下Reader故障且当前资格仍有效才返回503 AUDIT_UNAVAILABLE，无data；读取中身份失效优先401/403/既有身份不可用，不能泄漏记录、存在性或内部错误。未知/错误cursor仍沿用400 INVALID_QUERY，不新增宽松恢复 |
-| Envelope.source | 该audit响应取独立AuditSource；workspace/configuration响应仍取IdentitySource，目录响应仍取目录Source。不新增PLATFORM_DB等第三种公开枚举，不沿用未配置目录Source导致DTO非法 |
-| 两个入口投影 | workspaceOverview.queries.audit和configurationOverview.queries.audit均按当前空间的独立审计装配判定；目录未配置但审计已配置时audit=true、directory=UNCONFIGURED，其他目录键按原合同false。两个投影和audit实际入口必须同步修改，不能只改Handler前置if |
+| Envelope.source | 该audit响应取独立AuditBinding.Source；workspace/configuration响应仍取IdentitySource，目录响应仍取目录Source。不新增PLATFORM_DB等第三种公开枚举，不沿用未配置目录Source导致DTO非法 |
+| 两个入口投影 | workspaceOverview.queries.audit和configurationOverview.queries.audit均按当前空间的独立审计装配判定；目录未配置但审计已配置时audit=true、directory=UNCONFIGURED，其他目录键按原合同false。两个投影、audit实际入口和Web DTO校验已同步修改 |
 | 不变部分 | 七项GET、管理profile/version、确认capabilities、Envelope与data键、审计最小字段、25+1及(time,id)微秒排序、当前空间/caller游标检查均不变；只放开必要装配依赖，不生成/改写AuditEvent或任何验收/签收事实 |
 
 审计来源状态是当前部署/空间的显式配置声明，不是连接健康、已接纳真实来源或后续执行授权；公开availability仍NOT_CHECKED。真实审计查询宿主、范围、只读凭据和维护责任继续待定。角色、组织、成员、用户的目录前置依赖不因本节自动拆除；运行日志仍按独立契约查询和双权限判断。
 
-权限与验证要求见[装配方案](platform-management-main-service-readonly-v1.md)第4、8节。需特别覆盖audit-only无目录、目录故障但审计可用、缺审计来源、两个入口投影一致、Source来源正确、跨空间/跨caller游标、同微秒分页及读取成功/失败过程中撤权/到期。上述目标全部NOT_RUN，不继承旧51项通过结果；当前Base64游标不声称防篡改或跨页快照。
+权限与验证范围见[装配方案](platform-management-main-service-readonly-v1.md)和[本片实施记录](../product/platform-management-main-service-20261026.md)。audit-only、目录权限故障、未配置源、独立Source、投影/DTO、跨空间/caller游标、同微秒分页及读取成功/失败过程撤权/到期已获独立合成验证；不继承旧51项结果，不声称Base64游标防篡改或跨页快照。真实来源、完整目录/日志在新组合的兼容回归仍按分片单独记录。
 
 ## 验证
 
@@ -119,4 +119,4 @@ Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`m
 
 复用源目录查询测试并补齐本平台绑定：跨组织/project 响应、完整筛选后分页、读前/后权限撤回、身份在读取中撤回、旧 revision 不复活、跨空间游标、错误/空页区分、深链接和刷新、只读方法 allowlist、无 secret 字段。真实 PG 核验最小权限和身份 fence；独立 Edge 走真实 RP SDK 登录、多人员/多空间、分页和撤权。测试 fixture 的配置/撤权是隔离测试控制，不作为产品写入口。CI、合成浏览器与真实来源验收分别报告。
 
-材料确认与运行授权分开。候选表中的撤权、到期、错空间和来源故障反例优先复用隔离合成回归；未来的有限真实只读验证不因列有这些反例而获得修改真实grant/来源权限、创建账号、注入故障或调用fixture控制端的许可。责任确认只证明其已确认的材料/范围，不授予caller资格；任何未来实际查询仍按本契约重新核验当前身份、空间与来源权限，材料过期或范围变化也不能用旧纸面结论追认。当前授权仅为文档审查，原库、默认预览与业务写入口保持。
+材料确认与运行授权分开。候选表中的撤权、到期、错空间和来源故障反例优先复用隔离合成回归；未来的有限真实只读验证不因列有这些反例而获得修改真实grant/来源权限、创建账号、注入故障或调用fixture控制端的许可。责任确认只证明其已确认的材料/范围，不授予caller资格；任何未来实际查询仍按本契约重新核验当前身份、空间与来源权限，材料过期或范围变化也不能用旧纸面结论追认。当前后续授权已覆盖第一实施切片及独立合成验证；真实接入另行授权。原库、默认预览与业务写入口保持。

@@ -59,6 +59,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	managementservice "github.com/qq550723504/data-product-platform/apps/platform/internal/platformmanagement/service"
 	productapp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 	producthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/transport/http"
@@ -88,6 +89,15 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+	// Select before full-service config, DB, outbox, storage, queue or engines.
+	// This process owns only the query composition; existing Agent hosts are untouched.
+	if selected, err := managementservice.RunProfile(ctx, os.Getenv("PLATFORM_MANAGEMENT_PROFILE")); selected {
+		if err != nil {
+			logger.Error("management query-only composition unavailable")
+			os.Exit(1)
+		}
+		return
+	}
 
 	cfg, err := config.Load()
 	if err != nil {

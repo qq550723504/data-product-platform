@@ -52,7 +52,7 @@ func (g *testGate) Confirm(_ context.Context, p principal.RequestPrincipal) (pri
 	if g.denyAfter > 0 && g.calls > g.denyAfter {
 		return principal.Authority{}, principal.ErrWorkspaceDenied
 	}
-	return principal.Authority{Principal: p, EvaluatedAt: time.Now()}, nil
+	return principal.Authority{Principal: p, EvaluatedAt: time.Now(), ExpiresAt: time.Now().Add(time.Minute)}, nil
 }
 
 type testDirectory struct {
@@ -87,7 +87,7 @@ func setupManagement(t *testing.T) (*http.ServeMux, *testResolver, *testGate, *t
 		t.Fatal(err)
 	}
 	mux := http.NewServeMux()
-	Handler{Principal: r, Gate: g, Audit: testAudit{}, Bindings: map[uuid.UUID]Binding{ws: {OrganizationID: "org", ProjectID: "project", Source: "SYNTHETIC_FIXTURE", Directory: d, Catalog: c}}}.Register(mux)
+	Handler{Principal: r, Gate: g, Audits: map[uuid.UUID]AuditBinding{ws: {Source: "SYNTHETIC_FIXTURE", Reader: testAudit{}}}, IdentitySource: "SYNTHETIC_FIXTURE", Bindings: map[uuid.UUID]Binding{ws: {OrganizationID: "org", ProjectID: "project", Source: "SYNTHETIC_FIXTURE", Directory: d, Catalog: c}}}.Register(mux)
 	return mux, r, g, d
 }
 func TestManagementScopeRevocationAndProjection(t *testing.T) {

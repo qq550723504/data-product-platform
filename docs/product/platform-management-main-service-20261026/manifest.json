@@ -1,0 +1,30 @@
+{
+  "audit.png": {
+    "bytes": 155294,
+    "sha256": "d3fd7854b5f149dfff1cf40c5618c6bf337447415c56654d1a123e65ed33978f"
+  },
+  "browser-results.json": {
+    "bytes": 2515,
+    "sha256": "15b7ca042effaa9f24feed89372ac97fb0c1df214f8c9f92100af00aa3bb5e29"
+  },
+  "configuration.png": {
+    "bytes": 76390,
+    "sha256": "8574abbca9b16084c24597a6d99c6ebc7234b421c561b8bbc04bf945f5a67d89"
+  },
+  "failure-history.json": {
+    "bytes": 1616,
+    "sha256": "b37f8bc75f45a83728a3514022ad29a77ddb41ad0ed1792f8da16d0b35dd201e"
+  },
+  "go-regression.json": {
+    "bytes": 738,
+    "sha256": "1592e2a94c01fcd3a17bf7112fdfc3fb598155b34de5782b1ec5d7ea044b9007"
+  },
+  "retained-comparison.json": {
+    "bytes": 1363,
+    "sha256": "a9df0df0050cfc5b1be595fe73230d06d8502b6b3c60492a295baa2e9611a4ab"
+  },
+  "workspace.png": {
+    "bytes": 77166,
+    "sha256": "3b42e56c1c1dd5c18bd791cd29f187512da754cb7aa973d22f66428bb72cfc98"
+  }
+}

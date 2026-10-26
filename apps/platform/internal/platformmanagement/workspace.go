@@ -28,17 +28,18 @@ type WorkspaceOverview struct {
 	Queries               WorkspaceQueries   `json:"queries"`
 }
 
-func workspaceOverview(b Binding, audit AuditReader, a principal.Authority) (WorkspaceOverview, error) {
+func workspaceOverview(b Binding, audit AuditBinding, a principal.Authority) (WorkspaceOverview, error) {
 	if a.Principal.ActorID == uuid.Nil || a.Principal.WorkspaceID == uuid.Nil || a.EvaluatedAt.IsZero() || !a.ExpiresAt.After(a.EvaluatedAt) || !a.ExpiresAt.After(time.Now()) {
 		return WorkspaceOverview{}, ErrUnavailable
 	}
 	result := WorkspaceOverview{RecordState: "UNCONFIGURED", ConfirmationExpiresAt: a.ExpiresAt.UTC(), Directory: WorkspaceDirectory{State: "UNCONFIGURED", Source: "UNCONFIGURED", Availability: "NOT_CHECKED"}}
+	result.Queries.Audit = audit.Configured()
 	// Same requirements as the existing query paths, without invoking a provider.
 	ready := b.Directory != nil && b.Catalog != nil && IsIdentifier(b.OrganizationID) && IsIdentifier(b.ProjectID) && (b.Source == "CONFIGURED" || b.Source == "SYNTHETIC_FIXTURE")
 	if ready {
 		org, project := b.OrganizationID, b.ProjectID
 		result.Directory = WorkspaceDirectory{State: "CONFIGURED", Source: b.Source, OrganizationID: &org, ProjectID: &project, Availability: "NOT_CHECKED"}
-		result.Queries = WorkspaceQueries{Members: true, Users: b.Users != nil, Roles: true, Audit: audit != nil}
+		result.Queries = WorkspaceQueries{Members: true, Users: b.Users != nil, Roles: true, Audit: audit.Configured()}
 	}
 	return result, nil
 }

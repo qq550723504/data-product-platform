@@ -1,0 +1,54 @@
+{
+  "codeBaseline": "2a6f6099e7716dc4693db51147cfc88ab863b95c",
+  "preservedPrivateAttempts": [
+    {
+      "scope": "initial toolchain invocation",
+      "result": "NOT_RUN",
+      "reason": "requested Go toolchain executable unavailable",
+      "resolution": "used retained Go 1.26.10 toolchain without changing module/toolchain pins"
+    },
+    {
+      "scope": "audit-only and error-path unit regression",
+      "result": "EXPECTED_FAIL",
+      "cases": 2
+    },
+    {
+      "scope": "audit-only Web DTO regression",
+      "result": "EXPECTED_FAIL",
+      "cases": 1
+    },
+    {
+      "scope": "first isolated API startup",
+      "result": "FAIL",
+      "sqlstate": "42809",
+      "resolution": "CASE restricts sequence-privilege function to sequences; all privilege conditions retained"
+    },
+    {
+      "scope": "first browser acceptance",
+      "result": "FAIL",
+      "passed": 7,
+      "failed": 1,
+      "reason": "test expected 403 while existing OIDC boundary returns 401 for absent foreign workspace binding",
+      "resolution": "exact expected status corrected after resolver verification; all errors still require no data"
+    },
+    {
+      "scope": "first complete Go regression",
+      "result": "FAIL",
+      "reason": "new test missing principal import",
+      "resolution": "import fixed; final six packages pass with no skips"
+    }
+  ],
+  "finalBrowser": {
+    "pass": 18,
+    "fail": 0
+  },
+  "finalGo": {
+    "passEventsIncludingSubtests": 214,
+    "fail": 0,
+    "skip": 0
+  },
+  "realSources": "UNCONFIGURED",
+  "productBusinessWrites": false,
+  "models": false,
+  "dispatch": false
+}

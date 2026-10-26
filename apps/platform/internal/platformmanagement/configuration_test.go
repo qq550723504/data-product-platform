@@ -29,7 +29,7 @@ func TestConfigurationProjectsOnlyCurrentManagementCompositionWithoutSecretsOrNa
 				bindings[r.p.WorkspaceID] = b
 			}
 			mux := http.NewServeMux()
-			Handler{Principal: r, Gate: g, Bindings: bindings, Audit: testAudit{}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)
+			Handler{Principal: r, Gate: g, Bindings: bindings, Audits: map[uuid.UUID]AuditBinding{r.p.WorkspaceID: {Source: "SYNTHETIC_FIXTURE", Reader: testAudit{}}}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)
 			req := httptest.NewRequest("GET", "/api/v1/workspaces/"+r.p.WorkspaceID.String()+"/management/configuration", nil)
 			req.Header.Set("Authorization", "Bearer synthetic")
 			out := httptest.NewRecorder()

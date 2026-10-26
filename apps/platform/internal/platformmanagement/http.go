@@ -15,7 +15,7 @@ type Handler struct {
 	Principal principal.Resolver
 	Gate      Gate
 	Bindings  map[uuid.UUID]Binding
-	Audit     AuditReader
+	Audits    map[uuid.UUID]AuditBinding
 	// Explicit provenance of the current identity in workspace-only projections.
 	// Kept separate from native directory configuration and availability.
 	IdentitySource string
@@ -104,12 +104,14 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		authorityFailure(w, principal.ErrWorkspaceDenied)
 		return
 	}
-	if _, err = h.Gate.Confirm(ctx, p); err != nil {
+	initial, err := h.Gate.Confirm(ctx, p)
+	if err != nil {
 		authorityFailure(w, err)
 		return
 	}
 	b, ok := h.Bindings[ws]
-	if resource == "workspace" || resource == "configuration" {
+	audit := h.Audits[ws]
+	if resource == "workspace" || resource == "configuration" || resource == "audit" {
 		if h.IdentitySource != "SYNTHETIC_FIXTURE" && h.IdentitySource != "CONFIGURED" {
 			failure(w, 503, "SOURCE_UNCONFIGURED")
 			return
@@ -119,6 +121,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var payload any
+	var auditErr error
 	switch resource {
 	case "organization":
 		page, e := QueryOrganization(ctx, b)
@@ -212,19 +215,16 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			PolicySource string `json:"policySource"`
 		}{b.Catalog.Roles(), "APPLICATION_CATALOG"}
 	case "audit":
-		if h.Audit == nil {
-			failure(w, 503, "AUDIT_UNAVAILABLE")
+		if !audit.Configured() {
+			failure(w, 503, "SOURCE_UNCONFIGURED")
 			return
 		}
-		page, e := h.Audit.List(ctx, ws, p.ActorID, q["cursor"])
-		if e != nil {
-			if errors.Is(e, ErrInvalidRequest) {
-				failure(w, 400, "INVALID_QUERY")
-			} else {
-				failure(w, 503, "AUDIT_UNAVAILABLE")
-			}
+		if !initial.ExpiresAt.After(time.Now()) {
+			failure(w, 503, "READ_UNAVAILABLE")
 			return
 		}
+		page, e := audit.Reader.List(ctx, ws, p.ActorID, q["cursor"])
+		auditErr = e
 		payload = page
 	}
 	// A local grant check cannot detect IdP token revocation during directory I/O.
@@ -252,8 +252,23 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	env := Envelope{"platform-management.v1", ws, p.ActorID, a.Principal.IdentityRevision, a.EvaluatedAt, b.Source, false}
+	if resource == "audit" {
+		if !minTime(initial.ExpiresAt, a.ExpiresAt).After(time.Now()) {
+			failure(w, 503, "READ_UNAVAILABLE")
+			return
+		}
+		if auditErr != nil {
+			if errors.Is(auditErr, ErrInvalidRequest) {
+				failure(w, 400, "INVALID_QUERY")
+			} else {
+				failure(w, 503, "AUDIT_UNAVAILABLE")
+			}
+			return
+		}
+		env.Source = audit.Source
+	}
 	if resource == "workspace" {
-		payload, err = workspaceOverview(b, h.Audit, a)
+		payload, err = workspaceOverview(b, audit, a)
 		if err != nil {
 			failure(w, 503, "READ_UNAVAILABLE")
 			return
@@ -261,18 +276,23 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		env.Source = h.IdentitySource
 	}
 	if resource == "configuration" {
-		payload, err = configurationOverview(b, h.Audit, a)
+		payload, err = configurationOverview(b, audit, a)
 		if err != nil {
 			failure(w, 503, "READ_UNAVAILABLE")
 			return
 		}
 		env.Source = h.IdentitySource
 	}
-	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(struct {
+	data, err := json.Marshal(struct {
 		Envelope
 		Data any `json:"data"`
 	}{env, payload})
+	if err != nil || resource == "audit" && !minTime(initial.ExpiresAt, a.ExpiresAt).After(time.Now()) {
+		failure(w, 503, "READ_UNAVAILABLE")
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_, _ = w.Write(append(data, '\n'))
 }
 func strictQuery(r *http.Request, allowed map[string]bool) (map[string]string, error) {
 	values, err := urlValues(r.URL.RawQuery)

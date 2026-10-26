@@ -1,12 +1,12 @@
 # 工作空间运行日志只读契约
 
-状态：页面、只读HTTP处理器、日志专属权限与独立PostgreSQL/合成来源验收已实施（2026-10-26）；真实来源未配置。初版核对基线为PR #363的`90643b8ed227c58fe386a5ee09b2758045db6cd6`。本稿拥有运行日志的查询约束与未来真实来源准入，包括身份、空间、投影、查询及恢复；[管理只读契约](platform-management-readonly-v1.md)继续拥有七项管理接口，[页面方案](../product/platform-runtime-logs-page-plan-20261025.md)拥有布局与交互。代码基线整体验收见[审查记录](../product/platform-runtime-logs-readonly-review-20261026.md)，跨模块材料与责任索引见[来源清单](../product/platform-management-source-admission-20261026.md)；主服务装配、真实来源和默认预览仍未接入。
+状态：页面、只读HTTP处理器、日志专属权限与独立PostgreSQL/合成来源验收已实施（2026-10-26）；真实来源未配置。初版核对基线为PR #363的`90643b8ed227c58fe386a5ee09b2758045db6cd6`。本稿拥有运行日志的查询约束与未来真实来源准入，包括身份、空间、投影、查询及恢复；[管理只读契约](platform-management-readonly-v1.md)继续拥有七项管理接口，[页面方案](../product/platform-runtime-logs-page-plan-20261025.md)拥有布局与交互。代码基线整体验收见[审查记录](../product/platform-runtime-logs-readonly-review-20261026.md)，跨模块材料与责任索引见[来源清单](../product/platform-management-source-admission-20261026.md)；主服务已实现默认关闭的第一只读组合，但其中日志来源仍未组装；真实来源和默认预览仍未接入。
 
 本轮按新授权实现共享页面及[独立合成验收](../product/platform-runtime-logs-synthetic-acceptance-20261026.md)，默认Next入口固定未接入。已在独立管理验收宿主注册下述日志API，并在独立库运行migration 000078；原库和默认预览未迁移。没有真实来源Adapter或采集服务，也没有生产合成切换开关。详见[只读API验收记录](../product/platform-runtime-logs-api-acceptance-20261026.md)。真实来源保持UNCONFIGURED，业务写入口继续关闭；保留原库、OIDC/RP、Agent API和新版预览。PR保持Draft，不合并、不部署。
 
 ## 1. 目标与事实归属
 
-主服务未来如何选择只读组合、默认关闭及创建依赖，由[系统设置主服务装配方案](platform-management-main-service-readonly-v1.md)拥有，当前仅设计、未实施。日志三项GET、双权限、来源状态、最小投影和引用规则仍由本文拥有；审计解耦不扩展管理身份确认的capabilities，也不把日志键加入公开配置六项查询。本轮不新增真实Adapter、产品合成切换或采集服务，不改变默认预览。
+主服务未来如何选择只读组合、默认关闭及创建依赖，由[系统设置主服务装配方案](platform-management-main-service-readonly-v1.md)拥有，第一切片已实现默认关闭的组合，日志来源配置仍属后续。日志三项GET、双权限、来源状态、最小投影和引用规则仍由本文拥有；审计解耦不扩展管理身份确认的capabilities，也不把日志键加入公开配置六项查询。本轮不新增真实Adapter、产品合成切换或采集服务，不改变默认预览。
 
 用户在当前工作空间内查询一段时间的服务运行记录，查看明确一条记录，再返回相同查询条件和位置。记录仅解释技术运行观察，不据此重试任务、修改配置或判断业务通过。
 

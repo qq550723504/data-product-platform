@@ -40,7 +40,7 @@ func TestWorkspaceOverviewUsesCurrentAuthorityWithoutDirectoryCalls(t *testing.T
 				bindings[ws] = Binding{OrganizationID: "native-org", ProjectID: "native-app", Source: "SYNTHETIC_FIXTURE", Directory: d, Catalog: c}
 			}
 			mux := http.NewServeMux()
-			Handler{Principal: r, Gate: g, Bindings: bindings, Audit: testAudit{}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)
+			Handler{Principal: r, Gate: g, Bindings: bindings, Audits: map[uuid.UUID]AuditBinding{ws: {Source: "SYNTHETIC_FIXTURE", Reader: testAudit{}}}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)
 			req := httptest.NewRequest("GET", "/api/v1/workspaces/"+ws.String()+"/management/workspace", nil)
 			req.Header.Set("Authorization", "Bearer synthetic")
 			out := httptest.NewRecorder()
@@ -55,7 +55,7 @@ func TestWorkspaceOverviewUsesCurrentAuthorityWithoutDirectoryCalls(t *testing.T
 			if json.Unmarshal(out.Body.Bytes(), &wire) != nil || wire.WorkspaceID != ws || wire.PrincipalID != r.p.ActorID || wire.Source != "SYNTHETIC_FIXTURE" || wire.Data.RecordState != "UNCONFIGURED" || wire.Data.Directory.Availability != "NOT_CHECKED" || wire.WriteEnabled {
 				t.Fatal("invented workspace record/health or wrong provenance")
 			}
-			if wire.Data.Queries.Members != configured || wire.Data.Queries.Roles != configured || wire.Data.Queries.Audit != configured || wire.Data.Queries.Users {
+			if wire.Data.Queries.Members != configured || wire.Data.Queries.Roles != configured || !wire.Data.Queries.Audit || wire.Data.Queries.Users {
 				t.Fatal("overclaimed query readiness")
 			}
 			if !configured && (wire.Data.Directory.OrganizationID != nil || wire.Data.Directory.ProjectID != nil || wire.Data.Directory.Source != "UNCONFIGURED") {

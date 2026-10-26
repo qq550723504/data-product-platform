@@ -1,0 +1,81 @@
+{
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "API role refuses actual DML and DDL and RP is limited to temporary sessions",
+      "status": "PASS"
+    },
+    {
+      "name": "identity confirmation remains management-read only and ordinary user is refused",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration and workspace expose independent audit without directory or catalog",
+      "status": "PASS"
+    },
+    {
+      "name": "unconfigured directory queries reject instead of returning example or empty data",
+      "status": "PASS"
+    },
+    {
+      "name": "unconfigured log source remains separate and records require independent capability",
+      "status": "PASS"
+    },
+    {
+      "name": "closed mux rejects business routes writes HEAD OPTIONS and private identity aliases",
+      "status": "PASS"
+    },
+    {
+      "name": "58 equal-microsecond audit records continue 25 25 8 with no duplicates",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace and caller boundaries reject copied audit cursors",
+      "status": "PASS"
+    },
+    {
+      "name": "modern configuration page reaches audit while directory entries stay unconnected",
+      "status": "PASS"
+    },
+    {
+      "name": "audit details pagination reload history and return preserve the original list",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace overview advertises audit without native organization facts",
+      "status": "PASS"
+    },
+    {
+      "name": "directory permission failure does not block the independent audit query",
+      "status": "PASS"
+    },
+    {
+      "name": "audit source read failure is unavailable without data and recovers explicitly",
+      "status": "PASS"
+    },
+    {
+      "name": "revocation during a blocked successful or cancelled audit read discards observations",
+      "status": "PASS"
+    },
+    {
+      "name": "restoring authority cannot revive the old RP session on reload or history navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "expired workspace qualification refuses records and old session remains invalid after restoration",
+      "status": "PASS"
+    },
+    {
+      "name": "separate workspace browser login cannot reuse another workspace query position",
+      "status": "PASS"
+    },
+    {
+      "name": "query routes produce no business facts external calls or directory reads",
+      "status": "PASS"
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

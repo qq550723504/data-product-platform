@@ -107,3 +107,34 @@ jobs:
             .data/management-readonly-runtime-review-20261026/screenshots/
             .data/runtime-logs-api-20261026/retained-comparison.json
             .data/platform-management-preservation-20261026/retained-order-probe.json
+      - name: Prepare independent main service query composition and PG regression
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_READONLY
+          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-main-service-20261026
+        run: |
+          python3 tests/platform-management/bootstrap.py
+          python3 tests/platform-management/test-main-service.py
+          python3 tests/platform-management/start-web.py --build
+      - name: Main service audit-only composition and modern settings browser acceptance
+        env:
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_READONLY
+        run: |
+          node tests/platform-management/main-service-browser.mjs
+          python3 tests/platform-management/verify-main-service.py
+      - name: Preserve non-secret main service query results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-main-service-query-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-main-service-20261026/go-regression.json
+            .data/management-main-service-20261026/retained-comparison.json
+            .data/management-main-service-20261026/retained-final-comparison.json
+            .data/management-main-service-browser-20261026/main-service-browser-results.json
+            .data/management-main-service-browser-20261026/screenshots/
