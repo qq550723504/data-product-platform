@@ -41,6 +41,8 @@
 
 [结果摘要](platform-runtime-logs-api-acceptance-20261026/results.json) · [截图与文件校验](platform-runtime-logs-api-acceptance-20261026/manifest.json)。证据JSON固定UTF-8/LF，核对Git对象和工作副本的相同字节/hash。PR CI以对应最新HEAD的检查和收口评论为准，不由本地结果推定。
 
+CI在`c6991d25`发现[Go作业121375477895](https://github.com/qq550723504/data-product-platform/actions/runs/40261756345/job/121375477895)失败：trial-business当前候选仍精确固定schema77，新增只读权限迁移使当前DDL成为78。已审查迁移仅扩展日志资格CHECK，将当前候选精确pin更新为78；没有改成兼容范围/自动取latest，也没有改命令、状态迁移、原运行时或冻结记录。独立库上的整个trial-business/renewal回归通过，既有历史/幂等/并发门槛保留；运行的是合成工作空间单测，没有执行保留试点CLI。该回归的合成事实写入与只读API查询分开记录，不构成开启业务写入口。旧失败作业保持原FAIL结果，最新CI另行核对。
+
 ## 页面与重演
 
 ![实际API第二页](platform-runtime-logs-api-acceptance-20261026/list.png)
