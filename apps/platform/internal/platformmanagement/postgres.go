@@ -18,6 +18,14 @@ type PostgresGate struct {
 }
 
 func (g PostgresGate) Confirm(ctx context.Context, p principal.RequestPrincipal) (principal.Authority, error) {
+	return g.confirm(ctx, p, false)
+}
+
+func (g PostgresGate) ConfirmRuntime(ctx context.Context, p principal.RequestPrincipal, records bool) (principal.Authority, error) {
+	return g.confirm(ctx, p, records)
+}
+
+func (g PostgresGate) confirm(ctx context.Context, p principal.RequestPrincipal, records bool) (principal.Authority, error) {
 	if g.Pool == nil || g.Store == nil {
 		return principal.Authority{}, principal.ErrAuthorityUnavailable
 	}
@@ -29,6 +37,9 @@ func (g PostgresGate) Confirm(ctx context.Context, p principal.RequestPrincipal)
 	a, err := g.Store.ValidateInTx(ctx, tx, p, principal.CapabilityManagementRead)
 	if err != nil {
 		return a, err
+	}
+	if records && !a.Principal.HasCapability(principal.CapabilityRuntimeLogRead) {
+		return principal.Authority{}, principal.ErrCapabilityDenied
 	}
 	if tx.Commit(ctx) != nil {
 		return principal.Authority{}, principal.ErrAuthorityUnavailable

@@ -20,7 +20,7 @@ export function syntheticSource(){
   function recover(value,p,kind){const r=references.get(value);if(!r)throw new LogReadError('INVALID_LOG_QUERY');if(r.workspace!==workspace||r.principal!==p.principal_id)throw new LogReadError('LOG_ACCESS_DENIED');if(r.revision!==p.revision||r.version!==state.version||r.expires<=Date.now()||r.kind!==kind)throw new LogReadError('LOG_QUERY_EXPIRED');return r}
   function project(p,r,s,asOf){return {rowKey:rowKey(r),entryRef:ref(p,{kind:'entry',id:r.id,hash:hash(r),s,asOf}),recordedAt:r.recordedAt,occurredAt:r.occurredAt,service:r.service,level:r.level,eventCode:r.eventCode}}
   return {
-   async confirm(){const p=await confirm();return {...p,capabilities:[...p.capabilities,...state.logRead&&state.allow?['PLATFORM_RUNTIME_LOG_READ']:[]]}},
+   async confirm(){const p=await confirm();return {...p,capabilities:[...p.capabilities]}},
    async source(){const p=await checked(false);return wrap(p,{state:state.source,availability:'NOT_CHECKED'})},
    async query(s){const p=await checked(),version=state.version;state.calls.push({workspace,kind:'query'});let asOf=logNow(),after;
     if(s.cursor){const c=recover(s.cursor,p,'cursor');for(const k of ['start','end','service','level'])if(c.s[k]!==s[k])throw new LogReadError('INVALID_LOG_QUERY');asOf=c.asOf;after=c.after}
@@ -28,10 +28,10 @@ export function syntheticSource(){
     const page=records.slice(0,25),items=page.map(r=>project(p,r,s,asOf));
     const next=records.length>25?ref(p,{kind:'cursor',s,asOf,after:page.at(-1)}):null;
     const data={window:{start:s.start,end:s.end,asOf,timeBasis:'OBSERVED'},items,next};
-    if(state.afterRead)await state.afterRead();if(state.version!==version)throw new LogReadError('LOG_QUERY_EXPIRED');if(state.fault)state.fault(data);return wrap(p,data);
+    if(state.afterRead)await state.afterRead();await checked();if(state.version!==version)throw new LogReadError('LOG_QUERY_EXPIRED');if(state.fault)state.fault(data);return wrap(p,data);
    },
    async read(value){const p=await checked(),version=state.version;state.calls.push({workspace,kind:'detail'});const refData=recover(value,p,'entry'),r=state.records.find(r=>r.workspace===workspace&&r.id===refData.id);if(!r)throw new LogReadError('LOG_ENTRY_UNAVAILABLE');if(hash(r)!==refData.hash)throw new LogReadError('LOG_ENTRY_CHANGED');
-    const item={...project(p,r,refData.s,refData.asOf),entryRef:value};if(state.afterRead)await state.afterRead();if(state.version!==version)throw new LogReadError('LOG_QUERY_EXPIRED');return wrap(p,{window:{start:refData.s.start,end:refData.s.end,asOf:refData.asOf,timeBasis:'OBSERVED'},item});
+    const item={...project(p,r,refData.s,refData.asOf),entryRef:value};if(state.afterRead)await state.afterRead();await checked();if(state.version!==version)throw new LogReadError('LOG_QUERY_EXPIRED');return wrap(p,{window:{start:refData.s.start,end:refData.s.end,asOf:refData.asOf,timeBasis:'OBSERVED'},item});
    },
   };
  }

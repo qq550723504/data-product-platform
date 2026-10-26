@@ -4,11 +4,15 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import {randomBytes,createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
+import {runtimeSource} from './runtime-source.mjs';
 const require=createRequire(new URL('../../apps/web/package.json',import.meta.url));
 const {generateKeyPair,exportJWK,SignJWT}=await import(pathToFileURL(require.resolve('jose')).href);
 if(process.env.MANAGEMENT_FIXTURE_ACK!=='ISOLATED_READONLY_MANAGEMENT')throw Error('isolated fixture required');
 const p=JSON.parse(readFileSync(process.env.MANAGEMENT_FIXTURE_PROFILE,'utf8'));
-if(p.issuer!=='https://localhost:19130'||p.origin!=='https://localhost:4300')throw Error('exact independent origin required');
+const runtime=p.runtimeLogs===true&&process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK==='ISOLATED_RUNTIME_LOG_READONLY';
+const idpPort=runtime?19150:19130;
+const logs=runtimeSource(p);
+if(p.issuer!==`https://localhost:${idpPort}`||p.origin!==`https://localhost:${runtime?4350:4300}`)throw Error('exact independent origin required');
 const {publicKey,privateKey}=await generateKeyPair('RS256'),jwk=await exportJWK(publicKey);jwk.kid='management-synthetic';
 const codes=new Map(),logins=new Map(),tokens=new Map(),held=new Set(),heldUsers=new Set(),heldOrgs=new Set();const state={permission:true,foreign:false,fail:false,holdList:false,waiting:0,reads:0,userPermission:true,userForeign:false,userFail:false,userUnknown:false,holdUser:false,userWaiting:0,userReads:0,removeUser:false,orgPermission:true,orgForeign:false,orgFail:false,orgUnknown:false,orgMissing:false,orgSparse:false,orgExtra:false,holdOrg:false,orgWaiting:0,orgReads:0};
 const opaque=()=>randomBytes(32).toString('base64url');
@@ -21,6 +25,7 @@ function rows(org){const a=org==='organization-a';return Array.from({length:a?58
 const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.key),minVersion:'TLSv1.2'},async(req,res)=>{
  try{
   const u=new URL(req.url,p.issuer);
+  if(runtime&&await logs.handle(req,res,u))return;
   if(u.pathname==='/authorize'&&req.method==='GET'){
    if(u.searchParams.get('client_id')!=='dpp-management-rp'||u.searchParams.get('redirect_uri')!==p.origin+'/auth/callback'||u.searchParams.get('code_challenge_method')!=='S256'||u.searchParams.get('scope')!=='openid platform-management')return json(res,{},400);
    const id=opaque();logins.set(id,u.searchParams);res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});return res.end(`<!doctype html><html lang="zh-CN"><meta name="viewport" content="width=device-width,initial-scale=1"><h1>隔离身份验收</h1><p>仅合成身份，不连接企业人员目录。</p><form method="post" action="/login"><input type="hidden" name="request" value="${id}">${Object.entries(labels).map(([key,label])=>`<p><button name="person" value="${key}">${label}</button></p>`).join('')}</form></html>`);
@@ -69,7 +74,7 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
   if(u.pathname==='/_control'&&req.headers['x-fixture-control']===p.control){
    let testAccessToken;
    if(req.method==='POST'){
-    const b=JSON.parse(await body(req));for(const k of ['permission','foreign','fail','holdList','userPermission','userForeign','userFail','userUnknown','holdUser','removeUser','orgPermission','orgForeign','orgFail','orgUnknown','orgMissing','orgSparse','orgExtra','holdOrg'])if(typeof b[k]==='boolean')state[k]=b[k];
+    const b=JSON.parse(await body(req));if(runtime)logs.control(b);for(const k of ['permission','foreign','fail','holdList','userPermission','userForeign','userFail','userUnknown','holdUser','removeUser','orgPermission','orgForeign','orgFail','orgUnknown','orgMissing','orgSparse','orgExtra','holdOrg'])if(typeof b[k]==='boolean')state[k]=b[k];
     if(Object.hasOwn(labels,b.revokeSubject))for(const t of tokens.values())if(t.subject===b.revokeSubject)t.revoked=true;
     if(Object.hasOwn(labels,b.expireSubject))for(const t of tokens.values())if(t.subject===b.expireSubject)t.expires=Math.floor(Date.now()/1000)-1;
     if(Object.hasOwn(labels,b.issueSubject)){testAccessToken=opaque();tokens.set(testAccessToken,{subject:b.issueSubject,expires:Math.floor(Date.now()/1000)+600})}
@@ -77,10 +82,10 @@ const server=https.createServer({cert:readFileSync(p.cert),key:readFileSync(p.ke
     if(!state.holdUser)for(const release of heldUsers)release();
     if(!state.holdOrg)for(const release of heldOrgs)release();
    }
-   return json(res,{...state,...(testAccessToken?{testAccessToken}:{})});
+   return json(res,{...state,...runtime?logs.state:{},...(testAccessToken?{testAccessToken}:{})});
   }
   if(u.pathname==='/healthz')return json(res,{synthetic:true,businessWrites:false,realSources:'UNCONFIGURED'});
   return json(res,{},404);
  }catch{return json(res,{error:'synthetic fixture request failed'},400)}
 });
-server.listen(19130,'127.0.0.1',()=>console.log('Synthetic identity and directory contract ready; no real accounts or providers'));
+server.listen(idpPort,'127.0.0.1',()=>console.log('Synthetic identity and directory contract ready; no real accounts or providers'));

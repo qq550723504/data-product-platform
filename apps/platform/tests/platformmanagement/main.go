@@ -20,10 +20,14 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 )
 
-type config struct{ DatabaseURL, Issuer, ResourceSecret, ReadCredential, Cert, Key, CA, Root, APIPassword, RPPassword string }
+type config struct {
+	DatabaseURL, Issuer, ResourceSecret, ReadCredential, Cert, Key, CA, Root, APIPassword, RPPassword string
+	RuntimeLogs                                                                                       bool
+}
 
 var wsA = uuid.MustParse("11111111-1111-4111-8111-111111111111")
 var wsB = uuid.MustParse("12121212-1212-4212-8212-121212121212")
@@ -37,12 +41,16 @@ func main() {
 	b, e := os.ReadFile(os.Getenv("MANAGEMENT_FIXTURE_CONFIG"))
 	must(e)
 	must(json.Unmarshal(b, &c))
-	if c.Issuer != "https://localhost:19130" {
+	issuer, dbName, apiPort := "https://localhost:19130", "management_readonly_20261025", "18499"
+	if c.RuntimeLogs {
+		issuer, dbName, apiPort = "https://localhost:19150", "runtime_logs_readonly_20261026", "18550"
+	}
+	if c.Issuer != issuer {
 		log.Fatal("synthetic issuer required")
 	}
 	cfg, e := pgxpool.ParseConfig(c.DatabaseURL)
 	must(e)
-	if cfg.ConnConfig.Database != "management_readonly_20261025" {
+	if cfg.ConnConfig.Database != dbName {
 		log.Fatal("independent database required")
 	}
 	cfg.ConnConfig.RuntimeParams["default_transaction_read_only"] = "on"
@@ -72,11 +80,14 @@ func main() {
 	scopes := map[uuid.UUID]management.Binding{wsA: {OrganizationID: "organization-a", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, IdentityLinks: links, Catalog: catalog, Organizations: native}, wsB: {OrganizationID: "organization-b", ProjectID: "governance", Source: "SYNTHETIC_FIXTURE", Directory: native, Users: native, Catalog: catalog, Organizations: native}}
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /internal/identity/platform-management-principal", store.ManagementPrincipal(resolver))
+	logs, e := management.NewRuntimeLogHandler(resolver, management.PostgresGate{Pool: pool, Store: store}, runtimeSources(c, client), "SYNTHETIC_FIXTURE")
+	must(e)
+	logs.Register(mux)
 	management.Handler{Principal: resolver, Gate: management.PostgresGate{Pool: pool, Store: store}, Bindings: scopes, Audit: management.PostgresAudit{Pool: pool}, IdentitySource: "SYNTHETIC_FIXTURE"}.Register(mux)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"profile": "platform-management.v1", "realSources": "UNCONFIGURED", "businessWrites": false, "models": false, "dispatch": false})
 	})
-	server := http.Server{Addr: "127.0.0.1:18499", Handler: onlyQueries(mux), ReadHeaderTimeout: 5 * time.Second, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12}}
+	server := http.Server{Addr: "127.0.0.1:" + apiPort, Handler: onlyQueries(mux), ReadHeaderTimeout: 5 * time.Second, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12}}
 	log.Print("Independent management query host ready; real sources and business writes disabled")
 	must(server.ListenAndServeTLS(c.Cert, c.Key))
 }
@@ -95,7 +106,7 @@ func prepare(c config) {
 	raw := os.Getenv("MANAGEMENT_FIXTURE_ADMIN_DSN")
 	cfg, e := pgxpool.ParseConfig(raw)
 	must(e)
-	if cfg.ConnConfig.Database != "management_readonly_20261025" || cfg.ConnConfig.Host != "127.0.0.1" || cfg.ConnConfig.Port != 25496 {
+	if cfg.ConnConfig.Database != map[bool]string{false: "management_readonly_20261025", true: "runtime_logs_readonly_20261026"}[c.RuntimeLogs] || cfg.ConnConfig.Host != "127.0.0.1" || cfg.ConnConfig.Port != map[bool]uint16{false: 25496, true: 25550}[c.RuntimeLogs] {
 		log.Fatal("prepare target differs")
 	}
 	pool, e := pgxpool.NewWithConfig(ctx, cfg)
@@ -124,7 +135,7 @@ func prepare(c config) {
 			cap = principal.CapabilityAcceptanceRead
 		}
 		for _, ws := range targets {
-			_, e = pool.Exec(ctx, `INSERT INTO platform_workspace_grant(id,actor_id,workspace_id,capabilities,valid_from,valid_until)VALUES($1,$2,$3,$4,now()-interval '1 hour',now()+interval '8 hours')`, uuid.New(), id, ws, []string{cap})
+			_, e = pool.Exec(ctx, `INSERT INTO platform_workspace_grant(id,actor_id,workspace_id,capabilities,valid_from,valid_until)VALUES($1,$2,$3,$4,now()-interval '1 hour',now()+interval '8 hours')`, uuid.New(), id, ws, fixtureCapabilities(c, name, cap))
 			must(e)
 		}
 	}
@@ -151,11 +162,11 @@ func prepare(c config) {
 		_, e = pool.Exec(ctx, fmt.Sprintf("CREATE ROLE %s LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD '%s'", role, password))
 		must(e)
 	}
-	_, e = pool.Exec(ctx, `REVOKE ALL ON DATABASE management_readonly_20261025 FROM PUBLIC; REVOKE CREATE ON SCHEMA public FROM PUBLIC; REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM PUBLIC;
+	_, e = pool.Exec(ctx, strings.ReplaceAll(`REVOKE ALL ON DATABASE management_readonly_20261025 FROM PUBLIC; REVOKE CREATE ON SCHEMA public FROM PUBLIC; REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM PUBLIC;
  GRANT CONNECT ON DATABASE management_readonly_20261025 TO management_api,management_rp; GRANT USAGE ON SCHEMA public TO management_api,management_rp;
  GRANT SELECT ON platform_actor_state,platform_subject_binding,platform_workspace_grant,audit_event TO management_api;
  ALTER ROLE management_api SET default_transaction_read_only=on;
- GRANT SELECT,INSERT,DELETE ON platform_browser_transaction,platform_browser_session TO management_rp;`)
+ GRANT SELECT,INSERT,DELETE ON platform_browser_transaction,platform_browser_session TO management_rp;`, "management_readonly_20261025", cfg.ConnConfig.Database))
 	must(e)
 	log.Print("Independent management fixture prepared; API SELECT-only, RP session-only, no original database accessed")
 }

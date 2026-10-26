@@ -470,13 +470,13 @@ export class BrowserIAM {
     const request:typeof fetch=async(input,init={})=>{
       const url=new URL(typeof input==="string"?input:input instanceof URL?input.href:input.url);
       const prefix=`/api/v1/workspaces/${this.config.workspaceId}/management/`;
-      if(url.origin!==apiBaseUrl||url.username||url.password||url.hash||(init.method??"GET")!=="GET"||init.body!==undefined||[...new Headers(init.headers).keys()].length||!["members","roles","audit","users","workspace","organization","configuration"].some(resource=>url.pathname===prefix+resource))throw new IAMError();
+      if(url.origin!==apiBaseUrl||url.username||url.password||url.hash||(init.method??"GET")!=="GET"||init.body!==undefined||[...new Headers(init.headers).keys()].length||(!["members","roles","audit","users","workspace","organization","configuration","runtime-logs/source","runtime-logs/entries"].some(resource=>url.pathname===prefix+resource)&&!new RegExp("^"+prefix+"runtime-logs/entries/[A-Za-z0-9_-]{16,2048}$").test(url.pathname)))throw new IAMError();
       const {session}=await this.authorizedSession(key);
       const response=await this.reviewTransport(url,{...init,method:"GET",cache:"no-store",headers:{Authorization:`Bearer ${session.accessToken}`}});
       await this.authorizedSession(key);
       return response;
     };
-    return {principal,apiBaseUrl,request};
+    return {principal,apiBaseUrl,request,confirm:async()=> (await this.authorizedSession(key)).principal};
   }
   async logout(key: string, csrf: string) {
     // CSRF check does not depend on a working IdP. Invalid/revoked sessions can still be contained.

@@ -1,13 +1,13 @@
 """Start an independently built management page, preserving all existing previews."""
 import json,os,sys,subprocess,ssl,time,urllib.request
 from pathlib import Path
-from bootstrap import ROOT,RUN,spawn,env_clean
+from bootstrap import ROOT,RUN,WEB_PORT,spawn,env_clean
 def main():
  if os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('explicit fixture required')
  if (RUN/'web-process.json').exists():raise RuntimeError('existing web ledger retained; refusing duplicate')
  import socket
  with socket.socket() as s:
-  if s.connect_ex(('127.0.0.1',4300))==0:raise RuntimeError('management port occupied')
+  if s.connect_ex(('127.0.0.1',WEB_PORT))==0:raise RuntimeError('management port occupied')
  import re
  dist=os.environ.get('MANAGEMENT_WEB_DIST','.next-acceptance-identity-management-20261025');web=ROOT/'apps/web'
  if not re.fullmatch(r'\.next-acceptance-identity-management-[a-z0-9-]+',dist):raise RuntimeError('independent build name required')
@@ -25,9 +25,9 @@ def main():
  context=ssl.create_default_context(cafile=settings['MANAGEMENT_WEB_CERT'])
  for _ in range(120):
   try:
-   with urllib.request.urlopen('https://localhost:4300/settings',context=context,timeout=2) as response:
+   with urllib.request.urlopen(f'https://localhost:{WEB_PORT}/settings',context=context,timeout=2) as response:
     if response.status==200:break
   except Exception:time.sleep(.25)
  else:raise RuntimeError('owned management web unavailable; ledger retained')
- print('Independent modern management page: https://localhost:4300/settings; real sources UNCONFIGURED, business writes absent.')
+ print(f'Independent modern management page: https://localhost:{WEB_PORT}/settings; real sources UNCONFIGURED, business writes absent.')
 if __name__=='__main__':main()

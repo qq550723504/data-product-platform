@@ -1,4 +1,5 @@
-// Presentation contract only. There is no configured production Reader in this slice.
+// Server-rendered projections. The records API owns current dual-capability checks;
+// platform-management.v1 sessions continue to project only management read.
 export const logServices = {APP_SERVICE:'应用服务',BACKGROUND_SERVICE:'后台处理'} as const;
 export const logLevels = {INFO:'常规',WARN:'注意',ERROR:'异常',FATAL:'严重异常',UNKNOWN:'未分类'} as const;
 export const logEvents = {READ_COMPLETED:'查询完成',ACCESS_DENIED:'访问被拒绝',READ_FAILED:'查询未完成',DEPENDENCY_UNAVAILABLE:'依赖服务暂不可用',UNCLASSIFIED:'未分类运行记录'} as const;
@@ -52,12 +53,12 @@ export function validLogList(raw:unknown,p:LogPrincipal,s:LogSelection,now=Date.
 export function validLogDetail(raw:unknown,p:LogPrincipal,s:LogSelection,now=Date.now()):raw is NonNullable<LogView['detail']>{
  try{if(!envelope<{window:LogWindow;item:LogEntry}>(raw,p,65536))return false;const d=raw.data;return !!d&&exact(d,'window,item')&&windowValid(d.window,s,now)&&entryValid(d.item,s)&&d.item.entryRef===s.entryRef&&(!s.focus||d.item.rowKey===s.focus)&&d.item.recordedAt<=d.window.asOf}catch{return false}
 }
-function authority(p:LogPrincipal,records=false){
+function authority(p:LogPrincipal){
  if(!p||!p.principal_id||!p.workspace_id||!/^[1-9][0-9]*:[1-9][0-9]*:[1-9][0-9]*$/.test(p.revision)||!Number.isFinite(Date.parse(p.expires_at))||Date.parse(p.expires_at)<=Date.now())throw new LogReadError('AUTHENTICATION_REQUIRED');
- if(!p.capabilities.includes('PLATFORM_MANAGEMENT_READ')||records&&!p.capabilities.includes('PLATFORM_RUNTIME_LOG_READ'))throw new LogReadError('LOG_ACCESS_DENIED');
+ if(!p.capabilities.includes('PLATFORM_MANAGEMENT_READ'))throw new LogReadError('LOG_ACCESS_DENIED');
 }
-async function guarded<T>(reader:RuntimeLogReader,p:LogPrincipal,operation:()=>Promise<T>,records=false){
- authority(p,records);const data=await operation(),after=await reader.confirm();authority(after,records);
+async function guarded<T>(reader:RuntimeLogReader,p:LogPrincipal,operation:()=>Promise<T>){
+ authority(p);const data=await operation(),after=await reader.confirm();authority(after);
  if(after.principal_id!==p.principal_id||after.workspace_id!==p.workspace_id||after.revision!==p.revision)throw new LogReadError('AUTHENTICATION_REQUIRED');return data;
 }
 export async function loadRuntimeLogs(q:Record<string,string|string[]|undefined>,reader:RuntimeLogReader|null):Promise<LogView>{
@@ -69,15 +70,28 @@ export async function loadRuntimeLogs(q:Record<string,string|string[]|undefined>
   const source=await guarded(reader,p,()=>reader.source());
   if(!envelope<{state:string;availability:string}>(source,p)||!source.data||!exact(source.data,'state,availability')||source.data.availability!=='NOT_CHECKED'||!['UNCONFIGURED','CONFIGURED','UNSUPPORTED'].includes(source.data.state))throw new LogReadError('LOG_SOURCE_UNAVAILABLE');
   if(source.data.state!=='CONFIGURED')return {code:source.data.state==='UNCONFIGURED'?'LOG_SOURCE_UNCONFIGURED':'LOG_SOURCE_UNSUPPORTED'};
-  authority(p,true);selection=logSelection(q);
+  authority(p);selection=logSelection(q);
   if(!q.start)return {redirect:logHref(selection)};
-  const raw=await guarded(reader,p,()=>selection!.entryRef?reader.read(selection!.entryRef):reader.query(selection!),true);
+  const raw=await guarded(reader,p,()=>selection!.entryRef?reader.read(selection!.entryRef):reader.query(selection!));
   if(selection.entryRef){if(!validLogDetail(raw,p,selection))throw new LogReadError('LOG_SOURCE_UNAVAILABLE');return {selection,detail:raw}}
   if(!validLogList(raw,p,selection))throw new LogReadError('LOG_SOURCE_UNAVAILABLE');return {selection,result:raw};
  }catch(e){
   if(!selection&&e instanceof LogReadError&&e.code==='INVALID_LOG_QUERY'&&q.start&&q.end){try{selection=logSelection(Object.fromEntries(Object.entries(q).filter(([k])=>['start','end','service','level','from'].includes(k))))}catch{/* Never echo invalid times or arbitrary return targets. */}}
   return {selection,code:e instanceof LogReadError?e.code:'LOG_SOURCE_UNAVAILABLE'};
  }
+}
+
+// Backend authorization is performed by every source/list/detail request. This
+// adapter never manufactures a new capability in the existing RP profile.
+export function runtimeLogAPI(client:{principal:LogPrincipal;apiBaseUrl:string;request:typeof fetch;confirm():Promise<LogPrincipal>}):RuntimeLogReader{
+ const base=client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/management/runtime-logs/';
+ const request=async(path:string)=>{
+  let response:Response;try{response=await client.request(base+path)}catch{throw new LogReadError('AUTHENTICATION_REQUIRED')}
+  const raw=await response.json();if(!response.ok){const allowed=['INVALID_LOG_QUERY','LOG_QUERY_EXPIRED','LOG_ENTRY_CHANGED','LOG_ENTRY_UNAVAILABLE','LOG_WINDOW_EXPIRED','LOG_SOURCE_UNCONFIGURED','LOG_SOURCE_UNSUPPORTED','LOG_ACCESS_DENIED','AUTHENTICATION_REQUIRED'];throw new LogReadError(response.status===401?'AUTHENTICATION_REQUIRED':response.status===403?'LOG_ACCESS_DENIED':allowed.includes(raw?.code)?raw.code:'LOG_SOURCE_UNAVAILABLE')}return raw;
+ };
+ return {async confirm(){try{return await client.confirm()}catch{throw new LogReadError('AUTHENTICATION_REQUIRED')}},source:()=>request('source'),query:s=>{
+  const q=new URLSearchParams({start:s.start,end:s.end});for(const k of ['service','level','cursor']as const)if(s[k])q.set(k,s[k]!);return request('entries?'+q);
+ },read:entryRef=>{if(!token(entryRef))throw new LogReadError('INVALID_LOG_QUERY');return request('entries/'+entryRef)}};
 }
 
 // Used by the Next client and the isolated browser host. No local/session storage.

@@ -9,10 +9,10 @@ test('management RP is disjoint and transport allows only exact readonly workspa
  assert.deepEqual(client.principal.capabilities,['PLATFORM_MANAGEMENT_READ']);await assert.rejects(f.iam.acceptanceClient(session.key));
  const base=client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/management/';let calls=0;
  f.state.businessHandler=async(req,res)=>{calls++;assert.equal(req.method,'GET');res.end('{}')};
- await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');await client.request(base+'workspace');await client.request(base+'organization');await client.request(base+'configuration');assert.equal(calls,5);
+ await client.request(base+'members?offset=25');await client.request(base+'users?userId=native-user');await client.request(base+'workspace');await client.request(base+'organization');await client.request(base+'configuration');await client.request(base+'runtime-logs/source');await client.request(base+'runtime-logs/entries?start=2026-10-26T00:00:00.000000000Z&end=2026-10-26T01:00:00.000000000Z');await client.request(base+'runtime-logs/entries/'+'A'.repeat(43));assert.deepEqual((await client.confirm()).capabilities,['PLATFORM_MANAGEMENT_READ']);assert.equal(calls,8);
  for(const [url,init]of [[base+'members',{method:'POST'}],[base+'roles',{headers:{Authorization:'Bearer forged'}}],[base+'audit',{body:'x'}],[base.replace(client.principal.workspace_id,'44444444-4444-4444-8444-444444444444')+'members',{}],[client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/acceptance-context',{}]])await assert.rejects(client.request(url,init));
- assert.equal(calls,5);
- f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'configuration'));assert.equal(calls,6);
+ assert.equal(calls,8);
+ f.state.businessHandler=async(req,res)=>{calls++;f.state.revision='1:1:2';res.end('{}')};await assert.rejects(client.request(base+'configuration'));assert.equal(calls,9);
 });
 
 test('configuration navigation retains its fixed origin through existing query flows without API parameters',()=>{

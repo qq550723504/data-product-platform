@@ -1,8 +1,8 @@
 # 工作空间运行日志只读契约
 
-状态：页面与独立合成验收已实施（2026-10-26）；真实来源及服务端接入仍为DESIGN ONLY。初版核对基线为PR #363的`90643b8ed227c58fe386a5ee09b2758045db6cd6`。本稿拥有未来运行日志的来源准入、身份、空间、投影、查询及恢复约束；[管理只读契约](platform-management-readonly-v1.md)继续拥有已经实现的管理接口，[页面方案](../product/platform-runtime-logs-page-plan-20261025.md)拥有布局与交互。
+状态：页面、只读HTTP处理器、日志专属权限与独立PostgreSQL/合成来源验收已实施（2026-10-26）；真实来源未配置。初版核对基线为PR #363的`90643b8ed227c58fe386a5ee09b2758045db6cd6`。本稿拥有未来运行日志的来源准入、身份、空间、投影、查询及恢复约束；[管理只读契约](platform-management-readonly-v1.md)继续拥有已经实现的管理接口，[页面方案](../product/platform-runtime-logs-page-plan-20261025.md)拥有布局与交互。
 
-本轮按新授权实现共享页面及[独立合成验收](../product/platform-runtime-logs-synthetic-acceptance-20261026.md)，默认Next入口固定未接入。尚未注册日志API、迁移日志权限或接入原生Adapter、来源配置和采集服务；没有新增生产切换开关。真实来源保持UNCONFIGURED，业务写入口继续关闭；保留原库、OIDC/RP、Agent API和新版预览。PR保持Draft，不合并、不部署。
+本轮按新授权实现共享页面及[独立合成验收](../product/platform-runtime-logs-synthetic-acceptance-20261026.md)，默认Next入口固定未接入。已在独立管理验收宿主注册下述日志API，并在独立库运行migration 000078；原库和默认预览未迁移。没有真实来源Adapter或采集服务，也没有生产合成切换开关。详见[只读API验收记录](../product/platform-runtime-logs-api-acceptance-20261026.md)。真实来源保持UNCONFIGURED，业务写入口继续关闭；保留原库、OIDC/RP、Agent API和新版预览。PR保持Draft，不合并、不部署。
 
 ## 1. 目标与事实归属
 
@@ -19,7 +19,7 @@
 
 ## 2. Reuse Check与开源边界
 
-- 本仓库`cmd/api`和`cmd/worker`使用`slog`输出；现有management仅有AuditReader、目录与公开配置，没有运行日志查询Port、受空间隔离的日志存储或Reader。`go.mod`里的间接OpenTelemetry依赖不代表已部署日志采集或查询。
+- 本仓库`cmd/api`和`cmd/worker`使用`slog`输出；初版核对时management仅有AuditReader、目录与公开配置，没有运行日志查询Port；本轮新增独立查询Port和门禁，仍没有实际日志存储或真实来源Reader。`go.mod`里的间接OpenTelemetry依赖不代表已部署日志采集或查询。
 - 复查固定`shuomi-ai-commerce@e29058c56df4294e1c612b3a705ab767bc333188`，其日志输出/轮转设施与accountaudit不构成本平台可复用的空间日志查询API。复用已接的身份、查询前后核验、错误模型和页面往返，不导入文件tail、全局日志管理器或电商运行时。
 - 沿用[能力地图](capability-map.md)的外部可观测性归属。OpenTelemetry提供[日志数据模型](https://opentelemetry.io/docs/specs/otel/logs/data-model/)；其中记录时间、发生时间及任意Body/Attributes需分别处理，模型本身不提供本平台的授权或查询存储。
 - 优先适配已经部署且满足本稿的日志服务。Grafana Loki是待评估候选，不是本轮选型或部署决定；其[租户隔离](https://grafana.com/docs/loki/latest/operations/multi-tenancy/)和[查询API](https://grafana.com/docs/loki/latest/reference/loki-http-api/)不能替代平台认证和来源接纳。原生tenant header必须由受信服务端生成，禁止浏览器选择tenant或多租户联查。
@@ -46,9 +46,9 @@
 
 ## 4. 身份与工作空间边界
 
-未来复用现有OIDC/RP、canonical actor、当前workspace grant、uncached resolver及ValidateInTx，不建设第二套IAM。来源状态查询只需现有PLATFORM_MANAGEMENT_READ；记录列表和详情同时需要PLATFORM_MANAGEMENT_READ与单独的拟议能力PLATFORM_RUNTIME_LOG_READ。
+复用现有OIDC/RP、canonical actor、当前workspace grant、uncached resolver及ValidateInTx，不建设第二套IAM。来源状态查询只需现有PLATFORM_MANAGEMENT_READ；记录列表和详情同时需要PLATFORM_MANAGEMENT_READ与单独的拟议能力PLATFORM_RUNTIME_LOG_READ。
 
-**新能力尚未实现。** migration 000077的capability CHECK和现有常量尚不接受它。未来实施需独立增量迁移、后端双能力门禁与回归，不编辑旧迁移、不授予现有管理查询员默认日志权。原`platform-management.v1`身份确认仍只投影原管理读能力，不能悄悄扩展其语义；额外日志资格由实际记录API用同一当前grant独立核验，Web会话或角色名字不能证明它。
+**日志资格由独立增量migration 000078及CapabilityRuntimeLogRead实现。** 000077保持原样，新迁移只扩展严格CHECK，不修改任何已有grant，不授予管理查询员默认日志权；本轮只在独立验收库应用。原`platform-management.v1`身份确认仍只投影原管理读能力，不能悄悄扩展其语义；额外日志资格由实际记录API用同一当前grant独立核验，Web会话或角色名字不能证明它。
 
 1. 在调用来源前无缓存解析本人身份，在同一只读事务核验两项能力、actor/binding/grant状态与revision及最短期限。来源状态接口仍只核验原管理读能力。
 2. 从服务端选取当前空间的确切来源绑定；用户的workspace/tenant/organization header、日志属性、trace ID和cursor都不授予资格。producer空间标记必须来自受信注入，不能信任用户请求字段或未经证明的日志标签。
@@ -60,7 +60,7 @@
 
 ## 5. 拟议Port和公开投影
 
-拟议RuntimeLogReader只提供Query和ReadExact。请求包含服务端解析的Scope、固定时间窗、允许的服务/级别、受保护continuation或精确occurrence引用；不接受通用SQL/LogQL、文件路径、容器名、tenant或任意attributes。Adapter负责来源协议，Core Domain不得依赖Loki/OpenTelemetry SDK。来源配置投影由现有管理层组装，不通过查询原生状态/配置端点生成。
+服务端RuntimeReader只提供Query和ReadExact。请求包含服务端解析的Scope、固定时间窗、允许的服务/级别、受保护continuation或精确occurrence引用；不接受通用SQL/LogQL、文件路径、容器名、tenant或任意attributes。Adapter负责来源协议，Core Domain不得依赖Loki/OpenTelemetry SDK。来源配置投影由现有管理层组装，不通过查询原生状态/配置端点生成。
 
 每页固定最多25条，整次来源读取预算5秒、响应上限256KiB；详情上限64KiB，无隐式retry。来源无法证明当前页查询完成、分页被截断、预算超限、重复/乱序记录、错空间或字段核验失败时丢弃整页，不返回部分成功或假空结果。
 
@@ -84,7 +84,7 @@ ReadExact还需比较entryRef内的规范最小投影hash：相同原生身份�
 
 ## 6. 拟议HTTP与查询上下文
 
-以下路径**尚未注册**，不能把当前管理API的拒绝当作实现或从未配置状态返回假列表：
+以下路径已由RuntimeLogHandler注册在独立只读管理宿主。它们复用真实OIDC/RP与当前PG授权；正常预览保持未接入，原主服务及原库不因此启用来源。未配置状态不会返回假列表：
 
 | 方法与路径 | 条件与返回 |
 |---|---|
@@ -108,8 +108,8 @@ asOf固定本次可见读取边界，但不是跨页快照。晚到、重新索�
 | 不支持安全查询 | source查询200 UNSUPPORTED；记录查询503 LOG_SOURCE_UNSUPPORTED | 说明来源暂不支持当前查询，不能放宽scope/分页后重试 |
 | 登录无效/读取中令牌撤销 | 401 AUTHENTICATION_REQUIRED | 丢弃记录，重新核验身份 |
 | 无空间或缺任一读能力 | 403 LOG_ACCESS_DENIED | 丢弃记录；不自动换其他空间或角色 |
-| 参数或引用被改写 | 400 INVALID_LOG_QUERY | 保留合法时间/筛选，用户显式清除非法位置 |
-| cursor/entryRef到期或来源版本改变 | 409 LOG_QUERY_EXPIRED | 返回当前条件首页，显式发起新查询；不自动回退 |
+| 参数、引用格式被改写 | 400 INVALID_LOG_QUERY | 保留合法时间/筛选，用户显式清除非法位置 |
+| cursor/entryRef到期、无法验证或来源版本改变 | 409 LOG_QUERY_EXPIRED | 返回当前条件首页，显式发起新查询；不自动回退 |
 | 精确记录不在当前可见scope | 404 LOG_ENTRY_UNAVAILABLE | 返回原列表；不得泄露是否存在于别的空间 |
 | 相同记录身份的最小投影已变化 | 409 LOG_ENTRY_CHANGED | 丢弃详情，显式重新查询列表；不覆盖原显示内容 |
 | 来源确认已超保留范围 | 410 LOG_WINDOW_EXPIRED | 保留条件，用户显式缩短/修改时间窗 |
@@ -119,6 +119,8 @@ asOf固定本次可见读取边界，但不是跨页快照。晚到、重新索�
 
 ## 8. 实施停止点和验收门槛
 
-页面与独立合成验收已获授权并实施，不依赖真实来源准入。Web中的RuntimeLogReader仅为页面加载的归一化响应接口，生产入口固定传入null；合成Reader和会话宿主仅在tests目录。它不代表以下服务端接口、PG双能力门禁或原生Adapter已落地。真实Adapter实施前仍需明确：真实来源候选及责任人、可信空间注入、最小字段规则、稳定记录/分页证明、只读无业务副作用、权限扩展与独立环境方案。真实来源接入、业务写入、模型、执行、合并和部署分别授权，不能捆绑推定。
+页面与独立合成验收已获授权并实施，不依赖真实来源准入。Web中的RuntimeLogReader为页面加载的归一化响应接口；IAM关闭的默认预览仍传入null，管理身份模式经runtimeLogAPI请求实际HTTP接口。Web不再补造日志能力，读取资格由服务端API在来源I/O前后用同一当前grant判断。合成Reader和来源宿主仅在tests目录，原生来源Adapter仍未落地。真实Adapter实施前仍需明确：真实来源候选及责任人、可信空间注入、最小字段规则、稳定记录/分页证明、只读无业务副作用、权限扩展与独立环境方案。真实来源接入、业务写入、模型、执行、合并和部署分别授权，不能捆绑推定。
 
 [页面方案中的验收矩阵](../product/platform-runtime-logs-page-plan-20261025.md#4-异常验收矩阵)是未来用例规格，不是测试通过记录。本轮不新增运行对象/表或修改Agent、认证、发布、签收及历史契约。矩阵的合成页面验证与真实来源、PG事务及原生API见证须分别记录，不能相互替代。
+
+2026-10-26后端实施：PostgresGate.ConfirmRuntime在同一READ COMMITTED只读事务、现有IAM共享fence下核对管理读及日志读，外部I/O后再解析OIDC并比较原身份/revision，再做同样事务核对。短时引用复用现有依赖gorilla/securecookie v1.1.2进行加密/MAC并做用途隔离，rowKey用标准HMAC作用域化；进程重启失效，无新引用账本/密码基础设施。sources绑定版本和最小投影hash变化均拒绝旧引用。当前没有真实来源配置入口。

@@ -2,9 +2,13 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {syntheticSource} from './helpers/runtime-log-source.mjs';
-const require=createRequire(import.meta.url),{logSelection,logHref,logListHref,logNow,logTime,loadRuntimeLogs,validLogList,validLogDetail}=require('../.runtime-log-tests/lib/runtime-logs.js');
+const require=createRequire(import.meta.url),{runtimeLogAPI,logSelection,logHref,logListHref,logNow,logTime,loadRuntimeLogs,validLogList,validLogDetail}=require('../.runtime-log-tests/lib/runtime-logs.js');
 function setup(){const source=syntheticSource(),p={principal_id:'11111111-1111-4111-8111-111111111111',workspace_id:'33333333-3333-4333-8333-333333333333',revision:'1:1:1',expires_at:new Date(Date.now()+60000).toISOString(),capabilities:['PLATFORM_MANAGEMENT_READ']};return {source,p,reader:source.reader(async()=>p,'A'),q:source.window}}
 test('default entry stays unconfigured for every URL; no synthetic mode or data fallback',async()=>{for(const q of [{},{mode:'synthetic'},{start:'bad',entryRef:'forged'}])assert.deepEqual(await loadRuntimeLogs(q,null),{code:'LOG_SOURCE_UNCONFIGURED'})});
+test('HTTP adapter preserves management-only profile and excludes navigation markers from API requests',async()=>{
+ const {reader,q,p,source}=setup(),paths=[],client={principal:p,apiBaseUrl:'https://api.invalid',confirm:()=>reader.confirm(),async request(url){const u=new URL(url);paths.push(u);let value;try{value=u.pathname.endsWith('/source')?await reader.source():await reader.query(Object.fromEntries(u.searchParams));return new Response(JSON.stringify(value),{status:200})}catch{return new Response(JSON.stringify({code:'LOG_ACCESS_DENIED'}),{status:403})}}};
+ const wire=runtimeLogAPI(client);const result=await loadRuntimeLogs({...q,from:'configuration',focus:'A'.repeat(43)},wire);assert.ok(result.result);assert.deepEqual((await wire.confirm()).capabilities,['PLATFORM_MANAGEMENT_READ']);assert.equal(paths.at(-1).searchParams.has('from'),false);assert.equal(paths.at(-1).searchParams.has('focus'),false);source.state.logRead=false;assert.equal((await loadRuntimeLogs(q,wire)).code,'LOG_ACCESS_DENIED');
+});
 test('query uses canonical UTC nanoseconds and rejects ambiguous selectors or widened windows',()=>{
  const {q}=setup();assert.deepEqual(logSelection({...q,service:'',level:''}),q);assert.equal(logTime('2026-02-30T00:00:00.000000000Z'),false);
  for(const patch of [{start:q.end},{end:'2099-01-01T00:00:00.000000000Z'},{start:'2026-01-01T00:00:00Z'},{start:['a','b']},{tenant:'B'},{service:'constructor'},{cursor:'x'},{from:'//external.invalid'}])assert.throws(()=>logSelection({...q,...patch}));
