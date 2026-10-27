@@ -1,0 +1,253 @@
+{
+  "cases": [
+    {
+      "bytes": 32000,
+      "status": "PASS"
+    },
+    {
+      "bytes": 8000,
+      "status": "PASS"
+    },
+    {
+      "bytes": 2000,
+      "status": "PASS"
+    }
+  ],
+  "errors": [
+    {
+      "bytes": 32000,
+      "phase": "explicit after reload",
+      "message": "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "message": "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "message": "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    }
+  ],
+  "lifecycle": [
+    {
+      "bytes": 32000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/auth/login"
+    },
+    {
+      "bytes": 32000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/authorize"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 32000,
+      "phase": "reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit after reload",
+      "event": "hydration",
+      "first": "BODY(DIV()DIV(DIV(A()HEADER(A(IMG()STRONG())NAV()DIV(SPAN()A()))ASIDE(DIV()NAV(A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())))MAIN(DIV(SPAN()STRONG()A())DIV()DIV(DIV(H1()P()))FORM(LABEL(INPUT())LABEL(INPUT())LABEL(SELECT(OPTION()OPTION()OPTION()))LABEL(SELECT(OPTION()OPTION()OPTION()OPTION()OPTION()OPTION()))BUTTON()A())SECTION(P()DIV(TABLE(THEAD(TR(TH()TH()TH()TH()TH()))TBODY(TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD())))))))))",
+      "current": "BODY(DIV()DIV(DIV(A()HEADER(A(IMG()STRONG())NAV()DIV(SPAN()A()))ASIDE(DIV()NAV(A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())))MAIN(DIV(SPAN()STRONG()A())DIV()DIV(DIV(H1()P()))FORM(LABEL(INPUT())LABEL(INPUT())LABEL(SELECT(OPTION()OPTION()OPTION()))LABEL(SELECT(OPTION()OPTION()OPTION()OPTION()OPTION()OPTION()))BUTTON()A())SECTION(P()DIV(TABLE(THEAD(TR(TH()TH()TH()TH()TH()))TBODY(TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A())))))NAV(A()A())DETAILS(SUMMARY()P()P(TIME())P()))))))",
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/auth/login"
+    },
+    {
+      "bytes": 8000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/authorize"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "event": "hydration",
+      "first": "BODY(DIV()DIV(DIV(A()HEADER(A(IMG()STRONG())NAV()DIV(SPAN()A()))ASIDE(DIV()NAV(A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())))MAIN(DIV(SPAN()STRONG()A())DIV()DIV(DIV(H1()P()))FORM(LABEL(INPUT())LABEL(INPUT())LABEL(SELECT(OPTION()OPTION()OPTION()))LABEL(SELECT(OPTION()OPTION()OPTION()OPTION()OPTION()OPTION()))BUTTON()A())SECTION(P()DIV(TABLE(THEAD(TR(TH()TH()TH()TH()TH()))TBODY(TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD())))))))))",
+      "current": "BODY(DIV()DIV(DIV(A()HEADER(A(IMG()STRONG())NAV()DIV(SPAN()A()))ASIDE(DIV()NAV(A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())))MAIN(DIV(SPAN()STRONG()A())DIV()DIV(DIV(H1()P()))FORM(LABEL(INPUT())LABEL(INPUT())LABEL(SELECT(OPTION()OPTION()OPTION()))LABEL(SELECT(OPTION()OPTION()OPTION()OPTION()OPTION()OPTION()))BUTTON()A())SECTION(P()DIV(TABLE(THEAD(TR(TH()TH()TH()TH()TH()))TBODY(TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A())))))NAV(A()A())DETAILS(SUMMARY()P()P(TIME())P()))))))",
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "event": "hydration",
+      "first": "BODY(DIV()DIV(DIV(A()HEADER(A(IMG()STRONG())NAV()DIV(SPAN()A()))ASIDE(DIV()NAV(A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())))MAIN(DIV(SPAN()STRONG()A())DIV()DIV(DIV(H1()P()))FORM(LABEL(INPUT())LABEL(INPUT())LABEL(SELECT(OPTION()OPTION()OPTION()))LABEL(SELECT(OPTION()OPTION()OPTION()OPTION()OPTION()OPTION()))BUTTON()A())SECTION(P()DIV(TABLE(THEAD(TR(TH()TH()TH()TH()TH()))TBODY(TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD())))))))))",
+      "current": "BODY(DIV()DIV(DIV(A()HEADER(A(IMG()STRONG())NAV()DIV(SPAN()A()))ASIDE(DIV()NAV(A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())A(svg(path())SPAN())))MAIN(DIV(SPAN()STRONG()A())DIV()DIV(DIV(H1()P()))FORM(LABEL(INPUT())LABEL(INPUT())LABEL(SELECT(OPTION()OPTION()OPTION()))LABEL(SELECT(OPTION()OPTION()OPTION()OPTION()OPTION()OPTION()))BUTTON()A())SECTION(P()DIV(TABLE(THEAD(TR(TH()TH()TH()TH()TH()))TBODY(TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A()))TR(TD(TIME())TD()TD()TD()TD(A())))))NAV(A()A())DETAILS(SUMMARY()P()P(TIME())P()))))))",
+      "ready": "loading",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 2000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/auth/login"
+    },
+    {
+      "bytes": 2000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/authorize"
+    },
+    {
+      "bytes": 2000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings"
+    },
+    {
+      "bytes": 2000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 2000,
+      "phase": "reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 2000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 2000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    }
+  ],
+  "scope": "Isolated synthetic production build of the application source code; only fixed test coordinates differ from CI. Original DB untouched; enterprise sources UNCONFIGURED; models and real dispatch absent.",
+  "verdict": "FAIL"
+}

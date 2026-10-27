@@ -55,10 +55,23 @@
       "verdict": "FAIL",
       "evidence": "ci-runtime-second-failure.json",
       "resolution": "UNRESOLVED. Prior lifecycle and landing changes did not eliminate the error. Preserve original zero-error check; add bounded text-free native lifecycle/DOM diagnostics for Linux CI rather than declaring local passes a root fix."
+    },
+    {
+      "name": "production document network reproduces hydration mismatch",
+      "verdict": "FAIL",
+      "evidence": "hydration-network-before.json",
+      "resolution": "Three React 418 observations under document-only 32000/8000 Bps; navigation assertions alone were insufficient. CDP breakpoint confirms expected SECTION while cursor points to child P during document loading. Added a React Suspense boundary for streamed server children; candidate identical 3-rule matrix has zero errors."
+    },
+    {
+      "name": "boundary candidate Chromium row focus",
+      "verdict": "FAIL",
+      "evidence": "runtime-boundary-focus-failure.json",
+      "resolution": "Deferred content can complete after outer history effect. Reuse ManagementRowFocus inside the authorized list boundary with explicit log- prefix; retain exact focus, history, refresh and no-data assertions."
     }
   ],
   "realSources": "UNCONFIGURED",
   "businessWrites": false,
   "models": false,
-  "dispatch": false
+  "dispatch": false,
+  "latestResolutionEvidence": "runtime-stream-boundary-fix.json"
 }

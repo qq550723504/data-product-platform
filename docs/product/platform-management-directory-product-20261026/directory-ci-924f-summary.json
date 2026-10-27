@@ -1,0 +1,15 @@
+{
+  "head": "924fdbd400b27769716960632322375904df4ebd",
+  "run": 40425177639,
+  "artifact": 12699159984,
+  "goPassEventsIncludingSubtests": 284,
+  "goFailures": 0,
+  "actualMainPass": 12,
+  "directoryBrowserPass": 24,
+  "retained": "PASS",
+  "meaning": "Diagnostic-head evidence only. Final source change requires fresh exact-head CI including 20-case runtime route.",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

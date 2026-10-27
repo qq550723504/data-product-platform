@@ -1,0 +1,102 @@
+{
+  "head": "924fdbd400b27769716960632322375904df4ebd",
+  "checks": [
+    {
+      "id": 121933970460,
+      "name": "required",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929093064,
+      "name": "live-core / live-core-browser",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929093000,
+      "name": "demo / demo-lifecycle",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092970,
+      "name": "browser-contracts / web-browser-contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092675,
+      "name": "acceptance-identity / identity-1a",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092543,
+      "name": "go-platform",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092499,
+      "name": "label-studio-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092494,
+      "name": "gx-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092483,
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092452,
+      "name": "hop-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092403,
+      "name": "temporary-container-contracts (windows-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092373,
+      "name": "splink-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929092275,
+      "name": "web-console",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929021902,
+      "name": "classify-changes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929021184,
+      "name": "synthetic-source-admission",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 121929020227,
+      "name": "ownership",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "meaning": "Completed CI did not exclude the separately reproduced slow-document hydration defect; new Suspense fix must pass its own exact-head CI including the new regression."
+}

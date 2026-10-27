@@ -53,6 +53,18 @@ try{
  });
  page=await person('查询人员 A');await expect(rows(page)).toHaveCount(25);
  await pass('default one-hour window is canonical and refresh does not silently move it',async()=>{await page.goto(p.origin+'/settings/logs');const u=new URL(page.url());assert.equal(Date.parse(u.searchParams.get('end'))-Date.parse(u.searchParams.get('start')),3600000);await reloadReadOnly(page);assert.equal(page.url(),u.href);await page.goto(logURL());await expect(rows(page)).toHaveCount(25)});
+ await pass('streamed server log children hydrate through an explicit boundary while the document is slow',async()=>{
+  const network=await page.context().newCDPSession(page);
+  try{
+   await network.send('Network.enable');
+   await network.send('Network.emulateNetworkConditionsByRule',{offline:false,matchedNetworkConditions:[{urlPattern:p.origin+'/settings/logs*',latency:0,downloadThroughput:32000,uploadThroughput:-1}]});
+   await page.goto(logURL());await expect(rows(page)).toHaveCount(25);
+   await page.goto(p.origin+'/settings/logs');await reloadReadOnly(page);
+   await page.goto(logURL());await expect(rows(page)).toHaveCount(25);
+   await page.evaluate(()=>new Promise(requestAnimationFrame));
+   assert.deepEqual(pageErrors,[]);
+  }finally{await network.send('Network.emulateNetworkConditionsByRule',{matchedNetworkConditions:[]});await network.detach()}
+ });
  await pass('React-owned history clearing removes records and persisted restore performs a fresh query',async()=>{
   const reads=(await control()).logReads;
   await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:false})));

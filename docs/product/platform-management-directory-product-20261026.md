@@ -93,3 +93,18 @@ CI加入同一实际入口准备、Go/PG、子进程、Web、浏览器及保留�
 
 
 诊断记录区分原生/合成事件的isTrusted，保留最后400项并报告丢弃计数。该监听器在新4410开发宿主的19项流程验证通过；另一轮开发工具的栈帧POST被原有零写断言阻断，私有失败保留，未放行该路径或当作生产写入。开发版检查不替代生产CI，也未提供418根因重现。
+
+
+## 9. 2026-10-27：慢速文档流的渲染边界定位与补修
+
+924fdbd4随后取得[16项完整绿色](platform-management-directory-product-20261026/diagnostic-head-ci.json)，新目录CI产物也实际完成[Go/PG284个pass事件、实际main12项、目录24项及保留检查](platform-management-directory-product-20261026/directory-ci-924f-summary.json)。这没有排除已知问题：本机用Chromium已有的Network.emulateNetworkConditionsByRule仅限制日志HTML文档传输，保持脚本正常加载，在32000/8000 Bps条件下记录3次同型React 418。[失败报告](platform-management-directory-product-20261026/hydration-network-before.json)中的导航/行数断言完成不等于还原通过，整体verdict明确FAIL。
+
+在未修改框架或产品行为的CDP断点中，确认document仍为loading，React期望结果区SECTION，但下一还原游标已指向其内P（parent=SECTION）；[安全断点记录](platform-management-directory-product-20261026/hydration-breakpoint.json)只有节点类型和渲染祖先，无节点文本、引用或凭据。问题定位到服务端内容分段穿过客户端历史保护组件时缺少明确的还原边界；此前pagehide/登录落点调整不能代替这项修复。
+
+现复用已依赖React的Suspense，在RuntimeLogNavigation内为服务器日志内容建立明确边界，分段未就绪时只显示“正在读取运行记录…”。保留服务器查询、SSR、当前身份核验和完整GET；没有关闭SSR、屏蔽警告、放宽零错误或加入重试，也没有更换/修改React或Next依赖。同一隔离生产环境[3档相同网络条件](platform-management-directory-product-20261026/hydration-network-boundary-candidate.json)均零错误。
+
+该等待边界还暴露了焦点时序：[候选Chromium失败](platform-management-directory-product-20261026/runtime-boundary-focus-failure.json)表明外层历史effect可能早于实际行就绪。复用已有ManagementRowFocus，增加显式log-前缀，在同一已授权列表边界内恢复当前#management-main中的TR；不查询、切空间或恢复旧数据。原返回条件、页码、片段、焦点和刷新断言保留。
+
+最终生产候选的[Edge20项](platform-management-directory-product-20261026/runtime-hydration-final-edge.json)、[Chromium20项](platform-management-directory-product-20261026/runtime-hydration-final-chromium.json)均通过且pageErrors为空；新第4项专门用32000 Bps日志文档覆盖指定查询→默认窗口→刷新→指定查询，仍保留最终全程零错误及无业务写入/外联断言。[最终32000/8000 Bps复核](platform-management-directory-product-20261026/hydration-network-final.json)零错误，Web单测12项通过。[范围摘要](platform-management-directory-product-20261026/runtime-stream-boundary-fix.json)区分定位、候选与最终验证。
+
+仅替换经PID、创建时间、绝对node/入口和4410端口核实的本轮临时诊断Web，API、合成IdP、新库、先前构建/失败报告及旧会话保留；[旧容器元数据比较](platform-management-directory-product-20261026/retained-hydration-comparison.json)PASS。没有访问原库SQL/DDL、延长旧凭据、接纳真实来源或切换默认预览。本修复最新HEAD的全量CI及20项日志产物仍须另行核对并在PR闭环评论记录，不继承924fdbd4绿色；业务写入口、模型、真实执行和合并均继续关闭。

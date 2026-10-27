@@ -1,0 +1,101 @@
+{
+  "captures": [
+    {
+      "function": "rD",
+      "fiber": {
+        "expected": {
+          "tag": 5,
+          "type": "section",
+          "className": null
+        },
+        "ancestors": [
+          {
+            "tag": 5,
+            "type": "section",
+            "className": null
+          },
+          {
+            "tag": 0,
+            "type": "i",
+            "className": null
+          },
+          {
+            "tag": 7,
+            "type": "object",
+            "className": null
+          },
+          {
+            "tag": 7,
+            "type": "object",
+            "className": null
+          },
+          {
+            "tag": 10,
+            "type": "object",
+            "className": null
+          },
+          {
+            "tag": 0,
+            "type": "T",
+            "className": null
+          },
+          {
+            "tag": 1,
+            "type": "s",
+            "className": null
+          },
+          {
+            "tag": 0,
+            "type": "f",
+            "className": null
+          },
+          {
+            "tag": 0,
+            "type": "s",
+            "className": null
+          },
+          {
+            "tag": 0,
+            "type": "S",
+            "className": null
+          },
+          {
+            "tag": 0,
+            "type": "f",
+            "className": null
+          },
+          {
+            "tag": 1,
+            "type": "P",
+            "className": null
+          }
+        ],
+        "ready": "loading"
+      },
+      "nodes": [
+        {
+          "variable": "sV",
+          "nodeType": 9,
+          "children": [
+            "html",
+            "HTML"
+          ]
+        },
+        {
+          "variable": "rN",
+          "tag": "P",
+          "nodeType": 1,
+          "parent": "SECTION",
+          "next": "DIV",
+          "children": [
+            "#text"
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+  ],
+  "scope": "Isolated synthetic production build of the application source code; only fixed test coordinates differ from CI. Original DB untouched; enterprise sources UNCONFIGURED; models and real dispatch absent."
+}

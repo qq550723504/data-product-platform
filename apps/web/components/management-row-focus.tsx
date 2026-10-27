@@ -3,7 +3,7 @@ import {useEffect} from 'react';
 
 // A hash only restores keyboard position in an already-authorized rendered list.
 // It never fetches records, changes scope, or restores browser-cached data.
-export function ManagementRowFocus({prefix}:{prefix:'member-'|'user-'}){
+export function ManagementRowFocus({prefix}:{prefix:'member-'|'user-'|'log-'}){
  useEffect(()=>{
   const focus=()=>{
    let id:string;try{id=decodeURIComponent(location.hash.slice(1))}catch{return}
