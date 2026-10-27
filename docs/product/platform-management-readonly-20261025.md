@@ -46,6 +46,6 @@
 
 本地原始结果为`.data/management-readonly-20261025/browser-results.json`及截图；保留的非秘密副本见[验收结果](platform-management-readonly-20261025/browser-results.json)、[截图和来源摘要清单](platform-management-readonly-20261025/manifest.json)。截图来自合成数据，不能证明真实来源已配置。旧候选与旧截图保持历史状态。
 
-现有独立环境可复验 `node tests/platform-management/browser.mjs`；它只操作该明确测试库和合成身份。全新隔离准备入口为 `MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT python tests/platform-management/bootstrap.py`，然后同一ack运行 `start-web.py --build`。已存在目录、容器或端口会拒绝重复创建，不覆盖或重建现有资源。Node/Go只在各进程信任测试CA，不改系统信任库。
+当前验收统一使用 `MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT python tests/platform-management/run.py --suite readonly`；内部沿用原准备、构建、浏览器与保留探测，结束后停止本轮容器和关联进程、保留数据与证据。已有目录/容器/端口仍拒绝覆盖。运行及中断恢复遵循[验收收尾契约](../operations/acceptance-shutdown.md)。
 
 CI已在既有身份验收工作流加入全新管理库、独立构建与Chromium路线；CI结果以本增量精确HEAD为准，不能继承旧冻结候选绿色。独立4300用于本片验收，4193继续展示真实来源未配置状态。

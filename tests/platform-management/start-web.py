@@ -2,7 +2,9 @@
 import json,os,sys,subprocess,ssl,time,urllib.request
 from pathlib import Path
 from bootstrap import ROOT,RUN,WEB_PORT,spawn,env_clean
-def main():
+import bootstrap as b
+def main(build=None):
+ if b.LIFECYCLE is None:raise RuntimeError('Use the managed platform-management/run.py acceptance entrypoint')
  if os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('explicit fixture required')
  if (RUN/'web-process.json').exists():raise RuntimeError('existing web ledger retained; refusing duplicate')
  import socket
@@ -11,7 +13,8 @@ def main():
  import re
  dist=os.environ.get('MANAGEMENT_WEB_DIST','.next-acceptance-identity-management-20261025');web=ROOT/'apps/web'
  if not re.fullmatch(r'\.next-acceptance-identity-management-[a-z0-9-]+',dist):raise RuntimeError('independent build name required')
- if '--build' in sys.argv:
+ if build is None:build='--build' in sys.argv
+ if build:
   config=web/'.tsconfig.acceptance-identity-management-fixture.json';original=(web/'next-env.d.ts').read_bytes()
   if config.exists():raise RuntimeError('temporary build config retained')
   config.write_bytes((web/'tsconfig.json').read_bytes())

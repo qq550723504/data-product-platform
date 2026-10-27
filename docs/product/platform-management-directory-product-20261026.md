@@ -55,10 +55,9 @@ directory缺省/null时不创建目录客户端、不读取目录凭据；所选
 
 只在另行明确的新独立环境，设置MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT和MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK=ISOLATED_DIRECTORY_PRODUCT_READONLY，依次运行：
 
-1. tests/platform-management/bootstrap.py；拒绝覆盖现有目录、固定容器和端口，不删除旧环境重跑。
-2. test-main-service.py完成Go/PG后，再directory-product-contract.py验证实际main配置边界；不得与浏览器控制并发改变同一个新库。
-3. MANAGEMENT_WEB_DIST=.next-acceptance-identity-management-directory-product-20261026，start-web.py --build；实际cmd/api不接收夹具开关，Web TLS测试宿主与新RP会话独立。
-4. directory-product-browser.mjs，本机默认Edge，CI显式Chromium；最后verify-main-service.py只读比较保留资源。已有本轮环境复核使用新的报告名，保留失败；不能重置身份/数据抹掉旧结果。
+1. 运行 `python tests/platform-management/run.py --suite directory`；已有目录、容器或端口仍拒绝覆盖，不删除旧目标重新准备。
+2. 统一入口按原顺序执行 Go/PG、产品合同（如适用）、独立 Web、原浏览器验收及最终保留比较。本地默认 Edge，CI 显式 Chromium；实际产品 API 和权限边界保持。
+3. 成功、失败或中断后在 finally 停止本轮容器与关联进程，保留数据、配置、日志、截图和原始失败证据。不重置旧身份/数据，也不上传 profile、凭据或原始私密日志。运行及中断恢复遵循[验收收尾契约](../operations/acceptance-shutdown.md)。
 
 CI加入同一实际入口准备、Go/PG、子进程、Web、浏览器及保留检查，只上传固定安全JSON和截图，不上传私有profile、源凭据文件、DSN、证书/密钥、进程/资源原始账本或原始日志。此实现HEAD的完整CI以PR最终闭环评论核对，旧dc9089c7绿色不能替代。
 

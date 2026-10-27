@@ -21,24 +21,11 @@ jobs:
           npm ci --ignore-scripts --prefix apps/web
           npm install --ignore-scripts --prefix tests/browser
           cd tests/browser && npx playwright install --with-deps chromium
-      - name: Prepare isolated user profile product and verify actual API
+      - name: Run user profile product acceptance with owned shutdown
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_USER_PRODUCT_FIXTURE_ACK: ISOLATED_USER_PRODUCT_READONLY
-          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-user-product-20261027
-        run: |
-          python3 tests/platform-management/bootstrap.py
-          python3 tests/platform-management/test-main-service.py
-          python3 tests/platform-management/directory-product-contract.py
-          python3 tests/platform-management/start-web.py --build
-      - name: Whole settings product navigation and current authority browser acceptance
-        env:
-          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_USER_PRODUCT_FIXTURE_ACK: ISOLATED_USER_PRODUCT_READONLY
           MANAGEMENT_BROWSER_CHANNEL: chromium
-        run: |
-          node tests/platform-management/user-product-browser.mjs
-          python3 tests/platform-management/verify-main-service.py
+        run: python3 tests/platform-management/run.py --suite user-product
       - name: Preserve non-secret user profile product results
         if: always()
         uses: actions/upload-artifact@v4
@@ -54,6 +41,28 @@ jobs:
             .data/management-user-product-20261027/retained-final-comparison.json
             .data/management-user-product-browser-20261027/browser-results.json
             .data/management-user-product-browser-20261027/screenshots/
+      - name: Recover shutdown only for this job's registered runs
+        if: always()
+        shell: bash
+        run: |
+          failed=0
+          for fixture in management-user-product-20261027; do
+            if [ -f ".data/$fixture/lifecycle.json" ]; then
+              python3 tests/platform-management/stop.py --run "$fixture" || failed=1
+            fi
+          done
+          exit "$failed"
+      - name: Preserve non-secret shutdown receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-user-product-shutdown
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-user-product-20261027/cleanup-*.json
+            .data/management-user-product-20261027/acceptance-result.json
   identity-1a:
     runs-on: ubuntu-latest
     # Includes isolated API/Web preparations and browser dependency installation.
@@ -110,16 +119,11 @@ jobs:
             .data/acceptance-identity-1a/privilege-results.json
             .data/acceptance-identity-1a/screenshots/
             .data/acceptance-identity-1a/retained-comparison.json
-      - name: Prepare independent management query fixture
+      - name: Run management query acceptance with owned shutdown
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-        run: |
-          python3 tests/platform-management/bootstrap.py
-          python3 tests/platform-management/start-web.py --build
-      - name: Management members roles audit and revocation browser acceptance
-        env:
           MANAGEMENT_BROWSER_CHANNEL: chromium
-        run: node tests/platform-management/browser.mjs
+        run: python3 tests/platform-management/run.py --suite readonly
       - name: Preserve non-secret management results
         if: always()
         uses: actions/upload-artifact@v4
@@ -132,28 +136,12 @@ jobs:
             .data/management-readonly-20261025/browser-results.json
             .data/management-readonly-20261025/screenshots/
             .data/management-readonly-20261025/retained-comparison.json
-      - name: Readonly repeated preservation observations of the owned management fixture
+      - name: Run runtime log and settings acceptance with owned shutdown
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-        run: python3 tests/platform-management/probe-preservation.py
-      - name: Prepare independent runtime log API and permission fixture
-        env:
-          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK: ISOLATED_RUNTIME_LOG_READONLY
-          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-runtime-logs-20261026
-        run: |
-          python3 tests/platform-management/bootstrap.py
-          python3 tests/platform-management/start-web.py --build
-      - name: Runtime log HTTP OIDC PostgreSQL and page acceptance
-        env:
-          RUNTIME_LOG_BROWSER_CHANNEL: chromium
-        run: node tests/runtime-logs/api-browser.mjs
-      - name: Whole settings readonly acceptance on the same runtime log API host
-        env:
-          MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK: ISOLATED_RUNTIME_LOG_READONLY
           MANAGEMENT_BROWSER_CHANNEL: chromium
-          MANAGEMENT_BROWSER_OUTPUT: management-readonly-runtime-review-20261026
-        run: node tests/platform-management/browser.mjs
+          RUNTIME_LOG_BROWSER_CHANNEL: chromium
+        run: python3 tests/platform-management/run.py --suite runtime
       - name: Preserve runtime log API acceptance results
         if: always()
         uses: actions/upload-artifact@v4
@@ -169,23 +157,11 @@ jobs:
             .data/management-readonly-runtime-review-20261026/screenshots/
             .data/runtime-logs-api-20261026/retained-comparison.json
             .data/platform-management-preservation-20261026/retained-order-probe.json
-      - name: Prepare independent main service query composition and PG regression
+      - name: Run main service query acceptance with owned shutdown
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_READONLY
-          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-main-service-20261026
-        run: |
-          python3 tests/platform-management/bootstrap.py
-          python3 tests/platform-management/test-main-service.py
-          python3 tests/platform-management/start-web.py --build
-      - name: Main service audit-only composition and modern settings browser acceptance
-        env:
           MANAGEMENT_BROWSER_CHANNEL: chromium
-          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_READONLY
-        run: |
-          node tests/platform-management/main-service-browser.mjs
-          python3 tests/platform-management/verify-main-service.py
+        run: python3 tests/platform-management/run.py --suite main-service
       - name: Preserve non-secret main service query results
         if: always()
         uses: actions/upload-artifact@v4
@@ -200,26 +176,12 @@ jobs:
             .data/management-main-service-20261026/retained-final-comparison.json
             .data/management-main-service-browser-20261026/main-service-browser-results.json
             .data/management-main-service-browser-20261026/screenshots/
-      - name: Prepare independent shared composition compatibility fixture
+      - name: Run shared composition compatibility acceptance with owned shutdown
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_COMPAT_READONLY
-          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-main-service-compat-20261026
-        run: |
-          python3 tests/platform-management/bootstrap.py
-          python3 tests/platform-management/test-main-service.py
-          python3 tests/platform-management/start-web.py --build
-      - name: Shared composition directory and runtime log compatibility acceptance
-        env:
-          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK: ISOLATED_MAIN_SERVICE_COMPAT_READONLY
           MANAGEMENT_BROWSER_CHANNEL: chromium
           RUNTIME_LOG_BROWSER_CHANNEL: chromium
-        run: |
-          node tests/platform-management/compat-boundaries.mjs
-          node tests/platform-management/browser.mjs
-          node tests/runtime-logs/api-browser.mjs
-          python3 tests/platform-management/verify-main-service.py
+        run: python3 tests/platform-management/run.py --suite compat
       - name: Preserve non-secret shared composition compatibility results
         if: always()
         uses: actions/upload-artifact@v4
@@ -237,24 +199,11 @@ jobs:
             .data/management-readonly-main-service-compat-20261026/screenshots/
             .data/runtime-logs-review-main-service-compat-20261026/api-browser-results.json
             .data/runtime-logs-review-main-service-compat-20261026/screenshots/
-      - name: Prepare isolated product directory configuration and actual main entrypoint
+      - name: Run directory product acceptance with owned shutdown
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK: ISOLATED_DIRECTORY_PRODUCT_READONLY
-          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-directory-product-20261026
-        run: |
-          python3 tests/platform-management/bootstrap.py
-          python3 tests/platform-management/test-main-service.py
-          python3 tests/platform-management/directory-product-contract.py
-          python3 tests/platform-management/start-web.py --build
-      - name: Product directory organization members and current authority browser acceptance
-        env:
-          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
-          MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK: ISOLATED_DIRECTORY_PRODUCT_READONLY
           MANAGEMENT_BROWSER_CHANNEL: chromium
-        run: |
-          node tests/platform-management/directory-product-browser.mjs
-          python3 tests/platform-management/verify-main-service.py
+        run: python3 tests/platform-management/run.py --suite directory
       - name: Preserve non-secret product directory acceptance results
         if: always()
         uses: actions/upload-artifact@v4
@@ -270,3 +219,34 @@ jobs:
             .data/management-directory-product-20261026/retained-final-comparison.json
             .data/management-directory-product-browser-20261026/browser-results.json
             .data/management-directory-product-browser-20261026/screenshots/
+
+      - name: Recover shutdown only for this job's registered runs
+        if: always()
+        shell: bash
+        run: |
+          failed=0
+          for fixture in management-readonly-20261025 runtime-logs-api-20261026 management-main-service-20261026 management-main-service-compat-20261026 management-directory-product-20261026; do
+            if [ -f ".data/$fixture/lifecycle.json" ]; then
+              python3 tests/platform-management/stop.py --run "$fixture" || failed=1
+            fi
+          done
+          exit "$failed"
+      - name: Preserve non-secret shutdown receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-query-shutdown
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-readonly-20261025/cleanup-*.json
+            .data/management-readonly-20261025/acceptance-result.json
+            .data/runtime-logs-api-20261026/cleanup-*.json
+            .data/runtime-logs-api-20261026/acceptance-result.json
+            .data/management-main-service-20261026/cleanup-*.json
+            .data/management-main-service-20261026/acceptance-result.json
+            .data/management-main-service-compat-20261026/cleanup-*.json
+            .data/management-main-service-compat-20261026/acceptance-result.json
+            .data/management-directory-product-20261026/cleanup-*.json
+            .data/management-directory-product-20261026/acceptance-result.json
