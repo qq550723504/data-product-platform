@@ -196,3 +196,5 @@
 .governance-demo .management-page summary{cursor:pointer;color:var(--green)}
 @media(max-width:900px){.governance-demo .management-page{margin-left:172px;padding:28px}.governance-demo .management-cards{grid-template-columns:1fr}.governance-demo .management-summary strong{font-size:17px}}
 @media(max-width:600px){.governance-demo .management-page{margin-left:0;padding:22px 18px}.governance-demo .management-shell .centers{display:none}.governance-demo .management-shell .section-sidebar nav{display:flex;overflow:auto}.governance-demo .management-shell .section-sidebar nav a{white-space:nowrap;flex-shrink:0}.governance-demo .management-summary{grid-template-columns:1fr;gap:15px}.governance-demo .management-filters{align-items:stretch}.governance-demo .management-page .table-wrap table{min-width:550px}}
+
+.governance-demo .settings-interaction-notice{margin:0 0 24px;padding:10px 14px;border-left:2px solid var(--green);background:#edf5ef;color:var(--muted);font-size:12px;line-height:1.7}

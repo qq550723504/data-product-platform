@@ -1,6 +1,21 @@
 import {NextRequest,NextResponse} from 'next/server';
+import settingsInteractionRoutes from './lib/settings-interaction-routes.json';
 export function middleware(r:NextRequest){
  const mode=process.env.BROWSER_IAM_MODE;
+ if(process.env.GOVERNANCE_SETTINGS_INTERACTION_DEMO==='true'){
+  if(mode&&mode!=='off')return new NextResponse('Interaction preview cannot use connected identity',{status:503,headers:{'Cache-Control':'no-store'}});
+  const path=r.nextUrl.pathname;
+  if(!['GET','HEAD'].includes(r.method)||['/api','/auth','/core','/agent'].some(p=>path===p||path.startsWith(p+'/')))return new NextResponse('Local interaction preview only',{status:403,headers:{'Cache-Control':'no-store'}});
+  const settings:Record<string,string>=settingsInteractionRoutes;
+  if(settings[path]){
+   const host=r.headers.get('host')??'';
+   if(!/^127\.0\.0\.1:\d+$/.test(host))return new NextResponse('Loopback interaction preview required',{status:403});
+   return NextResponse.redirect(new URL('/#'+settings[path],'http://'+host));
+  }
+  if(path==='/'){const u=r.nextUrl.clone();u.pathname='/demo';return NextResponse.rewrite(u)}
+  if(path==='/demo'||path.startsWith('/_next/')||path.startsWith('/design/')||path==='/favicon.ico')return NextResponse.next();
+  return new NextResponse('Local interaction preview route unavailable',{status:404,headers:{'Cache-Control':'no-store'}});
+ }
  if(!mode||mode==='off'){
   // Preserve the existing public prototype rewrite and all exact Core URLs.
   if(r.nextUrl.pathname!=="/")return NextResponse.next();

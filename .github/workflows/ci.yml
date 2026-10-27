@@ -322,6 +322,49 @@ jobs:
             curl -fsS "http://127.0.0.1:3000${route}" >/dev/null
           done
 
+      - name: Install interaction browser dependencies
+        working-directory: tests/browser
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Verify isolated settings interaction preview
+        working-directory: tests/browser
+        env:
+          GOVERNANCE_SETTINGS_INTERACTION_DEMO: 'true'
+          GOVERNANCE_PREVIEW_MODE: synthetic-readonly
+          BROWSER_IAM_MODE: 'off'
+          SETTINGS_ADMIN_UI_ENABLED: 'false'
+          SETTINGS_INTERACTION_BROWSER_CHANNEL: chromium
+          NEXT_TELEMETRY_DISABLED: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node start-settings-interaction-preview.mjs > "$RUNNER_TEMP/settings-interaction.log" 2>&1 &
+          INTERACTION_PID=$!
+          trap 'kill "$INTERACTION_PID" 2>/dev/null || true; cat "$RUNNER_TEMP/settings-interaction.log"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4445/ >/dev/null; then
+              break
+            fi
+            if ! kill -0 "$INTERACTION_PID" 2>/dev/null; then
+              exit 1
+            fi
+            sleep 1
+          done
+          npx playwright test --config playwright.settings-interaction.config.mjs
+
+      - name: Upload interaction preview results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: settings-interaction-preview
+          if-no-files-found: ignore
+          path: |
+            .data/settings-interaction-browser/run-*/results.json
+            .data/settings-interaction-browser/run-*/artifacts/**/test-failed-*.png
+            tests/browser/.data/settings-interaction-*.png
+
   hop-smoke:
     needs: changes
     if: ${{ needs.changes.outputs.docs_only != 'true' }}

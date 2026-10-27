@@ -13,7 +13,7 @@ import "@/components/governance-demo/integration.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "数据治理平台",
+  title: "创平数据治理平台",
   description: "数据治理工作空间、数据开发、资产管理与 Agent 工作台",
 };
 
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN">
       <body>
-        {process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='business-acceptance'?<AcceptanceIdentityShell>{displayText(children)}</AcceptanceIdentityShell>:<ConsoleShell syntheticPreview={process.env.GOVERNANCE_PREVIEW_MODE==='synthetic-readonly'} managementIdentity={process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='platform-management'}>{displayText(children)}</ConsoleShell>}
+        {process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='business-acceptance'?<AcceptanceIdentityShell>{displayText(children)}</AcceptanceIdentityShell>:<ConsoleShell syntheticPreview={process.env.GOVERNANCE_PREVIEW_MODE==='synthetic-readonly'} settingsInteractionDemo={process.env.GOVERNANCE_SETTINGS_INTERACTION_DEMO==='true'} managementIdentity={process.env.BROWSER_IAM_MODE==='oidc'&&process.env.BROWSER_IAM_PROFILE==='platform-management'}>{displayText(children)}</ConsoleShell>}
       </body>
     </html>
   );
