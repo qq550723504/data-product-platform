@@ -3,7 +3,7 @@
 Copied from the user-approved governance-prototype/src on 2026-10-23. Source:
 C:/Users/Henry/.codex/visualizations/2026/10/22/01a163ef-ed6d-7d53-bb1d-9d059057244c/governance-prototype
 
-App owns the shared Next shell. Full business demo flows reuse the prototype's React contexts and pure presentation models. CSS is prefixed with .governance-demo and external Google Font loading was removed. Legacy AgentWorkspace/AgentTaskDetail/agent-model were deliberately not retained: the original API-backed Next Agent controller is the sole Agent command path.
+App owns the shared Next shell. Full business demo flows reuse the prototype's React contexts and pure presentation models. CSS is prefixed with .governance-demo and external Google Font loading was removed. The original API-backed Next Agent controller remains the sole connected Agent command path. Only the explicit, default-off frontend interaction host restores the original AgentWorkspace/AgentTaskDetail/agent-model for local template simulation, using the same isolated session contexts; these tasks never enter connected APIs or business facts.
 
 Adaptations: Next navigation, truthful Core/demo boundaries, namespaced session-only synthetic recovery/reset, global administration state, and remaining source/batch/entity-review demo screens. JS sources remain JS and are excluded from the TypeScript-specific ESLint rules; pure lifecycle/workspace/session regressions run via npm run test:demo as part of build. App.d.ts is the typed shell boundary. No API or model client is imported by this directory.
 

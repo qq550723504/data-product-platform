@@ -68,3 +68,30 @@ test('server rejects connected APIs, write methods and connected identity paths'
 for(const viewport of [{width:1280,height:360},{width:390,height:600}])test(`workspace dialog fits ${viewport.width}x${viewport.height}`,async({page})=>{
  await page.setViewportSize(viewport);await go(page,'admin-workspaces');await page.getByRole('button',{name:/^切换工作空间，当前：/}).click();const d=dialog(page);await expect(d).toBeVisible();const box=await d.boundingBox();expect(box.y).toBeGreaterThanOrEqual(0);expect(box.y+box.height).toBeLessThanOrEqual(viewport.height);await page.keyboard.press('Escape');await expect(d).toHaveCount(0);
 });
+
+test('local Agent menu, plan, detail, report, return and refresh preserve synthetic state',async({page})=>{
+ await go(page,'home');await page.getByRole('navigation',{name:'当前中心功能'}).getByRole('button',{name:'Agent 工作台',exact:true}).click();
+ await expect(page).toHaveURL(origin+'/#agent-workbench');await expect(page.getByRole('heading',{level:1,name:'让目标，成为下一步'})).toBeVisible();await expect(dialog(page)).toHaveCount(0);
+ await expect(page.locator('.agent-boundary')).toContainText('未连接模型和后端');await page.getByRole('button',{name:/从需求到开发方案/}).click();await page.getByRole('textbox',{name:'业务目标',exact:true}).fill('本地Agent方案验收');
+ await page.getByRole('button',{name:/生成.*计划/}).click();await expect(page).toHaveURL(/#agent-task$/);await expect(page.getByRole('heading',{level:1,name:/^需求转方案/})).toBeVisible();
+ await page.getByRole('button',{name:/确认计划 r1/}).click();for(let i=0;i<4;i++)await page.getByRole('button',{name:/^(模拟|预演)执行下一步$/}).click();
+ await page.getByRole('button',{name:'查看成果报告',exact:true}).click();await expect(page.getByRole('heading',{name:'Agent 成果报告',exact:true})).toBeVisible();await page.getByRole('textbox',{name:'Agent成果审阅说明',exact:true}).fill('仅确认本地模板成果，后续治理独立办理');await page.getByRole('button',{name:'接受成果',exact:true}).click();
+ await page.getByRole('button',{name:'返回 Agent 工作台',exact:true}).click();await expect(page.getByText('本地Agent方案验收',{exact:true})).toBeVisible();await page.reload();await expect(page.getByText('本地Agent方案验收',{exact:true})).toBeVisible();
+ await page.screenshot({path:'.data/settings-interaction-agent.png',fullPage:true});
+ const registryKey='dpp:governance-demo:registry:v1',dataKey='dpp:governance-demo:data:v1';
+ const local=await page.evaluate(keys=>Object.fromEntries(keys.map(k=>[k,sessionStorage.getItem(k)])),[registryKey,dataKey]);expect(JSON.stringify(local)).toContain('本地Agent方案验收');
+ await page.getByRole('button',{name:/^切换工作空间，当前：/}).click();await dialog(page).getByRole('button',{name:/^园区能耗分析/}).click();await go(page,'agent-workbench');await expect(page.getByText('本地Agent方案验收',{exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:/^切换工作空间，当前：/}).click();await dialog(page).getByRole('button',{name:/^企业经营数据/}).click();await go(page,'agent-task');await expect(page.getByRole('heading',{level:1,name:/^需求转方案/})).toBeVisible();
+});
+
+test('local Agent quality diagnosis confirms repair separately and retains history on refresh',async({page})=>{
+ await go(page,'agent-workbench');await page.getByRole('button',{name:/诊断一个质量问题/}).click();await page.getByRole('button',{name:/生成.*计划/}).click();await page.getByRole('button',{name:/确认计划 r1/}).click();
+ for(let i=0;i<2;i++)await page.getByRole('button',{name:/^(模拟|预演)执行下一步$/}).click();await expect(page.getByText('诊断完成，等待确认修复',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:/^(模拟|预演)执行下一步$/})).toHaveCount(0);
+ await page.getByRole('button',{name:'确认修复范围并继续',exact:true}).click();for(let i=0;i<2;i++)await page.getByRole('button',{name:/^(模拟|预演)执行下一步$/}).click();await page.getByRole('button',{name:'查看成果报告',exact:true}).click();await expect(page.getByRole('heading',{name:'Agent 成果报告',exact:true})).toBeVisible();
+ await page.reload();await expect(page.getByRole('heading',{level:1,name:/^质量诊断/})).toBeVisible();await page.getByRole('button',{name:'查看成果报告',exact:true}).click();await expect(page.getByText('源版本 → 成果',{exact:true})).toBeVisible();await page.screenshot({path:'.data/settings-interaction-agent-quality.png',fullPage:true});
+});
+
+test('direct local Agent detail and context entries never redirect to connected Agent',async({page})=>{
+ await go(page,'agent-task');await expect(page.getByRole('heading',{name:'选择一个 Agent 任务',exact:true})).toBeVisible();await page.getByRole('button',{name:'前往 Agent 工作台',exact:true}).click();await expect(page).toHaveURL(/#agent-workbench$/);
+ await go(page,'home');await page.getByRole('button',{name:/Agent.*上下文|上下文/}).click();await expect(dialog(page)).toBeVisible();await dialog(page).getByRole('button',{name:'打开 Agent 工作台',exact:true}).click();await expect(page).toHaveURL(origin+'/#agent-workbench');await expect(page.getByRole('heading',{name:'让目标，成为下一步',exact:true})).toBeVisible();await expect(dialog(page)).toHaveCount(0);
+});

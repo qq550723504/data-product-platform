@@ -5,13 +5,13 @@
   "preview": "http://127.0.0.1:4445/#settings",
   "brand": "创平数据治理平台",
   "browserTests": {
-    "passed": 7,
+    "passed": 10,
     "failed": 0,
     "skipped": 0,
     "flaky": 0
   },
   "demoModelTests": {
-    "passed": 43,
+    "passed": 66,
     "failed": 0,
     "skipped": 0
   },
@@ -35,6 +35,9 @@
     "admin-roles",
     "admin-audit",
     "admin-logs",
-    "admin-config"
-  ]
+    "admin-config",
+    "agent-workbench",
+    "agent-task"
+  ],
+  "localAgent": "template simulation only; no API/model/execution"
 }

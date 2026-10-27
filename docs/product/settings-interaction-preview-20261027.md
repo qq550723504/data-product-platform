@@ -1,4 +1,4 @@
-# 创平数据治理平台：系统设置交互预览
+# 创平数据治理平台：系统设置与Agent交互预览
 
 2026-10-27。用户在预览聊天明确要求暂停后端对接、先展示交互流程，并将对外名称改为“创平数据治理平台”。原始用户消息已从线程`01a17c2d-af32-7861-a0e4-68b97400d953`核验。本轮仅交付独立前端演示；未完成的管理写入代码保留在工作区，不纳入本预览构建或启用。
 
@@ -32,3 +32,17 @@
 自动重演：构建Web后，以`GOVERNANCE_SETTINGS_INTERACTION_DEMO=true BROWSER_IAM_MODE=off SETTINGS_ADMIN_UI_ENABLED=false`启动`node tests/browser/start-settings-interaction-preview.mjs`；在tests/browser运行`npx playwright test --config playwright.settings-interaction.config.mjs`。本机默认Edge；CI显式选择Chromium，复用已有web-console构建，不新增后端服务。新增CI结果须以本轮精确HEAD的运行记录为准，不继承a16a71aa的绿色。
 
 构建使用Git中本轮已选定的前端变更生成独立归档，排除未完成的管理写入代码；构建目录与旧预览分离。使用已有Next与依赖，`tests/browser/start-settings-interaction-preview.mjs`仅绑定127.0.0.1:4445；不安装新基础设施、不修改原型源目录、不清理已有数据或容器。
+
+## Agent入口反馈补修
+
+用户在同一预览聊天反馈“点击Agent工作台有问题”。前一候选在交互模式把入口送往系统说明，首次补修还保留了通用导航中的真实`/agent`跳转；新浏览器负例记录了该请求被403拒绝。现仅在显式交互模式恢复`#agent-workbench`/`#agent-task`和本地上下文入口，真实路径的跳转仍限于非交互模式。没有放开宿主或middleware。
+
+直接复用原批准原型的AgentWorkspace、AgentTaskDetail、agent-model及22项模型回归，使用现有PipelineContext、DemoProvider和agent.css，没有重建真实Agent。当前整改命令要求明确的未通过评测；适配时补传任务冻结的sourceAssessmentId，不绕过该新约束。其余原业务模型、后端控制器、API和默认开关保持。
+
+最终Edge完整10组PASS（原设置7组加Agent3组），演示模型66项PASS。新增覆盖：左侧菜单/直接hash/上下文三个入口；本地需求转方案→确认→逐步预演→报告→审阅→返回/刷新；质量诊断→修复独立确认→新版本→复检报告→刷新；切空间后不显示原任务、切回恢复原任务。页面错误、后端写请求和外联均0。报告审阅仅结束本地委托，不生成真实认证、发布、签收或业务验收事实。重启只更换核实归属的4445宿主，未重置浏览器会话、4193或其他环境。
+
+- Agent入口：`http://127.0.0.1:4445/#agent-workbench`
+- [本地任务截图](evidence/settings-interaction-20261027/agent.png)
+- [诊断与成果报告截图](evidence/settings-interaction-20261027/agent-quality.png)
+
+前一HEAD d2c523dc的web-console失败于新增浏览器依赖步骤：该目录没有已提交锁文件，npm ci拒绝安装，尚未执行新增CI浏览器用例。已改为现有验收所用的固定版本npm安装方式，不新增依赖、不改变锁文件策略；旧失败保留，不能用本地成功替代该CI结果。新HEAD的CI单独核对。

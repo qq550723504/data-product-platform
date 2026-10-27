@@ -29,6 +29,13 @@ test('every primary menu has a registered page',()=>{
  for(const [route] of Object.values(menuGroups).flat())assert.ok(routes.has(route),route);
 });
 
+test('explicit local interaction mode renders Agent pages instead of connected handoff',()=>{
+ for(const [route,title] of [['agent-workbench','让目标，成为下一步'],['agent-task','选择一个 Agent 任务']]){
+  globalThis.location={hash:'#'+route};const html=renderToStaticMarkup(React.createElement(App,{liveAgent:false,settingsInteractionDemo:true}));
+  assert.match(html,new RegExp(title));assert.doesNotMatch(html,/>打开 Agent 工作台<\/button>/);
+ }
+});
+
 test('Core catalog renders server facts without synthetic asset content or reset controls',()=>{
  globalThis.location={hash:'#assets'};
  const html=renderToStaticMarkup(React.createElement(App,{liveAgent:false,liveCatalog:true},React.createElement('h1',null,'CORE_FACT_SENTINEL')));
