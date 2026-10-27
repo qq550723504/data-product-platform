@@ -1,0 +1,143 @@
+{
+  "cases": [
+    {
+      "bytes": 32000,
+      "status": "PASS"
+    },
+    {
+      "bytes": 8000,
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "lifecycle": [
+    {
+      "bytes": 32000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/auth/login"
+    },
+    {
+      "bytes": 32000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/authorize"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 32000,
+      "phase": "reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 32000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/auth/login"
+    },
+    {
+      "bytes": 8000,
+      "phase": "login",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/authorize"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit initial",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    },
+    {
+      "bytes": 8000,
+      "phase": "explicit after reload",
+      "event": "pageshow",
+      "trusted": true,
+      "persisted": false,
+      "ready": "complete",
+      "path": "/settings/logs"
+    }
+  ],
+  "verdict": "PASS",
+  "scope": "Final Suspense plus in-boundary row-focus production candidate; identical isolated synthetic API/IdP/PG retained."
+}

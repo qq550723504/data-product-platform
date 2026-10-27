@@ -24,13 +24,13 @@ for (const [fault, offset] of [["quality-history", 0], ["quality-latest-summary"
     await expect(page.getByTestId("selected-quality-assessment")).toContainText(ids.goldAssessment);
     await expect(page.getByTestId("quality-evidence-unavailable")).toHaveCount(0);
     if (fault === "quality-history") {
-      await expect(page.getByTestId("quality-history-unavailable")).toContainText("UNKNOWN");
+      await expect(page.getByTestId("quality-history-unavailable")).toContainText("无法确认");
       await expect(page.getByRole("heading", { name: "最新评测", exact: true })).toBeVisible();
     }
-    if (fault === "quality-latest-summary") await expect(page.getByTestId("quality-summary-unavailable")).toContainText("UNKNOWN");
+    if (fault === "quality-latest-summary") await expect(page.getByTestId("quality-summary-unavailable")).toContainText("无法确认");
     if (fault === "quality-attempt") {
       await expect(page.getByTestId("quality-attempt-unavailable")).toContainText(attempt);
-      await expect(page.getByRole("form", { name: "运行 Quality Check" })).toHaveCount(0);
+      await expect(page.getByRole("form", { name: "运行 质量评测" })).toHaveCount(0);
     }
     const reads = await calls(request);
     expect(reads.filter(c => c.path.endsWith(`/quality-assessments/${ids.qualityAssessment}/report`))).toHaveLength(0);
@@ -76,7 +76,7 @@ test("Quality credentials stay server-side and denied evidence remains local UNK
   expect(await page.content()).not.toContain("review-secret");
   await reset(request, "quality-evidence-denied");
   await page.reload();
-  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText("UNKNOWN");
+  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText("无法确认");
   await expect(page.getByTestId("quality-evidence-unavailable")).toContainText(ids.goldAssessment);
   await expect(page.getByRole("heading", {name:"版本事实",exact:true})).toBeVisible();
   await expect(page.getByTestId("quality-report")).toHaveCount(0);
@@ -91,8 +91,8 @@ test("quality attention pages past 100 without fetching case details, then focus
   await expect(panel.locator("tbody tr")).toHaveCount(5);
   await expect(panel.getByRole("navigation", { name: "质量异常分页" })).toContainText("101–105 / 105");
   const row = panel.locator("tbody tr").filter({ hasText: "负数用电异常 105" });
-  await expect(panel.locator("tbody tr").filter({ hasText: "负数用电异常 101" }).getByRole("link", { name: "FAILED", exact: true })).toBeVisible();
-  await expect(panel.locator("tbody tr").filter({ hasText: "负数用电异常 102" })).toContainText("FAILED 尚无质量结论");
+  await expect(panel.locator("tbody tr").filter({ hasText: "负数用电异常 101" }).getByRole("link", { name: "失败", exact: true })).toBeVisible();
+  await expect(panel.locator("tbody tr").filter({ hasText: "负数用电异常 102" })).toContainText("失败 尚无质量结论");
   await expect(row).toContainText("已人工关闭（不代表合格）");
   await expect(row).toContainText("存在原复检待核对");
   const initial = await calls(request);
@@ -134,7 +134,7 @@ test("workbench enters follow-up view and recheck evidence opens its output vers
       && [...url.searchParams.keys()].every(key => key === "qualityView" || key === "_rsc")
       && request.headers()["next-router-prefetch"]) speculativeReads.push(request.url());
   });
-  await page.goto("/");
+  await page.goto("/core/workbench");
   const compact = page.getByTestId("quality-attention");
   await expect(compact).toContainText("需跟进 104 条");
   await compact.getByRole("link", { name: "查看质量异常" }).click();
@@ -158,10 +158,10 @@ test("workbench enters follow-up view and recheck evidence opens its output vers
 
 test("failed quality read stays UNKNOWN while existing attention remains visible", async ({ page, request }) => {
   await reset(request, "quality-attention-unavailable");
-  for (const path of ["/", "/attention"]) {
+  for (const path of ["/core/workbench", "/attention"]) {
     await page.goto(path);
-    await expect(page.getByTestId("quality-attention-unavailable")).toContainText("UNKNOWN");
-    await expect(page.getByText("Release 待发布", { exact: true })).toBeVisible();
+    await expect(page.getByTestId("quality-attention-unavailable")).toContainText("无法确认");
+    await expect(page.getByText("发布记录 待发布", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "去发布", exact: true })).toBeVisible();
   }
   expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
@@ -170,10 +170,10 @@ test("failed quality read stays UNKNOWN while existing attention remains visible
 test("foreign case or assessment scope fails without a latest-result fallback", async ({ page, request }) => {
   await reset(request, "quality-attention-foreign");
   await page.goto(`${versionPath}/remediation?caseId=${attentionCaseId(105)}`);
-  await expect(page.getByText("异常不属于所选版本或 workspace", { exact: true })).toBeVisible();
+  await expect(page.getByText("异常不属于所选版本或 工作空间", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: `异常 ${attentionCaseId(105)}`, exact: true })).toHaveCount(0);
   await page.goto(`${versionPath}?view=quality&assessmentId=${ids.goldAssessment}`);
-  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText("UNKNOWN");
+  await expect(page.getByTestId("quality-evidence-unavailable")).toContainText("无法确认");
   await expect(page.getByTestId("quality-report")).toHaveCount(0);
   expect((await calls(request)).some(c => c.method !== "GET")).toBe(false);
 });

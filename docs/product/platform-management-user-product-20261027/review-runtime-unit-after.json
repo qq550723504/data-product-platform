@@ -1,0 +1,15 @@
+{
+  "scope": "LOCAL_SYNTHETIC_SDK_TLS",
+  "counts": {
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "skipped": 0
+  },
+  "failingTests": [],
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

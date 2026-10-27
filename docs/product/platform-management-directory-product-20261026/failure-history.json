@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "directory-product-failure-history.v1",
+  "entries": [
+    {
+      "name": "native organization unit fixture enum",
+      "verdict": "FAIL",
+      "scope": "focused unit test output; no fixture DB or product run",
+      "observed": "Test fixture used ORG_STATE_ACTIVE instead of existing ORGANIZATION_STATE_ACTIVE.",
+      "resolution": "Corrected fixture enum; did not weaken native adapter."
+    },
+    {
+      "name": "first product Edge focus restoration",
+      "verdict": "FAIL",
+      "evidence": "browser-focus-before-fix.json",
+      "resolution": "Explicitly focus the exact already-rendered authorized member/user row after load/hash navigation; retained assertion and previous failure."
+    },
+    {
+      "name": "disabled grant error expectation",
+      "verdict": "FAIL",
+      "evidence": "browser-grant-expectation-failure.json",
+      "resolution": "Preserved existing 401 for disabled/expired workspace identity; added separate 403 capability removal case and independent grant-expiry cases. No permissive status set."
+    },
+    {
+      "name": "d57bd10d exact CI runtime hydration",
+      "verdict": "FAIL",
+      "evidence": "ci-runtime-before-retention-fix.json",
+      "resolution": "18 checks passed; pageerror 418 in expiry/fresh-login case failed final zero-error check. Required also failed; directory product and later shared steps NOT_RUN. Ordinary pagehide no longer unmounts discarded documents; persisted hide still clears through React and restore reloads. Exact original 418 timing not reproduced locally."
+    },
+    {
+      "name": "retained local default-window diagnostic",
+      "verdict": "FAIL",
+      "evidence": "local-runtime-before-retention-fix.json",
+      "resolution": "Default-window route returned authentication state during diagnostic, not canonical window. Preserved; not treated as reproduction of CI hydration."
+    },
+    {
+      "name": "first local retention fix expiry route",
+      "verdict": "FAIL",
+      "evidence": "local-runtime-before-landing-fix.json",
+      "resolution": "No pageerror, but fresh login did not yield records. Narrowed login wait from any same-origin callback path to final settings destination and visible landing. Preserved distinct failure without attributing it to hydration."
+    },
+    {
+      "name": "landing heading test expectation",
+      "verdict": "FAIL",
+      "evidence": "local-runtime-landing-label-failure.json",
+      "resolution": "Corrected test heading from system settings to existing settings overview; no product label changed."
+    },
+    {
+      "name": "shared landing wait negative-login expectation",
+      "verdict": "FAIL",
+      "evidence": "management-landing-denial-failure.json",
+      "resolution": "Success-only /settings wait cannot serve deliberately denied login. Test now explicitly selects accepted or denied destination, preserving negative heading and absence of access; subsequent full management 51 checks passed."
+    },
+    {
+      "name": "6e795473 repeated CI hydration mismatch",
+      "verdict": "FAIL",
+      "evidence": "ci-runtime-second-failure.json",
+      "resolution": "UNRESOLVED. Prior lifecycle and landing changes did not eliminate the error. Preserve original zero-error check; add bounded text-free native lifecycle/DOM diagnostics for Linux CI rather than declaring local passes a root fix."
+    },
+    {
+      "name": "production document network reproduces hydration mismatch",
+      "verdict": "FAIL",
+      "evidence": "hydration-network-before.json",
+      "resolution": "Three React 418 observations under document-only 32000/8000 Bps; navigation assertions alone were insufficient. CDP breakpoint confirms expected SECTION while cursor points to child P during document loading. Added a React Suspense boundary for streamed server children; candidate identical 3-rule matrix has zero errors."
+    },
+    {
+      "name": "boundary candidate Chromium row focus",
+      "verdict": "FAIL",
+      "evidence": "runtime-boundary-focus-failure.json",
+      "resolution": "Deferred content can complete after outer history effect. Reuse ManagementRowFocus inside the authorized list boundary with explicit log- prefix; retain exact focus, history, refresh and no-data assertions."
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "latestResolutionEvidence": "runtime-stream-boundary-fix.json"
+}

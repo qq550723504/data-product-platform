@@ -1,0 +1,43 @@
+{
+  "scope": "frontend-local-interaction-only",
+  "date": "2026-10-27",
+  "browser": "Microsoft Edge via Playwright independent context",
+  "preview": "http://127.0.0.1:4445/#settings",
+  "brand": "创平数据治理平台",
+  "browserTests": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "demoModelTests": {
+    "passed": 66,
+    "failed": 0,
+    "skipped": 0
+  },
+  "pageErrors": 0,
+  "backendWriteRequests": 0,
+  "externalRequests": 0,
+  "realSources": "UNCONFIGURED",
+  "realManagementWrites": "CLOSED",
+  "backendWork": "PAUSED_NOT_ACCEPTED",
+  "original4193": "UNCHANGED",
+  "originalDatabase": "NOT_ACCESSED",
+  "models": "NOT_CONNECTED",
+  "realExecution": "NOT_DISPATCHED",
+  "pullRequest": "363 DRAFT - NO MERGE",
+  "routesVerified": [
+    "settings",
+    "admin-workspaces",
+    "workspace-members",
+    "admin-users",
+    "admin-orgs",
+    "admin-roles",
+    "admin-audit",
+    "admin-logs",
+    "admin-config",
+    "agent-workbench",
+    "agent-task"
+  ],
+  "localAgent": "template simulation only; no API/model/execution"
+}

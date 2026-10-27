@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -17,12 +18,37 @@ var (
 )
 
 const CapabilityHumanDecision = "HUMAN_DECISION"
+const CapabilityAcceptanceRead = "BUSINESS_ACCEPTANCE_READ"
+const CapabilityAcceptanceDraft = "BUSINESS_ACCEPTANCE_DRAFT"
+const CapabilityAcceptanceBasis = "BUSINESS_ACCEPTANCE_BASIS_CONFIRM"
+const CapabilityReceiptRecord = "BUSINESS_RECEIPT_RECORD"
+const CapabilityManagementRead = "PLATFORM_MANAGEMENT_READ"
+const CapabilityRuntimeLogRead = "PLATFORM_RUNTIME_LOG_READ"
+
+var ErrAuthorityUnavailable = errors.New("identity authority unavailable")
+
+// Authority is a transaction-local decision, never a reusable authorization lease.
+// Only explicitly projected fields may be returned to a browser.
+type Authority struct {
+	Principal                                     RequestPrincipal
+	SubjectBindingID, WorkspaceGrantID            uuid.UUID
+	ActorRevision, SubjectRevision, GrantRevision int64
+	EvaluatedAt, ExpiresAt                        time.Time
+}
+
+const CapabilityAnnotationAccess = "ANNOTATION_ACCESS"
 
 type RequestPrincipal struct {
-	Subject      string
-	ActorID      uuid.UUID
-	WorkspaceID  uuid.UUID
-	Capabilities map[string]struct{}
+	// Set only by the OIDC server authenticator, for current-binding rechecks.
+	IdentityIssuer  string
+	IdentitySubject string
+	// Current authority fence, set only by the durable OIDC binding adapter.
+	IdentityRevision  string
+	IdentityExpiresAt time.Time
+	Subject           string
+	ActorID           uuid.UUID
+	WorkspaceID       uuid.UUID
+	Capabilities      map[string]struct{}
 }
 
 func (p RequestPrincipal) HasCapability(capability string) bool {

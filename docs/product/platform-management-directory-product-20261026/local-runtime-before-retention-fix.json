@@ -1,0 +1,23 @@
+{
+  "channel": "chromium",
+  "results": [
+    {
+      "name": "minimum API role remains SELECT-only and RP remains session-only",
+      "status": "PASS"
+    },
+    {
+      "name": "management session keeps original capability projection while records enforce separate permission",
+      "status": "PASS"
+    },
+    {
+      "name": "default one-hour window is canonical and refresh does not silently move it",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\nNaN !== 3600000\n"
+    }
+  ],
+  "pageErrors": [],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

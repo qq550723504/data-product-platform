@@ -1,0 +1,39 @@
+{
+  "channel": "chromium",
+  "results": [
+    {
+      "name": "minimum API role remains SELECT-only and RP remains session-only",
+      "status": "PASS"
+    },
+    {
+      "name": "management session keeps original capability projection while records enforce separate permission",
+      "status": "PASS"
+    },
+    {
+      "name": "default one-hour window is canonical and refresh does not silently move it",
+      "status": "PASS"
+    },
+    {
+      "name": "React-owned history clearing removes records and persisted restore performs a fresh query",
+      "status": "PASS"
+    },
+    {
+      "name": "actual Next query page is canonical and 58 equal/adjacent nanosecond occurrences paginate without loss",
+      "status": "PASS"
+    },
+    {
+      "name": "second page exact detail reload browser history and return preserve cursor filters and focused row",
+      "status": "PASS"
+    },
+    {
+      "name": "changing filters clears old position and refresh retains the explicit window",
+      "status": "FAIL",
+      "error": "page.reload: Protocol error (Page.reload): Not attached to an active page\nCall log:\n  - waiting for navigation until \"load\"\n"
+    }
+  ],
+  "pageErrors": [],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

@@ -1,0 +1,84 @@
+{
+  "recordedAt": "2026-10-25T11:37:27.551Z",
+  "browser": "msedge",
+  "source": "SYNTHETIC_FIXTURE",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "verdict": "FAIL",
+  "results": [
+    {
+      "name": "minimal DB roles: API SELECT only, RP temporary sessions only",
+      "status": "PASS"
+    },
+    {
+      "name": "canonical individual RP session and modern management shell",
+      "status": "PASS"
+    },
+    {
+      "name": "member pagination covers 58 distinct records and exact detail survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "filter searches entire directory before paging; empty and unavailable stay distinct",
+      "status": "PASS"
+    },
+    {
+      "name": "role projection uses explicit readonly application catalog with no management writes",
+      "status": "PASS"
+    },
+    {
+      "name": "role to members to exact detail restores filters page and focused row after refresh",
+      "status": "PASS"
+    },
+    {
+      "name": "changing role filters resets the page while preserving the other selected conditions",
+      "status": "PASS"
+    },
+    {
+      "name": "unavailable detail and out-of-range page return explicitly without losing original filters",
+      "status": "PASS"
+    },
+    {
+      "name": "audit immutable references paginate 25/25/8 without raw payloads",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign member, duplicate query and unknown workspace selector fail without fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace without grant and ordinary acceptance-only user cannot enter management",
+      "status": "PASS"
+    },
+    {
+      "name": "role member navigation is reevaluated in the current workspace and copied foreign detail is refused",
+      "status": "PASS"
+    },
+    {
+      "name": "switching authorized workspaces clears old members and rejects caller/workspace cursors",
+      "status": "PASS"
+    },
+    {
+      "name": "revocation removes reads and restoration cannot resurrect old RP revision",
+      "status": "PASS"
+    },
+    {
+      "name": "native directory permission revocation and foreign responses discard data",
+      "status": "PASS"
+    },
+    {
+      "name": "direct API discards directory records when access token is revoked during the read",
+      "status": "PASS"
+    },
+    {
+      "name": "failure near scoped user pages deduplicate references and restore search page and selected row",
+      "status": "FAIL",
+      "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: '返回用户目录', exact: true })\u001b[22m\n"
+    }
+  ]
+}

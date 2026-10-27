@@ -1,0 +1,30 @@
+{
+  "scope": "isolated synthetic runtime-log review and whole settings read-only acceptance",
+  "files": [
+    {
+      "file": "logs-detail.png",
+      "bytes": 52044,
+      "sha256": "521e34c363e5fb25cae527d3b792b9e655d8323bf3ede0fc21f944a3a5905902"
+    },
+    {
+      "file": "logs-list.png",
+      "bytes": 172861,
+      "sha256": "b71f2a97f38be65fa3535a024cc8a3da172dea95296e2a5b711e33d3b89c39eb"
+    },
+    {
+      "file": "results.json",
+      "bytes": 11420,
+      "sha256": "56241c1a56cf319b3d6b0d7faecbc76b593e6a2a602d9508031f1057b01f2b27"
+    },
+    {
+      "file": "role-members-return.png",
+      "bytes": 84210,
+      "sha256": "2f1cf6d2ee72e89510ce9797f0fb97e621cd961ea66b279e00505fba0c872769"
+    },
+    {
+      "file": "settings-configuration.png",
+      "bytes": 78633,
+      "sha256": "9f965a0f751c2490a9f7af22083a479ce64f04f5db496981af36812af9b38200"
+    }
+  ]
+}

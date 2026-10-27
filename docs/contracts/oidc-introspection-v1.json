@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "now": 1700000000,
+  "claims": {
+    "active": true,
+    "iss": "https://idp.example.test",
+    "sub": "human-001",
+    "aud": [
+      "platform-api",
+      "annotation-api"
+    ],
+    "client_id": "browser-client",
+    "token_type": "Bearer",
+    "exp": 1700000600,
+    "nbf": 1699999900,
+    "iat": 1699999900,
+    "scope": "openid platform-access annotation-access",
+    "email": "same@example.test",
+    "roles": [
+      "admin"
+    ]
+  },
+  "cases": [
+    {
+      "name": "valid",
+      "accept": true,
+      "set": {}
+    },
+    {
+      "name": "audience_string_platform",
+      "acceptCore": true,
+      "acceptLS": false,
+      "set": {
+        "aud": "platform-api"
+      }
+    },
+    {
+      "name": "audience_string_annotation",
+      "acceptCore": false,
+      "acceptLS": true,
+      "set": {
+        "aud": "annotation-api"
+      }
+    },
+    {
+      "name": "inactive",
+      "accept": false,
+      "set": {
+        "active": false
+      }
+    },
+    {
+      "name": "active_string",
+      "accept": false,
+      "set": {
+        "active": "true"
+      }
+    },
+    {
+      "name": "active_number",
+      "accept": false,
+      "set": {
+        "active": 1
+      }
+    },
+    {
+      "name": "wrong_issuer",
+      "accept": false,
+      "set": {
+        "iss": "https://untrusted.example.test"
+      }
+    },
+    {
+      "name": "wrong_audience",
+      "accept": false,
+      "set": {
+        "aud": [
+          "other-api"
+        ]
+      }
+    },
+    {
+      "name": "audience_substring",
+      "accept": false,
+      "set": {
+        "aud": "platform-api annotation-api"
+      }
+    },
+    {
+      "name": "missing_subject",
+      "accept": false,
+      "set": {
+        "sub": ""
+      }
+    },
+    {
+      "name": "blank_subject",
+      "accept": false,
+      "set": {
+        "sub": " "
+      }
+    },
+    {
+      "name": "subject_number",
+      "accept": false,
+      "set": {
+        "sub": 1
+      }
+    },
+    {
+      "name": "wrong_client",
+      "accept": false,
+      "set": {
+        "client_id": "unapproved-client"
+      }
+    },
+    {
+      "name": "id_token_type",
+      "accept": false,
+      "set": {
+        "token_type": "IDToken"
+      }
+    },
+    {
+      "name": "expired",
+      "accept": false,
+      "set": {
+        "exp": 1699999999
+      }
+    },
+    {
+      "name": "at_expiry",
+      "accept": false,
+      "set": {
+        "exp": 1700000000
+      }
+    },
+    {
+      "name": "expiry_string",
+      "accept": false,
+      "set": {
+        "exp": "1700000600"
+      }
+    },
+    {
+      "name": "expiry_bool",
+      "accept": false,
+      "set": {
+        "exp": true
+      }
+    },
+    {
+      "name": "expiry_fraction",
+      "accept": false,
+      "set": {
+        "exp": 1700000600.5
+      }
+    },
+    {
+      "name": "future_nbf",
+      "accept": false,
+      "set": {
+        "nbf": 1700000001
+      }
+    },
+    {
+      "name": "future_iat",
+      "accept": false,
+      "set": {
+        "iat": 1700000001
+      }
+    },
+    {
+      "name": "nbf_string",
+      "accept": false,
+      "set": {
+        "nbf": "1699999900"
+      }
+    },
+    {
+      "name": "iat_null",
+      "accept": false,
+      "set": {
+        "iat": null
+      }
+    },
+    {
+      "name": "delegation",
+      "accept": false,
+      "set": {
+        "act": {
+          "sub": "another-human"
+        }
+      }
+    },
+    {
+      "name": "delegation_null",
+      "accept": false,
+      "set": {
+        "act": null
+      }
+    },
+    {
+      "name": "roles_without_scope",
+      "accept": false,
+      "set": {
+        "scope": "openid",
+        "roles": [
+          "admin"
+        ]
+      }
+    },
+    {
+      "name": "scope_substring",
+      "accept": false,
+      "set": {
+        "scope": "openid xplatform-access xannotation-access"
+      }
+    },
+    {
+      "name": "scope_array",
+      "accept": false,
+      "set": {
+        "scope": [
+          "platform-access",
+          "annotation-access"
+        ]
+      }
+    },
+    {
+      "name": "absent_active",
+      "accept": false,
+      "remove": [
+        "active"
+      ],
+      "set": {}
+    },
+    {
+      "name": "absent_iss",
+      "accept": false,
+      "remove": [
+        "iss"
+      ],
+      "set": {}
+    },
+    {
+      "name": "absent_aud",
+      "accept": false,
+      "remove": [
+        "aud"
+      ],
+      "set": {}
+    },
+    {
+      "name": "absent_sub",
+      "accept": false,
+      "remove": [
+        "sub"
+      ],
+      "set": {}
+    },
+    {
+      "name": "absent_client_id",
+      "accept": false,
+      "remove": [
+        "client_id"
+      ],
+      "set": {}
+    },
+    {
+      "name": "absent_token_type",
+      "accept": false,
+      "remove": [
+        "token_type"
+      ],
+      "set": {}
+    },
+    {
+      "name": "absent_exp",
+      "accept": false,
+      "remove": [
+        "exp"
+      ],
+      "set": {}
+    },
+    {
+      "name": "absent_scope",
+      "accept": false,
+      "remove": [
+        "scope"
+      ],
+      "set": {}
+    }
+  ]
+}

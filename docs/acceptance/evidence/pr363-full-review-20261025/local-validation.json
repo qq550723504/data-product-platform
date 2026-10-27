@@ -1,0 +1,29 @@
+{
+  "candidate": "8495de4e1bb3100e9cf4e73760caaddc02264153",
+  "go": {
+    "packages": [
+      "internal/agenttask/domain",
+      "internal/agentquality/transport/http",
+      "internal/agenttask/transport/http",
+      "tests/agentpreview",
+      "internal/platform/principal/oidc"
+    ],
+    "passIncludingSubtests": 89,
+    "fail": 0,
+    "skip": 0
+  },
+  "webIam": {
+    "pass": 17,
+    "fail": 0,
+    "realPostgresSkipped": 2
+  },
+  "webAgent": {
+    "pass": 20,
+    "fail": 0
+  },
+  "runtimeScope": "LOOPBACK_SYNTHETIC_ONLY; NO_ORIGINAL_DB_OR_AGENT_SERVICE_OPERATIONS",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": "DISABLED",
+  "model": "NOT_RUN",
+  "dispatch": "NOT_RUN"
+}

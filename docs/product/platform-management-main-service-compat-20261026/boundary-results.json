@@ -1,0 +1,49 @@
+{
+  "transport": "Playwright APIRequestContext",
+  "results": [
+    {
+      "name": "members/token-revoked/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "members/token-expired/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "members/grant-revoked/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "users/token-revoked/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "users/token-expired/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "users/grant-revoked/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "organization/token-revoked/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "organization/token-expired/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "organization/grant-revoked/source-permission-failed",
+      "status": "PASS"
+    },
+    {
+      "name": "unchanged-business-facts",
+      "status": "PASS"
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

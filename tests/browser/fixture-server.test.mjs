@@ -23,6 +23,33 @@ test("Quality fault injection rejects one exact read and preserves the other aut
 });
 async function state() { return (await fetch(`${base}/__control/state`, { headers: controlHeaders })).json(); }
 
+test("Agent context fixture is scoped, authenticated and records only GET queries", async () => {
+  const path = `/api/v1/workspaces/${ids.workspace}/agent-quality-context?limit=25&offset=0`;
+  assert.equal((await fetch(base + path)).status, 401);
+  const headers = { Authorization: "Bearer review-secret" };
+  const catalog = await (await fetch(base + path, { headers })).json();
+  assert.equal(catalog.datasets.page.total, 1);
+  const context = await (await fetch(base + path + `&versionId=${ids.goldVersion}`, { headers })).json();
+  assert.equal(context.version.id, ids.goldVersion);
+  assert.equal(context.executionReadiness, "NOT_EVALUATED");
+  assert.equal(context.version.storageUri, undefined);
+  assert.equal((await fetch(base + path + `&versionId=${ids.version}`, { headers })).status, 404);
+  assert.equal((await fetch(base + path.replace(ids.workspace, ids.actor), { headers })).status, 403);
+  assert.ok((await state()).requests.every(r => r.method === "GET"));
+});
+
+test("Agent acceptance fixture has independent history/finding pages and an exact recoverable attempt", async () => {
+  await fetch(`${base}/__control/reset`, { method: "POST", headers: controlHeaders, body: JSON.stringify({scenario:"agent-quality-pages"}) });
+  const headers={ Authorization:"Bearer review-secret" };
+  const history=await(await fetch(`${base}/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments?workspaceId=${ids.workspace}&limit=25&offset=25`,{headers})).json();
+  assert.equal(history.page.total,26);assert.equal(history.items.length,1);assert.equal(history.items[0].id,ids.goldAssessment);
+  const report=await(await fetch(`${base}/api/v1/quality-assessments/${ids.goldAssessment}/report?workspaceId=${ids.workspace}&limit=25&offset=25`,{headers})).json();
+  assert.equal(report.id,ids.goldAssessment);assert.equal(report.findings.page.total,26);assert.equal(report.findings.items.length,1);assert.equal(report.findings.items[0].ruleId,"FIXTURE-26");
+  const attempt=await(await fetch(`${base}/api/v1/quality-assessment-attempts/${ids.job}?workspaceId=${ids.workspace}`,{headers})).json();
+  assert.equal(attempt.outcome,"SUCCEEDED");assert.equal(attempt.assessmentId,ids.goldAssessment);
+  assert.ok((await state()).requests.every(r=>r.method==="GET"));
+});
+
 test("observed request fixture counts attempts once and keeps selected identity after its observation arrives",async()=>{
   const headers={Authorization:"Bearer rights-fixture-secret"};
   await fetch(`${base}/__control/reset`,{method:"POST",headers:controlHeaders,body:JSON.stringify({scenario:"schema-attempts"})});
@@ -152,4 +179,14 @@ test("publish requires idempotency header and stores observed command headers", 
   assert.equal((await fetch(url, { method: "POST", headers: { "X-Actor-ID": ids.actor, "Idempotency-Key": "test-1" }, body: "{}" })).status, 200);
   assert.equal((await state()).releaseStatus, "PUBLISHED");
   assert.equal((await state()).requests.at(-1).idempotencyKey, "test-1");
+});
+
+test('modern Trace fixture requires exact workspace and credential and excludes secret fields',async()=>{
+ await fetch(base+'/__control/reset',{method:'POST',headers:controlHeaders,body:JSON.stringify({scenario:'modern-trace'})});
+ const path=`/api/v1/traceability/product-releases/${ids.release}?workspaceId=${ids.workspace}`;
+ assert.equal((await fetch(base+path)).status,401);
+ const headers={Authorization:'Bearer review-secret'};
+ assert.equal((await fetch(base+path.replace(ids.workspace,ids.product),{headers})).status,403);
+ const response=await fetch(base+path,{headers});assert.equal(response.status,200);const t=await response.json();assert.equal(t.releaseId,ids.release);assert.equal(t.workspaceId,ids.workspace);assert.equal(t.entityMappings[0].decisionId,ids.decision);assert.equal(t.costEvents[0].amount,'0.000000000000000001');
+ assert.doesNotMatch(JSON.stringify(t),/metadata|sourceKey|storageUri|review-secret/);
 });

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "management-navigation-acceptance-fix.v1",
+  "firstCI": {
+    "head": "f1180600dc76bea27a1aa5d7583dd2e0495ee57b",
+    "run": 40301725731,
+    "job": 121501049524,
+    "artifact": 12640603205,
+    "verdict": "FAIL",
+    "passedManagementCases": 42,
+    "failedManagementCases": 1,
+    "remainingManagementCases": "NOT_RUN",
+    "sharedRuntimeCases": "NOT_RUN",
+    "boundaryCases": {
+      "pass": 10,
+      "fail": 0
+    }
+  },
+  "observation": "Immediate page.reload after configuration link navigation failed with Chromium Page.reload Not attached to an active page; no browser pageerror or unauthorized write was recorded.",
+  "fix": "Wait for exact destination URL with load state and visible business return control before one reload. No sleep, retries, error filtering or assertion removal. Record exact entry label and page crash diagnostics.",
+  "exactOriginalCITrigger": "NOT_REPRODUCED_LOCALLY",
+  "localChromium": {
+    "pass": 51,
+    "fail": 0
+  },
+  "productCodeChanged": false,
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
 )
 
@@ -18,7 +19,8 @@ const (
 )
 
 type Handler struct {
-	repo *readmodel.Repository
+	Principal principal.Resolver
+	repo      *readmodel.Repository
 }
 
 func NewHandler(repo *readmodel.Repository) *Handler {
@@ -38,7 +40,8 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/attention/releases", h.releaseAttention)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/entity-match-reviews", h.listEntityReviews)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products", h.listDataProducts)
-	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/product-releases", h.listWorkspaceReleases)
+	h.RegisterReleaseHistoryReadOnly(mux)
+	h.RegisterDeliveryHistoryReadOnly(mux)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products/{productId}/releases", h.listProductReleases)
 }
 
@@ -285,6 +288,19 @@ func (h *Handler) listWorkspaceReleases(w http.ResponseWriter, r *http.Request) 
 	if !ok {
 		return
 	}
+	if h.Principal == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted workspace principal required", nil)
+		return
+	}
+	actor, authErr := h.Principal.Resolve(r, workspaceID, principal.CapabilityHumanDecision)
+	if errors.Is(authErr, principal.ErrUnauthenticated) || errors.Is(authErr, principal.ErrNotConfigured) {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted workspace principal required", nil)
+		return
+	}
+	if authErr != nil || actor.ActorID == uuid.Nil || actor.WorkspaceID != workspaceID || !actor.HasCapability(principal.CapabilityHumanDecision) {
+		httpserver.WriteError(w, r, 403, "WORKSPACE_AUTHORITY_DENIED", "workspace authority denied", nil)
+		return
+	}
 	limit, offset, ok := pagination(w, r)
 	if !ok {
 		return
@@ -299,7 +315,7 @@ func (h *Handler) listWorkspaceReleases(w http.ResponseWriter, r *http.Request) 
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "PRODUCT_RELEASES_READ_FAILED", err.Error(), nil)
 		return
 	}
-	writeJSON(w, http.StatusOK, result)
+	writeJSON(w, http.StatusOK, map[string]any{"workspaceId": workspaceID, "items": result.Items, "page": result.Page})
 }
 
 func (h *Handler) listProductReleases(w http.ResponseWriter, r *http.Request) {
@@ -388,4 +404,9 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(value)
+}
+
+// RegisterReleaseHistoryReadOnly exposes only workspace-scoped release history.
+func (h *Handler) RegisterReleaseHistoryReadOnly(mux *http.ServeMux) {
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/product-releases", h.listWorkspaceReleases)
 }

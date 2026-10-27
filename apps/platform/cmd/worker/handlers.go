@@ -83,7 +83,7 @@ func workerHandlerRegistrations(service governanceProjector, enqueuer workflowqu
 // against the registered handlers. It fails when a required handler is missing,
 // so an obligation can never be completed by an unregistered consumer.
 func newOutboxDispatcher(pool *pgxpool.Pool, logger *slog.Logger, service governanceProjector, enqueuer workflowqueue.ExecutionEnqueuer, external externalqueue.Enqueuer, lifecycle lifecyclequeue.Enqueuer) (*outbox.Dispatcher, error) {
-	router, err := routing.NewRouter(service != nil)
+	router, err := routing.NewWorkerRouter(service != nil)
 	if err != nil {
 		return nil, err
 	}

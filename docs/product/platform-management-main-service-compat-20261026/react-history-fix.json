@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "runtime-log-react-history-fix.v1",
+  "firstCI": {
+    "head": "8f30313848daf52a7cd5fc8ea80b8c01e8825fbd",
+    "run": 40299258047,
+    "job": 121492917351,
+    "artifact": 12640022303,
+    "verdict": "FAIL",
+    "failure": "One React hydration error 418 captured by the zero-browser-error assertion; preceding 17 runtime cases passed.",
+    "newCompatCases": "NOT_RUN"
+  },
+  "finding": {
+    "oldGuard": "Directly deleted React-owned children during pagehide. The renderer-ownership regression fails on the old function.",
+    "exactOriginalCITrigger": "NOT_REPRODUCED_LOCALLY",
+    "fix": "React state with flushSync owns unmount; persisted pageshow still reloads and revalidates. Static host explicitly supplies its own DOM clear callback. No hydration-warning suppression or page-error filtering."
+  },
+  "verification": {
+    "webUnit": {
+      "pass": 12,
+      "fail": 0,
+      "skip": 0
+    },
+    "nextEdge": {
+      "pass": 19,
+      "fail": 0,
+      "pageErrors": []
+    },
+    "nextChromium": {
+      "pass": 19,
+      "fail": 0,
+      "pageErrors": []
+    },
+    "staticEdge": {
+      "pass": 16,
+      "fail": 0
+    }
+  },
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

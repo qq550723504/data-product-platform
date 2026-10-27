@@ -1,0 +1,33 @@
+{
+  "baseline": "b37d03477bf0c8b6f54ce5ecd1b8fac10e8c22b8",
+  "historicalFailedJob": 121408207443,
+  "historicalExactDifference": "UNKNOWN",
+  "rootMechanism": "raw Mounts list-order equality is not a preservation invariant",
+  "unitTests": {
+    "normal": 13,
+    "optimized": 13,
+    "realChangeCases": 16,
+    "status": "PASS"
+  },
+  "localDockerVersion": "29.8.2",
+  "failedRunnerImage": "ubuntu24/20261012.334",
+  "runnerPublishedDockerVersion": "28.0.4",
+  "probe": {
+    "samples": 65,
+    "rawVariants": 1,
+    "canonicalVariants": 1,
+    "orderOnlySamples": 0
+  },
+  "realSources": "UNCONFIGURED",
+  "originalDatabaseQueries": false,
+  "localRuntimeRestart": false,
+  "models": false,
+  "dispatch": false,
+  "businessWrites": false,
+  "merge": false,
+  "notes": [
+    "Synthetic permutation reproduces the old failing comparison; every mount field and multiplicity are preserved.",
+    "Old CI lacks before/after diagnostics; no retrospective claim of unchanged resources.",
+    "Latest exact-head CI and runner observation are recorded in the PR closure, not inferred from this local proof."
+  ]
+}

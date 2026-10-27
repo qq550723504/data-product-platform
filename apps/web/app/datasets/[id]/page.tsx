@@ -1,3 +1,4 @@
+import {displayText} from '../../../lib/business-language.mjs';
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, SetupRequired, formatBytes, formatDate, shortId } from "@/components/ui";
 import { collectAllPages } from "@/lib/pagination";
@@ -27,19 +28,19 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
         />
 
         <section className="detail-card" style={{ marginBottom: 18 }}>
-          <h2>Dataset 定义</h2>
+          <h2>数据集 定义</h2>
           <DefinitionList items={[
             { label: "Dataset 类型", value: dataset.datasetType },
             {
               label: "Source Resource",
               value: dataset.sourceResourceId
-                ? <Link className="text-link mono" href={`/resources/${dataset.sourceResourceId}`}>{shortId(dataset.sourceResourceId)}</Link>
+                ? <Link className="text-link mono" href={`/resources/${dataset.sourceResourceId}`}>{displayText(shortId(dataset.sourceResourceId))}</Link>
                 : "—",
             },
             {
               label: "Current Version",
               value: dataset.currentVersionId
-                ? <Link className="text-link mono" href={`/datasets/${dataset.id}/versions/${dataset.currentVersionId}`}>{shortId(dataset.currentVersionId)}</Link>
+                ? <Link className="text-link mono" href={`/datasets/${dataset.id}/versions/${dataset.currentVersionId}`}>{displayText(shortId(dataset.currentVersionId))}</Link>
                 : "—",
             },
             { label: "Project", value: shortId(dataset.projectId) },
@@ -48,7 +49,7 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
           ]} />
         </section>
 
-        <div className="panel-header"><h2>不可变版本历史</h2><span className="eyebrow">{versions.length} Versions</span></div>
+        <div className="panel-header"><h2>不可变版本历史</h2><span className="eyebrow">{displayText(versions.length)} Versions</span></div>
         {versions.length === 0 ? (
           <EmptyState title="暂无版本" description="版本一旦生成即冻结；修复数据时应创建新版本，而不是覆盖历史版本。" />
         ) : (
@@ -58,16 +59,16 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
               <tbody>
                 {versions.map((version) => (
                   <tr key={version.id}>
-                    <td className="primary-cell"><Link className="text-link" href={`/datasets/${dataset.id}/versions/${version.id}`}><strong>v{version.versionNo}</strong></Link><span className="mono">{shortId(version.id)}</span>{dataset.datasetType === "RAW" && dataset.code.startsWith("CSV-") && version.status === "READY" ? <Link href={`/ingest?version=${version.id}`}>继续主体解析</Link> : null}</td>
+                    <td className="primary-cell"><Link className="text-link" href={`/datasets/${dataset.id}/versions/${version.id}`}><strong>v{displayText(version.versionNo)}</strong></Link><span className="mono">{displayText(shortId(version.id))}</span>{displayText(dataset.datasetType === "RAW" && dataset.code.startsWith("CSV-") && version.status === "READY" ? <Link href={`/ingest?version=${version.id}`}>继续主体解析</Link> : null)}</td>
                     <td><Badge value={version.status} /></td>
-                    <td>{version.rowCount ?? "—"}</td>
-                    <td>{formatBytes(version.byteSize)}</td>
+                    <td>{displayText(version.rowCount ?? "—")}</td>
+                    <td>{displayText(formatBytes(version.byteSize))}</td>
                     <td>
                       {version.generatedByExecutionId ? (
-                        <Link className="text-link mono" href={`/production/${version.generatedByExecutionId}`}>{shortId(version.generatedByExecutionId)}</Link>
+                        <Link className="text-link mono" href={`/production/${version.generatedByExecutionId}`}>{displayText(shortId(version.generatedByExecutionId))}</Link>
                       ) : "—"}
                     </td>
-                    <td>{formatDate(version.readyAt ?? version.createdAt)}</td>
+                    <td>{displayText(formatDate(version.readyAt ?? version.createdAt))}</td>
                   </tr>
                 ))}
               </tbody>

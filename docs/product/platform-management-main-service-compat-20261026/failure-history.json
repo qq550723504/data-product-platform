@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "management-compat-history.v1",
+  "entries": [
+    {
+      "attempt": "source-error-before-authority-fix",
+      "verdict": "FAIL",
+      "evidence": "boundary-before-fix.json",
+      "observed": "Source permission failure returned 503 before revoked caller was rejected with 401. Eight remaining resource/invalidation cases NOT_RUN.",
+      "resolution": "All source outcomes share uncached post-I/O identity and current authority checks."
+    },
+    {
+      "attempt": "browser-overlapped-with-Go-seeding",
+      "verdict": "FAIL",
+      "evidence": "browser-overlap-failure.json",
+      "observed": "Audit content hash changed while separate Go integration tests inserted synthetic audit records in the same isolated database.",
+      "resolution": "Retained failure and original hash assertion; completed Go first, then negative HTTP, directory UI and runtime UI sequentially in final02. No baseline reset within a run."
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

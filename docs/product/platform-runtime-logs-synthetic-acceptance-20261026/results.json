@@ -1,0 +1,361 @@
+{
+  "browser-results.json": {
+    "browserChannel": "msedge",
+    "stats": {
+      "startTime": "2026-10-26T01:36:54.771Z",
+      "duration": 17342.188000000002,
+      "expected": 16,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "name": "RL01: unconfigured source shows one setup state without synthetic records or queries",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 948
+          }
+        ]
+      },
+      {
+        "name": "RL06: all 58 independent records including 28 equal nanoseconds survive three pages",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 913
+          }
+        ]
+      },
+      {
+        "name": "RL09: second page detail refresh history and return restore fixed query and focused row",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1997
+          }
+        ]
+      },
+      {
+        "name": "RL10: filters clear old positions while reload preserves explicit UTC window",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1337
+          }
+        ]
+      },
+      {
+        "name": "RL03 RL13: switching workspace rejects copied cursor and detail without foreign data",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1037
+          }
+        ]
+      },
+      {
+        "name": "RL11: another person cannot reuse an otherwise valid same-space reference",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 929
+          }
+        ]
+      },
+      {
+        "name": "RL02 RL04: log capability removal during query discards the entire response",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 776
+          }
+        ]
+      },
+      {
+        "name": "RL04: RP revocation or revision changes block refresh back and forward without reviving cached records",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 901
+          }
+        ]
+      },
+      {
+        "name": "RL05: source binding changes invalidate old cursor without silently returning first page",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 905
+          }
+        ]
+      },
+      {
+        "name": "RL11: expired references require explicit restart and preserve filters",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 804
+          }
+        ]
+      },
+      {
+        "name": "RL07 RL08: malformed or private source fields never reach HTML DOM or storage",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 780
+          }
+        ]
+      },
+      {
+        "name": "RL12: deleted precise record returns to the original page and reports missing focused row",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1066
+          }
+        ]
+      },
+      {
+        "name": "RL12: a changed projection cannot masquerade as the original detail",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 705
+          }
+        ]
+      },
+      {
+        "name": "RL12: no matches differ from source failure and unsupported queries",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 830
+          }
+        ]
+      },
+      {
+        "name": "RL14: narrow layout query and return remain reachable with keyboard focus",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1112
+          }
+        ]
+      },
+      {
+        "name": "RL15: writes native selectors and caller-supplied identity are rejected; every response is no-store",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1048
+          }
+        ]
+      }
+    ]
+  },
+  "default-next-results.json": {
+    "browserChannel": "msedge",
+    "stats": {
+      "startTime": "2026-10-26T01:19:44.454Z",
+      "duration": 7583.229,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "name": "modern settings uses real-source setup states without synthetic people or write controls",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2324
+          }
+        ]
+      }
+    ]
+  },
+  "retained-results.json": {
+    "browserChannel": "msedge",
+    "stats": {
+      "startTime": "2026-10-26T01:20:42.944Z",
+      "duration": 24364.542,
+      "expected": 15,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "name": "withdrawal needs submitter and reason; resubmission and cancellation preserve exact submissions",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2354
+          }
+        ]
+      },
+      {
+        "name": "draft cancellation requires reason and cannot invent acceptance or archive facts",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1090
+          }
+        ]
+      },
+      {
+        "name": "receipt replacement blocks approval and can return on context change without a false criterion failure",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1792
+          }
+        ]
+      },
+      {
+        "name": "invalidating an archived decision preserves original facts and exact receipt/submission trace after refresh",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 2440
+          }
+        ]
+      },
+      {
+        "name": "switching receipt cases clears unsaved evidence and outcome before recording a different case",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1107
+          }
+        ]
+      },
+      {
+        "name": "workspace switches isolate identical demo IDs, frozen archives, dispositions and unsaved review input",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 3017
+          }
+        ]
+      },
+      {
+        "name": "storage refusal warns that local receipt changes are not saved and reload loses them",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 742
+          }
+        ]
+      },
+      {
+        "name": "business receipt, return, resubmit, approve and archive stay local and retain history",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 1969
+          }
+        ]
+      },
+      {
+        "name": "modern Agent preserves semantic failure colors and quality reads issue no commands",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 507
+          }
+        ]
+      },
+      {
+        "name": "leader quality history opens each exact report and keeps the earlier result after reload",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 913
+          }
+        ]
+      },
+      {
+        "name": "repair review card selects recent tasks instead of navigating to a blank diagnosis form",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 515
+          }
+        ]
+      },
+      {
+        "name": "prototype root stays synthetic; Core workbench uses server facts in the same modern shell",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 773
+          }
+        ]
+      },
+      {
+        "name": "exact release trace shows safe historical facts, survives refresh and preserves return filter",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 858
+          }
+        ]
+      },
+      {
+        "name": "cross-workspace or missing release never falls back to a known release",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 424
+          }
+        ]
+      },
+      {
+        "name": "frontend field projection does not render unexpected upstream storage or source fields",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 594
+          }
+        ]
+      }
+    ]
+  }
+}

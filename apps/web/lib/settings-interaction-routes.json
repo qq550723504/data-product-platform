@@ -1,0 +1,11 @@
+{
+  "/settings": "settings",
+  "/settings/users": "admin-users",
+  "/settings/members": "workspace-members",
+  "/settings/workspaces": "admin-workspaces",
+  "/settings/organizations": "admin-orgs",
+  "/settings/roles": "admin-roles",
+  "/settings/audit": "admin-audit",
+  "/settings/logs": "admin-logs",
+  "/settings/configuration": "admin-config"
+}

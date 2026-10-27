@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import ts from "typescript";
+import * as businessLanguage from "../lib/business-language.mjs";
 
 const require = createRequire(import.meta.url);
 const attention = require("../.quality-tests/quality-attention.js");
@@ -19,7 +20,11 @@ function evaluate(file, imports) {
   const source = readFileSync(new URL(file, import.meta.url), "utf8");
   const code = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
   const module = { exports: {} };
-  new Function("require", "module", "exports", code)(name => imports[name], module, module.exports);
+  new Function("require", "module", "exports", code)(name => {
+    if (name.endsWith("/business-language.mjs")) return businessLanguage;
+    assert.ok(Object.hasOwn(imports, name), `Unsupported test import: ${name}`);
+    return imports[name];
+  }, module, module.exports);
   return module.exports;
 }
 const reads = evaluate("../lib/workbench-read.ts", { "./quality-attention": attention });

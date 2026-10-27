@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-10-25T10:09:06.243590+00:00",
+  "reviewBase": "1dfa7c6fe00e9b6a7cfda536b43be378ca985de3",
+  "captureScope": "Modified worktree local evidence; hashes do not attest CI or runtime compilation",
+  "runtimeDist": ".next-acceptance-identity-management-review-20261025",
+  "browser": "Microsoft Edge, independent contexts",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "files": {
+    "browser-results.json": "e74b45003c8358720199d7bd277bf199c35ac2dfbeef782b041efdac1f7f6be9"
+  },
+  "sourceHashes": {
+    "apps/platform/internal/platformmanagement/http.go": "4fcf1bb7a71f02f7f52c552564f898cd0563ecbe2dc4a99921b4b1883c9263c6",
+    "apps/platform/internal/platformmanagement/zitadel/client.go": "1ef7ddfe6d990b4a842afef1671e9aeacacbe4ae630727106088fd5b4840a8b3",
+    "apps/web/lib/platform-management.ts": "9a41e7a4ca83cfa5544aef808fe50ce19a53efe88739c0f3ae935a5fb86c4824",
+    "tests/platform-management/browser.mjs": "2b388a1cdd22056c533a0ecdde6dffacab92073f3b39fd8c7ea71aa9f0b84309",
+    "tests/platform-management/fixture.mjs": "f2bdf5a93ca5383744e49b320d54cbaf0d24b1376f976c0a841d746b68d4037e"
+  }
+}

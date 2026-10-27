@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "evidence-files.v1",
+  "files": [
+    {
+      "path": "boundary-before-fix.json",
+      "bytes": 1197,
+      "sha256": "7e7ee368d11170398e75a436df87c3cf4eb9a89fd1bfdf33ed70fd1d2c9bf744"
+    },
+    {
+      "path": "boundary-results.json",
+      "bytes": 1156,
+      "sha256": "dcc366aa8fc1401ef33139b7bc8dd1831f6dba144c7fa681f8a0acf692365ea6"
+    },
+    {
+      "path": "browser-overlap-failure.json",
+      "bytes": 7460,
+      "sha256": "ec3ba941a398081aacb62dc2f1fefaf774d774235bd3c81fdf7f6eb25773802c"
+    },
+    {
+      "path": "ci-management-before-navigation-fix.json",
+      "bytes": 6344,
+      "sha256": "a1b5c4898065db7bcbcdbcecfbbf903f677816d153af50bc12e1f70366120d02"
+    },
+    {
+      "path": "ci-runtime-before-document-fix.json",
+      "bytes": 1293,
+      "sha256": "e086512d3172999f7479b378a42058be631951527d981eb160b555039f1f9775"
+    },
+    {
+      "path": "ci-runtime-before-react-fix.json",
+      "bytes": 2933,
+      "sha256": "10fd214857347486c7b3f9e4c06b19534d47e523c4b2af0862c867740e98d1b1"
+    },
+    {
+      "path": "configuration.png",
+      "bytes": 78633,
+      "sha256": "9f965a0f751c2490a9f7af22083a479ce64f04f5db496981af36812af9b38200"
+    },
+    {
+      "path": "document-readiness-chromium.json",
+      "bytes": 433,
+      "sha256": "f9f07ba8ab41d9be1c205ddfe5e0bf3c82179b9f8dd8a89601f0bda4841cdb4d"
+    },
+    {
+      "path": "document-readiness-edge.json",
+      "bytes": 431,
+      "sha256": "eac4bf1dc54dbae8704891e0c01d621179a5a8a57caae8fc542c46025052ddc1"
+    },
+    {
+      "path": "failure-history.json",
+      "bytes": 1058,
+      "sha256": "305435b2e2bedbeea552157740ac00b1eb3811c70c342719e1a88f4d20baf726"
+    },
+    {
+      "path": "go-regression.json",
+      "bytes": 738,
+      "sha256": "d597596f974723886d5b3c46716c7784802c5cf35878792b1a57e1e04de3d2b3"
+    },
+    {
+      "path": "log-detail.png",
+      "bytes": 52310,
+      "sha256": "dbe0a3326c9bbe8eb9d358e5ae0c4e274f415af22d3498eea94cbbf62f80e727"
+    },
+    {
+      "path": "log-expired.png",
+      "bytes": 46016,
+      "sha256": "fd9a08a78316dba3ecc4541c076a8960f38e5e155d5df719bee0523c15f6a76a"
+    },
+    {
+      "path": "log-list.png",
+      "bytes": 175106,
+      "sha256": "91f7fd21e61560958357b7cd6dfec8cb33c0daffea89aa1299395a10acfab59a"
+    },
+    {
+      "path": "management-browser-document-chromium.json",
+      "bytes": 7260,
+      "sha256": "559cf1347267dc655f1909175d9c3b5348c36f633aa609e307609e112a0ec262"
+    },
+    {
+      "path": "management-browser-navigation-chromium.json",
+      "bytes": 7260,
+      "sha256": "cbc020c2ba2236a3beae3e01d08052391211217ae2bafa31df46e4fe2b92edd8"
+    },
+    {
+      "path": "management-browser-results.json",
+      "bytes": 7258,
+      "sha256": "a687fb36d40393c3042b8a8f299a02a79ee1400f124847897a1457c6ae4fdf85"
+    },
+    {
+      "path": "member-detail.png",
+      "bytes": 56921,
+      "sha256": "6ef2c1f9a2de6972c7643bced108da3e509a25f91fcc253d721693fa2767c443"
+    },
+    {
+      "path": "members-return.png",
+      "bytes": 84210,
+      "sha256": "2f1cf6d2ee72e89510ce9797f0fb97e621cd961ea66b279e00505fba0c872769"
+    },
+    {
+      "path": "navigation-fix.json",
+      "bytes": 1115,
+      "sha256": "35761fc1dc53b473937a3c9f674d95dcb91ceff9277a49e840171f4fe4b6cbd8"
+    },
+    {
+      "path": "react-history-fix.json",
+      "bytes": 1259,
+      "sha256": "e5d5d15c068a6b4d282888b3b88ee3ad59142aefa51fbc0d71a9f63509919fcb"
+    },
+    {
+      "path": "retained-comparison.json",
+      "bytes": 1790,
+      "sha256": "808eb862d9c0c56b462690b2a1dbad8e0ce7502307213080f0234d744951830d"
+    },
+    {
+      "path": "retained-react-comparison.json",
+      "bytes": 1790,
+      "sha256": "808eb862d9c0c56b462690b2a1dbad8e0ce7502307213080f0234d744951830d"
+    },
+    {
+      "path": "runtime-browser-document-chromium.json",
+      "bytes": 2795,
+      "sha256": "641b544e0ba42760b25bb5ebb025ad6b9884b3d067a56c10d94b3699d6ff37c4"
+    },
+    {
+      "path": "runtime-browser-react-chromium.json",
+      "bytes": 2795,
+      "sha256": "641b544e0ba42760b25bb5ebb025ad6b9884b3d067a56c10d94b3699d6ff37c4"
+    },
+    {
+      "path": "runtime-browser-react-edge.json",
+      "bytes": 2793,
+      "sha256": "ef214581a6691254faeada2fc8cc8ae1bb2d0c1973696afbc7e45f119d77a2eb"
+    },
+    {
+      "path": "runtime-browser-results.json",
+      "bytes": 2630,
+      "sha256": "f70a09b76606d630df305b251f04a1ceb871f1dcb2b7f27ebb0dabdd432ca141"
+    },
+    {
+      "path": "static-browser-react-results.json",
+      "bytes": 3261,
+      "sha256": "0cff260c16736d8a4abc36c4b6c85cf677bae5854fb44aaeac2110b445a51ddf"
+    }
+  ]
+}

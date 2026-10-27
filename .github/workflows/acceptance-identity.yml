@@ -1,0 +1,252 @@
+name: acceptance-identity
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  user-profile-product:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.10'
+          cache-dependency-path: apps/platform/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked web and pinned browser dependencies
+        run: |
+          npm ci --ignore-scripts --prefix apps/web
+          npm install --ignore-scripts --prefix tests/browser
+          cd tests/browser && npx playwright install --with-deps chromium
+      - name: Run user profile product acceptance with owned shutdown
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+        run: python3 tests/platform-management/run.py --suite user-product
+      - name: Preserve non-secret user profile product results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-user-product-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-user-product-20261027/go-regression.json
+            .data/management-user-product-20261027/product-contract-results.json
+            .data/management-user-product-20261027/retained-comparison.json
+            .data/management-user-product-20261027/retained-final-comparison.json
+            .data/management-user-product-browser-20261027/browser-results.json
+            .data/management-user-product-browser-20261027/screenshots/
+      - name: Recover shutdown only for this job's registered runs
+        if: always()
+        shell: bash
+        run: |
+          failed=0
+          for fixture in management-user-product-20261027; do
+            if [ -f ".data/$fixture/lifecycle.json" ]; then
+              python3 tests/platform-management/stop.py --run "$fixture" || failed=1
+            fi
+          done
+          exit "$failed"
+      - name: Preserve non-secret shutdown receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-user-product-shutdown
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-user-product-20261027/cleanup-*.json
+            .data/management-user-product-20261027/acceptance-result.json
+  identity-1a:
+    runs-on: ubuntu-latest
+    # Includes isolated API/Web preparations and browser dependency installation.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.10'
+          cache-dependency-path: apps/platform/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Container preservation regression including optimized Python
+        run: |
+          python3 -B -m unittest discover -s tests -p test_fixture_preservation.py -v
+          python3 -O -B -m unittest discover -s tests -p test_fixture_preservation.py -v
+      - name: Install locked web and pinned browser dependencies
+        run: |
+          npm ci --ignore-scripts --prefix apps/web
+          npm install --ignore-scripts --prefix tests/browser
+          cd tests/browser && npx playwright install --with-deps chromium
+      - name: Verify full document readiness before readonly page refresh
+        run: node tests/browser/readonly-navigation.test.mjs
+      - name: Preserve non-secret readonly navigation results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: readonly-browser-navigation-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: .data/readonly-browser-navigation-20261026/results.json
+      - name: Prepare NEW independent TLS IdP and readonly 1A fixture
+        env:
+          ACCEPTANCE_IDENTITY_PREPARE_ACK: NEW_ISOLATED_1A_ONLY
+        run: python3 tests/acceptance-identity/bootstrap.py
+      - name: Verify minimal privileges and independent people/workspaces in browser
+        env:
+          ACCEPTANCE_BROWSER_CHANNEL: chromium
+        run: |
+          node tests/acceptance-identity/privileges.mjs
+          node tests/acceptance-identity/browser.mjs
+      - name: Preserve non-secret acceptance results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-identity-1a-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/acceptance-identity-1a/browser-results.json
+            .data/acceptance-identity-1a/privilege-results.json
+            .data/acceptance-identity-1a/screenshots/
+            .data/acceptance-identity-1a/retained-comparison.json
+      - name: Run management query acceptance with owned shutdown
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+        run: python3 tests/platform-management/run.py --suite readonly
+      - name: Preserve non-secret management results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-management-readonly-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-readonly-20261025/browser-results.json
+            .data/management-readonly-20261025/screenshots/
+            .data/management-readonly-20261025/retained-comparison.json
+      - name: Run runtime log and settings acceptance with owned shutdown
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+          RUNTIME_LOG_BROWSER_CHANNEL: chromium
+        run: python3 tests/platform-management/run.py --suite runtime
+      - name: Preserve runtime log API acceptance results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-log-api-readonly-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/runtime-logs-api-20261026/api-browser-results.json
+            .data/runtime-logs-api-20261026/screenshots/
+            .data/management-readonly-runtime-review-20261026/browser-results.json
+            .data/management-readonly-runtime-review-20261026/screenshots/
+            .data/runtime-logs-api-20261026/retained-comparison.json
+            .data/platform-management-preservation-20261026/retained-order-probe.json
+      - name: Run main service query acceptance with owned shutdown
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+        run: python3 tests/platform-management/run.py --suite main-service
+      - name: Preserve non-secret main service query results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-main-service-query-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-main-service-20261026/go-regression.json
+            .data/management-main-service-20261026/retained-comparison.json
+            .data/management-main-service-20261026/retained-final-comparison.json
+            .data/management-main-service-browser-20261026/main-service-browser-results.json
+            .data/management-main-service-browser-20261026/screenshots/
+      - name: Run shared composition compatibility acceptance with owned shutdown
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+          RUNTIME_LOG_BROWSER_CHANNEL: chromium
+        run: python3 tests/platform-management/run.py --suite compat
+      - name: Preserve non-secret shared composition compatibility results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-main-service-compat-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-main-service-compat-20261026/go-regression.json
+            .data/management-main-service-compat-20261026/retained-comparison.json
+            .data/management-main-service-compat-20261026/retained-final-comparison.json
+            .data/management-main-service-compat-boundaries-20261026/boundary-results.json
+            .data/management-readonly-main-service-compat-20261026/browser-results.json
+            .data/management-readonly-main-service-compat-20261026/screenshots/
+            .data/runtime-logs-review-main-service-compat-20261026/api-browser-results.json
+            .data/runtime-logs-review-main-service-compat-20261026/screenshots/
+      - name: Run directory product acceptance with owned shutdown
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+        run: python3 tests/platform-management/run.py --suite directory
+      - name: Preserve non-secret product directory acceptance results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-directory-product-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-directory-product-20261026/go-regression.json
+            .data/management-directory-product-20261026/product-contract-results.json
+            .data/management-directory-product-20261026/retained-comparison.json
+            .data/management-directory-product-20261026/retained-final-comparison.json
+            .data/management-directory-product-browser-20261026/browser-results.json
+            .data/management-directory-product-browser-20261026/screenshots/
+
+      - name: Recover shutdown only for this job's registered runs
+        if: always()
+        shell: bash
+        run: |
+          failed=0
+          for fixture in management-readonly-20261025 runtime-logs-api-20261026 management-main-service-20261026 management-main-service-compat-20261026 management-directory-product-20261026; do
+            if [ -f ".data/$fixture/lifecycle.json" ]; then
+              python3 tests/platform-management/stop.py --run "$fixture" || failed=1
+            fi
+          done
+          exit "$failed"
+      - name: Preserve non-secret shutdown receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-query-shutdown
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-readonly-20261025/cleanup-*.json
+            .data/management-readonly-20261025/acceptance-result.json
+            .data/runtime-logs-api-20261026/cleanup-*.json
+            .data/runtime-logs-api-20261026/acceptance-result.json
+            .data/management-main-service-20261026/cleanup-*.json
+            .data/management-main-service-20261026/acceptance-result.json
+            .data/management-main-service-compat-20261026/cleanup-*.json
+            .data/management-main-service-compat-20261026/acceptance-result.json
+            .data/management-directory-product-20261026/cleanup-*.json
+            .data/management-directory-product-20261026/acceptance-result.json

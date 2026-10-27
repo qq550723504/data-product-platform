@@ -1,0 +1,209 @@
+{
+  "api": {
+    "channel": "msedge",
+    "results": [
+      {
+        "name": "minimum API role remains SELECT-only and RP remains session-only",
+        "status": "PASS"
+      },
+      {
+        "name": "management session keeps original capability projection while records enforce separate permission",
+        "status": "PASS"
+      },
+      {
+        "name": "actual Next query page is canonical and 58 equal/adjacent nanosecond occurrences paginate without loss",
+        "status": "PASS"
+      },
+      {
+        "name": "second page exact detail reload browser history and return preserve cursor filters and focused row",
+        "status": "PASS"
+      },
+      {
+        "name": "changing filters clears old position and refresh retains the explicit window",
+        "status": "PASS"
+      },
+      {
+        "name": "HTTP references cannot cross caller workspace filters or purpose",
+        "status": "PASS"
+      },
+      {
+        "name": "workspace switching clears records and copied old detail stays rejected in the current workspace",
+        "status": "PASS"
+      },
+      {
+        "name": "database grant removal during held source I/O discards the response and regrant cannot revive old references",
+        "status": "PASS"
+      },
+      {
+        "name": "source-body token revocation is rechecked after I/O and old browser history cannot restore records",
+        "status": "PASS"
+      },
+      {
+        "name": "grant and access-token expiry fail closed until a fresh valid login",
+        "status": "PASS"
+      },
+      {
+        "name": "native wrong-space duplicate private incomplete and oversized responses expose no partial data",
+        "status": "PASS"
+      },
+      {
+        "name": "source timeout is bounded and cancellation returns no data",
+        "status": "PASS"
+      },
+      {
+        "name": "exact missing and changed record states return to the original list without replacing it",
+        "status": "PASS"
+      },
+      {
+        "name": "actual API rejects native selectors bodies cookies writes and ambiguous parameters",
+        "status": "PASS"
+      },
+      {
+        "name": "narrow Next layout and browser storage contain only safe fields with no business writes",
+        "status": "PASS"
+      }
+    ],
+    "realSources": "UNCONFIGURED",
+    "businessWrites": false,
+    "models": false,
+    "dispatch": false
+  },
+  "default-next-results.json": {
+    "channel": "msedge",
+    "stats": {
+      "startTime": "2026-10-26T02:34:29.882Z",
+      "duration": 6430.347000000001,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "name": "modern settings uses real-source setup states without synthetic people or write controls",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      }
+    ]
+  },
+  "retained-results.json": {
+    "channel": "msedge",
+    "stats": {
+      "startTime": "2026-10-26T02:34:36.773Z",
+      "duration": 23149.447,
+      "expected": 15,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "name": "withdrawal needs submitter and reason; resubmission and cancellation preserve exact submissions",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "draft cancellation requires reason and cannot invent acceptance or archive facts",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "receipt replacement blocks approval and can return on context change without a false criterion failure",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "invalidating an archived decision preserves original facts and exact receipt/submission trace after refresh",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "switching receipt cases clears unsaved evidence and outcome before recording a different case",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "workspace switches isolate identical demo IDs, frozen archives, dispositions and unsaved review input",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "storage refusal warns that local receipt changes are not saved and reload loses them",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "business receipt, return, resubmit, approve and archive stay local and retain history",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "modern Agent preserves semantic failure colors and quality reads issue no commands",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "leader quality history opens each exact report and keeps the earlier result after reload",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "repair review card selects recent tasks instead of navigating to a blank diagnosis form",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "prototype root stays synthetic; Core workbench uses server facts in the same modern shell",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "exact release trace shows safe historical facts, survives refresh and preserves return filter",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "cross-workspace or missing release never falls back to a known release",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      },
+      {
+        "name": "frontend field projection does not render unexpected upstream storage or source fields",
+        "status": "expected",
+        "attempts": [
+          "passed"
+        ]
+      }
+    ]
+  }
+}

@@ -23,14 +23,14 @@ test("new CSV -> original RAW -> explicit resolution -> manual review, without s
   await form.getByRole("checkbox").check();
   await form.getByLabel("选择 CSV 文件").setInputFiles({name:"invalid.csv",mimeType:"text/csv",buffer:Buffer.from("source_company_id,company_name\na,b,c")});
   await expect(form.getByRole("alert")).toContainText("第 2 行");
-  await expect(form.getByRole("button",{name:"登记来源并保存 RAW 版本"})).toBeDisabled();
+  await expect(form.getByRole("button",{name:"登记来源并保存 原始数据 版本"})).toBeDisabled();
   await form.getByLabel("选择 CSV 文件").setInputFiles({name:"operator-selected.csv",mimeType:"text/csv",buffer:Buffer.from(input.csvText)});
   await expect(page.getByText(/CSV 预检通过：2 条记录/)).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({path:test.info().outputPath("01-preview.png"),fullPage:true});
-  await form.getByRole("button",{name:"登记来源并保存 RAW 版本"}).click();
-  await expect(page.getByRole("status").filter({hasText:"原始 CSV 已保存为 RAW 版本"})).toBeVisible();
-  const rawURL=await page.getByRole("link",{name:"查看 RAW 数据集与版本"}).getAttribute("href");
+  await form.getByRole("button",{name:"登记来源并保存 原始数据 版本"}).click();
+  await expect(page.getByRole("status").filter({hasText:"原始 CSV 已保存为 原始数据 版本"})).toBeVisible();
+  const rawURL=await page.getByRole("link",{name:"查看 原始数据 数据集与版本"}).getAttribute("href");
   const resumeURL=await page.getByRole("link",{name:"保存此入口，稍后继续解析"}).getAttribute("href");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({path:test.info().outputPath("02-raw-created.png"),fullPage:true});
@@ -39,7 +39,7 @@ test("new CSV -> original RAW -> explicit resolution -> manual review, without s
   await expect(resolution.getByRole("button")).toBeDisabled();
   await resolution.getByRole("checkbox").check();
   await resolution.getByRole("button").click();
-  await expect(page.getByRole("status").filter({hasText:"WAITING_REVIEW"})).toBeVisible();
+  await expect(page.getByRole("status").filter({hasText:"待审核"})).toBeVisible();
   await page.getByRole("link",{name:"进入实体审核队列"}).click();
   const reviews=page.getByRole("form",{name:/^审核 /});
   await expect(reviews).toHaveCount(1);

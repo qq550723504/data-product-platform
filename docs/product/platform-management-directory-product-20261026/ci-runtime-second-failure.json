@@ -1,0 +1,33 @@
+{
+  "channel": "chromium",
+  "results": [
+    {
+      "name": "minimum API role remains SELECT-only and RP remains session-only",
+      "status": "PASS"
+    },
+    {
+      "name": "management session keeps original capability projection while records enforce separate permission",
+      "status": "PASS"
+    },
+    {
+      "name": "default one-hour window is canonical and refresh does not silently move it",
+      "status": "PASS"
+    },
+    {
+      "name": "React-owned history clearing removes records and persisted restore performs a fresh query",
+      "status": "FAIL",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n"
+    }
+  ],
+  "pageErrors": [
+    {
+      "case": "default one-hour window is canonical and refresh does not silently move it",
+      "path": "/settings/logs",
+      "message": "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

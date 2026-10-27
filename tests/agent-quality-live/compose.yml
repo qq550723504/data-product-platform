@@ -1,0 +1,46 @@
+# Disposable Q1 read-only integration dependencies. No worker or real data.
+services:
+  postgres:
+    image: postgres:16-alpine
+    network_mode: bridge
+    environment:
+      POSTGRES_DB: agent_q1_live
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: agent-q1-bootstrap-only
+    ports: ['127.0.0.1:25493:5432']
+    tmpfs: [/var/lib/postgresql/data]
+    labels: {codex.scope: agent-q1-live}
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U postgres -d agent_q1_live']
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    network_mode: bridge
+    command: [redis-server, --save, '', --appendonly, 'no']
+    ports: ['127.0.0.1:26493:6379']
+    labels: {codex.scope: agent-q1-live}
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  minio:
+    network_mode: bridge
+    # Existing local project build; source pin in deploy/trial/runtime.py.
+    # /usr/local/bin/minio --version reports commit 9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a.
+    image: dpp-pgi-minio@sha256:4b343185d3ce9148dbcb2ca720379faa793a140d54d6998b1cfe26f514fbb7fa
+    entrypoint: [/usr/local/bin/minio]
+    command: [server, /data, --address, ':9000']
+    environment:
+      MINIO_ROOT_USER: agent-q1-only
+      MINIO_ROOT_PASSWORD: agent-q1-local-objects-only
+    ports: ['127.0.0.1:29493:9000']
+    tmpfs: [/data]
+    labels: {codex.scope: agent-q1-live}
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, 'http://127.0.0.1:9000/minio/health/live']
+      interval: 2s
+      timeout: 2s
+      retries: 30

@@ -1,4 +1,5 @@
 "use client";
+import {businessText,displayText} from '../lib/business-language.mjs';
 
 import { useActionState, useEffect, useState } from "react";
 import { runComplianceCheck } from "@/app/datasets/[id]/versions/[versionId]/actions";
@@ -76,7 +77,7 @@ export function ComplianceCheckForm({
       onSubmit={rememberAttempt}
       className="detail-card"
       style={{ marginBottom: 18 }}
-      aria-label="运行 Compliance Check"
+      aria-label="运行 合规检查"
     >
       <input type="hidden" name="datasetId" value={datasetId} />
       <input type="hidden" name="versionId" value={versionId} />
@@ -84,24 +85,24 @@ export function ComplianceCheckForm({
 
       <div className="panel-header">
         <div>
-          <span className="eyebrow">Recoverable compliance attempt</span>
-          <h3>运行 Compliance Check</h3>
-          <p>attemptId 会保留在当前 URL；刷新后先恢复同一个 ComplianceResult，不会盲目创建第二条历史事实。</p>
+          <span className="eyebrow">Recoverable compliance 评测记录</span>
+          <h3>运行 合规检查</h3>
+          <p>评测记录Id 会保留在当前 URL；刷新后先恢复同一个 ComplianceResult，不会盲目创建第二条历史事实。</p>
         </div>
       </div>
 
       <div className="definition-list">
-        <div><dt>Attempt</dt><dd className="mono">{attemptId || "正在生成…"}</dd></div>
+        <div><dt>评测记录</dt><dd className="mono">{displayText(attemptId || "正在生成…")}</dd></div>
         <div>
           <dt>Policy</dt>
           <dd>
             <input
-              aria-label="Compliance Policy"
+              aria-label="合规策略"
               name="policyRef"
               value={policyRef}
               onChange={(event) => setPolicyRef(event.target.value)}
               maxLength={1024}
-              placeholder="留空使用 Core 默认合规策略"
+              placeholder="留空使用默认合规策略"
             />
           </dd>
         </div>
@@ -109,23 +110,23 @@ export function ComplianceCheckForm({
 
       {result ? (
         <p role="status" data-testid="compliance-attempt-status">
-          <strong>SUCCEEDED · Result {result.id.slice(0, 8)} · {result.gateDecision}</strong>
+          <strong>成功 · 结果记录 {displayText(result.id.slice(0, 8))} · {businessText(result.gateDecision)}</strong>
         </p>
       ) : null}
 
       <button type="submit" disabled={!canSubmit}>
-        {pending ? "正在执行，请勿重复操作…" : terminal ? "Attempt 已结束" : "运行 Compliance Check"}
+        {businessText(pending ? "正在执行，请勿重复操作…" : terminal ? "Attempt 已结束" : "运行 Compliance Check")}
       </button>
-      {terminal ? (
+      {displayText(terminal ? (
         <button type="button" onClick={startFreshAttempt} style={{ marginLeft: 8 }}>
-          开始新的 Compliance Check
+          开始新的 合规检查
         </button>
-      ) : null}
-      {!enabled ? <small style={{ display: "block", marginTop: 8 }}>Compliance 写入默认关闭；受信任 POC 可由服务端启用。</small> : null}
-      {enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>Core 只允许 READY / SUPERSEDED DatasetVersion 运行 Compliance Check。</small> : null}
-      {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
-      {state.ok ? <button type="button" onClick={() => window.location.reload()}>刷新合规结果</button> : null}
-      {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>刷新并核对 attempt 状态</button> : null}
+      ) : null)}
+      {displayText(!enabled ? <small style={{ display: "block", marginTop: 8 }}>当前环境未开放合规检查提交。</small> : null)}
+      {displayText(enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>仅可用或已被替代的成果版本可执行合规检查。</small> : null)}
+      {displayText(state.message ? <p role={state.ok ? "status" : "alert"}>{businessText(state.message)}</p> : null)}
+      {displayText(state.ok ? <button type="button" onClick={() => window.location.reload()}>刷新合规结果</button> : null)}
+      {displayText(state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>刷新并核对 评测记录 状态</button> : null)}
     </form>
   );
 }

@@ -22,6 +22,11 @@ coverage.out
 # Node
 node_modules/
 .schema-tests/
+.iam-tests/
+.next-acceptance-identity*/
+.tsconfig.acceptance-identity-1a.json
+.tsconfig.acceptance-identity-1b.json
+.tsconfig.acceptance-identity-leader.json
 .next/
 out/
 .turbo/
@@ -53,3 +58,5 @@ tmp/
 *.key
 *.p12
 *.pfx
+
+.runtime-log-tests/

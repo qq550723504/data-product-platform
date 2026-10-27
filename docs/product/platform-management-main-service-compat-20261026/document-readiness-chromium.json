@@ -1,0 +1,17 @@
+{
+  "channel": "chromium",
+  "results": [
+    {
+      "name": "unfinished destination blocks reload until load and preserves exact conditions and focus",
+      "status": "PASS"
+    },
+    {
+      "name": "failed readiness never reloads or retries",
+      "status": "PASS"
+    }
+  ],
+  "scope": "Loopback synthetic document only; no application API, DB or sources",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

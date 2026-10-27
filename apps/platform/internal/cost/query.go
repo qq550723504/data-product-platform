@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 )
 
 type Item struct {
@@ -26,10 +26,10 @@ type Item struct {
 }
 
 type QueryRepository struct {
-	pool *pgxpool.Pool
+	pool database.Queryer
 }
 
-func NewQueryRepository(pool *pgxpool.Pool) *QueryRepository {
+func NewQueryRepository(pool database.Queryer) *QueryRepository {
 	return &QueryRepository{pool: pool}
 }
 

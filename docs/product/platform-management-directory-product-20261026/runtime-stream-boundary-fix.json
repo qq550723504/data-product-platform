@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "runtime-stream-boundary-fix.v1",
+  "reproduction": {
+    "documentBytesPerSecond": [
+      32000,
+      8000,
+      2000
+    ],
+    "hydrationErrors": 3,
+    "verdict": "FAIL"
+  },
+  "breakpoint": {
+    "expected": "SECTION",
+    "nextHydratable": "P",
+    "nextHydratableParent": "SECTION",
+    "documentState": "loading"
+  },
+  "fix": "Existing React Suspense scopes streamed server children beneath RuntimeLogNavigation. Existing ManagementRowFocus is mounted within that boundary and accepts only log- prefixed authorized rendered rows.",
+  "candidateBoundaryMatrix": {
+    "rules": 3,
+    "hydrationErrors": 0
+  },
+  "finalMatrix": {
+    "documentBytesPerSecond": [
+      32000,
+      8000
+    ],
+    "hydrationErrors": 0
+  },
+  "unitTests": {
+    "pass": 12,
+    "fail": 0
+  },
+  "edge": {
+    "pass": 20,
+    "fail": 0
+  },
+  "chromium": {
+    "pass": 20,
+    "fail": 0
+  },
+  "limits": "Synthetic isolated production build and browser evidence. Does not admit a real source, enable business writes, prove original DB content, deploy the preview, or authorize merge. Latest exact-head full CI is recorded separately in the PR closure comment.",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

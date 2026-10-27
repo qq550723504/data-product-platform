@@ -13,6 +13,7 @@ package routing
 
 import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"strings"
 )
 
 // Handler names are the per-handler confirmation identities recorded in
@@ -31,7 +32,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v28+ext1+exec1+usage1+rem1+life3+schema1+obj1+s1"
+const Version = "c1-v29+ext1+exec1+usage1+rem1+life3+schema1+obj1+s1"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -58,6 +59,14 @@ func Routes(governanceProjection bool) []outbox.Route {
 	}
 
 	return []outbox.Route{
+		{EventType: "AgentTaskCreated"},
+		{EventType: "AgentPlanRevised"},
+		{EventType: "AgentPlanApproved"},
+		{EventType: "AgentTaskPaused"},
+		{EventType: "AgentTaskResumed"},
+		{EventType: "AgentTaskStopped"},
+		// Q2 records intent; no consumer is registered until Q3/Q4.
+		{EventType: "AgentActionRequested", RequiredHandlers: []string{"agent-action-dispatch"}},
 		{EventType: "SourceAdmissionPrepared"},
 		{EventType: "SourceAdmissionAccepted"},
 		{EventType: "SourceAdmissionRecorded"},
@@ -256,4 +265,25 @@ func sourceSchemaHandlers(enabled bool) []string {
 		return []string{HandlerSourceSchemaObservation}
 	}
 	return []string{}
+}
+
+// WorkerVersionFor identifies the currently implemented consumer profile.
+// Producer obligations remain authoritative on each persisted event.
+func WorkerVersionFor(governance bool) string {
+	return strings.Replace(VersionFor(governance), "c1-v", "c1-w", 1)
+}
+
+// NewWorkerRouter declares only implemented worker routes. Q2 records a future
+// Agent dispatch obligation but has no consumer: it must neither prevent the
+// existing worker from starting nor be declared retention-only/acknowledged.
+// A claimed Agent event retains its frozen missing-handler obligation and the
+// existing Dispatcher fails that claim without confirming or publishing it.
+func NewWorkerRouter(governance bool) (*outbox.Router, error) {
+	routes := []outbox.Route{}
+	for _, route := range Routes(governance) {
+		if route.EventType != "AgentActionRequested" {
+			routes = append(routes, route)
+		}
+	}
+	return outbox.NewRouter(WorkerVersionFor(governance), routes)
 }

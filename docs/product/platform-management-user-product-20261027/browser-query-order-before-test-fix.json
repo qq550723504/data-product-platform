@@ -1,0 +1,28 @@
+{
+  "entrypoint": "cmd/api",
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "actual product profile enables only explicit workspace account readers and no identity links",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration declares profile capability without health or identity admission claims",
+      "status": "PASS"
+    },
+    {
+      "name": "member account return preserves role search state second page row and refresh focus",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '?offset=25&q=%E7%A9%BA%E9%97%B4%E7%94%B2%E6%88%90%E5%91%98&role=management_viewer&state=active'\n- '?q=%E7%A9%BA%E9%97%B4%E7%94%B2%E6%88%90%E5%91%98&role=management_viewer&state=active&offset=25'\n"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "environment": "ISOLATED_SYNTHETIC",
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

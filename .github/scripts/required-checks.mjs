@@ -3,7 +3,7 @@ import { pathToFileURL } from 'node:url';
 export const requiredJobs = Object.freeze([
   'temporary-container-contracts',
   'go-platform', 'web-console', 'hop-smoke', 'splink-smoke', 'gx-smoke',
-  'label-studio-smoke', 'browser-contracts', 'live-core', 'demo',
+  'label-studio-smoke', 'browser-contracts', 'live-core', 'demo', 'acceptance-identity',
 ]);
 
 export function assertRequiredChecks(needs, docsOnly = false) {

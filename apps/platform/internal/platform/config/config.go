@@ -8,20 +8,21 @@ import (
 )
 
 type Config struct {
-	Environment      string
-	HTTPAddr         string
-	PostgresDSN      string
-	IndustryPackRoot string
-	RightsAPI        RightsAPIConfig
-	DeliveryAPI      DeliveryAPIConfig
-	HumanDecisionAPI HumanDecisionAPIConfig
-	Redis            RedisConfig
-	Storage          StorageConfig
-	OpenMetadata     OpenMetadataConfig
-	Hop              HopConfig
-	Splink           SplinkConfig
-	GX               GXConfig
-	LabelStudio      LabelStudioConfig
+	Environment            string
+	HTTPAddr               string
+	PostgresDSN            string
+	IndustryPackRoot       string
+	RightsAPI              RightsAPIConfig
+	DeliveryAPI            DeliveryAPIConfig
+	HumanDecisionAPI       HumanDecisionAPIConfig
+	AgentTasksWriteEnabled bool
+	Redis                  RedisConfig
+	Storage                StorageConfig
+	OpenMetadata           OpenMetadataConfig
+	Hop                    HopConfig
+	Splink                 SplinkConfig
+	GX                     GXConfig
+	LabelStudio            LabelStudioConfig
 }
 
 type RightsAPIConfig struct {
@@ -124,6 +125,10 @@ func Load() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
+	agentWritesEnabled, err := boolEnv("AGENT_TASKS_WRITE_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
 	openMetadataEnabled, err := boolEnv("OPENMETADATA_ENABLED", false)
 	if err != nil {
 		return Config{}, err
@@ -170,10 +175,11 @@ func Load() (Config, error) {
 	}
 
 	cfg := Config{
-		Environment:      stringEnv("APP_ENV", "development"),
-		HTTPAddr:         stringEnv("APP_HTTP_ADDR", ":8080"),
-		PostgresDSN:      stringEnv("POSTGRES_DSN", "postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable"),
-		IndustryPackRoot: stringEnv("INDUSTRY_PACK_ROOT", "../../industry-packs"),
+		AgentTasksWriteEnabled: agentWritesEnabled,
+		Environment:            stringEnv("APP_ENV", "development"),
+		HTTPAddr:               stringEnv("APP_HTTP_ADDR", ":8080"),
+		PostgresDSN:            stringEnv("POSTGRES_DSN", "postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable"),
+		IndustryPackRoot:       stringEnv("INDUSTRY_PACK_ROOT", "../../industry-packs"),
 		RightsAPI: RightsAPIConfig{
 			Token:        os.Getenv("RIGHTS_API_TOKEN"),
 			ActorID:      os.Getenv("RIGHTS_API_ACTOR_ID"),

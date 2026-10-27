@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "evidence-files.v1",
+  "files": [
+    {
+      "path": "browser-chromium-results.json",
+      "bytes": 3358,
+      "sha256": "2ea8ba4bb8e4a03df381be52b8ddf5d3af38709c3210808f7b4a5521d78fa4bf"
+    },
+    {
+      "path": "browser-edge-results.json",
+      "bytes": 3356,
+      "sha256": "3f77d3ed408b2139d9c6f190e6d66e194f67e610a24f7f3a4df1f83350c6788d"
+    },
+    {
+      "path": "browser-focus-before-fix.json",
+      "bytes": 1380,
+      "sha256": "fae4aa95305e38c45904ddd971c6ef5ebd572f1148ad88cb75c0b4728e5d43ea"
+    },
+    {
+      "path": "browser-grant-expectation-failure.json",
+      "bytes": 2228,
+      "sha256": "19a89fc963613e5a58cbdfbb343b2fa06ae892503a1bd320a6716c39a66f69d7"
+    },
+    {
+      "path": "ci-runtime-before-retention-fix.json",
+      "bytes": 3439,
+      "sha256": "6e6d5b1760a59cac388596d64c11721ce0e2d862252dadaff573d98233a5993f"
+    },
+    {
+      "path": "ci-runtime-second-failure.json",
+      "bytes": 1358,
+      "sha256": "47bbf585510166af1ddde7cf1aaf0f1e6c8b5667a4ba7dd1fde5a6f13f6cc45e"
+    },
+    {
+      "path": "configuration.png",
+      "bytes": 76658,
+      "sha256": "601e0ce69192f471e362e09a628ee9644805093b547a6102703da239f1e649f8"
+    },
+    {
+      "path": "diagnostic-head-ci.json",
+      "bytes": 2456,
+      "sha256": "eae4a526f4192404001254694ba0ae55f1327055825b47e612c1fdccc351e94e"
+    },
+    {
+      "path": "directory-ci-924f-summary.json",
+      "bytes": 470,
+      "sha256": "77fdab5ae946d0eda3a78a576e687e532bce4498a22312dc6f7530ad03253e8f"
+    },
+    {
+      "path": "directory-landing-chromium.json",
+      "bytes": 3358,
+      "sha256": "2ea8ba4bb8e4a03df381be52b8ddf5d3af38709c3210808f7b4a5521d78fa4bf"
+    },
+    {
+      "path": "failure-history.json",
+      "bytes": 4431,
+      "sha256": "fc2be0d19744b267eed5dfbacd3cea137f4a38aa6c3363a3dc3610d985db5c97"
+    },
+    {
+      "path": "go-regression.json",
+      "bytes": 738,
+      "sha256": "00c8fe2b64678510263897006c76943f98f09cbd68a41fbb7e83a5fdd5ca5d95"
+    },
+    {
+      "path": "hydration-breakpoint.json",
+      "bytes": 2315,
+      "sha256": "c5c7535b36fbc1bc3a5e4a3c6bd2640584d66e6bc1850d4a6ba43612138cdde8"
+    },
+    {
+      "path": "hydration-diagnostic-summary.json",
+      "bytes": 1719,
+      "sha256": "d3f594cd9ef4d56f74d27a19d6992d0b7fee583b40c242d2b81e4ef9df5f1b70"
+    },
+    {
+      "path": "hydration-network-before.json",
+      "bytes": 14302,
+      "sha256": "510f21589205c29d2c4e6fd3045bc6b7313ec5897dbc6e8957cf52f9ac1a67e2"
+    },
+    {
+      "path": "hydration-network-boundary-candidate.json",
+      "bytes": 4633,
+      "sha256": "836d835a2a412cb82df0a924021c4628c9b256275e6da4fac24e5fc82c442eff"
+    },
+    {
+      "path": "hydration-network-final.json",
+      "bytes": 3102,
+      "sha256": "cbed5a5a8f34b1496bf51994d4eb990dbfede5086a84411bd1c997d58bc488fe"
+    },
+    {
+      "path": "local-runtime-before-landing-fix.json",
+      "bytes": 2358,
+      "sha256": "f9b31751c0d0da4b1c30871ac99b14192ebf7f52fe6fd21fb7f82c19caa37a48"
+    },
+    {
+      "path": "local-runtime-before-retention-fix.json",
+      "bytes": 641,
+      "sha256": "5e13db1e9de7cb6ef8e57334cb8af1a5204140e9923e0a5e8f4d393bf7cf2bd0"
+    },
+    {
+      "path": "local-runtime-landing-label-failure.json",
+      "bytes": 977,
+      "sha256": "91aaf6b7da42faca17602a7213bba47d08da12949bbc8bde323526ca37f26e53"
+    },
+    {
+      "path": "management-landing-chromium.json",
+      "bytes": 7260,
+      "sha256": "7892ad4941975747f5c2314e9b221893dd634378e901b104fcaa690d251ce2fb"
+    },
+    {
+      "path": "management-landing-denial-failure.json",
+      "bytes": 2029,
+      "sha256": "e61bf6609e5724c463874eff45cc78a0e1c7b033df7bd0da4b457bd2e6315259"
+    },
+    {
+      "path": "member-detail.png",
+      "bytes": 55241,
+      "sha256": "00bb7498b3b9f960f4333bf69f1c626b36ddf091b281277f1c48fc635c81a6ae"
+    },
+    {
+      "path": "member-return.png",
+      "bytes": 82438,
+      "sha256": "97e2eb5dd1c4de66a93cd10bcfabd8254a7e9dd053d529d56fa94668025a6ec1"
+    },
+    {
+      "path": "mobile.png",
+      "bytes": 32927,
+      "sha256": "5bda67e2876dac5a1ce14b059c08a07e05cf10c9d24efe9e170c31a2d53e0b42"
+    },
+    {
+      "path": "organization.png",
+      "bytes": 66845,
+      "sha256": "02a3cecf725cb28e7c8c9f7b591f9a50cee31c7c07110439ce2c5ee460d3fbd8"
+    },
+    {
+      "path": "product-contract-results.json",
+      "bytes": 1227,
+      "sha256": "aa75809746a436d68fb43a389eb895ffebcd7c7758c4514958167fab866ea5c4"
+    },
+    {
+      "path": "retained-comparison.json",
+      "bytes": 2224,
+      "sha256": "50c3d71f958e66aa1cbb04fc7caadb180adaf8422b8357abddab409c507a375b"
+    },
+    {
+      "path": "retained-history-comparison.json",
+      "bytes": 1790,
+      "sha256": "808eb862d9c0c56b462690b2a1dbad8e0ce7502307213080f0234d744951830d"
+    },
+    {
+      "path": "retained-hydration-comparison.json",
+      "bytes": 2224,
+      "sha256": "50c3d71f958e66aa1cbb04fc7caadb180adaf8422b8357abddab409c507a375b"
+    },
+    {
+      "path": "retained-landing-comparison.json",
+      "bytes": 2224,
+      "sha256": "50c3d71f958e66aa1cbb04fc7caadb180adaf8422b8357abddab409c507a375b"
+    },
+    {
+      "path": "runtime-boundary-focus-failure.json",
+      "bytes": 1609,
+      "sha256": "8df9531c743ad5650f43e3c5f5b3c7e366d5cc9b9b19f42a720349e49d83091b"
+    },
+    {
+      "path": "runtime-history-chromium.json",
+      "bytes": 2795,
+      "sha256": "641b544e0ba42760b25bb5ebb025ad6b9884b3d067a56c10d94b3699d6ff37c4"
+    },
+    {
+      "path": "runtime-history-edge.json",
+      "bytes": 2793,
+      "sha256": "ef214581a6691254faeada2fc8cc8ae1bb2d0c1973696afbc7e45f119d77a2eb"
+    },
+    {
+      "path": "runtime-history-fix.json",
+      "bytes": 1191,
+      "sha256": "c6f58f73d3f07357e6fc73dfdf8ea283322e1899d4a9e696bf2fee61eb537fd5"
+    },
+    {
+      "path": "runtime-hydration-final-chromium.json",
+      "bytes": 3009,
+      "sha256": "2ef7b70fba5e691a4fbc138c165d816ea106db092fe02fe0a8700fc1a5e8c044"
+    },
+    {
+      "path": "runtime-hydration-final-edge.json",
+      "bytes": 3007,
+      "sha256": "73a0f286c2d4848d24b3200efd3c5c8cd4fcc9f3b6ccb3d3cc5dcf738a028408"
+    },
+    {
+      "path": "runtime-stream-boundary-fix.json",
+      "bytes": 1275,
+      "sha256": "246977292eec2188ababcf896d75bc394e3f692984cd90ae76ceeb46d5860d0b"
+    }
+  ]
+}

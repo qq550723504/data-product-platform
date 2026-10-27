@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "runtime-hydration-diagnostic.v1",
+  "failedHead": "6e79547329cb00d4c1d9f2b1753db922fd31eeb7",
+  "run": 40344864872,
+  "ci": {
+    "success": 14,
+    "failed": [
+      "acceptance-identity / identity-1a",
+      "required"
+    ],
+    "directoryProduct": "NOT_RUN"
+  },
+  "rootCause": "UNRESOLVED",
+  "localReproduction": {
+    "sharedComponentDev": {
+      "cases": 20,
+      "errors": 0
+    },
+    "fullShellDev": {
+      "cases": 8,
+      "errors": 0
+    },
+    "fullShellProduction": {
+      "cases": 8,
+      "errors": 0
+    },
+    "newNextOIDCPGDev": {
+      "checks": 19,
+      "errors": 0
+    },
+    "cpuAndScriptDelayMatrix": {
+      "cases": 18,
+      "errors": 0
+    }
+  },
+  "diagnosticMeaning": "NOT_REPRODUCED locally; these are not proof of a root-cause fix and do not replace the failed Linux CI.",
+  "environment": "New synthetic copied-source kit with separate PG/API/IdP/Web tuple 25610/18610/19210/4410; existing databases, sources, sessions and previews not reset. An initial incomplete clone failed preparation and was retained separately.",
+  "nextEvidence": "Bounded last-400 event ring with dropped count, trusted/persisted flags, pathname without query, relative timing, text-free tag/hidden structure. No event replacement/error filtering; original zero-error assertion remains.",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "diagnosticValidation": {
+    "actualNextOIDCPGDevChecks": 19,
+    "errors": 0,
+    "scope": "Native lifecycle metadata listener verified; not a root-cause reproduction. Earlier developer-tools stack-frame POST was blocked by the unchanged no-write assertion and retained privately."
+  }
+}

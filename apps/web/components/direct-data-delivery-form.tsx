@@ -1,4 +1,5 @@
 "use client";
+import {businessText,displayText} from '../lib/business-language.mjs';
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -185,32 +186,32 @@ export function DirectDataDeliveryForm(props: Props) {
     <section className="detail-card" style={{ marginTop: 18 }} data-testid="direct-data-delivery">
       <div className="panel-header">
         <div>
-          <h3>Direct Data 下载</h3>
-          <p>浏览器不会接触 Delivery API token。idempotency key 会在请求前写入 URL；响应丢失后先恢复 Operation，再决定是否创建新 attempt。</p>
+          <h3>数据下载 下载</h3>
+          <p>浏览器不会接触 Delivery API token。idempotency key 会在请求前写入 URL；响应丢失后先恢复 Operation，再决定是否创建新 评测记录。</p>
         </div>
         <span className="eyebrow">Trusted server proxy</span>
       </div>
       <div className="definition-list">
-        <div><dt>Idempotency Key</dt><dd className="mono">{key || "提交时生成"}</dd></div>
-        <div><dt>Consumer</dt><dd>{props.consumer}</dd></div>
-        <div><dt>Delivery</dt><dd>{props.delivery}</dd></div>
+        <div><dt>Idempotency Key</dt><dd className="mono">{displayText(key || "提交时生成")}</dd></div>
+        <div><dt>Consumer</dt><dd>{displayText(props.consumer)}</dd></div>
+        <div><dt>Delivery</dt><dd>{displayText(props.delivery)}</dd></div>
       </div>
-      {recoveryPending ? <p role="status">正在恢复当前 Delivery attempt…</p> : null}
-      {statusText ? <p role="status" data-testid="delivery-operation-status"><strong>{statusText}</strong></p> : null}
-      {message ? <p role="status">{message}</p> : null}
+      {displayText(recoveryPending ? <p role="status">正在恢复当前 Delivery 评测记录…</p> : null)}
+      {displayText(statusText ? <p role="status" data-testid="delivery-operation-status"><strong>{businessText(statusText)}</strong></p> : null)}
+      {message ? <p role="status">{displayText(message)}</p> : null}
       <button type="button" onClick={download} disabled={buttonDisabled}>
-        {submitted ? "下载请求已提交" : recoveryStatus === "ISSUED" ? "该 attempt 已签发" : "下载 Direct Data"}
+        {businessText(submitted ? "下载请求已提交" : recoveryStatus === "ISSUED" ? "该 attempt 已签发" : "下载 Direct Data")}
       </button>
-      {terminal ? (
+      {displayText(terminal ? (
         <button type="button" style={{ marginLeft: 8 }} onClick={() => startFresh(recoveryStatus === "ISSUED")}>
-          {recoveryStatus === "ISSUED" ? "创建重试下载 attempt" : "创建新的下载 attempt"}
+          {businessText(recoveryStatus === "ISSUED" ? "创建重试下载 attempt" : "创建新的下载 attempt")}
         </button>
-      ) : null}
-      {!props.enabled ? <small style={{ display: "block", marginTop: 8 }}>Direct Data 下载默认关闭；需由服务端启用并配置 trusted delivery identity。</small> : null}
-      {props.enabled && !props.allowed ? <small style={{ display: "block", marginTop: 8 }}>当前 Delivery Eligibility 为 BLOCKED，不能发起下载。</small> : null}
-      {props.enabled && !directData ? <small style={{ display: "block", marginTop: 8 }}>当前 Profile 不是 DIRECT_DATA delivery。</small> : null}
-      {props.enabled && directData && !supportedScope ? <small style={{ display: "block", marginTop: 8 }}>Direct Data 当前只支持 ALL_RESOURCE scope。</small> : null}
-      <iframe name="direct-data-download-frame" title="Direct Data download transport" hidden />
+      ) : null)}
+      {displayText(!props.enabled ? <small style={{ display: "block", marginTop: 8 }}>数据下载 下载默认关闭；需由服务端启用并配置 trusted delivery identity。</small> : null)}
+      {displayText(props.enabled && !props.allowed ? <small style={{ display: "block", marginTop: 8 }}>当前 Delivery Eligibility 为 已阻断，不能发起下载。</small> : null)}
+      {displayText(props.enabled && !directData ? <small style={{ display: "block", marginTop: 8 }}>当前 Profile 不是 DIRECT_DATA delivery。</small> : null)}
+      {displayText(props.enabled && directData && !supportedScope ? <small style={{ display: "block", marginTop: 8 }}>数据下载 当前只支持 全部资源 scope。</small> : null)}
+      <iframe name="direct-data-download-frame" title="数据下载 download transport" hidden />
     </section>
   );
 }

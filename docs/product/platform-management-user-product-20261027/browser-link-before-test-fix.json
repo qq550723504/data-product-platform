@@ -1,0 +1,32 @@
+{
+  "entrypoint": "cmd/api",
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "actual product profile enables only explicit workspace account readers and no identity links",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration declares profile capability without health or identity admission claims",
+      "status": "PASS"
+    },
+    {
+      "name": "member account return preserves role search state second page row and refresh focus",
+      "status": "PASS"
+    },
+    {
+      "name": "member detail account membership loop retains original conditions and fixed origins",
+      "status": "FAIL",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: '查看账号资料', exact: true })\u001b[22m\n"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "environment": "ISOLATED_SYNTHETIC",
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

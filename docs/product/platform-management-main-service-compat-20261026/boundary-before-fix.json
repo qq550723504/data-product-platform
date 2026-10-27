@@ -1,0 +1,46 @@
+{
+  "transport": "Playwright APIRequestContext",
+  "results": [
+    {
+      "name": "members/token-revoked/source-permission-failed",
+      "status": "FAIL",
+      "error": "post-I/O authority must take precedence over source failure\n\n503 !== 401\n"
+    },
+    {
+      "name": "members/token-expired/source-permission-failed",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "members/grant-revoked/source-permission-failed",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "users/token-revoked/source-permission-failed",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "users/token-expired/source-permission-failed",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "users/grant-revoked/source-permission-failed",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "organization/token-revoked/source-permission-failed",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "organization/token-expired/source-permission-failed",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "organization/grant-revoked/source-permission-failed",
+      "status": "NOT_RUN"
+    }
+  ],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

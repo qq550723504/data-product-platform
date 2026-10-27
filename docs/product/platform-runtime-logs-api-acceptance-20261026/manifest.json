@@ -1,0 +1,25 @@
+{
+  "scope": "Actual HTTP/RP/PG using independent synthetic source only; real sources UNCONFIGURED",
+  "files": [
+    {
+      "file": "detail.png",
+      "bytes": 52044,
+      "sha256": "521e34c363e5fb25cae527d3b792b9e655d8323bf3ede0fc21f944a3a5905902"
+    },
+    {
+      "file": "list.png",
+      "bytes": 172929,
+      "sha256": "2870e12022f8a49d2d7c47e4c1e6a4517d4d9ae0dfaa72a3aac0de0d69da4e31"
+    },
+    {
+      "file": "mobile.png",
+      "bytes": 31390,
+      "sha256": "39be97bd3de5c056354ba4876bafdd9827c2df5ed66ba34de3f258ee34cc19c2"
+    },
+    {
+      "file": "results.json",
+      "bytes": 6230,
+      "sha256": "6b78b374b9fa5d70df95c5ead531646372db785b34042b268079cdc15430d688"
+    }
+  ]
+}

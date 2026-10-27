@@ -4,6 +4,7 @@ Docker is a recording double; policy checking invokes the actual compiled Go
 CLI and maintained MinIO library. No provider or live environment is contacted.
 """
 import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -18,6 +19,46 @@ spec = importlib.util.spec_from_file_location('preflight', Path(__file__).with_n
 v = importlib.util.module_from_spec(spec); spec.loader.exec_module(v)
 PACKET = v.ROOT / 'docs/acceptance/evidence/issue307-d1/remaining-candidate07'
 RECORDED = PACKET.parent / 'delete-confirmed-v17-window01/business-races/readonly'
+
+def build_checker(destination):
+    result = subprocess.run(['go', 'build', '-o', str(destination), './cmd/lifecycle-fixture-readonly-check'],
+                            cwd=v.ROOT / 'apps/platform', capture_output=True)
+    if result.returncode:
+        # Go diagnostics can contain private proxy URLs. Expose only fixed
+        # classifications and byte fingerprints, never raw output or env.
+        stderr = result.stderr.lower()
+        signals = {'TOOLCHAIN_DOWNLOAD': b'download go', 'DEPENDENCY_DOWNLOAD': b'go: downloading',
+                   'NETWORK_TIMEOUT': b'timeout', 'NETWORK_EOF': b'unexpected eof',
+                   'TLS_ERROR': b'tls', 'DNS_ERROR': b'no such host',
+                   'DISK_FULL': b'no space left on device', 'COMPILATION_ERROR': b'.go:',
+                   'GO_VERSION_REQUIRED': b'requires go'}
+        summary = {'phase': 'readonly_checker_build', 'exit_code': result.returncode,
+                   'categories': [code for code, needle in signals.items() if needle in stderr] or ['UNKNOWN'],
+                   'stdout_bytes': len(result.stdout), 'stderr_bytes': len(result.stderr),
+                   'stdout_sha256': hashlib.sha256(result.stdout).hexdigest(),
+                   'stderr_sha256': hashlib.sha256(result.stderr).hexdigest()}
+        raise RuntimeError('offline Go build failed: ' + json.dumps(summary, sort_keys=True))
+
+class BuildDiagnosticsTests(unittest.TestCase):
+    def test_failure_stays_blocking_without_exposing_credentials_or_raw_paths(self):
+        private = b'go: downloading private/module; https://user:SECRET@proxy.invalid/private?token=HIDDEN: i/o timeout'
+        result = subprocess.CompletedProcess(['go'], 1, b'PRIVATE_STDOUT', private)
+        with patch.object(subprocess, 'run', return_value=result):
+            with self.assertRaises(RuntimeError) as error: build_checker(Path('never-built'))
+        message = str(error.exception)
+        for value in ['SECRET', 'HIDDEN', 'proxy.invalid', 'private/module', 'PRIVATE_STDOUT']:
+            self.assertNotIn(value, message)
+        self.assertIn('NETWORK_TIMEOUT', message)
+        self.assertIn(hashlib.sha256(private).hexdigest(), message)
+        self.assertIn('"exit_code": 1', message)
+
+    def test_unknown_failures_remain_blocked_and_success_does_not_retry(self):
+        with patch.object(subprocess, 'run', return_value=subprocess.CompletedProcess(['go'], 9, b'', b'unclassified')) as run:
+            with self.assertRaisesRegex(RuntimeError, 'UNKNOWN'): build_checker(Path('never-built'))
+            self.assertEqual(run.call_count, 1)
+        with patch.object(subprocess, 'run', return_value=subprocess.CompletedProcess(['go'], 0, b'', b'')) as run:
+            build_checker(Path('recorded-success'))
+            self.assertEqual(run.call_count, 1)
 
 class DockerDouble:
     def __init__(self, group, recorded, mutation):
@@ -64,11 +105,9 @@ class CompleteEntryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.build = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(cls.build.cleanup)
         cls.checker = Path(cls.build.name) / 'checker.exe'
-        subprocess.run(['go', 'build', '-o', str(cls.checker), './cmd/lifecycle-fixture-readonly-check'],
-                       cwd=v.ROOT / 'apps/platform', check=True, capture_output=True)
-    @classmethod
-    def tearDownClass(cls): cls.build.cleanup()
+        build_checker(cls.checker)
     def full_entry(self, mutation=None, denied=False):
         group = v.load(PACKET / 'candidate.json')['Groups'][0]
         double = DockerDouble(group, RECORDED, mutation)

@@ -11,11 +11,13 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/contract/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 )
 
 type Handler struct {
-	service *application.Service
-	repo    *infrastructure.PostgresRepository
+	Principal principal.Resolver
+	service   *application.Service
+	repo      *infrastructure.PostgresRepository
 }
 
 func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository) *Handler {
@@ -24,7 +26,7 @@ func NewHandler(service *application.Service, repo *infrastructure.PostgresRepos
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/data-contracts/versions", h.createVersion)
-	mux.HandleFunc("GET /api/v1/contract-versions/{versionId}", h.getVersion)
+	(ReadOnlyHandler{Reader: h.repo, Principal: h.Principal}).Register(mux)
 	mux.HandleFunc("POST /api/v1/contract-versions/{versionId}/publish", h.publishVersion)
 }
 
@@ -62,24 +64,6 @@ func (h *Handler) createVersion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusCreated, versionResponse(version))
-}
-
-func (h *Handler) getVersion(w http.ResponseWriter, r *http.Request) {
-	versionID, err := uuid.Parse(r.PathValue("versionId"))
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CONTRACT_VERSION_ID", "versionId must be a UUID", nil)
-		return
-	}
-	version, err := h.repo.GetVersion(r.Context(), versionID)
-	if err != nil {
-		if errors.Is(err, infrastructure.ErrNotFound) {
-			httpserver.WriteError(w, r, http.StatusNotFound, "CONTRACT_VERSION_NOT_FOUND", "contract version not found", nil)
-			return
-		}
-		httpserver.WriteError(w, r, http.StatusInternalServerError, "CONTRACT_VERSION_READ_FAILED", err.Error(), nil)
-		return
-	}
-	writeJSON(w, http.StatusOK, versionResponse(version))
 }
 
 func (h *Handler) publishVersion(w http.ResponseWriter, r *http.Request) {

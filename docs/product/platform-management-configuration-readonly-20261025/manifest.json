@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-10-25T13:44:10.223171+00:00",
+  "worktreeBaseHEAD": "be449a1ac3b534f96c51bf67e20dc7d0d5e26fe4",
+  "worktreeContainsUncommittedChanges": true,
+  "attestation": "Captured worktree hashes and build identifiers only; not a runtime commit attestation. PR CI is reported separately for exact pushed HEAD.",
+  "reuseSource": "qq550723504/shuomi-ai-commerce@e29058c56df4294e1c612b3a705ab767bc333188",
+  "sourceHashes": {
+    "apps/platform/internal/platformmanagement/configuration.go": "e9335f3041d99ae92eea9797ad52e047d79f6b8ffd88ed4149b33165ae4cf3e0",
+    "apps/platform/internal/platformmanagement/configuration_test.go": "8c0abaf9bf56fd48d4f5f8e1aaa0c75e835c617dac33967f0477442e82a708d0",
+    "apps/platform/internal/platformmanagement/http.go": "3be5f14ca523069b80beb1ab69ed2db8121cdd400f9ea552e5dd5af96869b205",
+    "apps/web/components/management-configuration.tsx": "0aaef6c5d3322805022c43ec4a7e2fc228f0e9b2984b5aad6c18a4e3f87588cc",
+    "apps/web/components/management-workspace.tsx": "c089c24a08c5044c2f24cc88fbcbaf6e3aa7ca2f9a44c134e424a4e0561c11d6",
+    "apps/web/components/management-organization.tsx": "411a146b651bcdc5f6a5a836dea745d9008e4174e3e060140e6ed2561429a2f4",
+    "apps/web/components/management-page.tsx": "8d565aa9c32fc38b2fafa917f6bc7f098ec6e58037ca1292ab91ab6435fb14c2",
+    "apps/web/lib/platform-management.ts": "1ee053ee2e9944c9317763465632d9e5bb3b6b403d38a7610fcf4f5b3fbb1ab3",
+    "apps/web/lib/iam-core.ts": "b6c4b1c1d6fc79057f72f12f00c7e6b844c14a57117c1d320c4bf938abeed7b0",
+    "apps/web/tests/platform-management.test.mjs": "1ecaf0d4a4485d2065ecf03c9af9799c224127afd2cc5b46d2ef5f80c0c51c13",
+    "tests/platform-management/browser.mjs": "768da5000e31fb5ffb6738c7f0d200733a7e9c57bf71ddd79dba099f33efa991",
+    "tests/leader-demo/preview.ps1": "04f9a248bcab09aa6a9679b6839ae97ac275c6d4c31b97f85939418992f58379"
+  },
+  "dist": ".next-acceptance-identity-management-configuration-20261025",
+  "buildId": "EQGN2NkfuFhnblMeiwmIm",
+  "apiBinarySHA256": "af149d1c23b52e02b70f29d53c10c3dcdc3e811072ead311027b9d4c5e81db72",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "checks": {
+    "isolatedEdge": 51,
+    "defaultUnconfigured": 1,
+    "retainedAgentAndReceipt": 21,
+    "webPassed": 358,
+    "webSkipped": 2,
+    "postgres": "PASS independent fresh scratch"
+  },
+  "files": {
+    "browser-results.json": "7d5d4b2d59ec35f714647d14a18fde4dc72c27394ec6ceff340f896912a3ea74",
+    "configuration-mobile.png": "1874a369f131f24777f95992e6beddf8d33cb174fa0c19ea773fcb8633bd2b77",
+    "configuration-revoked.png": "602a134161b290fe14c78340e8510f909d281b4daf7c3fc690be358bfdff501b",
+    "configuration.png": "9f965a0f751c2490a9f7af22083a479ce64f04f5db496981af36812af9b38200",
+    "retained-routes.json": "03ab00306a6de41e174b1ee768e800bfe17db18025762f4e9e717e8f414066d5"
+  }
+}

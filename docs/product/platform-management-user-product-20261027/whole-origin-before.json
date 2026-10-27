@@ -1,0 +1,32 @@
+{
+  "entrypoint": "cmd/api",
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "actual product profile enables only explicit workspace account readers and no identity links",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration declares profile capability without health or identity admission claims",
+      "status": "PASS"
+    },
+    {
+      "name": "whole product sidebar reaches all nine settings pages with honest configured and unavailable states",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration role member account and role return keep the fixed entry origin",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ null\n- 'configuration'\n"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "environment": "ISOLATED_SYNTHETIC",
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

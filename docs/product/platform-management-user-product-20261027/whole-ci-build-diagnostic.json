@@ -1,0 +1,29 @@
+{
+  "head": "2b0eb7c7b817fa9ef17f4c9e4a1cfabadddfdd0c",
+  "run": 40439945319,
+  "job": 121977689487,
+  "failedStep": "Confirmed disposal driver safety tests (no provider I/O)",
+  "phase": "test_verify_remaining_native.CompleteEntryTests.setUpClass",
+  "command": "go build ./cmd/lifecycle-fixture-readonly-check",
+  "exitCode": 1,
+  "stderr": "NOT_EXPOSED_BY_ORIGINAL_TEST",
+  "originalBuildRootCause": "UNKNOWN",
+  "additionalFailure": "artifact upload timed out after the action retries",
+  "retryOfOriginalJob": "NOT_RUN",
+  "change": "pin existing CI Go version and expose fixed classifications plus byte fingerprints; retain every original assertion",
+  "localNormal": {
+    "pass": 7,
+    "fail": 0
+  },
+  "localOptimized": {
+    "pass": 7,
+    "fail": 0
+  },
+  "providerIO": 0,
+  "dbIO": 0,
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

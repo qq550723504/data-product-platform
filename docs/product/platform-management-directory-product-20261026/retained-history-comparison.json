@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "fixture-preservation.v1",
+  "verdict": "PASS",
+  "resources": [
+    {
+      "resource": "original",
+      "changedFields": [],
+      "before": {
+        "present": false,
+        "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "mountCount": 0
+      },
+      "after": {
+        "present": false,
+        "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "mountCount": 0
+      },
+      "mountOrderOnly": false
+    },
+    {
+      "resource": "management",
+      "changedFields": [],
+      "before": {
+        "present": true,
+        "sha256": "ff376b16ca79020a6cbde17f633f764116c18da64f31da9c58384968713be80b",
+        "mountCount": 2
+      },
+      "after": {
+        "present": true,
+        "sha256": "ff376b16ca79020a6cbde17f633f764116c18da64f31da9c58384968713be80b",
+        "mountCount": 2
+      },
+      "mountOrderOnly": false
+    },
+    {
+      "resource": "runtime",
+      "changedFields": [],
+      "before": {
+        "present": true,
+        "sha256": "7c416c43b3d729fe72df6cb2854c13b2867991c3abeef24ba071478b356d5d78",
+        "mountCount": 2
+      },
+      "after": {
+        "present": true,
+        "sha256": "7c416c43b3d729fe72df6cb2854c13b2867991c3abeef24ba071478b356d5d78",
+        "mountCount": 2
+      },
+      "mountOrderOnly": false
+    },
+    {
+      "resource": "main-service",
+      "changedFields": [],
+      "before": {
+        "present": true,
+        "sha256": "22012e1f5c5e3d70910934bae1bd3bd26b43064540eed18bcb4936a6999a850f",
+        "mountCount": 2
+      },
+      "after": {
+        "present": true,
+        "sha256": "22012e1f5c5e3d70910934bae1bd3bd26b43064540eed18bcb4936a6999a850f",
+        "mountCount": 2
+      },
+      "mountOrderOnly": false
+    }
+  ]
+}

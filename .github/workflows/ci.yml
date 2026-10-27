@@ -80,7 +80,9 @@ jobs:
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
     name: temporary-container-contracts (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 5
+    # Windows runs the complete normal and -O lifecycle suites sequentially.
+    # Keep all checks; allow time for the remaining ownership and ACL steps.
+    timeout-minutes: ${{ matrix.os == 'windows-latest' && 10 || 5 }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -148,6 +150,10 @@ jobs:
           python -O -B examples/lifecycle-d1/test_window_six_support.py
           python -B examples/lifecycle-d1/test_attest_remaining_executable.py
           python -O -B examples/lifecycle-d1/test_attest_remaining_executable.py
+      - name: Test acceptance shutdown ownership, failure and native process handles
+        run: |
+          python -B -m unittest discover -s tests -p test_acceptance_lifecycle.py -v
+          python -O -B -m unittest discover -s tests -p test_acceptance_lifecycle.py -v
       - name: Test completed helper ownership, archival, and safe collection
         run: python examples/temporary_containers_test.py
       - name: Test lifecycle wrapper default retirement and explicit retention without Docker
@@ -203,7 +209,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Verify dependency lock is tidy
@@ -323,6 +329,50 @@ jobs:
             /products/11111111-1111-4111-8111-111111111111/releases/22222222-2222-4222-8222-222222222222; do
             curl -fsS "http://127.0.0.1:3000${route}" >/dev/null
           done
+
+      - name: Install interaction browser dependencies
+        working-directory: tests/browser
+        run: |
+          npm install --ignore-scripts --no-package-lock --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Verify isolated settings interaction preview
+        working-directory: tests/browser
+        env:
+          GOVERNANCE_SETTINGS_INTERACTION_DEMO: 'true'
+          GOVERNANCE_PREVIEW_MODE: synthetic-readonly
+          BROWSER_IAM_MODE: 'off'
+          SETTINGS_ADMIN_UI_ENABLED: 'false'
+          SETTINGS_INTERACTION_BROWSER_CHANNEL: chromium
+          NEXT_TELEMETRY_DISABLED: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node start-settings-interaction-preview.mjs > "$RUNNER_TEMP/settings-interaction.log" 2>&1 &
+          INTERACTION_PID=$!
+          trap 'kill "$INTERACTION_PID" 2>/dev/null || true; cat "$RUNNER_TEMP/settings-interaction.log"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4445/ >/dev/null; then
+              break
+            fi
+            if ! kill -0 "$INTERACTION_PID" 2>/dev/null; then
+              exit 1
+            fi
+            sleep 1
+          done
+          npx playwright test --config playwright.settings-interaction.config.mjs
+
+      - name: Upload interaction preview results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: settings-interaction-preview
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/settings-interaction-browser/run-*/results.json
+            .data/settings-interaction-browser/run-*/artifacts/**/test-failed-*.png
+            tests/browser/.data/settings-interaction-*.png
 
   hop-smoke:
     needs: changes
@@ -457,7 +507,7 @@ jobs:
         if: steps.changes.outputs.run_hop == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.8'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Run real isolated B2 object storage gate
@@ -667,7 +717,7 @@ jobs:
         if: steps.changes.outputs.run_gx == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Install pinned GX runtime
@@ -780,7 +830,7 @@ jobs:
         if: steps.changes.outputs.run_label_studio == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.x'
+          go-version: '1.26.10'
           cache-dependency-path: apps/platform/go.sum
 
       - name: Start pinned Label Studio reference runtime
@@ -844,10 +894,15 @@ jobs:
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
     uses: ./.github/workflows/demo-lifecycle.yml
 
+  acceptance-identity:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    uses: ./.github/workflows/acceptance-identity.yml
+
   required:
     name: required
     if: ${{ always() }}
-    needs: [changes, temporary-container-contracts, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo]
+    needs: [changes, temporary-container-contracts, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo, acceptance-identity]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

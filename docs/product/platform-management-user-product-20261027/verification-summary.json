@@ -1,0 +1,24 @@
+{
+  "environment": "ISOLATED_SYNTHETIC",
+  "entrypoint": "cmd/api",
+  "parentSHA": "792daa1384c8c29b71f7a7c267ae7e66c8862534",
+  "nextBuild": "PASS",
+  "iamTests": {
+    "pass": 33,
+    "skip": 2,
+    "fail": 0
+  },
+  "fixturePreservationTests": {
+    "ordinary": 13,
+    "optimized": 13,
+    "fail": 0
+  },
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "defaultPreview": "UNCONNECTED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false,
+  "merge": "NOT_AUTHORIZED",
+  "oldDatabaseSQLOrDDL": "NOT_RUN"
+}

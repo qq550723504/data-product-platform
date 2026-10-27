@@ -10,6 +10,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality"
+	agentqualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality/infrastructure"
+	agentqualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/agentquality/transport/http"
+	agenttaskapp "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/application"
+	agenttaskinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/infrastructure"
+	agenttaskhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/agenttask/transport/http"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	annotationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http"
@@ -53,6 +59,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	managementservice "github.com/qq550723504/data-product-platform/apps/platform/internal/platformmanagement/service"
 	productapp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 	producthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/transport/http"
@@ -82,6 +89,15 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+	// Select before full-service config, DB, outbox, storage, queue or engines.
+	// This process owns only the query composition; existing Agent hosts are untouched.
+	if selected, err := managementservice.RunProfile(ctx, os.Getenv("PLATFORM_MANAGEMENT_PROFILE")); selected {
+		if err != nil {
+			logger.Error("management query-only composition unavailable")
+			os.Exit(1)
+		}
+		return
+	}
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -144,7 +160,8 @@ func main() {
 	}
 
 	txManager := transaction.NewManager(db)
-	readModelHandler := readmodelhttp.NewHandler(readmodel.NewRepository(db))
+	readModelRepo := readmodel.NewRepository(db)
+	readModelHandler := readmodelhttp.NewHandler(readModelRepo)
 
 	resourceRepo := resourceinfra.NewPostgresRepository()
 	resourceHandler := resourcehttp.NewHandler(resourceapp.NewCreateService(txManager, resourceRepo))
@@ -284,8 +301,11 @@ func main() {
 	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
 	qualityHandler.Principal = humanDecisionResolver
+	contractHandler.Principal = humanDecisionResolver
+	readModelHandler.Principal = humanDecisionResolver
 	remediationRepo := remediationinfra.NewRepository(db)
 	var remediationService *remediationapp.Service
+	agentTemplate := agentquality.Template{Inputs: []agentquality.Input{}}
 	if ref := os.Getenv("QUALITY_REMEDIATION_PLAN_REF"); ref != "" {
 		plan, err := remediationapp.LoadPlan(cfg.IndustryPackRoot, ref)
 		if err != nil {
@@ -293,8 +313,17 @@ func main() {
 			os.Exit(1)
 		}
 		remediationService = &remediationapp.Service{Tx: txManager, Repo: remediationRepo, Quality: qualityService, Executions: executionService, Workflows: workflowRepo, Plan: plan}
+		agentTemplate = agentquality.Template{Configured: true, Name: plan.Metadata.Name, Version: plan.Metadata.Version, Hash: plan.Hash, WorkflowHash: plan.WorkflowHash, Inputs: []agentquality.Input{}}
+		for _, input := range plan.Inputs {
+			agentTemplate.Inputs = append(agentTemplate.Inputs, agentquality.Input{Name: input.Name, DatasetType: input.DatasetType, Required: input.Required})
+		}
 	}
 	remediationHandler := remediationhttp.NewHandler(remediationService, remediationRepo, humanDecisionResolver)
+	agentTaskHandler := &agenttaskhttp.Handler{Principal: humanDecisionResolver, WriteEnabled: cfg.AgentTasksWriteEnabled,
+		Service: &agenttaskapp.Service{Tx: txManager, Repo: &agenttaskinfra.Repository{Pool: db}, Remediation: remediationService}}
+	agentQualityHandler := &agentqualityhttp.Handler{Principal: humanDecisionResolver, Service: &agentquality.Service{
+		Reader: agentqualityinfra.Reader{Catalog: readModelRepo, DatasetRepo: datasetRepo}, Template: agentTemplate,
+	}}
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
 	certificationRepo := certificationinfra.NewCertificationRepository(db)
@@ -302,6 +331,7 @@ func main() {
 	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility, datasetRepo)
 	certificationHandler.Authorize = rightsAuthorizer.Authorize
+	certificationHandler.Principal = humanDecisionResolver
 	certificationHandler.Rights = rightsService
 
 	deliveryRepo := deliveryinfra.NewPostgresRepository(db)
@@ -357,11 +387,8 @@ func main() {
 		registerIngestion = h.Register
 	}
 
-	traceabilityHandler := traceabilityhttp.NewHandler(
-		evidence.NewQueryRepository(db),
-		cost.NewQueryRepository(db),
-		traceability.NewRepository(db),
-	)
+	traceabilityHandler := traceabilityhttp.NewHandler(traceability.NewRepository(db))
+	traceabilityHandler.Principal = humanDecisionResolver
 	registerSourceAdmission, sourceAdmissionErr := sourceAdmissionRoutes(db)
 	if sourceAdmissionErr != nil {
 		logger.Error("configure fork-approved source admission")
@@ -389,6 +416,8 @@ func main() {
 			rightsHandler.Register,
 			contractHandler.Register,
 			qualityHandler.Register,
+			agentQualityHandler.Register,
+			agentTaskHandler.Register,
 			remediationHandler.Register,
 			certificationHandler.Register,
 			deliveryHandler.Register,

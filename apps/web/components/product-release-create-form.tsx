@@ -1,4 +1,5 @@
 "use client";
+import {businessText,displayText} from '../lib/business-language.mjs';
 
 import { useActionState, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -53,57 +54,57 @@ export function ProductReleaseCreateForm({
   if (candidates.length === 0) {
     return (
       <div className="callout callout-warn" style={{ marginBottom: 18 }}>
-        <strong>当前 ProductVersion 没有可用于创建 Release 的 DATASET asset</strong>
-        <p>Release 需要显式冻结 DatasetVersion bindings；界面不会从其他 Dataset 自动猜测版本。</p>
+        <strong>当前 产品版本 没有可用于创建 发布记录 的 DATASET asset</strong>
+        <p>发布记录 需要显式冻结 成果版本 bindings；界面不会从其他 数据集 自动猜测版本。</p>
       </div>
     );
   }
 
   return (
-    <form action={action} className="detail-card" style={{ marginBottom: 18 }} aria-label="创建 ProductRelease">
+    <form action={action} className="detail-card" style={{ marginBottom: 18 }} aria-label="创建 发布记录">
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="productVersionId" value={productVersionId} />
-      {selected.map(({ candidate, selection }) => (
+      {displayText(selected.map(({ candidate, selection }) => (
         <span key={candidate.assetId}>
           <input type="hidden" name="datasetVersionId" value={selection.versionId} />
           <input type="hidden" name="datasetRole" value={selection.role} />
         </span>
-      ))}
+      )))}
 
       <div className="panel-header">
         <div>
           <span className="eyebrow">Explicit frozen bindings</span>
-          <h2>创建 Release Draft</h2>
-          <p>显式选择 DatasetVersion 和 Role；Core 会再次校验 ProductVersion、Workspace 与版本可用性。</p>
+          <h2>创建 发布草稿</h2>
+          <p>请选择明确的成果版本及其用途；提交时将重新校验产品版本、工作空间和成果可用性。</p>
         </div>
       </div>
 
       <div className="definition-list">
         <div>
-          <dt>Release No</dt>
-          <dd><input aria-label="Release No" name="releaseNo" value={releaseNo} onChange={(event) => setReleaseNo(event.target.value)} maxLength={64} required /></dd>
+          <dt>发布批次号</dt>
+          <dd><input aria-label="发布批次号" name="releaseNo" value={releaseNo} onChange={(event) => setReleaseNo(event.target.value)} maxLength={64} required /></dd>
         </div>
         <div>
-          <dt>Release Notes</dt>
-          <dd><textarea aria-label="Release Notes" name="releaseNotes" value={releaseNotes} onChange={(event) => setReleaseNotes(event.target.value)} maxLength={2000} rows={3} /></dd>
+          <dt>发布说明</dt>
+          <dd><textarea aria-label="发布说明" name="releaseNotes" value={releaseNotes} onChange={(event) => setReleaseNotes(event.target.value)} maxLength={2000} rows={3} /></dd>
         </div>
       </div>
 
       <div className="table-card" style={{ marginTop: 16 }}>
         <table className="data-table">
-          <thead><tr><th>ProductVersion Asset</th><th>DatasetVersion</th><th>Role</th></tr></thead>
+          <thead><tr><th>产品版本 Asset</th><th>成果版本</th><th>Role</th></tr></thead>
           <tbody>
             {candidates.map((candidate) => {
               const selection = selections[candidate.assetId] ?? { versionId: "", role: "" };
               return (
                 <tr key={candidate.assetId}>
                   <td className="primary-cell">
-                    <strong>{candidate.assetName}</strong>
-                    <span>{candidate.datasetName} · {candidate.datasetCode}</span>
+                    <strong>{displayText(candidate.assetName)}</strong>
+                    <span>{displayText(candidate.datasetName)} · {displayText(candidate.datasetCode)}</span>
                   </td>
                   <td>
                     <select
-                      aria-label={`${candidate.assetName} DatasetVersion`}
+                      aria-label={businessText(`${candidate.assetName} DatasetVersion`)}
                       value={selection.versionId}
                       onChange={(event) => setSelections((current) => ({
                         ...current,
@@ -113,14 +114,14 @@ export function ProductReleaseCreateForm({
                       <option value="">不绑定</option>
                       {candidate.versions.map((version) => (
                         <option key={version.id} value={version.id}>
-                          v{version.versionNo} · {version.status} · {version.id.slice(0, 8)}
+                          v{displayText(version.versionNo)} · {businessText(version.status)} · {displayText(version.id.slice(0, 8))}
                         </option>
                       ))}
                     </select>
                   </td>
                   <td>
                     <select
-                      aria-label={`${candidate.assetName} Role`}
+                      aria-label={businessText(`${candidate.assetName} Role`)}
                       value={selection.role}
                       disabled={!selection.versionId}
                       onChange={(event) => setSelections((current) => ({
@@ -129,9 +130,9 @@ export function ProductReleaseCreateForm({
                       }))}
                     >
                       <option value="">选择 Role</option>
-                      <option value="PRIMARY">PRIMARY</option>
-                      <option value="OUTPUT">OUTPUT</option>
-                      <option value="INPUT">INPUT</option>
+                      <option value="PRIMARY">主成果</option>
+                      <option value="OUTPUT">输出成果</option>
+                      <option value="INPUT">输入成果</option>
                       <option value="SUPPORTING">SUPPORTING</option>
                     </select>
                   </td>
@@ -142,30 +143,30 @@ export function ProductReleaseCreateForm({
         </table>
       </div>
 
-      {selected.length > 0 && productionTargets !== 1 ? (
+      {displayText(selected.length > 0 && productionTargets !== 1 ? (
         <div className="callout callout-warn" style={{ marginTop: 12 }}>
           <strong>需要且只能有一个生产目标</strong>
-          <p>Core 要求全部 bindings 中恰好一个 Role 为 PRIMARY 或 OUTPUT。</p>
+          <p>发布绑定中须恰好指定一个主成果或输出成果。</p>
         </div>
-      ) : null}
+      ) : null)}
 
       <button type="submit" disabled={!enabled || !complete || locked} style={{ marginTop: 14 }}>
-        {pending ? "正在创建，请勿重复操作…" : state.ok ? "Release 已创建" : "创建 Release Draft"}
+        {businessText(pending ? "正在创建，请勿重复操作…" : state.ok ? "Release 已创建" : "创建 Release Draft")}
       </button>
-      {!enabled ? (
-        <small style={{ display: "block", marginTop: 8 }}>Release 写入默认关闭；受信任 POC 可由服务端启用。</small>
+      {displayText(!enabled ? (
+        <small style={{ display: "block", marginTop: 8 }}>当前环境未开放发布准备提交。</small>
       ) : (
         <small style={{ display: "block", marginTop: 8 }}>
-          如果响应不确定，请保留相同 Release No；下一次提交会先核对是否已存在同一冻结 Release。
+          如果响应不确定，请保留相同 发布批次号；下一次提交会先核对是否已存在同一冻结 发布记录。
         </small>
-      )}
-      {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
-      {state.refreshRequired ? (
+      ))}
+      {displayText(state.message ? <p role={state.ok ? "status" : "alert"}>{businessText(state.message)}</p> : null)}
+      {displayText(state.refreshRequired ? (
         <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button>
-      ) : null}
-      {state.ok && state.release ? (
-        <button type="button" onClick={() => router.refresh()}>刷新 Release 列表</button>
-      ) : null}
+      ) : null)}
+      {displayText(state.ok && state.release ? (
+        <button type="button" onClick={() => router.refresh()}>刷新 发布记录 列表</button>
+      ) : null)}
     </form>
   );
 }

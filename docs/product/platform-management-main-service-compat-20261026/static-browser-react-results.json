@@ -1,0 +1,128 @@
+{
+  "browser": "msedge",
+  "results": [
+    {
+      "name": "RL01: unconfigured source shows one setup state without synthetic records or queries",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL06: all 58 independent records including 28 equal nanoseconds survive three pages",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL09: second page detail refresh history and return restore fixed query and focused row",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL10: filters clear old positions while reload preserves explicit UTC window",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL03 RL13: switching workspace rejects copied cursor and detail without foreign data",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL11: another person cannot reuse an otherwise valid same-space reference",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL02 RL04: log capability removal during query discards the entire response",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL04: RP revocation or revision changes block refresh back and forward without reviving cached records",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL05: source binding changes invalidate old cursor without silently returning first page",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL11: expired references require explicit restart and preserve filters",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL07 RL08: malformed or private source fields never reach HTML DOM or storage",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL12: deleted precise record returns to the original page and reports missing focused row",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL12: a changed projection cannot masquerade as the original detail",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL12: no matches differ from source failure and unsupported queries",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL14: narrow layout query and return remain reachable with keyboard focus",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    },
+    {
+      "name": "RL15: writes native selectors and caller-supplied identity are rejected; every response is no-store",
+      "status": "expected",
+      "results": [
+        "passed"
+      ]
+    }
+  ],
+  "stats": {
+    "expected": 16,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "scope": "Independent static React SSR host; no application API/DB/log source",
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}
