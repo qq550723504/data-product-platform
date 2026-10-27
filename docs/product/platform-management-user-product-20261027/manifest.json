@@ -132,6 +132,11 @@
       "sha256": "f653e6956e296cf38686b67e121396e3f8eac2f752b7257b4ba26287405c1b60"
     },
     {
+      "path": "whole-ci-build-diagnostic.json",
+      "bytes": 936,
+      "sha256": "ca639447679cd6f8496492cf34caa9e4de7ff5a2e06f05bc46574b382e972b08"
+    },
+    {
       "path": "whole-configuration.png",
       "bytes": 75809,
       "sha256": "cab89e1f97d78f7c8b72d429be11b6b8ed2f4d646ef9c50882c5358988331ea6"

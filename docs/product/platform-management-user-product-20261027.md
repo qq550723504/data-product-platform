@@ -91,3 +91,12 @@ Build-vs-Buy / Reuse Check：仓库已有 UserReader、QueryUsers、ZITADEL原�
 | 保留检查 | [旧容器元数据](platform-management-user-product-20261027/whole-retained-final.json)PASS；历史original别名前后均不存在，不冒充原库内容验证；默认4193与原库SQL/DDL未操作 |
 
 修正既有能力清单中“日志权限/API/Reader均未实现”的过时描述，改为：已有源码/独立合成证据与产品配置、真实接入分别列示。没有将Loki候选、合成空间/账号或材料表中的待定项改为真实接纳。最新HEAD的CI及本轮37组产物仍须单独核对，在PR收口评论记录；不继承10f99104绿色。PR保持Draft，业务写入口/模型/真实派发关闭。
+
+
+### 本轮CI离线构建诊断补齐
+
+系统设置HEAD `2b0eb7c7` 的实际产品专项在CI已通过293/15/37；另一个[demo作业121977689487](https://github.com/qq550723504/data-product-platform/actions/runs/40439945319/job/121977689487)在离线检查器Go构建阶段失败，原测试捕获stderr却未输出，0个完整入口用例执行。后续产物上传也超时；这些信号不能证明旧构建失败的具体原因，保留UNKNOWN，不把旧失败改为PASS，也未原地重跑旧作业。
+
+独立CI维护补修只为demo作业显式使用与主CI一致的Go1.26.10及现有go.sum缓存，避免依赖runner默认Go；离线测试在构建失败时继续抛错，新增固定类别、退出码、stdout/stderr字节数及SHA256诊断，绝不公开原始输出、代理URL或环境。类别只作定位线索，不裁定根因；未知错误仍失败，不新增编译重试或放宽权限。测试临时目录在setup失败时也由已有TemporaryDirectory机制清理，冻结候选和provider逻辑不改。
+
+普通/优化Python各7项PASS，包含真实编译检查器的原5项完整入口回归，以及2项诊断不泄漏/未知失败阻断/不重试反例。Docker为记录替身、策略读取为文件，provider/原库I/O均0。[安全摘要](platform-management-user-product-20261027/whole-ci-build-diagnostic.json)保留。此维护不修改系统设置代码、来源、API、OIDC/RP、真实运行或业务写入口；新HEAD全量CI另行核对，旧2b0eb7c7失败仍保留。
