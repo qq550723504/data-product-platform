@@ -6,6 +6,8 @@
 
 本轮文档复审基线为`d00645d12edbbf6e729ced7f2ba3347420ac480b`；只校对既有实现/证据与本表的责任、验证和授权语义，不新增能力或确认真实材料。
 
+2026-10-27补充的[配置与部署说明盘点](#7-配置与部署说明盘点2026-10-27)以`f3556b759f480ea898d0b3702538d46ff234ade1`为静态核对基线，只登记非敏感线索及M1—M5缺口；D01—D12真实材料/确认状态不变，真实来源与身份映射仍未配置。
+
 后续主服务只读装配设计以`48cde34853f8da73bfb07936e9906252c1ce2f09`核对源码，见[装配方案](../architecture/platform-management-main-service-readonly-v1.md)；后续第一实施切片现已实现默认关闭的cmd/api查询组合及审计解耦，并完成独立合成验证，详见[实施记录](platform-management-main-service-20261026.md)；真实运行未启用，所有真实对象和材料仍待定。本表继续只拥有材料与确认责任，代码配置不等于材料通过或启用授权。后续[第二切片兼容验收](platform-management-main-service-compat-20261026.md)已通过共享组合的目录/日志路线及观察门禁修复；仍仅合成证据，本表真实字段、9类来源和12项候选材料状态均不改变。第三片[目录产品入口记录](platform-management-directory-product-20261026.md)只增加配置能力和独立合成见证，不填写任何真实对象或接纳结论。
 
 ## 1. 权威与已完成范围
@@ -126,3 +128,52 @@ M4的完整性是既有预算内当前查询的有限保证，不是成员集合
 | 本轮允许的下一步 | 继续补充非敏感材料引用、落实确认人和审阅一致性；没有真实材料时其接纳结论停在待定。后续可选组合、目录产品配置及隔离合成验收已授权并执行，不包含真实来源接纳/启用或业务写入，材料结论不改变 |
 
 下一次记录可追加版本，不覆盖已有验收证据或把旧截图改成真实确认。本文没有生成EvidenceSnapshot、签收依据、业务验收决定或平台授权事实。未知项不推定通过；不以“只读”二字自动授权读取真实人员、原库或日志。
+
+## 7. 配置与部署说明盘点（2026-10-27）
+
+### 7.1 核对范围和证据层次
+
+核对基线`f3556b759f480ea898d0b3702538d46ff234ade1`。只检查Git跟踪的公开配置样例、部署说明及相关配置schema/Adapter声明；未扫描私有部署配置、`.env`、`.data`、宿主环境、容器、数据库或真实目录。两个`.env.example`仅提取匹配的赋值变量名，不查看其值；公开目录模板只核对结构、固定协议声明与占位情况，不打开任何引用的凭据、证书、私钥、数据库连接或其他私有文件。本轮未执行应用/部署/采集脚本、查询SQL或来源网络请求，未修改任何运行配置。
+
+| 已核对入口 | 非敏感发现 | 能证明的范围 |
+|---|---|---|
+| [目录配置样例](../../deploy/management/directory-query.example.json) | `QUERY_ONLY`、`directory.source=CONFIGURED`、`provider=ZITADEL`；workspace为零UUID，issuer、目录origin、organization/project及应用角色等为占位项；`userProfiles=false`，审计为空 | 是不可直接启用的schema样例；CONFIGURED是示例字段，不是已发现真实来源，空UUID不代表实际空间 |
+| [产品配置校验](../../apps/platform/internal/platformmanagement/service/profile.go)、[目录装配](../../apps/platform/internal/platformmanagement/service/directory.go)及[产品装配契约第10—11节](../architecture/platform-management-main-service-readonly-v1.md#10-组织与成员目录的产品配置) | 目录provider只接受ZITADEL，要求显式空间→组织/项目及专用来源引用；用户资料默认关闭，IdentityLinks未装配 | 存在可复用的产品接入口；配置解析成功/ready不证明目录可用、人员身份关联或来源接纳 |
+| [既有目录Adapter](../../apps/platform/internal/platformmanagement/zitadel/client.go)、[组织查询](../../apps/platform/internal/platformmanagement/zitadel/organization.go)、[原生权限确认](../../apps/platform/internal/platformmanagement/zitadel/permissions.go) | 成员使用固定`AuthorizationService/ListAuthorizations`，组织使用固定`/v2/organizations/_search`，权限使用固定`/auth/v1/permissions/zitadel/me/_search`；原生`user.grant.read`与`org.read`分别核验 | 可定位所需协议，不能从SDK版本或Adapter代码推定真实ZITADEL服务端版本/接口支持及只读权限 |
+| [身份实施记录](acceptance-identity-1a-implementation.md#build-vs-buy--reuse-check)、[能力归属](../architecture/capability-map.md#1-capability-ownership) | OIDC/RP已复用；Keycloak记载为本地/CI合成IdP，ZITADEL/Keycloak是身份能力候选 | 企业身份提供方和成员目录应分别确认；支持OIDC不等于支持上述目录查询，合成realm不能填写S01/S04真实实例 |
+| [通用Compose](../../deploy/docker-compose/docker-compose.yml)、[Label Studio](../../deploy/docker-compose/docker-compose.label-studio.yml)、[GX](../../deploy/docker-compose/docker-compose.gx.yml)、[demo Compose](../../deploy/demo/compose.yml) | services声明中未列出ZITADEL/Keycloak或其他人员目录；demo含API、Worker及迁移/seed等业务宿主 | 只说明这些受检清单的声明，不说明宿主没有外部IAM；不能直接把整套demo Compose当作QUERY_ONLY验收宿主，也不据此启动或修改它 |
+| [README](../../README.md)、[试用部署说明](../../deploy/trial/README.md)、[根配置样例](../../.env.example)、[Web配置样例](../../apps/web/.env.example) | README指向既有demo；trial是RAW/原环境业务试用说明；两个env样例的赋值变量名中未发现目录/OIDC/management配置键 | 没有从这些说明定位到经确认的企业目录；RAW数据来源、私有配置引用或缺少赋值键均不能补出目录归属，也不能推断运行配置是否存在 |
+
+### 7.2 候选分层登记
+
+本轮标号只用于盘点定位，不创建Source、DirectoryBinding、平台身份映射或运行授权，不替换第3节`DIR-RO-01`。
+
+| 线索 | 分类与复用判断 | 缺口及当前结论 |
+|---|---|---|
+| ZITADEL目录查询协议（关联DIR-RO-01） | 唯一已有产品目录provider配置和原生组织/成员Adapter的协议候选；优先复用当前Port/Adapter | 未确认企业是否采用该产品、实例/版本、维护归属、接口能力及真实空间绑定；保留为技术候选，未选定真实来源 |
+| Keycloak/OIDC | 已有可信登录协议与合成身份验收线索；继续复用现有OIDC/RP | 未发现可据此确认企业成员目录的部署材料，当前目录provider也不接受Keycloak；不把IdP选型改成目录接入，不替换现有身份系统 |
+| shuomi-ai-commerce固定来源 | [管理契约](../architecture/platform-management-readonly-v1.md)记录其固定提交及定向复用的只读模式，现有实现已落在本仓库Adapter后 | 是代码复用来源，未证明该项目的实际租户、目录或企业维护责任可供本平台读取；本轮未访问其运行环境，不把源码版本当目录服务版本 |
+| 隔离合成IdP/目录与A/B/C/D空间 | 已完成回归的合成协议/边界证据；仅引用已有说明 | 不进入真实来源候选，不使用测试端口、账号、组织或角色填写实际对象与确认人；本轮不打开其私有profile或重演夹具 |
+
+盘点中没有定位到已确认可用的真实目录实例。这是上述公开文件范围内的结论，不是对私有部署或企业系统是否存在的断言；其他LDAP/AD、HR或通讯录系统仍未知，不凭产品名称补出Adapter、连接参数或接纳结论。
+
+### 7.3 对照既有准入条件的缺口和确认责任
+
+下表是对第4—5节的盘点观察，不另立规则。已有代码和合成结果只作技术参考，M1—M5真实引用/版本、所有确认人的可信身份与职责依据仍待补，D01—D12没有新增真实通过项；以下职责均未指定实际个人或团队，不能由本文作者代签。
+
+| 材料/关联条件 | 已定位的参考 | 仍缺的真实材料 | 提供和确认责任 |
+|---|---|---|---|
+| M1；D01/D04/D05/D09 | 专用目录配置模板、固定原生查询协议和TLS/权限边界 | 实际目录产品/实例的受控引用、服务端版本与接口说明、维护归属；原生查询确为无业务副作用、只读范围和TLS要求的依据。IdP说明与目录说明分别提交；本轮不索取凭据或完整私有配置 | 来源/目录维护方提供；Adapter负责人核对兼容性，身份/安全负责人确认许可范围及只读权限 |
+| M2；D02/D03/D08 | 显式workspace→organization/project配置与现有OIDC/RP、平台资格查询契约 | 实际使用场景、接收/使用组织、唯一首个空间及明确组织/项目映射；查询人的issuer/subject→canonical actor和当前空间读资格的建立/维护依据。被查成员的原生ID、邮箱、角色不提供caller资格 | 空间负责人确认业务和查看范围；目录方提供外部对象；身份/安全与平台授权维护方分别确认身份、资格和撤回责任；不据此创建真实binding/grant |
+| M3；D04/D06/D09 | 应用角色Catalog及最小DTO投影，账号/成员状态与平台身份分离 | 所需专用原生read权限、可展示字段和应用角色映射的批准说明、未知角色处理、凭据保管责任与非敏感受控位置引用；不需要提供凭据值或真实人员明细 | 来源和应用策略维护方提供；空间与安全负责人确认字段/用途/权限；原生角色映射不生成平台grant |
+| M4；D05/D07/D08 | 当前固定查询、分页/精确详情、前后权限确认的源码与隔离证据 | 实际实例的接口/排序/稳定ID/总数/限额/超时说明，以及并发变化与撤回的有限保证；需核对现有预算内可完成查询，不能靠提高上限或旧缓存补成功 | 来源方提供协议材料；Adapter与验收负责人确认是否满足现有契约；合成反例仍只证明回归，不代替真实见证 |
+| M5；D10/D11 | 已实现默认关闭的QUERY_ONLY组合和独立合成路线；通用demo清单包含Worker | 尚未指定有限真实只读观察的运行目标、版本、资料范围、窗口、最小API库权限/RP临时会话权限、退出责任及停止条件；真实环境负向变更不在许可范围，现有demo运行清单不能充当该确认 | 平台装配负责人说明组件/最小权限；验收负责人编制有限观察与停止方案；空间、安全及相关来源责任方确认各自事项，仍需具体执行授权 |
+| M1—M5汇总；D12 | 本文第6节的现有结论记录结构 | 材料非敏感引用、版本/适用范围/有效性、各责任方确认及未决项；当前无真实确认，不能以仓库作者、应用角色名或测试角色代填 | 各责任方确认自身事项；空间与身份/安全负责人汇总，平台/Adapter/验收负责人核对一致性，汇总不代替其他职责确认 |
+
+### 7.4 是否可申请有限只读验收
+
+**当前结论：技术复用候选已定位；真实候选未确认，暂不具备“可申请有限真实只读验收”的材料条件。** D01/D02/D03及其他required项仍未知，第6节“待补材料、暂不接纳”保持不变。没有启动来源探测、读取真实目录、核验真实凭据或产生真实运行通过记录；真实见证仍NOT_RUN。
+
+最小可继续事项是先由对应责任方补M1的来源定位/维护归属和M2的一个空间、组织/项目及可信caller范围的非敏感引用，再由M3—M5各方补齐核对。M1/M2补齐本身也不满足D12；只有D01—D11全部required材料及确认齐备、D12记录完整且无契约冲突时，才能标记“材料齐备，可另行申请有限只读验证”。具体执行仍需明确目标、版本、空间/资料范围、允许动作、有效窗口与停止条件并获授权；材料判断不写平台资格、不配置来源、不自动启用服务。
+
+真实来源与平台身份映射继续UNCONFIGURED，实际场景/组织/空间/责任人仍待定；默认预览保持未接入。原库、OIDC/RP与Agent API保留，业务写入口关闭，不接模型、不派发真实执行，PR #363保持OPEN/Draft、不合并、不部署。后续补充采用追加盘点/确认记录，不覆盖旧证据或追认其他实例、版本与空间的见证。
