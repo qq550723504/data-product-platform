@@ -40,3 +40,29 @@ Build-vs-Buy / Reuse Check：仓库已有 UserReader、QueryUsers、ZITADEL原�
 本地首次测试发现验收脚本按query排列顺序比较URL，以及精确按钮名漏计箭头；两项均为断言问题，改为完整参数集合比较和明确链接定位，保留首次失败JSON。一次Go/PG运行因新环境未纳入既有固定目标识别而跳过1项；已修正识别，最终必须0 skip。构建准备期间一份临时候选审计展示角色多带users.read，正式bootstrap已修正为仅audit.read；复核角色配置并更换经PID/创建时间/可执行文件/监听核实的本轮独立API后重验，两版私有配置和原证据均保留。原生角色展示不生成caller资格，产品业务权限未扩大。保留报告一次使用的文件名不合闭集规则，脚本拒绝执行，改用合法新证据名后完成，不放宽检查。旧readiness单测本地输出目录已存在，拒绝覆盖，未计作本轮PASS；共享导航未修改，其CI仍在全量回归中运行。
 
 后续：真实组织/目录版本、人员、来源责任、受控凭据及运行授权仍待定。真实读取、平台身份关联、用户/角色管理写入、同进程全站组合、模型和执行均不由本轮自动开放。
+
+
+## 本轮复审与补修
+
+复审基线为 `3c1fa691aeb9ee6b138057d9b0998399f189d346`，只核对用户资料的关闭、身份/空间边界和列表往返，不启用真实来源或扩大业务范围。
+
+| 问题 | 已复现的影响 | 根因修复 |
+|---|---|---|
+| RP登录期限被异步确认延后 | SDK寿命快照在确认后才换算成绝对时间；耗尽的登录仍可能保存 | 确认前冻结原绝对期限；确认后到期拒绝，不续期 |
+| RP读取中到期或注销 | current、管理client构造、请求前及返回前，复核完成后可能接受已到期/被注销的本地会话 | 复核后重读同一加密会话并核对两项期限；无新会话/令牌回退 |
+| 有效会话的浏览器后退丢失焦点 | 筛选和第二页仍在，键盘焦点离开原行 | 复用原显式返回的hash及原生replaceState标记离开行，重新授权渲染后仅聚焦现有TR |
+
+复用决定：使用现有SessionStore查询、成熟OIDC/RP和ManagementRowFocus，不引入新登录系统、缓存、依赖、表、队列、业务API或权限。导航只保存URL行片段，保持原history.state，无账号资料或token进入WebStorage/历史状态。默认关闭及IdentityLinks不装配的产品代码不变；原库、Agent API及默认预览不改动。
+
+回归在补修前已记录失败：期限的6个子场景、注销的4个子场景，以及浏览器有效后退焦点失败。最终回归和保留结果见新增review证据；先前20项与旧CI属于首片历史结果，本轮CI须按最新HEAD单独核对并在PR评论记录。
+
+
+复审最终本地验证：
+
+- [SDK/TLS回归](platform-management-user-product-20261027/review-unit-after.json)：47个测试事件，45 PASS / 2可选PG SKIP / 0 FAIL；[到期补修前失败](platform-management-user-product-20261027/review-unit-before-expiry.json)、[注销补修前失败](platform-management-user-product-20261027/review-unit-before-logout.json)保留，含父测试状态，不把父/子失败当作不同缺陷。
+- [独立PG/Go](platform-management-user-product-20261027/review-go-regression.json)：293个pass事件，0 fail/skip；默认关闭、逐空间配置与IdentityLinks不装配保持。
+- 最终新版生产构建与lint/typecheck成功；[日志前端单元](platform-management-user-product-20261027/review-runtime-unit-after.json)12项PASS。仅更换本轮经过PID/创建时间/绝对入口/监听核验的4420隔离Web，旧构建/进程账册保留，API、IdP及库不替换。
+- [Edge](platform-management-user-product-20261027/review-browser-edge.json)、[Chromium](platform-management-user-product-20261027/review-browser-chromium.json)各29项PASS；新增有效后退/前进、无效片段、正常来源与来源失败两种情况下的5类权限失效，以及Web读取中撤销/到期。页面错误、业务写请求、外联均0，业务事实摘要不变。[补修前焦点失败](platform-management-user-product-20261027/review-browser-focus-before.json)保留。
+- [最终容器保留](platform-management-user-product-20261027/review-retained-final.json)PASS，证明列出的旧容器元数据相同；历史original别名前后均不存在，不冒充原库内容验证。原库不运行SQL/DDL，真实来源/身份映射仍未配置，默认预览未接入，业务写入口/模型/真实派发关闭，Draft不合并。
+
+本轮代码的全量CI及跨模块共享组件回归必须以最新HEAD为准，在PR收口评论登记，不继承首片3c1fa691的绿色。风险限制：这里只证明隔离合成身份与资料查询边界，不证明企业真实用户、组织、权限来源或正式签收。

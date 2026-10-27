@@ -1,0 +1,25 @@
+{
+  "scope": "LOCAL_SYNTHETIC_SDK_TLS",
+  "counts": {
+    "tests": 43,
+    "pass": 33,
+    "fail": 8,
+    "skipped": 2
+  },
+  "failingTests": [
+    "✖ false (31.6114ms)",
+    "✖ true (61.3371ms)",
+    "✖ RP confirmation cannot extend the SDK access deadline or persist an exhausted login (93.9771ms)",
+    "✖ current (109.8208ms)",
+    "✖ client (90.3883ms)",
+    "✖ request-before (76.5181ms)",
+    "✖ request-after (107.5234ms)",
+    "✖ management refuses an absolute RP expiry crossed during current or transport authority confirmation (386.1096ms)",
+    "✖ failing tests:"
+  ],
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

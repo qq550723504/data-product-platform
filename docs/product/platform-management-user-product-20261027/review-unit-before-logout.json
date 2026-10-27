@@ -1,0 +1,22 @@
+{
+  "scope": "LOCAL_SYNTHETIC_SDK_TLS",
+  "counts": {
+    "tests": 47,
+    "pass": 40,
+    "fail": 5,
+    "skipped": 2
+  },
+  "failingTests": [
+    "✖ logout/current (72.0956ms)",
+    "✖ logout/client (124.8302ms)",
+    "✖ logout/request-before (74.1328ms)",
+    "✖ logout/request-after (123.4079ms)",
+    "✖ management refuses RP expiry or logout crossed during current or transport authority confirmation (845.0266ms)",
+    "✖ failing tests:"
+  ],
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

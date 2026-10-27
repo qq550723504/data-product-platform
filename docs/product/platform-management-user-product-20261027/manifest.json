@@ -62,6 +62,51 @@
       "sha256": "6f64e70a301e866968376aa7e71b75b34e538a282bc1df809f39454836368d46"
     },
     {
+      "path": "review-browser-chromium.json",
+      "bytes": 4206,
+      "sha256": "2bcb21010118725de504a9d7f769015c7ca20613b6a8e434648c6197f643e0c1"
+    },
+    {
+      "path": "review-browser-edge.json",
+      "bytes": 4204,
+      "sha256": "76174a785594e47035b53f2dd8ab90542ad725d68e20902b6eef8d9f15664052"
+    },
+    {
+      "path": "review-browser-focus-before.json",
+      "bytes": 903,
+      "sha256": "3522a8b7cd8f63203fd551566e0f89121404bc24a05082fe1ea2470a90e0806d"
+    },
+    {
+      "path": "review-go-regression.json",
+      "bytes": 738,
+      "sha256": "fb9926cc8e698440e29c3ef0cc27313aebc41d40f407aa93abb4b3cc54f03fd2"
+    },
+    {
+      "path": "review-retained-final.json",
+      "bytes": 2656,
+      "sha256": "6f64e70a301e866968376aa7e71b75b34e538a282bc1df809f39454836368d46"
+    },
+    {
+      "path": "review-runtime-unit-after.json",
+      "bytes": 284,
+      "sha256": "a95b853642ff1f33f47735e01445941bb6bc7b2799c6b1cfa1cc67bbc665fef8"
+    },
+    {
+      "path": "review-unit-after.json",
+      "bytes": 284,
+      "sha256": "fc7adc2f997ad854a7adb3e60ce4e64a7b8e9ac0b8fd5d82b275e10167bf463d"
+    },
+    {
+      "path": "review-unit-before-expiry.json",
+      "bytes": 738,
+      "sha256": "8a8df4747b45ce8a199cb5c21333ba7bbfdafcac85c1a7b6be459735874d5b26"
+    },
+    {
+      "path": "review-unit-before-logout.json",
+      "bytes": 600,
+      "sha256": "3077e48f2f8969eb6630b2012992cc06a6861a7dd7fb3656f1f6231756756ed2"
+    },
+    {
       "path": "user-return.png",
       "bytes": 74419,
       "sha256": "d72efd485badc31e16174d7f683daac21b706338542c122df60514fb187c879e"

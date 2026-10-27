@@ -38,6 +38,24 @@ try{
   const start=await control(),t=await token();for(const ws of [a,b]){const r=await query(ws,'configuration',ws===a?t:await token('both'));assert.equal(r.data.queries.users,true);assert.equal(r.data.directory.availability,'NOT_CHECKED');assert.equal(r.writeEnabled,false)}const end=await control();assert.equal(end.userReads,start.userReads);assert.equal(end.reads,start.reads);
  });
  page=await person();
+ await pass('authorized browser back and forward restore member list conditions and keyboard position',async()=>{
+  await page.goto(p.origin+'/settings/members?offset=25&q='+encodeURIComponent('空间甲成员')+'&role=management_viewer&state=active&from=configuration');
+  await expect(rows(page)).toHaveCount(7);const list=page.url(),row=rows(page).last(),id=await row.getAttribute('id');
+  await row.getByRole('link',{name:'查看账号',exact:true}).click();await expect(account(page)).toBeVisible();
+  await page.goBack();await expect(rows(page)).toHaveCount(7);
+  assert.deepEqual([...new URL(page.url()).searchParams].sort(),[...new URL(list).searchParams].sort());
+  await expect.poll(()=>page.locator('[id="'+id+'"]').evaluate(r=>r.contains(document.activeElement))).toBe(true);
+  await page.goForward();await expect(account(page)).toBeVisible();
+  await page.getByRole('link',{name:'返回成员列表',exact:true}).click();await expect(page.locator('tr:target')).toHaveAttribute('id',id);await expect(page.locator('tr:target')).toBeFocused();
+ });
+ await pass('history fragments never restore records or focus outside the fresh authorized list',async()=>{
+  await page.goto(p.origin+'/settings/members?offset=25&role=management_viewer&state=active');await expect(rows(page)).toHaveCount(7);
+  for(const id of ['member-not-visible','management-main','user-person-a-2']){
+   await page.evaluate(id=>history.replaceState(history.state,'','#'+encodeURIComponent(id)),id);await reloadReadOnly(page);await expect(rows(page)).toHaveCount(7);
+   assert.equal(await page.evaluate(()=>document.activeElement?.tagName==='TR'),false);
+  }
+  assert.equal(await page.evaluate(()=>localStorage.length+sessionStorage.length),0);
+ });
  await pass('member account return preserves role search state second page row and refresh focus',async()=>{
   await page.goto(p.origin+'/settings/members?q='+encodeURIComponent('空间甲成员')+'&role=management_viewer&state=active&offset=25');await expect(rows(page)).toHaveCount(7);const list=page.url(),row=rows(page).last(),id=await row.getAttribute('id');await row.getByRole('link',{name:'查看账号',exact:true}).click();detailURL=page.url();await expect(account(page)).toBeVisible();await reloadReadOnly(page);await expect(account(page)).toBeVisible();await shot(page,'account-detail');await page.getByRole('link',{name:'返回成员列表',exact:true}).click();assert.deepEqual([...new URL(page.url()).searchParams].sort(),[...new URL(list).searchParams].sort());await expect(page.locator('tr:target')).toHaveAttribute('id',id);await expect(page.locator('tr:target')).toBeFocused();await reloadReadOnly(page);await expect(page.locator('tr:target')).toBeFocused();await shot(page,'member-return');
  });
@@ -72,9 +90,9 @@ try{
    try{await control({[flag]:value});await page.goto(detailURL);await expect(page.getByRole('heading',{name:'用户目录暂时无法读取',exact:true})).toBeVisible();assert.equal(await account(page).count(),0);await page.getByRole('link',{name:'返回成员列表',exact:true}).click();await expect(rows(page)).toHaveCount(7)}finally{await control({[flag]:!value})}
   }await page.goto(detailURL);await expect(account(page)).toBeVisible();
  });
- for(const mode of ['revoke','expire','grant','capability','grant-expiry'])await pass('in-flight account lookup rechecks caller '+mode+' even when source fails',async()=>{
+ for(const source of ['success','failure'])for(const mode of ['revoke','expire','grant','capability','grant-expiry'])await pass('in-flight account lookup rechecks caller '+mode+' with source '+source,async()=>{
   const t=await token(),saved=(await db.query('SELECT enabled,capabilities,valid_until FROM platform_workspace_grant WHERE actor_id=$1 AND workspace_id=$2',[actor,a])).rows[0];let pending;
-  try{await control({holdUser:true});pending=http.get(prefix(a)+'users?userId=person-a-2',{headers:{Authorization:'Bearer '+t},maxRedirects:0});await expect.poll(async()=>(await control()).userWaiting).toBe(1);if(mode==='grant')await grant(false);if(mode==='capability')await db.query("UPDATE platform_workspace_grant SET capabilities=ARRAY['BUSINESS_ACCEPTANCE_READ'],revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2",[actor,a]);if(mode==='grant-expiry')await db.query("UPDATE platform_workspace_grant SET valid_until=now()-interval '1 second',revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2",[actor,a]);await control({userPermission:false,holdUser:false,...mode==='revoke'?{revokeSubject:'admin-a'}:mode==='expire'?{expireSubject:'admin-a'}:{}});const r=await pending;assert.equal(r.status(),mode==='capability'?403:401);assert.equal(Object.hasOwn(await r.json(),'data'),false)}
+  try{await control({holdUser:true});pending=http.get(prefix(a)+'users?userId=person-a-2',{headers:{Authorization:'Bearer '+t},maxRedirects:0});await expect.poll(async()=>(await control()).userWaiting).toBe(1);if(mode==='grant')await grant(false);if(mode==='capability')await db.query("UPDATE platform_workspace_grant SET capabilities=ARRAY['BUSINESS_ACCEPTANCE_READ'],revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2",[actor,a]);if(mode==='grant-expiry')await db.query("UPDATE platform_workspace_grant SET valid_until=now()-interval '1 second',revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2",[actor,a]);await control({userPermission:source==='success',holdUser:false,...mode==='revoke'?{revokeSubject:'admin-a'}:mode==='expire'?{expireSubject:'admin-a'}:{}});const r=await pending;assert.equal(r.status(),mode==='capability'?403:401);assert.equal(Object.hasOwn(await r.json(),'data'),false)}
   finally{await control({userPermission:true,holdUser:false});await pending?.catch(()=>{});if(['grant','capability','grant-expiry'].includes(mode))await db.query('UPDATE platform_workspace_grant SET enabled=$3,capabilities=$4,valid_until=$5,revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2',[actor,a,saved.enabled,saved.capabilities,saved.valid_until])}
  });
  await pass('membership removed during account lookup denies a formerly visible profile',async()=>{
@@ -86,6 +104,12 @@ try{
  await pass('revocation expiry refresh and browser history cannot revive account records or previous RP revisions',async()=>{
   await login(page);await page.goto(p.origin+'/settings/members');await rows(page).first().getByRole('link',{name:'查看账号',exact:true}).click();await expect(account(page)).toBeVisible();try{await grant(false);await reloadReadOnly(page);await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();await page.goBack();await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await account(page).count(),0)}finally{await grant(true)}
   await page.goto(detailURL);await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();await login(page);await page.goto(detailURL);await expect(account(page)).toBeVisible();await control({expireSubject:'admin-a'});await reloadReadOnly(page);await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await account(page).count(),0);await login(page);
+ });
+ for(const mode of ['revoke','expire'])await pass('web account response held in source I/O refuses '+mode+' before rendering data',async()=>{
+  await login(page);let pending;
+  try{await control({holdUser:true});pending=page.goto(detailURL);await expect.poll(async()=>(await control()).userWaiting).toBe(1);await control({holdUser:false,...mode==='revoke'?{revokeSubject:'admin-a'}:{expireSubject:'admin-a'}});await pending;await expect(page.getByRole('heading',{name:'当前身份或记录无法核验',exact:true})).toBeVisible();assert.equal(await account(page).count(),0)}
+  finally{await control({holdUser:false});await pending?.catch(()=>{})}
+  await login(page);await page.goto(detailURL);await expect(account(page)).toBeVisible();
  });
  await pass('product has no account writes native proxy model or business command routes',async()=>{
   const t=await token();for(const method of ['POST','PATCH','DELETE'])assert.equal((await http.fetch(prefix(a)+'users',{method,headers:{Authorization:'Bearer '+t},data:{actorId:actor}})).status(),405);for(const path of ['/api/agent-tasks','/api/v1/executions','/v2/users/person-a-2','/api/v1/workspaces/'+a+'/management/users/person-a-2'])assert.equal((await http.get(api+path,{headers:{Authorization:'Bearer '+t}})).status(),404);await query(a,'users',await token('ordinary'),403);await query(b,'users',await token(),401);

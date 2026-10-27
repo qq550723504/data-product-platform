@@ -159,6 +159,26 @@ test("absolute credential lifetime requires new login; no refresh or static-toke
   assert.equal(f.state.principalCalls.length, 2);
   assert.equal(f.state.tokenCalls, 1);
 });
+test('RP confirmation cannot extend the SDK access deadline or persist an exhausted login',async t=>{
+ for(const crossExpiry of [false,true])await t.test(String(crossExpiry),async t=>{
+  const store=new MemoryStore(),f=await fixture(t,store),writes=t.mock.method(store,'put');
+  t.mock.timers.enable({apis:['Date'],now:Date.now()});
+  const start=await f.iam.start(),exchangeAt=Date.now(),advance=crossExpiry?121000:10000;
+  const iam=new BrowserIAM(f.cfg,store,async(input,init)=>{
+   const response=await fetch(input,init),url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
+   if(url.href===f.cfg.principalEndpoint){
+    t.mock.timers.setTime(exchangeAt+advance);
+    const body=await response.json();body.expiresAt=new Date(Date.now()+60000).toISOString();
+    return new Response(JSON.stringify(body),{status:response.status,headers:response.headers});
+   }
+   return response;
+  });
+  const pending=iam.callback(f.callback(start,'one',{claims:{exp:Math.floor(Date.now()/1000)+600}}),start.key);
+  if(crossExpiry){await assert.rejects(pending);assert.equal(writes.mock.calls.filter(c=>c.arguments[0]==='session').length,0)}
+  else {const session=await pending;assert.ok(session.expiresAt<=exchangeAt+120000,'confirmation renewed the access deadline');assert.ok(session.expiresAt>Date.now())}
+  assert.equal(f.state.tokenCalls,1);
+ });
+});
 test("mature RP rejects exhausted and rounded-to-zero access lifetimes before authority lookup", async (t) => {
   const store = new MemoryStore(),
     f = await fixture(t, store),

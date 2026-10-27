@@ -366,16 +366,19 @@ export class BrowserIAM {
         tokens.access_token.length > 8192
       )
         throw new IAMError();
-      const principal = await this.confirm(
-        tokens.access_token,
-        claims.iss,
-        claims.sub,
-      );
+      // The SDK lifetime is a point-in-time observation. Freeze its deadline
+      // before authority I/O; that I/O cannot renew the original credential.
       const expiresAt = Math.min(
         Date.now() + life * 1000,
         claims.exp * 1000,
         Date.now() + 8 * 3600000,
       );
+      const principal = await this.confirm(
+        tokens.access_token,
+        claims.iss,
+        claims.sub,
+      );
+      if (expiresAt <= Date.now()) throw new IAMError();
       const provider = this.config.backchannelLogoutEnabled ? providerSession(this.config,claims.sid,claims.sub) : undefined;
       const key = randomKey(),
         session: Session = {
@@ -434,7 +437,12 @@ export class BrowserIAM {
         session.issuer,
         session.subject,
       );
+      // Local logout can remove this row while the authority request is in
+      // flight. Re-read the same encrypted session; a fresh authority result
+      // cannot revive a removed or replaced browser session.
+      const confirmed = await this.store.getSession(key);
       if (
+        !confirmed || !confirmed.equals(raw) || session.expiresAt <= Date.now() || Date.parse(principal.expires_at) <= Date.now() ||
         principal.principal_id !== session.principal.principal_id || principal.canonical_subject !== session.principal.canonical_subject ||
         principal.revision !== session.principal.revision
       )

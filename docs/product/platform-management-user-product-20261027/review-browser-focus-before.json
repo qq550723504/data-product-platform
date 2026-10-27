@@ -1,0 +1,28 @@
+{
+  "entrypoint": "cmd/api",
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "actual product profile enables only explicit workspace account readers and no identity links",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration declares profile capability without health or identity admission claims",
+      "status": "PASS"
+    },
+    {
+      "name": "authorized browser back and forward restore member list conditions and keyboard position",
+      "status": "FAIL",
+      "error": "expect(received).toBe(expected) // Object.is equality\n\nExpected: true\nReceived: false\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "environment": "ISOLATED_SYNTHETIC",
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

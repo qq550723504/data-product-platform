@@ -3,7 +3,36 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fixture,MemoryStore} from './helpers/oidc-fixture.mjs';
 const require=createRequire(import.meta.url);
+const {BrowserIAM}=require('../.iam-tests/iam-core.js');
 const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,organizationQueryHref,configurationQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,managementUserFromMemberHref,managementUserReturnHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement,validConfigurationManagement}=require('../.iam-tests/platform-management.js');
+
+test('management refuses RP expiry or logout crossed during current or transport authority confirmation',async t=>{
+ for(const event of ['expiry','logout'])for(const phase of ['current','client','request-before','request-after'])await t.test(event+'/'+phase,async t=>{
+  const store=new MemoryStore(),f=await fixture(t,store,'platform-management');
+  t.mock.timers.enable({apis:['Date'],now:Date.now()});
+  const start=await f.iam.start(),session=await f.iam.callback(f.callback(start,'one',{claims:{exp:Math.floor(Date.now()/1000)+30}}),start.key);
+  let arm=false,businessCalls=0;
+  f.state.businessHandler=async(_req,res)=>{businessCalls++;res.end('{}')};
+  const iam=new BrowserIAM(f.cfg,store,async(input,init)=>{
+   const response=await fetch(input,init),url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
+   if(url.href===f.cfg.principalEndpoint&&arm){
+    if(event==='expiry')t.mock.timers.setTime(session.expiresAt+1);else await store.take('session',session.key);
+    const body=await response.json();body.expiresAt=new Date(Date.now()+60000).toISOString();
+    return new Response(JSON.stringify(body),{status:response.status,headers:response.headers});
+   }
+   if(url.pathname.includes('/management/'))arm=phase==='request-after';
+   return response;
+  });
+  if(phase==='current'||phase==='client'){
+   arm=true;await assert.rejects(phase==='current'?iam.current(session.key):iam.managementClient(session.key));
+  }else{
+   const client=await iam.managementClient(session.key);arm=phase==='request-before';
+   await assert.rejects(client.request(client.apiBaseUrl+'/api/v1/workspaces/'+client.principal.workspace_id+'/management/users?userId=native'));
+  }
+  assert.equal(businessCalls,phase==='request-after'?1:0);
+  assert.equal(f.state.tokenCalls,1);
+ });
+});
 
 test('member to account uses bounded navigation context and restores fixed list without API authority',()=>{
  for(const from of [undefined,'workspace','organization','configuration']){
