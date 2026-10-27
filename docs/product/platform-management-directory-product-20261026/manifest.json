@@ -27,6 +27,11 @@
       "sha256": "6e6d5b1760a59cac388596d64c11721ce0e2d862252dadaff573d98233a5993f"
     },
     {
+      "path": "ci-runtime-second-failure.json",
+      "bytes": 1358,
+      "sha256": "47bbf585510166af1ddde7cf1aaf0f1e6c8b5667a4ba7dd1fde5a6f13f6cc45e"
+    },
+    {
       "path": "configuration.png",
       "bytes": 76658,
       "sha256": "601e0ce69192f471e362e09a628ee9644805093b547a6102703da239f1e649f8"
@@ -38,13 +43,18 @@
     },
     {
       "path": "failure-history.json",
-      "bytes": 3081,
-      "sha256": "f6eb360275fb93119ad2aabbf9ed3aeed25e19f4660fcdd98b73254870206ff9"
+      "bytes": 3478,
+      "sha256": "9f572491181f5d92301530650a731da11ffdcf10fe54eace7b69f0ed843042eb"
     },
     {
       "path": "go-regression.json",
       "bytes": 738,
       "sha256": "00c8fe2b64678510263897006c76943f98f09cbd68a41fbb7e83a5fdd5ca5d95"
+    },
+    {
+      "path": "hydration-diagnostic-summary.json",
+      "bytes": 1719,
+      "sha256": "d3f594cd9ef4d56f74d27a19d6992d0b7fee583b40c242d2b81e4ef9df5f1b70"
     },
     {
       "path": "local-runtime-before-landing-fix.json",

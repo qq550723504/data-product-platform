@@ -81,3 +81,15 @@ CI加入同一实际入口准备、Go/PG、子进程、Web、浏览器及保留�
 
 
 登录就绪调整同步覆盖既有管理、首片main-service和本片目录脚本。故意拒绝的登录另以显式accepted=false等待/auth/callback并保留“登录未完成”断言，不把失败身份也当成成功落地；首次仅等待成功落地导致的[负向验收失败](platform-management-directory-product-20261026/management-landing-denial-failure.json)保留。最终[共享管理Chromium51项](platform-management-directory-product-20261026/management-landing-chromium.json)和[目录Chromium24项](platform-management-directory-product-20261026/directory-landing-chromium.json)全部PASS。目录复核继续使用本轮已运行的实际cmd/api/4380，不重置API、IdP、PG或过期会话；日志修复新构建在4370，共享设置也在该新构建验收。
+
+
+## 8. 重复CI失败仍阻断；只增加有界诊断
+
+6e795473的CI已完成，仍为14项成功、identity/required失败：[第二次失败](platform-management-directory-product-20261026/ci-runtime-second-failure.json)在默认时间范围/刷新阶段记录React 418，随后的历史保护零错误断言阻断，目录步骤继续NOT_RUN。上一节的生命周期与落地补修未消除根因，不能宣布已解决或冻结为完整绿色候选。
+
+[本机诊断范围](platform-management-directory-product-20261026/hydration-diagnostic-summary.json)包括共享组件开发版20组、全站外壳开发版8组/生产版8组、全新独立Next/OIDC/PG开发版19项，以及CPU速度与脚本加载延迟18组。均未重现，不当作Linux失败的反证或根因修复证明。为取得可读错误，新复制诊断环境仅改测试宿主的固定合成坐标与开发宿主；产品源码与业务边界保持不变。初次不完整的源码复制缺少migration目录，准备失败及其新资源单独保留；未清理、重置或延长旧库/旧资格。
+
+下一提交仅给原日志浏览器用例增加只读诊断：页面离开/恢复的原生persisted、pathname（无query）、相对时序；首个完整表格与错误时的有界DOM标签结构，不含文本、id、属性值、参数、引用、Cookie或凭据。不删除/修改DOM、不替换事件、不屏蔽错误、不增加重试；原零错误断言继续阻断。新提交仍需以最新HEAD的完整CI及目录产物核对；在此之前该浏览器阻断保持OPEN。真实来源、默认预览、业务写入、模型与真实执行边界均未改变，PR继续Draft。
+
+
+诊断记录区分原生/合成事件的isTrusted，保留最后400项并报告丢弃计数。该监听器在新4410开发宿主的19项流程验证通过；另一轮开发工具的栈帧POST被原有零写断言阻断，私有失败保留，未放行该路径或当作生产写入。开发版检查不替代生产CI，也未提供418根因重现。

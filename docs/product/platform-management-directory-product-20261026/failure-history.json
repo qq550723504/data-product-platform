@@ -49,6 +49,12 @@
       "verdict": "FAIL",
       "evidence": "management-landing-denial-failure.json",
       "resolution": "Success-only /settings wait cannot serve deliberately denied login. Test now explicitly selects accepted or denied destination, preserving negative heading and absence of access; subsequent full management 51 checks passed."
+    },
+    {
+      "name": "6e795473 repeated CI hydration mismatch",
+      "verdict": "FAIL",
+      "evidence": "ci-runtime-second-failure.json",
+      "resolution": "UNRESOLVED. Prior lifecycle and landing changes did not eliminate the error. Preserve original zero-error check; add bounded text-free native lifecycle/DOM diagnostics for Linux CI rather than declaring local passes a root fix."
     }
   ],
   "realSources": "UNCONFIGURED",
