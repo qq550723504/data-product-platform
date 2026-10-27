@@ -3,7 +3,7 @@ import json,os,re,sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import bootstrap as b
-if not (b.MAIN_SERVICE or b.COMPAT or b.DIRECTORY) or os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('independent main service fixture required')
+if not (b.MAIN_SERVICE or b.COMPAT or b.PRODUCT) or os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('independent main service fixture required')
 name=os.environ.get('MANAGEMENT_MAIN_SERVICE_PRESERVATION_OUTPUT','retained-final-comparison')
 if not re.fullmatch(r'retained-[a-z0-9-]+-comparison',name):raise RuntimeError('invalid preservation evidence name')
 target=b.RUN/(name+'.json')

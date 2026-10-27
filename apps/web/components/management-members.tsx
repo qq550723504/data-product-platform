@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Full GET navigation revalidates privileged reads and avoids restoring cached member records. */
 import {ManagementRowFocus} from './management-row-focus';
-import {managementMemberDetailHref,managementMemberListHref,managementPageQuery,permissionLabels,type ManagementResult,type ManagementSelection,type Member,type Role} from '@/lib/platform-management';
+import {managementMemberDetailHref,managementMemberListHref,managementUserFromMemberHref,managementPageQuery,permissionLabels,type ManagementResult,type ManagementSelection,type Member,type Role} from '@/lib/platform-management';
 
 export function ManagementMembers({result,selection:s}:{result:ManagementResult;selection:ManagementSelection}){
  const definitions=result.data.roleDefinitions!,selected=result.data.selected;
@@ -8,6 +8,7 @@ export function ManagementMembers({result,selection:s}:{result:ManagementResult;
  if(selected)return <section className="management-detail management-member-view" aria-label="成员详情">
   <a className="management-back" href={managementMemberListHref(s,selected.id)}><span aria-hidden="true">← </span>返回成员列表</a>
   <h2>{selected.displayName||selected.userId}</h2>
+  <a href={managementUserFromMemberHref(s,selected.id,selected.userId)}>查看账号资料 →</a>
   <dl className="management-member-facts"><dt>登录名</dt><dd>{selected.loginName}</dd><dt>状态</dt><dd>{selected.state==='active'?'启用':'停用'}</dd><dt>当前角色</dt><dd>{selected.roles.map(roleName).join('、')||'未配置角色'}</dd><dt>已配置权限</dt><dd>{selected.permissions.map(permission=>permissionLabels[permission]).join('、')||'暂无映射'}</dd></dl>
   <details><summary>查看来源引用</summary><p>外部用户：{selected.userId}</p><p>成员关系：{selected.id}</p><p>所属组织：{selected.organizationId}</p><p>应用项目：{selected.projectId}</p></details>
  </section>;
@@ -22,7 +23,7 @@ export function ManagementMembers({result,selection:s}:{result:ManagementResult;
   </form>
   <div className="management-count">共 {result.data.total} 名成员</div>
   <div className="table-wrap"><table aria-label="空间成员"><thead><tr><th>成员</th><th>角色</th><th>状态</th><th>操作</th></tr></thead><tbody>{(result.data.items as Member[]).map(member=><tr id={'member-'+member.id} tabIndex={-1} key={member.id}>
-   <td><strong>{member.displayName||member.userId}</strong><small>{member.loginName}</small></td><td>{member.roles.map(roleName).join('、')||'未配置角色'}</td><td>{member.state==='active'?'启用':'停用'}</td><td><a href={managementMemberDetailHref(s,member.id)}>查看成员</a></td>
+   <td><strong>{member.displayName||member.userId}</strong><small>{member.loginName}</small></td><td>{member.roles.map(roleName).join('、')||'未配置角色'}</td><td>{member.state==='active'?'启用':'停用'}</td><td><a href={managementMemberDetailHref(s,member.id)}>查看成员</a>{' · '}<a href={managementUserFromMemberHref(s,member.id,member.userId)}>查看账号</a></td>
   </tr>)}</tbody></table></div><ManagementRowFocus prefix="member-"/>
   {!result.data.items.length&&<p className="empty">当前条件下没有成员</p>}
   <nav className="pagination" aria-label="成员分页">

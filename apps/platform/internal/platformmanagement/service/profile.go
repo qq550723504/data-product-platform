@@ -68,6 +68,7 @@ type DirectoryWorkspace struct {
 	OrganizationID string            `json:"organizationId"`
 	ProjectID      string            `json:"projectId"`
 	Roles          []management.Role `json:"roles"`
+	UserProfiles   bool              `json:"userProfiles"`
 }
 
 func (Directory) String() string              { return "Directory configuration (private)" }
@@ -113,7 +114,7 @@ func strictProfile(b []byte, p *Profile) error {
 	if !utf8.Valid(b) {
 		return ErrConfiguration
 	}
-	allowed := strings.Fields("version mode listen tls identity database audit directory certFile keyFile source issuer tokenEndpoint introspectionEndpoint clientId clientSecretFile audience requiredScope allowedClientIds caFile urlFile name role workspaces provider workspaceId origin credentialFile organizationId projectId roles id permissions")
+	allowed := strings.Fields("version mode listen tls identity database audit directory certFile keyFile source issuer tokenEndpoint introspectionEndpoint clientId clientSecretFile audience requiredScope allowedClientIds caFile urlFile name role workspaces provider workspaceId origin credentialFile organizationId projectId roles id permissions userProfiles")
 	keys := map[string]bool{}
 	for _, k := range allowed {
 		keys[k] = true
@@ -142,7 +143,12 @@ func strictProfile(b []byte, p *Profile) error {
 						return ErrConfiguration
 					}
 					seen[key] = true
-					if walk(depth+1) != nil {
+					if key == "userProfiles" {
+						value, err := d.Token()
+						if _, ok := value.(bool); err != nil || !ok {
+							return ErrConfiguration
+						}
+					} else if walk(depth+1) != nil {
 						return ErrConfiguration
 					}
 				}

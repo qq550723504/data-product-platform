@@ -16,6 +16,7 @@ RETAINED = {
     'runtime': 'dpp-runtime-logs-readonly-20261026',
     'main-service': 'dpp-management-main-service-20261026',
     'main-service-compat': 'dpp-management-main-service-compat-20261026',
+    'directory-product': 'dpp-management-directory-product-20261026',
 }
 
 

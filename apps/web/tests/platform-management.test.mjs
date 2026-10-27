@@ -3,7 +3,21 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fixture,MemoryStore} from './helpers/oidc-fixture.mjs';
 const require=createRequire(import.meta.url);
-const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,organizationQueryHref,configurationQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement,validConfigurationManagement}=require('../.iam-tests/platform-management.js');
+const {managementSelection,managementQuery,managementPageQuery,workspaceQueryHref,organizationQueryHref,configurationQueryHref,managementMemberListHref,managementMemberDetailHref,managementUserListHref,managementUserDetailHref,managementUserFromMemberHref,managementUserReturnHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement,validConfigurationManagement}=require('../.iam-tests/platform-management.js');
+
+test('member to account uses bounded navigation context and restores fixed list without API authority',()=>{
+ for(const from of [undefined,'workspace','organization','configuration']){
+  const member={offset:25,q:'成员 & 甲',role:'viewer',state:'active',from};
+  const href=new URL(managementUserFromMemberHref(member,'grant-26','native-26'),'https://app.invalid');
+  const s=managementSelection('users',Object.fromEntries(href.searchParams));
+  assert.deepEqual(s.memberContext,{...Object.fromEntries(Object.entries(member).filter(([,v])=>v!==undefined)),memberId:'grant-26'});
+  assert.equal(managementQuery(s),'?userId=native-26');
+  assert.equal(managementUserReturnHref(s),managementMemberListHref(member,'grant-26'));
+  assert.deepEqual(managementSelection('users',Object.fromEntries(new URLSearchParams(managementPageQuery(s)))),s);
+ }
+ for(const context of ['memberId=grant&memberId=other','memberId=grant&workspaceId=foreign','memberId=grant&memberContext=x','returnTo=https://external.invalid','offset=25','memberId=grant&from=//foreign.invalid','memberId=grant&offset=01'])assert.throws(()=>managementSelection('users',{userId:'native',memberContext:context}));
+ for(const q of [{memberContext:'memberId=grant'},{userId:'native',q:'x',memberContext:'memberId=grant'},{userId:'native',offset:'25',memberContext:'memberId=grant'},{userId:'native',from:'workspace',memberContext:'memberId=grant'},{userId:'native',memberContext:['memberId=grant']},{userId:'native',memberContext:'x'.repeat(2001)}])assert.throws(()=>managementSelection('users',q));
+});
 test('management RP is disjoint and transport allows only exact readonly workspace queries',async t=>{
  const f=await fixture(t,new MemoryStore(),'platform-management'),start=await f.iam.start(),session=await f.iam.callback(f.callback(start),start.key),client=await f.iam.managementClient(session.key);
  assert.deepEqual(client.principal.capabilities,['PLATFORM_MANAGEMENT_READ']);await assert.rejects(f.iam.acceptanceClient(session.key));
@@ -87,6 +101,8 @@ test('user DTO separates account member and canonical identity facts and fails c
  const selected={profile:{id:'native',organizationId:'org',username:'login',displayName:'Person',accountState:'active',createdAt:at,changedAt:at},memberships:[m],identity:{workspaceId:p.workspace_id,state:'UNCONFIGURED',actorId:null,revision:'',basisRef:'',expiresAt:null}};
  const raw={profileVersion:'platform-management.v1',workspaceId:p.workspace_id,principalId:p.principal_id,authorityRevision:p.revision,evaluatedAt:at,source:'SYNTHETIC_FIXTURE',writeEnabled:false,data:{items:[{id:'native',displayName:'Person',loginName:'login',membershipCount:1}],total:1,offset:0,limit:25,selected,roleDefinitions:[{id:'viewer',name:'查询员',permissions:['management.users.read']}]}};
  assert.equal(validUserManagement(raw,p,{offset:0,userId:'native'}),true);
+ assert.equal(validUserManagement(raw,p,{offset:0,userId:'native',memberContext:{offset:25,memberId:'grant'}}),true);
+ assert.equal(validUserManagement(raw,p,{offset:0,userId:'native',memberContext:{offset:25,memberId:'foreign-grant'}}),false);
  const linked={...selected.identity,state:'LINKED',actorId:'44444444-4444-4444-8444-444444444444',revision:'2:3:4',basisRef:'explicit-source',expiresAt:new Date(Date.now()+300000).toISOString()};
  assert.equal(validUserManagement({...raw,data:{...raw.data,selected:{...selected,identity:linked}}},p,{offset:0,userId:'native'}),true);
  for(const selectedChange of [{profile:{...selected.profile,accountState:'unknown'}},{profile:{...selected.profile,email:'PRIVATE'}},{memberships:[{...m,organizationId:'foreign'}]},{identity:{...linked,workspaceId:p.principal_id}},{identity:{...linked,actorId:'native'}},{identity:{...selected.identity,actorId:linked.actorId}}])assert.equal(validUserManagement({...raw,data:{...raw.data,selected:{...selected,...selectedChange}}},p,{offset:0,userId:'native'}),false);

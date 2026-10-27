@@ -48,9 +48,12 @@ func directoryBindings(config *Directory) (map[uuid.UUID]management.Binding, fun
 			return nil, nil, ErrConfiguration
 		}
 		clients = append(clients, native)
-		// User profiles and native-user -> platform identity links require their
-		// own approved source contract. Do not enable every method on this client.
-		bindings[b.WorkspaceID] = management.Binding{OrganizationID: b.OrganizationID, ProjectID: b.ProjectID, Source: config.Source, Directory: native, Organizations: native, Catalog: catalog}
+		binding := management.Binding{OrganizationID: b.OrganizationID, ProjectID: b.ProjectID, Source: config.Source, Directory: native, Organizations: native, Catalog: catalog}
+		if b.UserProfiles {
+			binding.Users = native
+		}
+		// Native profiles never establish a native-user -> platform identity link.
+		bindings[b.WorkspaceID] = binding
 	}
 	return bindings, close, nil
 }

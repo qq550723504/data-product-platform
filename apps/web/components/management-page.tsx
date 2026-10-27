@@ -2,7 +2,7 @@
 import {currentManagementClient} from '@/lib/iam-server';
 import {iamEnabled} from '@/lib/iam-mode';
 import {workspaces} from '@/lib/iam-workspace';
-import {managementMenus,managementSelection,managementQuery,managementPageQuery,managementMemberListHref,managementUserListHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement,validConfigurationManagement,type ConfigurationManagementResult,type OrganizationManagementResult,type WorkspaceManagementResult,type UserManagementResult,type ManagementSection,type ManagementResult,type Role,type Audit} from '@/lib/platform-management';
+import {managementMenus,managementSelection,managementQuery,managementPageQuery,managementMemberListHref,managementUserReturnHref,validManagement,validUserManagement,validWorkspaceManagement,validOrganizationManagement,validConfigurationManagement,type ConfigurationManagementResult,type OrganizationManagementResult,type WorkspaceManagementResult,type UserManagementResult,type ManagementSection,type ManagementResult,type Role,type Audit} from '@/lib/platform-management';
 import {ManagementMembers,ManagementRoles} from './management-members';
 import {ManagementUsers} from './management-users';
 import {ManagementWorkspace} from './management-workspace';
@@ -36,7 +36,7 @@ export async function ManagementPage({section='',query={}}:{section?:string;quer
  const currentHeading=detail?<><div className="breadcrumb">系统设置 / {title} / {kind==='users'?'用户详情':'成员详情'}</div><div className="page-heading"><div><h1>{kind==='users'?'用户详情':'成员详情'}</h1><p>查看人员资料与当前空间的角色权限。</p></div><span className="tag green">仅查询</span></div></>:heading;
  return <>{context}{currentHeading}
  {s.from&&<a className="management-back" href={s.from==='configuration'?'/settings/configuration':s.from==='organization'?'/settings/organizations':'/settings/workspaces'}><span aria-hidden="true">← </span>返回{s.from==='configuration'?'基础配置':s.from==='organization'?'组织资料':'工作空间'}</a>}
- {!loaded?<section className="management-state" role="status"><h2>{error}</h2><p>没有用示例记录替代查询结果。</p><a href={url+managementPageQuery(s)}>重新查询</a>{detail&&<a className="management-back" href={kind==='users'?managementUserListHref(s):managementMemberListHref(s)}>返回{kind==='users'?'用户目录':'成员列表'}</a>}</section>:<>
+ {!loaded?<section className="management-state" role="status"><h2>{error}</h2><p>没有用示例记录替代查询结果。</p><a href={url+managementPageQuery(s)}>重新查询</a>{detail&&<a className="management-back" href={kind==='users'?managementUserReturnHref(s):managementMemberListHref(s)}>返回{kind==='users'&&!s.memberContext?'用户目录':'成员列表'}</a>}</section>:<>
  {loaded.source==='SYNTHETIC_FIXTURE'&&<p className="management-source">当前展示合成验收数据，真实来源未配置。</p>}
  {workspace&&<ManagementWorkspace result={workspace} label={label} selection={s}/>}
  {organization&&<ManagementOrganization result={organization} selection={s}/>}

@@ -1,6 +1,6 @@
 # 系统设置接入主服务：只读装配方案
 
-2026-10-26。状态：**前两片共享组合及第三片目录产品配置已完成隔离合成验证；主服务可选组合默认关闭，真实运行未启用**。设计源码基线为`48cde34853f8da73bfb07936e9906252c1ce2f09`，设计文档提交`2a6f6099e7716dc4693db51147cfc88ab863b95c`的16项CI已完成并成功。后续用户授权实施第一切片，当前结果见[实施及验收记录](../product/platform-management-main-service-20261026.md)；本次实现HEAD的CI单独记录，不继承前述绿色。第二切片复用既有目录/日志Port完成共享组合兼容及来源观察门禁修复，见[第二切片验收](../product/platform-management-main-service-compat-20261026.md)；第三片已增加默认关闭的组织/成员/应用角色目录配置，见[产品入口验收](../product/platform-management-directory-product-20261026.md)；用户资料/身份关联和日志产品配置仍未开放。
+2026-10-26。状态：**前两片共享组合及第三片目录产品配置已完成隔离合成验证；主服务可选组合默认关闭，真实运行未启用**。设计源码基线为`48cde34853f8da73bfb07936e9906252c1ce2f09`，设计文档提交`2a6f6099e7716dc4693db51147cfc88ab863b95c`的16项CI已完成并成功。后续用户授权实施第一切片，当前结果见[实施及验收记录](../product/platform-management-main-service-20261026.md)；本次实现HEAD的CI单独记录，不继承前述绿色。第二切片复用既有目录/日志Port完成共享组合兼容及来源观察门禁修复，见[第二切片验收](../product/platform-management-main-service-compat-20261026.md)；第三片已增加默认关闭的组织/成员/应用角色目录配置，见[产品入口验收](../product/platform-management-directory-product-20261026.md)；本轮用户资料产品配置见第11节；身份关联和日志产品配置仍未开放。
 
 真实来源UNCONFIGURED，默认新版预览未接入；原库、OIDC/RP和Agent API保留，业务写入口、模型和真实执行关闭，PR #363保持Draft、不合并、不部署。
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | 主服务入口 | [cmd/api](../../apps/platform/cmd/api/main.go)在全量配置、主库、outbox、存储/队列/engine创建前选择独立QUERY_ONLY组合 | 代码已接入可选分支，不代表现有服务已切换或全量主服务成为只读 |
 | 共享查询组合 | [Compose](../../apps/platform/internal/platformmanagement/service/composition.go)只注册既有设置/日志GET、私有身份确认和health | tests注入合成Port，产品profile不提供合成开关；不混挂业务mux |
-| 当前产品配置 | [Profile](../../apps/platform/internal/platformmanagement/service/profile.go)支持身份、专用资格库、可选审计及可选组织/成员目录 | 目录仅显式配置时装配；用户资料/身份关联、日志产品配置未开放，真实来源仍未启用 |
+| 当前产品配置 | [Profile](../../apps/platform/internal/platformmanagement/service/profile.go)支持身份、专用资格库、可选审计及可选组织/成员目录 | 目录仅显式配置时装配；用户资料由第11节独立开关控制；身份关联、日志产品配置未开放，真实来源仍未启用 |
 | 审计 | 独立workspace→AuditBinding，Handler、workspace/configuration投影及Web校验同步解耦 | 不再依赖目录/Catalog；仍需当前身份、空间和PLATFORM_MANAGEMENT_READ |
 | 实际验证 | 共享组合在独立PG/TLS/合成OIDC/RP与新版Web验证；产品入口另有真实main子进程的拒绝回退回归 | 不把测试宿主当真实部署；产品正向真实来源启动NOT_RUN |
 
@@ -20,7 +20,7 @@
 
 复用已有principal/oidc、bindings.Store/ValidateInTx、PostgresGate、PostgresAudit、管理/日志Handler、BrowserIAM/PostgresSessionStore及httpserver.NewMuxWithReadiness。现有ZITADEL OIDC v3.45.0、Casbin v2.128.0、pgx v5.9.2和securecookie v1.1.2保持，无新依赖。按[ADR-0010](../adr/0010-reuse-commodity-capabilities.md)和[能力归属](capability-map.md)，不新增IAM、OPA、HTTP框架、审计账本、日志存储或采集服务，不Fork源项目。
 
-现有全量cmd/api会创建多领域路由、存储/队列并执行健康入队，所以不能通过“最后追加管理Handler”获得只读保证。首片复用同一cmd/api入口的独立组合分支，创建自己的专用连接和封闭mux；现有Agent宿主和预览保持原路径。测试prepare/seed、控制端及合成源仅在tests，不进入产品组合。第三片目录配置复用该组合根；同进程全量与管理并存、用户/身份关联及日志产品配置、真实来源启用仍是后续范围。
+现有全量cmd/api会创建多领域路由、存储/队列并执行健康入队，所以不能通过“最后追加管理Handler”获得只读保证。首片复用同一cmd/api入口的独立组合分支，创建自己的专用连接和封闭mux；现有Agent宿主和预览保持原路径。测试prepare/seed、控制端及合成源仅在tests，不进入产品组合。第三片目录配置复用该组合根；用户资料产品装配由第11节限定；同进程全量与管理并存、身份关联及日志产品配置、真实来源启用仍是后续范围。
 
 ## 3. 默认关闭和私有配置
 
@@ -34,7 +34,7 @@
 | database | urlFile、caFile、name、role均明确；URL必须匹配数据库/角色，有显式主机端口和密码，不接受查询参数覆盖；固定验证TLS、无fallback，覆盖环境PG连接参数，专用只读连接不继承主服务DSN |
 | audit（可省略/null） | 配置时必须source=CONFIGURED及非空、无重复/零值的workspaces；独立AuditReader使用本资格库的audit_event最小投影；缺省不授audit_event读取权限 |
 | directory（可省略/null） | 第三片支持显式组织/成员/应用角色查询配置，字段和边界见第10节；缺省不构造目录客户端或读凭据 |
-| 未开放的配置 | 产品profile不接受用户资料/身份关联、日志Reader或SYNTHETIC_FIXTURE及夹具开关；独立产品入口验收可连接本地合成协议服务，但不是接纳真实来源 |
+| 未开放的配置 | 产品profile不接受身份关联、日志Reader或SYNTHETIC_FIXTURE及夹具开关；用户资料只接受第11节的严格布尔开关；独立产品入口验收可连接本地合成协议服务，但不是接纳真实来源 |
 
 运行响应/错误不序列化profile，常规fmt诊断隐藏其私有字段。文件读取有大小/类型边界，启动先验证配置与私有材料，再创建专用连接、核验schema/最小权限、创建Resolver并注册路由。没有自动迁移、创建角色、seed、身份导入、授权修改、热重载或配置保存接口。运行配置变更需要明确停用并验证新候选。
 
@@ -48,7 +48,7 @@ GET /health/live仅表示进程存活；GET /health/ready执行必需数据库/s
 | Gate | 每次读取复用当前资格/fence；读取前后核验同一actor、issuer/subject、workspace、revision及最短期限；原期限不得被后查延长 |
 | workspace/configuration | 身份可用即能解释来源未配置；不需要目录，不生成正式空间档案或健康断言；configuration仍为六个查询键 |
 | audit | 当前空间显式AuditBinding.Source/Reader，独立于Directory/Catalog；成功及失败观察均经后置身份检查，错误无data，输出前保留原期限 |
-| directory | 七项管理Handler复用现有Port和原生权限规则，第二切片已通过tests注入完成共享组合兼容；第三片产品profile仅在显式directory下组装Directory/Catalog/Organizations，Users/IdentityLinks仍不组装 |
+| directory | 七项管理Handler复用现有Port和原生权限规则，第二切片已通过tests注入完成共享组合兼容；第三片产品profile仅在显式directory下组装Directory/Catalog/Organizations；Users按第11节默认关闭，IdentityLinks仍不组装 |
 | logs | 产品默认RuntimeSources=nil；第二切片仅tests注入合成Reader验证共享日志Handler，source/记录继续独立双权限及引用规则，不接真实日志 |
 | Web | 复用现有管理RP、加密临时会话、同API origin的严格GET transport；无第二套IAM、无浏览器Bearer代理或业务写入口 |
 
@@ -113,7 +113,7 @@ QUERY_ONLY不创建outbox obligation/router、队列/健康入队、对象存储
 
 ## 9. 下一切片和授权边界
 
-第一切片后续已获第二切片共享组合兼容的独立合成验证授权，并完成上述有限回归。后续第三片已获准实施目录私有配置及实际产品入口的独立合成验收；用户/身份关联和日志产品配置、同进程全站并存、真实来源/版本/空间资料/责任人落实仍为后续工作，不由本次代码或CI自动启用。实际企业来源、受控地址和部署范围仍待定；产品正向真实来源启动、原库DDL、真实授权变更、默认预览切换、模型、派发、业务写入、合并/部署均未执行。
+第一切片后续已获第二切片共享组合兼容的独立合成验证授权，并完成上述有限回归。后续第三片已获准实施目录私有配置及实际产品入口的独立合成验收；用户资料由第11节继续推进；身份关联和日志产品配置、同进程全站并存、真实来源/版本/空间资料/责任人落实仍为后续工作，不由本次代码或CI自动启用。实际企业来源、受控地址和部署范围仍待定；产品正向真实来源启动、原库DDL、真实授权变更、默认预览切换、模型、派发、业务写入、合并/部署均未执行。
 
 出现身份/空间泄漏、真实保留元数据变化或UNKNOWN、权限扩大、错误源回退等必须停止，不降低门槛或补造成功。首次本地准备因权限检查SQL在非sequence对象调用sequence权限函数而失败，已改为显式CASE类型保护；实际写权限与元数据变化阻断均保留。失败和修复后验收分别留存，详见实施记录。
 
@@ -130,7 +130,7 @@ QUERY_ONLY不创建outbox obligation/router、队列/健康入队、对象存储
 | origin | 独立HTTPS origin；拒绝userinfo、任意路径（根/空除外）、query（含空问号）、fragment、opaque及转义路径；原生Adapter不跟随重定向，仅执行现有闭集只读查询 |
 | caFile/credentialFile | 显式绝对私有文件引用；CA须可解析、凭据非空且为无内部空白/控制字符的ASCII bearer值，受现有文件大小边界约束；缺失/错误即安全退出，无身份密钥、会话Bearer、环境或默认来源回退 |
 | roles | 每空间复用现有NewCatalog/Casbin，1—64个不重复角色及既有查询权限白名单；不实现新策略引擎，目录未映射角色没有已配置权限，角色不能生成平台grant |
-| 查询装配 | 仅Directory、OrganizationReader及Catalog；Users/IdentityLinks始终为空。audit按独立绑定，RuntimeSources仍为空；配置六键保持原合同 |
+| 查询装配 | 仅Directory、OrganizationReader及Catalog；省略或关闭第11节开关时Users为空；IdentityLinks始终为空。audit按独立绑定，RuntimeSources仍为空；配置六键保持原合同 |
 | 构造/健康/关闭 | 配置和文件校验先于新库连接；构造不请求来源，health/ready不探测目录或宣称来源健康；关闭只清理本组合拥有的目录空闲连接 |
 | 配置修改 | 无热重载、公开保存或测试入口；需要明确新候选和运行授权后再启动，不原地改写业务历史 |
 
@@ -141,3 +141,17 @@ QUERY_ONLY不创建outbox obligation/router、队列/健康入队、对象存储
 模板见[directory-query.example.json](../../deploy/management/directory-query.example.json)。其空UUID及PRIVATE/REPLACE、.invalid均为不可直接启用的占位符，实际配置须保存在受控位置，路径须按宿主系统替换。不得把凭据或完整私有profile提交仓库。
 
 第三片实际cmd/api启动契约12项、Edge/Chromium各24项及独立PG回归已通过，旧目录测试宿主的结果不能替代此入口证据；当前HEAD完整CI在PR闭环评论核对。来源真实实例/组织/空间/责任/材料、实际启用与原库DDL仍待定且未执行，默认预览保持未接入。
+
+
+## 11. 用户资料的产品级只读装配
+
+本节拥有 `directory.workspaces[].userProfiles` 的产品配置；[管理查询契约](platform-management-readonly-v1.md)继续拥有人员查询、身份及工作空间边界。[本轮记录](../product/platform-management-user-product-20261027.md)记录独立合成验证，不接纳任何真实来源。
+
+- `userProfiles` 可省略或为 `false`，均不装配 Users。只有逐空间显式 `true` 才将已有 ZITADEL Client 赋给 Users；严格拒绝 null、字符串、数值、对象、数组、重复键、大小写别名或错层字段。当前目录模板显式 false，顶层 profile 省略仍不创建新增组合或依赖。
+- 不新增用户查询协议、凭据、策略引擎或数据库表。复用原有 UserReader、QueryUsers、HTTP GET、OIDC/RP、PostgresGate、TLS 与同一目录凭据。构造和 ready 不探测原生用户来源。角色展示权限不能生成 caller grant。
+- 身份关联独立，IdentityLinks 始终不装配；目录用户ID、登录名、组织或合成的同人候选都不能推定 canonical actor。详情只能显示 UNCONFIGURED，不能声称已关联。真实来源、平台身份映射与默认预览均继续未配置。
+- 开关关闭时，公开六键中的 users=false，users 列表及详情 HTTP 均在当前身份/空间核验后返回503 SOURCE_UNCONFIGURED，且不读原生目录。底层 QueryUsers 可从已授权成员提取引用的能力不改变此 HTTP 关闭边界。开启不等于健康，availability 仍 NOT_CHECKED。
+- 开启后仍只有当前空间的显式 organization/project 成员可被查到；选中账号必须在可见成员集合中，随后读取严格匹配的原生账号，并在返回前重读成员和原生权限、再核验 caller revision/资格/有效期。不存在的当前成员、跨组织资料、来源错误或读取中撤权/到期不能回传账号资料。
+- 新导航 `memberContext` 仅用于用户详情返回成员列表，含既有合法筛选、offset、memberId及闭集 from。不能包含 workspace/caller、任意返回URL、重复键或嵌套上下文；仅在 userId 详情且没有竞争用户筛选时可用。Web校验该 memberId 属于当前返回账号；固定返回 `/settings/members`，恢复条件、页码和原行焦点。上下文不进入 API，不成为权限依据，刷新/历史继续完整GET重验。现有用户目录返回与焦点也保留。
+
+没有启用真实目录/用户、自动写入、业务签收、模型、执行、部署或合并。未来真实查询须先完成来源/责任材料及运行授权；`true`、合成 PASS 或CI绿色均不能替代这些条件。

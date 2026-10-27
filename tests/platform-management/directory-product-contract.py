@@ -3,9 +3,9 @@ import copy,json,os,re,socket,ssl,subprocess,sys,time,urllib.request
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import bootstrap as b
-if not b.DIRECTORY or os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('independent directory product fixture required')
+if not b.PRODUCT or os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('independent directory product fixture required')
 p=json.loads((b.RUN/'profile.json').read_text(encoding='utf-8'))
-if p['database']!='management_directory_product_20261026' or p['issuer']!='https://localhost:19180':raise RuntimeError('fixed isolated target required')
+if p['database']!=b.DATABASE or p['issuer']!=f'https://localhost:{b.IDP_PORT}':raise RuntimeError('fixed isolated target required')
 original=json.loads((b.RUN/'product-profile.json').read_text(encoding='utf-8'))
 binary=b.RUN/('api-product.exe' if os.name=='nt' else 'api-product')
 name=os.environ.get('DIRECTORY_PRODUCT_CONTRACT_OUTPUT','product-contract-results')
@@ -22,9 +22,10 @@ def write_profile(c,label):
  f=b.RUN/(name+'-'+label+'-private.json');f.write_text(json.dumps(c),encoding='utf-8');return f
 def fail(message):raise RuntimeError(message)
 try:
- for fault in ['partial','synthetic','provider','duplicate-workspace','zero-workspace','write-role','missing-credential','invalid-ca','users-unopened','logs-unopened','fixture-switch']:
+ for fault in ['user-switch-null','user-switch-string','user-switch-number']*b.USER_PRODUCT+['partial','synthetic','provider','duplicate-workspace','zero-workspace','write-role','missing-credential','invalid-ca','users-unopened','logs-unopened','fixture-switch']:
   c,_=candidate();d=c['directory'];binding=d['workspaces'][0]
-  if fault=='partial':c['directory']={}
+  if fault.startswith('user-switch-'):binding['userProfiles']={'user-switch-null':None,'user-switch-string':'true','user-switch-number':1}[fault]
+  elif fault=='partial':c['directory']={}
   elif fault=='synthetic':d['source']='SYNTHETIC_FIXTURE'
   elif fault=='provider':d['provider']='AUTO'
   elif fault=='duplicate-workspace':d['workspaces'].append(copy.deepcopy(binding))

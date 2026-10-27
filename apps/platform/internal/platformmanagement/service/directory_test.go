@@ -85,7 +85,7 @@ func TestDirectoryProfileRejectsIncompleteAmbiguousAndExpandedScope(t *testing.T
 			}
 		})
 	}
-	for _, alias := range []string{"workspaceId", "credentialFile", "permissions"} {
+	for _, alias := range []string{"workspaceId", "credentialFile", "permissions", "userProfiles"} {
 		p := directoryProfile(t)
 		raw, _ := json.Marshal(p)
 		// Both duplicate keys and case aliases must fail at their actual nesting.
@@ -155,10 +155,46 @@ func TestDirectoryAssemblyIsLazyScopedAndDoesNotEnableUserProfiles(t *testing.T)
 	if strings.Contains(fmt.Sprintf("%#v %v", p.Directory, *b), s.URL) {
 		t.Fatal("private directory diagnostic")
 	}
+	// Only an explicit workspace switch reuses the same native reader. It
+	// never wires the independent canonical identity mapping port.
+	b.UserProfiles = true
+	enabled, stop, err := directoryBindings(p.Directory)
+	if err != nil {
+		t.Fatal("explicit user profile assembly")
+	}
+	defer stop()
+	if enabled[b.WorkspaceID].Users == nil || enabled[b.WorkspaceID].IdentityLinks != nil || calls != 3 {
+		t.Fatal("profile activation probed source or enabled identity mapping")
+	}
 	for _, token := range []string{"", "bad\ncredential", "bad\tcredential"} {
 		_ = os.WriteFile(b.CredentialFile, []byte(token), 0600)
 		if _, _, e := directoryBindings(p.Directory); e != ErrConfiguration {
 			t.Fatal("invalid private credential accepted")
 		}
+	}
+}
+
+func TestUserProfileSwitchIsStrictAndDefaultsClosed(t *testing.T) {
+	p := directoryProfile(t)
+	raw, _ := json.Marshal(p)
+	for _, value := range []string{"omitted", "false", "true", "null", `"true"`, "1", "{}", "[]"} {
+		t.Run(value, func(t *testing.T) {
+			v := strings.Replace(string(raw), `,"userProfiles":false`, "", 1)
+			if value != "omitted" {
+				v = strings.Replace(v, `"workspaceId":`, `"userProfiles":`+value+`,"workspaceId":`, 1)
+			}
+			f := filepath.Join(t.TempDir(), "profile.json")
+			if os.WriteFile(f, []byte(v), 0600) != nil {
+				t.Fatal("fixture")
+			}
+			got, err := LoadProfile(f)
+			valid := value == "omitted" || value == "false" || value == "true"
+			if (err == nil) != valid {
+				t.Fatal("invalid boolean boundary")
+			}
+			if valid && got.Directory.Workspaces[0].UserProfiles != (value == "true") {
+				t.Fatal("default profile boundary")
+			}
+		})
 	}
 }

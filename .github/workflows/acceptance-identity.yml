@@ -4,6 +4,56 @@ on:
 permissions:
   contents: read
 jobs:
+  user-profile-product:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.10'
+          cache-dependency-path: apps/platform/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked web and pinned browser dependencies
+        run: |
+          npm ci --ignore-scripts --prefix apps/web
+          npm install --ignore-scripts --prefix tests/browser
+          cd tests/browser && npx playwright install --with-deps chromium
+      - name: Prepare isolated user profile product and verify actual API
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_USER_PRODUCT_FIXTURE_ACK: ISOLATED_USER_PRODUCT_READONLY
+          MANAGEMENT_WEB_DIST: .next-acceptance-identity-management-user-product-20261027
+        run: |
+          python3 tests/platform-management/bootstrap.py
+          python3 tests/platform-management/test-main-service.py
+          python3 tests/platform-management/directory-product-contract.py
+          python3 tests/platform-management/start-web.py --build
+      - name: Account navigation and current authority browser acceptance
+        env:
+          MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
+          MANAGEMENT_USER_PRODUCT_FIXTURE_ACK: ISOLATED_USER_PRODUCT_READONLY
+          MANAGEMENT_BROWSER_CHANNEL: chromium
+        run: |
+          node tests/platform-management/user-product-browser.mjs
+          python3 tests/platform-management/verify-main-service.py
+      - name: Preserve non-secret user profile product results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: management-user-product-results
+          retention-days: 7
+          if-no-files-found: ignore
+          include-hidden-files: true
+          path: |
+            .data/management-user-product-20261027/go-regression.json
+            .data/management-user-product-20261027/product-contract-results.json
+            .data/management-user-product-20261027/retained-comparison.json
+            .data/management-user-product-20261027/retained-final-comparison.json
+            .data/management-user-product-browser-20261027/browser-results.json
+            .data/management-user-product-browser-20261027/screenshots/
   identity-1a:
     runs-on: ubuntu-latest
     timeout-minutes: 20

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "evidence-files.v1",
+  "files": [
+    {
+      "path": "account-detail.png",
+      "bytes": 69729,
+      "sha256": "6e959dec6f7cf1658112d22823d1ef33e38cae270066527953645991c05a24c0"
+    },
+    {
+      "path": "browser-chromium-results.json",
+      "bytes": 3069,
+      "sha256": "547572534a10ca8c8bba541293dfbe5820a7d63e37e1bd5131e0e4b7890622d8"
+    },
+    {
+      "path": "browser-edge-results.json",
+      "bytes": 3067,
+      "sha256": "bf1009fc0332662044d53e21a863c0161029926b089734796adde255d8bf1a33"
+    },
+    {
+      "path": "browser-link-before-test-fix.json",
+      "bytes": 1028,
+      "sha256": "cbc95de5dc2b952bde9307573226c498ba77dc112c24bcd8400884be253e47b7"
+    },
+    {
+      "path": "browser-query-order-before-test-fix.json",
+      "bytes": 1001,
+      "sha256": "bfd3e11b9217670e50a17afbac6e4113c9af22ea60f32186d3380bb826a71de8"
+    },
+    {
+      "path": "go-before-fixture-recognition.json",
+      "bytes": 738,
+      "sha256": "544e14da2caf800396d6a6bcc64c1775385256c5640271cbb8587aa1a05a8973"
+    },
+    {
+      "path": "go-regression.json",
+      "bytes": 738,
+      "sha256": "fb9926cc8e698440e29c3ef0cc27313aebc41d40f407aa93abb4b3cc54f03fd2"
+    },
+    {
+      "path": "identity-unconfigured.png",
+      "bytes": 69392,
+      "sha256": "753958c943b4bb8aa28c2d3a33d3ceac19a1fc27553b79f09fdfae78f0abfb07"
+    },
+    {
+      "path": "member-return.png",
+      "bytes": 85061,
+      "sha256": "9d56d93afc6e8fe33c5635b9978f877edf86e5ba26637c590dcf82d929b44c83"
+    },
+    {
+      "path": "mobile.png",
+      "bytes": 46782,
+      "sha256": "c8c55d57e5b82f0fcda74ba94b8cf904a20a96e01af5a3355e51b075ec211549"
+    },
+    {
+      "path": "product-contract-results.json",
+      "bytes": 1501,
+      "sha256": "a47ab1cc0002ea3137acffa5ead1baa55990db8c90fcc667dba4e20c49e0123c"
+    },
+    {
+      "path": "retained-final-comparison.json",
+      "bytes": 2656,
+      "sha256": "6f64e70a301e866968376aa7e71b75b34e538a282bc1df809f39454836368d46"
+    },
+    {
+      "path": "user-return.png",
+      "bytes": 74419,
+      "sha256": "d72efd485badc31e16174d7f683daac21b706338542c122df60514fb187c879e"
+    },
+    {
+      "path": "verification-summary.json",
+      "bytes": 546,
+      "sha256": "03695ad59221184d3eb7d8614fa26b6ff176089d502cbcd484ba3398499c8075"
+    }
+  ]
+}

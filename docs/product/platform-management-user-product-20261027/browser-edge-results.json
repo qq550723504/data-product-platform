@@ -1,0 +1,95 @@
+{
+  "entrypoint": "cmd/api",
+  "channel": "msedge",
+  "results": [
+    {
+      "name": "actual product profile enables only explicit workspace account readers and no identity links",
+      "status": "PASS"
+    },
+    {
+      "name": "configuration declares profile capability without health or identity admission claims",
+      "status": "PASS"
+    },
+    {
+      "name": "member account return preserves role search state second page row and refresh focus",
+      "status": "PASS"
+    },
+    {
+      "name": "member detail account membership loop retains original conditions and fixed origins",
+      "status": "PASS"
+    },
+    {
+      "name": "user directory pages deduplicate references and return restores search page and focused user",
+      "status": "PASS"
+    },
+    {
+      "name": "account membership state and canonical identity stay separate despite a seeded same-person candidate",
+      "status": "PASS"
+    },
+    {
+      "name": "per-workspace disabled profile refuses lists and details before any source call",
+      "status": "PASS"
+    },
+    {
+      "name": "copied account IDs and member navigation cannot cross workspace or invent membership associations",
+      "status": "PASS"
+    },
+    {
+      "name": "navigation is bounded UI context never API authority or an arbitrary return URL",
+      "status": "PASS"
+    },
+    {
+      "name": "native user permissions foreign ownership unknown state and failures expose no profiles and recover explicitly",
+      "status": "PASS"
+    },
+    {
+      "name": "in-flight account lookup rechecks caller revoke even when source fails",
+      "status": "PASS"
+    },
+    {
+      "name": "in-flight account lookup rechecks caller expire even when source fails",
+      "status": "PASS"
+    },
+    {
+      "name": "in-flight account lookup rechecks caller grant even when source fails",
+      "status": "PASS"
+    },
+    {
+      "name": "in-flight account lookup rechecks caller capability even when source fails",
+      "status": "PASS"
+    },
+    {
+      "name": "in-flight account lookup rechecks caller grant-expiry even when source fails",
+      "status": "PASS"
+    },
+    {
+      "name": "membership removed during account lookup denies a formerly visible profile",
+      "status": "PASS"
+    },
+    {
+      "name": "native permission lost during profile lookup never returns stale account data",
+      "status": "PASS"
+    },
+    {
+      "name": "revocation expiry refresh and browser history cannot revive account records or previous RP revisions",
+      "status": "PASS"
+    },
+    {
+      "name": "product has no account writes native proxy model or business command routes",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile account detail uses business language and keeps credentials private with business facts unchanged",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "external": [],
+  "environment": "ISOLATED_SYNTHETIC",
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

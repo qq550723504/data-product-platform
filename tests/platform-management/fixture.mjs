@@ -13,10 +13,11 @@ const runtime=p.runtimeLogs===true&&process.env.MANAGEMENT_RUNTIME_LOG_FIXTURE_A
 const mainService=p.mainService===true&&process.env.MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK==='ISOLATED_MAIN_SERVICE_READONLY';
 const compat=p.mainServiceCompat===true&&process.env.MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK==='ISOLATED_MAIN_SERVICE_COMPAT_READONLY';
 const directoryProduct=p.directoryProduct===true&&process.env.MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK==='ISOLATED_DIRECTORY_PRODUCT_READONLY';
-if(p.mainService===true&&!mainService||p.mainServiceCompat===true&&!compat||p.directoryProduct===true&&!directoryProduct||[runtime,mainService,compat,directoryProduct].filter(Boolean).length>1)throw Error('disjoint independent main service fixture required');
-const idpPort=directoryProduct?19180:compat?19170:mainService?19160:runtime?19150:19130;
+const userProduct=p.userProduct===true&&process.env.MANAGEMENT_USER_PRODUCT_FIXTURE_ACK==='ISOLATED_USER_PRODUCT_READONLY';
+if(p.userProduct===true&&!userProduct||p.mainService===true&&!mainService||p.mainServiceCompat===true&&!compat||p.directoryProduct===true&&!directoryProduct||[runtime,mainService,compat,directoryProduct,userProduct].filter(Boolean).length>1)throw Error('disjoint independent main service fixture required');
+const idpPort=userProduct?19220:directoryProduct?19180:compat?19170:mainService?19160:runtime?19150:19130;
 const logs=runtimeSource(p);
-if(p.issuer!==`https://localhost:${idpPort}`||p.origin!==`https://localhost:${directoryProduct?4380:compat?4370:mainService?4360:runtime?4350:4300}`)throw Error('exact independent origin required');
+if(p.issuer!==`https://localhost:${idpPort}`||p.origin!==`https://localhost:${userProduct?4420:directoryProduct?4380:compat?4370:mainService?4360:runtime?4350:4300}`)throw Error('exact independent origin required');
 const {publicKey,privateKey}=await generateKeyPair('RS256'),jwk=await exportJWK(publicKey);jwk.kid='management-synthetic';
 const codes=new Map(),logins=new Map(),tokens=new Map(),held=new Set(),heldUsers=new Set(),heldOrgs=new Set();const state={permission:true,foreign:false,fail:false,holdList:false,waiting:0,reads:0,userPermission:true,userForeign:false,userFail:false,userUnknown:false,holdUser:false,userWaiting:0,userReads:0,removeUser:false,orgPermission:true,orgForeign:false,orgFail:false,orgUnknown:false,orgMissing:false,orgSparse:false,orgExtra:false,holdOrg:false,orgWaiting:0,orgReads:0};
 const opaque=()=>randomBytes(32).toString('base64url');

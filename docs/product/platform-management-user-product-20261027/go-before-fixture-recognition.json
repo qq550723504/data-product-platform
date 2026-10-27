@@ -1,0 +1,40 @@
+{
+  "verdict": "PASS",
+  "packages": {
+    "internal/platform/principal/bindings": {
+      "pass": 4,
+      "fail": 0,
+      "skip": 0
+    },
+    "internal/platformmanagement/zitadel": {
+      "pass": 72,
+      "fail": 0,
+      "skip": 0
+    },
+    "internal/platformmanagement": {
+      "pass": 140,
+      "fail": 0,
+      "skip": 0
+    },
+    "internal/platformmanagement/service": {
+      "pass": 66,
+      "fail": 0,
+      "skip": 1
+    },
+    "tests/platformmanagement": {
+      "pass": 9,
+      "fail": 0,
+      "skip": 0
+    },
+    "cmd/api": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "failedPackages": [],
+  "realSources": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}

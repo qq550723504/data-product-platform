@@ -32,6 +32,7 @@
       "credentialFile": "/PRIVATE/REPLACE/directory-readonly-credential",
       "organizationId": "REPLACE_ORGANIZATION_ID",
       "projectId": "REPLACE_PROJECT_ID",
+      "userProfiles": false,
       "roles": [{ "id": "REPLACE_NATIVE_ROLE_KEY", "name": "REPLACE_ROLE_NAME", "permissions": ["management.members.read", "management.roles.read"] }]
     }]
   }

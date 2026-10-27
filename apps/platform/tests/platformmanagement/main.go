@@ -27,7 +27,7 @@ import (
 
 type config struct {
 	DatabaseURL, Issuer, ResourceSecret, ReadCredential, Cert, Key, CA, Root, APIPassword, RPPassword string
-	RuntimeLogs, MainService, MainServiceCompat, DirectoryProduct                                     bool
+	RuntimeLogs, MainService, MainServiceCompat, DirectoryProduct, UserProduct                        bool
 }
 
 var wsA = uuid.MustParse("11111111-1111-4111-8111-111111111111")
@@ -47,22 +47,28 @@ func main() {
 		issuer, dbName, apiPort = "https://localhost:19150", "runtime_logs_readonly_20261026", "18550"
 	}
 	if c.MainService {
-		if c.RuntimeLogs || c.MainServiceCompat || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
+		if c.RuntimeLogs || c.MainServiceCompat || c.DirectoryProduct || c.UserProduct || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
 			log.Fatal("disjoint main service fixture required")
 		}
 		issuer, dbName, apiPort = "https://localhost:19160", "management_main_service_20261026", "18560"
 	}
 	if c.MainServiceCompat {
-		if c.RuntimeLogs || c.MainService || os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_COMPAT_READONLY" {
+		if c.RuntimeLogs || c.MainService || c.DirectoryProduct || c.UserProduct || os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_COMPAT_READONLY" {
 			log.Fatal("disjoint main service compatibility fixture required")
 		}
 		issuer, dbName, apiPort = "https://localhost:19170", "management_main_service_compat_20261026", "18570"
 	}
 	if c.DirectoryProduct {
-		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || os.Getenv("MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK") != "ISOLATED_DIRECTORY_PRODUCT_READONLY" {
+		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || c.UserProduct || os.Getenv("MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK") != "ISOLATED_DIRECTORY_PRODUCT_READONLY" {
 			log.Fatal("disjoint directory product fixture required")
 		}
 		issuer, dbName, apiPort = "https://localhost:19180", "management_directory_product_20261026", "18580"
+	}
+	if c.UserProduct {
+		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || c.DirectoryProduct || os.Getenv("MANAGEMENT_USER_PRODUCT_FIXTURE_ACK") != "ISOLATED_USER_PRODUCT_READONLY" {
+			log.Fatal("disjoint user product fixture required")
+		}
+		issuer, dbName, apiPort = "https://localhost:19220", "management_user_product_20261027", "18620"
 	}
 	if c.Issuer != issuer {
 		log.Fatal("synthetic issuer required")
@@ -77,7 +83,7 @@ func main() {
 		prepare(c)
 		return
 	}
-	if c.DirectoryProduct {
+	if c.DirectoryProduct || c.UserProduct {
 		log.Fatal("directory product runtime must use cmd/api with private profile")
 	}
 	pool, e := pgxpool.NewWithConfig(context.Background(), cfg)
@@ -145,22 +151,28 @@ func prepare(c config) {
 		expectedDB, expectedPort = "runtime_logs_readonly_20261026", 25550
 	}
 	if c.MainService {
-		if c.RuntimeLogs || c.MainServiceCompat || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
+		if c.RuntimeLogs || c.MainServiceCompat || c.DirectoryProduct || c.UserProduct || os.Getenv("MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_READONLY" {
 			log.Fatal("main service prepare boundary")
 		}
 		expectedDB, expectedPort = "management_main_service_20261026", 25560
 	}
 	if c.MainServiceCompat {
-		if c.RuntimeLogs || c.MainService || os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_COMPAT_READONLY" {
+		if c.RuntimeLogs || c.MainService || c.DirectoryProduct || c.UserProduct || os.Getenv("MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK") != "ISOLATED_MAIN_SERVICE_COMPAT_READONLY" {
 			log.Fatal("compatibility prepare boundary")
 		}
 		expectedDB, expectedPort = "management_main_service_compat_20261026", 25570
 	}
 	if c.DirectoryProduct {
-		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || os.Getenv("MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK") != "ISOLATED_DIRECTORY_PRODUCT_READONLY" {
+		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || c.UserProduct || os.Getenv("MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK") != "ISOLATED_DIRECTORY_PRODUCT_READONLY" {
 			log.Fatal("directory product prepare boundary")
 		}
 		expectedDB, expectedPort = "management_directory_product_20261026", 25580
+	}
+	if c.UserProduct {
+		if c.RuntimeLogs || c.MainService || c.MainServiceCompat || c.DirectoryProduct || os.Getenv("MANAGEMENT_USER_PRODUCT_FIXTURE_ACK") != "ISOLATED_USER_PRODUCT_READONLY" {
+			log.Fatal("user product prepare boundary")
+		}
+		expectedDB, expectedPort = "management_user_product_20261027", 25620
 	}
 	if cfg.ConnConfig.Database != expectedDB || cfg.ConnConfig.Host != "127.0.0.1" || cfg.ConnConfig.Port != expectedPort {
 		log.Fatal("prepare target differs")
@@ -185,7 +197,7 @@ func prepare(c config) {
 		}
 		if name == "both" {
 			targets = append(targets, wsB)
-			if c.DirectoryProduct {
+			if c.DirectoryProduct || c.UserProduct {
 				targets = append(targets, uuid.MustParse("13131313-1313-4313-8313-131313131313"))
 			}
 		}
