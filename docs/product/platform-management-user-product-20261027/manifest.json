@@ -137,6 +137,11 @@
       "sha256": "ca639447679cd6f8496492cf34caa9e4de7ff5a2e06f05bc46574b382e972b08"
     },
     {
+      "path": "whole-ci-timeout.json",
+      "bytes": 709,
+      "sha256": "9cd13c2bc34795a156655dbfb39198b02e7f6db30e7cd18bf2d52b91732f5608"
+    },
+    {
       "path": "whole-configuration.png",
       "bytes": 75809,
       "sha256": "cab89e1f97d78f7c8b72d429be11b6b8ed2f4d646ef9c50882c5358988331ea6"

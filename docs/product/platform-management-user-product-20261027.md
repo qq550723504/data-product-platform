@@ -100,3 +100,9 @@ Build-vs-Buy / Reuse Check：仓库已有 UserReader、QueryUsers、ZITADEL原�
 独立CI维护补修只为demo作业显式使用与主CI一致的Go1.26.10及现有go.sum缓存，避免依赖runner默认Go；离线测试在构建失败时继续抛错，新增固定类别、退出码、stdout/stderr字节数及SHA256诊断，绝不公开原始输出、代理URL或环境。类别只作定位线索，不裁定根因；未知错误仍失败，不新增编译重试或放宽权限。测试临时目录在setup失败时也由已有TemporaryDirectory机制清理，冻结候选和provider逻辑不改。
 
 普通/优化Python各7项PASS，包含真实编译检查器的原5项完整入口回归，以及2项诊断不泄漏/未知失败阻断/不重试反例。Docker为记录替身、策略读取为文件，provider/原库I/O均0。[安全摘要](platform-management-user-product-20261027/whole-ci-build-diagnostic.json)保留。此维护不修改系统设置代码、来源、API、OIDC/RP、真实运行或业务写入口；新HEAD全量CI另行核对，旧2b0eb7c7失败仍保留。
+
+### 身份验收作业时限修正
+
+后续HEAD `321764c1` 的demo作业和37组产品专项已通过；但[身份验收作业121981818235](https://github.com/qq550723504/data-product-platform/actions/runs/40441064492/job/121981818235)被GitHub明确判定超过20分钟上限，目录产品入口准备被取消、24组浏览器用例未执行，不能声称该HEAD全量通过。该作业依赖安装约7分8秒，前置多套隔离API/Web及浏览器验收均成功，至最后目录准备时耗尽总预算。
+
+本次仅将该作业总时限20→30分钟，全部步骤、断言、权限、来源默认值和产物保留不变，不增加自动重试，也不原地重跑已取消作业。[原始取消的安全摘要](platform-management-user-product-20261027/whole-ci-timeout.json)保留；下一HEAD须重新完成全部CI和目录浏览器产物核对后，才能在PR收口评论记录完成。

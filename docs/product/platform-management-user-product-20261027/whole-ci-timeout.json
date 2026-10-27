@@ -1,0 +1,18 @@
+{
+  "head": "321764c1a6a553e3c115a5149af45e3768798e5d",
+  "run": 40441064492,
+  "job": 121981818235,
+  "conclusion": "cancelled",
+  "githubAnnotation": "The job has exceeded the maximum execution time of 20m0s",
+  "dependencyInstallationSeconds": 428,
+  "cancelledStep": "Prepare isolated product directory configuration and actual main entrypoint",
+  "directoryBrowserStep": "SKIPPED",
+  "sameHeadWholeProductBrowser": {"pass": 37, "fail": 0},
+  "retryOfOriginalJob": "NOT_RUN",
+  "change": "identity-1a job budget 20 to 30 minutes; all steps and assertions unchanged",
+  "realSources": "UNCONFIGURED",
+  "identityMapping": "UNCONFIGURED",
+  "businessWrites": false,
+  "models": false,
+  "dispatch": false
+}
