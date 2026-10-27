@@ -131,3 +131,6 @@ Envelope保持原合同，data严格为`scope=CURRENT_WORKSPACE_MANAGEMENT`、`m
 产品入口的逐空间 `userProfiles` 默认关闭及依赖装配由[主服务契约第11节](platform-management-main-service-readonly-v1.md#11-用户资料的产品级只读装配)拥有。本轮只复用既有 users GET 与 UserReader，不新增响应字段、业务写入或身份推断；实际产品 IdentityLinks 仍为空。users HTTP 在开关关闭时列表和详情都拒绝，无来源调用；开启仍遵守当前成员可见性、原生 user.read/成员权限、返回前重验和当前平台资格。
 
 用户详情增加闭集 `memberContext` 页面参数（既有 members 查询的编码值）。它不属于任何 API 参数，不能选择空间/身份/URL；用户详情的返回与错误恢复固定回原成员列表并保留条件、offset和焦点。返回账号的成员关系必须包含 context.memberId，否则整份详情不展示。用户目录→详情→目录的原有固定导航仍保留；两条路线刷新/历史都重新认证查询，不用缓存账号资料恢复权限。
+
+
+同一产品入口的跨页规则补充：账号详情由memberContext进入时，次级“查看角色权限”及其他成员入口也继承memberContext.from；原成员的详情/主返回继续保留完整原筛选、页码和焦点。来源只取既有闭集标记，不新增返回URL、身份/空间选择器或API参数。配置、工作空间、组织三个实际页面入口均按此规则往返。

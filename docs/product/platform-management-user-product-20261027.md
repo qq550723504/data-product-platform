@@ -66,3 +66,28 @@ Build-vs-Buy / Reuse Check：仓库已有 UserReader、QueryUsers、ZITADEL原�
 - [最终容器保留](platform-management-user-product-20261027/review-retained-final.json)PASS，证明列出的旧容器元数据相同；历史original别名前后均不存在，不冒充原库内容验证。原库不运行SQL/DDL，真实来源/身份映射仍未配置，默认预览未接入，业务写入口/模型/真实派发关闭，Draft不合并。
 
 本轮代码的全量CI及跨模块共享组件回归必须以最新HEAD为准，在PR收口评论登记，不继承首片3c1fa691的绿色。风险限制：这里只证明隔离合成身份与资料查询边界，不证明企业真实用户、组织、权限来源或正式签收。
+
+
+## 系统设置产品入口整体验收
+
+范围冻结于 `10f99104daf049c4241312e1d32cd7b36e683aa2`：复用既有实际cmd/api产品组合与新版Web，在同一独立合成宿主核对九个菜单及跨页流程；不新增菜单、API、权限或业务写能力。[能力清单](leader-demo-capabilities-20261025.md#系统设置当前能力)统一区分“已实现”“已装配/合成见证”“真实来源未配置”。来源与实际责任仍由原清单拥有。
+
+本轮发现并先复现：配置→角色→成员→账号→查看角色权限，丢失from入口。账号页现在为次级角色/其他成员链接复用memberContext中的来源；主返回仍恢复原筛选/页码/焦点，来源只作导航不进入API。工作空间、组织和配置三条真实页面入口分别覆盖，不用手写目标URL代替整条路线。
+
+独立环境沿用固定4420/18620产品宿主，API/IdP/库不替换。增加D仅为合成无来源空间：CI新库prepare直接种入；本地既有独立库仅增加both合成主体对D的管理读资格，复用该主体原有有效窗口，未延长任何已有资格或凭据，其他grant不变。产品私有配置无D目录/审计绑定，IdentityLinks仍不装配，D不会继承A/B默认来源。该测试资格不是selected native user→平台人员映射，更不代表真实企业授权。
+
+覆盖计划：总览及所有侧栏菜单、配置/空间/组织到角色/成员/账号并回跳、实际审计分页与跨调用者游标、D全部来源关闭、目录故障但独立审计可查、全菜单资格撤回/到期、原29项用户资料边界。运行日志只检验实际产品未接入状态；其记录查询20项仍由独立日志宿主证明，不在产品中暗接合成Reader。默认4193及原库不变，不因本轮UI/CI接纳来源或开放写入。
+
+
+整体验收最终本地结果：
+
+| 项目 | 本轮证据 |
+|---|---|
+| 同一产品入口全流程 | [Edge 37组](platform-management-user-product-20261027/whole-browser-edge.json)、[Chromium 37组](platform-management-user-product-20261027/whole-browser-chromium.json)全部PASS；其中一组循环九个菜单，不冒充九条独立业务验收。原29组保留，新增8组整体流程 |
+| 边界与事实 | 页面错误/业务写请求/外联均0；审计及execution/agent/provider/outbox等业务表数量与内容摘要不变；所需测试资格只在独立合成库准备 |
+| 权限与查询基础 | [Go/独立PG](platform-management-user-product-20261027/whole-go-regression.json)293个pass事件、0 fail/skip；[SDK/TLS](platform-management-user-product-20261027/whole-unit-results.json)45 PASS/2可选PG SKIP，生产构建、类型及lint成功 |
+| 回跳修复 | [修复前失败](platform-management-user-product-20261027/whole-origin-before.json)保留；配置/空间/组织从真实页面入口到账号、角色并返回均通过，原筛选/页码/焦点回归保持 |
+| 来源与能力状态 | [配置页面](platform-management-user-product-20261027/whole-configuration.png)、[无来源空间](platform-management-user-product-20261027/whole-unconfigured.png)、[实际审计](platform-management-user-product-20261027/whole-audit.png)；Config只声明入口、空间档案仍未接入、身份映射未装配、日志产品来源未配置 |
+| 保留检查 | [旧容器元数据](platform-management-user-product-20261027/whole-retained-final.json)PASS；历史original别名前后均不存在，不冒充原库内容验证；默认4193与原库SQL/DDL未操作 |
+
+修正既有能力清单中“日志权限/API/Reader均未实现”的过时描述，改为：已有源码/独立合成证据与产品配置、真实接入分别列示。没有将Loki候选、合成空间/账号或材料表中的待定项改为真实接纳。最新HEAD的CI及本轮37组产物仍须单独核对，在PR收口评论记录；不继承10f99104绿色。PR保持Draft，业务写入口/模型/真实派发关闭。

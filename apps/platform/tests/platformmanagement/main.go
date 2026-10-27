@@ -200,6 +200,9 @@ func prepare(c config) {
 			if c.DirectoryProduct || c.UserProduct {
 				targets = append(targets, uuid.MustParse("13131313-1313-4313-8313-131313131313"))
 			}
+			if c.UserProduct {
+				targets = append(targets, uuid.MustParse("14141414-1414-4414-8414-141414141414"))
+			}
 		}
 		cap := principal.CapabilityManagementRead
 		if name == "ordinary" {

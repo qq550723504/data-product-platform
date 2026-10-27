@@ -104,6 +104,7 @@ def main():
  if PRODUCT:
   if DIRECTORY:web['MANAGEMENT_DIRECTORY_PRODUCT_FIXTURE_ACK']='ISOLATED_DIRECTORY_PRODUCT_READONLY'
   web['BROWSER_IAM_WORKSPACES']=json.dumps([{'id':'11111111-1111-4111-8111-111111111111','label':'隔离合成空间 A'},{'id':'12121212-1212-4212-8212-121212121212','label':'隔离合成空间 B'},{'id':'13131313-1313-4313-8313-131313131313','label':'用户资料未接入的隔离空间 C' if USER_PRODUCT else '未接目录的隔离空间 C'}])
+  if USER_PRODUCT:web['BROWSER_IAM_WORKSPACES']=json.dumps(json.loads(web['BROWSER_IAM_WORKSPACES'])+[{'id':'14141414-1414-4414-8414-141414141414','label':'来源未接入的隔离空间 D'}])
  (RUN/'web-env.json').write_text(json.dumps(web),encoding='utf-8')
  ctx=ssl.create_default_context(cafile=str(cert))
  for port in [IDP_PORT,API_PORT]:

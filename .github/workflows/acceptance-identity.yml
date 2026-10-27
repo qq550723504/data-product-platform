@@ -31,7 +31,7 @@ jobs:
           python3 tests/platform-management/test-main-service.py
           python3 tests/platform-management/directory-product-contract.py
           python3 tests/platform-management/start-web.py --build
-      - name: Account navigation and current authority browser acceptance
+      - name: Whole settings product navigation and current authority browser acceptance
         env:
           MANAGEMENT_FIXTURE_ACK: ISOLATED_READONLY_MANAGEMENT
           MANAGEMENT_USER_PRODUCT_FIXTURE_ACK: ISOLATED_USER_PRODUCT_READONLY

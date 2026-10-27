@@ -38,6 +38,52 @@ try{
   const start=await control(),t=await token();for(const ws of [a,b]){const r=await query(ws,'configuration',ws===a?t:await token('both'));assert.equal(r.data.queries.users,true);assert.equal(r.data.directory.availability,'NOT_CHECKED');assert.equal(r.writeEnabled,false)}const end=await control();assert.equal(end.userReads,start.userReads);assert.equal(end.reads,start.reads);
  });
  page=await person();
+ await pass('whole product sidebar reaches all nine settings pages with honest configured and unavailable states',async()=>{
+  const menu=page.getByRole('navigation',{name:'平台管理',exact:true});await expect(menu.getByRole('link')).toHaveCount(9);
+  for(const [label,path,region]of [['设置总览','',null],['工作空间','workspaces','工作空间概览'],['组织机构','organizations','目录组织资料'],['空间成员','members','空间成员'],['用户目录','users','用户目录'],['角色权限','roles','角色权限'],['审计记录','audit','空间审计记录'],['运行日志','logs',null],['基础配置','configuration','基础配置概览']]){
+   await menu.getByRole('link',{name:label,exact:true}).click();assert.equal(new URL(page.url()).pathname,'/settings'+(path?'/'+path:''));await expect(menu.getByRole('link',{name:label,exact:true})).toHaveAttribute('aria-current','page');
+   if(region)await expect(page.getByRole(['members','users','roles','audit'].includes(path)?'table':'region',{name:region,exact:true})).toBeVisible();
+   else await expect(page.getByRole('heading',{name:path==='logs'?'运行日志尚未接入':'设置总览',exact:true})).toBeVisible();
+   assert.equal(await page.locator('main').getByRole('button',{name:/新建|邀请|保存|授权|删除|执行|发布/}).count(),0);
+  }
+  await shot(page,'whole-configuration');
+ });
+ for(const origin of ['configuration','workspace','organization'])await pass(origin+' full member account role and entry return preserve origin',async()=>{
+  const title={configuration:'基础配置',workspace:'工作空间',organization:'组织资料'}[origin];
+  await page.goto(p.origin+'/settings/'+{configuration:'configuration',workspace:'workspaces',organization:'organizations'}[origin]);
+  if(origin==='configuration'){await page.getByRole('link',{name:'查看角色权限',exact:true}).click();await page.getByRole('table',{name:'角色权限'}).locator('tbody tr').filter({hasText:'管理查询员'}).getByRole('link',{name:'查看相关成员',exact:true}).click()}
+  else await page.getByRole('region',{name:origin==='workspace'?'工作空间概览':'目录组织资料',exact:true}).getByRole('link',{name:origin==='workspace'?/^空间成员/:/^当前空间成员/}).click();
+  await page.getByRole('textbox',{name:'搜索成员',exact:true}).fill('空间甲成员');await page.getByRole('combobox',{name:'角色',exact:true}).selectOption('management_viewer');await page.getByRole('combobox',{name:'状态',exact:true}).selectOption('active');await page.getByRole('button',{name:'筛选',exact:true}).click();await page.getByRole('link',{name:'下一页',exact:true}).click();await expect(rows(page)).toHaveCount(7);
+  await rows(page).last().getByRole('link',{name:'查看账号',exact:true}).click();await expect(account(page)).toBeVisible();
+  await page.getByRole('link',{name:'查看角色权限',exact:true}).click();assert.equal(new URL(page.url()).searchParams.get('from'),origin);
+  await page.getByRole('link',{name:'返回'+title,exact:true}).click();await expect(page.getByRole('region',{name:{configuration:'基础配置概览',workspace:'工作空间概览',organization:'目录组织资料'}[origin],exact:true})).toBeVisible();
+ });
+ await pass('actual product audit pages preserve exact records fixed configuration return and caller scope',async()=>{
+  await page.goto(p.origin+'/settings/configuration');await page.getByRole('link',{name:'查看审计记录',exact:true}).click();const table=()=>page.getByRole('table',{name:'空间审计记录',exact:true});const ids=[];let copied;
+  for(const n of [25,25,8]){await expect(table().locator('tbody tr')).toHaveCount(n);ids.push(...await table().locator('tbody details').allTextContents());if(n===25){await page.getByRole('link',{name:'更早记录',exact:true}).click();copied=page.url()}}
+  assert.equal(new Set(ids).size,58);await reloadReadOnly(page);await expect(table().locator('tbody tr')).toHaveCount(8);await table().locator('summary').first().click();await shot(page,'whole-audit');await page.getByRole('link',{name:'返回基础配置',exact:true}).click();await expect(page.getByRole('region',{name:'基础配置概览'})).toBeVisible();
+  const other=await person('双空间查询人员',b);await other.goto(copied);await expect(other.getByRole('heading',{name:'查询条件无效',exact:true})).toBeVisible();assert.equal(await other.getByRole('table',{name:'空间审计记录'}).count(),0);
+ });
+ await pass('workspace without any source stays unconfigured in all actual product menus without native calls',async()=>{
+  const d='14141414-1414-4414-8414-141414141414',t=await token('both'),start=await control(),config=await query(d,'configuration',t);
+  assert.equal(config.data.directory.state,'UNCONFIGURED');assert.deepEqual(config.data.queries,{workspace:true,organization:false,members:false,users:false,roles:false,audit:false});const overview=await query(d,'workspace',t);assert.equal(overview.data.recordState,'UNCONFIGURED');
+  for(const path of ['organization','members','users','roles','audit'])assert.equal((await query(d,path,t,503)).code,'SOURCE_UNCONFIGURED');assert.equal((await query(d,'runtime-logs/source',t)).data.state,'UNCONFIGURED');
+  const other=await person('双空间查询人员',d);
+  for(const path of ['members','users','roles','organizations','audit']){await other.goto(p.origin+'/settings/'+path);await expect(other.getByRole('heading',{name:'真实来源未配置',exact:true})).toBeVisible();assert.equal(await other.getByRole('table').count(),0)}
+  await other.goto(p.origin+'/settings/logs');await expect(other.getByRole('heading',{name:'运行日志尚未接入',exact:true})).toBeVisible();await other.goto(p.origin+'/settings/workspaces');await expect(other.getByRole('region',{name:'工作空间概览'})).toContainText('尚未接入');await other.goto(p.origin+'/settings/configuration');await expect(other.getByRole('table',{name:'管理查询配置'}).getByRole('link')).toHaveCount(1);await shot(other,'whole-unconfigured');
+  const end=await control();for(const k of ['reads','orgReads','userReads'])assert.equal(end[k],start[k]);
+ });
+ await pass('directory faults do not change configuration claims or independent audit and fixed error returns',async()=>{
+  for(const [flag,path,message]of [['fail','members','成员目录暂时无法读取'],['fail','users','用户目录暂时无法读取'],['orgFail','organizations','组织资料暂时无法读取']]){
+   try{await control({[flag]:true});await page.goto(p.origin+'/settings/configuration');await expect(page.getByRole('table',{name:'管理查询配置'})).toContainText('已配置');await page.goto(p.origin+'/settings/'+path+'?from=configuration');await expect(page.getByRole('heading',{name:message,exact:true})).toBeVisible();assert.equal(await page.getByRole('table').count(),0);await page.getByRole('link',{name:'返回基础配置',exact:true}).click();await page.getByRole('link',{name:'查看审计记录',exact:true}).click();await expect(page.getByRole('table',{name:'空间审计记录'}).locator('tbody tr')).toHaveCount(25)}finally{await control({[flag]:false})}
+  }
+ });
+ await pass('management capability loss and token expiry deny every settings page without cached records',async()=>{
+  const saved=(await db.query('SELECT capabilities FROM platform_workspace_grant WHERE actor_id=$1 AND workspace_id=$2',[actor,a])).rows[0];
+  try{await login(page);await db.query("UPDATE platform_workspace_grant SET capabilities=ARRAY['BUSINESS_ACCEPTANCE_READ'],revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2",[actor,a]);for(const path of ['','workspaces','organizations','members','users','roles','audit','configuration','logs']){await page.goto(p.origin+'/settings'+(path?'/'+path:''));await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await page.getByRole('table').count(),0)}}
+  finally{await db.query('UPDATE platform_workspace_grant SET capabilities=$3,revision=revision+1 WHERE actor_id=$1 AND workspace_id=$2',[actor,a,saved.capabilities])}
+  await login(page);await control({expireSubject:'admin-a'});for(const path of ['workspaces','organizations','members','users','roles','audit','configuration','logs']){await page.goto(p.origin+'/settings/'+path);await expect(page.getByRole('heading',{name:'登录状态不可用',exact:true})).toBeVisible();assert.equal(await page.getByRole('table').count(),0)}await login(page);
+ });
  await pass('authorized browser back and forward restore member list conditions and keyboard position',async()=>{
   await page.goto(p.origin+'/settings/members?offset=25&q='+encodeURIComponent('空间甲成员')+'&role=management_viewer&state=active&from=configuration');
   await expect(rows(page)).toHaveCount(7);const list=page.url(),row=rows(page).last(),id=await row.getAttribute('id');
