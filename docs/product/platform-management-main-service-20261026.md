@@ -44,7 +44,7 @@ prepare/migration/合成身份和AuditEvent seed、ACL改变、撤权/到期、�
 
 ## 4. 重演与停止条件
 
-只在另行明确的新独立环境执行tests/platform-management/bootstrap.py，需MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT及MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK=ISOLATED_MAIN_SERVICE_READONLY；当前固定目标已存在时必须拒绝，不能删旧目录/容器后重跑或改为原库。随后test-main-service.py验证相关Go/PG，start-web.py --build使用独立.next-acceptance-identity-management-*构建，main-service-browser.mjs运行Edge（CI显式Chromium），verify-main-service.py作最终只读保留比较。
+只在另行明确的新独立环境中设置 `MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT`，运行 `python tests/platform-management/run.py --suite main-service`。原 Go/PG、Web 构建、Edge/CI Chromium 和最终保留比较均在该入口内执行；结束后停止本轮资源，保留数据和证据。已有目标禁止覆盖或重新 seed，详见[验收收尾契约](../operations/acceptance-shutdown.md)。
 
 现有环境若需经修复再次验收，必须使用新的Go/浏览器/保留报告名称，保留历史结果；只允许核实并替换本轮拥有的候选进程，不重建或重置DB/IdP/原会话。CI已复用同一准备与验收路径，只上传固定安全JSON和截图，不上传profile、api-config、web-env、原始保留快照、进程/凭据账本、证书或密钥。
 

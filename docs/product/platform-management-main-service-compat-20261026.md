@@ -44,10 +44,9 @@
 
 仅在新的明确隔离环境依次执行以下既有脚本，设置MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT及MANAGEMENT_MAIN_SERVICE_COMPAT_FIXTURE_ACK=ISOLATED_MAIN_SERVICE_COMPAT_READONLY，构建目录MANAGEMENT_WEB_DIST=.next-acceptance-identity-management-main-service-compat-20261026：
 
-1. tests/platform-management/bootstrap.py准备新固定目标；已有目录、容器或端口即拒绝，不能删除旧目标重跑。
-2. tests/platform-management/test-main-service.py完成Go/PG后，再start-web.py --build；不与其他验收控制并发操作同一新库。
-3. tests/platform-management/compat-boundaries.mjs、browser.mjs、tests/runtime-logs/api-browser.mjs依次执行；本机默认Edge，CI显式Chromium。最后verify-main-service.py只读比较保留资源。
-4. 修复后复核已有本轮环境时使用新的Go、HTTP、浏览器、保留报告名，保留前次证据；不重置DB、IdP或其他预览会话。公开artifact不含profile、配置/进程账本、原始保留快照、DSN、token、Cookie、证书私钥或原始日志。
+1. 运行 `python tests/platform-management/run.py --suite compat`；已有目录、容器或端口仍拒绝覆盖，不删除旧目标重新准备。
+2. 统一入口按原顺序执行 Go/PG、产品合同（如适用）、独立 Web、原浏览器验收及最终保留比较。本地默认 Edge，CI 显式 Chromium；实际产品 API 和权限边界保持。
+3. 成功、失败或中断后在 finally 停止本轮容器与关联进程，保留数据、配置、日志、截图和原始失败证据。不重置旧身份/数据，也不上传 profile、凭据或原始私密日志。运行及中断恢复遵循[验收收尾契约](../operations/acceptance-shutdown.md)。
 
 ## 5. 后续与停止条件
 

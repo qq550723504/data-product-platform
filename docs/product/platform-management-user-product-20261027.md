@@ -20,7 +20,7 @@ Build-vs-Buy / Reuse Check：仓库已有 UserReader、QueryUsers、ZITADEL原�
 
 使用全新 `.data/management-user-product-20261027`、PostgreSQL `dpp-management-user-product-20261027` / `management_user_product_20261027`，仅隔离合成源。固定loopback端口：PG25620、实际产品API18620、合成OIDC/目录19220、新版Web4420。产品进程只使用私有 PLATFORM_MANAGEMENT_PROFILE，无夹具路由；测试控制端只在tests合成来源。API最小SELECT权限，RP仅技术会话写权限。
 
-仅在新的验收执行器首次建立该固定环境（已有环境禁止覆盖）时：设置 MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT 和 MANAGEMENT_USER_PRODUCT_FIXTURE_ACK=ISOLATED_USER_PRODUCT_READONLY，依次运行 tests/platform-management/bootstrap.py、test-main-service.py、directory-product-contract.py；设置独立 MANAGEMENT_WEB_DIST 后运行 start-web.py --build，再运行 user-product-browser.mjs 和 verify-main-service.py。浏览器本地默认Edge，CI显式 MANAGEMENT_BROWSER_CHANNEL=chromium。每次证据目录须全新，不延长旧凭据或重置旧会话。
+仅在新的验收执行器首次建立该固定环境时，设置 `MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT`，运行 `python tests/platform-management/run.py --suite user-product`。原 Go/PG、产品配置合同、独立 Web、浏览器和最终保留比较保持执行；入口在成功、失败或中断后停止本轮资源并保留数据与证据。已有环境禁止覆盖、延长凭据或重置会话。本地默认 Edge，CI 显式 Chromium；详见[验收收尾契约](../operations/acceptance-shutdown.md)。
 
 浏览器重演：合成查询人员A→空间成员→搜索“空间甲成员”/管理查询员/启用→第二页→查看账号→刷新→返回成员列表；核对条件、页码、行与焦点。分别从工作空间/组织/配置入口重复，核对对应成员详情及固定返回。双空间人员在B打开A复制链接应无资料；空间C目录可读但用户资料关闭。账号person-a-5停用不等于成员停用；person-a-7账号启用不等于成员启用；person-a-2有合成同人候选仍不得关联平台人员。
 

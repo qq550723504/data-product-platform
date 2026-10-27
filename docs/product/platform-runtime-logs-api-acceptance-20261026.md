@@ -51,9 +51,9 @@ CI在`c6991d25`发现[Go作业121375477895](https://github.com/qq550723504/data-
 
 ![窄屏](platform-runtime-logs-api-acceptance-20261026/mobile.png)
 
-仅在新的独立工作副本中准备，避免复用、重置或延长现有身份会话。复用`tests/platform-management`的启动流程，显式设置`MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT`和`MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK=ISOLATED_RUNTIME_LOG_READONLY`，运行bootstrap，再以独立`MANAGEMENT_WEB_DIST`运行start-web。已有目标时保留现场，不能删除ledger后盲目重跑准备。
+在明确获准的新独立工作副本中，设置 `MANAGEMENT_FIXTURE_ACK=ISOLATED_READONLY_MANAGEMENT`，运行 `python tests/platform-management/run.py --suite runtime`。原日志 API 与同宿主管理浏览器验收均由入口执行，结束后停止本轮容器与关联进程，保留数据、配置、日志、截图和原始失败证据。已有目标仍拒绝覆盖，不重置或延长旧身份会话；详见[验收收尾契约](../operations/acceptance-shutdown.md)。
 
-运行`node tests/runtime-logs/api-browser.mjs`，Windows默认独立Edge；CI设`RUNTIME_LOG_BROWSER_CHANNEL=chromium`。该脚本只读取本轮固定profile，将控制端与admin权限限定在隔离fixture，结果仅输出安全摘要。脚本会创建新的独立浏览器上下文，不操作用户已有浏览器cookie或会话。
+统一入口内部执行原 `api-browser.mjs` 与同宿主管理验收；本地默认 Edge，CI 显式设置两个浏览器 channel 为 Chromium。原只读角色、业务全量摘要与独立浏览器上下文检查继续执行，不复用用户日常会话。
 
 验收期间实际页面为`https://localhost:4350/settings/logs`，使用新建合成身份登录；引用及会话有期限，不是长期演示凭据。普通默认预览继续保持未接入。
 

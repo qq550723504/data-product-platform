@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'tests'))
 from fixture_preservation import container_metadata,capture_retained,verify_retained
+LIFECYCLE=None
 RUNTIME_LOGS=os.environ.get('MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK')=='ISOLATED_RUNTIME_LOG_READONLY'
 if os.environ.get('MANAGEMENT_RUNTIME_LOG_FIXTURE_ACK') and not RUNTIME_LOGS:raise RuntimeError('invalid runtime fixture acknowledgement')
 MAIN_SERVICE=os.environ.get('MANAGEMENT_MAIN_SERVICE_FIXTURE_ACK')=='ISOLATED_MAIN_SERVICE_READONLY'
@@ -38,24 +39,33 @@ if USER_PRODUCT:
  DATABASE='management_user_product_20261027'
 
 def call(args,**kwargs):
+ if args[0]=='docker' and LIFECYCLE is not None:
+  return LIFECYCLE.docker(*args[1:])
  p=subprocess.run(args,capture_output=True,encoding='utf-8',**kwargs)
  if p.returncode:
   if RUN.exists():(RUN/'prepare-private.log').write_text(p.stdout+'\n'+p.stderr,encoding='utf-8')
   raise RuntimeError('isolated preparation failed in '+Path(args[0]).name+'; private diagnostics retained and withheld')
  return p.stdout
 def metadata(name):
+ if LIFECYCLE is not None and LIFECYCLE.started:
+  def pinned(args,**kwargs):
+   from acceptance_lifecycle import environment
+   return subprocess.run([args[0],'--context',LIFECYCLE.state['context'],*args[1:]],env=environment(),**kwargs)
+  return container_metadata(name,run=pinned)
  return container_metadata(name)
 def env_clean():return {k:v for k,v in os.environ.items() if not k.startswith(('POC_','BROWSER_','AGENT_','PLATFORM_','HUMAN_DECISION_','DELIVERY_','SOURCE_ADMISSION_','GOVERNANCE_','OPENAI_','ANTHROPIC_','DASHSCOPE_','PG')) and k not in ['DATABASE_URL','REDIS_URL']}
 def spawn(name,args,env):
- with open(RUN/(name+'.log'),'w',encoding='utf-8') as log:p=subprocess.Popen(args,cwd=ROOT,env={**env_clean(),**env},stdout=log,stderr=log,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
- return {'name':name,'pid':p.pid,'path':args[0] if len(args)==1 else args[1],'startedAt':time.time()}
-def main():
+ if LIFECYCLE is None:raise RuntimeError('Use the managed platform-management/run.py acceptance entrypoint')
+ return LIFECYCLE.spawn(name,args,cwd=ROOT,env={**env_clean(),**env})
+def main(lifecycle=None):
+ global LIFECYCLE
+ if lifecycle is None:raise RuntimeError('Use the managed platform-management/run.py acceptance entrypoint')
  if os.environ.get('MANAGEMENT_FIXTURE_ACK')!='ISOLATED_READONLY_MANAGEMENT':raise RuntimeError('explicit independent fixture required')
  if RUN.exists() or metadata(PG):raise RuntimeError('existing fixture retained; refusing overwrite')
  for port in [PG_PORT,API_PORT,IDP_PORT,WEB_PORT]:
   with socket.socket() as s:
    if s.connect_ex(('127.0.0.1',port))==0:raise RuntimeError('fixture port occupied; no process changed')
- os.umask(0o077);RUN.mkdir(parents=True,mode=0o700)
+ os.umask(0o077);LIFECYCLE=lifecycle;LIFECYCLE.begin()
  retained=capture_retained(('original','management','runtime','main-service','main-service-compat','directory-product') if USER_PRODUCT else ('original','management','runtime','main-service','main-service-compat') if DIRECTORY else ('original','management','runtime','main-service') if COMPAT else ('original','management','runtime') if MAIN_SERVICE else ('original','management') if RUNTIME_LOGS else ('original',),RUN/'retained-comparison.json',observer=metadata)
  (RUN/'retained-before.json').write_text(json.dumps(retained),encoding='utf-8')
  cert=RUN/'server.crt';key=RUN/'server.key';call(['openssl','req','-x509','-newkey','rsa:2048','-nodes','-days','3','-keyout',str(key),'-out',str(cert),'-subj','/CN=localhost','-addext','subjectAltName=DNS:localhost,IP:127.0.0.1'])
@@ -64,9 +74,10 @@ def main():
  tls='?sslmode=verify-full&sslrootcert='+urllib.parse.quote(str(cert),safe='')
  p['adminDSN']=dsn('postgres',p['pgPassword'])+tls;(RUN/'profile.json').write_text(json.dumps(p),encoding='utf-8')
  (RUN/'pg.env').write_text('POSTGRES_PASSWORD='+p['pgPassword']+'\nPOSTGRES_DB='+p['database']+'\n',encoding='utf-8')
- call(['docker','run','-d','--name',PG,'--label','codex.scope=management-readonly','--env-file',str(RUN/'pg.env'),'-p',f'127.0.0.1:{PG_PORT}:5432','--mount',f'type=bind,source={RUN},target=/fixture,readonly','postgres:17-alpine','sh','-c','cp /fixture/server.key /tmp/server.key && cp /fixture/server.crt /tmp/server.crt && chown postgres:postgres /tmp/server.* && chmod 600 /tmp/server.key && exec docker-entrypoint.sh postgres -c ssl=on -c ssl_cert_file=/tmp/server.crt -c ssl_key_file=/tmp/server.key'])
+ LIFECYCLE.create_container(['--name',PG,'--label','codex.scope=management-readonly','--env-file',str(RUN/'pg.env'),'-p',f'127.0.0.1:{PG_PORT}:5432','--mount',f'type=bind,source={RUN},target=/fixture,readonly','postgres:17-alpine','sh','-c','cp /fixture/server.key /tmp/server.key && cp /fixture/server.crt /tmp/server.crt && chown postgres:postgres /tmp/server.* && chmod 600 /tmp/server.key && exec docker-entrypoint.sh postgres -c ssl=on -c ssl_cert_file=/tmp/server.crt -c ssl_key_file=/tmp/server.key'])
  for _ in range(60):
-  r=subprocess.run(['docker','exec',PG,'pg_isready','-U','postgres','-d',p['database']],capture_output=True)
+  from acceptance_lifecycle import environment
+  r=subprocess.run(['docker','--context',LIFECYCLE.state['context'],'exec',PG,'pg_isready','-U','postgres','-d',p['database']],env=environment(),capture_output=True)
   if r.returncode==0:break
   time.sleep(.5)
  else:raise RuntimeError('new isolated database unavailable; no automatic restart')
